@@ -86,6 +86,7 @@
     <Compile Include="Finance\ClienterWithdrawFormProvider.cs" />
     <Compile Include="Finance\ClienterWithdrawLogProvider.cs" />
     <Compile Include="Finance\ClienterFinanceAccountProvider.cs" />
+    <Compile Include="GlobalConfig\GlobalConfigProvider.cs" />
     <Compile Include="Message\MessageProvider.cs" />
     <Compile Include="OpenApi\JuWangKeGroup.cs" />
     <Compile Include="OpenApi\MeiTuanGroup.cs" />

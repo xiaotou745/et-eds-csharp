@@ -9,9 +9,9 @@ namespace ETS.Enums
     public enum MealsSettleMode
     {
         [DisplayText("线下结算")]
-        Status0 = 0,
+        LineOff = 0,
         [DisplayText("线上结算")]
-        Status1 = 1
+        LineOn = 1
     }
     /// <summary>
     /// 修改外卖费状态

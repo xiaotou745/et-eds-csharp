@@ -333,6 +333,23 @@ where   c.PhoneNo = @PhoneNo
             }
         }
         /// <summary>
+        /// 骑士注册判断推荐人手机号是否正确 2015年7月6日14:51:38 茹化肖
+        /// </summary>
+        /// <param name="phoneNum"></param>
+        /// <returns>-1 :不存在 0:骑士 其他:物流公司的ID</returns>
+        public int CheckRecommendPhone(string phoneNum)
+        {
+            const string sql = @"SELECT ISNULL(MIN(T.PemType),-1) FROM (
+SELECT DeliveryCompanyCode AS Phone,id AS PemType FROM DeliveryCompany (NOLOCK) WHERE IsEnable=1
+UNION
+SELECT PhoneNo AS Phone,0 AS PemType FROM clienter(NOLOCK) WHERE Status=1
+) AS T WHERE T.Phone = @PhoneNo";
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@PhoneNo", DbType.String).Value = phoneNum;
+            object obj = DbHelper.ExecuteScalar(SuperMan_Read, sql, parm);
+            return ParseHelper.ToInt(obj, -1);
+        }
+        /// <summary>
         /// 判断该骑士是否有资格 
         /// wc
         /// </summary>
@@ -427,9 +444,11 @@ where   c.PhoneNo = @PhoneNo
                            ,[InviteCode]
                            ,[City]
                            ,[CityId]
-                           ,[GroupId])
+                           ,[GroupId]
+                           ,[DeliveryCompanyId])
                      VALUES
-                       (@PhoneNo,@recommendPhone,@Password,@Status,@InsertTime,@InviteCode,@City,@CityId,@GroupId );select SCOPE_IDENTITY() as id;";
+                       (@PhoneNo,@recommendPhone,@Password,@Status,@InsertTime,@InviteCode,@City,@CityId,@GroupId,@DeliveryCompanyId );
+                    select SCOPE_IDENTITY() as id;";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@PhoneNo", SqlDbType.NVarChar);
             parm.SetValue("@PhoneNo", model.PhoneNo);
@@ -441,6 +460,7 @@ where   c.PhoneNo = @PhoneNo
             parm.AddWithValue("@City", model.City);
             parm.AddWithValue("@CityId", model.CityId);
             parm.AddWithValue("@GroupId", model.GroupId);
+            parm.AddWithValue("@DeliveryCompanyId", (object)model.DeliveryCompanyId);
             object i = DbHelper.ExecuteScalar(SuperMan_Write, sql, parm);
             if (i != null)
             {
@@ -1205,6 +1225,7 @@ SELECT   c.[Id],
          c.[Province],
          c.[BussinessID],
          c.[WorkStatus], 
+         c.DeliveryCompanyId,
          cfa.TrueName AccountName,
          cfa.AccountNo,
          cfa.AccountType,
@@ -1517,5 +1538,110 @@ where  cityid in(" + pushCity + ")";
             object obj = DbHelper.ExecuteScalar(SuperMan_Read, querysql, dbParameters);
             return ParseHelper.ToLong(obj) > 0;
         }
+
+        /// <summary>
+        /// 根据骑士id为骑士绑定物流公司  add by caoheyang  20150707
+        /// </summary>
+        /// <param name="clienterId">骑士id</param>
+        /// <param name="deliveryCompanyId">物流公司id</param>
+        /// <param name="optId">操作人id</param>
+        /// <param name="optName">操作人名</param>
+        /// <returns></returns>
+        public int BindDeliveryCompany(int clienterId, int deliveryCompanyId, int optId, string optName)
+        {
+            const string sql = @"
+update dbo.clienter set DeliveryCompanyId=@DeliveryCompanyId 
+output Inserted.Id,@OptId,@OptName,'配送公司批量导入骑士,更新已有骑士所属物流公司信息'
+into dbo.ClienterOptionLog(ClienterId,OptId,OptName,Remark) 
+where Id=@Id ";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("DeliveryCompanyId", DbType.Int32, 4).Value = clienterId;
+            dbParameters.Add("Id", DbType.Int32, 4).Value = clienterId;
+            dbParameters.Add("OptId", DbType.Int32, 4).Value = optId;
+            dbParameters.Add("OptName", DbType.String, 50).Value = optName;
+            return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters));
+        }
+
+
+        /// <summary>
+        /// 物流公司新增骑士功能  add by caoheyang  20150707
+        /// </summary>
+        /// <param name="model">骑士实体</param>
+        /// <param name="optId">操作人id</param>
+        /// <param name="optName">操作人名</param>
+        /// <returns></returns>
+        public int DeliveryCompanyInsertClienter(clienter model,int optId, string optName)
+        {
+            const string insertSql = @"
+insert into clienter(PhoneNo,Password,TrueName,IDCard,
+Status,InsertTime,City,CityId,
+CityCode,DeliveryCompanyId)
+
+output Inserted.Id,@OptId,@OptName,'配送公司批量导入骑士'
+into dbo.ClienterOptionLog(ClienterId,OptId,OptName,Remark)
+
+values(@PhoneNo,@Password,@TrueName,@IDCard,
+@Status,getdate(),@City,@CityId,
+@CityCode,@DeliveryCompanyId)
+
+SELECT IDENT_CURRENT('clienter')"
+;
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("OptId", optId);
+            dbParameters.AddWithValue("OptName", optName);
+            dbParameters.AddWithValue("PhoneNo", model.PhoneNo);
+            dbParameters.AddWithValue("Password", model.Password);
+            dbParameters.AddWithValue("TrueName", model.TrueName);
+            dbParameters.AddWithValue("IDCard", model.IDCard);
+            dbParameters.AddWithValue("Status", model.Status);
+            dbParameters.AddWithValue("City", model.City);
+            dbParameters.AddWithValue("CityId", model.CityId);
+            dbParameters.AddWithValue("CityCode", model.CityCode);
+            dbParameters.AddWithValue("DeliveryCompanyId", model.DeliveryCompanyId);
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters));
+        }
+		/// <summary>
+        /// 修改骑士详细信息
+        /// danny-20150707
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool ModifyClienterDetail(ClienterDetailModel model)
+        {
+
+            string remark = model.OptUserName + "通过后台管理系统修改骑士信息";
+            string sql = @"UPDATE clienter 
+                            SET IDCard=@IDCard,
+                                TrueName=@TrueName,
+                                DeliveryCompanyId=@DeliveryCompanyId ";
+            sql += @" OUTPUT
+                        Inserted.Id,
+                        @OptId,
+                        @OptName,
+                        GETDATE(),
+                        @Platform,
+                        @Remark
+                    INTO ClienterOptionLog
+                        (ClienterId,
+                        OptId,
+                        OptName,
+                        InsertTime,
+                        Platform,
+                        Remark)
+                        WHERE  Id = @Id;";
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@IDCard", model.IDCard);
+            parm.AddWithValue("@TrueName", model.TrueName);
+            parm.AddWithValue("@DeliveryCompanyId", model.DeliveryCompanyId);
+            parm.AddWithValue("@Id", model.Id);
+            parm.AddWithValue("@OptId", model.OptUserId);
+            parm.AddWithValue("@OptName", model.OptUserName);
+            parm.AddWithValue("@Platform", 3);
+            parm.AddWithValue("@Remark", remark);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
+        }
+
     }
 }

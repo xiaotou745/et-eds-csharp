@@ -58,11 +58,11 @@ namespace ETS.Enums
         /// <summary>
         /// 上班
         /// </summary>
-        Status0 = 0,
+        WorkOn = 0,
         /// <summary>
         /// 下班
         /// </summary>
-        Status1 = 1
+        WorkOff = 1
     }
 
     /// <summary>
@@ -72,12 +72,24 @@ namespace ETS.Enums
     /// <UpdateTime>20150706</UpdateTime>
     public enum ClienteStatus
     {
+        /// <summary>
+        /// 被拒绝
+        /// </summary>
         [DisplayText("被拒绝")]
         Status0 = 0,
+        /// <summary>
+        /// 已通过
+        /// </summary>
         [DisplayText("已通过")]
         Status1 = 1,
+        /// <summary>
+        /// 未审核
+        /// </summary>
         [DisplayText("未审核")]
         Status2 = 2,
+        /// <summary>
+        /// "审核中"
+        /// </summary>
         [DisplayText("审核中")]
         Status3 = 3
     }

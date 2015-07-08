@@ -22,13 +22,5 @@ namespace ETS.Enums
         [DisplayText("首旅")]
         Group6 = 6     
     }
-
-    /// <summary>
-    /// 集团状态枚举  add by caohehang 20150212
-    /// </summary>
-    public enum GroupIsValidStatus
-    {
-        正常 = 1,
-        不可用 = 0
-    }
+   
 }

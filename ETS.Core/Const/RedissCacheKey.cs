@@ -42,6 +42,17 @@ namespace ETS.Const
         /// C端找回密码验证码缓存key
         /// </summary>
         public const string PostForgetPwd_C = "PostForgetPwd_C_";
+
+        /// <summary>
+        /// 商家端找回密码缓存KEY
+        /// </summary>
+        public const string CheckCodeFindPwd_B = "CheckCodeFindPwd_B_";
+
+        /// <summary>
+        /// 商家注册缓存key
+        /// </summary>
+        public const string PostRegisterInfo_B = "PostRegisterInfo_B_";
+
         /// <summary>
         /// 后台获取开放城市
         /// </summary>
@@ -71,26 +82,6 @@ namespace ETS.Const
         /// </summary>
 
         public const string CheckOrderPay = "CheckOrderPay_{0}";
-
-        /// <summary>
-        /// C端注册语音验证码缓存key
-        /// </summary>
-        public const string PostRegisterInfoSoundCode_C = "PostRegisterInfoSoundCode_C_";
-
-        /// <summary>
-        /// C端找回密码语音验证码缓存key
-        /// </summary>
-        public const string PostForgetPwdSoundCode_C = "PostForgetPwdSoundCode_C_";
-
-        /// <summary>
-        /// b端注册语音验证码缓存key
-        /// </summary>
-        public const string PostRegisterInfoSoundCode_B = "PostRegisterInfoSoundCode_b_";
-
-        /// <summary>
-        /// b端找回密码语音验证码缓存key
-        /// </summary>
-        public const string PostForgetPwdSoundCode_B = "PostForgetPwdSoundCode_b_";
 
         /// <summary>
         /// 商户对应骑士

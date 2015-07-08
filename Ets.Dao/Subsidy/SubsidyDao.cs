@@ -151,12 +151,14 @@ WHERE   sub.[Status] = 1 ");
                     count(distinct businessId) businessCount
           from      dbo.[order] (nolock) o
           join dbo.GlobalConfig gc ( nolock ) on o.BusinessGroupId = gc.GroupId
+          JOIN OrderOther other (NOLOCK) ON o.id=other.OrderId 
           where     o.PubDate between convert(char(10), dateadd(day, -1,
                                                               getdate()), 120)
                               and     convert(char(10), getdate(), 120)
                     and o.[Status] = 1
 					and gc.KeyName = 'IsStartOverStoreSubsidies'
-					and gc.Value = 1    
+					and gc.Value = 1   
+                    AND other.IsNotRealOrder=0  
                     and not exists ( select ClienterId
                                      from   dbo.CrossShopLog (nolock) cs
                                      where  RewardTime between convert(char(10), dateadd(day,

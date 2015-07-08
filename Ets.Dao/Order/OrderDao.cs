@@ -401,7 +401,7 @@ values( @OrderId,  @ChildId,@TotalPrice,@GoodPrice,@DeliveryPrice,@CreateBy,
             dbParameters.AddWithValue("@CreateBy", "第三方对接平台");
             dbParameters.AddWithValue("@UpdateBy", "第三方对接平台");
             if ((bool)paramodel.is_pay ||
-                           (!(bool)paramodel.is_pay && paramodel.MealsSettleMode == MealsSettleMode.Status0.GetHashCode())
+                           (!(bool)paramodel.is_pay && paramodel.MealsSettleMode == MealsSettleMode.LineOff.GetHashCode())
                            )//已付款 未付款线下付款
                 dbParameters.AddWithValue("@PayStatus", "1");
             else
@@ -518,6 +518,7 @@ select @@IDENTITY ";
                                     ,o.[IsPay]
                                     ,o.[Amount]
                                     ,o.[OrderCommission]
+                                    ,o.[RealOrderCommission]
                                     ,o.[DistribSubsidy]
                                     ,o.[WebsiteSubsidy]
                                     ,o.[Remark]
@@ -683,6 +684,7 @@ select @@IDENTITY ";
                                         ,o.[SongCanDate]
                                         ,o.[OrderCount]
                                         ,o.[CommissionRate] 
+                                        ,o.[RealOrderCommission] 
                                         ,b.[City] BusinessCity
                                         ,b.Name BusinessName
                                         ,b.PhoneNo BusinessPhoneNo
@@ -698,6 +700,7 @@ select @@IDENTITY ";
                                         ,oo.NeedUploadCount
                                         ,oo.HadUploadCount
                                         ,oo.ReceiptPic
+                                        ,oo.IsNotRealOrder IsNotRealOrder
                                         ,o.OtherCancelReason
                                         ,o.OriginalOrderNo
                                         ,ISNULL(o.MealsSettleMode,0) MealsSettleMode
@@ -788,13 +791,13 @@ select @@IDENTITY ";
                                         ,c.PhoneNo ClienterPhoneNo
                                         ,c.TrueName ClienterTrueName
                                         ,c.TrueName ClienterName
-                                        ,c.AccountBalance AccountBalance
+                                        ,c.AccountBalance AccountBalance                                      
                                         ,b.GroupId
                                         ,case when o.orderfrom=0 then '客户端' else g.GroupName end GroupName
                                         ,o.OriginalOrderNo
                                         ,oo.NeedUploadCount
                                         ,oo.HadUploadCount
-                                        ,oo.ReceiptPic
+                                        ,oo.ReceiptPic                                        
                                         ,o.OtherCancelReason
                                         ,o.OriginalOrderNo
                                     FROM [order] o WITH ( NOLOCK )
@@ -2157,7 +2160,7 @@ values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude,@OneKeyPubOrder)";
                         dr["GoodPrice"] = order.listOrderChild[i].GoodPrice;
                         dr["DeliveryPrice"] = order.DistribSubsidy;
                         if ((bool)order.IsPay ||
-                            (!(bool)order.IsPay && order.MealsSettleMode == MealsSettleMode.Status0.GetHashCode())
+                            (!(bool)order.IsPay && order.MealsSettleMode == MealsSettleMode.LineOff.GetHashCode())
                             )//已付款 未付款线下付款
                             dr["PayStatus"] = 1;
                         else
@@ -2304,7 +2307,7 @@ where businessId=@businessId and TimeSpan=@TimeSpan ";
             string sql = @"
 select 
 o.id,o.amount, 
-o.orderCommission clienterPrice, --给骑士
+o.RealOrderCommission clienterPrice, --给骑士
 o.Amount-o.SettleMoney businessPrice,--给商家
 o.clienterId, o.businessId
 from    dbo.[order] o ( nolock )
@@ -2764,7 +2767,8 @@ INTO ClienterBalanceRecord
 from clienter c
 where c.Id=@ClienterId;");
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@Amount", model.OrderCommission);
+            //parm.AddWithValue("@Amount", model.OrderCommission);
+            parm.AddWithValue("@Amount", model.RealOrderCommission);
             parm.AddWithValue("@Status", ClienterBalanceRecordStatus.Success);
             parm.AddWithValue("@RecordType", ClienterBalanceRecordRecordType.CancelOrder);
             parm.AddWithValue("@Operator", model.OptUserName);
@@ -3031,6 +3035,58 @@ where   Id = @OrderId and FinishAll = 0";
             {
                 return -1;
             }
+        }
+        /// <summary>
+        /// 更新订单是真实佣金
+        /// zhaohailong20150706
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <param name="realOrderCommission"></param>
+        /// <returns></returns>
+        public int UpdateOrderRealOrderCommission(string orderId, decimal realOrderCommission)
+        {
+            string sql = @" update [Order] set RealOrderCommission=@realOrderCommission where id=@orderId";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@realOrderCommission", realOrderCommission);
+            dbParameters.AddWithValue("@OrderId", orderId);
+            return DbHelper.ExecuteNonQuery(SuperMan_Read, sql, dbParameters);
+        }
+
+        /// <summary>
+        /// 记录扣除网站补贴日志
+        ///  zhaohailong20150706
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <param name="price"></param>
+        /// <returns></returns>
+        public bool InsertNotRealOrderLog(int orderId, decimal price)
+        {
+            string sql =
+                @"INSERT INTO OrderSubsidiesLog
+                                (Price
+                                ,OrderId
+                                ,InsertTime
+                                ,OptName
+                                ,Remark
+                                ,OrderStatus
+                                ,Platform 
+                                )
+                     VALUES
+                                (@Price
+                                ,@OrderId
+                                ,Getdate()
+                                ,'admin'
+                                ,@Remark
+                                ,1
+                                ,3);";
+            string remark = string.Format("扣除网站补贴{0}元", price);
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Price", price);
+            parm.AddWithValue("@OrderId", orderId);
+            parm.AddWithValue("@Remark", remark);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+
         }
     }
 }
