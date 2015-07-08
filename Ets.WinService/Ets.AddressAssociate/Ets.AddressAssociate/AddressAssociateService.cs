@@ -14,13 +14,16 @@ namespace Ets.AddressAssociate
 {
     public partial class AddressAssociateService : ServiceBase
     {
-        private Quartz.IScheduler scheduler;
+        private Quartz.IScheduler scheduler = null;
         public AddressAssociateService()
         {
             Thread.Sleep(1000 * 5);
             InitializeComponent();
-            Quartz.ISchedulerFactory schedulerFactory = new StdSchedulerFactory();
-            scheduler = schedulerFactory.GetScheduler();
+            if (scheduler == null)
+            {
+                var schedulerFactory = new StdSchedulerFactory();
+                scheduler = schedulerFactory.GetScheduler();
+            }
         }
         protected override void OnStart(string[] args)
         {
@@ -29,7 +32,7 @@ namespace Ets.AddressAssociate
 
         protected override void OnStop()
         {
-            scheduler.Shutdown();
+            scheduler.Shutdown(false);
         }
 
         protected override void OnPause()

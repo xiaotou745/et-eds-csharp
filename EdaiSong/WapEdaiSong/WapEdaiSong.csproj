@@ -153,11 +153,13 @@
     <Content Include="Content\img\help\img_07.jpg" />
     <Content Include="Content\page.css" />
     <Content Include="Content\rcg.css" />
+    <Content Include="Content\style\box.css" />
     <Content Include="Content\style\c3.css" />
     <Content Include="Content\style\common.css" />
     <Content Include="Content\style\help.css" />
     <Content Include="Content\style\normalize.css" />
     <Content Include="Content\style\popup.css" />
+    <Content Include="Content\style\rcg.css" />
     <Content Include="Global.asax" />
     <Content Include="htmls\android\help.html" />
     <Content Include="htmls\android\help1.html" />
@@ -184,6 +186,7 @@
     <Content Include="htmls\ios\help5.html" />
     <Content Include="htmls\ios\help6.html" />
     <Content Include="htmls\ios\help7.html" />
+    <Content Include="htmls\Register.html" />
     <Content Include="Images\apk.png" />
     <Content Include="Images\gotop.png" />
     <Content Include="Images\img1-1.jpg" />
