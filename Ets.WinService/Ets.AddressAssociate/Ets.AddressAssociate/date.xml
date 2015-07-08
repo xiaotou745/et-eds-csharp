@@ -1,6 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<root>
-  <date>2015-07-06 17:00:00</date>
-  <lastid>0</lastid>
-</root>
-
+<?xml version="1.0"?>
+<ArrayOfDateModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <DateModel>
+    <date>2015-07-06T17:00:00</date>
+  </DateModel>
+</ArrayOfDateModel>
