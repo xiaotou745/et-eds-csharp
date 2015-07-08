@@ -496,7 +496,7 @@ order by a.id desc
         /// <summary>
         /// 根据商户id获取商户
         /// </summary>
-        
+
         /// <param name="busiId"></param>
         /// <returns></returns>
         public BusListResultModel GetBusiness(int busiId)
@@ -619,10 +619,10 @@ order by a.id desc
                 {
                     sql.AppendFormat(" update business set Status={0} ", BusinessStatus.Status4.GetHashCode());
                 }
-               
+
                 sql.Append(" where id=@id;");
                 IDbParameters dbParameters = DbHelper.CreateDbParameters();
-                dbParameters.AddWithValue("id", id); 
+                dbParameters.AddWithValue("id", id);
                 int i = DbHelper.ExecuteNonQuery(Config.SuperMan_Write, sql.ToString(), dbParameters);
 
                 if (i > 0)
@@ -791,7 +791,7 @@ where b.PhoneNo=@PhoneNo and isnull(g.IsModifyBind,1)=1";
                     WHERE businessId=@businessId
                 ";
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.Add("businessId",DbType.Int32,4).Value=BusinessId;
+            parm.Add("businessId", DbType.Int32, 4).Value = BusinessId;
             parm.Add("order_new", DbType.Int32, 4).Value = OrderStatus.Status0.GetHashCode();
             parm.Add("order_Finish", DbType.Int32, 4).Value = OrderStatus.Status1.GetHashCode();
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
@@ -1195,7 +1195,7 @@ select SCOPE_IDENTITY() as id;
             parm.AddWithValue("@CityCode", business.CityCode);
             parm.AddWithValue("@City", business.City);
             parm.AddWithValue("@busiID", business.Id);
-            parm.Add("@OneKeyPubOrder",DbType.Int32,4).Value=business.OneKeyPubOrder;
+            parm.Add("@OneKeyPubOrder", DbType.Int32, 4).Value = business.OneKeyPubOrder;
             try
             {
                 object executeScalar = DbHelper.ExecuteScalar(SuperMan_Write, upSql, parm);
@@ -1496,7 +1496,7 @@ select  Id,Name,City,district,PhoneNo,PhoneNo2,Password,CheckPicUrl,IDCard,
         Address,Landline,Longitude,Latitude,Status,InsertTime,districtId,CityId,GroupId,
         OriginalBusiId,ProvinceCode,CityCode,AreaCode,Province,CommissionTypeId,DistribSubsidy,
         BusinessCommission,CommissionType,CommissionFixValue,BusinessGroupId,BalancePrice,
-        AllowWithdrawPrice,HasWithdrawPrice,BusinessLicensePic
+        AllowWithdrawPrice,HasWithdrawPrice,BusinessLicensePic,OneKeyPubOrder
 from  Business (nolock) 
 where Id=@Id";
 
@@ -1624,8 +1624,8 @@ where Id=@Id";
                 #endregion
 
                 result.CheckPicUrl = CheckPicUrl;
-                result.BusinessLicensePic = string.IsNullOrEmpty(Convert.ToString(dataReader["BusinessLicensePic"])) ? 
-                    string.Empty : 
+                result.BusinessLicensePic = string.IsNullOrEmpty(Convert.ToString(dataReader["BusinessLicensePic"])) ?
+                    string.Empty :
                     Ets.Model.Common.ImageCommon.ReceiptPicConvert(dataReader["BusinessLicensePic"].ToString());
                 result.IDCard = dataReader["IDCard"].ToString();
                 result.Address = dataReader["Address"].ToString();
@@ -1710,6 +1710,11 @@ where Id=@Id";
                 if (obj != null && obj != DBNull.Value)
                 {
                     result.HasWithdrawPrice = decimal.Parse(obj.ToString());
+                }
+                obj = dataReader["OneKeyPubOrder"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.OneKeyPubOrder = ParseHelper.ToInt(obj.ToString());
                 }
 
                 return result;
@@ -2023,7 +2028,7 @@ VALUES
             {
                 string sql = "SELECT COUNT(1) FROM BusinessClienterRelation bcr WITH(NOLOCK) WHERE bcr.IsBind = 1 AND bcr.IsEnable=1 AND BusinessId=@BusinessId;";
                 var parm = DbHelper.CreateDbParameters();
-                parm.AddWithValue("@BusinessId",businessId);
+                parm.AddWithValue("@BusinessId", businessId);
                 return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm));
             }
             catch (Exception ex)
@@ -2158,7 +2163,7 @@ VALUES
             var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@BusinessId", businessId);
             parm.AddWithValue("@IsBind", isBind);
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, parm)>0;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, parm) > 0;
         }
         /// <summary>
         /// 修改骑士绑定标志
@@ -2187,7 +2192,7 @@ VALUES
             var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@BusinessId", model.BusinessId);
             parm.AddWithValue("@ClienterId", model.ClienterId);
-            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm))>0;
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm)) > 0;
         }
         /// <summary>
         /// 查询商户结算列表（分页）
@@ -2199,7 +2204,7 @@ VALUES
         public PageInfo<T> GetBusinessCommissionOfPaging<T>(Ets.Model.ParameterModel.Business.BusinessCommissionSearchCriteria criteria)
         {
 
-            string columnList =string.Format( @"   BB.id ,
+            string columnList = string.Format(@"   BB.id ,
                                         BB.Name ,
                                         BB.PhoneNo,
                                         T.Amount ,
@@ -2242,7 +2247,7 @@ VALUES
                                                    ) AS T ON BB.Id = T.Id ", sqlwhere);
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             string orderByColumn = " BB.Id ASC";
-            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true); 
+            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
         }
 
         /// <summary>
@@ -2254,7 +2259,7 @@ VALUES
         /// <returns></returns>
         public DataTable GetPhoneNoList(string pushCity)
         {
-                    string querysql = @"  
+            string querysql = @"  
  select id, PhoneNo from dbo.business 
  where   cityid in(" + pushCity + ")";
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, querysql);
@@ -2273,7 +2278,7 @@ VALUES
             string querysql = @"SELECT sum(BalancePrice) as total FROM dbo.business(nolock) b where Status=1";
 
             object obj = DbHelper.ExecuteScalar(SuperMan_Read, querysql);
-            return ParseHelper.ToDecimal(obj,0);
+            return ParseHelper.ToDecimal(obj, 0);
         }
         /// <summary>
         /// 获取商户操作记录
@@ -2305,10 +2310,10 @@ SELECT PhoneNo AS Phone,0 AS PemType FROM clienter(NOLOCK) WHERE Status=1
 ) AS T WHERE T.Phone = @PhoneNo";
             var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@PhoneNo", DbType.String).Value = phoneNum;
-            object obj = DbHelper.ExecuteScalar(SuperMan_Read, sql,parm);
+            object obj = DbHelper.ExecuteScalar(SuperMan_Read, sql, parm);
             return ParseHelper.ToInt(obj, -1);
         }
-		/// <summary>
+        /// <summary>
         /// 获取商户和快递公司关系列表
         /// danny-20150706
         /// </summary>

@@ -152,6 +152,11 @@ namespace Ets.Model.DomainModel.Business
         /// </summary>
         public bool HasMessage { get; set; }
 
+        /// <summary>
+        /// 是否允许一健发单1是0否
+        /// </summary>
+        public int OneKeyPubOrder { get; set; }
+
     }
 
     public class BusinessInfo
