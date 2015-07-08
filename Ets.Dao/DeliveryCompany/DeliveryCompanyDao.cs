@@ -201,5 +201,32 @@ set     DeliveryCompanyName = @DeliveryCompanyName ,
                 return null;
             return MapRows<DeliveryCompanyModel>(dt)[0];
         }
+
+        public DeliveryCompanyModel GetByName(string deliveryCompanyName)
+        {
+            string sql = @"SELECT   
+        Id ,
+        DeliveryCompanyName ,
+        DeliveryCompanyCode ,
+        IsEnable ,
+        SettleType ,
+        ClienterFixMoney ,
+        ClienterSettleRatio ,
+        DeliveryCompanySettleMoney ,
+        DeliveryCompanyRatio ,
+        BusinessQuantity ,
+        ClienterQuantity ,
+        CreateTime ,
+        CreateName ,
+        ModifyName ,
+        ModifyTime
+   FROM dbo.[DeliveryCompany] WITH(NOLOCK) where DeliveryCompanyName = @DeliveryCompanyName";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("@DeliveryCompanyName", DbType.String).Value = deliveryCompanyName; 
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, dbParameters);
+            if (dt == null || dt.Rows.Count <= 0)
+                return null;
+            return MapRows<DeliveryCompanyModel>(dt)[0]; 
+        }
     }
 }

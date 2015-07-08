@@ -148,8 +148,12 @@ namespace Ets.Dao.Clienter
         c.AccountBalance as Amount ,
         c.City ,
         c.CityId ,
-        c.IsBind 
+        c.IsBind ,
+        d.Id as DeliveryCompanyId,
+        isnull(d.DeliveryCompanyName,'') DeliveryCompanyName,
+        isnull(d.IsDisplay,1) IsDisplay
 from    dbo.clienter c(nolock)
+ left join dbo.DeliveryCompany d(nolock) on c.DeliveryCompanyId = d.Id
 where   c.PhoneNo = @PhoneNo
         and c.[Password] = @Password";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -558,7 +562,7 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.FromClienter, OrderConst.O
         isnull(d.IsDisplay,1) IsDisplay
 from    dbo.clienter c ( nolock )
  left join dbo.DeliveryCompany d ( nolock ) on c.DeliveryCompanyId = d.Id 
-where Id=@clienterId ";
+where c.Id=@clienterId ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@clienterId", userId);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);

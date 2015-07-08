@@ -60,6 +60,19 @@ namespace Ets.Model.ParameterModel.Clienter
         /// </summary>
         public string cityId { get; set; }
 
+        /// <summary>
+        /// 配送公司Id
+        /// </summary>
+        public int DeliveryCompanyId { get; set; }
+        /// <summary>
+        /// 配送公司名称
+        /// </summary>
+        public string DeliveryCompanyName { get; set; }
+        /// <summary>
+        /// 是否显示 金额 0隐藏 1 显示
+        /// </summary>
+        public int IsDisplay { get; set; }
+
     }
     public class ClientRegisterInfoModelTranslator : TranslatorBase<clienter, ClientRegisterInfoModel>
     {
