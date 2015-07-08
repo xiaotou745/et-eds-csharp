@@ -1530,12 +1530,12 @@ namespace Ets.Service.Provider.Order
                 if (model.SearchType == (int)GetJobCMode.NewJob)//物流公司全部任务
                 {
                     model.TopNum = PageSizeType.App_PageSize.GetHashCode().ToString();//50条
-                    jobs = orderDao.GetLastedJobC(model);
+                    jobs = orderDao.GetExpressAllJob(model);
                 }
                 else if (model.SearchType == (int)GetJobCMode.NearbyJob)//物流公司附近任务
                 {
                     model.TopNum = GlobalConfigDao.GlobalConfigGet(0).ClienterOrderPageSize;// top 值
-                    jobs = orderDao.GetJobC(model);
+                    jobs = orderDao.GetExpressNearJob(model);
                 }
                 #endregion
             }

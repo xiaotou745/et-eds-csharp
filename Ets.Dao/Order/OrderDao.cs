@@ -2340,6 +2340,93 @@ where   oo.IsJoinWithdraw = 0
         }
 
         /// <summary>
+        /// 获取物流公司全部任务
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150708</UpdateTime>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public IList<GetJobCDM> GetExpressAllJob(GetJobCPM model)
+        {
+            string querysql =string.Format(@"
+declare @cliernterPoint geography ;
+select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
+select top {0}
+        a.Id, a.OrderCommission, a.OrderCount,
+        ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,
+        b.Name as BusinessName, b.City as BusinessCity,
+        b.Address as BusinessAddress, isnull(a.ReceviceCity, '') as UserCity,
+        isnull(a.ReceviceAddress, '附近3公里左右，由商户指定') as UserAddress,ISNULL(b.Longitude,0) as  Longitude,ISNULL(b.Latitude,0) as Latitude,
+        case convert(varchar(100), PubDate, 23)
+          when convert(varchar(100), getdate(), 23) then '今日 '
+          else substring(convert(varchar(100), PubDate, 23), 6, 5)
+        end + '  ' + substring(convert(varchar(100), PubDate, 24), 1, 5) as PubDate,
+		round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) as DistanceToBusiness 
+from    dbo.[order] a ( nolock )
+        join dbo.business b ( nolock ) on a.businessId = b.Id
+        left join dbo.BusinessExpressRelation ber (nolock) on a.businessId=ber.BusinessId
+where a.status = 0 and ber.IsEnable=1 and a.ReceviceCity=@ReceviceCity and ber.ExpressId=@ExpressId
+order by a.Id desc", model.TopNum);
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("Latitude", model.Latitude);
+            dbParameters.AddWithValue("Longitude", model.Longitude);
+            dbParameters.AddWithValue("ReceviceCity", model.City);
+            dbParameters.AddWithValue("ExpressId", model.ExpressId);
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
+            if (DataTableHelper.CheckDt(dt))
+            {
+                return TranslateGetJobC(dt);
+            }
+            return new List<GetJobCDM>();
+        }
+
+        /// <summary>
+        ///获取物流公司附近任务
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150708</UpdateTime>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public IList<GetJobCDM> GetExpressNearJob(GetJobCPM model)
+        {
+            string querysql= string.Format(@"
+declare @cliernterPoint geography ;
+select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
+select top {0} a.Id,a.OrderCommission,a.OrderCount,   
+        (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
+        b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
+        ISNULL(a.ReceviceCity,'') as UserCity,ISNULL(a.ReceviceAddress,'附近3公里左右，由商户指定') as UserAddress,
+        ISNULL(b.Longitude,0) as  Longitude,ISNULL(b.Latitude,0) as Latitude,
+        case convert(varchar(100), PubDate, 23) 
+	        when convert(varchar(100), getdate(), 23) then '今日 '
+            else substring(convert(varchar(100), PubDate, 23),6,5) 
+        end
+        +'  '+substring(convert(varchar(100),PubDate,24),1,5)
+        as PubDate,
+        round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) as DistanceToBusiness 
+from dbo.[order] a (nolock)
+        join dbo.business b (nolock) on a.businessId=b.Id
+        left join dbo.BusinessExpressRelation ber (nolock) on a.businessId=ber.BusinessId
+where a.status=0  and ber.IsEnable=1 and ber.ExpressId=@ExpressId
+and  geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint)<= @PushRadius
+order by geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint) asc
+", model.TopNum);
+     
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("Latitude", model.Latitude);
+            dbParameters.AddWithValue("Longitude", model.Longitude);
+            dbParameters.AddWithValue("PushRadius", ParseHelper.ToInt(model.PushRadius) * 1000);
+            dbParameters.AddWithValue("ExpressId", model.ExpressId);
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
+            if (DataTableHelper.CheckDt(dt))
+            {
+                return TranslateGetJobC(dt);
+            }
+            return new List<GetJobCDM>();
+        }
+
+        /// <summary>
         /// 最新任务列表 即 全部订单  
         /// </summary>
         /// <param name="model"></param>
