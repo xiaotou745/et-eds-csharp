@@ -105,17 +105,26 @@ namespace Ets.Service.Provider.DeliveryCompany
         }
         public ResultModel<DeliveryCompanyResultModel> Add(DeliveryCompanyModel deliveryCompanyModel)
         {
-            int addId = dao.Add(deliveryCompanyModel);
-            DeliveryCompanyResultModel dcrm = new DeliveryCompanyResultModel();
-
-            if (addId > 0)
+            DeliveryCompanyModel sModel = dao.GetByName(deliveryCompanyModel.DeliveryCompanyName.Trim());
+            if (sModel == null)
             {
-                dcrm.Id = addId;
-                return ResultModel<DeliveryCompanyResultModel>.Conclude(DeliveryStatus.Success, dcrm);
+                int addId = dao.Add(deliveryCompanyModel);
+
+                DeliveryCompanyResultModel dcrm = new DeliveryCompanyResultModel();
+
+                if (addId > 0)
+                {
+                    dcrm.Id = addId;
+                    return ResultModel<DeliveryCompanyResultModel>.Conclude(DeliveryStatus.Success, dcrm);
+                }
+                else
+                {
+                    return ResultModel<DeliveryCompanyResultModel>.Conclude(DeliveryStatus.Fail, null);
+                }
             }
             else
             {
-                return ResultModel<DeliveryCompanyResultModel>.Conclude(DeliveryStatus.Fail, null);
+                return ResultModel<DeliveryCompanyResultModel>.Conclude(DeliveryStatus.HadExist, null);
             }
         }
 

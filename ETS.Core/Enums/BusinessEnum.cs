@@ -118,7 +118,10 @@ namespace ETS.Enums
         [DisplayText("成功")]
         Success = 1,
         [DisplayText("失败")]
-        Fail = 0 
+        Fail = 0 ,
+        [DisplayText("已存在")]
+        HadExist = 2
+
     }
 
     public enum BusiAddAddressStatus : int
