@@ -1523,7 +1523,6 @@ namespace Ets.Service.Provider.Order
             IList<GetJobCDM> jobs = new List<GetJobCDM>();
             model.PushRadius = GlobalConfigDao.GlobalConfigGet(0).PushRadius; //距离
             model.ExclusiveOrderTime = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet(0).ExclusiveOrderTime); //商家专属骑士接单响应时间
-
             
             if (model.ExpressId > 0)
             {

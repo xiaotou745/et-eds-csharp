@@ -142,10 +142,19 @@ namespace Ets.Dao.Clienter
         {
 
             ClienterLoginResultModel model = null;
-            const string querysql = @"
-select Id AS userId,PhoneNo,status,AccountBalance AS Amount,city,cityId,IsBind 
-from dbo.clienter(nolock) 
-where PhoneNo=@PhoneNo and [Password]=@Password";
+            const string querysql = @"select  c.Id as userId ,
+        c.PhoneNo ,
+        c.[Status] ,
+        c.AccountBalance as Amount ,
+        c.City ,
+        c.CityId ,
+        c.IsBind ,
+        d.DeliveryCompanyName,
+        d.IsDisplay
+from    dbo.clienter c(nolock)
+left join dbo.DeliveryCompany d(nolock) on c.DeliveryCompanyId=d.Id
+where   c.PhoneNo = @PhoneNo
+        and c.[Password] = @Password";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("PhoneNo", loginModel.phoneNo);
             dbParameters.AddWithValue("@Password", loginModel.passWord);

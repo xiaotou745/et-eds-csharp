@@ -1,0 +1,89 @@
+﻿
+@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.DeliveryCompany.DeliveryCompanyModel>
+
+@using Ets.Service.Provider.Common
+@using ETS.Util
+@using Webdiyer.WebControls.Mvc
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+    <thead> 
+        <tr class="tdbg">
+            <th width="%5">编号</th>
+            <th>物流公司名称</th>
+            <th>物流公司Code</th>
+            <th>结算类型</th>
+            <th>骑士固定金额值</th>
+            <th>骑士结算比例值</th>
+            <th>物流公司固定金额值</th>
+            <th>物流公司结算比例值</th>
+            <th>商家数量</th>
+            <th>骑士数量</th>
+            <th>创建人</th>
+            <th>创建时间</th>
+            <th>修改人</th>
+            <th>修改时间</th>
+            <th>是否启用</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            if (Model != null && Model.Records.Count > 0)
+            {
+                var i = 0;
+                foreach (var item in Model.Records)
+                {
+                    i++;
+                    <tr id="@item.Id">
+                        <td>@item.Id</td>
+                        <td>@item.DeliveryCompanyName</td>
+                        <td>@item.DeliveryCompanyCode</td>
+                        <td>
+                            @if (@item.SettleType == 1)
+                            {
+                                @Html.Raw("结算比例")
+                            }
+                            else if (@item.SettleType == 2)
+                            {
+                                @Html.Raw("固定金额")
+                            }
+                        </td>
+                        <td>@item.ClienterFixMoney</td>
+                        <td>@item.ClienterSettleRatio</td>
+                        <td>@item.DeliveryCompanySettleMoney</td>
+                        <td>@item.DeliveryCompanyRatio</td>
+                        <td>@item.BusinessQuantity</td>
+                        <td>@item.ClienterQuantity</td>
+                        <td>@item.CreateName</td>
+                        <td>@item.CreateTime</td>
+                        <td>@item.ModifyName</td>
+                        <td>@item.ModifyTime</td>
+                        <td>
+                            @if (@item.IsEnable == 1)
+                            {
+                                @Html.Raw("启用")
+                            }
+                            else if (@item.IsEnable == 0)
+                            {
+                                @Html.Raw("未启用")
+                            }
+                            else { @Html.Raw("未知状态")}
+                        </td>
+                        <td>
+                            <a href="/DeliveryCompany/Modify?Id=@item.Id">修改</a>
+                            <a href="/DeliveryCompany/BatchImportClienter?companyId=@item.Id&CompanyName=@item.DeliveryCompanyName">导入骑士</a>
+                        </td>
+                    </tr>
+                }
+            }
+        }
+    <tbody>
+
+</table>
+@{
+    if (Model != null)
+    {
+        ViewBag.ActionName = "PostDeliveryCompany";
+        @Html.Partial("~/views/shared/PagerControl.cshtml", Model)
+    }
+}

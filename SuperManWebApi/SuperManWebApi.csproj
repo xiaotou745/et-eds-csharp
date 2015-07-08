@@ -235,6 +235,30 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Business\BusiAddAddressResultModel.cs" />
+    <Compile Include="Models\Business\BusiDistribInfoModel.cs" />
+    <Compile Include="Models\Business\BusiForgetPwdInfoModel.cs" />
+    <Compile Include="Models\Business\BusiLoginResultModel.cs" />
+    <Compile Include="Models\Business\BusiModifyPwdResultModel.cs" />
+    <Compile Include="Models\Business\BusiOrderInfoModel.cs" />
+    <Compile Include="Models\Business\BusiOrderResultModel.cs" />
+    <Compile Include="Models\Business\BusiRegisterResultModel.cs" />
+    <Compile Include="Models\Business\LoginModel.cs" />
+    <Compile Include="Models\Business\NewBusiRegisterResultModel.cs" />
+    <Compile Include="Models\Business\NewPostPublishOrderModel.cs" />
+    <Compile Include="Models\Business\NewPostPublishOrderResultModel.cs" />
+    <Compile Include="Models\Business\NewRegisterInfoModel.cs" />
+    <Compile Include="Models\Business\OrderCancelModel.cs" />
+    <Compile Include="Models\Business\OrderCancelResultModel.cs" />
+    <Compile Include="Models\Business\RegisterInfoModel.cs" />
+    <Compile Include="Models\Business\UploadIconModel.cs" />
+    <Compile Include="Models\Clienter\ClienterLoginResultModel.cs" />
+    <Compile Include="Models\Clienter\ClientOrderInfoModel.cs" />
+    <Compile Include="Models\Clienter\ClientOrderResultModel.cs" />
+    <Compile Include="Models\Clienter\ClientRegisterInfoModel.cs" />
+    <Compile Include="Models\Clienter\ModifyPwdInfoModel.cs" />
+    <Compile Include="Models\Clienter\MyBalanceResultModel.cs" />
+    <Compile Include="Models\Clienter\RushOrderResultModel.cs" />
     <Compile Include="Models\IdentityModels.cs">
       <SubType>Code</SubType>
     </Compile>

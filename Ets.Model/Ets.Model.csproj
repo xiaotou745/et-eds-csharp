@@ -117,6 +117,7 @@
     <Compile Include="DomainModel\Clienter\ClienterDM.cs" />
     <Compile Include="DomainModel\DeliveryCompany\CompanyModel.cs" />
     <Compile Include="DomainModel\DeliveryCompany\CompanyModelList.cs" />
+    <Compile Include="DomainModel\DeliveryCompany\DeliveryCompanyResultModel.cs" />
     <Compile Include="DomainModel\Finance\BusinessBalanceRecordModel.cs" />
     <Compile Include="DomainModel\Finance\BusinessWithdrawFormModel.cs" />
     <Compile Include="DomainModel\Finance\BusinessWithdrawLogModel.cs" />
@@ -254,6 +255,7 @@
     <Compile Include="ParameterModel\Clienter\UploadReceiptModel.cs" />
     <Compile Include="ParameterModel\Clienter\UploadReceiptResultModel.cs" />
     <Compile Include="ParameterModel\DeliveryCompany\DoBatchImportClienterPM.cs" />
+    <Compile Include="ParameterModel\DeliveryCompany\DeliveryCompanyCriteria.cs" />
     <Compile Include="ParameterModel\Finance\BankCriteria.cs" />
     <Compile Include="ParameterModel\Finance\BusinessBalanceRecordSerchCriteria.cs" />
     <Compile Include="ParameterModel\Finance\BusinessWithdrawSearchCriteria.cs" />

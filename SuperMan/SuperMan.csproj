@@ -670,7 +670,9 @@
     <Content Include="Views\DeliveryCompany\BatchImportClienterExcel.cshtml" />
 	<Content Include="Views\SuperManManager\ClienterModify.cshtml" />
 	<Content Include="Views\Statistical\RecommendStatistical.cshtml" />
-    <Content Include="Views\Statistical\PostRecommendStatistical.cshtml" />
+    <Content Include="Views\Statistical\PostRecommendStatistical.cshtml" />    <Content Include="Views\DeliveryCompany\DeliveryCompany.cshtml" />
+    <Content Include="Views\DeliveryCompany\_DeliveryCompanyList.cshtml" />
+    <Content Include="Views\DeliveryCompany\DeliveryCompanyModify.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
