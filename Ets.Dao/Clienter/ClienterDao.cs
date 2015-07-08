@@ -562,7 +562,7 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.FromClienter, OrderConst.O
         isnull(d.IsDisplay,1) IsDisplay
 from    dbo.clienter c ( nolock )
  left join dbo.DeliveryCompany d ( nolock ) on c.DeliveryCompanyId = d.Id 
-where Id=@clienterId ";
+where c.Id=@clienterId ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@clienterId", userId);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
