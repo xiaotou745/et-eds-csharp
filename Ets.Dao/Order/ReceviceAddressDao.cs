@@ -119,7 +119,8 @@ FROM    dbo.ReceviceAddress RA3 ,
         #TempAdress
 WHERE   #TempAdress.businessId = RA3.BusinessId
         AND #TempAdress.PhoneNo = RA3.PhoneNo
-        AND #TempAdress.[ADDRESS] = RA3.[ADDRESS]                                                   
+        AND #TempAdress.[ADDRESS] = RA3.[ADDRESS]
+        AND #TempAdress.Falg=1                                                    
 DROP TABLE #TempAdress";
             #endregion
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
