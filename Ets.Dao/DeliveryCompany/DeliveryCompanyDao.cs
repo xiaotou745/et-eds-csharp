@@ -125,34 +125,33 @@ select @@IDENTITY ";
         {
            StringBuilder upSql = new StringBuilder(@"
 update  dbo.DeliveryCompany
-set     DeliveryCompanyName = @DeliveryCompanyName ,
+ set     DeliveryCompanyName = @DeliveryCompanyName ,
         IsEnable = @IsEnable ,
         SettleType = @SettleType ,
         ModifyName = @ModifyName");
 
             if (deliveryCompanyModel.SettleType == 1)
             {
+                deliveryCompanyModel.ClienterSettleRatio = deliveryCompanyModel.ClienterSettle;
+                deliveryCompanyModel.DeliveryCompanyRatio = deliveryCompanyModel.DeliveryCompanySettle;
                 upSql.Append(@" ,ClienterSettleRatio = @ClienterSettleRatio,DeliveryCompanyRatio = @DeliveryCompanyRatio ");
             }
             else
             {
+                deliveryCompanyModel.ClienterFixMoney = deliveryCompanyModel.ClienterSettle;
+                deliveryCompanyModel.DeliveryCompanySettleMoney = deliveryCompanyModel.DeliveryCompanySettle;
                 upSql.Append(@" ,ClienterFixMoney = @ClienterFixMoney,DeliveryCompanySettleMoney = @DeliveryCompanySettleMoney ");
             }
-            if (deliveryCompanyModel.ClienterSettleRatio != 0 || deliveryCompanyModel.ClienterFixMoney != 0)
-            {
-                deliveryCompanyModel.IsDisplay = 1;
-            }
-            else
-            {
-                deliveryCompanyModel.IsDisplay = 0;
-            }
+            
             upSql.Append(@" ,IsDisplay = @IsDisplay ");
             upSql.Append(@"where   Id = @Id;");
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
+
+            dbParameters.Add("@Id", DbType.Int32).Value = deliveryCompanyModel.Id;
             dbParameters.Add("@DeliveryCompanyName", DbType.String).Value = deliveryCompanyModel.DeliveryCompanyName;
-            dbParameters.Add("@DeliveryCompanyCode", DbType.String).Value = deliveryCompanyModel.DeliveryCompanyCode;
             dbParameters.Add("@SettleType", DbType.Int16).Value = deliveryCompanyModel.SettleType;
             dbParameters.Add("@IsDisplay", DbType.Int16).Value = deliveryCompanyModel.IsDisplay;
+            dbParameters.Add("@IsEnable", DbType.Int16).Value = deliveryCompanyModel.IsEnable;
             if (deliveryCompanyModel.SettleType == 1)
             {
                 dbParameters.Add("@ClienterSettleRatio", DbType.Decimal).Value = deliveryCompanyModel.ClienterSettleRatio;
@@ -169,7 +168,7 @@ set     DeliveryCompanyName = @DeliveryCompanyName ,
                 dbParameters.Add("@ClienterSettleRatio", DbType.Decimal).Value = 0;
                 dbParameters.Add("@DeliveryCompanyRatio", DbType.Decimal).Value = 0;
             }
-            dbParameters.Add("@CreateName", DbType.String).Value = deliveryCompanyModel.CreateName;
+            dbParameters.Add("@ModifyName", DbType.String).Value = deliveryCompanyModel.ModifyName;
             return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, upSql.ToString(), dbParameters));
         }
 

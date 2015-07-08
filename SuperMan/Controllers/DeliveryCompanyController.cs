@@ -87,8 +87,8 @@ namespace SuperMan.Controllers
 
         public ActionResult Modify(int Id)
         {
-
-            return View("DeliveryCompanyModify");
+            DeliveryCompanyModel deliveryCompanyModel = deliveryCompanyProvider.GetById(Id);
+            return View("DeliveryCompanyModify",deliveryCompanyModel);
         }
 
         /// <summary>

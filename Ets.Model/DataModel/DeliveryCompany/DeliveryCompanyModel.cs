@@ -33,7 +33,7 @@ namespace Ets.Model.DataModel.DeliveryCompany
         /// </summary>
 
         public string DeliveryCompanyName { get; set; }
-
+        public string DeliveryCompanyOldName { get; set; }
         /// <summary>
 
         /// 物流公司Code（11位，以1开头）
@@ -73,6 +73,10 @@ namespace Ets.Model.DataModel.DeliveryCompany
         /// </summary>
 
         public decimal ClienterSettleRatio { get; set; }
+        /// <summary>
+        /// 骑士结算，记录比例或者 固定金额，通过SettleType来区分
+        /// </summary>
+        public decimal ClienterSettle { get; set; }
 
         /// <summary>
 
@@ -89,7 +93,10 @@ namespace Ets.Model.DataModel.DeliveryCompany
         /// </summary>
 
         public decimal DeliveryCompanyRatio { get; set; }
-
+        /// <summary>
+        /// 物流公司结算，记录比例或者 固定金额，通过SettleType来区分
+        /// </summary>
+        public decimal DeliveryCompanySettle { get; set; }
         /// <summary>
 
         /// 骑士数量,该物流公司下有多少骑士
