@@ -116,7 +116,7 @@ namespace SuperMan.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult PhoneNoImport()
+        public string PhoneNoImport()
         {
             Stream fs = null;
             string strPhoneNo = "";
@@ -169,7 +169,12 @@ namespace SuperMan.Controllers
                 fs.Close();
                 strMsg = "文件格式有误，请按模板导入数据！";
             }
-            return Json(new Ets.Model.Common.ResultModel(reg, reg ? strPhoneNo : strMsg), JsonRequestBehavior.DenyGet);
+
+            return JsonHelper.ToJson(new Ets.Model.Common.ResultModel(reg, reg ? strPhoneNo : strMsg));
+
+            //return new JsonResult() {Data = };
+
+
         }
 
         
