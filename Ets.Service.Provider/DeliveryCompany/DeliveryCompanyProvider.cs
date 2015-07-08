@@ -14,9 +14,10 @@ using Ets.Model.DomainModel.Area;
 using Ets.Model.DomainModel.Clienter;
 using Ets.Model.DomainModel.DeliveryCompany;
 using Ets.Model.ParameterModel.DeliveryCompany;
-using Ets.Service.IProvider.Common;
 using Ets.Service.IProvider.DeliveryCompany;
-using Ets.Service.Provider.Common;
+using ETS.Data;
+using ETS.Data.PageData;
+using ETS.Enums;
 
 namespace Ets.Service.Provider.DeliveryCompany
 {
@@ -88,6 +89,49 @@ namespace Ets.Service.Provider.DeliveryCompany
                 message = message + "更新失败骑士的手机号码为:" + string.Join(",",errorPhones);
             }
             return ResultModel<string>.Conclude(SystemState.Success,message);
+        }
+        /// <summary>
+        /// 获取物流公司
+        /// </summary>
+        /// <returns></returns>
+        public PageInfo<DeliveryCompanyModel> Get(DeliveryCompanyCriteria deliveryCompanyCriteria)
+        {
+            return dao.Get<DeliveryCompanyModel>(deliveryCompanyCriteria);
+        }
+
+        public DeliveryCompanyModel GetById(int Id)
+        {
+            return dao.GetById(Id);
+        }
+        public ResultModel<DeliveryCompanyResultModel> Add(DeliveryCompanyModel deliveryCompanyModel)
+        {
+            int addId = dao.Add(deliveryCompanyModel);
+            DeliveryCompanyResultModel dcrm = new DeliveryCompanyResultModel();
+
+            if (addId > 0)
+            {
+                dcrm.Id = addId;
+                return ResultModel<DeliveryCompanyResultModel>.Conclude(DeliveryStatus.Success, dcrm);
+            }
+            else
+            {
+                return ResultModel<DeliveryCompanyResultModel>.Conclude(DeliveryStatus.Fail, null);
+            }
+        }
+
+        public ResultModel<DeliveryCompanyResultModel> Modify(DeliveryCompanyModel deliveryCompanyModel)
+        {
+            int modifyResult = dao.Modify(deliveryCompanyModel);
+            DeliveryCompanyResultModel dcrm = new DeliveryCompanyResultModel();
+
+            if (modifyResult > 0)
+            { 
+                return ResultModel<DeliveryCompanyResultModel>.Conclude(DeliveryStatus.Success, null);
+            }
+            else
+            {
+                return ResultModel<DeliveryCompanyResultModel>.Conclude(DeliveryStatus.Fail, null);
+            }
         }
     }
 }

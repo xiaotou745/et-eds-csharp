@@ -8,6 +8,7 @@ using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
 using Quartz.Impl;
+using System.Threading;
 
 namespace Ets.AddressAssociate
 {
@@ -16,6 +17,7 @@ namespace Ets.AddressAssociate
         private Quartz.IScheduler scheduler;
         public AddressAssociateService()
         {
+            Thread.Sleep(1000 * 5);
             InitializeComponent();
             Quartz.ISchedulerFactory schedulerFactory = new StdSchedulerFactory();
             scheduler = schedulerFactory.GetScheduler();

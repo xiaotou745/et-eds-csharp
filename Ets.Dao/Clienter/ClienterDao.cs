@@ -142,10 +142,16 @@ namespace Ets.Dao.Clienter
         {
 
             ClienterLoginResultModel model = null;
-            const string querysql = @"
-select Id AS userId,PhoneNo,status,AccountBalance AS Amount,city,cityId,IsBind 
-from dbo.clienter(nolock) 
-where PhoneNo=@PhoneNo and [Password]=@Password";
+            const string querysql = @"select  c.Id as userId ,
+        c.PhoneNo ,
+        c.[Status] ,
+        c.AccountBalance as Amount ,
+        c.City ,
+        c.CityId ,
+        c.IsBind 
+from    dbo.clienter c(nolock)
+where   c.PhoneNo = @PhoneNo
+        and c.[Password] = @Password";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("PhoneNo", loginModel.phoneNo);
             dbParameters.AddWithValue("@Password", loginModel.passWord);
@@ -542,7 +548,17 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.FromClienter, OrderConst.O
         /// <returns></returns>
         public ClienterStatusModel GetUserStatus(int userId)
         {
-            string sql = @" select id as userid,status,phoneno,AccountBalance as amount,IsBind from dbo.clienter with(nolock) where Id=@clienterId ";
+            string sql = @" select  c.Id as userid ,
+        c.[Status] ,
+        c.PhoneNo ,
+        c.AccountBalance as amount ,
+        c.IsBind,
+        d.Id as DeliveryCompanyId,
+        isnull(d.DeliveryCompanyName,'') DeliveryCompanyName,
+        isnull(d.IsDisplay,1) IsDisplay
+from    dbo.clienter c ( nolock )
+ left join dbo.DeliveryCompany d ( nolock ) on c.DeliveryCompanyId = d.Id 
+where Id=@clienterId ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@clienterId", userId);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);

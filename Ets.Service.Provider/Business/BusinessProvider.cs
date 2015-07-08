@@ -777,7 +777,7 @@ namespace Ets.Service.Provider.Business
                 //账号不存在 
                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.NotExists);
             }
-            string randomCode = new Random().Next(100000).ToString("D6");
+            string randomCode = new Random().Next(1000).ToString("D4");
             var msg = string.Format(Config.SmsContentFindPassword, randomCode, SystemConst.MessageBusiness);
             try
             {
@@ -812,7 +812,7 @@ namespace Ets.Service.Provider.Business
             {
                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.InvlidPhoneNumber);
             }
-            string randomCode = new Random().Next(100000).ToString("D6");  //生成短信验证码
+            string randomCode = new Random().Next(1000).ToString("D4");  //生成短信验证码
             var msg = string.Format(Config.SmsContentCheckCode, randomCode, SystemConst.MessageBusiness);  //获取提示用语信息
             try
             {

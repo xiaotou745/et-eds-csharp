@@ -7,6 +7,7 @@ using Ets.Model.Common;
 using Ets.Model.DataModel.DeliveryCompany;
 using Ets.Model.DomainModel.DeliveryCompany;
 using Ets.Model.ParameterModel.DeliveryCompany;
+using ETS.Data.PageData;
 
 namespace Ets.Service.IProvider.DeliveryCompany
 {
@@ -24,5 +25,9 @@ namespace Ets.Service.IProvider.DeliveryCompany
         /// <param name="model">参数实体</param>
         /// <returns></returns>
         ResultModel<string> DoBatchImportClienter(DoBatchImportClienterPM model);
+
+        PageInfo<DeliveryCompanyModel> Get(DeliveryCompanyCriteria deliveryCompanyCriteria);
+
+        ResultModel<DeliveryCompanyResultModel> Add(DeliveryCompanyModel deliveryCompanyModel);
     }
 }

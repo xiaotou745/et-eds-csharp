@@ -248,7 +248,7 @@ namespace Ets.Service.Provider.Order
         /// <param name="busiOrderInfoModel"></param>
         /// <param name="business">返回商户信息</param>
         /// <returns></returns>
-        public order TranslateOrder(Ets.Model.ParameterModel.Business.BussinessOrderInfoPM busiOrderInfoModel,out BusListResultModel business)
+        public order TranslateOrder(Ets.Model.ParameterModel.Business.BussinessOrderInfoPM busiOrderInfoModel, out BusListResultModel business)
         {
             order to = new order();
             ///TODO 订单号生成规则，定了以后要改；
@@ -1108,7 +1108,7 @@ namespace Ets.Service.Provider.Order
             to.CommissionFormulaMode = business.StrategyId;
             to.Adjustment = commProvider.GetAdjustment(orderComm);//订单额外补贴金额
 
-            to.Status = (byte)OrderStatus.Status0.GetHashCode(); 
+            to.Status = (byte)OrderStatus.Status0.GetHashCode();
 
             //to.TimeSpan = busiOrderInfoModel.TimeSpan;
             to.listOrderChild = from.listOrderChlid;
@@ -1337,7 +1337,7 @@ namespace Ets.Service.Provider.Order
 
         public string CanOrder(string originalOrderNo, int group)
         {
-            var order = orderDao.GetOrderByOrderNoAndOrderFrom(originalOrderNo, group, 0);    
+            var order = orderDao.GetOrderByOrderNoAndOrderFrom(originalOrderNo, group, 0);
             if (order.Status == OrderStatus.Status0.GetHashCode())
             {
                 var k = orderDao.CancelOrderStatus(order.OrderNo, OrderStatus.Status3.GetHashCode(), "第三方取消订单", null);
@@ -1523,20 +1523,41 @@ namespace Ets.Service.Provider.Order
             IList<GetJobCDM> jobs = new List<GetJobCDM>();
             model.PushRadius = GlobalConfigDao.GlobalConfigGet(0).PushRadius; //距离
             model.ExclusiveOrderTime = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet(0).ExclusiveOrderTime); //商家专属骑士接单响应时间
-            if (model.SearchType == (int)GetJobCMode.NewJob)//最新订单
+            
+            if (model.ExpressId > 0)
             {
-                model.TopNum = PageSizeType.App_PageSize.GetHashCode().ToString();//50条
-                jobs = orderDao.GetLastedJobC(model);
+                #region 物流公司逻辑
+                if (model.SearchType == (int)GetJobCMode.NewJob)//物流公司全部任务
+                {
+                    model.TopNum = PageSizeType.App_PageSize.GetHashCode().ToString();//50条
+                    jobs = orderDao.GetExpressAllJob(model);
+                }
+                else if (model.SearchType == (int)GetJobCMode.NearbyJob)//物流公司附近任务
+                {
+                    model.TopNum = GlobalConfigDao.GlobalConfigGet(0).ClienterOrderPageSize;// top 值
+                    jobs = orderDao.GetExpressNearJob(model);
+                }
+                #endregion
             }
-            else if (model.SearchType == (int)GetJobCMode.NearbyJob)//附近订单
+            else
             {
-                model.TopNum = GlobalConfigDao.GlobalConfigGet(0).ClienterOrderPageSize;// top 值
-                jobs = orderDao.GetJobC(model);
-            }
-            else if (model.SearchType == (int)GetJobCMode.EmployerJob)//店内任务
-            {
-                model.TopNum = GlobalConfigDao.GlobalConfigGet(0).ClienterOrderPageSize;// top 值
-                jobs = orderDao.GetEmployerJobC(model);
+                #region 众包业务逻辑
+                if (model.SearchType == (int)GetJobCMode.NewJob)//全部任务
+                {
+                    model.TopNum = PageSizeType.App_PageSize.GetHashCode().ToString();//50条
+                    jobs = orderDao.GetLastedJobC(model);
+                }
+                else if (model.SearchType == (int)GetJobCMode.NearbyJob)//附近任务
+                {
+                    model.TopNum = GlobalConfigDao.GlobalConfigGet(0).ClienterOrderPageSize;// top 值
+                    jobs = orderDao.GetJobC(model);
+                }
+                else if (model.SearchType == (int)GetJobCMode.EmployerJob)//店内任务
+                {
+                    model.TopNum = GlobalConfigDao.GlobalConfigGet(0).ClienterOrderPageSize;// top 值
+                    jobs = orderDao.GetEmployerJobC(model);
+                }
+                #endregion
             }
             return ResultModel<object>.Conclude(SystemState.Success, jobs);
         }
@@ -1587,7 +1608,7 @@ namespace Ets.Service.Provider.Order
                 {
                     return ResultModel<bool>.Conclude(tempresult, false);
                 }
-                int result = orderDao.CancelOrderStatus(paramodel.OrderNo,OrderStatus.Status3.GetHashCode(), "商家取消订单",OrderStatus.Status0.GetHashCode(), order.SettleMoney);
+                int result = orderDao.CancelOrderStatus(paramodel.OrderNo, OrderStatus.Status3.GetHashCode(), "商家取消订单", OrderStatus.Status0.GetHashCode(), order.SettleMoney);
                 if (result > 0)
                 {
                     BusinessDao businessDao = new BusinessDao();
@@ -1639,7 +1660,7 @@ namespace Ets.Service.Provider.Order
             {
                 return CancelOrderStatus.VersionError;
             }
-            order = orderDao.GetOrderById(paramodel.OrderId, paramodel.BusinessId,OrderStatus.Status0.GetHashCode());
+            order = orderDao.GetOrderById(paramodel.OrderId, paramodel.BusinessId, OrderStatus.Status0.GetHashCode());
             if (order == null)
             {
                 return CancelOrderStatus.CancelOrderError;
@@ -1733,11 +1754,11 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public OrderMapDetail GetOrderMapDetail(long orderID)
         {
-            OrderMapDetail detail= orderDao.GetOrderMapDetail(orderID);
-            if (detail!=null)
+            OrderMapDetail detail = orderDao.GetOrderMapDetail(orderID);
+            if (detail != null)
             {
                 DateTime d = DateTime.Parse("1900-01-01");
-                if (DateTime.Parse(detail.PubDate)==d)
+                if (DateTime.Parse(detail.PubDate) == d)
                 {
                     detail.PubDate = "暂无";
                 }
@@ -1754,9 +1775,9 @@ namespace Ets.Service.Provider.Order
                     detail.TakeTime = "暂无";
                 }
                 #region 如果抢单，取货，完成地点的经度或纬度为0，则其经纬度都取发单经纬度
-                if (detail.GrabLatitude==0||detail.GrabLongitude==0)
+                if (detail.GrabLatitude == 0 || detail.GrabLongitude == 0)
                 {
-                    detail.GrabLongitude=detail.PubLongitude;
+                    detail.GrabLongitude = detail.PubLongitude;
                     detail.GrabLatitude = detail.PubLatitude;
                 }
                 if (detail.TakeLatitude == 0 || detail.TakeLongitude == 0)
@@ -1772,7 +1793,7 @@ namespace Ets.Service.Provider.Order
                 #endregion
             }
             return detail;
-                
+
         }
 
         /// <summary>
@@ -1784,7 +1805,7 @@ namespace Ets.Service.Provider.Order
         /// <returns>是否修改成功</returns>
         public int UpdateOrderAddressAndPhone(string orderId, string newAddress, string newPhone)
         {
-            return orderDao.UpdateOrderAddressAndPhone(orderId,newAddress,newPhone);
+            return orderDao.UpdateOrderAddressAndPhone(orderId, newAddress, newPhone);
         }
     }
 }

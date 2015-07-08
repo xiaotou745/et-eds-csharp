@@ -7,6 +7,7 @@ using System.Web;
 using System.Web.Helpers;
 using System.Web.Mvc;
 using Ets.Model.Common;
+using Ets.Model.DataModel.DeliveryCompany;
 using Ets.Model.DomainModel.Area;
 using Ets.Model.DomainModel.DeliveryCompany;
 using Ets.Model.ParameterModel.DeliveryCompany;
@@ -26,18 +27,95 @@ namespace SuperMan.Controllers
     /// <summary>
     /// 物流公司相关业务 
     /// </summary>
+    [WebHandleError]
     public class DeliveryCompanyController : BaseController
     {
+        private DeliveryCompanyProvider deliveryCompanyProvider = new DeliveryCompanyProvider();
+        /// <summary>
+        /// 获取数据
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult DeliveryCompany()
+        { 
+            int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
 
-        private readonly IDeliveryCompanyProvider deliveryCompanyProvider = new DeliveryCompanyProvider();
-        // GET: DeliveryCompany
-        public ActionResult Index()
+            DeliveryCompanyCriteria deliveryCompanyCriteria = new DeliveryCompanyCriteria();
+            TryUpdateModel(deliveryCompanyCriteria);
+            var dcList = new DeliveryCompanyProvider().Get(deliveryCompanyCriteria);//获取物流公司
+
+            return View(dcList); 
+        }
+        /// <summary>
+        /// 获取数据 分页
+        /// </summary>
+        /// <param name="pageindex"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult PostDeliveryCompany(int pageindex = 1)
         {
-            return View();
+            DeliveryCompanyCriteria deliveryCompanyCriteria = new DeliveryCompanyCriteria();
+            TryUpdateModel(deliveryCompanyCriteria); 
+            int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
+            var dcList = new DeliveryCompanyProvider().Get(deliveryCompanyCriteria);//获取物流公司
+            return PartialView("_DeliveryCompanyList", dcList);
+        }
+        /// <summary>
+        /// 添加配送公司
+        /// </summary>
+        /// <param name="deliveryCompanyModel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult AddDeliveryCompany(DeliveryCompanyModel deliveryCompanyModel)
+        {
+            TryUpdateModel(deliveryCompanyModel);
+            deliveryCompanyModel.CreateName = UserContext.Current.Name;
+            if (deliveryCompanyModel.ClienterSettleRatio != 0 || deliveryCompanyModel.ClienterFixMoney != 0)
+            {
+                deliveryCompanyModel.IsDisplay = 1;
+            }
+            else
+            {
+                deliveryCompanyModel.IsDisplay = 0;
+            }
+            var result = deliveryCompanyProvider.Add(deliveryCompanyModel);
+            if (result.Status == 0)
+            {
+                return Json(new ResultModel(true, "成功!"), JsonRequestBehavior.DenyGet);
+            }
+            return Json(new ResultModel(false, result.Message), JsonRequestBehavior.DenyGet);
         }
 
+        public ActionResult Modify(int Id)
+        {
 
-        #region 物流公司批量导入骑士功能 add by caoheyang 20150706
+            return View("DeliveryCompanyModify");
+        }
+
+        /// <summary>
+        /// 修改配送公司
+        /// </summary>
+        /// <param name="deliveryCompanyModel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult ModifyDeliveryCompany(DeliveryCompanyModel deliveryCompanyModel)
+        {
+            TryUpdateModel(deliveryCompanyModel);
+            deliveryCompanyModel.ModifyName = UserContext.Current.Name;
+            if (deliveryCompanyModel.ClienterSettleRatio != 0 || deliveryCompanyModel.ClienterFixMoney != 0)
+            {
+                deliveryCompanyModel.IsDisplay = 1;
+            }
+            else
+            {
+                deliveryCompanyModel.IsDisplay = 0;
+            }
+            var result = deliveryCompanyProvider.Modify(deliveryCompanyModel);
+            if (result.Status == 0)
+            {
+                return Json(new ResultModel(true, "修改成功!"), JsonRequestBehavior.DenyGet);
+            }
+            return Json(new ResultModel(false, result.Message), JsonRequestBehavior.DenyGet);
+        }
 
         /// <summary>
         /// 批量导入骑士页面 add by caoheyang 20150706
@@ -196,6 +274,6 @@ namespace SuperMan.Controllers
                 Data = res
             };
         } 
-        #endregion
+         
     }
 }

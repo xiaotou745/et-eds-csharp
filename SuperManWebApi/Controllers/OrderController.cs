@@ -394,36 +394,7 @@ namespace SuperManWebApi.Controllers
 
             FinishOrderResultModel finishModel = iClienterProvider.FinishOrder(parModel);
             return ResultModel<FinishOrderResultModel>.Conclude(finishModel.FinishOrderStatus, finishModel);
-
-            #region 临时
-            //if (finishModel.Message == "1")  //完成
-            //{
-            //    return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.Success, finishModel);
-            //}
-
-            //if (finishModel.Message == "500") //在查询订单信息关联表时数据不完成造成
-            //{
-            //    return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.DataError);
-            //}
-            //if (finishModel.Message == "501")  //完成时间
-            //{
-            //    return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.TooQuickly);
-            //}
-            //if (finishModel.Message == "502")//有未完成子订单
-            //{
-            //    return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.ExistNotPayChildOrder);
-            //}           
-            //if (finishModel.Message == "3")
-            //{
-            //    return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.OrderHadCancel);
-            //}
-            //if (finishModel.Message == FinishOrderStatus.PickupCodeError.ToString())
-            //{
-            //    return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.PickupCodeError);
-            //}
-
-            //return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.Failed);          
-            #endregion
+          
         }
 
         /// <summary>

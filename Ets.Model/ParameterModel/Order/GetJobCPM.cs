@@ -61,5 +61,10 @@ namespace Ets.Model.ParameterModel.Order
         /// 是否绑定了商户（0：否 1：是）
         /// </summary>
         public int IsBind { get; set; }
+
+        /// <summary>
+        /// 配送公司ID
+        /// </summary>
+        public int ExpressId { get; set; }
     }
 }

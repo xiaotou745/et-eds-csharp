@@ -33,5 +33,6 @@ namespace Ets.Model.DataModel.Clienter
         /// 是否只显示雇主任务
         /// </summary>
         public int IsOnlyShowBussinessTask { get; set; }
+        
     }
 }
