@@ -104,7 +104,6 @@
         }
         var decimalFormat = /^[0-9]*(\.[0-9]{1,2})?$/;
         var settleType = $('input[name="rDeliveryCheck"]:checked').val();
-        alert(settleType)
         if (settleType == 1) {
             if (clienterSettlementRatio == null || clienterSettlementRatio == "" || deliverySettlementRatio == null || deliverySettlementRatio == "") {
                 alert("骑士结算和物流公司结算必须填写!");

@@ -78,9 +78,9 @@ namespace SuperMan.Controllers
                 deliveryCompanyModel.IsDisplay = 0;
             }
             var result = deliveryCompanyProvider.Add(deliveryCompanyModel);
-            if (result.Status == 0)
+            if (result.Status == 1)
             {
-                return Json(new ResultModel(true, "成功!"), JsonRequestBehavior.DenyGet);
+                return Json(new ResultModel(true, result.Message), JsonRequestBehavior.DenyGet);
             }
             return Json(new ResultModel(false, result.Message), JsonRequestBehavior.DenyGet);
         }

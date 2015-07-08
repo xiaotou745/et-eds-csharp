@@ -119,7 +119,7 @@ namespace ETS.Enums
         Success = 1,
         [DisplayText("失败")]
         Fail = 0 ,
-        [DisplayText("已存在")]
+        [DisplayText("该配送公司已存在")]
         HadExist = 2
 
     }
