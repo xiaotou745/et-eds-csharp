@@ -17,7 +17,7 @@ namespace Ets.AddressAssociate
         private Quartz.IScheduler scheduler = null;
         public AddressAssociateService()
         {
-            //Thread.Sleep(1000 * 5);
+            Thread.Sleep(1000 * 5);
             InitializeComponent();
             if (scheduler == null)
             {
