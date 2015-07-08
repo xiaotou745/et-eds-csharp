@@ -299,9 +299,9 @@ namespace Ets.Service.Provider.Clienter
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PasswordEmpty);
             if (string.IsNullOrEmpty(code) || model.verifyCode != code) //判断验码法录入是否正确
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.IncorrectCheckCode);
-            var wuliuCode =string.IsNullOrWhiteSpace(model.recommendPhone)?0:clienterDao.CheckRecommendPhone(model.recommendPhone);//获取物流公司编码
-                model.DeliveryCompanyId = wuliuCode;
-            if (!string.IsNullOrEmpty(model.recommendPhone) && (wuliuCode==-1))//如果推荐人手机号在B端C端都不存在提示信息 
+            var wuliuCode = string.IsNullOrWhiteSpace(model.recommendPhone) ? 0 : clienterDao.CheckRecommendPhone(model.recommendPhone);//获取物流公司编码
+            model.DeliveryCompanyId = wuliuCode;
+            if (!string.IsNullOrEmpty(model.recommendPhone) && (wuliuCode == -1))//如果推荐人手机号在B端C端都不存在提示信息 
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberNotExist);
             var clienter = ClientRegisterInfoModelTranslator.Instance.Translate(model);
             //根据用户传递的  名称，取得 国标编码 wc,这里的 city 是二级 ，已和康珍 确认过
@@ -525,10 +525,22 @@ namespace Ets.Service.Provider.Clienter
                 //    return Letao.Util.JsonHelper.ToObject<ClienterStatusModel>(cacheValue);
                 //}
                 var UserInfo = clienterDao.GetUserStatus(UserId);
-                if (UserInfo != null && UserInfo.IsBind == 1)
+                if (UserInfo == null)
+                {
+                    return null;
+                }
+
+                if (UserInfo.DeliveryCompanyId > 0)
+                {
+                    UserInfo.IsOnlyShowBussinessTask = 0;
+                    UserInfo.IsBind = 0;
+                }
+                else if (UserInfo.IsBind == 1)
                 {
                     UserInfo.IsOnlyShowBussinessTask = IsOnlyShowBussinessTask(UserId);
                 }
+
+
                 //if (UserInfo != null)
                 //{
                 //    redis.Add(cacheKey, Letao.Util.JsonHelper.ToJson(UserInfo));
@@ -630,7 +642,7 @@ namespace Ets.Service.Provider.Clienter
 
                 //写入骑士完成坐标                 
                 orderOtherDao.UpdateComplete(parModel);
-                string mess = "更新坐标:" + parModel.orderId;               
+                string mess = "更新坐标:" + parModel.orderId;
                 LogHelper.LogWriter(" FinishOrder", new { obj = "时间：" + DateTime.Now.ToString() + mess });
 
                 //更新骑士和商家金额
@@ -647,7 +659,7 @@ namespace Ets.Service.Provider.Clienter
             //异步回调第三方，推送通知
             Task.Factory.StartNew(() =>
             {
-                if (myOrderInfo.businessId != 0 )
+                if (myOrderInfo.businessId != 0)
                 {
                     Push.PushMessage(1, "订单提醒", "有订单完成了！", "有超人完成了订单！", myOrderInfo.businessId.ToString(), string.Empty);
                     new OrderProvider().AsyncOrderStatus(orderNo);
@@ -898,7 +910,7 @@ namespace Ets.Service.Provider.Clienter
                     IsPayOrderCommission = false;
                     orderDao.UpdateJoinWithdraw(myOrderInfo.Id);//把订单加入到已增加可提现里
 
-                    if (orderOther.HadUploadCount >= orderOther.NeedUploadCount && orderOther.OrderStatus ==OrderStatus.Status1.GetHashCode())
+                    if (orderOther.HadUploadCount >= orderOther.NeedUploadCount && orderOther.OrderStatus == OrderStatus.Status1.GetHashCode())
                     {
                         CheckOrderPay(myOrderInfo.Id);
                     }
@@ -1098,7 +1110,7 @@ namespace Ets.Service.Provider.Clienter
         public OrderOther InsertReceiptInfo(UploadReceiptModel uploadReceiptModel)
         {
             return clienterDao.InsertReceiptInfo(uploadReceiptModel);
-        }      
+        }
 
         /// <summary>
         /// 根据订单Id获取小票信息
@@ -1438,7 +1450,7 @@ namespace Ets.Service.Provider.Clienter
             dealResultInfo.DealMsg = "修改骑士信息成功！";
             dealResultInfo.DealFlag = true;
             return dealResultInfo;
-            
+
         }
     }
 
