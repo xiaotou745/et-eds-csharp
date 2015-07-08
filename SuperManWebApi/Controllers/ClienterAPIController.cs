@@ -322,7 +322,7 @@ namespace SuperManWebApi.Controllers
             {
                 return SimpleResultModel.Conclude(SendCheckCodeStatus.InvlidPhoneNumber);
             }
-            var randomCode = new Random().Next(100000).ToString("D6");
+            var randomCode = new Random().Next(1000).ToString("D6");
             string msg = string.Empty;
             string key = "";
             bool checkUser = iClienterProvider.CheckClienterExistPhone(PhoneNumber);

@@ -2307,7 +2307,7 @@ where businessId=@businessId and TimeSpan=@TimeSpan ";
             string sql = @"
 select 
 o.id,o.amount, 
-o.RealOrderCommission clienterPrice, --给骑士
+o.orderCommission clienterPrice, --给骑士
 o.Amount-o.SettleMoney businessPrice,--给商家
 o.clienterId, o.businessId
 from    dbo.[order] o ( nolock )
