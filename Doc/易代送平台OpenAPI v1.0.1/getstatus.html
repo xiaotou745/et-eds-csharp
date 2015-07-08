@@ -1,0 +1,197 @@
+﻿
+<!DOCTYPE html>
+<html>
+<head>
+    <title>E代送开放平台</title>
+    <meta charset="utf-8" />
+    <link type="text/css" rel="stylesheet" href="css/index.css">
+    <script src="js/jquery.1.9.0.min.js"></script>
+</head>
+<body>
+    <div class="index_top">
+        <div class="top_center">
+            <div class="center_left">
+                <a href="#"><img src="images/logo.png" title="" alt="" /></a>
+                <img src="images/title.png" title="" alt="" />
+            </div>
+            <div class="center_right">
+                <img src="images/bgtop.jpg">
+            </div>
+        </div>
+        <div class="top_bottom"></div>
+    </div>
+    <div class="index_box">
+        <div class="box_top">
+            <a href="index.html">首页</a> > 获取订单类目信息
+        </div>
+        <div class="box_left">
+            <h3>订单API</h3>
+            <ul>
+                <li><a href="orderlist.html">接收物流订单API</a></li>
+                <li class="on"><a href="#">订单状态查询</a></li>
+                <li><a href="changestatus.html">订单取消</a></li>
+            </ul>
+        </div>
+        <div class="box_right">
+            <h3>获取订单类目信息</h3>
+            <div class="right_ty">
+                <h4>API功能描述</h4>
+                <p>E代送隶属于易代送网络科技（北京）有限公司，基于共享经济模式，利用移动互联网LBS定位技术而搭建的同城即时短途配送服务平台。它将物流需求发起与骑士抢单响应的信息共享于手机终端，便捷地服务于平台商户和快送骑士。</p>
+            </div>
+            <div class="right_ty">
+                <h4>授权类型</h4>
+                <p>1. 360buy.warecats.get </p>
+                <p>2. 360buy.warecats.get </p>
+            </div>
+            <div class="right_ty">
+                <h4>应用场景</h4>
+                <p>E代送隶属于易代送网络科技（北京）有限公司，基于共享经济模式，利用移动互联网LBS定位技术而搭建的同城即时短途配送服务平台。它将物流需求发起与骑士抢单响应的信息共享于手机终端。</p>
+            </div>
+            <div class="right_ty">
+                <h4>api地址</h4>
+                <p>/order/getstatus</p>
+            </div>
+            <div class="right_ty">
+                <h4>api功能描述址</h4>
+                <p>用于查询当前订单的订单状态</p>
+            </div>
+            <div class="right_ty">
+                <h4>系统参数</h4>
+                <p>请参照<a href="index.html">API简介</a></p>
+            </div>
+            <div class="right_ty">
+                <h4>应用参数</h4>
+                <p>应用参数主体如下:</p>
+                <table id="table" border="0" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <th>参数名称</th>
+                        <th>类型</th>
+                        <th>是否必须</th>
+                        <th>描述</th>
+                    </tr>
+                    <tr>
+                        <td>order_no</td>
+                        <td>string</td>
+                        <td>是</td>
+                        <td>商家订单号  第三方对接的集团的订单号</td>
+                    </tr>
+                </table>
+
+
+                <p>调用json数据示例：</p>
+                <div class="cnblogs_Highlighter">
+                    <pre class="brush:csharp;gutter:true;">
+{
+    "app_key": "wanda",
+    "timestamp": "2015-03-11 20:42:33",
+    "v": "1.0",
+    "sign": "D58E3582AFA99040E27B92B13C8F2280",
+    "fields": {
+        "order_no": "12121212121"
+    }
+}
+</pre>
+                </div>
+
+                <h4>返回结果</h4>
+                <p>返回结果结构</p>
+                <table id="table" border="0" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <th>名称</th>
+                        <th>类型</th>
+                        <th>示例值</th>
+                        <th>描述</th>
+                    </tr>
+                    <tr>
+                        <td>Message</td>
+                        <td>string</td>
+                        <td>成功</td>
+                        <td>正确返回完成,错误返回错误代码</td>
+                    </tr>
+                    <tr>
+                        <td>order_status</td>
+                        <td>string</td>
+                        <td>1</td>
+                        <td>订单状态  0:订单新增 1：订单已完成 2：订单已接单 4：订单已取消</td>
+                    </tr>
+                    <tr>
+                        <td>Status</td>
+                        <td>string</td>
+                        <td>0</td>
+                        <td>0为正常，其他见错误码说明</td>
+                    </tr>
+                    <tr>
+                </table>
+
+                <p>返回结果Json示例</p>
+                <div class="cnblogs_Highlighter">
+<pre class="brush:csharp;gutter:true;">
+{
+    "Message": "成功",
+    "Result": {
+        "order_status": "0"
+    },
+    "Status": "0"
+}
+</pre>
+                </div>
+            </div>
+            <div class="right_ty">
+                <h4>错误码</h4>
+                <p>错误码结构如下</p>
+                <table id="table" border="0" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <th>错误代码表</th>
+                        <th>描述</th>
+                    </tr>
+                    <tr>
+                        <td>10000</td>
+                        <td>签名错误</td>
+                    </tr>
+                    <tr>
+                        <td>10001</td>
+                        <td>未知系统错误</td>
+                    </tr>
+                    <tr>
+                        <td>10002</td>
+                        <td>参数错误</td>
+                    </tr>
+                    <tr>
+                </table>
+            </div>
+            <div class="right_ty">
+                <h4>api测试工具</h4>
+                <span>API测试工具</span><span>SDK调用示例</span>
+            </div>
+            <div class="right_ty">
+                <h4>FAQ</h4>
+                <p></p>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+    <div class="footer">
+        <p><img src="images/bottom.png" title="" alt="" /></p>
+        <p>京ICP备15014116号-1 Copyright©2011-2015易代送网络科技（北京）有限公司,All rights reserved.</p>
+    </div>
+</body>
+<script>
+    function countH() {
+        var Height = $('.box_right').height();
+        $(".box_left").css({
+            "height": Height
+        });
+    }
+    $(function () {
+        countH();
+    })
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("tr:even").addClass("t1");//偶数行的背景色
+        $("tr:odd").addClass("t2");//奇数行的背景色
+        $("tr>td:last-child").addClass("t3")
+
+    });
+</script>
+</html>	

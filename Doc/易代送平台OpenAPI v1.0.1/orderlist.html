@@ -1,0 +1,543 @@
+﻿
+<!DOCTYPE html>
+<html>
+<head>
+    <title>E代送开放平台</title>
+    <meta charset="utf-8" />
+    <link type="text/css" rel="stylesheet" href="css/index.css">
+    <script src="js/jquery.1.9.0.min.js"></script>
+</head>
+<body>
+    <div class="index_top">
+        <div class="top_center">
+            <div class="center_left">
+                <a href="#"><img src="images/logo.png" title="" alt="" /></a>
+                <img src="images/title.png" title="" alt="" />
+            </div>
+            <div class="center_right">
+                <img src="images/bgtop.jpg">
+            </div>
+        </div>
+        <div class="top_bottom"></div>
+    </div>
+    <div class="index_box">
+        <div class="box_top">
+            <a href="index.html">首页</a> > 获取订单类目信息
+        </div>
+        <div class="box_left">
+            <h3>订单API</h3>
+            <ul>
+                <li class="on"><a href="#">接收物流订单API</a></li>
+                <li><a href="getstatus.html">订单状态查询</a></li>
+                <li><a href="changestatus.html">订单取消</a></li>
+            </ul>
+        </div>
+        <div class="box_right">
+            <h3>获取订单类目信息</h3>
+            <div class="right_ty">
+                <h4>API功能描述</h4>
+                <p>E代送隶属于易代送网络科技（北京）有限公司，基于共享经济模式，利用移动互联网LBS定位技术而搭建的同城即时短途配送服务平台。它将物流需求发起与骑士抢单响应的信息共享于手机终端，便捷地服务于平台商户和快送骑士。</p>
+            </div>
+            <div class="right_ty">
+                <h4>授权类型</h4>
+                <p>1. 360buy.warecats.get </p>
+                <p>2. 360buy.warecats.get </p>
+            </div>
+            <div class="right_ty">
+                <h4>应用场景</h4>
+                <p>E代送隶属于易代送网络科技（北京）有限公司，基于共享经济模式，利用移动互联网LBS定位技术而搭建的同城即时短途配送服务平台。它将物流需求发起与骑士抢单响应的信息共享于手机终端。</p>
+            </div>
+            <div class="right_ty">
+                <h4>api地址</h4>
+                <p>/order/create</p>
+            </div>
+            <div class="right_ty">
+                <h4>api功能描述址</h4>
+                <p>物流订单接收接口</p>
+            </div>
+            <div class="right_ty">
+                <h4>系统参数</h4>
+                <p>请参照<a href="index.html">API简介</a></p>
+            </div>
+            <div class="right_ty">
+                <h4>应用参数</h4>
+                <p>应用参数主体如下:</p>
+                <table id="table" border="0" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <th>参数名称</th>
+                        <th>类型</th>
+                        <th>是否必须</th>
+                        <th>描述</th>
+                    </tr>
+                    <tr>
+                        <td>order_id</td>
+                        <td>string</td>
+                        <td>是</td>
+                        <td>订单号 第三方的订单号，一个第三方用户同一个订单号只能推送一次</td>
+                    </tr>
+                    <tr>
+                        <td>create_time</td>
+                        <td>date</td>
+                        <td>是</td>
+                        <td>订单下单时间</td>
+                    </tr>
+                    <tr>
+                        <td>receive_time</td>
+                        <td>date</td>
+                        <td>是</td>
+                        <td>要求送餐时间</td>
+                    </tr>
+                    <tr>
+                        <td>is_pay</td>
+                        <td>boolean</td>
+                        <td>是</td>
+                        <td>用户是否已付款，true 已付款 false 未付款</td>
+                    </tr>
+                    <tr>
+                        <td>payment</td>
+                        <td>int</td>
+                        <td>是</td>
+                        <td>支付类型 0 现金</td>
+                    </tr>
+                    <tr>
+                        <td>total_price</td>
+                        <td>number</td>
+                        <td>是</td>
+                        <td>订单金额，精确到两位小数</td>
+                    </tr>
+                    <tr>
+                        <td>address</td>
+                        <td>address</td>
+                        <td>是</td>
+                        <td>收货地址信息</td>
+                    </tr>
+                    <tr>
+                        <td>store_info</td>
+                        <td>store</td>
+                        <td>是</td>
+                        <td>门店信息</td>
+                    </tr>
+                    <tr>
+                        <td>order_details</td>
+                        <td>orderdetail[]</td>
+                        <td>是</td>
+                        <td>订单明细</td>
+                    </tr>
+                    <tr>
+                        <td>remark</td>
+                        <td>string</td>
+                        <td>否</td>
+                        <td>备注</td>
+                    </tr>
+                    <tr>
+                        <td>weight</td>
+                        <td>number</td>
+                        <td>否</td>
+                        <td>重量，默认为0</td>
+                    </tr>
+                    <tr>
+                        <td>delivery_fee</td>
+                        <td>number</td>
+                        <td>否</td>
+                        <td>外送费,默认为0</td>
+                    </tr>
+                    <tr>
+                        <td>package_count</td>
+                        <td>int</td>
+                        <td>否</td>
+                        <td>订单数量，默认为1（并单时使用)</td>
+                    </tr>
+                </table>
+                <p>address-收货地址信息</p>
+                <table id="table" border="0" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <th>参数名称</th>
+                        <th>类型</th>
+                        <th>是否必须</th>
+                        <th>描述</th>
+                    </tr>
+                    <tr>
+                        <td>user_name</td>
+                        <td>string</td>
+                        <td>是</td>
+                        <td>用户姓名</td>
+                    </tr>
+                    <tr>
+                        <td>user_phone</td>
+                        <td>string</td>
+                        <td>是</td>
+                        <td>用户联系电话</td>
+                    </tr>
+                    <tr>
+                        <td>province_code</td>
+                        <td>string</td>
+                        <td>否</td>
+                        <td>用户所在省份code</td>
+                    </tr>
+                    <tr>
+                        <td>city_code</td>
+                        <td>string</td>
+                        <td>否</td>
+                        <td>用户所在城市code</td>
+                    </tr>
+                    <tr>
+                        <td>area_code</td>
+                        <td>string</td>
+                        <td>否</td>
+                        <td>用户所在区域code</td>
+                    </tr>
+                    <tr>
+                        <td>province</td>
+                        <td>string</td>
+                        <td>是</td>
+                        <td>用户所在省份名称</td>
+                    </tr>
+                    <tr>
+                        <td>city</td>
+                        <td>string</td>
+                        <td>是</td>
+                        <td>用户所在城市名称</td>
+                    </tr>
+                    <tr>
+                        <td>area</td>
+                        <td>string</td>
+                        <td>是</td>
+                        <td>用户所在区域名称</td>
+                    </tr>
+                    <tr>
+                        <td>address</td>
+                        <td>address</td>
+                        <td>是</td>
+                        <td>用户收货地址</td>
+                    </tr>
+                    <tr>
+                        <td>longitude</td>
+                        <td>number</td>
+                        <td>否</td>
+                        <td>用户收货地址所在区域经度</td>
+                    </tr>
+                    <tr>
+                        <td>latitude</td>
+                        <td>number</td>
+                        <td>否</td>
+                        <td>用户收货地址所在区域纬度</td>
+                    </tr>
+                    <tr>
+                        <td>pickupcode</td>
+                        <td>string</td>
+                        <td>否</td>
+                        <td>取货码</td>
+                    </tr>
+                </table>
+                <p>store-门店信息</p>
+                <table id="table" border="0" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <th>参数名称</th>
+                        <th>类型</th>
+                        <th>是否必须</th>
+                        <th>描述</th>
+                    </tr>
+                    <tr>
+                        <td>store_id</td>
+                        <td>int</td>
+                        <td>是</td>
+                        <td>对接方店铺ID</td>
+                    </tr>
+                    <tr>
+                        <td>store_name</td>
+                        <td>string</td>
+                        <td>是</td>
+                        <td>店铺名称</td>
+                    </tr>
+                    <tr>
+                        <td>id_card</td>
+                        <td>string</td>
+                        <td>否</td>
+                        <td>店铺身份证号</td>
+                    </tr>
+                    <tr>
+                        <td>phone</td>
+                        <td>string</td>
+                        <td>是</td>
+                        <td>门店联系电话</td>
+                    </tr>
+                    <tr>
+                        <td>phone2</td>
+                        <td>string</td>
+                        <td>否</td>
+                        <td>门店第二联系电话</td>
+                    </tr>
+                    <tr>
+                        <td>address</td>
+                        <td>string</td>
+                        <td>是</td>
+                        <td>门店地址</td>
+                    </tr>
+                    <tr>
+                        <td>province_code</td>
+                        <td>string</td>
+                        <td>否</td>
+                        <td>门店所在省份code</td>
+                    </tr>
+                    <tr>
+                        <td>city_code</td>
+                        <td>string</td>
+                        <td>否</td>
+                        <td>门店所在城市code</td>
+                    </tr>
+                    <tr>
+                        <td>area_code</td>
+                        <td>string</td>
+                        <td>否</td>
+                        <td>门店所在区域code</td>
+                    </tr>
+                    <tr>
+                        <td>province</td>
+                        <td>string</td>
+                        <td>是</td>
+                        <td>门店所在省份名称</td>
+                    </tr>
+                    <tr>
+                        <td>city</td>
+                        <td>string</td>
+                        <td>是</td>
+                        <td>门店所在城市名称</td>
+                    </tr>
+                    <tr>
+                        <td>area</td>
+                        <td>string</td>
+                        <td>是</td>
+                        <td>门店所在区域名称</td>
+                    </tr>
+                    <tr>
+                        <td>longitude</td>
+                        <td>number</td>
+                        <td>否</td>
+                        <td>门店所在区域经度</td>
+                    </tr>
+                    <tr>
+                        <td>latitude</td>
+                        <td>number</td>
+                        <td>否</td>
+                        <td>门店所在区域纬度</td>
+                    </tr>
+                    <tr>
+                        <td>delivery_fee</td>
+                        <td>number</td>
+                        <td>否</td>
+                        <td>外送费,默认为0</td>
+                    </tr>
+                    <tr>
+                        <td>commission_type</td>
+                        <td>int</td>
+                        <td>否</td>
+                        <td>佣金类型，涉及到快递员的佣金计算方式，默认1</td>
+                    </tr>
+                </table>
+                <p>orderdetail-订单明细信息</p>
+                <table id="table" border="0" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <th>参数名称</th>
+                        <th>类型</th>
+                        <th>是否必须</th>
+                        <th>描述</th>
+                    </tr>
+                    <tr>
+                        <td>detail_id</td>
+                        <td>string</td>
+                        <td>是</td>
+                        <td>明细ID，默认为0  （启用，并且不能重复，一个订单明细只能推送一次</td>
+                    </tr>
+                    <tr>
+                        <td>detail_id</td>
+                        <td>number</td>
+                        <td>是</td>
+                        <td>商品名称</td>
+                    </tr>
+                    <tr>
+                        <td>unit_price</td>
+                        <td>number</td>
+                        <td>是</td>
+                        <td>商品单价，精确到两位小数</td>
+                    </tr>
+                    <tr>
+                        <td>quantity</td>
+                        <td>int</td>
+                        <td>是</td>
+                        <td>商品数量</td>
+                    </tr>
+                </table>
+
+                <p>调用json数据示例：</p>
+                <div class="cnblogs_Highlighter">
+<pre class="brush:csharp;gutter:true;">{
+    "app_key": "wanda",
+    "timestamp": "2015-03-12 00:21:42",
+    "v": "1.0",
+    "sign": "D58E3582AFA99040E27B92B13C8F2280",
+    "fields": {
+        "order_id": "123456",
+        "create_time": "2015-03-12 00:21:42",
+        "receive_time": "2015-03-12 00:21:42",
+        "is_pay": true,
+        "total_price": 55,
+        "address": {
+            "user_name": "张三",
+            "user_phone": "13612345678",
+            "province_code": "000000",
+            "city_code": "000000",
+            "area_code": "000000",
+            "province": "北京市",
+            "city": "北京市",
+            "area": "朝阳区",
+            "address": "建国路93号院万达广场4号楼2705",
+            "longitude": 11.11,
+            "latitude": 11.11
+        },
+        "store_info": {
+            "store_id": "1",
+            "store_name": "天下第一名厨大望路店",
+            "id_card": "130212201503101234",
+            "phone": "010-12345678",
+            "phone2": "13612345678",
+            "province_code": "000000",
+            "city_code": "000000",
+            "area_code": "000000",
+            "province": "北京市",
+            "city": "北京市",
+            "area": "朝阳区",
+            "address": "建国路93号院万达广场4号楼2705",
+            "longitude": 11.11,
+            "latitude": 11.11,
+            "delivery_fee": 0,
+            "commission_type": "1"
+        },
+        "order_details": [
+            {
+                "detail_id": 1,
+                "product_name": "鱼香肉丝",
+                "unit_price": 15,
+                "quantity": 1
+            },
+            {
+                "detail_id": 2,
+                "product_name": "宫爆鸡丁",
+                "unit_price": 20,
+                "quantity": 2
+            }
+        ],
+        "remark": "快点，饿",
+        "weight": 0,
+        "delivery_fee": 0,
+        "package_count": 1
+    }
+}
+</pre>
+                </div>
+
+                <h4>返回结果</h4>
+                <p>返回结果结构</p>
+                <table id="table" border="0" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <th>名称</th>
+                        <th>类型</th>
+                        <th>示例值</th>
+                        <th>描述</th>
+                    </tr>
+                    <tr>
+                        <td>Message</td>
+                        <td>string</td>
+                        <td>成功</td>
+                        <td>正确返回完成,错误返回错误代码</td>
+                    </tr>
+                    <tr>
+                        <td>order_no</td>
+                        <td>string</td>
+                        <td>1</td>
+                        <td>订单号</td>
+                    </tr>
+                    <tr>
+                        <td>Status</td>
+                        <td>string</td>
+                        <td>0</td>
+                        <td>0为正常，其他见错误码说明</td>
+                    </tr>
+                    <tr>
+                </table>
+       
+                <p>返回结果Json示例</p>
+                <div class="cnblogs_Highlighter">
+<pre class="brush:csharp;gutter:true;">
+{
+    "Message": "成功",
+    "Result": {
+        "order_no": "39150319093850030"
+    },
+    "Status": "0"
+}
+</pre>
+                </div>
+            </div>
+            <div class="right_ty">
+                <h4>错误码</h4>
+                <p>错误码结构如下</p>
+                <table id="table" border="0" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <th>错误代码表</th>
+                        <th>描述</th>
+                    </tr>
+                    <tr>
+                        <td>10000</td>         
+                        <td>签名错误</td>
+                    </tr>
+                    <tr>
+                        <td>10001</td>
+                        <td>未知系统错误</td>
+                    </tr>
+                    <tr>
+                        <td>10002</td>
+                        <td>参数错误</td>
+                    </tr>
+                    <tr>
+                        <td>10003</td>
+                        <td>该订单已经同步过</td>
+                    </tr>
+                    <tr>
+                </table>
+            </div>
+            <div class="right_ty">
+                <h4>api测试工具</h4>
+                <span>API测试工具</span><span>SDK调用示例</span>
+            </div>
+            <div class="right_ty">
+                <h4>FAQ</h4>
+                <p></p>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+    <div class="footer">
+        <p><img src="images/bottom.png" title="" alt="" /></p>
+        <p>京ICP备15014116号-1 Copyright©2011-2015易代送网络科技（北京）有限公司,All rights reserved.</p>
+    </div>
+</body>
+<script>
+    function countH() {
+        var Height = $('.box_right').height();
+        $(".box_left").css({
+            "height": Height
+        });
+    }
+    $(function () {
+        countH();
+    })
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("tr:even").addClass("t1");//偶数行的背景色
+        $("tr:odd").addClass("t2");//奇数行的背景色
+        $("tr>td:last-child").addClass("t3")
+
+    });
+</script>
+</html>	
