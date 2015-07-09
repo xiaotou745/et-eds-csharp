@@ -101,7 +101,9 @@ namespace ETS.Enums
         [DisplayText("订单号错误")]
         ErrOderNo = 3,
         [DisplayText("获取订单失败")]
-        FailedGetOrders = 4
+        FailedGetOrders = 4,
+        [DisplayText("账号状态出错")]
+        ErrStatus = -500,
     }
 
     public enum OrdersStatus
