@@ -947,12 +947,22 @@ namespace Ets.Service.Provider.Business
             string msg = string.Empty;
             string key = model.Stype == "0" ? RedissCacheKey.PostRegisterInfo_B + model.PhoneNumber : RedissCacheKey.CheckCodeFindPwd_B + model.PhoneNumber;
             var redis = new ETS.NoSql.RedisCache.RedisCache();
-
             object obj = redis.Get<object>(key);
             if (obj == null)
             {
                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.CodeNotExists);
             }
+
+            #region 判断该语音验证码是否存在
+            string keycheck = key + "_voice";
+            if (ParseHelper.ToInt(redis.Get<int>(keycheck)) == 1)
+            {
+                //如果该验证码存在直接提示成功
+                return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.Sending);
+            }
+            redis.Add(keycheck, 1, new TimeSpan(0, 1, 0));
+            #endregion
+           
             string tempcode = obj.ToString().Aggregate("", (current, c) => current + (c.ToString() + ','));
 
             bool userStatus = businessDao.CheckBusinessExistPhone(model.PhoneNumber);

@@ -205,7 +205,12 @@ namespace Ets.Service.Provider.Clienter
                 {
                     return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential);
                 }
-                if (resultModel.IsBind == 1)
+                if (resultModel.DeliveryCompanyId > 0)
+                {
+                    resultModel.IsOnlyShowBussinessTask = 0;
+                    resultModel.IsBind = 0;
+                }
+                else if (resultModel.IsBind == 1)
                 {
                     resultModel.IsOnlyShowBussinessTask = IsOnlyShowBussinessTask(resultModel.userId);
                 }
@@ -304,7 +309,7 @@ namespace Ets.Service.Provider.Clienter
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.IncorrectCheckCode);
             var wuliuCode = string.IsNullOrWhiteSpace(model.recommendPhone) ? 0 : clienterDao.CheckRecommendPhone(model.recommendPhone);//获取物流公司编码
             model.DeliveryCompanyId = wuliuCode;
-            
+
             if (!string.IsNullOrEmpty(model.recommendPhone) && (wuliuCode == -1))//如果推荐人手机号在B端C端都不存在提示信息 
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberNotExist);
             var clienter = ClientRegisterInfoModelTranslator.Instance.Translate(model);
@@ -335,6 +340,12 @@ namespace Ets.Service.Provider.Clienter
                 resultModel.DeliveryCompanyId = deliveryModel.Id;
                 resultModel.DeliveryCompanyName = deliveryModel.DeliveryCompanyName;
                 resultModel.IsDisplay = deliveryModel.IsDisplay;
+            }
+            else
+            {
+                resultModel.DeliveryCompanyId = 0;
+                resultModel.DeliveryCompanyName = "";
+                resultModel.IsDisplay = 1;
             }
             if (id > 0)
             {
