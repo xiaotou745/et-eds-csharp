@@ -469,9 +469,6 @@
     <Content Include="Content\i\img-x.psd" />
     <Content Include="Content\i\sprite-icon.psd" />
     <Content Include="Nlog.config" />
-    <Content Include="Content\Template\phoneNoTemplate.xlsx" />
-    <Content Include="Content\Template\BatchImport.xls" />
-    <Content Include="Content\Template\物流公司批量导入配送员.xls" />
     <None Include="Properties\PublishProfiles\admin.edaisong.com.pubxml" />
     <None Include="Properties\PublishProfiles\chuan.admin.edaisong.com.pubxml" />
     <None Include="Properties\PublishProfiles\HDLWEB.pubxml" />
@@ -668,15 +665,17 @@
     <Content Include="Views\MessageManager\Detail.cshtml" />
     <Content Include="Views\DeliveryCompany\BatchImportClienter.cshtml" />
     <Content Include="Views\DeliveryCompany\BatchImportClienterExcel.cshtml" />
-	<Content Include="Views\SuperManManager\ClienterModify.cshtml" />
-	<Content Include="Views\Statistical\RecommendStatistical.cshtml" />
-    <Content Include="Views\Statistical\PostRecommendStatistical.cshtml" />    <Content Include="Views\DeliveryCompany\DeliveryCompany.cshtml" />
+    <Content Include="Views\SuperManManager\ClienterModify.cshtml" />
+    <Content Include="Views\Statistical\RecommendStatistical.cshtml" />
+    <Content Include="Views\Statistical\PostRecommendStatistical.cshtml" />
+    <Content Include="Views\DeliveryCompany\DeliveryCompany.cshtml" />
     <Content Include="Views\DeliveryCompany\_DeliveryCompanyList.cshtml" />
     <Content Include="Views\DeliveryCompany\DeliveryCompanyModify.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\app\" />
+    <Folder Include="Content\Template\" />
     <Folder Include="uploads\" />
     <Folder Include="Views\BusinessDistributionStatistical\" />
     <Folder Include="Views\Test\" />
