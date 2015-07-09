@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
+using ETS.Enums;
 using Ets.Model.Common;
 using ETS.Const;
 using ETS.IO;
@@ -15,7 +16,7 @@ namespace SuperManWebApi.Providers
 {
     public class ImageHelper
     {
-        public ImgInfo UploadImg(HttpPostedFile httpPostedFile,int orderId)
+        public ImgInfo UploadImg(HttpPostedFile httpPostedFile,int orderId,UserType userType = UserType.Business)
         {
             ImgInfo imgInfo = new ImgInfo(); 
             try
@@ -36,8 +37,13 @@ namespace SuperManWebApi.Providers
             imgInfo.OriginFileName = rFileName;
             string saveDbFilePath;
             string saveDir = "";
-            if (orderId > 0) saveDir = orderId.ToString();
-            string fullFileDir = ETS.Util.ImageTools.CreateDirectory(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath, saveDir, out saveDbFilePath);
+            string basePath = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.GetPhysicalPath(orderId,
+                UserType.Business);
+            if (orderId > 0)
+            {
+                saveDir = orderId.ToString();
+            }
+            string fullFileDir = ETS.Util.ImageTools.CreateDirectory(basePath, saveDir, out saveDbFilePath);
             imgInfo.FullFileDir = fullFileDir;
             imgInfo.SaveDbFilePath = saveDbFilePath;
             if (fullFileDir == "0")

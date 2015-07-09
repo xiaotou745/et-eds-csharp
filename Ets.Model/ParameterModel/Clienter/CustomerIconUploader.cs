@@ -1,4 +1,5 @@
-﻿using ETS.Util;
+﻿using ETS.Enums;
+using ETS.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -103,6 +104,26 @@ namespace Ets.Model.ParameterModel.Clienter
                     }
                 }
                 return clienterPicPhysicalPath;
+            }
+        }
+
+        public string GetPhysicalPath(int orderId,UserType userType)
+        {
+            //如果orderId为0,则为图片为商家或骑士的验证图片,需要保存在CustomerIcon/Business(或Clients)/中,否则为小票,放在CustomerIcon/中
+            if (orderId > 0)
+            {
+                return PhysicalPath;
+            }
+            else
+            {
+                if (userType == UserType.Business)
+                {
+                    return BusinessPicPhysicalPath;
+                }
+                else
+                {
+                    return ClienterPicPhysicalPath;
+                }
             }
         }
     }

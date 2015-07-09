@@ -26,7 +26,7 @@ namespace Ets.UpdateBCPic
     /// <summary>
     /// 更新商户和骑士图片业务  add by pengyi 20150709
     /// </summary>
-    public class UpdateBCPicBLL : Quartz.IJob
+    public class UpdateBCPicBLL// : Quartz.IJob
     {
         //使用Common.Logging.dll日志接口实现日志记录        
         private ILog logger = LogManager.GetCurrentClassLogger();
@@ -43,7 +43,7 @@ namespace Ets.UpdateBCPic
 
         #region IJob 成员
 
-        public void Execute(Quartz.IJobExecutionContext context)
+        public void Execute()//(Quartz.IJobExecutionContext context)
         {
             if (!threadSafe)
             {
@@ -95,7 +95,7 @@ namespace Ets.UpdateBCPic
             var pageCount = count / PAGET_SIZE + 1;
             for (int i = 0; i < pageCount; i++)
             {
-                var pageRet = new PagingResult(i, PAGET_SIZE);
+                var pageRet = new PagingResult(i+1, PAGET_SIZE);
                 CopyBusinessPics(businessDao, pageRet);
             }
         }
