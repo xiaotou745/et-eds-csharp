@@ -67,7 +67,9 @@ namespace Ets.CrossShopService.BLL
                 {
                     try
                     {
-                        List<GlobalConfigSubsidies> MyList = GetSubsidies(GlobalConfigDao.GlobalConfigGet(0).OverStoreSubsidies);
+                        //List<GlobalConfigSubsidies> MyList = GetSubsidies(GlobalConfigDao.GlobalConfigGet(0).OverStoreSubsidies);
+                        List<GlobalConfigSubsidies> MyList = GetSubsidies(new GlobalConfigDao().GlobalConfigMethod(0).OverStoreSubsidies);
+                        
                         if (MyList == null || MyList.Count <= 0)
                         {
                             ETS.Util.LogHelper.LogWriter("global配置数据为空" + DateTime.Now.ToString() + ":");
