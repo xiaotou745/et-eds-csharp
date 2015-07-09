@@ -1654,5 +1654,42 @@ SELECT IDENT_CURRENT('clienter')"
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
 
+
+        /// <summary>
+        /// 获取骑士图片   add by pengyi 20150709  仅限工具使用
+        /// </summary>
+        /// <param name="page">分页</param>
+        public PageInfo<T> GetClienterPics<T>(PagingResult page)
+        {
+            #region where
+            string whereStr = "1=1 and (c.PicUrl is not null or c.PicWithHandUrl is not null)";  //where查询条件实体类
+            #endregion
+
+            string orderByColumn = " b.InsertTime ";  //排序条件
+            string columnList = @"  c.PicUrl,
+                                                   c.PicWithHandUrl";
+            string tableList = @" [clienter](nolock) as c ";  //表名
+
+            return new PageHelper().GetPages<T>(SuperMan_Read, page.PageIndex, whereStr, orderByColumn, columnList, tableList, page.PageSize, true);
+        }
+
+        /// <summary>
+        /// 获取当前骑士数量   add by pengyi 20150709  仅限工具使用
+        /// </summary>
+        /// <returns>骑士数量</returns>
+        public int GetClienterCount()
+        {
+            try
+            {
+                string sql = @"SELECT COUNT(1)  FROM dbo.clienter";
+                return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql));
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(ex);
+                return 0;
+                throw;
+            }
+        }
     }
 }

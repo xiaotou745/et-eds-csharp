@@ -67,5 +67,43 @@ namespace Ets.Model.ParameterModel.Clienter
         {
             get { return ConfigSettings.Instance.PicHost; }
         }
+        private string businessPicPhysicalPath;
+        /// <summary>
+        /// 商户图片物理路径  add by pengyi 20150709
+        /// </summary>
+        public string BusinessPicPhysicalPath
+        {
+            get
+            {
+                if (businessPicPhysicalPath == null)
+                {
+                    businessPicPhysicalPath = Path.Combine(PhysicalPath, ConfigSettings.Instance.FileUploadFolderNameBusiness);
+                    if (!System.IO.Directory.Exists(businessPicPhysicalPath))
+                    {
+                        System.IO.Directory.CreateDirectory(businessPicPhysicalPath);
+                    }
+                }
+                return businessPicPhysicalPath;
+            }
+        }
+        private string clienterPicPhysicalPath;
+        /// <summary>
+        /// 骑士图片物理路径  add by pengyi 20150709
+        /// </summary>
+        public string ClienterPicPhysicalPath
+        {
+            get
+            {
+                if (clienterPicPhysicalPath == null)
+                {
+                    clienterPicPhysicalPath = Path.Combine(PhysicalPath, ConfigSettings.Instance.FileUploadFolderNameClienter);
+                    if (!System.IO.Directory.Exists(clienterPicPhysicalPath))
+                    {
+                        System.IO.Directory.CreateDirectory(clienterPicPhysicalPath);
+                    }
+                }
+                return clienterPicPhysicalPath;
+            }
+        }
     }
 }

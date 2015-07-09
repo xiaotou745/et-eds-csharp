@@ -2375,5 +2375,42 @@ MERGE INTO BusinessExpressRelation ber
             parm.AddWithValue("@OptName", model.OptName);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, parm) > 0;
         }
+
+        /// <summary>
+        /// 获取商户图片   add by pengyi 20150709  仅限工具使用
+        /// </summary>
+        /// <param name="page">分页</param>
+        public PageInfo<T> GetBusinessPics<T>(PagingResult page)
+        {
+            #region where
+            string whereStr = "1=1 and (b.CheckPicUrl is not null or b.BusinessLicensePic is not null)";  //where查询条件实体类
+            #endregion
+
+            string orderByColumn = " b.InsertTime ";  //排序条件
+            string columnList = @"  b.CheckPicUrl,
+                                                   b.BusinessLicensePic";
+            string tableList = @" [business](nolock) as b ";  //表名
+
+            return new PageHelper().GetPages<T>(SuperMan_Read, page.PageIndex, whereStr, orderByColumn, columnList, tableList, page.PageSize, true);
+        }
+
+        /// <summary>
+        /// 获取当前商户数量   add by pengyi 20150709  仅限工具使用
+        /// </summary>
+        /// <returns>商户数量</returns>
+        public int GetBusinsessCount()
+        {
+            try
+            {
+                string sql = @"SELECT COUNT(1)  FROM dbo.business";
+                return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql));
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(ex);
+                return 0;
+                throw;
+            }
+        }
     }
 }
