@@ -110,7 +110,7 @@ namespace SuperMan.Controllers
                 deliveryCompanyModel.IsDisplay = 0;
             }
             var result = deliveryCompanyProvider.Modify(deliveryCompanyModel);
-            if (result.Status == 0)
+            if (result.Status == 1)
             {
                 return Json(new ResultModel(true, "修改成功!"), JsonRequestBehavior.DenyGet);
             }

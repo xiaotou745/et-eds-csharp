@@ -70,7 +70,10 @@
                             else { @Html.Raw("未知状态")}
                         </td>
                         <td>
-                            <a href="/DeliveryCompany/Modify?Id=@item.Id">修改</a>
+                           @if (SuperMan.App_Start.UserContext.Current.HasAuthority(66))
+                           {
+                               <a href="/DeliveryCompany/Modify?Id=@item.Id">修改</a>
+                           }
                             <a href="/DeliveryCompany/BatchImportClienter?companyId=@item.Id&CompanyName=@item.DeliveryCompanyName">导入骑士</a>
                         </td>
                     </tr>
