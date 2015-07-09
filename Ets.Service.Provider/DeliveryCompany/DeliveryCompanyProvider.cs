@@ -105,32 +105,49 @@ namespace Ets.Service.Provider.DeliveryCompany
         }
         public ResultModel<DeliveryCompanyResultModel> Add(DeliveryCompanyModel deliveryCompanyModel)
         {
-            int addId = dao.Add(deliveryCompanyModel);
-            DeliveryCompanyResultModel dcrm = new DeliveryCompanyResultModel();
-
-            if (addId > 0)
+            DeliveryCompanyModel sModel = dao.GetByName(deliveryCompanyModel.DeliveryCompanyName.Trim());
+            if (sModel == null)
             {
-                dcrm.Id = addId;
-                return ResultModel<DeliveryCompanyResultModel>.Conclude(DeliveryStatus.Success, dcrm);
+                int addId = dao.Add(deliveryCompanyModel);
+
+                DeliveryCompanyResultModel dcrm = new DeliveryCompanyResultModel();
+
+                if (addId > 0)
+                {
+                    dcrm.Id = addId;
+                    return ResultModel<DeliveryCompanyResultModel>.Conclude(DeliveryStatus.Success, dcrm);
+                }
+                else
+                {
+                    return ResultModel<DeliveryCompanyResultModel>.Conclude(DeliveryStatus.Fail, null);
+                }
             }
             else
             {
-                return ResultModel<DeliveryCompanyResultModel>.Conclude(DeliveryStatus.Fail, null);
+                return ResultModel<DeliveryCompanyResultModel>.Conclude(DeliveryStatus.HadExist, null);
             }
         }
 
         public ResultModel<DeliveryCompanyResultModel> Modify(DeliveryCompanyModel deliveryCompanyModel)
         {
-            int modifyResult = dao.Modify(deliveryCompanyModel);
-            DeliveryCompanyResultModel dcrm = new DeliveryCompanyResultModel();
+             DeliveryCompanyModel sModel = dao.GetByName(deliveryCompanyModel.DeliveryCompanyOldName.Trim());
+            if (sModel == null)
+            {
+                int modifyResult = dao.Modify(deliveryCompanyModel);
+                DeliveryCompanyResultModel dcrm = new DeliveryCompanyResultModel();
 
-            if (modifyResult > 0)
-            { 
-                return ResultModel<DeliveryCompanyResultModel>.Conclude(DeliveryStatus.Success, null);
+                if (modifyResult > 0)
+                {
+                    return ResultModel<DeliveryCompanyResultModel>.Conclude(DeliveryStatus.Success, null);
+                }
+                else
+                {
+                    return ResultModel<DeliveryCompanyResultModel>.Conclude(DeliveryStatus.Fail, null);
+                }
             }
             else
             {
-                return ResultModel<DeliveryCompanyResultModel>.Conclude(DeliveryStatus.Fail, null);
+                return ResultModel<DeliveryCompanyResultModel>.Conclude(DeliveryStatus.HadExist, null);
             }
         }
     }

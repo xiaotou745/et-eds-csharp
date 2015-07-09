@@ -108,7 +108,7 @@ INSERT  INTO dbo.ReceviceAddress
           PubDate
         )
         SELECT  PhoneNo ,
-                [Address] ,
+                isnull([Address],''),
                 Businessid ,
                 PubDate
         FROM    #TempAdress

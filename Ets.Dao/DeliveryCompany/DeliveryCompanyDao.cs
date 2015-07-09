@@ -125,34 +125,34 @@ select @@IDENTITY ";
         {
            StringBuilder upSql = new StringBuilder(@"
 update  dbo.DeliveryCompany
-set     DeliveryCompanyName = @DeliveryCompanyName ,
+ set     DeliveryCompanyName = @DeliveryCompanyName ,
         IsEnable = @IsEnable ,
         SettleType = @SettleType ,
-        ModifyName = @ModifyName");
+        ModifyName = @ModifyName ,
+        ModifyTime = getdate() ");
 
             if (deliveryCompanyModel.SettleType == 1)
             {
+                deliveryCompanyModel.ClienterSettleRatio = deliveryCompanyModel.ClienterSettle;
+                deliveryCompanyModel.DeliveryCompanyRatio = deliveryCompanyModel.DeliveryCompanySettle;
                 upSql.Append(@" ,ClienterSettleRatio = @ClienterSettleRatio,DeliveryCompanyRatio = @DeliveryCompanyRatio ");
             }
             else
             {
+                deliveryCompanyModel.ClienterFixMoney = deliveryCompanyModel.ClienterSettle;
+                deliveryCompanyModel.DeliveryCompanySettleMoney = deliveryCompanyModel.DeliveryCompanySettle;
                 upSql.Append(@" ,ClienterFixMoney = @ClienterFixMoney,DeliveryCompanySettleMoney = @DeliveryCompanySettleMoney ");
             }
-            if (deliveryCompanyModel.ClienterSettleRatio != 0 || deliveryCompanyModel.ClienterFixMoney != 0)
-            {
-                deliveryCompanyModel.IsDisplay = 1;
-            }
-            else
-            {
-                deliveryCompanyModel.IsDisplay = 0;
-            }
+            
             upSql.Append(@" ,IsDisplay = @IsDisplay ");
             upSql.Append(@"where   Id = @Id;");
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
+
+            dbParameters.Add("@Id", DbType.Int32).Value = deliveryCompanyModel.Id;
             dbParameters.Add("@DeliveryCompanyName", DbType.String).Value = deliveryCompanyModel.DeliveryCompanyName;
-            dbParameters.Add("@DeliveryCompanyCode", DbType.String).Value = deliveryCompanyModel.DeliveryCompanyCode;
             dbParameters.Add("@SettleType", DbType.Int16).Value = deliveryCompanyModel.SettleType;
             dbParameters.Add("@IsDisplay", DbType.Int16).Value = deliveryCompanyModel.IsDisplay;
+            dbParameters.Add("@IsEnable", DbType.Int16).Value = deliveryCompanyModel.IsEnable;
             if (deliveryCompanyModel.SettleType == 1)
             {
                 dbParameters.Add("@ClienterSettleRatio", DbType.Decimal).Value = deliveryCompanyModel.ClienterSettleRatio;
@@ -169,7 +169,7 @@ set     DeliveryCompanyName = @DeliveryCompanyName ,
                 dbParameters.Add("@ClienterSettleRatio", DbType.Decimal).Value = 0;
                 dbParameters.Add("@DeliveryCompanyRatio", DbType.Decimal).Value = 0;
             }
-            dbParameters.Add("@CreateName", DbType.String).Value = deliveryCompanyModel.CreateName;
+            dbParameters.Add("@ModifyName", DbType.String).Value = deliveryCompanyModel.ModifyName;
             return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, upSql.ToString(), dbParameters));
         }
 
@@ -200,6 +200,33 @@ set     DeliveryCompanyName = @DeliveryCompanyName ,
             if (dt == null || dt.Rows.Count <= 0)
                 return null;
             return MapRows<DeliveryCompanyModel>(dt)[0];
+        }
+
+        public DeliveryCompanyModel GetByName(string deliveryCompanyName)
+        {
+            string sql = @"SELECT   
+        Id ,
+        DeliveryCompanyName ,
+        DeliveryCompanyCode ,
+        IsEnable ,
+        SettleType ,
+        ClienterFixMoney ,
+        ClienterSettleRatio ,
+        DeliveryCompanySettleMoney ,
+        DeliveryCompanyRatio ,
+        BusinessQuantity ,
+        ClienterQuantity ,
+        CreateTime ,
+        CreateName ,
+        ModifyName ,
+        ModifyTime
+   FROM dbo.[DeliveryCompany] WITH(NOLOCK) where DeliveryCompanyName = @DeliveryCompanyName";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("@DeliveryCompanyName", DbType.String).Value = deliveryCompanyName; 
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, dbParameters);
+            if (dt == null || dt.Rows.Count <= 0)
+                return null;
+            return MapRows<DeliveryCompanyModel>(dt)[0]; 
         }
     }
 }

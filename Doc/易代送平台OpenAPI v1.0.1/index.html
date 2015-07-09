@@ -1,0 +1,117 @@
+﻿
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API列表</title>
+    <meta charset="utf-8" />
+    <link type="text/css" rel="stylesheet" href="css/index.css">
+    <script src="js/jquery.1.9.0.min.js"></script>
+</head>
+<body>
+    <div class="index_top">
+        <div class="top_center">
+            <div class="center_left">
+                <a href="#"><img src="images/logo.png" title="" alt="" /></a>
+                <img src="images/title.png" title="" alt="" />
+            </div>
+            <div class="center_right">
+                <img src="images/bgtop.jpg">
+            </div>
+        </div>
+        <div class="top_bottom"></div>
+    </div>
+    <div class="index_box">
+        <div class="box_top">
+        </div>
+        <div class="box_left">
+            <h3>API列表</h3>
+            <ul>
+                <li class="on"><a href="#">API简介</a></li>
+                <li><a href="orderlist.html">订单API</a></li>
+            </ul>
+        </div>
+        <div class="box_right">
+            <h3>API简介</h3>
+            <div class="right_ty">
+                <p>E代送隶属于易代送网络科技（北京）有限公司，基于共享经济模式，利用移动互联网LBS定位技术而搭建的同城即时短途配送服务平台。它将物流需求发起与骑士抢单响应的信息共享于手机终端，便捷地服务于平台商户和快送骑士，使供需双方的信息实现自主匹配，从而提高个人时间应用效率，创造巨大社会价值。</p>
+            </div>
+            <div class="right_ty">
+                <h4>接口地图</h4>
+                <p>E代送隶属于易代送网络科技（北京）有限公司，基于共享经济模式，利用移动互联网LBS定位技术而搭建的同城即时短途配送服务平台。它将物流需求发起与骑士抢单响应的信息共享于手机终端，便捷地服务于平台商户和快送骑士，使供需双方的信息实现自主匹配，从而提高个人时间应用效率，创造巨大社会价值。</p>
+            </div>
+            <div class="right_ty">
+                <h4>数据结构列</h4>
+                <p>E代送隶属于易代送网络科技（北京）有限公司，基于共享经济模式，利用移动互联网LBS定位技术而搭建的同城即时短途配送服务平台。它将物流需求发起与骑士抢单响应的信息共享于手机终端，便捷地服务于平台商户和快送骑士，使供需双方的信息实现自主匹配，从而提高个人时间应用效率，创造巨大社会价值。</p>
+            </div>
+            <div class="right_ty">
+                <h4>调用介绍</h4>
+                <p>e代送系统API调用使用HTTP方式，即使用者可以按照一定格式拼装HTTP请求进行API调用。每个API提供正式环境和测试环境两个接口地址，接口地址如下：</p>
+                <p>正式环境：http://openapi.edaisong.com.cn</p>
+                <p>测试环境：http://edsapi.yitaoyun.net </p>
+            </div>
+            <div class="right_ty">
+                <h4>系统级别调用参数</h4>
+                <p style="text-indent:0em;">调用API需要传入系统参数和应用参数，其中应用参数根据具体的API具体入参，系统参数详细介绍如下：</p>
+                <table id="table" border="0" cellpadding="0" cellspacing="0" style="margin:0px;">
+                    <tr>
+                        <th>参数名称</th>
+                        <th>类型</th>
+                        <th>是否必须</th>
+                        <th>描述</th>
+                    </tr>
+                    <tr>
+                        <td>app_key</td>
+                        <td>string</td>
+                        <td>是</td>
+                        <td>AppKey,由e代送统一分配</td>
+                    </tr>
+                    <tr>
+                        <td>timestamp</td>
+                        <td>string</td>
+                        <td>是</td>
+                        <td>时间戳，格式为yyyy-mm-ddHH:mm:ss，例如：2015-03-11 13:52:03。</td>
+                    </tr>
+                    <tr>
+                        <td>v</td>
+                        <td>string</td>
+                        <td>是</td>
+                        <td>api版本号，目前可选1.0</td>
+                    </tr>
+                    <tr>
+                        <td>sign</td>
+                        <td>string</td>
+                        <td>是</td>
+                        <td>对API调用参数(除sign外)进行md5加密获得。详细参考如下所示</td>
+                    </tr>
+                </table>
+
+                <p style="text-indent:0em;">
+                    签名sign说明：<br />
+                    调用API 时需要对请求参数进行签名验证，e代送服务器也会对该请求参数进行是否合法验证。<br />
+                    验证方法如下：<br />
+                    根据参数名称（除sign及图片外）将涉及到验证的请求参数按照字母先后顺序排序:key + value .... key + value。<br />
+                    例如：将app_key=1,timestamp =2,v=3 排序为app_key=1,timestamp =2,v=3 ，参数名和参数值链接后，得到拼装字符串app_key1timestamp2v3。<br />
+                    将appSecret(密钥，由e代送统一分配)拼接到参数字符串头、尾进行md5加密后，再转化成大写，格式是：byte2hex(md5(appSecretapp_key1timestamp2v3appSecret))。<br />
+                    注：hex为自定义方法，JAVA中MD5是对字节数组加密，加密结果是16字节，我们需要的是32位的大写字符串。<br />
+                </p>
+
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div class="footer">
+            <p><img src="images/bottom.png" title="" alt="" /></p>
+            <p>京ICP备15014116号-1 Copyright©2011-2015易代送网络科技（北京）有限公司,All rights reserved.</p>
+        </div>
+</body>
+<script>
+    function countH() {
+        var Height = $('.box_right').height();
+        $(".box_left").css({
+            "height": Height
+        });
+    }
+    $(function () {
+        countH();
+    })
+</script>
+</html>	

@@ -35,6 +35,9 @@ using Ets.Model.DomainModel.GlobalConfig;
 using Ets.Service.Provider.Common;
 using Ets.Service.IProvider.Common;
 using Ets.Model.DataModel.Business;
+using Ets.Service.IProvider.DeliveryCompany;
+using Ets.Service.Provider.DeliveryCompany;
+
 namespace Ets.Service.Provider.Clienter
 {
     public class ClienterProvider : IClienterProvider
@@ -47,7 +50,7 @@ namespace Ets.Service.Provider.Clienter
         readonly BusinessDao businessDao = new BusinessDao();
         readonly BusinessClienterRelationDao businessClienterDao = new BusinessClienterRelationDao();
         readonly BusinessBalanceRecordDao businessBalanceRecordDao = new BusinessBalanceRecordDao();
-
+        readonly DeliveryCompanyProvider deliveryCompanyProvider = new DeliveryCompanyProvider();
         readonly IAreaProvider iAreaProvider = new AreaProvider();
         readonly IOrderOtherProvider iOrderOtherProvider = new OrderOtherProvider();
 
@@ -202,7 +205,12 @@ namespace Ets.Service.Provider.Clienter
                 {
                     return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential);
                 }
-                if (resultModel.IsBind == 1)
+                if (resultModel.DeliveryCompanyId > 0)
+                {
+                    resultModel.IsOnlyShowBussinessTask = 0;
+                    resultModel.IsBind = 0;
+                }
+                else if (resultModel.IsBind == 1)
                 {
                     resultModel.IsOnlyShowBussinessTask = IsOnlyShowBussinessTask(resultModel.userId);
                 }
@@ -301,6 +309,7 @@ namespace Ets.Service.Provider.Clienter
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.IncorrectCheckCode);
             var wuliuCode = string.IsNullOrWhiteSpace(model.recommendPhone) ? 0 : clienterDao.CheckRecommendPhone(model.recommendPhone);//获取物流公司编码
             model.DeliveryCompanyId = wuliuCode;
+
             if (!string.IsNullOrEmpty(model.recommendPhone) && (wuliuCode == -1))//如果推荐人手机号在B端C端都不存在提示信息 
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberNotExist);
             var clienter = ClientRegisterInfoModelTranslator.Instance.Translate(model);
@@ -325,7 +334,19 @@ namespace Ets.Service.Provider.Clienter
                 city = string.IsNullOrWhiteSpace(clienter.City) ? null : clienter.City.Trim(),  //城市
                 cityId = string.IsNullOrWhiteSpace(clienter.CityId) ? null : clienter.CityId.Trim()  //城市编码
             };
-
+            if (wuliuCode > 0)
+            {
+                var deliveryModel = deliveryCompanyProvider.GetById(model.DeliveryCompanyId);
+                resultModel.DeliveryCompanyId = deliveryModel.Id;
+                resultModel.DeliveryCompanyName = deliveryModel.DeliveryCompanyName;
+                resultModel.IsDisplay = deliveryModel.IsDisplay;
+            }
+            else
+            {
+                resultModel.DeliveryCompanyId = 0;
+                resultModel.DeliveryCompanyName = "";
+                resultModel.IsDisplay = 1;
+            }
             if (id > 0)
             {
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.Success, resultModel);
