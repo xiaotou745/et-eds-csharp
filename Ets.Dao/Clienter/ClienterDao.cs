@@ -143,11 +143,11 @@ namespace Ets.Dao.Clienter
 
             ClienterLoginResultModel model = null;
             const string querysql = @"select  c.Id as userId ,
-        c.PhoneNo ,
-        c.[Status] ,
+        c.phoneNo ,
+        c.[status] ,
         c.AccountBalance as Amount ,
-        c.City ,
-        c.CityId ,
+        c.city ,
+        c.cityId ,
         c.IsBind ,
         ISNULL(d.Id,0) as DeliveryCompanyId,
         isnull(d.DeliveryCompanyName,'') DeliveryCompanyName,
@@ -553,8 +553,8 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.FromClienter, OrderConst.O
         public ClienterStatusModel GetUserStatus(int userId)
         {
             string sql = @" select  c.Id as userid ,
-        c.[Status] ,
-        c.PhoneNo ,
+        c.[status] ,
+        c.phoneno ,
         c.AccountBalance as amount ,
         c.IsBind,
         ISNULL(d.Id,0) as DeliveryCompanyId,
