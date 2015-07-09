@@ -128,7 +128,8 @@ update  dbo.DeliveryCompany
  set     DeliveryCompanyName = @DeliveryCompanyName ,
         IsEnable = @IsEnable ,
         SettleType = @SettleType ,
-        ModifyName = @ModifyName");
+        ModifyName = @ModifyName ,
+        ModifyTime = getdate() ");
 
             if (deliveryCompanyModel.SettleType == 1)
             {

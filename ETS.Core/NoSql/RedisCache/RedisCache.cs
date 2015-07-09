@@ -104,6 +104,21 @@ namespace ETS.NoSql.RedisCache
             }
         }
 
+        public void Add(string key, object value, TimeSpan timeSpan)
+        {
+            using (IRedisClient Redis = RedisManager.GetClient())
+            {
+                if (Redis.ContainsKey(key))
+                {
+                    Redis.Set<byte[]>(key, new ObjectSerializer().Serialize(value), timeSpan);
+                }
+                else
+                {
+                    Redis.Add<byte[]>(key, new ObjectSerializer().Serialize(value), timeSpan);
+                }
+            }
+        }
+
         public void AddList(string listId, object value, DateTime expiredTime)
         {
             using (IRedisClient Redis = RedisManager.GetClient())
