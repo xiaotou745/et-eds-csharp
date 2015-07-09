@@ -149,7 +149,7 @@ namespace Ets.Dao.Clienter
         c.City ,
         c.CityId ,
         c.IsBind ,
-        d.Id as DeliveryCompanyId,
+        ISNULL(d.Id,0) as DeliveryCompanyId,
         isnull(d.DeliveryCompanyName,'') DeliveryCompanyName,
         isnull(d.IsDisplay,1) IsDisplay
 from    dbo.clienter c(nolock)
@@ -557,7 +557,7 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.FromClienter, OrderConst.O
         c.PhoneNo ,
         c.AccountBalance as amount ,
         c.IsBind,
-        d.Id as DeliveryCompanyId,
+        ISNULL(d.Id,0) as DeliveryCompanyId,
         isnull(d.DeliveryCompanyName,'') DeliveryCompanyName,
         isnull(d.IsDisplay,1) IsDisplay
 from    dbo.clienter c ( nolock )
