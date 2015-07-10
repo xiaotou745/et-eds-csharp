@@ -38,7 +38,7 @@ namespace SuperManWebApi.Providers
             string saveDbFilePath;
             string saveDir = "";
             string basePath = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.GetPhysicalPath(orderId,
-                UserType.Business);
+                userType);
             if (orderId > 0)
             {
                 saveDir = orderId.ToString();
