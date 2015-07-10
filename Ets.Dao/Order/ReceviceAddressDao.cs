@@ -77,7 +77,7 @@ SELECT  ODataNew.PhoneNo ,
         CASE WHEN ODataNew.PubDate != RA2.PubDate THEN 1 ELSE 0 END AS Falg
 INTO    #TempAdress
 FROM    ( SELECT    OData.RecevicePhoneNo AS PhoneNo ,
-                    OData.ReceviceAddress AS [Address] ,
+                    ISNULL(OData.ReceviceAddress,'') AS [Address] ,
                     OData.BusinessId ,
                     OData.PubDate
           FROM      ( SELECT    RecevicePhoneNo ,
@@ -93,7 +93,7 @@ FROM    ( SELECT    OData.RecevicePhoneNo AS PhoneNo ,
                     ) AS OData
                     LEFT JOIN dbo.ReceviceAddress RA ( NOLOCK ) ON OData.businessId = RA.BusinessId
                                                               AND OData.RecevicePhoneNo = RA.PhoneNo
-                                                              AND OData.ReceviceAddress = RA.[ADDRESS]
+                                                              AND ISNULL(OData.ReceviceAddress,'') = RA.[ADDRESS]
                                                               AND OData.PubDate = RA.PubDate
           WHERE     RA.id IS NULL
         ) AS ODataNew
