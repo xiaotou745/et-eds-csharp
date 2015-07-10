@@ -1,6 +1,6 @@
 ﻿@model Ets.Model.DomainModel.Business.BusinessDetailModel
 @{
-    Layout = "~/Views/Shared/_LayoutNew.cshtml";    
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
     var busiThirdRelationList = ViewBag.businessThirdRelation as IList<BusinessThirdRelationModel>;
     var puth = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.RelativePath;
     var PicHost = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PicHost;
@@ -35,7 +35,7 @@
             </div>
             <div class="control-group">
                 <label>商铺名称：</label>
-                <input name="busiName" id="busiName" type="text" value="@Model.Name" >
+                <input name="busiName" id="busiName" type="text" value="@Model.Name">
                 <input name="busiId" id="busiId" type="hidden" value="@Model.Id">
             </div>
             <div class="control-group">
@@ -48,7 +48,7 @@
             </div>
             <div class="control-group">
                 <label style="margin-left: 5px">配  送  费：</label>
-                <input name="busiWaisong" id="busiWaisong" type="text" value="@Model.DistribSubsidy" >
+                <input name="busiWaisong" id="busiWaisong" type="text" value="@Model.DistribSubsidy">
             </div>
             <div class="control-group">
                 <label style="margin-left: 20px">城  市：</label>
@@ -94,7 +94,7 @@
             <div class="control-group" style="margin-left:27px">
                 <label id="labGlobalConfig" style="margin-left: 48px">@ViewBag.subsidyConfig</label>
             </div>
-            <div class="control-group" >
+            <div class="control-group">
                 <label style="margin-left:74px">补贴策略：</label>
                 @Html.DropDownList("businessGroupID", new SelectList(new BusinessGroupProvider().GetBusinessGroupList(), "Id", "Name", @Model.BusinessGroupId), new { @class = "selectw", style = "width:143px" })
             </div>
@@ -108,15 +108,15 @@
             <div class="control-group">
                 <label style="margin-left: 73px">一键发单：</label>
                 <input id="rOneKeyPubOrderY" name="rOneKeyPubOrder" type="radio" value="1" @(Model.OneKeyPubOrder == 1 ? "checked" : "")>
-                <label >是</label>
+                <label>是</label>
                 <input id="rOneKeyPubOrderN" name="rOneKeyPubOrder" type="radio" value="0" style="margin-left: 30px" @(Model.OneKeyPubOrder == 0 ? "checked" : "")>
-                <label >否</label>
+                <label>否</label>
             </div>
             <div class="control-group">
                 <label style="margin-left: 48px">余额可以透支：</label>
-                <input id="rBbalanceAllowOverDraftY" name="rBalanceAllowOverDraft" type="radio" value="1" @(Model.IsAllowOverdraft == 1?"checked":"")>
-                <label >是</label>
-                <input id="rBbalanceAllowOverDraftN" name="rBalanceAllowOverDraft" type="radio" value="0" style="margin-left: 30px" @(Model.IsAllowOverdraft == 0 ? "checked" : "") >
+                <input id="rBbalanceAllowOverDraftY" name="rBalanceAllowOverDraft" type="radio" value="1" @(Model.IsAllowOverdraft == 1 ? "checked" : "")>
+                <label>是</label>
+                <input id="rBbalanceAllowOverDraftN" name="rBalanceAllowOverDraft" type="radio" value="0" style="margin-left: 30px" @(Model.IsAllowOverdraft == 0 ? "checked" : "")>
                 <label>否</label>
             </div>
             <div class="control-group">
@@ -166,17 +166,17 @@
                     </div>
                 </div>*@
         </div>
-        
-        
+
+
 
         @*<div style="width:750px;height: auto;border-bottom:solid 1px #dcdcdc;padding-left:10px;">
-         </div>*@
+            </div>*@
         @*<div class="SearchMd">
-            <div style="margin-left: 100px;float: left"><input type="button" value="保存" class="searchBtn" id="btnModifyCommit" /></div>
-            <div style="margin-left: 180px;float: left"><input type="button" value="返回" class="searchBtn" id="btnReturn" /></div>
-            <br />
-        </div>*@
-        
+                <div style="margin-left: 100px;float: left"><input type="button" value="保存" class="searchBtn" id="btnModifyCommit" /></div>
+                <div style="margin-left: 180px;float: left"><input type="button" value="返回" class="searchBtn" id="btnReturn" /></div>
+                <br />
+            </div>*@
+
         <div style="width:750px;height:auto;overflow:auto;margin-top:10px;border-bottom:solid 1px #dcdcdc;" id="divDeliveryCompany">
             <div style="float: left">
                 <label>绑定配送公司：</label>
@@ -220,38 +220,38 @@
     </div>
     @{
         var originSize = "_0_0";
-        var bigFileName = "/nopic.jpg";
-        var bigFileNameb = "/nopic.jpg";
-        var checkPicUrl = "/nopic.jpg";
-        var businessLicensePic = "/nopic.jpg";
+        var bigFileName = puth + "/nopic.jpg";
+        var bigFileNameb = puth + "/nopic.jpg";
+        var checkPicUrl = puth + "/nopic.jpg";
+        var businessLicensePic = puth + "/nopic.jpg";
         if (!string.IsNullOrWhiteSpace(Model.CheckPicUrl))
         {
             var fileLastDot = Model.CheckPicUrl.LastIndexOf('.');
             var fileHandHouZhui = Model.CheckPicUrl.Substring(fileLastDot, Model.CheckPicUrl.Length - fileLastDot);
-            bigFileName = Model.CheckPicUrl.Substring(0, fileLastDot) + originSize + fileHandHouZhui;
-            checkPicUrl = Model.CheckPicUrl;
+            bigFileName = puth + "/" + ConfigSettings.Instance.FileUploadFolderNameBusiness + Model.CheckPicUrl.Substring(0, fileLastDot) + originSize + fileHandHouZhui;
+            checkPicUrl = puth + "/" + ConfigSettings.Instance.FileUploadFolderNameBusiness + Model.CheckPicUrl;
         }
         if (!string.IsNullOrWhiteSpace(Model.BusinessLicensePic))
         {
             var fileLastDotb = Model.BusinessLicensePic.LastIndexOf('.');
             var fileHandHouZhuib = Model.BusinessLicensePic.Substring(fileLastDotb, Model.BusinessLicensePic.Length - fileLastDotb);
-            bigFileNameb = Model.BusinessLicensePic.Substring(0, fileLastDotb) + originSize + fileHandHouZhuib;
-            businessLicensePic = Model.BusinessLicensePic;
+            bigFileNameb = puth + "/" + ConfigSettings.Instance.FileUploadFolderNameBusiness + Model.BusinessLicensePic.Substring(0, fileLastDotb) + originSize + fileHandHouZhuib;
+            businessLicensePic = puth + "/" + ConfigSettings.Instance.FileUploadFolderNameBusiness + Model.BusinessLicensePic;
         }
 
     }
     <div id="right" style="float: left;width: 250px;height: auto;">
         <div id="BusiImage" style="width: 250px;margin-left: 20px">
             <div style="width: 200px;height:200px">
-                <img id="showBusiImage" src="@PicHost@puth@checkPicUrl" width="200px" height="200px" />
+                <img id="showBusiImage" src="@PicHost@checkPicUrl" width="200px" height="200px" />
             </div>
-            店主手持身份证照片<a id="showBigBusiImage" href="@PicHost@puth@bigFileName" target="_blank" style="margin-left: 15px">查看大图</a>
+            店主手持身份证照片<a id="showBigBusiImage" href="@PicHost@bigFileName" target="_blank" style="margin-left: 15px">查看大图</a>
         </div>
         <div id="BusinessLicensePic" style="width: 250px;margin-left: 20px">
             <div style="width: 200px;height:200px">
-                <img id="showBusiImage" src="@PicHost@puth@businessLicensePic" width="200px" height="200px" />
+                <img id="showBusiImage" src="@PicHost@businessLicensePic" width="200px" height="200px" />
             </div>
-            营业执照（或卫生许可证）<a id="showBigBusinessLicensePic" href="@PicHost@puth@bigFileNameb" target="_blank">查看大图</a>
+            营业执照（或卫生许可证）<a id="showBigBusinessLicensePic" href="@PicHost@bigFileNameb" target="_blank">查看大图</a>
         </div>
     </div>
     <div style="clear: both"></div>
@@ -319,7 +319,7 @@
     $("#btnAddThird").click(function () {
         funAddThirdRelation();
     });
-    
+
     function funcCheckExpress(businessId) {
         var businessExpressRef;
         var paramaters = { "businessId": businessId };
@@ -455,7 +455,7 @@
         var hidGroupId = $('#hidGroupId').val();
         var oneKeyPubOrder = $('input[name="rOneKeyPubOrder"]:checked').val();
         var IsEmployerTask = $('input[name="rIsEmployerTask"]:checked').val();
-        
+
         var isAllowOverdraft = $('input[name="rBalanceAllowOverDraft"]:checked').val();
         if (hidGroupId == 0) {
             groupId = $('#busGroupId').val();
@@ -543,7 +543,7 @@
         var paramaters = {
             "Id": id, "Name": name, "Landline": landline, "PhoneNo2": phoneNo2, "DistribSubsidy": distribSubsidy, "CityId": cityId, "districtId": districtId, "City": cityName,
             "district": districtName, "Address": adress, "Latitude": latitude, "Longitude": longitude, "CommissionType": commissionType, "BusinessCommission": commissionText,
-            "CommissionFixValue": commissionFixValue, "BusinessGroupId": businessGroupId, "MealsSettleMode": mealsSettleMode, "groupId": groupId, "originalBusiId": originalBusiId, "oneKeyPubOrder": oneKeyPubOrder,"IsEmployerTask":IsEmployerTask, "isAllowOverdraft": isAllowOverdraft
+            "CommissionFixValue": commissionFixValue, "BusinessGroupId": businessGroupId, "MealsSettleMode": mealsSettleMode, "groupId": groupId, "originalBusiId": originalBusiId, "oneKeyPubOrder": oneKeyPubOrder, "IsEmployerTask": IsEmployerTask, "isAllowOverdraft": isAllowOverdraft
         };
         var url = "/BusinessManager/ModifyBusinessDetail";
         $.ajax({
