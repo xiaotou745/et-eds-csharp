@@ -103,16 +103,16 @@ select @@IDENTITY ";
             dbParameters.Add("@IsDisplay", DbType.Int16).Value = deliveryCompanyModel.IsDisplay;
             if (deliveryCompanyModel.SettleType == 1)
             {
-                dbParameters.Add("@ClienterSettleRatio", DbType.Decimal).Value = deliveryCompanyModel.ClienterSettleRatio;
-                dbParameters.Add("@DeliveryCompanyRatio", DbType.Decimal).Value = deliveryCompanyModel.DeliveryCompanyRatio;
+                dbParameters.Add("@ClienterSettleRatio", DbType.Decimal).Value = deliveryCompanyModel.ClienterSettle;
+                dbParameters.Add("@DeliveryCompanyRatio", DbType.Decimal).Value = deliveryCompanyModel.DeliveryCompanySettle;
 
                 dbParameters.Add("@ClienterFixMoney", DbType.Decimal).Value = 0;
                 dbParameters.Add("@DeliveryCompanySettleMoney", DbType.Decimal).Value = 0;
             }
             else
             {
-                dbParameters.Add("@ClienterFixMoney", DbType.Decimal).Value = deliveryCompanyModel.ClienterFixMoney;
-                dbParameters.Add("@DeliveryCompanySettleMoney", DbType.Decimal).Value = deliveryCompanyModel.DeliveryCompanySettleMoney;
+                dbParameters.Add("@ClienterFixMoney", DbType.Decimal).Value = deliveryCompanyModel.ClienterSettle;
+                dbParameters.Add("@DeliveryCompanySettleMoney", DbType.Decimal).Value = deliveryCompanyModel.DeliveryCompanySettle;
 
                 dbParameters.Add("@ClienterSettleRatio", DbType.Decimal).Value = 0;
                 dbParameters.Add("@DeliveryCompanyRatio", DbType.Decimal).Value = 0;
@@ -155,19 +155,19 @@ update  dbo.DeliveryCompany
             dbParameters.Add("@IsEnable", DbType.Int16).Value = deliveryCompanyModel.IsEnable;
             if (deliveryCompanyModel.SettleType == 1)
             {
-                dbParameters.Add("@ClienterSettleRatio", DbType.Decimal).Value = deliveryCompanyModel.ClienterSettleRatio;
-                dbParameters.Add("@DeliveryCompanyRatio", DbType.Decimal).Value = deliveryCompanyModel.DeliveryCompanyRatio;
+                dbParameters.Add("@ClienterSettleRatio", DbType.Decimal).Value = deliveryCompanyModel.ClienterSettle;
+                dbParameters.Add("@DeliveryCompanyRatio", DbType.Decimal).Value = deliveryCompanyModel.DeliveryCompanySettle;
 
-                dbParameters.Add("@ClienterFixMoney", DbType.Decimal).Value = 0;
-                dbParameters.Add("@DeliveryCompanySettleMoney", DbType.Decimal).Value = 0;
+                //dbParameters.Add("@ClienterFixMoney", DbType.Decimal).Value = 0;
+                //dbParameters.Add("@DeliveryCompanySettleMoney", DbType.Decimal).Value = 0;
             }
             else
             {
-                dbParameters.Add("@ClienterFixMoney", DbType.Decimal).Value = deliveryCompanyModel.ClienterFixMoney;
-                dbParameters.Add("@DeliveryCompanySettleMoney", DbType.Decimal).Value = deliveryCompanyModel.DeliveryCompanySettleMoney;
+                dbParameters.Add("@ClienterFixMoney", DbType.Decimal).Value = deliveryCompanyModel.ClienterSettle;
+                dbParameters.Add("@DeliveryCompanySettleMoney", DbType.Decimal).Value = deliveryCompanyModel.DeliveryCompanySettle;
 
-                dbParameters.Add("@ClienterSettleRatio", DbType.Decimal).Value = 0;
-                dbParameters.Add("@DeliveryCompanyRatio", DbType.Decimal).Value = 0;
+                //dbParameters.Add("@ClienterSettleRatio", DbType.Decimal).Value = 0;
+                //dbParameters.Add("@DeliveryCompanyRatio", DbType.Decimal).Value = 0;
             }
             dbParameters.Add("@ModifyName", DbType.String).Value = deliveryCompanyModel.ModifyName;
             return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, upSql.ToString(), dbParameters));

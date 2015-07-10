@@ -12,6 +12,7 @@ using Ets.Model.DataModel.Common;
 using Ets.Model.ParameterModel.Common;
 using Ets.Service.IProvider.Common;
 using ETS.Util;
+using ETS;
 
 namespace Ets.Service.Provider.Common
 {
@@ -69,16 +70,18 @@ namespace Ets.Service.Provider.Common
         public IList<ExportSqlManage> QueryForWindows(DataManageSearchCriteria search)
         {
             IList<ExportSqlManage> results = exportSqlManageDao.QueryForWindows(search);
-            //string urlPath = "E:\\Export\\" + DateTime.Now.ToString("yyyyMMdd") + "\\";
             string urlPath = ETS.Config.ConfigKey("ExportPath").TrimEnd('\\') + "\\" + DateTime.Now.ToString("yyyyMMdd") + "\\";
             if (!System.IO.Directory.Exists(urlPath))
             {
                 System.IO.Directory.CreateDirectory(urlPath);
             }
+            string fileName = DateTime.Now.ToString("yyyyMMdd");
+            string EmailSendTo = Config.ConfigKey("EmailSendTo");
             foreach (var temp in results)
             {
                 //判断今天是否已经导出过该文件
-                if (System.IO.File.Exists(urlPath + temp.Name + DateTime.Now.ToString("yyyyMMdd") + ".xls"))
+                string fullFileName = urlPath + temp.Name + fileName + ".xls";
+                if (System.IO.File.Exists(fullFileName))
                 {
                     continue;
                 }
@@ -89,11 +92,10 @@ namespace Ets.Service.Provider.Common
                         DataTable dt = exportSqlManageDao.ExecuteForExport(temp.SqlText);
                         if (dt != null)
                         {
-                            if (Excel.OutputXLSFromDataTable(null, dt,
-                                urlPath + temp.Name + DateTime.Now.ToString("yyyyMMdd") + ".xls"))
+                            if (Excel.OutputXLSFromDataTable(null, dt, fullFileName))
                             {
-                                EmailHelper.SendEmailTo("", temp.ReceiveEmail, "数据", "edsdev@etaostars.com", false,
-                                    attachName: urlPath + temp.Name + DateTime.Now.ToString("yyyyMMdd") + ".xls", displayName: "导出数据");
+                                EmailHelper.SendEmailTo("", temp.ReceiveEmail, temp.Name + fileName, EmailSendTo, false,
+                                    attachName: fullFileName, displayName: "导出数据");
                             }
                         }
                     }

@@ -19,7 +19,6 @@ namespace Ets.ExportData
         private Quartz.IScheduler scheduler;
         public ExportDataService()
         {
-            Thread.Sleep(5000);
             try
             {
                 InitializeComponent();
