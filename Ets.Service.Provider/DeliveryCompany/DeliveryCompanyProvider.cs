@@ -18,6 +18,7 @@ using Ets.Service.IProvider.DeliveryCompany;
 using ETS.Data;
 using ETS.Data.PageData;
 using ETS.Enums;
+using ETS.Util;
 
 namespace Ets.Service.Provider.DeliveryCompany
 {
@@ -58,7 +59,7 @@ namespace Ets.Service.Provider.DeliveryCompany
                     int id = clienterDao.DeliveryCompanyInsertClienter(new clienter()
                     {
                         PhoneNo = temp.Phone, //真实姓名
-                        Password = temp.Phone, //手机号
+                        Password =  MD5Helper.MD5(temp.Phone), //手机号
                         TrueName = temp.Name, //真实姓名
                         IDCard = temp.IdCard, //身份证号
                         Status = (byte)ClienteStatus.Status2.GetHashCode(),
