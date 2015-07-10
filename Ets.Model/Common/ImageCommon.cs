@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ETS.Enums;
+using ETS.Extension;
+using ETS.Util;
 
 namespace Ets.Model.Common
 {
@@ -27,11 +31,34 @@ namespace Ets.Model.Common
         //    return listReceiptPic;
         //}
 
+        /// <summary>
+        /// 小票获取地址
+        /// 窦海超
+        /// </summary>
+        /// <param name="receiptPic"></param>
+        /// <returns></returns>
         public static string ReceiptPicConvert(string receiptPic)
         {
             return ETS.Util.ConfigSettings.Instance.PicHost +
                             Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.RelativePath +
                             receiptPic;
+        }
+
+        /// <summary>
+        /// 骑士商家获取地址
+        /// 彭宜   20150710
+        /// </summary>
+        /// <param name="imagePic"></param>
+        /// <param name="userType"></param>
+        /// <returns></returns>
+        public static string GetUserImage(string imagePic,UserType userType)
+        {
+            string picFolderName = userType == UserType.Business
+                                                                            ? ConfigSettings.Instance.FileUploadFolderNameBusiness
+                                                                            : ConfigSettings.Instance.FileUploadFolderNameClienter;
+            return ETS.Util.ConfigSettings.Instance.PicHost +
+                            Path.Combine("/", Path.GetFileName(ConfigSettings.Instance.FileUploadPath), ParameterModel.Clienter.CustomerIconUploader.Instance.FolderName, picFolderName).ToForwardSlashPath() +
+                            imagePic;
         }
 
         public static List<string> GetListImgString(string receiptPic)

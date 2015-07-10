@@ -1619,14 +1619,14 @@ where Id=@Id";
                 }
                 else
                 {
-                    CheckPicUrl = Ets.Model.Common.ImageCommon.ReceiptPicConvert(CheckPicUrl);
+                    CheckPicUrl = Ets.Model.Common.ImageCommon.GetUserImage(CheckPicUrl, UserType.Business);
                 }
                 #endregion
 
                 result.CheckPicUrl = CheckPicUrl;
                 result.BusinessLicensePic = string.IsNullOrEmpty(Convert.ToString(dataReader["BusinessLicensePic"])) ?
                     string.Empty :
-                    Ets.Model.Common.ImageCommon.ReceiptPicConvert(dataReader["BusinessLicensePic"].ToString());
+                    Ets.Model.Common.ImageCommon.GetUserImage(dataReader["BusinessLicensePic"].ToString(), UserType.Business);
                 result.IDCard = dataReader["IDCard"].ToString();
                 result.Address = dataReader["Address"].ToString();
                 result.Landline = dataReader["Landline"].ToString();
