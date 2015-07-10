@@ -30,7 +30,6 @@ namespace Ets.UpdateBCPic
     public class UpdateBCPicBLL
     {
         private Logger logger = LogManager.GetCurrentClassLogger();
-        private static readonly int PAGET_SIZE = int.Parse(ConfigurationManager.AppSettings["PageSize"]);
 
         private static readonly string BusinessBasePath =
             Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.BusinessPicPhysicalPath;
