@@ -74,7 +74,7 @@
         var deliverySettlement = $("#deliverySettlement").val();
         var deliveryCompanyId = $("#deliveryCompanyId").val();
         var deliveryCompanyOldName = $("#deliveryCompanyOldName").val();
-        if (deliveryCompanyName == null || deliveryCompanyName == "") {
+        if ( deliveryCompanyName == "") {
             alert("配送公司名称为空!");
             return;
         }
@@ -82,7 +82,7 @@
         var settleType = $('input[name="rDeliveryCheck"]:checked').val();
         var isEnable = $('input[name="rDeliveryIsEnableCheck"]:checked').val();
 
-        if (clienterSettlement == null || clienterSettlement == "" || deliverySettlement == null || deliverySettlement == "") {
+        if (clienterSettlement == "" || deliverySettlement == "") {
             alert("骑士结算和配送公司结算必须填写!");
             return;
         }

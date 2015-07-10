@@ -67,15 +67,14 @@
             <div class="control-group">
                 <label>骑士结算：</label>
 
-                <input name="clienterSettlementFix" id="clienterSettlementFix" style="display: none" type="text" />
-                <input name="clienterSettlementRatio" id="clienterSettlementRatio" type="text" />
+                <input name="clienterSettlement" id="clienterSettlement" type="text" /> 
                 <label id="lblClienterSettlement">%</label>
 
             </div>
             <div class="control-group">
                 <label>配送公司结算：</label>
-                <input name="deliverySettlementFix" id="deliverySettlementFix" style="display: none" type="text" />
-                <input name="deliverySettlementRatio" id="deliverySettlementRatio" type="text" />
+                <input name="deliverySettlement" id="deliverySettlement" type="text" />
+              
                 <label id="lblDeliverySettlement">%</label>
             </div>
         </fieldset>
@@ -96,10 +95,8 @@
     }
     $("#btnAddDelivery").click(function () {
         var deliveryCompanyName = $("#deliveryCompanyName").val();
-        var clienterSettlementFix = $("#clienterSettlementFix").val();
-        var clienterSettlementRatio = $("#clienterSettlementRatio").val();
-        var deliverySettlementFix = $("#deliverySettlementFix").val();
-        var deliverySettlementRatio = $("#deliverySettlementRatio").val();
+        var clienterSettlement = $("#clienterSettlement").val();
+        var deliverySettlement = $("#deliverySettlement").val();
         var deliveryCode = $("#deliveryCompanyCode").val();
         if (deliveryCompanyName == null || deliveryCompanyName == "") {
             alert("配送公司名称!");
@@ -107,34 +104,19 @@
         }
         var decimalFormat = /^[0-9]*(\.[0-9]{1,2})?$/;
         var settleType = $('input[name="rDeliveryCheck"]:checked').val();
-        if (settleType == 1) {
-            if (clienterSettlementRatio == null || clienterSettlementRatio == "" || deliverySettlementRatio == null || deliverySettlementRatio == "") {
-                alert("骑士结算和配送公司结算必须填写!");
-                return;
-            }
-            if (!decimalFormat.test(clienterSettlementRatio)) {
-                alert("请输入正确的骑士结算金额！");
-                return;
-            }
-            if (!decimalFormat.test(deliverySettlementRatio)) {
-                alert("请输入正确的配送公司金额！");
-                return;
-            }
-        } else {
-            if (clienterSettlementFix == null || clienterSettlementFix == "" || deliverySettlementFix == null || deliverySettlementFix == "") {
-                alert("骑士结算和配送公司结算必须填写!");
-                return;
-            }
-            if (!decimalFormat.test(clienterSettlementFix)) {
-                alert("请输入正确的骑士结算金额！");
-                return;
-            }
-            if (!decimalFormat.test(deliverySettlementFix)) {
-                alert("请输入正确的配送公司金额！");
-                return;
-            }
+        if (clienterSettlement == "" || deliverySettlement == "") {
+            alert("骑士结算和配送公司结算必须填写!");
+            return;
         }
-        var paramaters = { "SettleType": settleType, "DeliveryCompanyName": deliveryCompanyName, "DeliveryCompanyCode": deliveryCode, "ClienterFixMoney": clienterSettlementFix, "ClienterSettleRatio": clienterSettlementRatio, "DeliveryCompanySettleMoney": deliverySettlementFix, "DeliveryCompanyRatio": deliverySettlementRatio };
+        if (!decimalFormat.test(clienterSettlement)) {
+            alert("请输入正确的骑士结算金额！");
+            return;
+        }
+        if (!decimalFormat.test(clienterSettlement)) {
+            alert("请输入正确的配送公司金额！");
+            return;
+        }
+        var paramaters = { "SettleType": settleType, "DeliveryCompanyName": deliveryCompanyName, "DeliveryCompanyCode": deliveryCode, "ClienterSettle": clienterSettlement, "DeliveryCompanySettle": deliverySettlement };
         var url = "/DeliveryCompany/AddDeliveryCompany";
         $.ajax({
             type: 'POST',
@@ -153,24 +135,9 @@
     $('input[name="rDeliveryCheck"]').click(function () {
         var a = $('input[name="rDeliveryCheck"]:checked').val();
         if (a == 1) {  //结算比例
-            $("#clienterSettlementFix").val('');
-            $("#deliverySettlementFix").val('');
-
-            $("#clienterSettlementFix").hide();
-            $("#deliverySettlementFix").hide();
-
-            $("#clienterSettlementRatio").show();
-            $("#deliverySettlementRatio").show();
             $("#lblClienterSettlement").html("%");
             $("#lblDeliverySettlement").html("%");
         } else {
-            $("#clienterSettlementRatio").show();
-            $("#deliverySettlementRatio").show();
-
-            $("#clienterSettlementFix").val('');
-            $("#deliverySettlementFix").val('');
-            $("#clienterSettlementFix").hide();
-            $("#deliverySettlementFix").hide();
             $("#lblClienterSettlement").html("元/单");
             $("#lblDeliverySettlement").html("元/单");
         }
