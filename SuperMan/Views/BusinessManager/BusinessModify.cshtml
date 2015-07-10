@@ -335,7 +335,12 @@
         });
         if (businessExpressRef.length > 0) {
             for (var i = 0; i < businessExpressRef.length; i++) {
-                $(":checkbox[id='" + businessExpressRef[i].Id + "']").prop("checked", true);
+                if (businessExpressRef[i].IsEnable == 1) {
+                    $(":checkbox[id='" + businessExpressRef[i].ExpressId + "']").prop("checked", true);
+                } else {
+                    $(":checkbox[id='" + businessExpressRef[i].ExpressId + "']").prop("checked", false);
+                }
+                
             }
         }
     };

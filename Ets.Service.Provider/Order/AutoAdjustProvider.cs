@@ -1,4 +1,5 @@
-﻿using Ets.Dao.Order;
+﻿using Ets.Dao.GlobalConfig;
+using Ets.Dao.Order;
 using Ets.Model.Common;
 using Ets.Model.DomainModel.Order;
 using Ets.Service.IProvider.Order;
@@ -24,7 +25,8 @@ namespace Ets.Service.Provider.Order
         public void AdjustOrderService()
         {
             //ETS.Util.Log.WriteTextToFile("执行补贴任务", ETS.Config.ConfigKey("LogPath"));
-            string globalConfigModel = Ets.Dao.GlobalConfig.GlobalConfigDao.GlobalConfigGet(0).TimeSubsidies;
+            //string globalConfigModel = Ets.Dao.GlobalConfig.GlobalConfigDao.GlobalConfigGet(0).TimeSubsidies;
+            string globalConfigModel = new GlobalConfigDao().GlobalConfigMethod(0).TimeSubsidies;
             if (string.IsNullOrEmpty(globalConfigModel))
             {
                 return;

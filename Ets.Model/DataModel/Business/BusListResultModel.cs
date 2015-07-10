@@ -74,5 +74,9 @@ namespace Ets.Model.DataModel.Business
         /// 是否一键发单
         /// </summary>
         public int OneKeyPubOrder { get; set; }
+        /// <summary>
+        /// 推荐人手机
+        /// </summary>
+        public string RecommendPhone { get; set; }
     }
 }

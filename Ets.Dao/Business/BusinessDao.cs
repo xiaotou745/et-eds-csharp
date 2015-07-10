@@ -375,7 +375,8 @@ and a.PhoneNo=@PhoneNo";
                                     ,bg.Name BusinessGroupName
                                     ,ISNULL(b.MealsSettleMode,0) MealsSettleMode
                                     ,ISNULL(b.BalancePrice,0) BalancePrice
-                                    ,ISNULL(b.AllowWithdrawPrice,0) AllowWithdrawPrice";
+                                    ,ISNULL(b.AllowWithdrawPrice,0) AllowWithdrawPrice
+                                    ,ISNULL(b.RecommendPhone,'') as RecommendPhone";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrWhiteSpace(criteria.RecommendPhone))
             {
