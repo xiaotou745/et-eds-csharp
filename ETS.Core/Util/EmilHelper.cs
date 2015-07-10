@@ -51,7 +51,7 @@ namespace ETS.Util
         /// <param name="isBodyHtml">邮件格式</param>
         /// <param name="throwOnError">当发送邮件过程中出现异常，是否抛出异常。</param>
         /// <param name="displayName">显示的名称</param>
-        public static bool SendEmailTo(string body, string emailAddress, string title, string copyto, bool isBodyHtml, Stream stream = null, bool throwOnError = false, string displayName = "e代送项目预警", string attachName = "附件.xls")
+        public static bool SendEmailTo(string body, string emailAddress, string title, string copyto, bool isBodyHtml, Stream stream = null, bool throwOnError = false, string displayName = "e代送项目预警", string attachName = "")
         {
 
             try
@@ -92,9 +92,14 @@ namespace ETS.Util
                 if (!string.IsNullOrEmpty(copyto)) mail.CC.Add(copyto);
                 //附件
 
-                if (stream != null)
+                //if (stream != null)
+                //{
+                //    mail.Attachments.Add(new Attachment(stream, attachName));
+                //}
+
+                if (!string.IsNullOrEmpty(attachName))
                 {
-                    mail.Attachments.Add(new Attachment(stream, attachName));
+                    mail.Attachments.Add(new Attachment(attachName));
                 }
              
                 // 回复至
