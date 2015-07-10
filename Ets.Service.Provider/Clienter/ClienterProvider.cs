@@ -1380,12 +1380,12 @@ namespace Ets.Service.Provider.Clienter
             {
                 return true;
             }
-            ClienterDetailModel clienter = clienterDao.GetClienterDetailById(myOrderInfo.clienterId.ToString());
-            BusinessModel bussinessDetail = businessDao.GetById(myOrderInfo.businessId);
-            if (clienter.PhoneNo == bussinessDetail.PhoneNo)
-            {
-                return true;
-            }
+            //ClienterDetailModel clienter = clienterDao.GetClienterDetailById(myOrderInfo.clienterId.ToString());
+            //BusinessModel bussinessDetail = businessDao.GetById(myOrderInfo.businessId);
+            //if (clienter.PhoneNo == bussinessDetail.PhoneNo)
+            //{
+            //    return true;
+            //}
             return false;
         }
 
