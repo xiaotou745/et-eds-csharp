@@ -1503,7 +1503,8 @@ select top 1
         ISNULL(oo.HadUploadCount,0) HadUploadCount,
         o.SettleMoney,
         o.IsPay,   
-        o.ActualDoneDate
+        o.ActualDoneDate,
+        oo.GrabTime
 from    [order] o with ( nolock )
         join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
         join dbo.business b with ( nolock ) on o.businessId = b.Id
