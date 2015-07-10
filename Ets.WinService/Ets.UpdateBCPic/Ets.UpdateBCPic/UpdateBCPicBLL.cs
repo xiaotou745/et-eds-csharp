@@ -68,18 +68,32 @@ namespace Ets.UpdateBCPic
                 if (!string.IsNullOrEmpty(record.CheckPicUrl))
                 {
                     var sourcePath = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath + record.CheckPicUrl;
-                    var destPath = BusinessBasePath + record.CheckPicUrl;
-                    ProcessDirect(destPath);
-                    FileHelper.Copy(sourcePath, destPath);
-                    logger.Info(string.Format("copy business:{0}  {1} to {2}", record.Id, sourcePath, destPath));
+                    if (!File.Exists(sourcePath))
+                    {
+                        logger.Error(string.Format("商家图片不存在:{0}", sourcePath));
+                    }
+                    else
+                    {
+                        var destPath = BusinessBasePath + record.CheckPicUrl;
+                        ProcessDirect(destPath);
+                        FileHelper.Copy(sourcePath, destPath);
+                        logger.Info(string.Format("copy business:{0}  {1} to {2}", record.Id, sourcePath, destPath));
+                    }
                 }
                 if (!string.IsNullOrEmpty(record.BusinessLicensePic))
                 {
                     var sourcePath = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath + record.BusinessLicensePic;
-                    var destPath = BusinessBasePath + record.BusinessLicensePic;
-                    ProcessDirect(destPath);
-                    FileHelper.Copy(sourcePath, destPath);
-                    logger.Info(string.Format("copy business:{0}  {1} to {2}", record.Id, sourcePath, destPath));
+                    if (!File.Exists(sourcePath))
+                    {
+                        logger.Error(string.Format("商家图片不存在:{0}",sourcePath));
+                    }
+                    else
+                    {
+                        var destPath = BusinessBasePath + record.BusinessLicensePic;
+                        ProcessDirect(destPath);
+                        FileHelper.Copy(sourcePath, destPath);
+                        logger.Info(string.Format("copy business:{0}  {1} to {2}", record.Id, sourcePath, destPath));
+                    }
                 }
             }
         }
@@ -97,18 +111,32 @@ namespace Ets.UpdateBCPic
                 if (!string.IsNullOrEmpty(record.PicUrl))
                 {
                     var sourcePath = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath + record.PicUrl;
-                    var destPath = ClienterBasePath + record.PicUrl;
-                    ProcessDirect(destPath);
-                    FileHelper.Copy(sourcePath, destPath);
-                    logger.Info(string.Format("copy clienter:{0}  {1} to {2}", record.Id, sourcePath, destPath));
+                    if (!File.Exists(sourcePath))
+                    {
+                        logger.Error(string.Format("骑士图片不存在:{0}", sourcePath));
+                    }
+                    else
+                    {
+                        var destPath = ClienterBasePath + record.PicUrl;
+                        ProcessDirect(destPath);
+                        FileHelper.Copy(sourcePath, destPath);
+                        logger.Info(string.Format("copy clienter:{0}  {1} to {2}", record.Id, sourcePath, destPath));
+                    }
                 }
                 if (!string.IsNullOrEmpty(record.PicWithHandUrl))
                 {
                     var sourcePath = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath + record.PicWithHandUrl;
-                    var destPath = ClienterBasePath + record.PicWithHandUrl;
-                    ProcessDirect(destPath);
-                    FileHelper.Copy(sourcePath, destPath);
-                    logger.Info(string.Format("copy clienter:{0}  {1} to {2}", record.Id, sourcePath, destPath));
+                    if (!File.Exists(sourcePath))
+                    {
+                        logger.Error(string.Format("骑士图片不存在:{0}", sourcePath));
+                    }
+                    else
+                    {
+                        var destPath = ClienterBasePath + record.PicWithHandUrl;
+                        ProcessDirect(destPath);
+                        FileHelper.Copy(sourcePath, destPath);
+                        logger.Info(string.Format("copy clienter:{0}  {1} to {2}", record.Id, sourcePath, destPath));
+                    }
                 }
             }
         }

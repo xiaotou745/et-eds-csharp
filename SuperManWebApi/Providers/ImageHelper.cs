@@ -16,9 +16,17 @@ namespace SuperManWebApi.Providers
 {
     public class ImageHelper
     {
-        public ImgInfo UploadImg(HttpPostedFile httpPostedFile,int orderId,UserType userType = UserType.Business)
+        /// <summary>
+        /// 上传图片
+        /// </summary>
+        /// <param name="httpPostedFile">待文件</param>
+        /// <param name="orderId"></param>
+        /// <param name="isReceipt">是否是上传小票</param>
+        /// <param name="userType">用户类型   Business    Clienter</param>
+        /// <returns></returns>
+        public ImgInfo UploadImg(HttpPostedFile httpPostedFile, int orderId, bool isReceipt, UserType userType = UserType.Business)
         {
-            ImgInfo imgInfo = new ImgInfo(); 
+            ImgInfo imgInfo = new ImgInfo();
             try
             {
                 System.Drawing.Image img = System.Drawing.Image.FromStream(httpPostedFile.InputStream);
@@ -28,8 +36,8 @@ namespace SuperManWebApi.Providers
                 imgInfo.FailRemark = "无图片流";
                 return imgInfo;
             }
-            var fileName = ETS.Util.ImageTools.GetFileName(Path.GetExtension(httpPostedFile.FileName)); 
-            imgInfo.FileName = fileName; 
+            var fileName = ETS.Util.ImageTools.GetFileName(Path.GetExtension(httpPostedFile.FileName));
+            imgInfo.FileName = fileName;
             int fileNameLastDot = fileName.LastIndexOf('.');
             //原图 
             string rFileName = string.Format("{0}{1}{2}", fileName.Substring(0, fileNameLastDot), SystemConst.OriginSize, Path.GetExtension(fileName));
@@ -37,8 +45,7 @@ namespace SuperManWebApi.Providers
             imgInfo.OriginFileName = rFileName;
             string saveDbFilePath;
             string saveDir = "";
-            string basePath = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.GetPhysicalPath(orderId,
-                userType);
+            string basePath = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.GetPhysicalPath(isReceipt, userType);
             if (orderId > 0)
             {
                 saveDir = orderId.ToString();
@@ -53,8 +60,8 @@ namespace SuperManWebApi.Providers
             }
             //保存原图，
             ///TODO记录图片大小
-            var fullFilePath = Path.Combine(fullFileDir, rFileName);  
-            httpPostedFile.SaveAs(fullFilePath); 
+            var fullFilePath = Path.Combine(fullFileDir, rFileName);
+            httpPostedFile.SaveAs(fullFilePath);
             //裁图
             var transformer = new ETS.Compress.FixedDimensionTransformerAttribute(Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.Width, Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.Height, Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.MaxBytesLength / 1024);
             //保存到数据库的图片路径
@@ -73,13 +80,13 @@ namespace SuperManWebApi.Providers
         /// <param name="ticketUrl"></param>
         /// <returns></returns>
         public void DeleteTicket(string ticketUrl)
-        { 
+        {
             Regex regex = new Regex(@"(/\d{4}/\d{2}/\d{2}.*?)\.jpg", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline);
             MatchCollection matchCollection = regex.Matches(ticketUrl);
             string delPicDir = "1.jpg";
             foreach (Match match in matchCollection)
             {
-                delPicDir = match.Value; 
+                delPicDir = match.Value;
             }
             string ppath = ConfigSettings.Instance.FileUploadPath + "\\" + ConfigSettings.Instance.FileUploadFolderNameCustomerIcon;
             var delDir = ppath + delPicDir;
@@ -91,7 +98,7 @@ namespace SuperManWebApi.Providers
             //删除磁盘中的裁图
             FileHelper.DeleteFile(delDir);
             //删除缩略图
-            FileHelper.DeleteFile(orginalFileName); 
+            FileHelper.DeleteFile(orginalFileName);
         }
     }
 
@@ -130,5 +137,5 @@ namespace SuperManWebApi.Providers
 
         public string FailRemark { get; set; }
     }
-    
+
 }

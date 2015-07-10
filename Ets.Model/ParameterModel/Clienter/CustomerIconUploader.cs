@@ -107,10 +107,10 @@ namespace Ets.Model.ParameterModel.Clienter
             }
         }
 
-        public string GetPhysicalPath(int orderId,UserType userType)
+        public string GetPhysicalPath(bool isReceipt, UserType userType)
         {
-            //如果orderId为0,则为图片为商家或骑士的验证图片,需要保存在CustomerIcon/Business(或Clients)/中,否则为小票,放在CustomerIcon/中
-            if (orderId > 0)
+            //如果是小票,放在CustomerIcon/中,否则图片为商家或骑士的验证图片,需要保存在CustomerIcon/Business(或Clients)/中
+            if (isReceipt)
             {
                 return PhysicalPath;
             }

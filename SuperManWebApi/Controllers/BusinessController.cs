@@ -147,7 +147,7 @@ namespace SuperManWebApi.Controllers
                 {
                     return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.InvalidFileFormat);
                 }
-                ImgInfo imgInfo = ih.UploadImg(file, model.userId, UserType.Business);
+                ImgInfo imgInfo = ih.UploadImg(file, model.userId, false, UserType.Business);
                 if (!string.IsNullOrWhiteSpace(imgInfo.FailRemark))
                 {
                     return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.UpFailed);
@@ -167,7 +167,7 @@ namespace SuperManWebApi.Controllers
                     return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.InvalidFileFormat);
                 }
                 //执照
-                ImgInfo imgInfoLicen = ih.UploadImg(fileLicen, model.userId, UserType.Business);
+                ImgInfo imgInfoLicen = ih.UploadImg(fileLicen, model.userId, false, UserType.Business);
                 if (!string.IsNullOrWhiteSpace(imgInfoLicen.FailRemark))
                 {
                     return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.UpFailed);
