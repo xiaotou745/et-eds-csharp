@@ -128,13 +128,14 @@ namespace SuperManWebApi.Controllers
             try
             {
                 ImageHelper ih = new ImageHelper();
-                ImgInfo imgInfo = ih.UploadImg(file, 0);
+                ImgInfo imgInfo = ih.UploadImg(file, 0, ImageType.Business);
                 if (!string.IsNullOrWhiteSpace(imgInfo.FailRemark))
                 {
                     return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.UpFailed);
                 }
                 //保存图片目录信息到数据库
                 var upResult = iBusinessProvider.UpdateBusinessPicInfo(userId, imgInfo.PicUrl);
+                imgInfo.PicUrl = CustomerIconUploader.Instance.GetPhysicalPath(ImageType.Business);
                 if (upResult == -1)
                 {
                     return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.UpFailed, new UploadIconModel() { Id = userId, ImagePath = imgInfo.PicUrl, status = upResult.ToString() });

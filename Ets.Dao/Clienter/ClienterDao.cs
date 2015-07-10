@@ -1276,7 +1276,7 @@ WHERE c.Id = @ClienterId  ";
                 result.TrueName = dataReader["TrueName"].ToString();
                 result.IDCard = dataReader["IDCard"].ToString();
                 if (dataReader["PicWithHandUrl"] != null && dataReader["PicWithHandUrl"].ToString() != "")
-                    result.PicWithHandUrl = Ets.Model.Common.ImageCommon.ReceiptPicConvert(dataReader["PicWithHandUrl"].ToString());
+                    result.PicWithHandUrl = Ets.Model.Common.ImageCommon.GetUserImage(dataReader["PicWithHandUrl"].ToString(), ImageType.Clienter);
                 result.PicUrl = dataReader["PicUrl"].ToString();
                 obj = dataReader["Status"];
                 if (obj != null && obj != DBNull.Value)
@@ -1654,5 +1654,15 @@ SELECT IDENT_CURRENT('clienter')"
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
 
+        /// <summary>
+        /// 获取骑士图片   add by pengyi 20150709  仅限工具使用
+        /// </summary>
+        public IList<ClienterPicModel> GetClienterPics()
+        {
+            var sql = @"select c.Id,c.PicUrl,c.PicWithHandUrl from [clienter](nolock) as c where c.PicUrl is not null or c.PicWithHandUrl is not null";
+            var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql));
+            var list = ConvertDataTableList<ClienterPicModel>(dt);
+            return list;
+        }
     }
 }

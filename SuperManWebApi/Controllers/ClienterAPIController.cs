@@ -88,16 +88,16 @@ namespace SuperManWebApi.Controllers
 
             ImageHelper ih = new ImageHelper();
             //手持照片
-            ImgInfo handImg = ih.UploadImg(fileHand, ParseHelper.ToInt(strUserId, 0));
+            ImgInfo handImg = ih.UploadImg(fileHand, ParseHelper.ToInt(strUserId, 0), ImageType.Clienter);
             //身份证照片
-            ImgInfo sfhImg = ih.UploadImg(file, ParseHelper.ToInt(strUserId, 0));
+            ImgInfo sfhImg = ih.UploadImg(file, ParseHelper.ToInt(strUserId, 0), ImageType.Clienter);
 
             var upResult = iClienterProvider.UpdateClientPicInfo(new ClienterModel { Id = int.Parse(strUserId), PicUrl = sfhImg.PicUrl, PicWithHandUrl = handImg.PicUrl, TrueName = trueName, IDCard = strIdCard });
             if (!upResult)
             {
                 return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.UpFailed, new UploadIconModel() { Id = ParseHelper.ToInt(strUserId), ImagePath = "" });
             }
-            var relativePath = Path.Combine(CustomerIconUploader.Instance.RelativePath, sfhImg.FileName).ToForwardSlashPath();
+            var relativePath = Path.Combine(CustomerIconUploader.Instance.GetPhysicalPath(ImageType.Clienter), sfhImg.FileName).ToForwardSlashPath();
             return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.Success, new UploadIconModel() { Id = ParseHelper.ToInt(strUserId), ImagePath = relativePath });
         }
         /// <summary>
