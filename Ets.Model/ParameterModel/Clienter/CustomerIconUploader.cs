@@ -107,23 +107,24 @@ namespace Ets.Model.ParameterModel.Clienter
             }
         }
 
-        public string GetPhysicalPath(bool isReceipt, UserType userType)
+        /// <summary>
+        /// 获得图片物理路径
+        /// 彭宜
+        /// 20150710
+        /// </summary>
+        /// <param name="imageType">图片类型</param>
+        /// <returns></returns>
+        public string GetPhysicalPath(ImageType imageType)
         {
             //如果是小票,放在CustomerIcon/中,否则图片为商家或骑士的验证图片,需要保存在CustomerIcon/Business(或Clients)/中
-            if (isReceipt)
+            switch (imageType)
             {
-                return PhysicalPath;
-            }
-            else
-            {
-                if (userType == UserType.Business)
-                {
+                 case ImageType.Business:
                     return BusinessPicPhysicalPath;
-                }
-                else
-                {
+                case ImageType.Clienter:
                     return ClienterPicPhysicalPath;
-                }
+                default:
+                    return PhysicalPath;
             }
         }
     }

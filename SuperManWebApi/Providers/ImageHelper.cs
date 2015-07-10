@@ -17,14 +17,13 @@ namespace SuperManWebApi.Providers
     public class ImageHelper
     {
         /// <summary>
-        /// 上传图片
+        /// 上传图片   修改：彭宜    20150710
         /// </summary>
-        /// <param name="httpPostedFile">待文件</param>
+        /// <param name="httpPostedFile">待传输文件</param>
         /// <param name="orderId"></param>
-        /// <param name="isReceipt">是否是上传小票</param>
-        /// <param name="userType">用户类型   Business    Clienter</param>
+        /// <param name="imageType">图片类型</param>
         /// <returns></returns>
-        public ImgInfo UploadImg(HttpPostedFile httpPostedFile, int orderId, bool isReceipt, UserType userType = UserType.Business)
+        public ImgInfo UploadImg(HttpPostedFile httpPostedFile, int orderId, ImageType imageType)
         {
             ImgInfo imgInfo = new ImgInfo();
             try
@@ -45,7 +44,7 @@ namespace SuperManWebApi.Providers
             imgInfo.OriginFileName = rFileName;
             string saveDbFilePath;
             string saveDir = "";
-            string basePath = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.GetPhysicalPath(isReceipt, userType);
+            string basePath = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.GetPhysicalPath(imageType);
             if (orderId > 0)
             {
                 saveDir = orderId.ToString();

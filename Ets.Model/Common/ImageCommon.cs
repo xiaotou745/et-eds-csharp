@@ -49,13 +49,19 @@ namespace Ets.Model.Common
         /// 彭宜   20150710
         /// </summary>
         /// <param name="imagePic"></param>
-        /// <param name="userType"></param>
+        /// <param name="imageType"></param>
         /// <returns></returns>
-        public static string GetUserImage(string imagePic,UserType userType)
+        public static string GetUserImage(string imagePic,ImageType imageType)
         {
-            string picFolderName = userType == UserType.Business
-                                                                            ? ConfigSettings.Instance.FileUploadFolderNameBusiness
-                                                                            : ConfigSettings.Instance.FileUploadFolderNameClienter;
+            var picFolderName = "";
+            if (imageType == ImageType.Business)
+            {
+                picFolderName = ConfigSettings.Instance.FileUploadFolderNameBusiness;
+            }
+            else if (imageType == ImageType.Clienter)
+            {
+                picFolderName = ConfigSettings.Instance.FileUploadFolderNameClienter;
+            }
             return ETS.Util.ConfigSettings.Instance.PicHost +
                             Path.Combine("/", Path.GetFileName(ConfigSettings.Instance.FileUploadPath), ParameterModel.Clienter.CustomerIconUploader.Instance.FolderName, picFolderName).ToForwardSlashPath() +
                             imagePic;

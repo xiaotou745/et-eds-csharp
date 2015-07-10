@@ -14,9 +14,9 @@ namespace ETS.Enums
     }
 
     /// <summary>
-    /// 用户类型  add by pengyi 20150709
+    /// 图片类型  add by pengyi 20150709
     /// </summary>
-    public enum UserType
+    public enum ImageType
     {
         /// <summary>
         /// 商户
@@ -26,5 +26,9 @@ namespace ETS.Enums
         /// 骑士
         /// </summary>
         Clienter = 2,
+        /// <summary>
+        /// 小票
+        /// </summary>
+        Receipt = 3,
     }
 }
