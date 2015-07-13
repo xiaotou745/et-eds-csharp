@@ -134,7 +134,7 @@ namespace Ets.Service.Provider.DeliveryCompany
             DeliveryCompanyModel sModel = null;
             if (deliveryCompanyModel.DeliveryCompanyName.Trim() != deliveryCompanyModel.DeliveryCompanyOldName.Trim())
             {
-                sModel = dao.GetByName(deliveryCompanyModel.DeliveryCompanyOldName.Trim());
+                sModel = dao.GetByName(deliveryCompanyModel.DeliveryCompanyName.Trim());
             }
             if (sModel == null)
             {
