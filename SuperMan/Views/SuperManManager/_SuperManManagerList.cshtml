@@ -30,7 +30,7 @@
             if (Model != null && Model.Records.Count > 0)
             {
                 var i = 0;
-                var puth = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.RelativePath
+                var puth = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.ParentRelativePath
                     + "/" + ConfigSettings.Instance.FileUploadFolderNameClienter;
                 var PicHost = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PicHost;
                 foreach (var item in Model.Records)

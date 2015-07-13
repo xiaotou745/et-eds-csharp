@@ -64,6 +64,14 @@ namespace Ets.Model.ParameterModel.Clienter
         {
             get { return Path.Combine("/", Path.GetFileName(ConfigSettings.Instance.FileUploadPath), this.FolderName).ToForwardSlashPath(); }
         }
+
+        /// <summary>
+        /// 文件相对父路径
+        /// </summary>
+        public string ParentRelativePath
+        {
+            get { return Path.Combine("/", Path.GetFileName(ConfigSettings.Instance.FileUploadPath)).ToForwardSlashPath(); }
+        }
         public string PicHost
         {
             get { return ConfigSettings.Instance.PicHost; }
@@ -78,7 +86,7 @@ namespace Ets.Model.ParameterModel.Clienter
             {
                 if (businessPicPhysicalPath == null)
                 {
-                    businessPicPhysicalPath = Path.Combine(PhysicalPath, ConfigSettings.Instance.FileUploadFolderNameBusiness);
+                    businessPicPhysicalPath = Path.Combine(ConfigSettings.Instance.FileUploadPath, ConfigSettings.Instance.FileUploadFolderNameBusiness);
                     if (!System.IO.Directory.Exists(businessPicPhysicalPath))
                     {
                         System.IO.Directory.CreateDirectory(businessPicPhysicalPath);
@@ -97,7 +105,7 @@ namespace Ets.Model.ParameterModel.Clienter
             {
                 if (clienterPicPhysicalPath == null)
                 {
-                    clienterPicPhysicalPath = Path.Combine(PhysicalPath, ConfigSettings.Instance.FileUploadFolderNameClienter);
+                    clienterPicPhysicalPath = Path.Combine(ConfigSettings.Instance.FileUploadPath, ConfigSettings.Instance.FileUploadFolderNameClienter);
                     if (!System.IO.Directory.Exists(clienterPicPhysicalPath))
                     {
                         System.IO.Directory.CreateDirectory(clienterPicPhysicalPath);

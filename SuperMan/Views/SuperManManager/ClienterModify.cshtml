@@ -3,6 +3,7 @@
 @{
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
     var puth = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.RelativePath;
+    var parentPuth = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.ParentRelativePath;
     var PicHost = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PicHost;
 }
 <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
@@ -47,8 +48,8 @@
             {
                 var fileLastDot = Model.PicWithHandUrl.LastIndexOf('.');
                 var fileHandHouZhui = Model.PicWithHandUrl.Substring(fileLastDot, Model.PicWithHandUrl.Length - fileLastDot);
-                bigFileName = puth + "/" + ConfigSettings.Instance.FileUploadFolderNameClienter + Model.PicWithHandUrl.Substring(0, fileLastDot) + originSize + fileHandHouZhui;
-                checkPicUrl = puth + "/" + ConfigSettings.Instance.FileUploadFolderNameClienter + Model.PicWithHandUrl;
+                bigFileName = parentPuth + "/" + ConfigSettings.Instance.FileUploadFolderNameClienter + Model.PicWithHandUrl.Substring(0, fileLastDot) + originSize + fileHandHouZhui;
+                checkPicUrl = parentPuth + "/" + ConfigSettings.Instance.FileUploadFolderNameClienter + Model.PicWithHandUrl;
             }
 
         }
