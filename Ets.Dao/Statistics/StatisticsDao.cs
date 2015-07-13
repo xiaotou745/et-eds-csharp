@@ -806,7 +806,7 @@ order by o.Date desc, o.ActiveClienterCount desc";
                                       MIN(b.InsertTime) AS InsertTime,
                                       MIN(b.RecommendPhone) AS RecommendPhone,
                                       sum(o.OrderCount) AS  OrderCount,
-                                      MIN(b.Status) AS Stauts ";
+                                      MIN(b.Status) AS Status ";
             string tables = @"  dbo.business b(nolock) join dbo.[order] o (nolock) on b.Id=o.businessId ";
             StringBuilder sbSqlWhere=new StringBuilder(" 1=1 ");
             if (!string.IsNullOrWhiteSpace(recommendQuery.StartDate))

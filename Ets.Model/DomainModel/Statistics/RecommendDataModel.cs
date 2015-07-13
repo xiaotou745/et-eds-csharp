@@ -40,7 +40,7 @@ namespace Ets.Model.DomainModel.Statistics
         /// <summary>
         /// 商家审核状态
         /// </summary>
-        public int Status { get; set; }
+        public byte Status { get; set; }
     }
 
 
