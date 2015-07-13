@@ -1772,7 +1772,8 @@ SELECT   b.Id ,
          ISNULL(g.IsModifyBind,0) IsModifyBind,
          ISNULL(b.OneKeyPubOrder,0) OneKeyPubOrder,
          b.IsAllowOverdraft,
-         b.IsEmployerTask
+         b.IsEmployerTask,
+         ISNULL(b.RecommendPhone,'') AS RecommendPhone
 FROM business b WITH(NOLOCK) 
 	Left join BusinessFinanceAccount bfa WITH(NOLOCK) ON b.Id=bfa.BusinessId AND bfa.IsEnable=1
     Left join [group] g WITH(NOLOCK) on g.Id=b.GroupId 

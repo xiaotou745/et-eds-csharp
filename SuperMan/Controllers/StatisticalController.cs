@@ -191,6 +191,7 @@ namespace SuperMan.Controllers
         {
             RecommendQuery recommendQuery=new RecommendQuery();
             recommendQuery.PageIndex = 1;
+            recommendQuery.StartDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).ToString();
             StatisticsProvider statisticsProvider = new StatisticsProvider();
             var pagelist = statisticsProvider.GetRecommendList(recommendQuery);
             return View(pagelist);
