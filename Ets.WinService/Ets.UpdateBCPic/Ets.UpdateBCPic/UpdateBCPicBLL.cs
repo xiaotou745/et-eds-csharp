@@ -158,8 +158,10 @@ namespace Ets.UpdateBCPic
 
         private string GetBigPicUrl(string url)
         {
-            var strArr = url.Split('.');
-            return strArr[0] + "_0_0." + strArr[1];
+            var path = Path.GetDirectoryName(url)+@"\";
+            var fileName = Path.GetFileNameWithoutExtension(url);
+            var extension = Path.GetExtension(url);
+            return path+fileName + "_0_0" + extension;
         }
 
         private void Copy(string src)
