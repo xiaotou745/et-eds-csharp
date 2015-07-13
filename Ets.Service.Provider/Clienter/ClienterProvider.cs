@@ -1375,16 +1375,16 @@ namespace Ets.Service.Provider.Clienter
                     return true;
                 }
             }
-            //if (!(myOrderInfo.GrabTime.Value.AddMinutes(5) < DateTime.Now &&
-            //DateTime.Now < myOrderInfo.GrabTime.Value.AddMinutes(120)))
-            //{
-            //    return true;
-            //}
-            if (!(myOrderInfo.GrabTime.Value.AddMinutes(1) < DateTime.Now &&
-                DateTime.Now < myOrderInfo.GrabTime.Value.AddMinutes(5)))
+            if (!(myOrderInfo.GrabTime.Value.AddMinutes(5) < DateTime.Now &&
+            DateTime.Now < myOrderInfo.GrabTime.Value.AddMinutes(120)))
             {
                 return true;
             }
+            //if (!(myOrderInfo.GrabTime.Value.AddMinutes(1) < DateTime.Now &&
+            //    DateTime.Now < myOrderInfo.GrabTime.Value.AddMinutes(5)))
+            //{
+            //    return true;
+            //}
             //ClienterDetailModel clienter = clienterDao.GetClienterDetailById(myOrderInfo.clienterId.ToString());
             //BusinessModel bussinessDetail = businessDao.GetById(myOrderInfo.businessId);
             //if (clienter.PhoneNo == bussinessDetail.PhoneNo)
