@@ -241,7 +241,7 @@ namespace SuperManWebApi.Controllers
             #endregion
            
             //上传图片
-            ImgInfo imgInfo = new ImageHelper().UploadImg(file, orderId);
+            ImgInfo imgInfo = new ImageHelper().UploadImg(file, orderId, ImageType.Receipt);
             var uploadReceiptModel = new UploadReceiptModel
             {
                 OrderId = orderId,
