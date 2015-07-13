@@ -324,8 +324,7 @@ LEFT join dbo.[group] b on a.GroupId=b.Id
 where isnull(b.IsModifyBind,1)=1
 and a.PhoneNo=@PhoneNo";
                 IDbParameters parm = DbHelper.CreateDbParameters();
-                parm.Add("@PhoneNo", SqlDbType.NVarChar);
-                parm.SetValue("@PhoneNo", PhoneNo);
+                parm.Add("@PhoneNo", DbType.String, 40).Value = PhoneNo;
                 return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm)) > 0 ? true : false;
             }
             catch (Exception ex)
