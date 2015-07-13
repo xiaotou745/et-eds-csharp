@@ -947,8 +947,8 @@ namespace Ets.Service.Provider.Business
             string msg = string.Empty;
             string key = model.Stype == "0" ? RedissCacheKey.PostRegisterInfo_B + model.PhoneNumber : RedissCacheKey.CheckCodeFindPwd_B + model.PhoneNumber;
             var redis = new ETS.NoSql.RedisCache.RedisCache();
-            object obj = redis.Get<object>(key);
-            if (obj == null)
+            string obj = redis.Get<string>(key);
+            if (string.IsNullOrEmpty(obj))
             {
                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.CodeNotExists);
             }

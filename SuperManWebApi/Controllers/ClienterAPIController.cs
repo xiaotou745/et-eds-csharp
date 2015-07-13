@@ -382,8 +382,8 @@ namespace SuperManWebApi.Controllers
             string key = model.Stype == "0" ? RedissCacheKey.PostRegisterInfo_C + model.PhoneNumber : RedissCacheKey.PostForgetPwd_C + model.PhoneNumber;
 
 
-            object obj = redis.Get<object>(key);
-            if (obj == null)
+            string obj = redis.Get<string>(key);
+            if (string.IsNullOrEmpty(obj))
             {
                 return SimpleResultModel.Conclude(SendCheckCodeStatus.CodeNotExists);
             }
