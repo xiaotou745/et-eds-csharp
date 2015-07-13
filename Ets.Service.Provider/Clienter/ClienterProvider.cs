@@ -1375,8 +1375,13 @@ namespace Ets.Service.Provider.Clienter
                     return true;
                 }
             }
-            if (!(myOrderInfo.GrabTime.Value.AddMinutes(5) < DateTime.Now &&
-                DateTime.Now < myOrderInfo.GrabTime.Value.AddMinutes(120)))
+            //if (!(myOrderInfo.GrabTime.Value.AddMinutes(5) < DateTime.Now &&
+            //DateTime.Now < myOrderInfo.GrabTime.Value.AddMinutes(120)))
+            //{
+            //    return true;
+            //}
+            if (!(myOrderInfo.GrabTime.Value.AddMinutes(1) < DateTime.Now &&
+                DateTime.Now < myOrderInfo.GrabTime.Value.AddMinutes(5)))
             {
                 return true;
             }
