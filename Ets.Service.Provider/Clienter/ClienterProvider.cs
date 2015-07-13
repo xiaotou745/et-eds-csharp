@@ -1013,7 +1013,7 @@ namespace Ets.Service.Provider.Clienter
                 {
                     if (CheckOrderPay(myOrderInfo.Id))
                     {
-                        UpdateAccountBalanceAndWithdraw(uploadReceiptModel.ClienterId, myOrderInfo);
+                        UpdateClienterTotalAccount(myOrderInfo, null, 1);
                         iOrderOtherProvider.UpdateIsJoinWithdraw(myOrderInfo.Id);
                     }
                 }
@@ -1093,7 +1093,7 @@ namespace Ets.Service.Provider.Clienter
                 {
                     if (CheckOrderPay(myOrderInfo.Id))
                     {
-                        UpdateAccountBalanceAndWithdraw(myOrderInfo.clienterId, myOrderInfo);
+                        UpdateClienterTotalAccount(myOrderInfo, parModel, 1);
                         iOrderOtherProvider.UpdateIsJoinWithdraw(myOrderInfo.Id);
                     }
                 }
@@ -1400,7 +1400,7 @@ namespace Ets.Service.Provider.Clienter
         /// </summary>
         /// <param name="myOrderInfo"></param>
         /// <param name="isNotRealOrder"></param>
-        private void UpdateClienterTotalAccount(OrderListModel myOrderInfo, OrderCompleteModel parModel)
+        private void UpdateClienterTotalAccount(OrderListModel myOrderInfo, OrderCompleteModel parModel,int operateType=0)
         {
             decimal realOrderCommission = myOrderInfo.OrderCommission == null ? 0 : myOrderInfo.OrderCommission.Value;
 
@@ -1411,8 +1411,14 @@ namespace Ets.Service.Provider.Clienter
                 realOrderCommission = realOrderCommission > myOrderInfo.SettleMoney ? myOrderInfo.SettleMoney : realOrderCommission;
             }
             int result = orderDao.UpdateOrderRealOrderCommission(myOrderInfo.Id.ToString(), realOrderCommission);
-
-            UpdateClienterAccount(myOrderInfo);
+            if (operateType==0)
+            {
+                UpdateClienterAccount(myOrderInfo);  
+            }
+            else
+            {
+                UpdateAccountBalanceAndWithdraw(myOrderInfo.clienterId,myOrderInfo);
+            }
 
             if (isNotRealOrder)
             {
@@ -1420,7 +1426,15 @@ namespace Ets.Service.Provider.Clienter
                 if (myOrderInfo.OrderCommission > myOrderInfo.SettleMoney)
                 {
                     decimal diffOrderCommission = myOrderInfo.SettleMoney - myOrderInfo.OrderCommission.Value;
-                    UpdateNotRealOrderClienterAccount(myOrderInfo, diffOrderCommission);
+                    if (operateType == 0)
+                    {
+                        UpdateNotRealOrderClienterAccount(myOrderInfo, diffOrderCommission);
+                    }
+                    else
+                    {
+                        UpdateNotRealOrderClienterAccountAndWithdraw(myOrderInfo, diffOrderCommission);
+                    }
+                  
                     orderDao.InsertNotRealOrderLog(myOrderInfo.Id, diffOrderCommission * (-1));
                 }
             }
@@ -1435,6 +1449,36 @@ namespace Ets.Service.Provider.Clienter
         {
             //更新骑士 金额  
             bool b = clienterDao.UpdateClienterAccountBalanceForFinish(new WithdrawRecordsModel() { UserId = myOrderInfo.clienterId, Amount = realOrderCommission });
+            //增加记录 
+            decimal? accountBalance = 0;
+            //更新用户相关金额数据 
+            if (myOrderInfo.AccountBalance.HasValue)
+            {
+                accountBalance = myOrderInfo.AccountBalance.Value + myOrderInfo.OrderCommission.Value + realOrderCommission;
+            }
+            else
+            {
+                accountBalance = myOrderInfo.OrderCommission.Value + realOrderCommission;
+            }
+
+            ClienterBalanceRecord cbrm = new ClienterBalanceRecord()
+            {
+                ClienterId = myOrderInfo.clienterId,
+                Amount = realOrderCommission,
+                Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
+                Balance = accountBalance ?? 0,
+                RecordType = ClienterBalanceRecordRecordType.BalanceAdjustment.GetHashCode(),
+                Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士" : myOrderInfo.ClienterName,
+                WithwardId = myOrderInfo.Id,
+                RelationNo = myOrderInfo.OrderNo,
+                Remark = "无效订单"
+            };
+            clienterBalanceRecordDao.Insert(cbrm);
+        }
+        public void UpdateNotRealOrderClienterAccountAndWithdraw(OrderListModel myOrderInfo, decimal realOrderCommission)
+        {
+            //更新骑士 金额  
+            bool b = clienterDao.UpdateAccountBalanceAndWithdraw(new WithdrawRecordsModel() { UserId = myOrderInfo.clienterId, Amount = realOrderCommission });
             //增加记录 
             decimal? accountBalance = 0;
             //更新用户相关金额数据 
