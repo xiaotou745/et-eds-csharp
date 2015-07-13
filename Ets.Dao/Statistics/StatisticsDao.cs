@@ -772,28 +772,16 @@ order by o.Date desc, o.ActiveClienterCount desc";
         /// <returns></returns>
         public PageInfo<RecommendDataModel> GetRecommendList(RecommendQuery recommendQuery)
         {
-            string querysql=@"SELECT 
-                        MIN(b.id) AS ID,
-                        MIN(b.Name) AS Name,
-                        MIN(b.PhoneNo) AS PhoneNo,
-                        MIN (b.address) AS [Address],
-                        MIN(b.InsertTime) AS InsertTime,
-                        MIN(b.RecommendPhone) AS RecommendPhone,
-                        sum(o.OrderCount) AS  OrderCount,
-                        MIN(b.Status) AS Stauts,
-                        ROW_NUMBER() OVER (order by  b.Id   ) AS RowNum
-                        INTO #Temp
-                        FROM dbo.business b(nolock)
-                        join dbo.[order] o (nolock) on b.Id=o.businessId
-                        where 1=1 
-                        {0}
-                        {1}
-                        {2}
-                        group by b.Id  
-
-                        SELECT COUNT(ID) AS TotalCount FROM #Temp
-                        SELECT * FROM #Temp WHERE RowNum BETWEEN @Top AND @Last
-                        DROP TABLE #Temp";
+            string getcount = @"SELECT COUNT(ID) FROM
+                            (SELECT b.id AS ID 
+                            FROM dbo.business b(nolock)
+                            join dbo.[order] o (nolock) on b.Id=o.businessId
+                            where 1=1
+                            {0}
+                            {1}
+                            {2} 
+                            group by b.Id ) AS t
+";//查询数据总数
             string starPar = "";
             string endPar = "";
             string remPar = "";
@@ -803,28 +791,101 @@ order by o.Date desc, o.ActiveClienterCount desc";
             }
             if (!string.IsNullOrWhiteSpace(recommendQuery.EndDate))
             {
-                endPar=string.Format(" AND o.PubDate<='{0}' ", recommendQuery.EndDate);
+                endPar = string.Format(" AND o.PubDate<='{0}' ", Convert.ToDateTime(recommendQuery.EndDate).AddDays(1).ToString());
             }
             if (!string.IsNullOrWhiteSpace(recommendQuery.RecommendPhone))
             {
-                remPar=string.Format(" AND B.RecommendPhone='{0}' ", recommendQuery.RecommendPhone.Trim());
+                remPar = string.Format(" AND B.RecommendPhone='{0}' ", recommendQuery.RecommendPhone.Trim());
             }
-            var dbParameters = DbHelper.CreateDbParameters();
-            var top = SystemConst.PageSize * (recommendQuery.PageIndex-1)+1;
-            var last = top + SystemConst.PageSize - 1;
-            dbParameters.Add("@Top", DbType.Int32).Value = top;
-            dbParameters.Add("@Last", DbType.Int32).Value = last;
-            DataSet ds = DbHelper.ExecuteDataset(SuperMan_Read, string.Format(querysql, starPar, endPar, remPar), dbParameters);
-            if (ds.HasData())
-            {   //无数据
-                return new PageInfo<RecommendDataModel>(0, 1, new List<RecommendDataModel>(), 0, 15);
+            var count = (int)DbHelper.ExecuteScalar(SuperMan_Read, CommandType.Text, string.Format(getcount, starPar, endPar, remPar));//总条数
+            int pagecount = Convert.ToInt32(Math.Ceiling(count*1.0/SystemConst.PageSize));//总页数
+            string columnList = @"    MIN(b.id) AS ID,
+                                      MIN(b.Name) AS Name,
+                                      MIN(b.PhoneNo) AS PhoneNo,
+                                      MIN (b.address) AS [Address],
+                                      MIN(b.InsertTime) AS InsertTime,
+                                      MIN(b.RecommendPhone) AS RecommendPhone,
+                                      sum(o.OrderCount) AS  OrderCount,
+                                      MIN(b.Status) AS Stauts ";
+            string tables = @"  dbo.business b(nolock) join dbo.[order] o (nolock) on b.Id=o.businessId ";
+            StringBuilder sbSqlWhere=new StringBuilder(" 1=1 ");
+            if (!string.IsNullOrWhiteSpace(recommendQuery.StartDate))
+            {
+                sbSqlWhere.AppendFormat(" AND o.PubDate>='{0}' ", recommendQuery.StartDate);
             }
-            var count = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalCount"]);
-            int pagecount = Convert.ToInt32(Math.Ceiling(count*1.0/SystemConst.PageSize));
-            var list = MapRows<RecommendDataModel>(ds.Tables[1]);
-            PageInfo<RecommendDataModel> result = new PageInfo<RecommendDataModel>(count, recommendQuery.PageIndex, list, pagecount, SystemConst.PageSize);
+            if (!string.IsNullOrWhiteSpace(recommendQuery.EndDate))
+            {
+                sbSqlWhere.AppendFormat(" AND o.PubDate<='{0}' ", Convert.ToDateTime(recommendQuery.EndDate).AddDays(1).ToString());
+            }
+            if (!string.IsNullOrWhiteSpace(recommendQuery.RecommendPhone))
+            {
+                sbSqlWhere.AppendFormat(" AND B.RecommendPhone='{0}' ", recommendQuery.RecommendPhone.Trim());
+            }
+            sbSqlWhere.Append(" group by b.Id ");
+            var temp= new PageHelper().GetPages<RecommendDataModel>(SuperMan_Read, recommendQuery.PageIndex, sbSqlWhere.ToString(),
+                " b.Id ", columnList, tables, ETS.Const.SystemConst.PageSize, false);
+            PageInfo<RecommendDataModel> result = new PageInfo<RecommendDataModel>(count, recommendQuery.PageIndex, temp.Records, pagecount, SystemConst.PageSize);
+            
+            
             return result;
 
+
+            #region
+
+//            string querysql=@"SELECT 
+//                        MIN(b.id) AS ID,
+//                        MIN(b.Name) AS Name,
+//                        MIN(b.PhoneNo) AS PhoneNo,
+//                        MIN (b.address) AS [Address],
+//                        MIN(b.InsertTime) AS InsertTime,
+//                        MIN(b.RecommendPhone) AS RecommendPhone,
+//                        sum(o.OrderCount) AS  OrderCount,
+//                        MIN(b.Status) AS Stauts,
+//                        ROW_NUMBER() OVER (order by  b.Id   ) AS RowNum
+//                        INTO #Temp
+//                        FROM dbo.business b(nolock)
+//                        join dbo.[order] o (nolock) on b.Id=o.businessId
+//                        where 1=1 
+//                        {0}
+//                        {1}
+//                        {2}
+//                        group by b.Id  
+//
+//                        SELECT COUNT(ID) AS TotalCount FROM #Temp
+//                        SELECT * FROM #Temp WHERE RowNum BETWEEN @Top AND @Last
+//                        DROP TABLE #Temp";
+//            string starPar = "";
+//            string endPar = "";
+//            string remPar = "";
+//            if (!string.IsNullOrWhiteSpace(recommendQuery.StartDate))
+//            {
+//                starPar = string.Format("AND o.PubDate>='{0}'", recommendQuery.StartDate);
+//            }
+//            if (!string.IsNullOrWhiteSpace(recommendQuery.EndDate))
+//            {
+//                endPar=string.Format(" AND o.PubDate<='{0}' ", Convert.ToDateTime(recommendQuery.EndDate).AddDays(1).ToString());
+//            }
+//            if (!string.IsNullOrWhiteSpace(recommendQuery.RecommendPhone))
+//            {
+//                remPar=string.Format(" AND B.RecommendPhone='{0}' ", recommendQuery.RecommendPhone.Trim());
+//            }
+//            var dbParameters = DbHelper.CreateDbParameters();
+//            var top = SystemConst.PageSize * (recommendQuery.PageIndex-1)+1;
+//            var last = top + SystemConst.PageSize - 1;
+//            dbParameters.Add("@Top", DbType.Int32).Value = top;
+//            dbParameters.Add("@Last", DbType.Int32).Value = last;
+//            DataSet ds = DbHelper.ExecuteDataset(SuperMan_Read, string.Format(querysql, starPar, endPar, remPar), dbParameters);
+//            if (ds.HasData())
+//            {   //无数据
+//                return new PageInfo<RecommendDataModel>(0, 1, new List<RecommendDataModel>(), 0, 15);
+//            }
+//            var count = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalCount"]);
+//            int pagecount = Convert.ToInt32(Math.Ceiling(count*1.0/SystemConst.PageSize));
+//            var list = MapRows<RecommendDataModel>(ds.Tables[1]);
+//            PageInfo<RecommendDataModel> result = new PageInfo<RecommendDataModel>(count, recommendQuery.PageIndex, list, pagecount, SystemConst.PageSize);
+//            return result;
+
+            #endregion
         }
         #endregion
     }
