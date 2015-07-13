@@ -192,8 +192,9 @@
                         </div>
                         foreach (var item in deliveryCompany)
                         {
+                            var check = item.DeliveryCompanyCode.Trim().Equals(Model.RecommendPhone.Trim()) ? "checked='checked'" : ""; 
                             <div style="width: 110px;height:25px;float: left">
-                                <input type="checkbox" name="checkMenus" id="@item.Id" value="@item.Id" checked="@(item.DeliveryCompanyCode.Trim().Equals(Model.RecommendPhone.Trim())?"checked='checked'":"")" />
+                                <input type="checkbox" name="checkMenus" id="@item.Id" value="@item.Id" @check/>
                                 <label>@item.DeliveryCompanyName</label>
                             </div>
                         }
