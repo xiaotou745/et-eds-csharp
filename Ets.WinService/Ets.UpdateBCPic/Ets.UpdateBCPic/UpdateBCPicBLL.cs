@@ -65,36 +65,38 @@ namespace Ets.UpdateBCPic
             var list = businessDao.GetBusinessPics();
             foreach (var record in list)
             {
-                if (!string.IsNullOrEmpty(record.CheckPicUrl))
-                {
-                    var sourcePath = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath + record.CheckPicUrl;
-                    if (!File.Exists(sourcePath))
-                    {
-                        logger.Error(string.Format("商家图片不存在:{0}", sourcePath));
-                    }
-                    else
-                    {
-                        var destPath = BusinessBasePath + record.CheckPicUrl;
-                        ProcessDirect(destPath);
-                        FileHelper.Copy(sourcePath, destPath);
-                        logger.Info(string.Format("copy business:{0}  {1} to {2}", record.Id, sourcePath, destPath));
-                    }
-                }
-                if (!string.IsNullOrEmpty(record.BusinessLicensePic))
-                {
-                    var sourcePath = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath + record.BusinessLicensePic;
-                    if (!File.Exists(sourcePath))
-                    {
-                        logger.Error(string.Format("商家图片不存在:{0}",sourcePath));
-                    }
-                    else
-                    {
-                        var destPath = BusinessBasePath + record.BusinessLicensePic;
-                        ProcessDirect(destPath);
-                        FileHelper.Copy(sourcePath, destPath);
-                        logger.Info(string.Format("copy business:{0}  {1} to {2}", record.Id, sourcePath, destPath));
-                    }
-                }
+                //if (!string.IsNullOrEmpty(record.CheckPicUrl))
+                //{
+                //    var sourcePath = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath + record.CheckPicUrl;
+                //    if (!File.Exists(sourcePath))
+                //    {
+                //        logger.Error(string.Format("商家图片不存在:{0}", sourcePath));
+                //    }
+                //    else
+                //    {
+                //        var destPath = BusinessBasePath + record.CheckPicUrl;
+                //        ProcessDirect(destPath);
+                //        FileHelper.Copy(sourcePath, destPath);
+                //        logger.Info(string.Format("copy business:{0}  {1} to {2}", record.Id, sourcePath, destPath));
+                //    }
+                //}
+                Copy(record.CheckPicUrl);
+                //if (!string.IsNullOrEmpty(record.BusinessLicensePic))
+                //{
+                //    var sourcePath = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath + record.BusinessLicensePic;
+                //    if (!File.Exists(sourcePath))
+                //    {
+                //        logger.Error(string.Format("商家图片不存在:{0}",sourcePath));
+                //    }
+                //    else
+                //    {
+                //        var destPath = BusinessBasePath + record.BusinessLicensePic;
+                //        ProcessDirect(destPath);
+                //        FileHelper.Copy(sourcePath, destPath);
+                //        logger.Info(string.Format("copy business:{0}  {1} to {2}", record.Id, sourcePath, destPath));
+                //    }
+                //}
+                Copy(record.BusinessLicensePic);
             }
         }
 
@@ -108,36 +110,38 @@ namespace Ets.UpdateBCPic
             var list = clienterDao.GetClienterPics();
             foreach (var record in list)
             {
-                if (!string.IsNullOrEmpty(record.PicUrl))
-                {
-                    var sourcePath = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath + record.PicUrl;
-                    if (!File.Exists(sourcePath))
-                    {
-                        logger.Error(string.Format("骑士图片不存在:{0}", sourcePath));
-                    }
-                    else
-                    {
-                        var destPath = ClienterBasePath + record.PicUrl;
-                        ProcessDirect(destPath);
-                        FileHelper.Copy(sourcePath, destPath);
-                        logger.Info(string.Format("copy clienter:{0}  {1} to {2}", record.Id, sourcePath, destPath));
-                    }
-                }
-                if (!string.IsNullOrEmpty(record.PicWithHandUrl))
-                {
-                    var sourcePath = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath + record.PicWithHandUrl;
-                    if (!File.Exists(sourcePath))
-                    {
-                        logger.Error(string.Format("骑士图片不存在:{0}", sourcePath));
-                    }
-                    else
-                    {
-                        var destPath = ClienterBasePath + record.PicWithHandUrl;
-                        ProcessDirect(destPath);
-                        FileHelper.Copy(sourcePath, destPath);
-                        logger.Info(string.Format("copy clienter:{0}  {1} to {2}", record.Id, sourcePath, destPath));
-                    }
-                }
+                Copy(record.PicUrl);
+                //if (!string.IsNullOrEmpty(record.PicUrl))
+                //{
+                //    var sourcePath = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath + record.PicUrl;
+                //    if (!File.Exists(sourcePath))
+                //    {
+                //        logger.Error(string.Format("骑士图片不存在:{0}", sourcePath));
+                //    }
+                //    else
+                //    {
+                //        var destPath = ClienterBasePath + record.PicUrl;
+                //        ProcessDirect(destPath);
+                //        FileHelper.Copy(sourcePath, destPath);
+                //        logger.Info(string.Format("copy clienter:{0}  {1} to {2}", record.Id, sourcePath, destPath));
+                //    }
+                //}
+                Copy(record.PicWithHandUrl);
+                //if (!string.IsNullOrEmpty(record.PicWithHandUrl))
+                //{
+                //    var sourcePath = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath + record.PicWithHandUrl;
+                //    if (!File.Exists(sourcePath))
+                //    {
+                //        logger.Error(string.Format("骑士图片不存在:{0}", sourcePath));
+                //    }
+                //    else
+                //    {
+                //        var destPath = ClienterBasePath + record.PicWithHandUrl;
+                //        ProcessDirect(destPath);
+                //        FileHelper.Copy(sourcePath, destPath);
+                //        logger.Info(string.Format("copy clienter:{0}  {1} to {2}", record.Id, sourcePath, destPath));
+                //    }
+                //}
             }
         }
 
@@ -149,6 +153,49 @@ namespace Ets.UpdateBCPic
             if (!Directory.Exists(destDirectoryName))
             {
                 Directory.CreateDirectory(destDirectoryName);
+            }
+        }
+
+        private string GetBigPicUrl(string url)
+        {
+            var path = Path.GetDirectoryName(url)+@"\";
+            var fileName = Path.GetFileNameWithoutExtension(url);
+            var extension = Path.GetExtension(url);
+            return path+fileName + "_0_0" + extension;
+        }
+
+        private void Copy(string src)
+        {
+            if (!string.IsNullOrEmpty(src))
+            {
+                var sourcePath = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath + src;
+
+                //小图
+                if (!File.Exists(sourcePath))
+                {
+                    logger.Error(string.Format("图片不存在:{0}", sourcePath));
+                }
+                else
+                {
+                    var destPath = BusinessBasePath + src;
+                    ProcessDirect(destPath);
+                    FileHelper.Copy(sourcePath, destPath);
+                    logger.Info(string.Format("copy success:  {0} to {1}", sourcePath, destPath));
+                }
+
+                var bigPicUrl = GetBigPicUrl(src);
+                var srcBigPicPath = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PhysicalPath + bigPicUrl;
+                if (!File.Exists(srcBigPicPath))
+                {
+                    logger.Error(string.Format("图片不存在:{0}", srcBigPicPath));
+                }
+                else
+                {
+                    var destBigPicPath = BusinessBasePath + bigPicUrl;
+                    ProcessDirect(destBigPicPath);
+                    FileHelper.Copy(srcBigPicPath, destBigPicPath);
+                    logger.Info(string.Format("copy success:  {0} to {1}", srcBigPicPath, destBigPicPath));
+                }
             }
         }
     }

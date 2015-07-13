@@ -4,6 +4,7 @@
     var busiThirdRelationList = ViewBag.businessThirdRelation as IList<BusinessThirdRelationModel>;
     var puth = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.RelativePath;
     var PicHost = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PicHost;
+    var parentPuth = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.ParentRelativePath;
 }
 @using ETS.Enums
 @using ETS.Extension
@@ -228,15 +229,15 @@
         {
             var fileLastDot = Model.CheckPicUrl.LastIndexOf('.');
             var fileHandHouZhui = Model.CheckPicUrl.Substring(fileLastDot, Model.CheckPicUrl.Length - fileLastDot);
-            bigFileName = puth + "/" + ConfigSettings.Instance.FileUploadFolderNameBusiness + Model.CheckPicUrl.Substring(0, fileLastDot) + originSize + fileHandHouZhui;
-            checkPicUrl = puth + "/" + ConfigSettings.Instance.FileUploadFolderNameBusiness + Model.CheckPicUrl;
+            bigFileName = parentPuth + "/" + ConfigSettings.Instance.FileUploadFolderNameBusiness + Model.CheckPicUrl.Substring(0, fileLastDot) + originSize + fileHandHouZhui;
+            checkPicUrl = parentPuth + "/" + ConfigSettings.Instance.FileUploadFolderNameBusiness + Model.CheckPicUrl;
         }
         if (!string.IsNullOrWhiteSpace(Model.BusinessLicensePic))
         {
             var fileLastDotb = Model.BusinessLicensePic.LastIndexOf('.');
             var fileHandHouZhuib = Model.BusinessLicensePic.Substring(fileLastDotb, Model.BusinessLicensePic.Length - fileLastDotb);
-            bigFileNameb = puth + "/" + ConfigSettings.Instance.FileUploadFolderNameBusiness + Model.BusinessLicensePic.Substring(0, fileLastDotb) + originSize + fileHandHouZhuib;
-            businessLicensePic = puth + "/" + ConfigSettings.Instance.FileUploadFolderNameBusiness + Model.BusinessLicensePic;
+            bigFileNameb = parentPuth + "/" + ConfigSettings.Instance.FileUploadFolderNameBusiness + Model.BusinessLicensePic.Substring(0, fileLastDotb) + originSize + fileHandHouZhuib;
+            businessLicensePic = parentPuth + "/" + ConfigSettings.Instance.FileUploadFolderNameBusiness + Model.BusinessLicensePic;
         }
 
     }

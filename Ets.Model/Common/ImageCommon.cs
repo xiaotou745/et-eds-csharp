@@ -53,17 +53,20 @@ namespace Ets.Model.Common
         /// <returns></returns>
         public static string GetUserImage(string imagePic,ImageType imageType)
         {
-            var picFolderName = "";
             if (imageType == ImageType.Business)
             {
-                picFolderName = ConfigSettings.Instance.FileUploadFolderNameBusiness;
+                return ETS.Util.ConfigSettings.Instance.PicHost +
+                Path.Combine("/", Path.GetFileName(ConfigSettings.Instance.FileUploadPath), ConfigSettings.Instance.FileUploadFolderNameBusiness).ToForwardSlashPath() +
+                imagePic;
             }
             else if (imageType == ImageType.Clienter)
             {
-                picFolderName = ConfigSettings.Instance.FileUploadFolderNameClienter;
+                return ETS.Util.ConfigSettings.Instance.PicHost +
+                Path.Combine("/", Path.GetFileName(ConfigSettings.Instance.FileUploadPath), ConfigSettings.Instance.FileUploadFolderNameClienter).ToForwardSlashPath() +
+                imagePic;
             }
             return ETS.Util.ConfigSettings.Instance.PicHost +
-                            Path.Combine("/", Path.GetFileName(ConfigSettings.Instance.FileUploadPath), ParameterModel.Clienter.CustomerIconUploader.Instance.FolderName, picFolderName).ToForwardSlashPath() +
+                            Path.Combine("/", Path.GetFileName(ConfigSettings.Instance.FileUploadPath), ParameterModel.Clienter.CustomerIconUploader.Instance.FolderName).ToForwardSlashPath() +
                             imagePic;
         }
 
