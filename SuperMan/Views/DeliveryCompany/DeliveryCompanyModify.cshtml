@@ -40,7 +40,7 @@
             {
                 <input name="clienterSettlement" id="clienterSettlement" type="text" value="@Model.ClienterFixMoney" />
             }
-            <label id="lblClienterSettlement">@(Model.SettleType == 1 ? "元/单" : "%")</label>
+            <label id="lblClienterSettlement">@(Model.SettleType == 2 ? "元/单" : "%")</label>
         </div>
         <div class="control-group">
             <label>配送公司结算：</label>
@@ -52,7 +52,7 @@
             {
                 <input name="deliverySettlement" id="deliverySettlement" type="text" value="@Model.DeliveryCompanySettleMoney" />
             }
-            <label id="lblDeliverySettlement">@(Model.SettleType == 1 ? "元/单" : "%")</label>
+            <label id="lblDeliverySettlement">@(Model.SettleType == 2 ? "元/单" : "%")</label>
         </div>
         <div class="control-group">
             <label>是否启用：</label>
