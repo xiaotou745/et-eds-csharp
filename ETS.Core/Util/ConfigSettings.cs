@@ -38,6 +38,28 @@ namespace ETS.Util
             }
         }
 
+        /// <summary>
+        /// 商户图片文件夹名  add by pengyi 20150709
+        /// </summary>
+        public string FileUploadFolderNameBusiness
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["FileUploadFolderNameBusiness"];
+            }
+        }
+
+        /// <summary>
+        /// 骑士图片文件夹名  add by pengyi 20150709
+        /// </summary>
+        public string FileUploadFolderNameClienter
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["FileUploadFolderNameClienter"];
+            }
+        }
+
         public string FileUploadFolderNameAd
         {
             get

@@ -375,7 +375,8 @@ and a.PhoneNo=@PhoneNo";
                                     ,bg.Name BusinessGroupName
                                     ,ISNULL(b.MealsSettleMode,0) MealsSettleMode
                                     ,ISNULL(b.BalancePrice,0) BalancePrice
-                                    ,ISNULL(b.AllowWithdrawPrice,0) AllowWithdrawPrice";
+                                    ,ISNULL(b.AllowWithdrawPrice,0) AllowWithdrawPrice
+                                    ,ISNULL(b.RecommendPhone,'') as RecommendPhone";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrWhiteSpace(criteria.RecommendPhone))
             {
@@ -1619,14 +1620,14 @@ where Id=@Id";
                 }
                 else
                 {
-                    CheckPicUrl = Ets.Model.Common.ImageCommon.ReceiptPicConvert(CheckPicUrl);
+                    CheckPicUrl = Ets.Model.Common.ImageCommon.GetUserImage(CheckPicUrl, ImageType.Business);
                 }
                 #endregion
 
                 result.CheckPicUrl = CheckPicUrl;
                 result.BusinessLicensePic = string.IsNullOrEmpty(Convert.ToString(dataReader["BusinessLicensePic"])) ?
                     string.Empty :
-                    Ets.Model.Common.ImageCommon.ReceiptPicConvert(dataReader["BusinessLicensePic"].ToString());
+                    Ets.Model.Common.ImageCommon.GetUserImage(dataReader["BusinessLicensePic"].ToString(), ImageType.Business);
                 result.IDCard = dataReader["IDCard"].ToString();
                 result.Address = dataReader["Address"].ToString();
                 result.Landline = dataReader["Landline"].ToString();
@@ -2374,6 +2375,17 @@ MERGE INTO BusinessExpressRelation ber
             parm.AddWithValue("@IsEnable", model.IsEnable);
             parm.AddWithValue("@OptName", model.OptName);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, parm) > 0;
+        }
+
+        /// <summary>
+        /// 获取商户图片   add by pengyi 20150709  仅限工具使用
+        /// </summary>
+        public IList<BusinessPicModel> GetBusinessPics()
+        {
+            var sql = @"select b.Id,b.CheckPicUrl,b.BusinessLicensePic from [business](nolock) as b where b.CheckPicUrl is not null or b.BusinessLicensePic is not null";
+            var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql));
+            var list = ConvertDataTableList<BusinessPicModel>(dt);
+            return list;
         }
     }
 }

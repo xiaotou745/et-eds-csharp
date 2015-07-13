@@ -1,4 +1,5 @@
-﻿using ETS.Util;
+﻿using ETS.Enums;
+using ETS.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -66,6 +67,65 @@ namespace Ets.Model.ParameterModel.Clienter
         public string PicHost
         {
             get { return ConfigSettings.Instance.PicHost; }
+        }
+        private string businessPicPhysicalPath;
+        /// <summary>
+        /// 商户图片物理路径  add by pengyi 20150709
+        /// </summary>
+        public string BusinessPicPhysicalPath
+        {
+            get
+            {
+                if (businessPicPhysicalPath == null)
+                {
+                    businessPicPhysicalPath = Path.Combine(PhysicalPath, ConfigSettings.Instance.FileUploadFolderNameBusiness);
+                    if (!System.IO.Directory.Exists(businessPicPhysicalPath))
+                    {
+                        System.IO.Directory.CreateDirectory(businessPicPhysicalPath);
+                    }
+                }
+                return businessPicPhysicalPath;
+            }
+        }
+        private string clienterPicPhysicalPath;
+        /// <summary>
+        /// 骑士图片物理路径  add by pengyi 20150709
+        /// </summary>
+        public string ClienterPicPhysicalPath
+        {
+            get
+            {
+                if (clienterPicPhysicalPath == null)
+                {
+                    clienterPicPhysicalPath = Path.Combine(PhysicalPath, ConfigSettings.Instance.FileUploadFolderNameClienter);
+                    if (!System.IO.Directory.Exists(clienterPicPhysicalPath))
+                    {
+                        System.IO.Directory.CreateDirectory(clienterPicPhysicalPath);
+                    }
+                }
+                return clienterPicPhysicalPath;
+            }
+        }
+
+        /// <summary>
+        /// 获得图片物理路径
+        /// 彭宜
+        /// 20150710
+        /// </summary>
+        /// <param name="imageType">图片类型</param>
+        /// <returns></returns>
+        public string GetPhysicalPath(ImageType imageType)
+        {
+            //如果是小票,放在CustomerIcon/中,否则图片为商家或骑士的验证图片,需要保存在CustomerIcon/Business(或Clients)/中
+            switch (imageType)
+            {
+                 case ImageType.Business:
+                    return BusinessPicPhysicalPath;
+                case ImageType.Clienter:
+                    return ClienterPicPhysicalPath;
+                default:
+                    return PhysicalPath;
+            }
         }
     }
 }
