@@ -70,7 +70,13 @@ width: 100%;
                         <td style="color:red;font-weight:600">@item.Amount</td>
                         <td>@item.OrderCommission</td>
                         @{
-                            decimal butie = item.OrderCommission.Value - item.RealOrderCommission;
+                            decimal butie = 0.00M;
+                            if ((int)ETS.Enums.OrderStatusCommon.Finish == item.Status ||
+                                (int)ETS.Enums.OrderStatusCommon.Cancel == item.Status)
+                            {
+                                butie = item.OrderCommission.Value - item.RealOrderCommission;
+                            }
+                            
                             if (butie > 0)
                             {
                                 <td style="color:red;font-weight:600">@butie</td>
