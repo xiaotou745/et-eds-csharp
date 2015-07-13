@@ -84,6 +84,9 @@ insert into dbo.DeliveryCompany
            CreateName ,
            IsDisplay
          )
+ output Inserted.Id,Inserted.DeliveryCompanyName,Inserted.IsEnable,Inserted.SettleType,Inserted.ClienterFixMoney,Inserted.ClienterSettleRatio,
+        Inserted.DeliveryCompanySettleMoney,Inserted.BusinessQuantity,Inserted.ClienterQuantity,Inserted.IsDisplay,@CreateName,getdate()
+        into dbo.DeliveryCompanyLog(DeliveryCompanyId,DeliveryCompanyName,IsEnable,SettleType,ClienterFixMoney,ClienterSettleRatio,DeliveryCompanySettleMoney,BusinessQuantity,ClienterQuantity,IsDisplay,ModifyName, ModifyTime) 
  values(
            @DeliveryCompanyName ,
            @DeliveryCompanyCode ,
@@ -145,7 +148,11 @@ update  dbo.DeliveryCompany
             }
             
             upSql.Append(@" ,IsDisplay = @IsDisplay ");
-            upSql.Append(@"where   Id = @Id;");
+            upSql.Append(
+                @" output Deleted.Id,Deleted.DeliveryCompanyName,Deleted.IsEnable,Deleted.SettleType,Deleted.ClienterFixMoney,Deleted.ClienterSettleRatio,
+        Deleted.DeliveryCompanySettleMoney,Deleted.BusinessQuantity,Deleted.ClienterQuantity,Deleted.IsDisplay,@ModifyName,getdate()
+        into dbo.DeliveryCompanyLog(DeliveryCompanyId,DeliveryCompanyName,IsEnable,SettleType,ClienterFixMoney,ClienterSettleRatio,DeliveryCompanySettleMoney,BusinessQuantity,ClienterQuantity,IsDisplay,ModifyName,ModifyTime) ");
+            upSql.Append(@" where   Id = @Id; ");
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
 
             dbParameters.Add("@Id", DbType.Int32).Value = deliveryCompanyModel.Id;
