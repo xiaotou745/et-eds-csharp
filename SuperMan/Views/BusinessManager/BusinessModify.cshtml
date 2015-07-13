@@ -332,18 +332,20 @@
             data: paramaters,
             success: function (result) {
                 businessExpressRef = result;
+
+                if (businessExpressRef.length > 0) {
+                    for (var i = 0; i < businessExpressRef.length; i++) {
+                        if (businessExpressRef[i].IsEnable == 1) {
+                            $(":checkbox[id='" + businessExpressRef[i].ExpressId + "']").prop("checked", true);
+                        } else {
+                            $(":checkbox[id='" + businessExpressRef[i].ExpressId + "']").prop("checked", false);
+                        }
+
+                    }
+                }
             }
         });
-        if (businessExpressRef.length > 0) {
-            for (var i = 0; i < businessExpressRef.length; i++) {
-                if (businessExpressRef[i].IsEnable == 1) {
-                    $(":checkbox[id='" + businessExpressRef[i].ExpressId + "']").prop("checked", true);
-                } else {
-                    $(":checkbox[id='" + businessExpressRef[i].ExpressId + "']").prop("checked", false);
-                }
-                
-            }
-        }
+
     };
 
     function funAddThirdRelation() {
