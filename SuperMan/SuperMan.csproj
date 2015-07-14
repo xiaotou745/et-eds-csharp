@@ -217,6 +217,7 @@
     <Compile Include="Controllers\BusinessManagerController.cs" />
     <Compile Include="Controllers\DataManagerController.cs" />
     <Compile Include="Controllers\DeliveryCompanyController.cs" />
+    <Compile Include="Controllers\DeliveryManagerController.cs" />
     <Compile Include="Controllers\DownloadController.cs" />
     <Compile Include="Controllers\MessageManagerController.cs" />
     <Compile Include="Controllers\StatisticalController.cs" />
@@ -671,6 +672,8 @@
     <Content Include="Views\DeliveryCompany\DeliveryCompany.cshtml" />
     <Content Include="Views\DeliveryCompany\_DeliveryCompanyList.cshtml" />
     <Content Include="Views\DeliveryCompany\DeliveryCompanyModify.cshtml" />
+    <Content Include="Views\DeliveryManager\SuperManManager.cshtml" />
+    <Content Include="Views\DeliveryManager\_PostSuperManManager.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
