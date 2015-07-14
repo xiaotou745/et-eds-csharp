@@ -139,6 +139,7 @@
     <Compile Include="Pay\AliPay\MD5.cs" />
     <Compile Include="Pay\YeePay\AESUtil.cs" />
     <Compile Include="Pay\YeePay\Digest.cs" />
+    <Compile Include="Pay\YeePay\EnumConfig.cs" />
     <Compile Include="Pay\YeePay\HmacMD5.cs" />
     <Compile Include="Pay\YeePay\KeyConfig.cs" />
     <Compile Include="Pay\YeePay\QueryBalance.cs" />

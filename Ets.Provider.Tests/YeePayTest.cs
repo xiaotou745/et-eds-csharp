@@ -28,31 +28,31 @@ namespace Ets.Provider.Tests
 
             string requestid = re;
 
-            string bindmobile = "18513958521";
+            string bindmobile = "18553507220";  //绑定手机
 
-            string customertype = "PERSON";
+            string customertype = CustomertypeEnum.PERSON.ToString(); //注册类型  PERSON ：个人 ENTERPRISE：企业个人 ENTERPRISE：企业
 
-            string signedname = "林春晓";
+            string signedname = "曹赫洋"; //签约名   商户签约名；个人，填写姓名；企业，填写企业名称。
 
-            string linkman = "林春晓";
+            string linkman = "曹赫洋"; //联系人
 
-            string idcard = "130924198603073514";
+            string idcard = "370685199110161712"; //身份证  customertype为PERSON时，必填
 
-            string businesslicence = "";
+            string businesslicence = ""; //营业执照号 customertype为ENTERPRISE时，必填
 
-            string legalperson = "林春晓";
+            string legalperson = "曹赫洋";
 
-            string minsettleamount = "0.1";
+            string minsettleamount = "0.1"; //起结金额
 
-            string riskreserveday = "1";
+            string riskreserveday = "1"; //姓名  PERSON时，idcard对应的姓名； ENTERPRISE时，企业的法人姓名
 
-            string bankaccountnumber = "6225880123108731";
+            string bankaccountnumber = "6226200105376660"; //银行卡号
 
-            string bankname = "招商银行股份有限公司北京大运村支行";
+            string bankname = "民生银行"; //开户行
 
-            string accountname = "林春晓";
+            string accountname = "曹赫洋"; //开户名
 
-            string bankaccounttype = "PrivateCash";
+            string bankaccounttype = BankaccounttypeEnum.PrivateCash.ToString();  //银行卡类别  PrivateCash：对私 PublicCash： 对公
 
             string bankprovince = "北京";
 
@@ -69,6 +69,18 @@ namespace Ets.Provider.Tests
 
         }
 
+        /// <summary>
+        /// 查询余额
+        /// </summary>
+        [Test]
+        public void CashTransfer()
+        {
+            TimeSpan ts = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0);
+            string re = 1 + Convert.ToInt64(ts.TotalSeconds).ToString();
+            var result = new Transfer().CashTransfer(re, "10012474271", "1.1", "");//提现
+
+        }
+
 
         /// <summary>
         /// 查询余额
@@ -76,7 +88,7 @@ namespace Ets.Provider.Tests
         [Test]
         public void GetBalance()
         {
-            var result = new QueryBalance().GetBalance("10012474239");//账户余额
+            var result = new QueryBalance().GetBalance("10012474271");//账户余额
         }
 
 
@@ -89,8 +101,8 @@ namespace Ets.Provider.Tests
         {
             TimeSpan ts = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0);
             string re = 1 + Convert.ToInt64(ts.TotalSeconds).ToString();
-           // var result = new Transfer().TransferAccounts(re, "10012474239", "0.1", "");//转账   主账户转给子账户
-            var result1 = new Transfer().TransferAccounts(re, "", "0.1", "10012474239");//转账   子账户转给总账户
+            var result = new Transfer().TransferAccounts(re, "10012474271", "1.1", "");//转账   主账户转给子账户
+            //var result1 = new Transfer().TransferAccounts(re, "", "0.1", "10012474239");//转账   子账户转给总账户
         }
      
     }

@@ -99,21 +99,21 @@ namespace ETS.Pay.YeePay
         /// </summary>
         /// <param name="requestid">注册请求号   guid</param>
         /// <param name="bindmobile">绑定手机</param>
-        /// <param name="customertype">注册类型</param>
-        /// <param name="signedname">签约名</param>
+        /// <param name="customertype">注册类型  PERSON ：个人 ENTERPRISE：企业</param>
+        /// <param name="signedname">签约名   商户签约名；个人，填写姓名；企业，填写企业名称。</param>
         /// <param name="linkman">联系人</param>
-        /// <param name="idcard">身份证</param>
-        /// <param name="businesslicence">营业执照号</param>
-        /// <param name="legalperson">姓名</param>
+        /// <param name="idcard">身份证  customertype为PERSON时，必填</param>
+        /// <param name="businesslicence">营业执照号 customertype为ENTERPRISE时，必填</param>
+        /// <param name="legalperson">姓名  PERSON时，idcard对应的姓名； ENTERPRISE时，企业的法人姓名</param>
         /// <param name="minsettleamount">起结金额</param>
         /// <param name="riskreserveday">结算周期</param>
         /// <param name="bankaccountnumber">银行卡号</param>
         /// <param name="bankname">开户行</param>
         /// <param name="accountname">开户名</param>
-        /// <param name="bankaccounttype">银行卡类别</param>
+        /// <param name="bankaccounttype">银行卡类别  PrivateCash：对私 PublicCash： 对公</param>
         /// <param name="bankprovince">开户省</param>
         /// <param name="bankcity">开户市</param>
-        /// <param name="manualsettle">自劣结算</param>
+        /// <param name="manualsettle">自助结算 N – 易宝自劢打款到银行卡； Y - 丌自劢打款，需要通过提现接口或商户后台提现功能迚行结算。 若丌填写，该参数默讣值为：N</param>
         /// <returns>Json数据</returns>
         public RegisterReturnModel RegSubaccount(string requestid, string bindmobile, string customertype, 
             string signedname, string linkman, string idcard, string businesslicence,

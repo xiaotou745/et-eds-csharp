@@ -119,7 +119,7 @@ namespace ETS.Pay.YeePay
 
             var datas = "customernumber=" + customernumber + "&data=" + data;
 
-            var result = HTTPHelper.HttpPost(postUrl, datas);
+            var result = HTTPHelper.HttpPost(postUrl, datas,null);
 
             return ResponseYeePay.OutRes(result);
         }
