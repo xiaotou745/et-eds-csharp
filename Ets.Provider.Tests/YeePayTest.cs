@@ -16,6 +16,9 @@ namespace Ets.Provider.Tests
    public   class YeePayTest
     {
 
+        /// <summary>
+        /// 注册
+        /// </summary>
         [Test]
         public void Register()
         {
@@ -65,5 +68,30 @@ namespace Ets.Provider.Tests
             var result = new Transfer().CashTransfer(requestid, "", "0.1", "");//提现
 
         }
+
+
+        /// <summary>
+        /// 查询余额
+        /// </summary>
+        [Test]
+        public void GetBalance()
+        {
+            var result = new QueryBalance().GetBalance("10012474239");//账户余额
+        }
+
+
+        /// <summary>
+        /// 转账
+        /// </summary>
+
+        [Test]
+        public void TransferAccounts()
+        {
+            TimeSpan ts = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0);
+            string re = 1 + Convert.ToInt64(ts.TotalSeconds).ToString();
+           // var result = new Transfer().TransferAccounts(re, "10012474239", "0.1", "");//转账   主账户转给子账户
+            var result1 = new Transfer().TransferAccounts(re, "", "0.1", "10012474239");//转账   子账户转给总账户
+        }
+     
     }
 }

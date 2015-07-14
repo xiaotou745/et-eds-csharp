@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Web.Script.Serialization;
 using ETS.Util;
+using Newtonsoft.Json.Linq;
 
 
 namespace ETS.Pay.YeePay
@@ -54,7 +55,7 @@ namespace ETS.Pay.YeePay
 
             var datas = "customernumber=" + customernumber + "&data=" + data;
 
-            var result = HTTPHelper.HttpPost(postUrl, datas);
+            var result = HTTPHelper.HttpPost(postUrl, datas,null);
 
             return ResponseYeePay.OutRes(result);
 
@@ -69,14 +70,15 @@ namespace ETS.Pay.YeePay
         /// <param name="ledgerno">子账户商户编号</param>
         /// <param name="amount">转账金额 单位：元</param>
         /// <param name="sourceledgerno">子账户商编</param>
-        /// <returns>json</returns>
-        public string TransferAccounts(string requestid, string ledgerno, string amount, string sourceledgerno)
+        /// <returns>成功  失败</returns>
+        public bool TransferAccounts(string requestid, string ledgerno, string amount, string sourceledgerno)
         {
             //商户编号   
             string customernumber = KeyConfig.YeepayAccountId;
             //密钥   
             string hmackey = KeyConfig.YeepayHmac;
-            return TransferAccounts(customernumber, hmackey, requestid, ledgerno, amount, sourceledgerno);
+            string res = TransferAccounts(customernumber, hmackey, requestid, ledgerno, amount, sourceledgerno);
+            return JObject.Parse(res).Value<int>("code") == 1;
 
         }
         /// <summary>
