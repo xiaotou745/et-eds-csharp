@@ -117,7 +117,7 @@ namespace Ets.Model.DataModel.Clienter
         /// <summary>
         /// 所属物流公司ID
         /// </summary>
-        public int DeliveryCompanyId { get; set; }
+        public int DeliveryCompanyId { get; set; } 
     }
 
     public class ClientOrderSearchCriteria
