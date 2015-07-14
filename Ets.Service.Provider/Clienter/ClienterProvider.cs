@@ -1375,13 +1375,13 @@ namespace Ets.Service.Provider.Clienter
                     return true;
                 }
             }
-            //if (!(myOrderInfo.GrabTime.Value.AddMinutes(5) < DateTime.Now && 
+            //if (!(myOrderInfo.GrabTime.Value.AddMinutes(5) < DateTime.Now &&
             //DateTime.Now < myOrderInfo.GrabTime.Value.AddMinutes(120)))
             //{
             //    return true;
             //}
-            if ((DateTime.Now < myOrderInfo.GrabTime.Value.AddMinutes(5) ||
-          DateTime.Now > myOrderInfo.GrabTime.Value.AddMinutes(120)))
+            if ((ParseHelper.ToDatetime(mapDetail.ActualDoneDate) < myOrderInfo.GrabTime.Value.AddMinutes(5) ||
+          ParseHelper.ToDatetime(mapDetail.ActualDoneDate) > myOrderInfo.GrabTime.Value.AddMinutes(120)))
             {
                 return true;
             }
@@ -1409,18 +1409,14 @@ namespace Ets.Service.Provider.Clienter
         {
             decimal realOrderCommission = myOrderInfo.OrderCommission == null ? 0 : myOrderInfo.OrderCommission.Value;
             bool isNotRealOrder = false;
-            //这里比较恶心，上传小票时则不需要验证是否为有效订单，
-            //因为parModel在传小票时传的都是null，所以先暂时拿parModel来做验证，该位置一定要改成单一规则
-            if (parModel != null)
+         
+            isNotRealOrder = CheckIsNotRealOrder(myOrderInfo, parModel);
+            if (isNotRealOrder)
             {
-                isNotRealOrder = CheckIsNotRealOrder(myOrderInfo, parModel);
-                if (isNotRealOrder)
-                {
-                    orderOtherDao.UpdateOrderIsReal(myOrderInfo.Id);
-                    realOrderCommission = realOrderCommission > myOrderInfo.SettleMoney ? myOrderInfo.SettleMoney : realOrderCommission;
-                }
+                orderOtherDao.UpdateOrderIsReal(myOrderInfo.Id);
+                realOrderCommission = realOrderCommission > myOrderInfo.SettleMoney ? myOrderInfo.SettleMoney : realOrderCommission;
             }
-
+            
             orderDao.UpdateOrderRealOrderCommission(myOrderInfo.Id.ToString(), realOrderCommission);
             if (operateType == 0)
             {
@@ -1430,9 +1426,7 @@ namespace Ets.Service.Provider.Clienter
             {
                 UpdateAccountBalanceAndWithdraw(myOrderInfo.clienterId, myOrderInfo);
             }
-            //这里比较恶心，上传小票时则不需要验证是否为有效订单，
-            //因为parModel在传小票时传的都是null，所以先暂时拿parModel来做验证，该位置一定要改成单一规则
-            if (parModel != null && isNotRealOrder)
+            if (isNotRealOrder)
             {
                 //如果是无效订单，则扣除网站补贴
                 if (myOrderInfo.OrderCommission > myOrderInfo.SettleMoney)
