@@ -38,7 +38,7 @@ namespace Ets.Dao.Business
         public virtual PageInfo<T> GetOrdersAppToSql<T>(Ets.Model.ParameterModel.Business.BussOrderParaModelApp paraModel)
         {
             #region where
-            string whereStr = "1=1 ";  //where查询条件实体类
+            string whereStr = "1=1 and o.IsEnable=1";  //where查询条件实体类
             if (paraModel.userId != null)  //订单商户id
                 whereStr += " and o.businessId=" + paraModel.userId.ToString();
 
