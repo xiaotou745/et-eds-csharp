@@ -136,6 +136,7 @@
     <Content Include="businessprotocol.html" />
     <Content Include="clienterprotocol.html" />
     <Content Include="Content\box.css" />
+    <Content Include="Content\eds2.css" />
     <Content Include="Content\img\ex_jt.png" />
     <Content Include="Content\img\help\1tu.png" />
     <Content Include="Content\img\help\2tu.png" />
@@ -186,8 +187,12 @@
     <Content Include="htmls\ios\help5.html" />
     <Content Include="htmls\ios\help6.html" />
     <Content Include="htmls\ios\help7.html" />
+    <Content Include="htmls\ios\qs.html" />
+    <Content Include="htmls\ios\sh.html" />
     <Content Include="htmls\Register.html" />
     <Content Include="Images\apk.png" />
+    <Content Include="Images\btn-qs.jpg" />
+    <Content Include="Images\btn-sh.jpg" />
     <Content Include="Images\gotop.png" />
     <Content Include="Images\img1-1.jpg" />
     <Content Include="Images\img1-1.png" />
@@ -200,6 +205,8 @@
     <Content Include="Images\img5.png" />
     <Content Include="Images\img6.jpg" />
     <Content Include="Images\img7.jpg" />
+    <Content Include="Images\iphone-qs.png" />
+    <Content Include="Images\iphone-sh.png" />
     <Content Include="Images\t2.jpg" />
     <Content Include="Images\t2_db.jpg" />
     <Content Include="Images\t5.jpg" />
