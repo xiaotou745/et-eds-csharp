@@ -125,7 +125,7 @@ case substring(convert(varchar(100), OperateTime, 23),1,7)
     else convert(varchar(4),datepart(Year,OperateTime))+'年'+convert(varchar(4),datepart(month,OperateTime)) +'月' end
 as MonthInfo
 from  ClienterBalanceRecord (nolock)
-where  ClienterId=@ClienterId 
+where  ClienterId=@ClienterId  and IsEnable=1
 order by Id desc";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("ClienterId", clienterId);
