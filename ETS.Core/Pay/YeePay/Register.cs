@@ -36,7 +36,7 @@ namespace ETS.Pay.YeePay
         /// <param name="bankcity">开户市</param>
         /// <param name="manualsettle">自劣结算</param>
         /// <returns>Json数据</returns>
-        public string RegSubaccount(string customernumber, string hmackey, string requestid, 
+        public RegisterReturnModel RegSubaccount(string customernumber, string hmackey, string requestid, 
             string bindmobile, string customertype, string signedname, string linkman, 
             string idcard, string businesslicence, string legalperson, string minsettleamount,
             string riskreserveday, string bankaccountnumber, string bankname, string accountname,
@@ -88,9 +88,9 @@ namespace ETS.Pay.YeePay
 
             var datas = "customernumber=" + customernumber + "&data=" + data;
 
-            var result = HTTPHelper.HttpPost(postURL, datas);
+            var result = HTTPHelper.HttpPost(postURL, datas,null);
 
-            return ResponseYeePay.OutRes(result);
+            return JsonHelper.JsonConvertToObject<RegisterReturnModel>(ResponseYeePay.OutRes(result));
             
         }
 
@@ -115,7 +115,7 @@ namespace ETS.Pay.YeePay
         /// <param name="bankcity">开户市</param>
         /// <param name="manualsettle">自劣结算</param>
         /// <returns>Json数据</returns>
-        public string RegSubaccount(string requestid, string bindmobile, string customertype, 
+        public RegisterReturnModel RegSubaccount(string requestid, string bindmobile, string customertype, 
             string signedname, string linkman, string idcard, string businesslicence,
             string legalperson, string minsettleamount, string riskreserveday, 
             string bankaccountnumber, string bankname, string accountname, 

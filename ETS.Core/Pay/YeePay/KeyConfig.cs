@@ -7,7 +7,7 @@ namespace ETS.Pay.YeePay
     public static class KeyConfig
     {
 
-        private static string _yeepayHmac = "obtr65W8683701747qoVA1HCs197q9swwR9TrpKofh12rekWI198tP1FSi0F";
+        private static string _yeepayHmac = "I79t12SoeK5lBZBx3ceUUZ7F02S881zRyL37aRTocTr8rA619B5i309jr8CZ";
         /// <summary>
         /// 易宝支付 商户密钥
         /// </summary>
@@ -19,7 +19,7 @@ namespace ETS.Pay.YeePay
             }
         }
 
-        private static string _yeepayaccountid = "10012463028";
+        private static string _yeepayaccountid = "10012462233";
         /// <summary>
         /// 易宝支付 商户编号
         /// </summary>
