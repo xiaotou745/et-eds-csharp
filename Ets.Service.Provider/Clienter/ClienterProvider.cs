@@ -638,8 +638,8 @@ namespace Ets.Service.Provider.Clienter
             GlobalConfigModel globalSetting = new GlobalConfigProvider().GlobalConfigMethod(0);
             //取到任务的接单时间、从缓存中读取完成任务时间限制，判断要用户点击完成时间>接单时间+限制时间 
             int limitFinish = ParseHelper.ToInt(globalSetting.CompleteTimeSet, 0);
-           
-            if (limitFinish>0)
+
+            if (limitFinish > 0)
             {
                 DateTime yuJiFinish = myOrderInfo.GrabTime.Value.AddMinutes(limitFinish);
                 if (DateTime.Compare(DateTime.Now, yuJiFinish) < 0)  //小于0说明用户完成时间 太快
@@ -648,7 +648,7 @@ namespace Ets.Service.Provider.Clienter
                     return model;
                 }
             }
-          
+
             if (!new OrderDao().IsOrNotFinish(myOrderInfo.Id))//是否有未完成子订单
             {
                 model.FinishOrderStatus = FinishOrderStatus.ExistNotPayChildOrder;
@@ -1375,8 +1375,13 @@ namespace Ets.Service.Provider.Clienter
                     return true;
                 }
             }
-            if (!(myOrderInfo.GrabTime.Value.AddMinutes(5) < DateTime.Now &&
-            DateTime.Now < myOrderInfo.GrabTime.Value.AddMinutes(120)))
+            //if (!(myOrderInfo.GrabTime.Value.AddMinutes(5) < DateTime.Now && 
+            //DateTime.Now < myOrderInfo.GrabTime.Value.AddMinutes(120)))
+            //{
+            //    return true;
+            //}
+            if ((DateTime.Now < myOrderInfo.GrabTime.Value.AddMinutes(5) ||
+          DateTime.Now > myOrderInfo.GrabTime.Value.AddMinutes(120)))
             {
                 return true;
             }
@@ -1400,27 +1405,34 @@ namespace Ets.Service.Provider.Clienter
         /// </summary>
         /// <param name="myOrderInfo"></param>
         /// <param name="isNotRealOrder"></param>
-        private void UpdateClienterTotalAccount(OrderListModel myOrderInfo, OrderCompleteModel parModel,int operateType=0)
+        private void UpdateClienterTotalAccount(OrderListModel myOrderInfo, OrderCompleteModel parModel, int operateType = 0)
         {
             decimal realOrderCommission = myOrderInfo.OrderCommission == null ? 0 : myOrderInfo.OrderCommission.Value;
-
-            bool isNotRealOrder = CheckIsNotRealOrder(myOrderInfo, parModel);
-            if (isNotRealOrder)
+            bool isNotRealOrder = false;
+            //这里比较恶心，上传小票时则不需要验证是否为有效订单，
+            //因为parModel在传小票时传的都是null，所以先暂时拿parModel来做验证，该位置一定要改成单一规则
+            if (parModel != null)
             {
-                orderOtherDao.UpdateOrderIsReal(myOrderInfo.Id);
-                realOrderCommission = realOrderCommission > myOrderInfo.SettleMoney ? myOrderInfo.SettleMoney : realOrderCommission;
+                isNotRealOrder = CheckIsNotRealOrder(myOrderInfo, parModel);
+                if (isNotRealOrder)
+                {
+                    orderOtherDao.UpdateOrderIsReal(myOrderInfo.Id);
+                    realOrderCommission = realOrderCommission > myOrderInfo.SettleMoney ? myOrderInfo.SettleMoney : realOrderCommission;
+                }
             }
-            int result = orderDao.UpdateOrderRealOrderCommission(myOrderInfo.Id.ToString(), realOrderCommission);
-            if (operateType==0)
+
+            orderDao.UpdateOrderRealOrderCommission(myOrderInfo.Id.ToString(), realOrderCommission);
+            if (operateType == 0)
             {
-                UpdateClienterAccount(myOrderInfo);  
+                UpdateClienterAccount(myOrderInfo);
             }
             else
             {
-                UpdateAccountBalanceAndWithdraw(myOrderInfo.clienterId,myOrderInfo);
+                UpdateAccountBalanceAndWithdraw(myOrderInfo.clienterId, myOrderInfo);
             }
-
-            if (isNotRealOrder)
+            //这里比较恶心，上传小票时则不需要验证是否为有效订单，
+            //因为parModel在传小票时传的都是null，所以先暂时拿parModel来做验证，该位置一定要改成单一规则
+            if (parModel != null && isNotRealOrder)
             {
                 //如果是无效订单，则扣除网站补贴
                 if (myOrderInfo.OrderCommission > myOrderInfo.SettleMoney)
@@ -1434,7 +1446,7 @@ namespace Ets.Service.Provider.Clienter
                     {
                         UpdateNotRealOrderClienterAccountAndWithdraw(myOrderInfo, diffOrderCommission);
                     }
-                  
+
                     orderDao.InsertNotRealOrderLog(myOrderInfo.Id, diffOrderCommission * (-1));
                 }
             }
