@@ -1,0 +1,151 @@
+﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Clienter.ClienterListModel>
+@using Ets.Service.Provider.Clienter
+@using Ets.Service.Provider.Common
+@using ETS.Util
+@using Webdiyer.WebControls.Mvc
+@using ETS.Enums;
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+    <thead>
+
+        <tr class="tdbg">
+            <th width="%5">编号</th>
+            <th>姓名</th>
+            <th>工作状态</th>
+            <th>电话</th>
+            <th>身份证号</th>
+            <th>照片</th>
+            <th>申请时间</th>
+            <th>审核状态</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            if (Model != null && Model.Records.Count > 0)
+            {
+                var i = 0;
+                var puth = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.ParentRelativePath
+                    + "/" + ConfigSettings.Instance.FileUploadFolderNameClienter;
+                var PicHost = Ets.Model.ParameterModel.Clienter.CustomerIconUploader.Instance.PicHost;
+                foreach (var item in Model.Records)
+                {
+                    i++;
+                    <tr id="@item.Id">
+                        <td>@item.Id</td>
+                        <td>@item.TrueName</td>
+                        <td>
+                            @if (@item.WorkStatus == 0)
+                            {
+                                @Html.Raw("上班")
+                            }
+                            else if (@item.WorkStatus == 1)
+                            {
+                                @Html.Raw("下班")
+                            }
+                        </td>
+                        <td>@item.PhoneNo</td>
+                        <td>@item.IDCard</td>
+                        <td>
+                            <a href="javascript:void(0)" class="businessOk" onclick="funcPicView('@String.Format("{0}{1}",PicHost,puth)','@item.PicWithHandUrl','@item.PicUrl')">查看</a>
+                        </td>
+                        <td>@item.InsertTime</td>
+                       
+                        <td>@item.CompanyName</td>
+                        @{
+                            var statusView = "";
+                            if (@item.Status == ClienteStatus.Status1.GetHashCode())
+                            {
+                                statusView = "审核通过";
+                            }
+
+                            else if (@item.Status == ClienteStatus.Status0.GetHashCode())
+                            {
+                                statusView = "审核被拒绝";
+                            }
+                            else if (@item.Status == ClienteStatus.Status3.GetHashCode())
+                            {
+                                statusView = "审核中";
+                            }
+                            else if (@item.Status == ClienteStatus.Status2.GetHashCode())
+                            {
+                                statusView = "未审核";
+                            }
+                        }
+                        <td>@statusView</td>
+                    </tr>
+                }
+            }
+
+        }
+    </tbody>
+
+</table>
+@{
+    if (Model != null)
+    {
+        ViewBag.ActionName = "PostSuperManManager";
+        @Html.Partial("~/views/shared/PagerControl.cshtml", Model)
+    }
+}
+
+@*弹出图片*@
+<div class="selectSupplierDish">
+    <div class="add-openbox add-form" id="ClientPicShow" style="width:500px">
+        <p id="statusFin"><h2>查看图片</h2></p>
+        <form class="form-horizontal" role="form" id="BusiPicForm" method="post">
+            <fieldset>
+                <img width="160" height="160" id="showPicHandWithUrl" />
+                <a id="showBigPicHWU" href="" target="_blank">查看大图</a>
+                <img width="160" height="160" id="showPicUrl" />
+                <a id="showBigPicUrl" href="" target="_blank">查看大图</a>
+            </fieldset>
+            <p class="btnbox">
+                <input value="关闭" type="button" class="J_closebox qxBtn" />
+            </p>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+    var currentId;
+    var amount;
+    var adminjs = new adminglass();
+    $(document).ready(function () {
+
+    });
+
+    function funcPicView(puth, PicWithHandUrl, PicUrl) {
+
+        $('#showPicHandWithUrl').attr('src', puth + PicWithHandUrl);
+        $('#showPicUrl').attr('src', puth + PicUrl);
+
+        var originSize = '_0_0';
+        $('#showBigPicHWU').attr('href', puth + BigPicName(PicWithHandUrl, originSize));
+        $('#showBigPicUrl').attr('href', puth + BigPicName(PicUrl, originSize));
+        adminjs.openwinbox('#ClientPicShow');
+        if (PicWithHandUrl.length == 0) {
+            $('#showBigPicHWU').hide();
+        } else {
+            $('#showBigPicHWU').show();
+        }
+        if (PicUrl.length == 0) {
+            $('#showBigPicUrl').hide();
+        } else {
+            $('#showBigPicUrl').show();
+        }
+    }
+
+    $('.J_closebox').click(function () {
+        adminjs.closewinbox('.add-openbox');
+        return false;
+    });
+
+
+    function BigPicName(picFileName, fileSize) {
+        var lastDot = picFileName.lastIndexOf('.');
+        var houzhui = picFileName.substr(lastDot, picFileName.length - lastDot);
+        var bigPicName = picFileName.substring(0, lastDot) + fileSize + houzhui;
+        return bigPicName;
+    }
+
+</script>
+
