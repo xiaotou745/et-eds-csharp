@@ -102,6 +102,7 @@
     }
     function funcCheckCity(accountId) {
         var accountCityRef;
+        var accountDcRef;//当前用户的物流公司权限
         var paramaters = { "accountId": accountId };
         var strCityNameList = "";
         var url = "/AuthorityManager/GetAccountCityRel";
@@ -114,10 +115,25 @@
                 accountCityRef = result;
             }
         });
+        $.ajax({
+            type: 'POST',
+            async: false,
+            url:  '/AuthorityManager/GetAccountDcRel',
+            data: paramaters,
+            success: function (result) {
+               
+                accountDcRef = result;
+            }
+        });
         if (accountCityRef.length > 0) {
             for (var i = 0; i < accountCityRef.length; i++) {
-                $(":checkbox[id='" + accountCityRef[i].CityId + "']").prop("checked", true);
+                $("#DcItemList :checkbox[id='" + accountCityRef[i].CityId + "']").prop("checked", true);
                 strCityNameList = strCityNameList + accountCityRef[i].CityName + ",";
+            }
+        }
+        if (accountDcRef.length > 0) {
+            for (var i = 0; i < accountDcRef.length; i++) {
+                $(":checkbox[id='" + accountDcRef[i].DeliveryCompanyID + "']").prop("checked", true);
             }
         }
         if (strCityNameList.length > 0) {
