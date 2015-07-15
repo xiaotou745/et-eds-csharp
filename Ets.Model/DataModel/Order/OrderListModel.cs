@@ -288,5 +288,10 @@ namespace Ets.Model.DataModel.Order
         /// 最终给骑士的佣金
         /// </summary>
         public decimal RealOrderCommission { get; set; }
+
+        /// <summary>
+        /// 是否删除
+        /// </summary>
+        public int IsEnable { get; set; }
     }
 }
