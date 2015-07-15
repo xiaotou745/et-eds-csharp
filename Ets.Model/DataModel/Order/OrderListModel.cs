@@ -293,5 +293,13 @@ namespace Ets.Model.DataModel.Order
         /// 是否删除
         /// </summary>
         public int IsEnable { get; set; }
+        /// <summary>
+        /// 结算类型
+        /// </summary>
+        public string SettleType { get; set; }
+        /// <summary>
+        /// 结算数值
+        /// </summary>
+        public decimal SettleValue { get; set; }
     }
 }
