@@ -141,7 +141,10 @@ namespace Ets.Model.DomainModel.GlobalConfig
         /// 雇主任务时间限制
         /// </summary>
         public string EmployerTaskTimeSet { get; set; }
-        
 
+        /// <summary>
+        /// 骑士提现小于等于X元支付手续费
+        /// </summary>
+        public string ClienterWithdrawCommissionAccordingMoney { get; set; }
     }
 }
