@@ -1,4 +1,8 @@
-﻿using Ets.Service.IProvider.Pay;
+﻿using Ets.Model.Common.YeePay;
+using Ets.Model.DomainModel.Finance;
+using ETS.Pay.YeePay;
+using Ets.Service.IProvider.Finance;
+using Ets.Service.IProvider.Pay;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -9,6 +13,7 @@ using Ets.Model.Common.AliPay;
 using ETS.Enums;
 using Ets.Model.Common;
 using ETS.Expand;
+using Ets.Service.Provider.Finance;
 using ETS.Util;
 using ETS.Pay.AliPay;
 using System.Xml;
@@ -30,6 +35,8 @@ namespace Ets.Service.Provider.Pay
     {
         //AlipayIntegrate alipayIntegrate = new AlipayIntegrate();
         OrderChildDao orderChildDao = new OrderChildDao();
+        private IBusinessFinanceProvider iBusinessFinanceProvider = new BusinessFinanceProvider();
+        private  IClienterFinanceProvider iClienterFinanceProvider = new ClienterFinanceProvider();
         #region 生成支付宝、微信二维码订单
 
         /// <summary>
@@ -347,12 +354,12 @@ namespace Ets.Service.Provider.Pay
         /// <returns></returns>
         public ResultModel<BusinessRechargeResultModel> BusinessRecharge(BusinessRechargeModel model)
         {
-            LogHelper.LogWriter("=============商家充值支付请求数据：", model); 
+            LogHelper.LogWriter("=============商家充值支付请求数据：", model);
 
             // string.Concat(model.productId, "_", model.orderId, "_", model.childId, "_", model.payStyle);
 
             #region 金额验证
-            if (model.payAmount <=0 || model.payAmount > 100000)
+            if (model.payAmount <= 0 || model.payAmount > 100000)
             {
                 return ResultModel<BusinessRechargeResultModel>.Conclude(AliPayStatus.fail);
             }
@@ -606,5 +613,72 @@ namespace Ets.Service.Provider.Pay
         }
 
         #endregion
+
+
+        /// <summary>
+        /// 易宝转账回调接口
+        /// </summary>
+        /// <param name="data"></param>
+
+        public bool YeePayCashTransferCallback(string data)
+        {
+            string username = "易宝提现回调";
+
+            CashTransferCallback model = JsonHelper.JsonConvertToObject<CashTransferCallback>(ResponseYeePay.OutRes(data));
+            int withwardId = ParseHelper.ToInt(model.cashrequestid.Substring(2));
+            if (model.cashrequestid.Substring(0, 1) == "B")  //B端逻辑
+            {
+                if (model.status == "SUCCESS")  //提现成功 走 成功的逻辑
+                {
+
+                    iBusinessFinanceProvider.BusinessWithdrawPayOk( new BusinessWithdrawLog()
+                    {
+                        Operator = username,
+                        Remark = "易宝提现打款成功" + model.desc,
+                        Status = BusinessWithdrawFormStatus.Success.GetHashCode(),
+                        WithwardId = withwardId
+                    });
+                }
+                else if (model.status == "FAIL")  //提现失败 走 失败的逻辑
+                {
+
+                    iBusinessFinanceProvider.BusinessWithdrawPayFailed( new BusinessWithdrawLogModel()
+                    {
+                        Operator = username,
+                        Remark = "易宝提现打款失败，" + model.desc,
+                        Status = BusinessWithdrawFormStatus.Error.GetHashCode(),
+                        WithwardId =withwardId,
+                        PayFailedReason = ""
+
+                    }); //商户体现失败
+                }
+            }
+            else if (model.cashrequestid.Substring(0, 1) == "C")  //C端逻辑
+            {
+                if (model.status == "SUCCESS")  //提现成功 走 成功的逻辑
+                {
+
+                     iClienterFinanceProvider.ClienterWithdrawPayOk(new ClienterWithdrawLog()
+                    {
+                        Operator = username,
+                        Remark = "易宝提现打款成功" + model.desc,
+                        Status = ClienterWithdrawFormStatus.Success.GetHashCode(),
+                        WithwardId = withwardId
+                    });
+                }
+                else if (model.status == "FAIL")  //提现失败 走 失败的逻辑
+                {
+                    iClienterFinanceProvider.ClienterWithdrawPayFailed( new ClienterWithdrawLogModel()
+                    {
+                        Operator = username,
+                        Remark = "易宝提现打款失败，" + model.desc,
+                        Status = ClienterWithdrawFormStatus.Error.GetHashCode(),
+                        WithwardId =withwardId,
+                        PayFailedReason = ""
+                    });
+                }
+            }
+            return true;
+        }
     }
 }

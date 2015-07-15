@@ -71,5 +71,11 @@ namespace Ets.Service.IProvider.Pay
         /// </summary>
         /// <returns></returns>
         dynamic ReturnWxpay();
+
+        /// <summary>
+        /// 易宝转账回调接口
+        /// </summary>
+        /// <param name="data"></param>
+        bool YeePayCashTransferCallback(string data);
     }
 }
