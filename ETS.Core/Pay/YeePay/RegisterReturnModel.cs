@@ -36,6 +36,9 @@ namespace ETS.Pay.YeePay
         /// </summary>
         public string hmac { get; set; }
 
-       
+        /// <summary>
+        /// msg
+        /// </summary>
+        public string msg { get; set; }
     }
 }

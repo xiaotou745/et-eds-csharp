@@ -27,7 +27,7 @@ namespace ETS.Pay.YeePay
         /// <param name="amount">转账金额 单位：元</param>
         /// <param name="sourceledgerno">子账户商编</param>
         /// <returns>json</returns>
-        public bool TransferAccounts(string customernumber, string hmackey, string requestid, 
+        public TransferReturnModel TransferAccounts(string customernumber, string hmackey, string requestid, 
             string ledgerno, string amount, string sourceledgerno)
         {
             try
@@ -58,11 +58,11 @@ namespace ETS.Pay.YeePay
 
                 var result = HTTPHelper.HttpPost(KeyConfig.TransferAccountsUrl, datas, null);
 
-                return JObject.Parse(ResponseYeePay.OutRes(result)).Value<int>("code") == 1;
+                return JsonHelper.JsonConvertToObject<TransferReturnModel>(ResponseYeePay.OutRes(result));
             }
             catch (Exception ex)
             {
-                return false;
+                return null;
             }
         }
 
@@ -76,7 +76,7 @@ namespace ETS.Pay.YeePay
         /// <param name="amount">转账金额 单位：元</param>
         /// <param name="sourceledgerno">子账户商编</param>
         /// <returns>成功  失败</returns>
-        public bool TransferAccounts(string requestid, string ledgerno, string amount, string sourceledgerno)
+        public TransferReturnModel TransferAccounts(string requestid, string ledgerno, string amount, string sourceledgerno)
         {
             //商户编号   
             string customernumber = KeyConfig.YeepayAccountId;
@@ -94,7 +94,7 @@ namespace ETS.Pay.YeePay
         /// <param name="amount">转账金额 单位：元</param>
         /// <param name="callbackurl">回调接口 提现成功与否返回data;为空则不予回调</param>
         /// <returns></returns>
-        public string CashTransfer(string customernumber, string hmackey, string requestid, string ledgerno, string amount, string callbackurl)
+        public TransferReturnModel CashTransfer(string customernumber, string hmackey, string requestid, string ledgerno, string amount, string callbackurl)
         {
             var js = new JavaScriptSerializer();
 
@@ -122,7 +122,7 @@ namespace ETS.Pay.YeePay
 
             var result = HTTPHelper.HttpPost(KeyConfig.CashTransferUrl, datas,null);
 
-            return ResponseYeePay.OutRes(result);
+            return JsonHelper.JsonConvertToObject<TransferReturnModel>(ResponseYeePay.OutRes(result));
         }
         /// <summary>
         /// 提现接口
@@ -132,7 +132,7 @@ namespace ETS.Pay.YeePay
         /// <param name="amount">转账金额 单位：元</param>
         /// <param name="callbackurl">回调接口 提现成功与否返回data</param>
         /// <returns></returns>
-        public string CashTransfer(string requestid, string ledgerno, string amount, string callbackurl)
+        public TransferReturnModel CashTransfer(string requestid, string ledgerno, string amount, string callbackurl)
         {
             //商户编号   
             string customernumber = KeyConfig.YeepayAccountId;
