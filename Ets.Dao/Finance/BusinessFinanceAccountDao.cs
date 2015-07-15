@@ -81,7 +81,7 @@ where  Id=@Id ";
         {
             BusinessFinanceAccount model = null;
             const string querysql = @"
-select  Id,BusinessId,TrueName,AccountNo,IsEnable,AccountType,BelongType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime
+select  Id,BusinessId,TrueName,AccountNo,IsEnable,AccountType,BelongType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime,OpenProvince,OpenCity,IDCard 
 from  BusinessFinanceAccount (nolock)
 where  Id=@Id and IsEnable=1";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();

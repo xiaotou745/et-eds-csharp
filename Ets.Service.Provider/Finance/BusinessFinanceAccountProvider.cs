@@ -91,7 +91,10 @@ namespace Ets.Service.Provider.Finance
                     BelongType = cardModifyBpm.BelongType,//账号类别  0 个人账户 1 公司账户  
                     OpenBank = cardModifyBpm.OpenBank, //开户行
                     OpenSubBank = cardModifyBpm.OpenSubBank, //开户支行
-                    UpdateBy = cardModifyBpm.UpdateBy//修改人  当前登录人
+                    UpdateBy = cardModifyBpm.UpdateBy,//修改人  当前登录人
+                    OpenProvince = cardModifyBpm.OpenProvince, //省名称
+                    OpenCity = cardModifyBpm.OpenCity, //市区名称
+                    IDCard = cardModifyBpm.IDCard //身份证号
                 });
                 tran.Complete();
                 return ResultModel<object>.Conclude(SystemState.Success);

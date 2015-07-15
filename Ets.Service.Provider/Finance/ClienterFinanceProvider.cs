@@ -233,22 +233,41 @@ namespace Ets.Service.Provider.Finance
             {
                 return ResultModel<object>.Conclude(checkbool);
             }
-            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            ClienterFinanceAccount cfAccount = _clienterFinanceAccountDao.GetById(cardModifyCpm.Id);
+            if (cfAccount != null)
             {
-                _clienterFinanceAccountDao.Update(new ClienterFinanceAccount()
+                if (cfAccount.OpenBank != cardModifyCpm.OpenBank || cfAccount.OpenSubBank != cardModifyCpm.OpenSubBank ||
+                    cfAccount.OpenProvince != cardModifyCpm.OpenCity || cfAccount.IDCard != cardModifyCpm.IDCard || cfAccount.TrueName != cardModifyCpm.TrueName || cfAccount.AccountNo !=  DES.Encrypt(cardModifyCpm.AccountNo))
                 {
-                    Id = cardModifyCpm.Id,
-                    ClienterId = cardModifyCpm.ClienterId,//骑士ID
-                    TrueName = cardModifyCpm.TrueName, //户名
-                    AccountNo = DES.Encrypt(cardModifyCpm.AccountNo), //卡号(DES加密)
-                    BelongType = cardModifyCpm.BelongType,//账号类别  0 个人账户 1 公司账户  
-                    OpenBank = cardModifyCpm.OpenBank, //开户行
-                    OpenSubBank = cardModifyCpm.OpenSubBank, //开户支行
-                    UpdateBy = cardModifyCpm.UpdateBy//修改人  当前登录人
-                });
-                tran.Complete();
-                return ResultModel<object>.Conclude(SystemState.Success);
+                    //1.修改数据库
+                    using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+                    {
+                        _clienterFinanceAccountDao.Update(new ClienterFinanceAccount()
+                        {
+                            Id = cardModifyCpm.Id,
+                            ClienterId = cardModifyCpm.ClienterId,//骑士ID
+                            TrueName = cardModifyCpm.TrueName, //户名
+                            AccountNo = DES.Encrypt(cardModifyCpm.AccountNo), //卡号(DES加密)
+                            BelongType = cardModifyCpm.BelongType,//账号类别  0 个人账户 1 公司账户  
+                            OpenBank = cardModifyCpm.OpenBank, //开户行
+                            OpenSubBank = cardModifyCpm.OpenSubBank, //开户支行
+                            UpdateBy = cardModifyCpm.UpdateBy,//修改人  当前登录人
+                            OpenProvince = cardModifyCpm.OpenProvince, //省名称
+                            OpenCity = cardModifyCpm.OpenCity, //市区名称
+                            IDCard = cardModifyCpm.IDCard //身份证号
+                        });
+                        tran.Complete();
+                    }
+                }
+                else
+                {
+                    return ResultModel<object>.Conclude(FinanceCardModifyC.NoModify);
+                }
             }
+            //异步调用赫洋的修改
+
+
+            return ResultModel<object>.Conclude(SystemState.Success);
         }
 
         /// <summary>
@@ -267,6 +286,7 @@ namespace Ets.Service.Provider.Finance
             {
                 return FinanceCardModifyC.BelongTypeError;
             }
+
             return FinanceCardModifyC.Success;
         }
 

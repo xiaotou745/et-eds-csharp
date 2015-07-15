@@ -75,7 +75,9 @@ namespace ETS.Enums
         [DisplayText("系统错误")]
         SystemError = 0,
         [DisplayText("未传参")]
-        NoPara = -2
+        NoPara = -2,
+        [DisplayText("无需修改")]
+        NoModify = 100
     }
     /// <summary>
     ///骑士余额流水   流水状态(1、交易成功 2、交易中）枚举 add by caoheyang 20150509

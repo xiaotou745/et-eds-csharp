@@ -109,7 +109,7 @@ from  ClienterFinanceAccount (nolock)" + condition;
         {
             ClienterFinanceAccount model = null;
             const string querysql = @"
-select  Id,ClienterId,TrueName,AccountNo,IsEnable,AccountType,BelongType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime
+select Id,ClienterId,TrueName,AccountNo,IsEnable,AccountType,BelongType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime,OpenProvince,OpenCity,IDCard
 from  ClienterFinanceAccount(nolock)  
 where  Id=@Id  and IsEnable=1";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
