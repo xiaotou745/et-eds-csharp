@@ -8,9 +8,9 @@ namespace ETS.Pay.YeePay
 {
 
     /// <summary>
-    /// 易宝注册返回参数实体  反序列化用 add by caoheyang 20150714
+    /// 易宝提现返回参数实体  反序列化用 add by caoheyang 20150714
     /// </summary>
-    public class RegisterReturnModel
+    public class CashTransferReturnModel
     {
         /// <summary>
         /// 主账户商户编号
@@ -35,7 +35,5 @@ namespace ETS.Pay.YeePay
         /// 签名信息
         /// </summary>
         public string hmac { get; set; }
-
-       
     }
 }

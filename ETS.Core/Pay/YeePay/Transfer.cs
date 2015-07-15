@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Web.Script.Serialization;
 using ETS.Util;
 using Newtonsoft.Json.Linq;
@@ -7,7 +8,7 @@ using Newtonsoft.Json.Linq;
 namespace ETS.Pay.YeePay
 {
     /// <summary>
-    /// 转账
+    /// 转账  add  by caoheyang  20150715
     /// </summary>
     public class Transfer
     {
@@ -26,39 +27,43 @@ namespace ETS.Pay.YeePay
         /// <param name="amount">转账金额 单位：元</param>
         /// <param name="sourceledgerno">子账户商编</param>
         /// <returns>json</returns>
-        public string TransferAccounts(string customernumber,string hmackey, string requestid, 
+        public bool TransferAccounts(string customernumber, string hmackey, string requestid, 
             string ledgerno, string amount, string sourceledgerno)
         {
-            var postUrl = "https://o2o.yeepay.com/zgt-api/api/transfer";//转账接口
+            try
+            {
+                var js = new JavaScriptSerializer();
 
-            var js = new JavaScriptSerializer();
+                string[] stringArray = { customernumber, requestid, ledgerno, amount };
 
-            string[] stringArray = {customernumber, requestid, ledgerno, amount}; 
+                var hmac = Digest.getHmac(stringArray, hmackey);//生成hmac签名
 
-            var hmac = Digest.getHmac(stringArray, hmackey);//生成hmac签名
+                IDictionary<string, string> parameters = new Dictionary<string, string>();
+                #region 参数拼接
+                parameters.Add("customernumber", customernumber);
+                parameters.Add("requestid", requestid);
+                parameters.Add("ledgerno", ledgerno);
+                parameters.Add("amount", amount);
+                parameters.Add("sourceledgerno", sourceledgerno);
+                parameters.Add("hmac", hmac);
+                #endregion
 
-            IDictionary<string, string> parameters = new Dictionary<string, string>();
-            #region 参数拼接
-            parameters.Add("customernumber", customernumber);
-            parameters.Add("requestid", requestid);
-            parameters.Add("ledgerno", ledgerno);
-            parameters.Add("amount", amount);
-            parameters.Add("sourceledgerno", sourceledgerno);
-            parameters.Add("hmac", hmac);
-            #endregion
+                var keyForAes = hmackey.Substring(0, 16);//AESUtil加密与解密的密钥
 
-            var keyForAes = hmackey.Substring(0, 16);//AESUtil加密与解密的密钥
+                var dataJsonString = js.Serialize(parameters);
 
-            var dataJsonString = js.Serialize(parameters);
+                var data = AESUtil.Encrypt(dataJsonString, keyForAes);
 
-            var data = AESUtil.Encrypt(dataJsonString, keyForAes);
+                var datas = "customernumber=" + customernumber + "&data=" + data;
 
-            var datas = "customernumber=" + customernumber + "&data=" + data;
+                var result = HTTPHelper.HttpPost(KeyConfig.TransferAccountsUrl, datas, null);
 
-            var result = HTTPHelper.HttpPost(postUrl, datas,null);
-
-            return ResponseYeePay.OutRes(result);
-
+                return JObject.Parse(ResponseYeePay.OutRes(result)).Value<int>("code") == 1;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
 
         /// <summary>
@@ -77,9 +82,7 @@ namespace ETS.Pay.YeePay
             string customernumber = KeyConfig.YeepayAccountId;
             //密钥   
             string hmackey = KeyConfig.YeepayHmac;
-            string res = TransferAccounts(customernumber, hmackey, requestid, ledgerno, amount, sourceledgerno);
-            return JObject.Parse(res).Value<int>("code") == 1;
-
+            return TransferAccounts(customernumber, hmackey, requestid, ledgerno, amount, sourceledgerno);
         }
         /// <summary>
         /// 提现接口
@@ -93,8 +96,6 @@ namespace ETS.Pay.YeePay
         /// <returns></returns>
         public string CashTransfer(string customernumber, string hmackey, string requestid, string ledgerno, string amount, string callbackurl)
         {
-            var postUrl = "https://o2o.yeepay.com/zgt-api/api/cashTransfer";//提现接口
-
             var js = new JavaScriptSerializer();
 
             string[] stringArray = { customernumber, requestid, ledgerno, amount, callbackurl };
@@ -119,7 +120,7 @@ namespace ETS.Pay.YeePay
 
             var datas = "customernumber=" + customernumber + "&data=" + data;
 
-            var result = HTTPHelper.HttpPost(postUrl, datas,null);
+            var result = HTTPHelper.HttpPost(KeyConfig.CashTransferUrl, datas,null);
 
             return ResponseYeePay.OutRes(result);
         }
