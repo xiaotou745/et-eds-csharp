@@ -85,8 +85,8 @@ namespace Ets.Provider.Tests
         public void TransferAccounts()
         {
             string requestid = TimeHelper.GetTimeStamp(false);
-            var result = new Transfer().TransferAccounts(requestid, "10012474356", "1", "");//转账   主账户转给子账户
-            //var result1 = new Transfer().TransferAccounts(requestid, "", "0.1", "10012474356");//转账   子账户转给总账户
+            //var result = new Transfer().TransferAccounts(requestid, "10012474356", "10", "");//转账   主账户转给子账户
+            var result1 = new Transfer().TransferAccounts(requestid, "", "10", "10012474356");//转账   子账户转给总账户
         }
      
     }

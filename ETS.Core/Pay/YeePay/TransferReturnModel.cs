@@ -10,7 +10,7 @@ namespace ETS.Pay.YeePay
     /// <summary>
     /// 易宝提现返回参数实体  反序列化用 add by caoheyang 20150714
     /// </summary>
-    public class CashTransferReturnModel
+    public class TransferReturnModel
     {
         /// <summary>
         /// 主账户商户编号
@@ -27,13 +27,15 @@ namespace ETS.Pay.YeePay
         /// 成功返回：1，其他请参考附彔
         /// </summary>
         public string code { get; set; }
-        /// <summary>
-        /// 子账户商户编号
-        /// </summary>
-        public string ledgerno { get; set; }
+     
         /// <summary>
         /// 签名信息
         /// </summary>
         public string hmac { get; set; }
+
+        /// <summary>
+        /// msg
+        /// </summary>
+        public string msg { get; set; }
     }
 }
