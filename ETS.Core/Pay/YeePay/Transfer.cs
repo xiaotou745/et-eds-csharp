@@ -96,33 +96,40 @@ namespace ETS.Pay.YeePay
         /// <returns></returns>
         public TransferReturnModel CashTransfer(string customernumber, string hmackey, string requestid, string ledgerno, string amount, string callbackurl)
         {
-            var js = new JavaScriptSerializer();
+            try
+            {
+                var js = new JavaScriptSerializer();
 
-            string[] stringArray = { customernumber, requestid, ledgerno, amount, callbackurl };
+                string[] stringArray = { customernumber, requestid, ledgerno, amount, callbackurl };
 
-            var hmac = Digest.getHmac(stringArray, hmackey);//生成hmac签名
+                var hmac = Digest.getHmac(stringArray, hmackey);//生成hmac签名
 
-            IDictionary<string, string> parameters = new Dictionary<string, string>();
-            #region 参数拼接
-            parameters.Add("customernumber", customernumber);
-            parameters.Add("requestid", requestid);
-            parameters.Add("ledgerno", ledgerno);
-            parameters.Add("amount", amount);
-            parameters.Add("callbackurl", callbackurl);
-            parameters.Add("hmac", hmac);
-            #endregion
+                IDictionary<string, string> parameters = new Dictionary<string, string>();
+                #region 参数拼接
+                parameters.Add("customernumber", customernumber);
+                parameters.Add("requestid", requestid);
+                parameters.Add("ledgerno", ledgerno);
+                parameters.Add("amount", amount);
+                parameters.Add("callbackurl", callbackurl);
+                parameters.Add("hmac", hmac);
+                #endregion
 
-            var keyForAes = hmackey.Substring(0, 16);//AESUtil加密与解密的密钥
+                var keyForAes = hmackey.Substring(0, 16);//AESUtil加密与解密的密钥
 
-            var dataJsonString = js.Serialize(parameters);
+                var dataJsonString = js.Serialize(parameters);
 
-            var data = AESUtil.Encrypt(dataJsonString, keyForAes);
+                var data = AESUtil.Encrypt(dataJsonString, keyForAes);
 
-            var datas = "customernumber=" + customernumber + "&data=" + data;
+                var datas = "customernumber=" + customernumber + "&data=" + data;
 
-            var result = HTTPHelper.HttpPost(KeyConfig.CashTransferUrl, datas,null);
+                var result = HTTPHelper.HttpPost(KeyConfig.CashTransferUrl, datas, null);
 
-            return JsonHelper.JsonConvertToObject<TransferReturnModel>(ResponseYeePay.OutRes(result));
+                return JsonHelper.JsonConvertToObject<TransferReturnModel>(ResponseYeePay.OutRes(result));
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
         /// <summary>
         /// 提现接口
