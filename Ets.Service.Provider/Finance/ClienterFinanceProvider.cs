@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Ets.Dao.Clienter;
 using Ets.Dao.Finance;
 using ETS.Enums;
@@ -190,11 +191,24 @@ namespace Ets.Service.Provider.Finance
                     OpenBank = cardBindCpm.OpenBank, //开户行
                     OpenSubBank = cardBindCpm.OpenSubBank, //开户支行
                     CreateBy = cardBindCpm.CreateBy,//创建人  当前登录人
-                    UpdateBy = cardBindCpm.CreateBy//新增时最后修改人与新增人一致  当前登录人
+                    UpdateBy = cardBindCpm.CreateBy,//新增时最后修改人与新增人一致  当前登录人
+                    OpenCity = cardBindCpm.OpenCity,//开户行
+                    OpenProvince = cardBindCpm.OpenProvince,//开户市
+                    IDCard = cardBindCpm.IDCard,//身份证号
                 });
                 tran.Complete();
-                return ResultModel<object>.Conclude(FinanceCardBindC.Success);
             }
+            //异步请求易宝注册接口
+            Task.Factory.StartNew(() =>
+            {
+                //请求易宝注册接口,如果成功,则更新账户易宝key和status
+                var isSucess = true;
+                if (isSucess)
+                {
+                    _clienterFinanceAccountDao.UpdateYeepayInfo(cardBindCpm.ClienterId, "key", 0);
+                }
+            });
+            return ResultModel<object>.Conclude(FinanceCardBindC.Success);
         }
 
         /// <summary>

@@ -61,11 +61,24 @@ namespace Ets.Service.Provider.Finance
                     OpenBank = cardBindBpm.OpenBank, //开户行
                     OpenSubBank = cardBindBpm.OpenSubBank, //开户支行
                     CreateBy = cardBindBpm.CreateBy,//创建人  当前登录人
-                    UpdateBy = cardBindBpm.CreateBy//新增时最后修改人与新增人一致  当前登录人
+                    UpdateBy = cardBindBpm.CreateBy,//新增时最后修改人与新增人一致  当前登录人
+                    OpenCity = cardBindBpm.OpenCity,//开户行
+                    OpenProvince = cardBindBpm.OpenProvince,//开户市
+                    IDCard = cardBindBpm.IDCard,//营业执照
                 });
                 tran.Complete();
-                return ResultModel<object>.Conclude(SystemState.Success);
             }
+            //异步请求易宝注册接口
+            Task.Factory.StartNew(() =>
+            {
+                //请求易宝注册接口,如果成功,则更新账户易宝key和status
+                var isSucess = true;
+                if (isSucess)
+                {
+                    _businessFinanceAccountDao.UpdateYeepayInfo(cardBindBpm.BusinessId, "key", 0);
+                }
+            });
+            return ResultModel<object>.Conclude(SystemState.Success);
         }
 
         /// <summary>
@@ -96,7 +109,7 @@ namespace Ets.Service.Provider.Finance
                 tran.Complete();
                 return ResultModel<object>.Conclude(SystemState.Success);
             }
-        }      
+        }
 
 
         #region 用户自定义方法
