@@ -22,11 +22,8 @@ namespace Ets.Provider.Tests
         [Test]
         public void Register()
         {
-            TimeSpan ts = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0);
-            string re= 1 + Convert.ToInt64(ts.TotalSeconds).ToString();
-            var sp = new StringBuilder();
 
-            string requestid = re;
+            string requestid = TimeHelper.GetTimeStamp(false);
 
             string bindmobile = "18553507220";  //绑定手机
 
@@ -42,11 +39,7 @@ namespace Ets.Provider.Tests
 
             string legalperson = "曹赫洋";
 
-            string minsettleamount = "0.1"; //起结金额
-
-            string riskreserveday = "1"; //结算周期
-
-            string bankaccountnumber = "6222620910009103866"; //银行卡号   
+            string bankaccountnumber = "6226200105376660"; //银行卡号           交通银行  6222620910009103866
 
             string bankname = "民生银行"; //开户行
 
@@ -58,11 +51,9 @@ namespace Ets.Provider.Tests
 
             string bankcity = "北京";
 
-            string manualsettle = "Y";
-
             var result1 = new Register().RegSubaccount(requestid, bindmobile, customertype, signedname, linkman,
-                idcard, businesslicence, legalperson, minsettleamount, riskreserveday, bankaccountnumber, bankname,
-                accountname, bankaccounttype, bankprovince, bankcity, manualsettle);//注册帐号
+                idcard, businesslicence, legalperson,  bankaccountnumber, bankname,
+                accountname, bankaccounttype, bankprovince, bankcity);//注册帐号
         }
 
         /// <summary>
@@ -71,9 +62,8 @@ namespace Ets.Provider.Tests
         [Test]
         public void CashTransfer()
         {
-            TimeSpan ts = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0);
-            string re = 1 + Convert.ToInt64(ts.TotalSeconds).ToString();
-            var result = new Transfer().CashTransfer(re, "10012474347", "1.1", "");//提现
+            string requestid = TimeHelper.GetTimeStamp(false);
+            var result = new Transfer().CashTransfer(requestid, "10012474356", "1", "");//提现
 
         }
 
@@ -84,7 +74,7 @@ namespace Ets.Provider.Tests
         [Test]
         public void GetBalance()
         {
-            var result = new QueryBalance().GetBalance("10012474347");//账户余额
+            var result = new QueryBalance().GetBalance("10012474356");//账户余额
         }
 
 
@@ -95,9 +85,8 @@ namespace Ets.Provider.Tests
         [Test]
         public void TransferAccounts()
         {
-            TimeSpan ts = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0);
-            string re = 1 + Convert.ToInt64(ts.TotalSeconds).ToString();
-            var result = new Transfer().TransferAccounts(re, "10012474347", "1.1", "");//转账   主账户转给子账户
+            string requestid = TimeHelper.GetTimeStamp(false);
+            var result = new Transfer().TransferAccounts(requestid, "10012474356", "1", "");//转账   主账户转给子账户
             //var result1 = new Transfer().TransferAccounts(re, "", "0.1", "10012474239");//转账   子账户转给总账户
         }
      

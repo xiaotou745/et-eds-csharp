@@ -34,8 +34,8 @@ namespace ETS.Pay.YeePay
         /// <param name="bankaccounttype">银行卡类别</param>
         /// <param name="bankprovince">开户省</param>
         /// <param name="bankcity">开户市</param>
-        /// <param name="manualsettle">自劣结算</param>
-        /// <returns>Json数据</returns>
+        /// <param name="manualsettle">自助结算</param>
+        /// <returns></returns>
         public RegisterReturnModel RegSubaccount(string customernumber, string hmackey, string requestid, 
             string bindmobile, string customertype, string signedname, string linkman, 
             string idcard, string businesslicence, string legalperson, string minsettleamount,
@@ -105,21 +105,21 @@ namespace ETS.Pay.YeePay
         /// <param name="idcard">身份证  customertype为PERSON时，必填</param>
         /// <param name="businesslicence">营业执照号 customertype为ENTERPRISE时，必填</param>
         /// <param name="legalperson">姓名  PERSON时，idcard对应的姓名； ENTERPRISE时，企业的法人姓名</param>
-        /// <param name="minsettleamount">起结金额</param>
-        /// <param name="riskreserveday">结算周期</param>
         /// <param name="bankaccountnumber">银行卡号</param>
         /// <param name="bankname">开户行</param>
         /// <param name="accountname">开户名</param>
         /// <param name="bankaccounttype">银行卡类别  PrivateCash：对私 PublicCash： 对公</param>
         /// <param name="bankprovince">开户省</param>
         /// <param name="bankcity">开户市</param>
-        /// <param name="manualsettle">自助结算 N – 易宝自劢打款到银行卡； Y - 丌自劢打款，需要通过提现接口或商户后台提现功能迚行结算。 若丌填写，该参数默讣值为：N</param>
-        /// <returns>Json数据</returns>
+        /// <param name="minsettleamount">起结金额  默认 0.1</param>
+        /// <param name="riskreserveday">结算周期 默认 1 </param>
+        /// <param name="manualsettle">自助结算  N自助结算： N - 隔天自动打款； Y - 不会自动打款，需要通过提现接口或商户后台功能进行结算。   默认Y</param>
+        /// <returns></returns>
         public RegisterReturnModel RegSubaccount(string requestid, string bindmobile, string customertype, 
             string signedname, string linkman, string idcard, string businesslicence,
-            string legalperson, string minsettleamount, string riskreserveday, 
-            string bankaccountnumber, string bankname, string accountname, 
-            string bankaccounttype, string bankprovince, string bankcity, string manualsettle)
+            string legalperson,
+            string bankaccountnumber, string bankname, string accountname,
+            string bankaccounttype, string bankprovince, string bankcity, string minsettleamount="0.1",  string riskreserveday="1" ,string manualsettle = "Y")
         {
             //商户编号   
             string customernumber = KeyConfig.YeepayAccountId;
