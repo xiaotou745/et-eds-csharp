@@ -19,9 +19,9 @@ namespace Ets.Model.ParameterModel.Finance
         public int BusinessId { get; set; }
 
         /// <summary>
-        /// 营业执照号
+        /// 身份证或营业执照号    如果是个人则为身份证,否则为营业执照号 
         /// </summary>
-        [Required(ErrorMessage = "营业执照号不能为空")]
+        [Required(ErrorMessage = "身份证或营业执照号不能为空")]
         public string IDCard { get; set; }
     }
 }
