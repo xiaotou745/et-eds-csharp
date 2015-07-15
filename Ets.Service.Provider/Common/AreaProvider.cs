@@ -72,10 +72,10 @@ namespace Ets.Service.Provider.Common
         /// 获取银行省市信息
         /// 彭宜   20150715
         /// </summary>
-        /// <param name="version">版本号</param>
+        /// <param name="dataversion">数据版本号</param>
         /// <param name="isResultData"></param>
         /// <returns></returns>
-        public Model.Common.ResultModel<Model.DomainModel.Area.AreaModelList> GetPublicBankCity(string version,
+        public Model.Common.ResultModel<Model.DomainModel.Area.AreaModelList> GetPublicBankCity(string dataversion,
             bool isResultData = true)
         {
             AreaModelList areaList = new AreaModelList();
@@ -96,8 +96,8 @@ namespace Ets.Service.Provider.Common
                     redis.Set(key, JsonHelper.JsonConvertToString(areaList));
                 }
             }
-            areaList.Version = Config.ApiVersion;
-            if (Config.ApiVersion == version && !isResultData)
+            areaList.Version = Config.BankCityVersion;
+            if (Config.BankCityVersion == dataversion && !isResultData)
             {
                 areaList.AreaModels = null;
                 return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.UnNewest, areaList);

@@ -262,6 +262,7 @@
     <Compile Include="ParameterModel\DeliveryCompany\DoBatchImportClienterPM.cs" />
     <Compile Include="ParameterModel\DeliveryCompany\DeliveryCompanyCriteria.cs" />
     <Compile Include="ParameterModel\Finance\BankCriteria.cs" />
+    <Compile Include="ParameterModel\Finance\BankProvinceCityPM.cs" />
     <Compile Include="ParameterModel\Finance\BusinessBalanceRecordSerchCriteria.cs" />
     <Compile Include="ParameterModel\Finance\BusinessWithdrawSearchCriteria.cs" />
     <Compile Include="ParameterModel\Finance\CardBindPM.cs" />

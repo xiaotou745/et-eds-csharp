@@ -203,6 +203,16 @@ namespace Ets.Service.Provider.Business
                         return false;
                     }
                 }
+                if (globalConfigModel.ClienterWithdrawCommissionAccordingMoney != "0")
+                {
+                    globalConfig.KeyName = "ClienterWithdrawCommissionAccordingMoney";
+                    globalConfig.Value = globalConfigModel.ClienterWithdrawCommissionAccordingMoney;
+                    reg = businessGroupDao.UpdateGlobalConfig(globalConfig);
+                    if (!reg)
+                    {
+                        return false;
+                    }
+                }
                 if (globalConfigModel.ExclusiveOrderTime != "0")
                 {
                     globalConfig.KeyName = "ExclusiveOrderTime";

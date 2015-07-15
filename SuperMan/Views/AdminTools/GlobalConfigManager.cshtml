@@ -53,6 +53,11 @@
                     <input type="text" name="employerTaskTimeSet" value="@globalConfigModel.EmployerTaskTimeSet" id="employerTaskTimeSet" style="width: 100px" />分
                     <input type="hidden" name="oldEmployerTaskTimeSet" value="@globalConfigModel.EmployerTaskTimeSet" id="oldEmployerTaskTimeSet" />
                 </td>
+                <td>
+                    <span>骑士提现小于等于X元支付手续费:</span>
+                    <input type="text" name="employerTaskTimeSet" value="@globalConfigModel.ClienterWithdrawCommissionAccordingMoney" id="clienterWithdrawCommissionAccordingMoney" style="width: 100px" />元
+                    <input type="hidden" name="oldEmployerTaskTimeSet" value="@globalConfigModel.ClienterWithdrawCommissionAccordingMoney" id="oldClienterWithdrawCommissionAccordingMoney" />
+                </td>
             </tr>
         </table>
     </div>
@@ -68,6 +73,7 @@
             var exclusiveOrderTime = $("#exclusiveOrderTime").val(); //商家专属骑士接单响应时间
             var completeTimeSet = $("#completeTimeSet").val(); //骑士完成任务时间限制
             var employerTaskTimeSet = $("#employerTaskTimeSet").val(); //雇主任务时间限制
+            var clienterWithdrawCommissionAccordingMoney = $("#clienterWithdrawCommissionAccordingMoney").val(); //骑士提现小于等于X元支付手续费
 
             var oldHasUnFinishedOrderUploadTimeInterval = $("#oldHasUnFinishedOrderUploadTimeInterval").val(); //骑士有待完成任务经纬度上传时间间隔（之前）
             var oldAllFinishedOrderUploadTimeInterval = $("#oldAllFinishedOrderUploadTimeInterval").val(); //骑士没有待完成任务经纬度上传时间间隔（之前）
@@ -76,6 +82,7 @@
             var oldExclusiveOrderTime = $("#oldExclusiveOrderTime").val(); //商家专属骑士接单响应时间（之前）
             var oldCompleteTimeSet = $("#oldCompleteTimeSet").val(); //骑士完成任务时间限制（之前）
             var oldEmployerTaskTimeSet = $("#oldEmployerTaskTimeSet").val(); //雇主任务时间限制（之前）
+            var oldClienterWithdrawCommissionAccordingMoney = $("#oldClienterWithdrawCommissionAccordingMoney").val(); //骑士提现小于等于X元支付手续费（之前）
 
             if (isNaN(hasUnFinishedOrderUploadTimeInterval)) {
                 alert("请输入正确的数字!");
@@ -95,6 +102,14 @@
                 return;
             }
 
+            if (isNaN(clienterWithdrawCommissionAccordingMoney)) {
+                alert("请输入正确的数字!");
+                return;
+            }
+            if (clienterWithdrawCommissionAccordingMoney < 0) {
+                alert("请输入大于零的值!");
+                return;
+            }
             if (isNaN(pushRadius)) {
                 alert("请输入正确的数字!");
                 return;
@@ -148,12 +163,12 @@
             }
                                
        
-            if (hasUnFinishedOrderUploadTimeInterval == oldHasUnFinishedOrderUploadTimeInterval && allFinishedOrderUploadTimeInterval == oldAllFinishedOrderUploadTimeInterval && pushRadius == oldPushRadius && clienterOrderPageSize == oldClienterOrderPageSize && exclusiveOrderTime == oldExclusiveOrderTime && completeTimeSet == oldCompleteTimeSet && employerTaskTimeSet == oldEmployerTaskTimeSet) {
+            if (clienterWithdrawCommissionAccordingMoney == oldClienterWithdrawCommissionAccordingMoney && hasUnFinishedOrderUploadTimeInterval == oldHasUnFinishedOrderUploadTimeInterval && allFinishedOrderUploadTimeInterval == oldAllFinishedOrderUploadTimeInterval && pushRadius == oldPushRadius && clienterOrderPageSize == oldClienterOrderPageSize && exclusiveOrderTime == oldExclusiveOrderTime && completeTimeSet == oldCompleteTimeSet && employerTaskTimeSet == oldEmployerTaskTimeSet) {
                 alert("没有需要修改的信息!");
                 return;
             }
             if (confirm("确定提交修改?")) {
-                var pars = { "hasUnFinishedOrderUploadTimeInterval": hasUnFinishedOrderUploadTimeInterval, "allFinishedOrderUploadTimeInterval": allFinishedOrderUploadTimeInterval, "pushRadius": pushRadius, "clienterOrderPageSize": clienterOrderPageSize, "exclusiveOrderTime": exclusiveOrderTime, "completeTimeSet": completeTimeSet, "employerTaskTimeSet": employerTaskTimeSet };
+                var pars = {"clienterWithdrawCommissionAccordingMoney":clienterWithdrawCommissionAccordingMoney, "hasUnFinishedOrderUploadTimeInterval": hasUnFinishedOrderUploadTimeInterval, "allFinishedOrderUploadTimeInterval": allFinishedOrderUploadTimeInterval, "pushRadius": pushRadius, "clienterOrderPageSize": clienterOrderPageSize, "exclusiveOrderTime": exclusiveOrderTime, "completeTimeSet": completeTimeSet, "employerTaskTimeSet": employerTaskTimeSet };
                 var url = "/AdminTools/ModifyGlobalConfig";
                 $.ajax({
                     type: 'POST',
