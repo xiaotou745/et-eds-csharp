@@ -244,8 +244,9 @@ namespace ETS.Enums
         [DisplayText("订单菜品费")]
         OrderMeals = 8,
         [DisplayText("充值")]
-        Recharge = 9
-        
+        Recharge = 9,
+        [DisplayText("手续费")]
+        ProcedureFee = 10
     }
 
     /// <summary>

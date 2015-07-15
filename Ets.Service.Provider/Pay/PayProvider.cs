@@ -623,14 +623,12 @@ namespace Ets.Service.Provider.Pay
         public bool YeePayCashTransferCallback(string data)
         {
             string username = "易宝提现回调";
-
             CashTransferCallback model = JsonHelper.JsonConvertToObject<CashTransferCallback>(ResponseYeePay.OutRes(data));
             int withwardId = ParseHelper.ToInt(model.cashrequestid.Substring(2));
             if (model.cashrequestid.Substring(0, 1) == "B")  //B端逻辑
             {
                 if (model.status == "SUCCESS")  //提现成功 走 成功的逻辑
                 {
-
                     iBusinessFinanceProvider.BusinessWithdrawPayOk( new BusinessWithdrawLog()
                     {
                         Operator = username,
@@ -641,7 +639,6 @@ namespace Ets.Service.Provider.Pay
                 }
                 else if (model.status == "FAIL")  //提现失败 走 失败的逻辑
                 {
-
                     iBusinessFinanceProvider.BusinessWithdrawPayFailed( new BusinessWithdrawLogModel()
                     {
                         Operator = username,
@@ -650,14 +647,13 @@ namespace Ets.Service.Provider.Pay
                         WithwardId =withwardId,
                         PayFailedReason = ""
 
-                    }); //商户体现失败
+                    }); //商户提现失败
                 }
             }
             else if (model.cashrequestid.Substring(0, 1) == "C")  //C端逻辑
             {
                 if (model.status == "SUCCESS")  //提现成功 走 成功的逻辑
                 {
-
                      iClienterFinanceProvider.ClienterWithdrawPayOk(new ClienterWithdrawLog()
                     {
                         Operator = username,
