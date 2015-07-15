@@ -112,15 +112,15 @@ namespace SuperManWebApi.Controllers
         /// 彭宜
         /// 2015年7月15日
         /// </summary>
-        /// <param name="version">版本号</param>
+        /// <param name="bankProvinceCityPM"></param>
         /// <returns></returns>        
-        [HttpGet]
+        [HttpPost]
         [ApiVersionStatistic]
-        public ResultModel<AreaModelList> GetBankProvinceCity(string version)
+        public ResultModel<AreaModelList> GetBankProvinceCity([FromBody]BankProvinceCityPM bankProvinceCityPM)
         {
             AreaProvider area = new AreaProvider();
 
-            return area.GetPublicBankCity(version, false);
+            return area.GetPublicBankCity(bankProvinceCityPM.DataVersion, false);
         }
     }
 }

@@ -29,6 +29,11 @@ namespace ETS
         public static string ApiVersion { get { return ConfigKey("ApiVersion"); } }
 
         /// <summary>
+        /// 银行省市版本号
+        /// </summary>
+        public static string BankCityVersion { get { return ConfigKey("BankCityVersion"); } }
+
+        /// <summary>
         /// 找回密码内容
         /// </summary>
         public static string SmsContentFindPassword { get { return ConfigKey("SmsContentCheckCodeFindPwd"); } }
