@@ -44,9 +44,9 @@ namespace Ets.Provider.Tests
 
             string minsettleamount = "0.1"; //起结金额
 
-            string riskreserveday = "1"; //姓名  PERSON时，idcard对应的姓名； ENTERPRISE时，企业的法人姓名
+            string riskreserveday = "1"; //结算周期
 
-            string bankaccountnumber = "6226200105376660"; //银行卡号
+            string bankaccountnumber = "6222620910009103866"; //银行卡号   
 
             string bankname = "民生银行"; //开户行
 
@@ -63,10 +63,6 @@ namespace Ets.Provider.Tests
             var result1 = new Register().RegSubaccount(requestid, bindmobile, customertype, signedname, linkman,
                 idcard, businesslicence, legalperson, minsettleamount, riskreserveday, bankaccountnumber, bankname,
                 accountname, bankaccounttype, bankprovince, bankcity, manualsettle);//注册帐号
-            //var result = Helpers<Transfer>.Instance.TransferAccounts(requestid, "10012472116", "0.1", "");//转账
-            //var result = Helpers<QueryBalance>.Instance.GetBalance("");//账户余额
-            var result = new Transfer().CashTransfer(requestid, "", "0.1", "");//提现
-
         }
 
         /// <summary>
@@ -77,7 +73,7 @@ namespace Ets.Provider.Tests
         {
             TimeSpan ts = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0);
             string re = 1 + Convert.ToInt64(ts.TotalSeconds).ToString();
-            var result = new Transfer().CashTransfer(re, "10012474271", "1.1", "");//提现
+            var result = new Transfer().CashTransfer(re, "10012474347", "1.1", "");//提现
 
         }
 
@@ -88,7 +84,7 @@ namespace Ets.Provider.Tests
         [Test]
         public void GetBalance()
         {
-            var result = new QueryBalance().GetBalance("10012474271");//账户余额
+            var result = new QueryBalance().GetBalance("10012474347");//账户余额
         }
 
 
@@ -101,7 +97,7 @@ namespace Ets.Provider.Tests
         {
             TimeSpan ts = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0);
             string re = 1 + Convert.ToInt64(ts.TotalSeconds).ToString();
-            var result = new Transfer().TransferAccounts(re, "10012474271", "1.1", "");//转账   主账户转给子账户
+            var result = new Transfer().TransferAccounts(re, "10012474347", "1.1", "");//转账   主账户转给子账户
             //var result1 = new Transfer().TransferAccounts(re, "", "0.1", "10012474239");//转账   子账户转给总账户
         }
      
