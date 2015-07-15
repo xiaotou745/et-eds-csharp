@@ -638,8 +638,8 @@ namespace Ets.Service.Provider.Clienter
             GlobalConfigModel globalSetting = new GlobalConfigProvider().GlobalConfigMethod(0);
             //取到任务的接单时间、从缓存中读取完成任务时间限制，判断要用户点击完成时间>接单时间+限制时间 
             int limitFinish = ParseHelper.ToInt(globalSetting.CompleteTimeSet, 0);
-           
-            if (limitFinish>0)
+
+            if (limitFinish > 0)
             {
                 DateTime yuJiFinish = myOrderInfo.GrabTime.Value.AddMinutes(limitFinish);
                 if (DateTime.Compare(DateTime.Now, yuJiFinish) < 0)  //小于0说明用户完成时间 太快
@@ -648,7 +648,7 @@ namespace Ets.Service.Provider.Clienter
                     return model;
                 }
             }
-          
+
             if (!new OrderDao().IsOrNotFinish(myOrderInfo.Id))//是否有未完成子订单
             {
                 model.FinishOrderStatus = FinishOrderStatus.ExistNotPayChildOrder;
@@ -1375,8 +1375,13 @@ namespace Ets.Service.Provider.Clienter
                     return true;
                 }
             }
-            if (!(myOrderInfo.GrabTime.Value.AddMinutes(5) < DateTime.Now &&
-            DateTime.Now < myOrderInfo.GrabTime.Value.AddMinutes(120)))
+            //if (!(myOrderInfo.GrabTime.Value.AddMinutes(5) < DateTime.Now &&
+            //DateTime.Now < myOrderInfo.GrabTime.Value.AddMinutes(120)))
+            //{
+            //    return true;
+            //}
+            if ((ParseHelper.ToDatetime(mapDetail.ActualDoneDate,DateTime.Now) < myOrderInfo.GrabTime.Value.AddMinutes(5) ||
+          ParseHelper.ToDatetime(mapDetail.ActualDoneDate,DateTime.Now) > myOrderInfo.GrabTime.Value.AddMinutes(120)))
             {
                 return true;
             }
@@ -1400,26 +1405,27 @@ namespace Ets.Service.Provider.Clienter
         /// </summary>
         /// <param name="myOrderInfo"></param>
         /// <param name="isNotRealOrder"></param>
-        private void UpdateClienterTotalAccount(OrderListModel myOrderInfo, OrderCompleteModel parModel,int operateType=0)
+        private void UpdateClienterTotalAccount(OrderListModel myOrderInfo, OrderCompleteModel parModel, int operateType = 0)
         {
             decimal realOrderCommission = myOrderInfo.OrderCommission == null ? 0 : myOrderInfo.OrderCommission.Value;
-
-            bool isNotRealOrder = CheckIsNotRealOrder(myOrderInfo, parModel);
+            bool isNotRealOrder = false;
+         
+            isNotRealOrder = CheckIsNotRealOrder(myOrderInfo, parModel);
             if (isNotRealOrder)
             {
                 orderOtherDao.UpdateOrderIsReal(myOrderInfo.Id);
                 realOrderCommission = realOrderCommission > myOrderInfo.SettleMoney ? myOrderInfo.SettleMoney : realOrderCommission;
             }
-            int result = orderDao.UpdateOrderRealOrderCommission(myOrderInfo.Id.ToString(), realOrderCommission);
-            if (operateType==0)
+            
+            orderDao.UpdateOrderRealOrderCommission(myOrderInfo.Id.ToString(), realOrderCommission);
+            if (operateType == 0)
             {
-                UpdateClienterAccount(myOrderInfo);  
+                UpdateClienterAccount(myOrderInfo);
             }
             else
             {
-                UpdateAccountBalanceAndWithdraw(myOrderInfo.clienterId,myOrderInfo);
+                UpdateAccountBalanceAndWithdraw(myOrderInfo.clienterId, myOrderInfo);
             }
-
             if (isNotRealOrder)
             {
                 //如果是无效订单，则扣除网站补贴
@@ -1434,7 +1440,7 @@ namespace Ets.Service.Provider.Clienter
                     {
                         UpdateNotRealOrderClienterAccountAndWithdraw(myOrderInfo, diffOrderCommission);
                     }
-                  
+
                     orderDao.InsertNotRealOrderLog(myOrderInfo.Id, diffOrderCommission * (-1));
                 }
             }

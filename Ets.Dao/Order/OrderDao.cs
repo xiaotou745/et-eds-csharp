@@ -88,7 +88,7 @@ namespace Ets.Dao.Order
         LEFT JOIN dbo.business b WITH ( NOLOCK ) ON b.Id = o.businessId 
         left join dbo.OrderOther oo (nolock) on o.Id = oo.OrderId ");
             //条件
-            StringBuilder whereStr = new StringBuilder(" 1=1 ");
+            StringBuilder whereStr = new StringBuilder(" 1=1 and o.IsEnable=1 ");
             if (criteria.userId != 0)
             {
                 whereStr.AppendFormat(" AND o.clienterId = {0}", criteria.userId);
@@ -800,6 +800,7 @@ select @@IDENTITY ";
                                         ,oo.ReceiptPic                                        
                                         ,o.OtherCancelReason
                                         ,o.OriginalOrderNo
+                                        ,o.IsEnable
                                     FROM [order] o WITH ( NOLOCK )
                                     LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                     LEFT JOIN clienter c WITH (NOLOCK) ON o.clienterId=c.Id
@@ -2366,7 +2367,7 @@ select top {0}
 from    dbo.[order] a ( nolock )
         join dbo.business b ( nolock ) on a.businessId = b.Id
         left join dbo.BusinessExpressRelation ber (nolock) on a.businessId=ber.BusinessId
-where a.status = 0 and ber.IsEnable=1 and a.ReceviceCity=@ReceviceCity and ber.ExpressId=@ExpressId
+where a.status = 0 and a.IsEnable=1 and ber.IsEnable=1 and a.ReceviceCity=@ReceviceCity and ber.ExpressId=@ExpressId
 order by a.Id desc", model.TopNum);
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -2409,7 +2410,7 @@ select top {0} a.Id,a.OrderCommission,a.OrderCount,
 from dbo.[order] a (nolock)
         join dbo.business b (nolock) on a.businessId=b.Id
         left join dbo.BusinessExpressRelation ber (nolock) on a.businessId=ber.BusinessId
-where a.status=0  and ber.IsEnable=1 and ber.ExpressId=@ExpressId
+where a.status=0 and a.IsEnable=1 and ber.IsEnable=1 and ber.ExpressId=@ExpressId
 and  geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint)<= @PushRadius
 order by geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint) asc
 ", model.TopNum);
@@ -2454,7 +2455,7 @@ select top {0}
 		round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) as DistanceToBusiness 
 from    dbo.[order] a ( nolock )
         join dbo.business b ( nolock ) on a.businessId = b.Id
-where   a.status = 0  and( b.IsBind=0 or (b.IsBind=1 and DATEDIFF(minute,a.PubDate,GETDATE())>{1}))
+where   a.status = 0 and a.IsEnable=1  and( b.IsBind=0 or (b.IsBind=1 and DATEDIFF(minute,a.PubDate,GETDATE())>{1}))
         {2}
 order by a.Id desc", model.TopNum, model.ExclusiveOrderTime, whereStr);
             }
@@ -2483,7 +2484,7 @@ from    dbo.[order] a ( nolock )
                             and temp.IsBind = 1
                             and temp.ClienterId = {1}
                   ) as c on a.BusinessId = c.BusinessId        
-where   a.status = 0
+where   a.status = 0 and a.IsEnable=1
         and ( b.IsBind = 0
               or ( b.IsBind = 1
                    and DATEDIFF(minute, a.PubDate, GETDATE()) > {2}
@@ -2532,7 +2533,7 @@ as PubDate,
 round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) as DistanceToBusiness 
 from dbo.[order] a (nolock)
 join dbo.business b (nolock) on a.businessId=b.Id
-where a.status=0  and( b.IsBind=0 or (b.IsBind=1 and DATEDIFF(minute,a.PubDate,GETDATE())>{1}))
+where a.status=0 and a.IsEnable=1 and( b.IsBind=0 or (b.IsBind=1 and DATEDIFF(minute,a.PubDate,GETDATE())>{1}))
 and  geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint)<= @PushRadius
 order by geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint) asc
 ", model.TopNum, model.ExclusiveOrderTime);
@@ -2563,7 +2564,7 @@ left join ( select  distinct
                             and temp.IsBind = 1
                             and temp.ClienterId = {1}
                   ) as c on a.BusinessId = c.BusinessId        
-where a.status=0 
+where a.status=0 and a.IsEnable=1
 and ( b.IsBind = 0
               or ( b.IsBind = 1
                    and DATEDIFF(minute, a.PubDate, GETDATE()) > {2}
@@ -2611,7 +2612,7 @@ round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistan
 from dbo.[order] a (nolock)
 join dbo.business b (nolock) on a.businessId=b.Id
 join (select  distinct(temp.BusinessId) from BusinessClienterRelation  temp where temp.IsEnable=1 and  temp.IsBind =1 and temp.ClienterId=@ClienterId ) as c on a.BusinessId=c.BusinessId
-where a.status=0 
+where a.status=0 and a.IsEnable=1
 order by a.id desc 
 ", model.TopNum);
             IDbParameters dbParameters = DbHelper.CreateDbParameters();

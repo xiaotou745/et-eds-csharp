@@ -225,5 +225,7 @@ namespace Ets.Service.IProvider.AuthorityMenu
         /// <param name="criteria"></param>
         /// <returns></returns>
         PageInfo<AccountModel> GetAccountListOfPaging(AuthoritySearchCriteria criteria);
+
+        IList<AccountDCRelationModel> GetAccountDCRel(int accountId);
     }
 }
