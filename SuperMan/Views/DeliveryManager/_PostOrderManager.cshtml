@@ -1,0 +1,121 @@
+﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Order.OrderListModel>
+<script src="~/Scripts/view/orderList.js"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=您的密钥"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=dAeaG6HwIFGlkbqtyKkyFGEC"></script>
+<style type="text/css">
+    #map_contain {
+        height: 90%;
+        width: 100%;
+        max-width: none;
+    }
+
+    label {
+        max-width: none;
+    }
+
+    #control {
+        width: 100%;
+    }
+</style>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+    <thead>
+        <tr class="tdbg">
+            <th width="%5">订单号</th>
+            <th>商户信息</th>
+            <th>骑士信息</th>
+            <th>发布时间</th>
+            <th>完成时间</th>
+            <th>订单数量</th>
+            <th>订单金额</th>
+            <th>结算类型</th>
+            <th>结算数值</th>
+            <th>订单状态</th>
+            <th>已上传/共需上传</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var i = 0;
+            if (Model != null && Model.Records.Count > 0)
+            {
+
+
+                foreach (var item in Model.Records)
+                {
+                    var diffHour = (DateTime.Now - DateTime.Parse(item.PubDate != null ? item.PubDate.ToString() : DateTime.Now.ToString())).TotalHours;
+                    string val = diffHour > 10 && item.Status == 0 ? "red" : diffHour > 8 && item.Status == 0 ? "blue" : diffHour > 5 && item.Status == 0 ? "yellow" : "none";
+                    i++;
+                    @*<tr id="@item.Id" style="background-color:@Html.Raw(val)" >*@
+                    <tr id="@item.Id">
+                        <td><a href="/DeliveryManager/OrderDetail?OrderNo=@item.OrderNo&OrderId=@item.Id ">@item.OrderNo</a></td>
+                        <td>@item.BusinessName <br> @item.BusinessPhoneNo</td>
+                        <td>@item.ClienterName <br> @item.ClienterPhoneNo</td>
+                        <td>@item.PubDate</td>
+                        <td>@item.ActualDoneDate</td>
+                        <td>@item.OrderCount</td>
+                        <td style="color:red;font-weight:600">@item.Amount</td>
+                        <td>@item.SettleType</td>
+                        <td>@item.SettleValue</td>
+                        <td style="color:@Html.Raw(val)">@ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.OrderStatusCommon)item.Status).GetType(), (ETS.Enums.OrderStatusCommon)item.Status).Text</td>
+                        <td>@item.HadUploadCount.ToString()/@item.OrderCount.ToString()</td>
+                    </tr>
+                }
+            }
+        }
+    </tbody>
+</table>
+@{
+    if (Model != null)
+    {
+        ViewBag.ActionName = "PostOrderManager";
+        @Html.Partial("~/views/shared/PagerControl.cshtml", Model)
+    }
+}
+<div class="selectSupplierDish">
+    <div class="add-openbox add-form" id="orderMapShow" style="width: 60%;height:80%">
+        <div id="map_contain"></div>
+        <p class="btnbox">
+            <input value="关闭" type="button" class="J_closebox qxBtn" />
+        </p>
+    </div>
+</div>
+<script type="text/javascript">
+    var adminjs = new adminglass(); //实例化后台类
+    $(function () {
+    });
+    $('#btnSuperConfim').bind('click', function () {
+        var orderCommission = $('#OrderCommissionUnFin').val();
+        var orderNo = $('#orderNoUnFin').val();
+        var superID = $("#superSelect").val().trim();
+        if ($("#OrderCommissionUnFin").val().trim() == "") {
+            alert("订单佣金不能为空！");
+            return false;
+        }
+        var paramaters = { "OrderCommission": orderCommission, "SuperName": "", "OrderNo": orderNo };
+        var url = "/Order/SaveOrderInfo";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                $.post("/Order/RushOrder", { SuperID: superID, OrderNo: orderNo }, function (data) {
+                    if (data.IsSuccess) {
+                        alert("更新订单成功!");
+                        window.location.href = location.href;
+                        adminjs.closewinbox('.add-openbox');
+                    } else {
+                        alert("分配失败，请重新选择超人!");
+                        window.location.href = location.href;
+                        adminjs.closewinbox('.add-openbox');
+                    }
+                });
+            }
+        });
+        return true;
+    });
+    function funcViewOrder(id, pubDate, businessName, busiPhone, busiAddress, yongjin, disBuTie, WebBuTie, revPhone, revName, revAddress, Amount, isPay, superId, status, superManName) {
+        var paramaters = { "OrderNo": id, "PubDate": pubDate, "BusinessName": businessName, "BusinessPhoneNo": busiPhone, "BusinessAddress": busiAddress, "OrderCommission": yongjin, "DistribSubsidy": disBuTie, "WebsiteSubsidy": WebBuTie, "RecevicePhoneNo": revPhone, "ReceviceName": revName, "ReceviceAddress": revAddress, "Amount": Amount, "IsPay": isPay, "clienterId": superId, "Status": status, "ClienterName": superManName };
+        window.location.href = "/Order/OrderDetail";
+    };
+</script>
+
