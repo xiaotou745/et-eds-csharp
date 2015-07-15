@@ -73,23 +73,27 @@ namespace Ets.Dao.DeliveryManager
         /// <returns></returns>
         public PageInfo<T> GetOrderList<T>(OrderSearchCriteria criteria)
         {
-            string columnList = @"       o.[Id]--
-		                                ,o.[OrderNo]--订单号
-		                                ,o.[PubDate]--发单时间
-		                                ,o.[ActualDoneDate]--完成时间
-		                                ,o.[Amount]--订单金额
-		                                ,o.[Status]--订单状态
-		                                ,o.[OrderCount]--订单数量
-		                                ,c.TrueName ClienterName--骑士信息
-		                                ,c.PhoneNo ClienterPhoneNo--骑士信息
-		                                ,b.Name BusinessName----商家信息
-		                                ,b.PhoneNo BusinessPhoneNo--商家信息
-		                                ,oo.NeedUploadCount--需要上传小票的数量
-		                                ,ISNULL(oo.HadUploadCount,0) HadUploadCount--上传小票数量
-		                                ,oo.GrabToCompleteDistance
-		                                ,o.BusinessCommission --商家结算比例FROM 
-		                                ,CASE dc.SettleType WHEN 1 THEN '比例计算' WHEN 2 THEN '固定结算' ELSE '' END AS SettleType--骑士结算比例
-		                                ,CASE DC.SettleType WHEN 1 THEN dc.ClienterSettleRatio WHEN 2 THEN DC.ClienterFixMoney ELSE 0 END AS SettleValue--骑士固定金额
+            string columnList = @"       o.[Id]
+                                    ,o.[OrderNo]
+                                    ,o.[PubDate]
+                                    ,o.[ActualDoneDate]
+                                    ,o.[Amount]
+                                    ,o.[DistribSubsidy]
+                                    ,o.[Status]
+                                    ,o.[clienterId]
+                                    ,o.[OrderCount]
+                                    ,c.TrueName ClienterName
+                                    ,c.PhoneNo ClienterPhoneNo
+                                    ,b.Name BusinessName
+                                    ,b.PhoneNo BusinessPhoneNo
+                                    ,ISNULL(oo.HadUploadCount,0) HadUploadCount
+                                    ,o.BusinessCommission --商家结算比例 
+		                            ,CASE dc.SettleType WHEN 1 THEN '比例计算' WHEN 2 THEN '固定结算' ELSE '' END AS SettleType--结算类型
+		                            ,CASE DC.SettleType WHEN 1 THEN dc.DeliveryCompanyRatio WHEN 2 THEN DC.DeliveryCompanySettleMoney ELSE 0 END AS SettleValue
+		                            ,CASE DC.SettleType WHEN 1 THEN dc.ClienterSettleRatio WHEN 2 THEN DC.ClienterFixMoney ELSE 0 END AS SuperManSettleValue--骑士固定金额
+                                    ,oo.IsNotRealOrder
+                                    ,oo.GrabTime
+                                    ,b.City AS BusinessCity
                                     ";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrWhiteSpace(criteria.deliveryCompany))
