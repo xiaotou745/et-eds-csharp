@@ -1557,7 +1557,7 @@ select  isnull(DistribSubsidy,0) as DistribSubsidy,
             b.BusinessCommission,
             b.CommissionType, 
             b.CommissionFixValue,
-            b.BalancePrice from Business (nolock) 
+            b.BalancePrice from Business b (nolock) 
 where Id=@Id";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);
