@@ -298,8 +298,16 @@ namespace Ets.Model.DataModel.Order
         /// </summary>
         public string SettleType { get; set; }
         /// <summary>
-        /// 结算数值
+        /// 配送公司结算数值
         /// </summary>
         public decimal SettleValue { get; set; }
+        /// <summary>
+        /// 骑士结算数值
+        /// </summary>
+        public decimal SuperManSettleValue { get; set; }
+        /// <summary>
+        /// 取货时间
+        /// </summary>
+        public DateTime? TakeTime { get; set; }
     }
 }

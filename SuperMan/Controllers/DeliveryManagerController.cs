@@ -84,7 +84,7 @@ namespace SuperMan.Controllers
 
             string excelContent = this.CreateSuperManExcel(result);
             byte[] data = Encoding.UTF8.GetBytes(excelContent);
-            string filname = "e代送-物流订单管理-骑士导出数据.xls";
+            string filname = "e代送-骑士导出数据-"+DateTime.Now.ToString("yyyy-MM-dd")+".xls";
             return File(data, "application/ms-excel", filname);
         }
 
@@ -190,8 +190,6 @@ namespace SuperMan.Controllers
 
         public ActionResult OrderExport()
         {
-            //订单号、商户名称、骑士ID、骑士姓名、下单时间、接单时间、
-            //取货时间、完成时间、配送费、订单金额、订单状态、城市、是否在线支付、是否异常订单
             int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(UserType));
             var criteria = new OrderSearchCriteria();
@@ -202,27 +200,32 @@ namespace SuperMan.Controllers
             var pagedList = iDeliveryManagerProvider.GetOrderList(criteria).Records;
             string excelContent = this.CreateOrderExcel(pagedList);
             byte[] data = Encoding.UTF8.GetBytes(excelContent);
-            string filname = "e代送-物流订单管理-订单导出数据.xls";
+            string filname = "e代送-订单导出数据"+criteria.orderPubStart+"-"+criteria.orderPubEnd+".xls";
             return File(data, "application/ms-excel", filname);
         }
 
         private string CreateOrderExcel(IList<OrderListModel> pagedList)
         {
+            //订单号、商户名称、骑士ID、骑士姓名、下单时间、接单时间、
+            //取货时间、完成时间、配送费、订单金额、订单状态、城市、是否在线支付、是否异常订单
             StringBuilder strBuilder = new StringBuilder();
             strBuilder.AppendLine("<table border=1 cellspacing=0 cellpadding=5 rules=all>");
             //输出表头.
             strBuilder.AppendLine("<tr style=\"font-weight: bold; white-space: nowrap;\">");
             strBuilder.AppendLine("<td>订单号</td>");
-            strBuilder.AppendLine("<td>商户信息</td>");
-            strBuilder.AppendLine("<td>骑士信息</td>");
-            strBuilder.AppendLine("<td>发布时间</td>");
+            strBuilder.AppendLine("<td>商户名称</td>");
+            strBuilder.AppendLine("<td>骑士ID</td>");
+            strBuilder.AppendLine("<td>骑士姓名</td>");
+            strBuilder.AppendLine("<td>下单时间</td>");
+            strBuilder.AppendLine("<td>接单时间</td>");
+            strBuilder.AppendLine("<td>取货时间</td>"); 
             strBuilder.AppendLine("<td>完成时间</td>");
-            strBuilder.AppendLine("<td>订单数量</td>");
+            strBuilder.AppendLine("<td>配送费</td>");
             strBuilder.AppendLine("<td>订单金额</td>");
-            strBuilder.AppendLine("<td>结算类型</td>");
-            strBuilder.AppendLine("<td>结算数值</td>");
             strBuilder.AppendLine("<td>订单状态</td>");
-            strBuilder.AppendLine("<td>已传小票/共需上传</td>");
+            strBuilder.AppendLine("<td>城市</td>");
+            strBuilder.AppendLine("<td>是否在线支付</td>");
+            strBuilder.AppendLine("<td>是否异常订单</td>");
             strBuilder.AppendLine("</tr>");
             //输出数据.
             foreach (var item in pagedList)
@@ -230,16 +233,19 @@ namespace SuperMan.Controllers
                 var statusView =ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.OrderStatusCommon) item.Status).GetType(),
                         (ETS.Enums.OrderStatusCommon) item.Status).Text;
                 strBuilder.AppendLine(string.Format("<tr><td>{0}</td>", item.OrderNo));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.BusinessName+"/"+item.BusinessPhoneNo));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.ClienterName+"/"+item.ClienterPhoneNo));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.BusinessName));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.clienterId));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.ClienterName));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.PubDate));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.GrabTime));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.GrabTime));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.ActualDoneDate));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.OrderCount));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.DistribSubsidy));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.Amount));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.SettleType));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.SettleValue));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", statusView));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.HadUploadCount+"//"+item.OrderCount));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.BusinessCity));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.MealsSettleMode==1?"是":"否"));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.IsNotRealOrder==1?"是":"否"));
                 strBuilder.AppendLine("</tr>");
             }
             strBuilder.AppendLine("</table>");

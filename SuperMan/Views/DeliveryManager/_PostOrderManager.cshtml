@@ -28,9 +28,11 @@
             <th>订单数量</th>
             <th>订单金额</th>
             <th>结算类型</th>
-            <th>结算数值</th>
+            <th>公司结算数值</th>
+            <th>骑士结算数值</th>
             <th>订单状态</th>
             <th>已上传/共需上传</th>
+            <th>异常订单</th>
         </tr>
     </thead>
     <tbody>
@@ -44,6 +46,7 @@
                 {
                     var diffHour = (DateTime.Now - DateTime.Parse(item.PubDate != null ? item.PubDate.ToString() : DateTime.Now.ToString())).TotalHours;
                     string val = diffHour > 10 && item.Status == 0 ? "red" : diffHour > 8 && item.Status == 0 ? "blue" : diffHour > 5 && item.Status == 0 ? "yellow" : "none";
+                    string strread = item.IsNotRealOrder == 1 ? "red" : "";
                     i++;
                     @*<tr id="@item.Id" style="background-color:@Html.Raw(val)" >*@
                     <tr id="@item.Id">
@@ -56,8 +59,10 @@
                         <td style="color:red;font-weight:600">@item.Amount</td>
                         <td>@item.SettleType</td>
                         <td>@item.SettleValue</td>
+                        <td>@item.SuperManSettleValue</td>
                         <td style="color:@Html.Raw(val)">@ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.OrderStatusCommon)item.Status).GetType(), (ETS.Enums.OrderStatusCommon)item.Status).Text</td>
                         <td>@item.HadUploadCount.ToString()/@item.OrderCount.ToString()</td>
+                        <td style="color:@Html.Raw(strread)">@(item.IsNotRealOrder==1?"是":"否")</td>
                     </tr>
                 }
             }
