@@ -82,6 +82,10 @@ namespace Ets.Model.DataModel.Finance
         /// 身份证号
         /// </summary>
         public string IDCard { get; set; }
+        /// <summary>
+        /// 骑士手机号
+        /// </summary>
+        public string PhoneNo { get; set; }
     }
 
 }

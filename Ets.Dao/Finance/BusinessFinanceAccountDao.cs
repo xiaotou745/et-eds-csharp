@@ -64,7 +64,7 @@ select @@IDENTITY";
             const string updateSql = @"
 update  BusinessFinanceAccount
 set  TrueName=@TrueName,AccountNo=@AccountNo,BelongType=@BelongType,OpenBank=@OpenBank,
-OpenSubBank=@OpenSubBank,UpdateBy=@UpdateBy
+OpenSubBank=@OpenSubBank,UpdateBy=@UpdateBy,OpenProvince=@OpenProvince,OpenCity=@OpenCity,IDCard=@IDCard 
 where  Id=@Id ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Id", businessFinanceAccount.Id);
@@ -74,6 +74,9 @@ where  Id=@Id ";
             dbParameters.AddWithValue("OpenBank", businessFinanceAccount.OpenBank);
             dbParameters.AddWithValue("OpenSubBank", businessFinanceAccount.OpenSubBank);
             dbParameters.AddWithValue("UpdateBy", businessFinanceAccount.UpdateBy);
+            dbParameters.Add("OpenProvince", DbType.String).Value = businessFinanceAccount.OpenProvince;
+            dbParameters.Add("OpenCity", DbType.String).Value = businessFinanceAccount.OpenCity;
+            dbParameters.Add("IDCard", DbType.String).Value = businessFinanceAccount.IDCard;
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
 
@@ -97,15 +100,34 @@ where  BusinessId=@BusinessId ";
         }
 
         /// <summary>
+        /// 更新易宝信息通过Id
+        /// </summary>
+        /// <param name="Id">Id</param>
+        /// <param name="yeepayKey">易宝Key</param>
+        /// <param name="yeepayStatus">易宝账户状态  0正常 1失败</param>
+        public void UpdateYeepayInfoById(int id, string yeepayKey, byte yeepayStatus)
+        {
+            const string updateSql = @"
+update  BusinessFinanceAccount
+set  YeepayKey=@YeepayKey,YeepayStatus=@YeepayStatus
+where  Id=@Id ";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("YeepayKey", yeepayKey);
+            dbParameters.AddWithValue("YeepayStatus", yeepayStatus);
+            dbParameters.AddWithValue("Id", id);
+            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+        }
+
+        /// <summary>
         /// 根据ID获取对象
         /// </summary>
         public BusinessFinanceAccount GetById(int id)
         {
             BusinessFinanceAccount model = null;
             const string querysql = @"
-select  Id,BusinessId,TrueName,AccountNo,IsEnable,AccountType,BelongType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime,OpenProvince,OpenCity,IDCard 
-from  BusinessFinanceAccount (nolock)
-where  Id=@Id and IsEnable=1";
+ select  a.Id,a.BusinessId,a.TrueName,a.AccountNo,a.IsEnable,a.AccountType,a.BelongType,a.OpenBank,a.OpenSubBank,a.CreateBy,a.CreateTime,a.UpdateBy,a.UpdateTime,a.OpenProvince,a.OpenCity,a.IDCard,b.PhoneNo
+from  dbo.BusinessFinanceAccount (nolock) a join dbo.business b (nolock) on a.BusinessId = b.Id
+where  a.Id=@Id and a.IsEnable=1 ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Id", id);
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));

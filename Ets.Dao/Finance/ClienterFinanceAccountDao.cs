@@ -64,7 +64,7 @@ select @@IDENTITY";
             const string updateSql = @"
 update  ClienterFinanceAccount
 set  TrueName=@TrueName,AccountNo=@AccountNo,BelongType=@BelongType,OpenBank=@OpenBank,
-OpenSubBank=@OpenSubBank,UpdateBy=@UpdateBy
+OpenSubBank=@OpenSubBank,UpdateBy=@UpdateBy,OpenProvince=@OpenProvince,OpenCity=@OpenCity,IDCard=@IDCard 
 where  Id=@Id ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Id", clienterFinanceAccount.Id);
@@ -74,6 +74,10 @@ where  Id=@Id ";
             dbParameters.AddWithValue("OpenBank", clienterFinanceAccount.OpenBank);
             dbParameters.AddWithValue("OpenSubBank", clienterFinanceAccount.OpenSubBank);
             dbParameters.AddWithValue("UpdateBy", clienterFinanceAccount.UpdateBy);
+            dbParameters.Add("OpenProvince", DbType.String).Value =clienterFinanceAccount.OpenProvince;
+            dbParameters.Add("OpenCity", DbType.String).Value = clienterFinanceAccount.OpenCity;
+            dbParameters.Add("IDCard", DbType.String).Value = clienterFinanceAccount.IDCard;
+
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
 
@@ -93,6 +97,26 @@ where  ClienterId=@ClienterId ";
             dbParameters.AddWithValue("YeepayKey", yeepayKey);
             dbParameters.AddWithValue("YeepayStatus", yeepayStatus);
             dbParameters.AddWithValue("ClienterId", clienterId);
+            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+        }
+
+
+        /// <summary>
+        /// 更新易宝信息根据Id
+        /// </summary>
+        /// <param name="Id">Id</param>
+        /// <param name="yeepayKey">易宝Key</param>
+        /// <param name="yeepayStatus">易宝账户状态  0正常 1失败</param>
+        public void UpdateYeepayInfoById(int id, string yeepayKey, byte yeepayStatus)
+        {
+            const string updateSql = @"
+update ClienterFinanceAccount
+set  YeepayKey=@YeepayKey,YeepayStatus=@YeepayStatus
+where  Id=@Id ";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("YeepayKey", yeepayKey);
+            dbParameters.AddWithValue("YeepayStatus", yeepayStatus);
+            dbParameters.AddWithValue("Id", id);
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
 
@@ -131,9 +155,9 @@ from  ClienterFinanceAccount (nolock)" + condition;
         {
             ClienterFinanceAccount model = null;
             const string querysql = @"
-select Id,ClienterId,TrueName,AccountNo,IsEnable,AccountType,BelongType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime,OpenProvince,OpenCity,IDCard
-from  ClienterFinanceAccount(nolock)  
-where  Id=@Id  and IsEnable=1";
+ select a.Id,a.ClienterId,a.TrueName,a.AccountNo,a.IsEnable,a.AccountType,a.BelongType,a.OpenBank,a.OpenSubBank,a.CreateBy,a.CreateTime,a.UpdateBy,a.UpdateTime,a.OpenProvince,a.OpenCity,a.IDCard,b.PhoneNo
+from  dbo.ClienterFinanceAccount(nolock) a join dbo.clienter(nolock) b on a.ClienterId = b.Id
+where  a.Id=@Id  and a.IsEnable=1 ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Id", id);
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));

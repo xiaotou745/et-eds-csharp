@@ -289,21 +289,23 @@ namespace Ets.Service.Provider.Finance
             if (cfAccount != null)
             {
                 if (cfAccount.OpenBank != cardModifyCpm.OpenBank || cfAccount.OpenSubBank != cardModifyCpm.OpenSubBank ||
-                    cfAccount.OpenProvince != cardModifyCpm.OpenCity || cfAccount.IDCard != cardModifyCpm.IDCard || cfAccount.TrueName != cardModifyCpm.TrueName || cfAccount.AccountNo !=  DES.Encrypt(cardModifyCpm.AccountNo))
+                    cfAccount.OpenProvince != cardModifyCpm.OpenCity || cfAccount.IDCard != cardModifyCpm.IDCard ||
+                    cfAccount.TrueName != cardModifyCpm.TrueName ||
+                    cfAccount.AccountNo != DES.Encrypt(cardModifyCpm.AccountNo))
                 {
-                    //1.修改数据库
+                    //1.修改
                     using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
                     {
                         _clienterFinanceAccountDao.Update(new ClienterFinanceAccount()
                         {
                             Id = cardModifyCpm.Id,
-                            ClienterId = cardModifyCpm.ClienterId,//骑士ID
+                            ClienterId = cardModifyCpm.ClienterId, //骑士ID
                             TrueName = cardModifyCpm.TrueName, //户名
                             AccountNo = DES.Encrypt(cardModifyCpm.AccountNo), //卡号(DES加密)
-                            BelongType = cardModifyCpm.BelongType,//账号类别  0 个人账户 1 公司账户  
+                            BelongType = cardModifyCpm.BelongType, //账号类别  0 个人账户 1 公司账户  
                             OpenBank = cardModifyCpm.OpenBank, //开户行
                             OpenSubBank = cardModifyCpm.OpenSubBank, //开户支行
-                            UpdateBy = cardModifyCpm.UpdateBy,//修改人  当前登录人
+                            UpdateBy = cardModifyCpm.UpdateBy, //修改人  当前登录人
                             OpenProvince = cardModifyCpm.OpenProvince, //省名称
                             OpenCity = cardModifyCpm.OpenCity, //市区名称
                             IDCard = cardModifyCpm.IDCard //身份证号
@@ -316,7 +318,49 @@ namespace Ets.Service.Provider.Finance
                     return ResultModel<object>.Conclude(FinanceCardModifyC.NoModify);
                 }
             }
-            //异步调用赫洋的修改
+            else
+            {
+                return ResultModel<object>.Conclude(FinanceCardModifyC.BelongTypeError);
+            }
+
+            #region 2.异步调用注册ebao
+
+            string requestid = TimeHelper.GetTimeStamp(false);
+            string bindmobile = cfAccount.PhoneNo; //绑定手机
+            string customertype = (cardModifyCpm.BelongType == 0 ? CustomertypeEnum.PERSON.ToString() : CustomertypeEnum.ENTERPRISE.ToString()); //注册类型PERSON ：个人 ENTERPRISE：企业个人 ENTERPRISE：企业
+            string signedname = cardModifyCpm.TrueName; //签约名   商户签约名；个人，填写姓名；企业，填写企业名称。
+            string linkman = cardModifyCpm.TrueName; //联系人
+            string idcard = cardModifyCpm.IDCard; //身份证  customertype为PERSON时，必填
+            string businesslicence = ""; //营业执照号 customertype为ENTERPRISE时，必填
+            string legalperson = cardModifyCpm.TrueName;
+            string bankaccountnumber = cardModifyCpm.AccountNo; //银行卡号 
+            string bankname = cardModifyCpm.OpenBank; //开户行
+            string accountname = cardModifyCpm.TrueName; //开户名
+            string bankaccounttype = (cardModifyCpm.BelongType == 0 ? BankaccounttypeEnum.PrivateCash.ToString(): BankaccounttypeEnum.PublicCash.ToString()); //银行卡类别  PrivateCash：对私 PublicCash： 对公
+            string bankprovince = cardModifyCpm.OpenProvince;
+            string bankcity = cardModifyCpm.OpenCity;
+            var registResult = new Register().RegSubaccount(requestid, bindmobile, customertype, signedname, linkman,
+                idcard, businesslicence, legalperson, bankaccountnumber, bankname,
+                accountname, bankaccounttype, bankprovince, bankcity); //注册帐号
+            if (registResult != null && !string.IsNullOrEmpty(registResult.code) && registResult.code.Trim() == "1")   //绑定成功，更新易宝key
+            {
+                _clienterFinanceAccountDao.UpdateYeepayInfoById(cardModifyCpm.Id, registResult.ledgerno, 0);
+            }
+            else
+            {
+                _clienterFinanceAccountDao.UpdateYeepayInfoById(cardModifyCpm.Id, "", 1);  //绑定失败，更新易宝key
+                if (registResult == null)
+                {
+                    LogHelper.LogWriterString("骑士绑定易宝支付失败", string.Format("返回结果为null"));
+                }
+                else
+                {
+                    LogHelper.LogWriterString("骑士绑定易宝支付失败",
+                        string.Format("易宝错误信息:code{0},ledgerno:{1},hmac{2},msg{3}",
+                            registResult.code, registResult.ledgerno, registResult.hmac, registResult.msg));
+                }
+            } 
+            #endregion
 
 
             return ResultModel<object>.Conclude(SystemState.Success);

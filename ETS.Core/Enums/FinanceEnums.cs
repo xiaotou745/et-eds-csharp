@@ -77,7 +77,9 @@ namespace ETS.Enums
         [DisplayText("未传参")]
         NoPara = -2,
         [DisplayText("无需修改")]
-        NoModify = 100
+        NoModify = 100,
+        [DisplayText("请先注册或账户被封")]
+        FisrtRegist = 101
     }
     /// <summary>
     ///骑士余额流水   流水状态(1、交易成功 2、交易中）枚举 add by caoheyang 20150509
@@ -211,7 +213,11 @@ namespace ETS.Enums
         [DisplayText("系统错误")]
         SystemError = 0,
         [DisplayText("未传参")]
-        NoPara = -2
+        NoPara = -2,
+        [DisplayText("无需修改")]
+        NoModify = 100,
+        [DisplayText("请先注册或账户被封")]
+        FisrtRegist = 101
     }
     /// <summary>
     ///商户余额流水   流水状态(1、交易成功 2、交易中）枚举 add by caoheyang 20150511
