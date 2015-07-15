@@ -62,8 +62,7 @@ namespace Ets.Provider.Tests
         [Test]
         public void CashTransfer()
         {
-            string requestid = TimeHelper.GetTimeStamp(false);
-            var result = new Transfer().CashTransfer(requestid, "10012474356", "1.9", "");//提现
+            var result = new Transfer().CashTransfer(APP.B,100, "10012474356", "1.9", "");//提现
         }
 
 

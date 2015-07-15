@@ -27,7 +27,7 @@ namespace ETS.Pay.YeePay
         /// <param name="amount">转账金额 单位：元</param>
         /// <param name="sourceledgerno">子账户商编</param>
         /// <returns>json</returns>
-        public TransferReturnModel TransferAccounts(string customernumber, string hmackey, string requestid, 
+        private TransferReturnModel TransferAccounts(string customernumber, string hmackey, string requestid, 
             string ledgerno, string amount, string sourceledgerno)
         {
             try
@@ -94,7 +94,7 @@ namespace ETS.Pay.YeePay
         /// <param name="amount">转账金额 单位：元</param>
         /// <param name="callbackurl">回调接口 提现成功与否返回data;为空则不予回调</param>
         /// <returns></returns>
-        public TransferReturnModel CashTransfer(string customernumber, string hmackey, string requestid, string ledgerno, string amount, string callbackurl)
+        private TransferReturnModel CashTransfer(string customernumber, string hmackey, string requestid, string ledgerno, string amount, string callbackurl)
         {
             try
             {
@@ -132,15 +132,17 @@ namespace ETS.Pay.YeePay
             }
         }
         /// <summary>
-        /// 提现接口
+        /// 易宝提现回调功能 
         /// </summary>
-        /// <param name="requestid">请求号 在主帐号下唯一 MAX(50 )</param>
+        ///  <param name="app">B  C端区分</param>
+        /// <param name="withdrawFormId">提现单id 用来生成体现单号</param>
         /// <param name="ledgerno">子账户商户编号</param>
         /// <param name="amount">转账金额 单位：元</param>
         /// <param name="callbackurl">回调接口 提现成功与否返回data</param>
         /// <returns></returns>
-        public TransferReturnModel CashTransfer(string requestid, string ledgerno, string amount, string callbackurl)
+        public TransferReturnModel CashTransfer(APP app, int withdrawFormId, string ledgerno, string amount, string callbackurl)
         {
+            string requestid = app.ToString() + withdrawFormId;
             //商户编号   
             string customernumber = KeyConfig.YeepayAccountId;
             //密钥   

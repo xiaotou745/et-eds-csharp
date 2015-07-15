@@ -60,6 +60,7 @@
     <Compile Include="Common\PagedList.cs" />
     <Compile Include="Common\TestUserModel.cs" />
     <Compile Include="Common\VersionCheckModel.cs" />
+    <Compile Include="Common\YeePay\CashTransferCallback.cs" />
     <Compile Include="DataModel\Authority\AccountCityRelation.cs" />
     <Compile Include="DataModel\Business\BusiModifyResultModelDM.cs" />
     <Compile Include="DataModel\Business\BusinessClienterRelation.cs" />
