@@ -70,7 +70,18 @@ namespace Ets.Model.DataModel.Finance
         /// 最后更新时间
         /// </summary>
         public DateTime UpdateTime { get; set; }
-
+        /// <summary>
+        /// 开户省
+        /// </summary>
+        public string OpenProvince { get; set; }
+        /// <summary>
+        /// 开户市
+        /// </summary>
+        public string OpenCity { get; set; }
+        /// <summary>
+        /// 身份证号
+        /// </summary>
+        public string IDCard { get; set; }
     }
 
 }

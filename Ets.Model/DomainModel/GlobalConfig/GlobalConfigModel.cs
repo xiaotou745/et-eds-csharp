@@ -92,9 +92,14 @@ namespace Ets.Model.DomainModel.GlobalConfig
         public string IsStartOverStoreSubsidies { get; set; }
 
         /// <summary>
-        ///骑士端上传一次经纬度给到服务端的时间间隔(单位为秒)
+        /// 骑士端有未完成订单上传一次经纬度给到服务端的时间间隔(单位为秒)
         /// </summary>
-        public string UploadTimeInterval { get; set; }
+        public string HasUnFinishedOrderUploadTimeInterval { get; set; }
+
+        /// <summary>
+        /// 骑士端没有未完成订单上传一次经纬度给到服务端的时间间隔(单位为秒)
+        /// </summary>
+        public string AllFinishedOrderUploadTimeInterval { get; set; }
 
         /// <summary>
         /// 订单推送给骑士的区域半径(单位为公里)

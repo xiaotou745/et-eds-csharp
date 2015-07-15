@@ -9,8 +9,10 @@ using System.Web.Http.Controllers;
 using System.Web.Http.ModelBinding;
 using ETS.Enums;
 using Ets.Model.Common;
+using Ets.Model.DomainModel.Area;
 using Ets.Model.ParameterModel.Finance;
 using Ets.Service.IProvider.Finance;
+using Ets.Service.Provider.Common;
 using Ets.Service.Provider.Finance;
 using SuperManWebApi.App_Start.Filters; 
 #endregion
@@ -104,5 +106,21 @@ namespace SuperManWebApi.Controllers
         }
 
         #endregion
+
+        /// <summary>
+        /// 获取银行省市
+        /// 彭宜
+        /// 2015年7月15日
+        /// </summary>
+        /// <param name="version">版本号</param>
+        /// <returns></returns>        
+        [HttpGet]
+        [ApiVersionStatistic]
+        public ResultModel<AreaModelList> GetBankProvinceCity(string version)
+        {
+            AreaProvider area = new AreaProvider();
+
+            return area.GetPublicBankCity(version, false);
+        }
     }
 }
