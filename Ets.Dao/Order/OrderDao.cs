@@ -3177,5 +3177,19 @@ where   Id = @OrderId and FinishAll = 0";
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
 
         }
+
+        /// <summary>
+        /// 骑士目前是否有未完成的订单
+        /// add by 彭宜   20150714
+        /// </summary>
+        /// <param name="clienterId">骑士Id</param>
+        /// <returns></returns>
+        public bool ClienterHasUnFinishedOrder(int clienterId)
+        {
+            string sql = "select count(1) from [dbo].[order] where clienterId=@clientId and (Status=2 or Status=4);";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@clientId", clienterId);
+            return int.Parse(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm).ToString()) > 0;
+        }
     }
 }

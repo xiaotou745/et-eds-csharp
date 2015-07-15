@@ -145,6 +145,7 @@
     <Compile Include="Pay\YeePay\QueryBalance.cs" />
     <Compile Include="Pay\YeePay\RandomUtil.cs" />
     <Compile Include="Pay\YeePay\Register.cs" />
+    <Compile Include="Pay\YeePay\TransferReturnModel.cs" />
     <Compile Include="Pay\YeePay\RegisterReturnModel.cs" />
     <Compile Include="Pay\YeePay\ResponseModel.cs" />
     <Compile Include="Pay\YeePay\ResponseYeePay.cs" />

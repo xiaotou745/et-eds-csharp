@@ -66,7 +66,7 @@ namespace SuperManWebApi.Controllers
 
             try
             {
-                BusinessDM businessDM = iBusinessProvider.GetDetails(model.BussinessId);               
+                BusinessDM businessDM = iBusinessProvider.GetDetails(model.BussinessId);
                 return Ets.Model.Common.ResultModel<BusinessDM>.Conclude(GetBussinessStatus.Success, businessDM);
             }
             catch (Exception ex)
@@ -84,34 +84,38 @@ namespace SuperManWebApi.Controllers
         /// <param name="model">商户参数</param>
         /// <returns></returns>        
         [HttpPost]
-        public ResultModel<BusinessInfo> GetDistribSubsidy(BussinessPM model)
+        public ResultModel<BusiDistribSubsidyResultModel> GetDistribSubsidy(BussinessPM model)
         {
             #region 验证
             var version = model.Version;
             if (string.IsNullOrWhiteSpace(version)) //版本号 
             {
-                return ResultModel<BusinessInfo>.Conclude(GetBussinessStatus.NoVersion);
+                return ResultModel<BusiDistribSubsidyResultModel>.Conclude(GetBussinessStatus.NoVersion);
             }
             if (model.BussinessId < 0)//商户Id不合法
             {
-                return ResultModel<BusinessInfo>.Conclude(GetBussinessStatus.ErrNo);
+                return ResultModel<BusiDistribSubsidyResultModel>.Conclude(GetBussinessStatus.ErrNo);
             }
             if (!iBusinessProvider.IsExist(model.BussinessId)) //商户不存在
             {
-                return ResultModel<BusinessInfo>.Conclude(GetBussinessStatus.FailedGet);
+                return ResultModel<BusiDistribSubsidyResultModel>.Conclude(GetBussinessStatus.FailedGet);
+            }
+            if (model.OrderCount <= 0) //子订单数量不能小于1
+            {
+                return ResultModel<BusiDistribSubsidyResultModel>.Conclude(GetBussinessStatus.OrderCountError);
             }
 
             #endregion
 
             try
             {
-                BusinessInfo busInfo = iBusinessProvider.GetDistribSubsidy(model.BussinessId);
-                return Ets.Model.Common.ResultModel<BusinessInfo>.Conclude(GetBussinessStatus.Success, busInfo);
+                var ret = iBusinessProvider.GetBusinessPushOrderInfo(model.BussinessId, model.OrderCount, model.Amount);
+                return Ets.Model.Common.ResultModel<BusiDistribSubsidyResultModel>.Conclude(GetBussinessStatus.Success, ret);
             }
             catch (Exception ex)
             {
                 LogHelper.LogWriter("ResultModel<decimal> GetDistribSubsidy", new { obj = "时间：" + DateTime.Now.ToString() + ex.Message });
-                return ResultModel<BusinessInfo>.Conclude(GetBussinessStatus.Failed);
+                return ResultModel<BusiDistribSubsidyResultModel>.Conclude(GetBussinessStatus.Failed);
             }
         }
 
@@ -153,7 +157,7 @@ namespace SuperManWebApi.Controllers
                     return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.UpFailed);
                 }
                 model.CheckPicUrl = imgInfo.PicUrl;
-             
+
             }
             #endregion
 
@@ -175,7 +179,7 @@ namespace SuperManWebApi.Controllers
                 model.BusinessLicensePic = imgInfoLicen.PicUrl;
             }
             #endregion
-           
+
             //修改商户地址信息，返回当前商户的状态
             return iBusinessProvider.UpdateBusinessInfoB(model);
         }

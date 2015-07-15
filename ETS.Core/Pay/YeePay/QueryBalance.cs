@@ -6,7 +6,7 @@ using ETS.Util;
 namespace ETS.Pay.YeePay
 {
     /// <summary>
-    /// 余额查询
+    /// 余额查询  add  by caoheyang  20150715
     /// </summary>
     public class QueryBalance
     {
@@ -26,8 +26,7 @@ namespace ETS.Pay.YeePay
         /// <returns>json</returns>
         public string GetBalance(string customernumber,string hmackey, string ledgerno)
         {
-            var postUrl = "https://o2o.yeepay.com/zgt-api/api/queryBalance";//转账接口
-
+         
             var js = new JavaScriptSerializer();
 
             string[] stringArray = { customernumber, ledgerno };
@@ -49,7 +48,7 @@ namespace ETS.Pay.YeePay
 
             var datas = "customernumber=" + customernumber + "&data=" + data;
 
-            var result = HTTPHelper.HttpPost(postUrl, datas,null);
+            var result = HTTPHelper.HttpPost(KeyConfig.QueryBalanceUrl, datas,null);
 
             return ResponseYeePay.OutRes(result);
         }
