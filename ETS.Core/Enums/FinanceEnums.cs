@@ -244,7 +244,10 @@ namespace ETS.Enums
         [DisplayText("订单菜品费")]
         OrderMeals = 8,
         [DisplayText("充值")]
-        Recharge = 9
+        Recharge = 9,
+        [DisplayText("系统金额归零")]
+        SysClearMoney= 10
+
         
     }
 
