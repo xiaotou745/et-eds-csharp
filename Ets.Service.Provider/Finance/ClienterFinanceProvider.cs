@@ -145,13 +145,13 @@ namespace Ets.Service.Provider.Finance
             {
                 return FinanceWithdrawC.NoPara;
             }
-            if (string.IsNullOrWhiteSpace(withdrawCpm.OpenProvince)) 
+            if (string.IsNullOrWhiteSpace(withdrawCpm.OpenProvince))
                 return FinanceWithdrawC.NoOpenProvince;
-            if (withdrawCpm.OpenProvinceCode==0)
+            if (withdrawCpm.OpenProvinceCode == 0)
                 return FinanceWithdrawC.NoOpenProvinceCode;
             if (string.IsNullOrWhiteSpace(withdrawCpm.OpenCity))
                 return FinanceWithdrawC.NoOpenCity;
-            if (withdrawCpm.OpenCityCode==0)
+            if (withdrawCpm.OpenCityCode == 0)
                 return FinanceWithdrawC.NoOpenCityCode;
             if (!Regex.IsMatch(withdrawCpm.IDCard, @"^(^\d{15}$|^\d{18}$|^\d{17}(\d|X|x))$", RegexOptions.IgnoreCase))
                 return FinanceWithdrawC.NoIDCard;
@@ -358,7 +358,7 @@ namespace Ets.Service.Provider.Finance
             string bankaccountnumber = cardModifyCpm.AccountNo; //银行卡号 
             string bankname = cardModifyCpm.OpenBank; //开户行
             string accountname = cardModifyCpm.TrueName; //开户名
-            string bankaccounttype = (cardModifyCpm.BelongType == 0 ? BankaccounttypeEnum.PrivateCash.ToString(): BankaccounttypeEnum.PublicCash.ToString()); //银行卡类别  PrivateCash：对私 PublicCash： 对公
+            string bankaccounttype = (cardModifyCpm.BelongType == 0 ? BankaccounttypeEnum.PrivateCash.ToString() : BankaccounttypeEnum.PublicCash.ToString()); //银行卡类别  PrivateCash：对私 PublicCash： 对公
             string bankprovince = cardModifyCpm.OpenProvince;
             string bankcity = cardModifyCpm.OpenCity;
             var registResult = new Register().RegSubaccount(requestid, bindmobile, customertype, signedname, linkman,
@@ -381,7 +381,7 @@ namespace Ets.Service.Provider.Finance
                         string.Format("易宝错误信息:code{0},ledgerno:{1},hmac{2},msg{3}",
                             registResult.code, registResult.ledgerno, registResult.hmac, registResult.msg));
                 }
-            } 
+            }
             #endregion
 
 
@@ -562,19 +562,33 @@ namespace Ets.Service.Provider.Finance
             bool reg = false;
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                if (clienterFinanceDao.ClienterWithdrawReturn(model))
+                if (clienterFinanceDao.ClienterWithdrawReturn(model)
+                    && clienterFinanceDao.ClienterWithdrawPayFailed(model)
+                    && clienterFinanceDao.ModifyClienterBalanceRecordStatus(model.WithwardId.ToString())
+                    && clienterFinanceDao.ModifyClienterAmountInfo(model.WithwardId.ToString()))
                 {
-                    if (clienterFinanceDao.ClienterWithdrawPayFailed(model))
+                   var  withdraw=_clienterWithdrawFormDao.GetById(model.WithwardId);
+                   _clienterDao.UpdateForWithdrawC(new UpdateForWithdrawPM
+                   {
+                       Id = withdraw.ClienterId,
+                       Money = -withdraw.HandCharge
+                   }); //更新骑士表的余额，可提现余额
+                    if (withdraw.HandChargeOutlay == 0) //个人支出手续费  增加手续费扣款记录流水 
                     {
-                        if (clienterFinanceDao.ModifyClienterBalanceRecordStatus(model.WithwardId.ToString()))
+                        _clienterBalanceRecordDao.Insert(new ClienterBalanceRecord()
                         {
-                            if (clienterFinanceDao.ModifyClienterAmountInfo(model.WithwardId.ToString()))
-                            {
-                                reg = true;
-                                tran.Complete();
-                            }
-                        }
+                            ClienterId = withdraw.ClienterId, //骑士Id(Clienter表）
+                            Amount = -withdraw.HandCharge, //流水金额
+                            Status = (int) ClienterBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
+                            RecordType = (int)ClienterBalanceRecordRecordType.ProcedureFee,
+                            Operator = "易宝系统回调",
+                            WithwardId = withdraw.Id,
+                            RelationNo = withdraw.WithwardNo,
+                            Remark = "易宝提现失败扣除手续费"
+                        });
                     }
+                    reg = true;
+                    tran.Complete();
                 }
             }
             return reg;
