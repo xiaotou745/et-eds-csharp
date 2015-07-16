@@ -1380,8 +1380,8 @@ namespace Ets.Service.Provider.Clienter
             //{
             //    return true;
             //}
-            if ((ParseHelper.ToDatetime(mapDetail.ActualDoneDate) < myOrderInfo.GrabTime.Value.AddMinutes(5) ||
-          ParseHelper.ToDatetime(mapDetail.ActualDoneDate) > myOrderInfo.GrabTime.Value.AddMinutes(120)))
+            if ((ParseHelper.ToDatetime(mapDetail.ActualDoneDate,DateTime.Now) < myOrderInfo.GrabTime.Value.AddMinutes(5) ||
+          ParseHelper.ToDatetime(mapDetail.ActualDoneDate,DateTime.Now) > myOrderInfo.GrabTime.Value.AddMinutes(120)))
             {
                 return true;
             }

@@ -34,8 +34,8 @@ namespace Ets.Dao.Finance
         public int Insert(ClienterFinanceAccount clienterFinanceAccount)
         {
             const string insertSql = @"
-insert into ClienterFinanceAccount(ClienterId,TrueName,AccountNo,IsEnable,AccountType,BelongType,OpenBank,OpenSubBank,CreateBy,UpdateBy)
-values(@ClienterId,@TrueName,@AccountNo,@IsEnable,@AccountType,@BelongType,@OpenBank,@OpenSubBank,@CreateBy,@UpdateBy)
+insert into ClienterFinanceAccount(ClienterId,TrueName,AccountNo,IsEnable,AccountType,BelongType,OpenBank,OpenSubBank,OpenProvince,OpenCity,IDCard,CreateBy,UpdateBy)
+values(@ClienterId,@TrueName,@AccountNo,@IsEnable,@AccountType,@BelongType,@OpenBank,@OpenSubBank,@OpenProvince,@OpenCity,@IDCard,@CreateBy,@UpdateBy)
 select @@IDENTITY";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("ClienterId", clienterFinanceAccount.ClienterId); //骑士ID
@@ -48,6 +48,9 @@ select @@IDENTITY";
             dbParameters.AddWithValue("OpenSubBank", clienterFinanceAccount.OpenSubBank); //开户支行
             dbParameters.AddWithValue("CreateBy", clienterFinanceAccount.CreateBy); //添加人
             dbParameters.AddWithValue("UpdateBy", clienterFinanceAccount.UpdateBy); //最后更新人
+            dbParameters.AddWithValue("IDCard", clienterFinanceAccount.IDCard); //身份证号
+            dbParameters.AddWithValue("OpenProvince", clienterFinanceAccount.OpenProvince); //开户省
+            dbParameters.AddWithValue("OpenCity", clienterFinanceAccount.OpenCity); //开户市
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters);
             return ParseHelper.ToInt(result);
         }
@@ -61,7 +64,7 @@ select @@IDENTITY";
             const string updateSql = @"
 update  ClienterFinanceAccount
 set  TrueName=@TrueName,AccountNo=@AccountNo,BelongType=@BelongType,OpenBank=@OpenBank,
-OpenSubBank=@OpenSubBank,UpdateBy=@UpdateBy
+OpenSubBank=@OpenSubBank,UpdateBy=@UpdateBy,OpenProvince=@OpenProvince,OpenCity=@OpenCity,IDCard=@IDCard 
 where  Id=@Id ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Id", clienterFinanceAccount.Id);
@@ -71,6 +74,49 @@ where  Id=@Id ";
             dbParameters.AddWithValue("OpenBank", clienterFinanceAccount.OpenBank);
             dbParameters.AddWithValue("OpenSubBank", clienterFinanceAccount.OpenSubBank);
             dbParameters.AddWithValue("UpdateBy", clienterFinanceAccount.UpdateBy);
+            dbParameters.Add("OpenProvince", DbType.String).Value =clienterFinanceAccount.OpenProvince;
+            dbParameters.Add("OpenCity", DbType.String).Value = clienterFinanceAccount.OpenCity;
+            dbParameters.Add("IDCard", DbType.String).Value = clienterFinanceAccount.IDCard;
+
+            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+        }
+
+        /// <summary>
+        /// 更新易宝信息
+        /// </summary>
+        /// <param name="clienterId">骑士Id</param>
+        /// <param name="yeepayKey">易宝Key</param>
+        /// <param name="yeepayStatus">易宝账户状态  0正常 1失败</param>
+        public void UpdateYeepayInfo(int clienterId, string yeepayKey, byte yeepayStatus)
+        {
+            const string updateSql = @"
+update ClienterFinanceAccount
+set  YeepayKey=@YeepayKey,YeepayStatus=@YeepayStatus
+where  ClienterId=@ClienterId ";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("YeepayKey", yeepayKey);
+            dbParameters.AddWithValue("YeepayStatus", yeepayStatus);
+            dbParameters.AddWithValue("ClienterId", clienterId);
+            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+        }
+
+
+        /// <summary>
+        /// 更新易宝信息根据Id
+        /// </summary>
+        /// <param name="Id">Id</param>
+        /// <param name="yeepayKey">易宝Key</param>
+        /// <param name="yeepayStatus">易宝账户状态  0正常 1失败</param>
+        public void UpdateYeepayInfoById(int id, string yeepayKey, byte yeepayStatus)
+        {
+            const string updateSql = @"
+update ClienterFinanceAccount
+set  YeepayKey=@YeepayKey,YeepayStatus=@YeepayStatus
+where  Id=@Id ";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("YeepayKey", yeepayKey);
+            dbParameters.AddWithValue("YeepayStatus", yeepayStatus);
+            dbParameters.AddWithValue("Id", id);
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
 
@@ -109,9 +155,9 @@ from  ClienterFinanceAccount (nolock)" + condition;
         {
             ClienterFinanceAccount model = null;
             const string querysql = @"
-select  Id,ClienterId,TrueName,AccountNo,IsEnable,AccountType,BelongType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime
-from  ClienterFinanceAccount(nolock)  
-where  Id=@Id  and IsEnable=1";
+ select a.Id,a.ClienterId,a.TrueName,a.AccountNo,a.IsEnable,a.AccountType,a.BelongType,a.OpenBank,a.OpenSubBank,a.CreateBy,a.CreateTime,a.UpdateBy,a.UpdateTime,a.OpenProvince,a.OpenCity,a.IDCard,b.PhoneNo
+from  dbo.ClienterFinanceAccount(nolock) a join dbo.clienter(nolock) b on a.ClienterId = b.Id
+where  a.Id=@Id  and a.IsEnable=1 ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Id", id);
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));

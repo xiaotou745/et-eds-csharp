@@ -30,7 +30,6 @@ namespace ETS.Pay.YeePay
             }
             else
             {
-
                 return result;
             }
         }

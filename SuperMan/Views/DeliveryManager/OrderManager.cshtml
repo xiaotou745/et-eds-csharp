@@ -1,0 +1,96 @@
+﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Order.OrderListModel>
+@using ETS.Enums
+@using ETS.Extension
+@using Ets.Model
+@using Ets.Service.Provider.User
+@using Ets.Service.Provider.Business
+@{
+    ViewBag.Title = "Order";
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+}
+<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script src="~/Scripts/jquery-ui-1.8.20.js"></script>
+<script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
+
+
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置：物流订单管理 > 订单管理
+    </h2>
+    @using (Ajax.BeginForm("PostOrderManager", new RouteValueDictionary { { "pageindex", "" } },
+    new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
+    new RouteValueDictionary { { "id", "searchForm" } }))
+    {
+        <div class="SearchMd">
+            <table border="0" cellspacing="0" cellpadding="0" style="width:1080px">
+                <tr>
+                    <td>
+                        <span class="">订单状态: </span>
+                        @Html.DropDownList("orderStatus", new SelectList(EnumExtenstion.GetEnumItems(typeof(OrderStatusCommon)), "Value", "Text"), "全部", new { @class = "selectw", style = "width:157px" })
+                        <span class="">发布时间: </span>
+                        <input id="txtOrderPubStart" readonly="readonly" type="text" name="OrderPubStart" />
+                        <span class="">到: </span>
+                        <input id="txtOrderPubEnd" readonly="readonly" type="text" name="OrderPubEnd" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="">筛选城市: </span>
+                        @Html.DropDownList("businessCity", new SelectList(ViewBag.openCityList.Result.AreaModels, "Name", "Name"), "--无--", new { style = "width:155px" })
+                        <span class="">订单号: </span>
+                        <input id="txtOrderNo" type="text" name="orderId" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="">骑士电话: </span>
+                        <input id="txtSuperManPhone" type="tel" name="superManPhone" />
+                        <span class="">骑士姓名: </span>
+                        <input id="txtSuperManName" type="text" width="90px" name="superManName" />
+                        <span class="">物流公司: </span>
+                        @Html.DropDownList("deliveryCompany", new SelectList(ViewBag.deliveryCompanyList, "CompanyId", "CompanyName"), new { style = "width:155px" })
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
+                        <input type="button" value="订单数据导出" onclick="return DaoCHu()" class="searchBtn" id="btncDaochu" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+    }
+    <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <div class="bd clearfix" id="dataList">
+        @Html.Partial("_PostOrderManager", Model)
+    </div>
+</div>
+<script type="text/javascript">
+    var adminjs = new adminglass(); //实例化后台类
+    //var DEFAULT_PAGESIZE = 15;
+    //var criteria = { PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE }, GroupId: $("#txtGroupId").val() };
+    $(document).ready(function () {
+        $('#txtOrderPubStart').datepicker();
+        $('#txtOrderPubEnd').datepicker();
+        window.location.hash = '';
+    });
+    function DaoCHu() {
+        var superManPhone = $("#txtSuperManPhone").val();
+        var txtSuperManName = $("#txtSuperManName").val();
+        var txtOrderPubStart = $("#txtOrderPubStart").val();
+        var txtOrderPubEnd = $("#txtOrderPubEnd").val();
+        var businessCity = $("#businessCity option:selected").val();
+        var orderStatus = $("#StatusSelect option:selected").val();
+        var deliveryCompany =$("#deliveryCompany option:selected").val();
+        if (txtOrderPubStart == "" || txtOrderPubEnd == "") {
+            alert("请输入时间范围!");
+            return;
+        }
+        var url = "/DeliveryManager/OrderExport?superManPhone=" + superManPhone + "&superManName=" + txtSuperManName + "&orderStatus=" + orderStatus + "&businessCity=" + businessCity + "&OrderPubStart=" + txtOrderPubStart + "&OrderPubEnd=" + txtOrderPubEnd + "&deliveryCompany=" + deliveryCompany;
+        window.location.href = url;
+        return true;
+    }
+</script>
+<script src="~/Scripts/mvcpager.js"></script>
+

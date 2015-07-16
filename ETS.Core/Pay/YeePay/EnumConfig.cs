@@ -43,4 +43,22 @@ namespace ETS.Pay.YeePay
         PublicCash = 2
 
     }
+
+    /// <summary>
+    /// 银行卡类别  add By caoheyang 20150714
+    /// </summary>
+    public enum APP
+    {
+        /// <summary>
+        /// 对私
+        /// </summary>
+        [Description("对私")]
+        B = 1,
+        /// <summary>
+        /// 商家端
+        /// </summary>
+        [Description("对公")]
+        c = 2
+
+    }
 }
