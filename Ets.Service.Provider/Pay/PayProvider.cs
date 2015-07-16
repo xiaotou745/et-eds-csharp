@@ -650,11 +650,11 @@ namespace Ets.Service.Provider.Pay
                     }); //商户提现失败
                 }
             }
-            else if (model.cashrequestid.Substring(0, 1) == "C")  //C端逻辑
+            else if (model.cashrequestid.Substring(0, 1) == "C") //C端逻辑
             {
-                if (model.status == "SUCCESS")  //提现成功 走 成功的逻辑
+                if (model.status == "SUCCESS") //提现成功 走 成功的逻辑
                 {
-                     iClienterFinanceProvider.ClienterWithdrawPayOk(new ClienterWithdrawLog()
+                    iClienterFinanceProvider.ClienterWithdrawPayOk(new ClienterWithdrawLog()
                     {
                         Operator = username,
                         Remark = "易宝提现打款成功" + model.desc,
@@ -662,17 +662,21 @@ namespace Ets.Service.Provider.Pay
                         WithwardId = withwardId
                     });
                 }
-                else if (model.status == "FAIL")  //提现失败 走 失败的逻辑
+                else if (model.status == "FAIL") //提现失败 走 失败的逻辑
                 {
-                    iClienterFinanceProvider.ClienterWithdrawPayFailed( new ClienterWithdrawLogModel()
+                    iClienterFinanceProvider.ClienterWithdrawPayFailed(new ClienterWithdrawLogModel()
                     {
                         Operator = username,
                         Remark = "易宝提现打款失败，" + model.desc,
                         Status = ClienterWithdrawFormStatus.Error.GetHashCode(),
-                        WithwardId =withwardId,
+                        WithwardId = withwardId,
                         PayFailedReason = ""
                     });
                 }
+            }
+            else
+            {
+                return false;
             }
             return true;
         }
