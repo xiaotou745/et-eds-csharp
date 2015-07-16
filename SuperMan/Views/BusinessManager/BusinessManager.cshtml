@@ -57,11 +57,12 @@
                             <option value="0">线下结算</option>
                             <option value="1">线上结算</option>
                         </select>
-                        
+
                     </td>
                 </tr>
                 <tr>
-                    <td><span class="">推荐人电话: </span>
+                    <td>
+                        <span class="">推荐人电话: </span>
                         <input id="txtRecommendPhone" type="text" name="RecommendPhone" />
                         <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
                         @if (SuperMan.App_Start.UserContext.Current.HasAuthority(40))
@@ -301,7 +302,7 @@
             <div class="control-group">
                 <label>充值金额：</label>
                 <input name="busRechargeAmount" id="busRechargeAmount" type="text">元
-                <label  style="font-size: 10px;color: red">（充值金额范围:1.00-50000.00元）</label>
+                <label style="font-size: 10px;color: red">（充值金额范围:1.00-50000.00元）</label>
             </div>
             <div class="control-group">
                 <label>操作描述：</label>
@@ -340,7 +341,7 @@
             </div>
             <div class="control-group">
                 <label>省：</label>
-                @Html.DropDownList("OpenProvince", new SelectList(RegionLogic.regionLogic().GetRegionsByFid(), "Code", "Name"), "--请选择--", new { style = "width:90px", id = "OpenProvince" }) 
+                <select id="openProvince"></select>
             </div>
             <div class="control-group">
                 <label>市区：</label>
@@ -369,12 +370,24 @@
 
 <script>
     var adminjs = new adminglass(); //实例化后台类
-    $(document).ready(function() {
+    $(document).ready(function () {
+        GetOpenProvince();
         window.location.hash = '';
-    })
+    });
+
+    function GetOpenProvince() {
+        var openProvinceInfo = $('#openProvince');
+        openProvinceInfo.append('<option value="" selected="selected">--省市--</option>');
+        $.post("/BusinessManager/GetOpenProvince", "",
+            function (data) {
+                $.each(data, function (i, item) {
+                    openProvinceInfo.append('<option value="' + item.Code + '">' + item.Name + '</option>');
+                });
+            });
+    }
 
     //设置结算比例-外送费
-    $("#btnCommissionConfim").on('click', function() {
+    $("#btnCommissionConfim").on('click', function () {
         var busCommissionHid = $("#busCommissionHid").val(); //商户id
 
         var busCommissionText = $("#busCommissionText").val(); ////商户结算比例
@@ -419,7 +432,7 @@
             type: 'POST',
             url: url,
             data: paramaters,
-            success: function(result) {
+            success: function (result) {
                 if (result.IsSuccess) {
                     alert("设置成功!");
                     window.location.href = "/BusinessManager/BusinessManager";
@@ -430,7 +443,7 @@
         });
     });
     //修改商家信息
-    $("#btnUpdateBusinessInfo").on('click', function() {
+    $("#btnUpdateBusinessInfo").on('click', function () {
 
         var busiId = $("#busiId").val(); //商户id
         var busiName = $("#busiName").val(); //商户电话
@@ -470,7 +483,7 @@
             type: 'POST',
             url: url,
             data: paramaters,
-            success: function(result) {
+            success: function (result) {
                 if (result.IsSuccess) {
                     alert("修改成功!");
                     window.location.href = "/BusinessManager/BusinessManager";
@@ -481,7 +494,7 @@
         });
     });
     //添加商户
-    $("#btnAddBusiness").on('click', function() {
+    $("#btnAddBusiness").on('click', function () {
         var businessName = $("#businessName").val(); //商户
         var businessCommission = $("#businessCommission").val(); ////商户结算比例
         var businessphoneNo = $("#businessphoneNo").val(); ////商户手机号
@@ -538,7 +551,7 @@
             type: 'POST',
             url: url,
             data: paramaters,
-            success: function(result) {
+            success: function (result) {
                 if (result.IsSuccess) {
                     alert("设置成功!");
                     window.location.href = "/BusinessManager/BusinessManager";
@@ -553,8 +566,8 @@
         adminjs.openwinbox('#BusinessAddDiv');
     }
 
-//商户充值
-    $("#btnRechargeCommit").on('click', function() {
+    //商户充值
+    $("#btnRechargeCommit").on('click', function () {
         var busiId = $("#busId").val(); //商户id
         var busiName = $("#busName").val(); //商户电话
         var busiRechargeAmount = $("#busRechargeAmount").val(); //商户充值金额
@@ -583,7 +596,7 @@
                 type: 'POST',
                 url: url,
                 data: paramaters,
-                success: function(result) {
+                success: function (result) {
                     if (result.IsSuccess) {
                         alert(result.Message);
                         window.location.href = "/BusinessManager/BusinessManager";
@@ -596,7 +609,7 @@
     });
 
     //商户提现
-    $("#btnWithdrawCommit").on('click', function() {
+    $("#btnWithdrawCommit").on('click', function () {
         var withdrawId = $("#withdrawId").val(); //商户id
         var busiName = $("#withdrawPhone").val(); //商户电话
         var withdrawAmount = $("#withdrawAmount").val();
@@ -625,7 +638,7 @@
                 type: 'POST',
                 url: url,
                 data: paramaters,
-                success: function(result) {
+                success: function (result) {
 
                     if (result.Status == "1") {
                         alert(result.Message);
@@ -638,11 +651,11 @@
         }
     });
     //关闭弹层
-    $('.J_closebox').click(function() {
+    $('.J_closebox').click(function () {
         adminjs.closewinbox('.add-openbox');
         return false;
     });
-    $('input[name="rCommissionFormulaMode"]').click(function() {
+    $('input[name="rCommissionFormulaMode"]').click(function () {
         var a = $('input[name="rCommissionFormulaMode"]:checked').val();
         if (a == 1) {
             $("#divCommissionFixValue").hide();
@@ -653,21 +666,20 @@
         }
     });
     //选择省时触发联动
-    $('#OpenProvince').change(function() {
-        LoadOpenCityInfo();
-    });
+    //$('#OpenProvince').change(function() {
+    //    LoadOpenCityInfo();
+    //});
 
     function LoadOpenCityInfo() {
         var selBussinessID = $('#OpenProvince').val();
         selBussinessID.append('<option value="" selected="selected">--市区--</option>');
         $.post("/BusinessManager/GetBussinessByCityInfo",
             { ProvinceCode: $("#BoxProvinceCode").val(), CityCode: $('#BoxCityCode').val(), GroupId: $("#HidGroupID").val() },
-            function(data) {
-                $.each(data, function(i, item) {
+            function (data) {
+                $.each(data, function (i, item) {
                     selBussinessID.append('<option  value="' + item.Id + '">' + item.Name + '</option>');
                 });
             });
-
     }
 </script>
 <script src="~/Scripts/mvcpager.js"></script>
