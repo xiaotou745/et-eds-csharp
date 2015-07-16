@@ -108,22 +108,51 @@ namespace ETS.Enums
     /// </summary>
     public enum ClienterBalanceRecordRecordType
     {    
+        /// <summary>
+        /// 订单佣金
+        /// </summary>
         [DisplayText("订单佣金")]
         OrderCommission = 1,
+        /// <summary>
+        /// 取消订单
+        /// </summary>
         [DisplayText("取消订单")]
         CancelOrder = 2,
+        /// <summary>
+        /// 提现申请
+        /// </summary>
         [DisplayText("提现申请")]
         WithdrawApply = 3,
+        /// <summary>
+        /// 提现拒绝
+        /// </summary>
         [DisplayText("提现拒绝")]
         WithdrawRefuse = 4,
+        /// <summary>
+        /// 打款失败
+        /// </summary>
         [DisplayText("打款失败")]
         PayFailure = 5,
+        /// <summary>
+        /// 系统奖励
+        /// </summary>
         [DisplayText("系统奖励")]
         SystemReward = 6,
+        /// <summary>
+        /// 系统赔偿
+        /// </summary>
         [DisplayText("系统赔偿")]
         SystemCompensation = 7,
+        /// <summary>
+        /// 余额调整
+        /// </summary>
         [DisplayText("余额调整")]
-        BalanceAdjustment = 8
+        BalanceAdjustment = 8,
+        /// <summary>
+        /// 手续费
+        /// </summary>
+        [DisplayText("手续费")]
+        ProcedureFee = 9
     }
 
     /// <summary>
