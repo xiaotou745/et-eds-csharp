@@ -99,6 +99,26 @@ namespace Ets.Model.DataModel.Finance
         /// 开户支行
         /// </summary>
         public string OpenSubBank { get; set; }
+        /// <summary>
+        /// 省名称
+        /// </summary>
+        public string OpenProvince { get; set; }
+        /// <summary>
+        /// 市区名称
+        /// </summary>
+        public string OpenCity { get; set; }
+        /// <summary>
+        /// 身份证号
+        /// </summary>
+        public string IDCard { get; set; }
+        /// <summary>
+        /// 省代码
+        /// </summary>
+        public int OpenProvinceCode { get; set; }
+        /// <summary>
+        /// 市区代码
+        /// </summary>
+        public int OpenCityCode { get; set; }
 
 
     }

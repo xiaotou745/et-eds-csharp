@@ -33,9 +33,9 @@ namespace Ets.Dao.Finance
         {
             const string insertSql = @"
 insert into ClienterWithdrawForm(WithwardNo,ClienterId,BalancePrice,AllowWithdrawPrice,Status,Amount,Balance,
-TrueName,AccountNo,AccountType,BelongType,OpenBank,OpenSubBank)
+TrueName,AccountNo,AccountType,BelongType,OpenBank,OpenSubBank,OpenProvince,OpenCity,OpenProvinceCode,OpenCityCode,IDCard)
 values(@WithwardNo,@ClienterId,@BalancePrice,@AllowWithdrawPrice,@Status,@Amount,@Balance,
-@TrueName,@AccountNo,@AccountType,@BelongType,@OpenBank,@OpenSubBank)
+@TrueName,@AccountNo,@AccountType,@BelongType,@OpenBank,@OpenSubBank,@OpenProvince,@OpenCity,@OpenProvinceCode,@OpenCityCode,@IDCard)
 
 select @@IDENTITY";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -52,6 +52,11 @@ select @@IDENTITY";
             dbParameters.AddWithValue("BelongType", clienterWithdrawForm.BelongType);//账号类别  0 个人账户 1 公司账户  
             dbParameters.AddWithValue("OpenBank", clienterWithdrawForm.OpenBank); //开户行
             dbParameters.AddWithValue("OpenSubBank", clienterWithdrawForm.OpenSubBank);//开户支行
+            dbParameters.AddWithValue("OpenProvince", clienterWithdrawForm.OpenProvince); //卡号(DES加密)
+            dbParameters.AddWithValue("OpenCity", clienterWithdrawForm.OpenCity);//账号类型：(1网银 2支付宝 3微信 4财付通 5百度钱包）
+            dbParameters.AddWithValue("OpenProvinceCode", clienterWithdrawForm.OpenProvinceCode);//账号类别  0 个人账户 1 公司账户  
+            dbParameters.AddWithValue("OpenCityCode", clienterWithdrawForm.OpenCityCode); //开户行
+            dbParameters.AddWithValue("IDCard", clienterWithdrawForm.IDCard);//开户支行
 
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters); //提现单号
             return ParseHelper.ToLong(result);

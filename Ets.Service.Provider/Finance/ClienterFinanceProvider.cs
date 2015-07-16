@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Ets.Dao.Clienter;
 using Ets.Dao.Finance;
@@ -85,7 +86,12 @@ namespace Ets.Service.Provider.Finance
                                   AccountType = clienterFinanceAccount.AccountType, //账号类型：
                                   BelongType = clienterFinanceAccount.BelongType,//账号类别  0 个人账户 1 公司账户  
                                   OpenBank = clienterFinanceAccount.OpenBank,//开户行
-                                  OpenSubBank = clienterFinanceAccount.OpenSubBank //开户支行
+                                  OpenSubBank = clienterFinanceAccount.OpenSubBank, //开户支行
+                                  IDCard = withdrawCpm.IDCard,//申请提款身份证号
+                                  OpenCity = withdrawCpm.OpenCity,//城市
+                                  OpenCityCode = withdrawCpm.OpenCityCode,//城市代码
+                                  OpenProvince = withdrawCpm.OpenProvince,//省份
+                                  OpenProvinceCode = withdrawCpm.OpenProvinceCode//省份代码
                               });
                     #endregion
 
@@ -133,6 +139,16 @@ namespace Ets.Service.Provider.Finance
             {
                 return FinanceWithdrawC.NoPara;
             }
+            if (string.IsNullOrWhiteSpace(withdrawCpm.OpenProvince)) 
+                return FinanceWithdrawC.NoOpenProvince;
+            if (withdrawCpm.OpenProvinceCode==0)
+                return FinanceWithdrawC.NoOpenProvinceCode;
+            if (string.IsNullOrWhiteSpace(withdrawCpm.OpenCity))
+                return FinanceWithdrawC.NoOpenCity;
+            if (withdrawCpm.OpenCityCode==0)
+                return FinanceWithdrawC.NoOpenCityCode;
+            if (!Regex.IsMatch(withdrawCpm.IDCard, @"^(^\d{15}$|^\d{18}$|^\d{17}(\d|X|x))$", RegexOptions.IgnoreCase))
+                return FinanceWithdrawC.NoIDCard;
             if (withdrawCpm.WithdrawPrice % 100 != 0 || withdrawCpm.WithdrawPrice < 100
                 || withdrawCpm.WithdrawPrice > 3000) //提现金额小于500 加2手续费
             {

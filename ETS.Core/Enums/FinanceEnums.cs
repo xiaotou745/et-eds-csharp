@@ -25,8 +25,19 @@ namespace ETS.Enums
         MoneyError = 4,
         [DisplayText("提现金额必须在100元-3000元之间，且为100的倍数。")]
         MoneyDoubleError = 5,
+        [DisplayText("缺少省份参数")]
+        NoOpenProvince = 6,
+        [DisplayText("缺少省份Code参数")]
+        NoOpenProvinceCode = 7,
+        [DisplayText("缺少城市参数")]
+        NoOpenCity = 8,
+        [DisplayText("缺少城市Code参数")]
+        NoOpenCityCode = 9,
+        [DisplayText("缺少身份证号")]
+        NoIDCard = 10,
         [DisplayText("未传参")]
         NoPara = -2
+
     }
     /// <summary>
     /// 骑士绑定金融账号涉及到的各种返回状态枚举 add by caoheyang 20150509
