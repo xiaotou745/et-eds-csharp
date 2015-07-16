@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Ets.Dao.Clienter;
 using Ets.Dao.GlobalConfig;
+using Ets.Dao.Order;
 using ETS.Enums;
 using Ets.Model.Common;
 using Ets.Model.DataModel.Clienter;
@@ -18,6 +19,7 @@ namespace Ets.Service.Provider.Clienter
     {
 
         readonly ClienterLocationDao clienterLocationDao = new ClienterLocationDao();
+        readonly OrderDao orderDao = new OrderDao();
 
         /// <summary>
         /// 插入骑士运行轨迹
@@ -32,7 +34,7 @@ namespace Ets.Service.Provider.Clienter
             {
                 long id = clienterLocationDao.Insert(TranslateInsertModel(model));
                 return ResultModel<object>.Conclude(SystemState.Success,
-                    new { PushTime = GlobalConfigDao.GlobalConfigGet(0).UploadTimeInterval });
+                    new { PushTime = GetUploadLocationInterval(model.ClienterId) });
             }
             catch (Exception ex)
             {
@@ -59,6 +61,18 @@ namespace Ets.Service.Provider.Clienter
             return temp;
         }
 
+        /// <summary>
+        /// 获得上传坐标时间间隔
+        /// </summary>
+        /// <param name="clienterId">骑士Id</param>
+        /// <returns>时间间隔(单位:秒)</returns>
+        private int GetUploadLocationInterval(int clienterId)
+        {
+            bool hasUnFinishedOrder = orderDao.ClienterHasUnFinishedOrder(clienterId);
+            return hasUnFinishedOrder
+                ? int.Parse(GlobalConfigDao.GlobalConfigGet(0).HasUnFinishedOrderUploadTimeInterval)
+                : int.Parse(GlobalConfigDao.GlobalConfigGet(0).AllFinishedOrderUploadTimeInterval);
+        }
     }
 
 }

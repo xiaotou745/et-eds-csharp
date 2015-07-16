@@ -13,9 +13,14 @@
         <table style="border: 0; width: 80%;">
             <tr>
                 <td>
-                    <span>骑士经纬度上传时间间隔:</span>
-                    <input type="text" name="uploadTimeInterval" value="@globalConfigModel.UploadTimeInterval" id="uploadTimeInterval" style="width: 100px" />秒
-                    <input type="hidden" name="oldUploadTimeInterval" value="@globalConfigModel.UploadTimeInterval" id="oldUploadTimeInterval" />
+                    <span>骑士有待完成任务经纬度上传时间间隔:</span>
+                    <input type="text" name="uploadTimeInterval" value="@globalConfigModel.HasUnFinishedOrderUploadTimeInterval" id="hasUnFinishedOrderUploadTimeInterval" style="width: 100px" />秒
+                    <input type="hidden" name="oldUploadTimeInterval" value="@globalConfigModel.HasUnFinishedOrderUploadTimeInterval" id="oldHasUnFinishedOrderUploadTimeInterval" />
+                </td>
+                <td>
+                    <span>骑士没有待完成任务经纬度上传时间间隔:</span>
+                    <input type="text" name="uploadTimeInterval" value="@globalConfigModel.AllFinishedOrderUploadTimeInterval" id="allFinishedOrderUploadTimeInterval" style="width: 100px" />秒
+                    <input type="hidden" name="oldUploadTimeInterval" value="@globalConfigModel.AllFinishedOrderUploadTimeInterval" id="oldAllFinishedOrderUploadTimeInterval" />
                 </td>
                 <td>
                     <span>订单推动区域半径:</span>
@@ -59,6 +64,11 @@
                     <input type="hidden" name="oldTakeCompleteDistance" value="@globalConfigModel.TakeCompleteDistance" id="oldTakeCompleteDistance" />
                 </td>
                 <td>
+                    <span>骑士提现小于等于X元支付手续费:</span>
+                    <input type="text" name="employerTaskTimeSet" value="@globalConfigModel.ClienterWithdrawCommissionAccordingMoney" id="clienterWithdrawCommissionAccordingMoney" style="width: 100px" />元
+                    <input type="hidden" name="oldEmployerTaskTimeSet" value="@globalConfigModel.ClienterWithdrawCommissionAccordingMoney" id="oldClienterWithdrawCommissionAccordingMoney" />
+                </td>
+                <td>
                     <input type="button" value="提交修改" class="searchBtn" id="btnCommit" />
                 </td>
             </tr>
@@ -69,7 +79,8 @@
 <script type="text/javascript">
     $(function () {
         $("#btnCommit").click(function () {
-            var uploadTimeInterval = $("#uploadTimeInterval").val(); //上传时间间隔ExclusiveOrderTime
+            var hasUnFinishedOrderUploadTimeInterval = $("#hasUnFinishedOrderUploadTimeInterval").val(); //骑士有待完成任务经纬度上传时间间隔
+            var allFinishedOrderUploadTimeInterval = $("#allFinishedOrderUploadTimeInterval").val(); //骑士没有待完成任务经纬度上传时间间隔
             var pushRadius = $("#pushRadius").val(); //推送半径
             var clienterOrderPageSize = $("#clienterOrderPageSize").val(); //骑士订单列表每页显示条数
             var exclusiveOrderTime = $("#exclusiveOrderTime").val(); //商家专属骑士接单响应时间
@@ -77,8 +88,10 @@
             var employerTaskTimeSet = $("#employerTaskTimeSet").val(); //雇主任务时间限制
             var orderCountSetting = $("#orderCountSetting").val(); //无效订单判定时累计完成订单数量
             var takeCompleteDistance = $("#takeCompleteDistance").val(); //无效订单判定时取货点和完成点的距离
+            var clienterWithdrawCommissionAccordingMoney = $("#clienterWithdrawCommissionAccordingMoney").val(); //骑士提现小于等于X元支付手续费
 
-            var oldUploadTimeInterval = $("#oldUploadTimeInterval").val(); //上传时间间隔（之前）
+            var oldHasUnFinishedOrderUploadTimeInterval = $("#oldHasUnFinishedOrderUploadTimeInterval").val(); //骑士有待完成任务经纬度上传时间间隔（之前）
+            var oldAllFinishedOrderUploadTimeInterval = $("#oldAllFinishedOrderUploadTimeInterval").val(); //骑士没有待完成任务经纬度上传时间间隔（之前）
             var oldPushRadius = $("#oldPushRadius").val(); //推送半径（之前）
             var oldClienterOrderPageSize = $("#oldClienterOrderPageSize").val(); //骑士订单列表每页显示条数（之前）
             var oldExclusiveOrderTime = $("#oldExclusiveOrderTime").val(); //商家专属骑士接单响应时间（之前）
@@ -86,6 +99,7 @@
             var oldEmployerTaskTimeSet = $("#oldEmployerTaskTimeSet").val(); //雇主任务时间限制（之前）
             var oldOrderCountSetting = $("#oldOrderCountSetting").val(); //无效订单判定时累计完成订单数量
             var oldTakeCompleteDistance = $("#oldTakeCompleteDistance").val(); //无效订单判定时取货点和完成点的距离
+            var oldClienterWithdrawCommissionAccordingMoney = $("#oldClienterWithdrawCommissionAccordingMoney").val(); //骑士提现小于等于X元支付手续费（之前）
             var pageOk = true;
             $(":text").each(function (index,obj) {
                 if ($(obj).val() == "") {
@@ -113,11 +127,29 @@
                 alert("无效订单判定时取货点和完成点的距离请输入大于零的值!");
                 return;
             }
-            if (isNaN(uploadTimeInterval)) {
+            if (isNaN(hasUnFinishedOrderUploadTimeInterval)) {
                 alert("请输入正确的数字!");
                 return;
             }
-            if (uploadTimeInterval < 0) {
+            if (hasUnFinishedOrderUploadTimeInterval < 0) {
+                alert("请输入大于零的值!");
+                return;
+            }
+
+            if (isNaN(allFinishedOrderUploadTimeInterval)) {
+                alert("请输入正确的数字!");
+                return;
+            }
+            if (allFinishedOrderUploadTimeInterval < 0) {
+                alert("请输入大于零的值!");
+                return;
+            }
+
+            if (isNaN(clienterWithdrawCommissionAccordingMoney)) {
+                alert("请输入正确的数字!");
+                return;
+            }
+            if (clienterWithdrawCommissionAccordingMoney < 0) {
                 alert("请输入大于零的值!");
                 return;
             }
@@ -175,7 +207,9 @@
             }
                                
        
-            if (uploadTimeInterval == oldUploadTimeInterval &&
+            if (clienterWithdrawCommissionAccordingMoney == oldClienterWithdrawCommissionAccordingMoney &&
+                hasUnFinishedOrderUploadTimeInterval == oldHasUnFinishedOrderUploadTimeInterval &&
+                allFinishedOrderUploadTimeInterval == oldAllFinishedOrderUploadTimeInterval &&
                 pushRadius == oldPushRadius &&
                 clienterOrderPageSize == oldClienterOrderPageSize &&
                 exclusiveOrderTime == oldExclusiveOrderTime &&
@@ -189,7 +223,9 @@
             }
             if (confirm("确定提交修改?")) {
                 var pars = {
-                    "uploadTimeInterval": uploadTimeInterval,
+                    "clienterWithdrawCommissionAccordingMoney": clienterWithdrawCommissionAccordingMoney,
+                    "hasUnFinishedOrderUploadTimeInterval": hasUnFinishedOrderUploadTimeInterval,
+                    "allFinishedOrderUploadTimeInterval": allFinishedOrderUploadTimeInterval,
                     "pushRadius": pushRadius,
                     "clienterOrderPageSize": clienterOrderPageSize,
                     "exclusiveOrderTime": exclusiveOrderTime,

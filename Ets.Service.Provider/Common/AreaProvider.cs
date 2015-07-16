@@ -86,6 +86,44 @@ namespace Ets.Service.Provider.Common
                 redis.Set(RedissCacheKey.Ets_Service_Provider_Common_GetOpenCity_New, JsonHelper.ToJson(areaList));
             }
         }
+
+        /// <summary>
+        /// 获取银行省市信息
+        /// 彭宜   20150715
+        /// </summary>
+        /// <param name="dataversion">数据版本号</param>
+        /// <param name="isResultData"></param>
+        /// <returns></returns>
+        public Model.Common.ResultModel<Model.DomainModel.Area.AreaModelList> GetPublicBankCity(string dataversion,
+            bool isResultData = true)
+        {
+            AreaModelList areaList = new AreaModelList();
+            var redis = new ETS.NoSql.RedisCache.RedisCache();
+            string key = RedissCacheKey.Ets_Service_Provider_Common_GetPublicBankCity_New;
+            string strAreaList = redis.Get<string>(key);
+            if (!string.IsNullOrEmpty(strAreaList))
+            {
+                areaList = JsonHelper.JsonConvertToObject<AreaModelList>(strAreaList);
+            }
+            if (areaList.AreaModels == null || areaList.AreaModels.Count <= 0)
+            {
+                var list = dao.GetPublicBankCitySql();
+                areaList = new AreaModelList();
+                areaList.AreaModels = list;
+                if (list != null)
+                {
+                    redis.Set(key, JsonHelper.JsonConvertToString(areaList));
+                }
+            }
+            areaList.Version = Config.BankCityVersion;
+            if (Config.BankCityVersion == dataversion && !isResultData)
+            {
+                areaList.AreaModels = null;
+                return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.UnNewest, areaList);
+            }
+            return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.Newest, areaList);
+        }
+
         ///// <summary>
         ///// 获取开通城市(只有市)
         ///// danny-20150414
