@@ -291,11 +291,16 @@ namespace ETS.Enums
         /// </summary>
         [DisplayText("充值")]
         Recharge = 9,
+         /// <summary>
+         /// 系统金额归零
+         /// </summary>
+        [DisplayText("系统金额归零")]
+        SysClearMoney= 10,
         /// <summary>
         /// 手续费
         /// </summary>
         [DisplayText("手续费")]
-        ProcedureFee = 10
+        ProcedureFee = 11
     }
 
     /// <summary>

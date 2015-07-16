@@ -253,6 +253,26 @@ namespace Ets.Service.Provider.Business
                         return false;
                     }
                 }
+                if (ParseHelper.ToInt(globalConfigModel.OrderCountSetting) >= 0)
+                {
+                    globalConfig.KeyName = "OrderCountSetting";
+                    globalConfig.Value = globalConfigModel.OrderCountSetting;
+                    reg = businessGroupDao.UpdateGlobalConfig(globalConfig);
+                    if (!reg)
+                    {
+                        return false;
+                    }
+                }
+                if (ParseHelper.ToInt(globalConfigModel.TakeCompleteDistance) >= 0)
+                {
+                    globalConfig.KeyName = "TakeCompleteDistance";
+                    globalConfig.Value = globalConfigModel.TakeCompleteDistance;
+                    reg = businessGroupDao.UpdateGlobalConfig(globalConfig);
+                    if (!reg)
+                    {
+                        return false;
+                    }
+                }
                 tran.Complete();
                 DeleteGlobalConfigRedisByGroupId(globalConfigModel.GroupId);
                 return true;
