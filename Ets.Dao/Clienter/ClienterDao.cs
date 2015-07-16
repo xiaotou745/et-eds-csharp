@@ -471,6 +471,30 @@ SELECT PhoneNo AS Phone,0 AS PemType FROM clienter(NOLOCK) WHERE Status=1
 
         }
 
+        /// <summary>
+        /// 骑士是否已注册
+        /// 彭宜  20150716
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns>是否注册</returns>
+        public bool IsExist(ClientRegisterInfoModel model)
+        {
+            bool isExist;
+
+            const string querysql = @"
+select  count(1) 
+from  dbo.[clienter]  
+where Timespan=@Timespan and phoneNo=@phoneNo and RecommendPhone=@RecommendPhone;";
+            IDbParameters dbSelectParameters = DbHelper.CreateDbParameters();
+            dbSelectParameters.Add("phoneNo", DbType.String,20).Value=model.phoneNo;
+            dbSelectParameters.Add("Timespan", DbType.String, 50).Value = model.Timespan;
+            dbSelectParameters.Add("RecommendPhone", DbType.String,40).Value = model.recommendPhone;
+            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Write, querysql, dbSelectParameters);
+            isExist = ParseHelper.ToInt(executeScalar, 0) > 0;
+
+            return isExist;
+        }
+
 
         /// <summary>
         /// 抢单
