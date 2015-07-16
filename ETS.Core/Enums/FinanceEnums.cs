@@ -246,24 +246,54 @@ namespace ETS.Enums
     /// </summary>
     public enum BusinessBalanceRecordRecordType
     {
+        /// <summary>
+        /// 发布订单
+        /// </summary>
         [DisplayText("发布订单")]
         PublishOrder = 1,
+        /// <summary>
+        /// 取消订单
+        /// </summary>
         [DisplayText("取消订单")]
         CancelOrder = 2,
+        /// <summary>
+        /// 提款申请
+        /// </summary>
         [DisplayText("提款申请")]
         WithdrawApply = 3,
+        /// <summary>
+        /// 提款拒绝
+        /// </summary>
         [DisplayText("提款拒绝")]
         WithdrawRefuse = 4,
+        /// <summary>
+        /// 打款失败
+        /// </summary>
         [DisplayText("打款失败")]
         PayFailure = 5,
+        /// <summary>
+        /// 系统奖励
+        /// </summary>
         [DisplayText("系统奖励")]
         SystemReward = 6,
+        /// <summary>
+        /// 系统赔偿
+        /// </summary>
         [DisplayText("系统赔偿")]
         SystemCompensation = 7,
+        /// <summary>
+        /// 订单菜品费
+        /// </summary>
         [DisplayText("订单菜品费")]
         OrderMeals = 8,
+        /// <summary>
+        /// 充值
+        /// </summary>
         [DisplayText("充值")]
         Recharge = 9,
+        /// <summary>
+        /// 手续费
+        /// </summary>
         [DisplayText("手续费")]
         ProcedureFee = 10
     }

@@ -657,33 +657,31 @@ namespace Ets.Service.Provider.Pay
                 TransferReturnModel tempmodel = transfer.TransferAccounts("", model.amount, model.ledgerno);
                 if (tempmodel.code == "1")
                 {
-
-                } 
-                if (model.cashrequestid.Substring(0, 1) == "B") //B端逻辑
-                {
-                    iBusinessFinanceProvider.BusinessWithdrawPayFailed(new BusinessWithdrawLogModel()
+                    if (model.cashrequestid.Substring(0, 1) == "B") //B端逻辑
                     {
-                        Operator = username,
-                        Remark = "易宝提现打款失败，" + model.desc,
-                        Status = BusinessWithdrawFormStatus.Error.GetHashCode(),
-                        WithwardId = withwardId,
-                        PayFailedReason = ""
-                    }); //商户提现失败
-                    result = true;
-                }
-                else if (model.cashrequestid.Substring(0, 1) == "C") //C端逻辑
-                {
-                    iClienterFinanceProvider.ClienterWithdrawPayFailed(new ClienterWithdrawLogModel()
+                        iBusinessFinanceProvider.BusinessWithdrawPayFailed(new BusinessWithdrawLogModel()
+                        {
+                            Operator = username,
+                            Remark = "易宝提现打款失败，" + model.desc,
+                            Status = BusinessWithdrawFormStatus.Error.GetHashCode(),
+                            WithwardId = withwardId,
+                            PayFailedReason = ""
+                        }); //商户提现失败
+                        result = true;
+                    }
+                    else if (model.cashrequestid.Substring(0, 1) == "C") //C端逻辑
                     {
-                        Operator = username,
-                        Remark = "易宝提现打款失败，" + model.desc,
-                        Status = ClienterWithdrawFormStatus.Error.GetHashCode(),
-                        WithwardId = withwardId,
-                        PayFailedReason = ""
-                    });
-                    result = true;
+                        iClienterFinanceProvider.ClienterWithdrawPayFailed(new ClienterWithdrawLogModel()
+                        {
+                            Operator = username,
+                            Remark = "易宝提现打款失败，" + model.desc,
+                            Status = ClienterWithdrawFormStatus.Error.GetHashCode(),
+                            WithwardId = withwardId,
+                            PayFailedReason = ""
+                        });
+                        result = true;
+                    }
                 }
-
             }
             return result;
 
