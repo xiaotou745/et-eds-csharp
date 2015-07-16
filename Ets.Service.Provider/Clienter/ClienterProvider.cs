@@ -307,6 +307,8 @@ namespace Ets.Service.Provider.Clienter
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PasswordEmpty);
             if (string.IsNullOrEmpty(code) || model.verifyCode != code) //判断验码法录入是否正确
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.IncorrectCheckCode);
+            if (string.IsNullOrEmpty(model.Timespan)) //判断时间戳是否为空
+                return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.TimespanEmpty);
             var wuliuCode = string.IsNullOrWhiteSpace(model.recommendPhone) ? 0 : clienterDao.CheckRecommendPhone(model.recommendPhone);//获取物流公司编码
             model.DeliveryCompanyId = wuliuCode;
 

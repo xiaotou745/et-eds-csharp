@@ -90,7 +90,9 @@ namespace ETS.Enums
         [DisplayText("推荐人手机号有误")]
         RecommendPhoneError = 115,
         [DisplayText("商户已存在")]
-        HasExist = 116
+        HasExist = 116,
+        [DisplayText("时间戳不能为空")]
+        TimespanEmpty = 117,
     }
 
 
