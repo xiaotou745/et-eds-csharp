@@ -106,6 +106,7 @@
     <Compile Include="DataModel\Order\OrderSubsidiesLog.cs" />
     <Compile Include="DomainModel\Authority\AccountDCRelationModel.cs" />
     <Compile Include="DomainModel\Business\BusinessExpressRelationModel.cs" />
+    <Compile Include="DomainModel\Common\AppVersionModel.cs" />
     <Compile Include="DomainModel\DeliveryCompany\BatchImportClienterExcelDM.cs" />
     <Compile Include="DomainModel\Area\DMAreaCodeInfo.cs" />
     <Compile Include="DomainModel\Authority\AccountCityRelationModel.cs" />
@@ -253,6 +254,7 @@
     <Compile Include="ParameterModel\Clienter\RushOrderResultModel.cs" />
     <Compile Include="ParameterModel\Clienter\UploadIconModel.cs" />
     <Compile Include="ParameterModel\Clienter\CustomerIconUploader.cs" />
+    <Compile Include="ParameterModel\Common\AppVerionSearchCriteria.cs" />
     <Compile Include="ParameterModel\Common\DataManageSearchCriteria.cs" />
     <Compile Include="ParameterModel\Common\OpenCitySearchCriteria.cs" />
     <Compile Include="ParameterModel\Clienter\UploadReceiptModel.cs" />

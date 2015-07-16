@@ -674,6 +674,10 @@
     <Content Include="Views\DeliveryCompany\DeliveryCompanyModify.cshtml" />
     <Content Include="Views\DeliveryManager\SuperManManager.cshtml" />
     <Content Include="Views\DeliveryManager\_PostSuperManManager.cshtml" />
+    <Content Include="Views\AdminTools\APPVersionManager.cshtml" />
+    <Content Include="Views\AdminTools\APPVersionEdit.cshtml" />
+    <Content Include="Views\AdminTools\_APPVersionList.cshtml" />
+    <Content Include="Views\AdminTools\APPVersionDetail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -40,7 +40,7 @@ namespace SuperMan.Controllers
         {
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(0);
             ViewBag.dealType = 1;//新增
-            return View();
+            return View("");
         }
 
         /// <summary>
