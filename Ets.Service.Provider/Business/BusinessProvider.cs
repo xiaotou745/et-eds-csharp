@@ -257,6 +257,14 @@ namespace Ets.Service.Provider.Business
             {
                 returnEnum = BusinessRegisterStatus.RecommendPhoneError;//填入的推荐人手机号有误
             }
+            if (string.IsNullOrEmpty(model.timespan)) //判断时间戳是否为空
+            {
+                returnEnum = BusinessRegisterStatus.TimespanEmpty;
+            }
+            else if (businessDao.IsExist(model))
+            {
+                returnEnum = BusinessRegisterStatus.HasExist;//商户已存在
+            }
             //else if (!string.IsNullOrWhiteSpace(model.RecommendPhone) &&
             //         !businessDao.CheckRecommendPhone(model.RecommendPhone))
             //{
@@ -1094,17 +1102,16 @@ namespace Ets.Service.Provider.Business
             //结算类型：1：固定比例 2：固定金额
             if (busiInfo.CommissionType == 1)
             {
-                result.OrderBalance = amount*busiInfo.BusinessCommission;
+                result.OrderBalance = amount * busiInfo.BusinessCommission;
             }
             else
             {
-                result.OrderBalance = orderChildCount*busiInfo.CommissionFixValue;
+                result.OrderBalance = orderChildCount * busiInfo.CommissionFixValue;
             }
             //剩余余额(商家余额 –当前任务结算金额)
             result.RemainBalance = busiInfo.BalancePrice - result.OrderBalance;
             return result;
         }
-
         /// <summary>
         /// 判断商户是否存在
         /// <UpdateBy>hulingbo</UpdateBy>

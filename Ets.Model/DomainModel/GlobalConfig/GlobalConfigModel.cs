@@ -142,9 +142,22 @@ namespace Ets.Model.DomainModel.GlobalConfig
         /// </summary>
         public string EmployerTaskTimeSet { get; set; }
 
+		/// <summary>
+        /// 无效订单判定时取货点和完成点的距离(米)
+        /// </summary>
+        public string TakeCompleteDistance { get; set; }
+		
+		/// <summary>
+        /// 无效订单判定时累计完成订单数量
+        /// </summary>
+        public string OrderCountSetting { get; set; }
         /// <summary>
         /// 骑士提现小于等于X元支付手续费
         /// </summary>
         public string ClienterWithdrawCommissionAccordingMoney { get; set; }
+        /// <summary>
+        /// 提现扣除手续费数值
+        /// </summary>
+        public string WithdrawCommission { get; set; }
     }
 }

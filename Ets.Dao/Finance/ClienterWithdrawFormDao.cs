@@ -31,11 +31,12 @@ namespace Ets.Dao.Finance
         /// </summary>
         public long Insert(ClienterWithdrawForm clienterWithdrawForm)
         {
+            //TODO 修改ADD
             const string insertSql = @"
 insert into ClienterWithdrawForm(WithwardNo,ClienterId,BalancePrice,AllowWithdrawPrice,Status,Amount,Balance,
-TrueName,AccountNo,AccountType,BelongType,OpenBank,OpenSubBank,OpenProvince,OpenCity,OpenProvinceCode,OpenCityCode,IDCard)
+TrueName,AccountNo,AccountType,BelongType,OpenBank,OpenSubBank,OpenProvince,OpenCity,OpenProvinceCode,OpenCityCode,IDCard,HandChargeThreshold,HandCharge,HandChargeOutlay)
 values(@WithwardNo,@ClienterId,@BalancePrice,@AllowWithdrawPrice,@Status,@Amount,@Balance,
-@TrueName,@AccountNo,@AccountType,@BelongType,@OpenBank,@OpenSubBank,@OpenProvince,@OpenCity,@OpenProvinceCode,@OpenCityCode,@IDCard)
+@TrueName,@AccountNo,@AccountType,@BelongType,@OpenBank,@OpenSubBank,@OpenProvince,@OpenCity,@OpenProvinceCode,@OpenCityCode,@IDCard,@HandChargeThreshold,@HandCharge,@HandChargeOutlay)
 
 select @@IDENTITY";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -57,7 +58,9 @@ select @@IDENTITY";
             dbParameters.AddWithValue("OpenProvinceCode", clienterWithdrawForm.OpenProvinceCode);//易宝省份代码  
             dbParameters.AddWithValue("OpenCityCode", clienterWithdrawForm.OpenCityCode); //易宝城市代码
             dbParameters.AddWithValue("IDCard", clienterWithdrawForm.IDCard);//身份证号
-
+            dbParameters.AddWithValue("HandChargeThreshold", clienterWithdrawForm.HandChargeThreshold);//手续费阈值  
+            dbParameters.AddWithValue("HandCharge", clienterWithdrawForm.HandCharge); //手续费
+            dbParameters.AddWithValue("HandChargeOutlay", (object)clienterWithdrawForm.HandChargeOutlay);//手续费支付方
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters); //提现单号
             return ParseHelper.ToLong(result);
         }
@@ -122,7 +125,8 @@ from  ClienterWithdrawForm (nolock)" + condition;
         {
             ClienterWithdrawForm model = new ClienterWithdrawForm();
             const string querysql = @"
-select  Id,WithwardNo,ClienterId,BalancePrice,AllowWithdrawPrice,Status,Amount,Balance,WithdrawTime,Auditor,AuditTime,AuditFailedReason,Payer,PayTime,PayFailedReason
+select  Id,WithwardNo,ClienterId,BalancePrice,AllowWithdrawPrice,Status,Amount,Balance,WithdrawTime,
+Auditor,AuditTime,AuditFailedReason,Payer,PayTime,PayFailedReason,HandChargeThreshold,HandCharge,HandChargeOutlay 
 from  ClienterWithdrawForm (nolock)
 where  Id=@Id ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();

@@ -93,13 +93,14 @@ namespace ETS.Pay.YeePay
             }
             catch (Exception ex)
             {
+                LogHelper.LogWriter(ex, "易宝注册子账户失败");  
                 return null;
             }
 
         }
 
         /// <summary>
-        /// 子账户注册
+        /// 子账户注册   TODO 改成类
         /// </summary>
         /// <param name="requestid">注册请求号   guid</param>
         /// <param name="bindmobile">绑定手机</param>

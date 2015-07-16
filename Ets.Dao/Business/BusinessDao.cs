@@ -441,8 +441,8 @@ and a.PhoneNo=@PhoneNo";
         public int Insert(RegisterInfoPM model)
         {
             const string insertSql = @"         
-insert into dbo.business (City,PhoneNo,PhoneNo2,Password,CityId,RecommendPhone)
-values( @City,@PhoneNo,@PhoneNo2,@Password,@CityId ,@RecommendPhone)
+insert into dbo.business (City,PhoneNo,PhoneNo2,Password,CityId,RecommendPhone,Timespan)
+values( @City,@PhoneNo,@PhoneNo2,@Password,@CityId ,@RecommendPhone,@Timespan)
 select @@IDENTITY";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -452,7 +452,31 @@ select @@IDENTITY";
             dbParameters.AddWithValue("@PhoneNo2", model.phoneNo);
             dbParameters.AddWithValue("@CityId", model.CityId);
             dbParameters.AddWithValue("@RecommendPhone", model.RecommendPhone);
+            dbParameters.AddWithValue("@Timespan", model.timespan);
             return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters));
+        }
+
+        /// <summary>
+        /// 商户是否已注册
+        /// 彭宜  20150716
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns>是否注册</returns>
+        public bool IsExist(RegisterInfoPM model)
+        {
+            bool isExist;
+
+            const string querysql = @"
+select  count(1) 
+from  dbo.[business]  
+where Timespan=@Timespan and phoneNo=@phoneNo;";
+            IDbParameters dbSelectParameters = DbHelper.CreateDbParameters();
+            dbSelectParameters.Add("phoneNo", DbType.String, 20).Value = model.phoneNo;
+            dbSelectParameters.Add("Timespan", DbType.String, 50).Value = model.timespan;
+            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Write, querysql, dbSelectParameters);
+            isExist = ParseHelper.ToInt(executeScalar, 0) > 0;
+
+            return isExist;
         }
 
 

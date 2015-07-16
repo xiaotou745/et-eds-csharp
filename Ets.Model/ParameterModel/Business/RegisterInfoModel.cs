@@ -34,6 +34,10 @@ namespace Ets.Model.ParameterModel.Business
         public int GroupId { get; set; }
 
         public string RecommendPhone { get; set; }
+        /// <summary>
+        /// 时间戳
+        /// </summary>
+        public string timespan { get; set; }
     }
 
     /// <summary>

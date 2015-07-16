@@ -62,7 +62,7 @@ namespace Ets.Provider.Tests
         [Test]
         public void CashTransfer()
         {
-            var result = new Transfer().CashTransfer(APP.B,100, "10012474356", "1.9", "");//提现
+            var result = new Transfer().CashTransfer(APP.B, 97, "10012474356", "3", "http://edstest130.yitaoyun.net/pay/YeePayCashTransferCallback");//提现
         }
 
 
@@ -83,9 +83,8 @@ namespace Ets.Provider.Tests
         [Test]
         public void TransferAccounts()
         {
-            string requestid = TimeHelper.GetTimeStamp(false);
-            //var result = new Transfer().TransferAccounts(requestid, "10012474356", "10", "");//转账   主账户转给子账户
-            var result1 = new Transfer().TransferAccounts(requestid, "", "10", "10012474356");//转账   子账户转给总账户
+            var result = new Transfer().TransferAccounts("10012474356", "5", "");//转账   主账户转给子账户
+            //var result1 = new Transfer().TransferAccounts( "", "10", "10012474356");//转账   子账户转给总账户
         }
      
     }

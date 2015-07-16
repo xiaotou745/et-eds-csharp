@@ -9,6 +9,7 @@ using Ets.Model.DomainModel.GlobalConfig;
 using Ets.Service.IProvider.Business;
 using Ets.Dao.Business;
 using ETS.Util;
+
 namespace Ets.Service.Provider.Business
 {
     /// <summary>
@@ -16,7 +17,7 @@ namespace Ets.Service.Provider.Business
     /// </summary>
     public class BusinessGroupProvider : IBusinessGroupProvider
     {
-        readonly BusinessGroupDao businessGroupDao = new BusinessGroupDao();
+        private readonly BusinessGroupDao businessGroupDao = new BusinessGroupDao();
 
         /// <summary>
         /// 获取商家分组列表
@@ -55,7 +56,8 @@ namespace Ets.Service.Provider.Business
                     globalConfigModel.GroupId = businessGroupDao.AddBusinessGroup(businessGroupModel);
                     if (globalConfigModel.GroupId > 0)
                     {
-                        var r = businessGroupDao.CopyGlobalConfigMode(globalConfigModel.GroupId, globalConfigModel.OptName);
+                        var r = businessGroupDao.CopyGlobalConfigMode(globalConfigModel.GroupId,
+                            globalConfigModel.OptName);
                     }
                 }
                 else //修改
@@ -247,6 +249,36 @@ namespace Ets.Service.Provider.Business
                 {
                     globalConfig.KeyName = "EmployerTaskTimeSet";
                     globalConfig.Value = globalConfigModel.EmployerTaskTimeSet;
+                    reg = businessGroupDao.UpdateGlobalConfig(globalConfig);
+                    if (!reg)
+                    {
+                        return false;
+                    }
+                }
+                if (!string.IsNullOrWhiteSpace(globalConfigModel.WithdrawCommission))
+                {
+                    globalConfig.KeyName = "WithdrawCommission";
+                    globalConfig.Value = globalConfigModel.WithdrawCommission;
+                    reg = businessGroupDao.UpdateGlobalConfig(globalConfig);
+                    if (!reg)
+                    {
+                        return false;
+                    }
+                }
+                if (ParseHelper.ToInt(globalConfigModel.OrderCountSetting) >= 0)
+                {
+                    globalConfig.KeyName = "OrderCountSetting";
+                    globalConfig.Value = globalConfigModel.OrderCountSetting;
+                    reg = businessGroupDao.UpdateGlobalConfig(globalConfig);
+                    if (!reg)
+                    {
+                        return false;
+                    }
+                }
+                if (ParseHelper.ToInt(globalConfigModel.TakeCompleteDistance) >= 0)
+                {
+                    globalConfig.KeyName = "TakeCompleteDistance";
+                    globalConfig.Value = globalConfigModel.TakeCompleteDistance;
                     reg = businessGroupDao.UpdateGlobalConfig(globalConfig);
                     if (!reg)
                     {
