@@ -19,15 +19,5 @@ namespace Ets.Model.ParameterModel.Business
         /// 版本
         /// </summary>
         public string Version { get; set; }
-        /// <summary>
-        /// 订单金额 
-        /// add by 彭宜   20150714
-        /// </summary>
-        public decimal Amount { get; set; }
-        /// <summary>
-        /// 订单
-        /// add by 彭宜   20150714
-        /// </summary>
-        public int OrderCount { get; set; }
     }
 }

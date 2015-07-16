@@ -600,23 +600,6 @@ namespace Ets.Service.Provider.Authority
                         }
                     }
                 }
-                if (!string.IsNullOrWhiteSpace(criteria.DcIdList))
-                {
-                    var dclist = criteria.DcIdList.Split(',');
-                    authoritySetDao.DeleteAccountDCRelation(accountCityRelation.AccountId);
-                    foreach (string dcid in dclist)
-                    {
-                        if (!authoritySetDao.AddAccountDCRelation(Convert.ToInt32(dcid), accountCityRelation.AccountId, criteria.OptUserName))
-                        {
-                            dealResultInfo.DealMsg = "插入用户和配送公司关联信息失败!";
-                            return dealResultInfo;
-                        }
-                    }
-                }
-                else
-                {
-                    authoritySetDao.DeleteAccountDCRelation(accountCityRelation.AccountId);
-                }
                 tran.Complete();
             }
             dealResultInfo.DealMsg = "用户信息提交成功！";
@@ -646,15 +629,5 @@ namespace Ets.Service.Provider.Authority
             return authoritySetDao.GetAccountListOfPaging<AccountModel>(criteria);
         }
 
-
-        /// <summary>
-        /// 获取用户和物流公司对应关系
-        /// </summary>
-        /// <param name="accountId"></param>
-        /// <returns></returns>
-        public IList<AccountDCRelationModel> GetAccountDCRel(int accountId)
-        {
-            return authoritySetDao.GetAccountDCRel(accountId);
-        }
     }
 }

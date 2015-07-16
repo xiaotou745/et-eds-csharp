@@ -53,16 +53,6 @@ namespace Ets.Model.ParameterModel.Finance
         /// </summary>
         public string OpenSubBank { get; set; }
         /// <summary>
-        /// 开户省
-        /// </summary>
-        [Required(ErrorMessage = "开户省不能为空")]
-        public string OpenProvince { get; set; }
-        /// <summary>
-        /// 开户市
-        /// </summary>
-        [Required(ErrorMessage = "开户市不能为空")]
-        public string OpenCity { get; set; }
-        /// <summary>
         /// 创建人
         /// </summary>
         [Required(ErrorMessage = "创建人不能为空")]

@@ -19,15 +19,5 @@ namespace Ets.Service.Provider.Common
             CompanyDao companyDao=new CompanyDao();
             return  companyDao.GetCompanyList();
         }
-        /// <summary>
-        /// 根据用户获取物流公司权限
-        /// </summary>
-        /// <param name="accountId"></param>
-        /// <returns></returns>
-        public IList<CompanyModel> GetCompanyListByAccountID(int accountId)
-        {
-            CompanyDao companyDao = new CompanyDao();
-            return companyDao.GetCompanyListByAccountID(accountId);
-        }
     }
 }

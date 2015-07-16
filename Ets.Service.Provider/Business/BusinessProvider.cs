@@ -962,7 +962,7 @@ namespace Ets.Service.Provider.Business
             }
             redis.Add(keycheck, 1, new TimeSpan(0, 1, 0));
             #endregion
-
+           
             string tempcode = obj.ToString().Aggregate("", (current, c) => current + (c.ToString() + ','));
 
             bool userStatus = businessDao.CheckBusinessExistPhone(model.PhoneNumber);
@@ -1078,33 +1078,6 @@ namespace Ets.Service.Provider.Business
         {
             return businessDao.GetDistribSubsidy(id);
         }
-
-        /// <summary>
-        /// 获取商家发布任务需要的信息(包含商户外送费,当前任务结算金额,剩余余额)
-        /// add by 彭宜   20150714
-        /// </summary>
-        /// <param name="id">商户id</param>
-        /// <param name="orderChildCount">子订单数量</param>
-        /// <param name="amount">订单金额</param>
-        /// <returns></returns>
-        public BusiDistribSubsidyResultModel GetBusinessPushOrderInfo(int id, int orderChildCount, decimal amount)
-        {
-            var busiInfo = businessDao.GetDistribSubsidy(id);
-            var result = new BusiDistribSubsidyResultModel { DistribSubsidy = busiInfo.DistribSubsidy };
-            //结算类型：1：固定比例 2：固定金额
-            if (busiInfo.CommissionType == 1)
-            {
-                result.OrderBalance = amount*busiInfo.BusinessCommission;
-            }
-            else
-            {
-                result.OrderBalance = orderChildCount*busiInfo.CommissionFixValue;
-            }
-            //剩余余额(商家余额 –当前任务结算金额)
-            result.RemainBalance = busiInfo.BalancePrice - result.OrderBalance;
-            return result;
-        }
-
         /// <summary>
         /// 判断商户是否存在
         /// <UpdateBy>hulingbo</UpdateBy>

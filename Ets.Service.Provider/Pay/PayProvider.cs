@@ -354,12 +354,12 @@ namespace Ets.Service.Provider.Pay
         /// <returns></returns>
         public ResultModel<BusinessRechargeResultModel> BusinessRecharge(BusinessRechargeModel model)
         {
-            LogHelper.LogWriter("=============商家充值支付请求数据：", model);
+            LogHelper.LogWriter("=============商家充值支付请求数据：", model); 
 
             // string.Concat(model.productId, "_", model.orderId, "_", model.childId, "_", model.payStyle);
 
             #region 金额验证
-            if (model.payAmount <= 0 || model.payAmount > 100000)
+            if (model.payAmount <=0 || model.payAmount > 100000)
             {
                 return ResultModel<BusinessRechargeResultModel>.Conclude(AliPayStatus.fail);
             }

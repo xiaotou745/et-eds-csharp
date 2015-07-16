@@ -2,10 +2,8 @@
 using Ets.Model.ParameterModel.Authority;
 using Ets.Service.IProvider.AuthorityMenu;
 using Ets.Service.IProvider.Common;
-using Ets.Service.IProvider.DeliveryCompany;
 using Ets.Service.Provider.Authority;
 using Ets.Service.Provider.Common;
-using Ets.Service.Provider.DeliveryCompany;
 using SuperMan.App_Start;
 using System;
 using System.Collections.Generic;
@@ -23,7 +21,6 @@ namespace SuperMan.Controllers
     {
         IAuthorityMenuProvider iAuthorityMenuProvider = new AuthorityMenuProvider();
         IAreaProvider iAreaProvider = new AreaProvider();
-        IDeliveryCompanyProvider iDeliveryCompanyProvider=new DeliveryCompanyProvider();
         // GET: AuthorityManager
        /// <summary>
        /// 后台用户管理列表页面
@@ -40,7 +37,6 @@ namespace SuperMan.Controllers
 
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;//集团id
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(0);
-            ViewBag.openDcList = iDeliveryCompanyProvider.GetDeliveryCompanyList();
             var criteria = new Ets.Model.ParameterModel.Authority.AuthoritySearchCriteria() { GroupId = SuperMan.App_Start.UserContext.Current.GroupId };
             var authorityModel = iAuthorityMenuProvider.GetAuthorityManage(criteria);
             return View(authorityModel);
@@ -56,7 +52,6 @@ namespace SuperMan.Controllers
             Ets.Model.ParameterModel.Authority.AuthoritySearchCriteria criteria = new Ets.Model.ParameterModel.Authority.AuthoritySearchCriteria();
             TryUpdateModel(criteria);
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(0);
-            ViewBag.openDcList = iDeliveryCompanyProvider.GetDeliveryCompanyList();//获取启用的物流公司列表
             var authorityModel = iAuthorityMenuProvider.GetAuthorityManage(criteria);
             return PartialView("_AuthorityManagerList", authorityModel);
         }
@@ -192,16 +187,6 @@ namespace SuperMan.Controllers
             var accountCityRelList = iAuthorityMenuProvider.GetAccountCityRel(accountid);
             return Json(accountCityRelList, JsonRequestBehavior.DenyGet);
         }
-        /// <summary>
-        /// 获取用户和物流公司对应关系
-        /// </summary>
-        /// <param name="accountid">用户Id</param>
-        /// <returns></returns>
-        [HttpPost]
-        public JsonResult GetAccountDcRel(int accountid)
-        {
-            var accountCityRel = iAuthorityMenuProvider.GetAccountDCRel(accountid);
-            return Json(accountCityRel, JsonRequestBehavior.DenyGet);
-        }
+         
     }
 }
