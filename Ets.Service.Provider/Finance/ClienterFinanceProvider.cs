@@ -9,6 +9,7 @@ using Ets.Dao.GlobalConfig;
 using ETS.Enums;
 using ETS.Extension;
 using Ets.Model.Common;
+using Ets.Model.Common.YeePay;
 using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.Finance;
 using Ets.Model.DomainModel.Finance;
@@ -567,26 +568,6 @@ namespace Ets.Service.Provider.Finance
                     && clienterFinanceDao.ModifyClienterBalanceRecordStatus(model.WithwardId.ToString())
                     && clienterFinanceDao.ModifyClienterAmountInfo(model.WithwardId.ToString()))
                 {
-                   var  withdraw=_clienterWithdrawFormDao.GetById(model.WithwardId);
-                   _clienterDao.UpdateForWithdrawC(new UpdateForWithdrawPM
-                   {
-                       Id = withdraw.ClienterId,
-                       Money = -withdraw.HandCharge
-                   }); //更新骑士表的余额，可提现余额
-                    if (withdraw.HandChargeOutlay == 0) //个人支出手续费  增加手续费扣款记录流水 
-                    {
-                        _clienterBalanceRecordDao.Insert(new ClienterBalanceRecord()
-                        {
-                            ClienterId = withdraw.ClienterId, //骑士Id(Clienter表）
-                            Amount = -withdraw.HandCharge, //流水金额
-                            Status = (int) ClienterBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
-                            RecordType = (int)ClienterBalanceRecordRecordType.ProcedureFee,
-                            Operator = "易宝系统回调",
-                            WithwardId = withdraw.Id,
-                            RelationNo = withdraw.WithwardNo,
-                            Remark = "易宝提现失败扣除手续费"
-                        });
-                    }
                     reg = true;
                     tran.Complete();
                 }
@@ -594,6 +575,64 @@ namespace Ets.Service.Provider.Finance
             return reg;
         }
 
+        /// <summary>
+        /// 易宝打款失败回调处理逻辑 
+        /// add by caoheyang  20150716
+        /// </summary>
+        /// <param name="model"></param>
+        ///  <param name="callback"></param>
+        /// <returns></returns>
+        public bool ClienterWithdrawPayFailed(ClienterWithdrawLogModel model,CashTransferCallback callback)
+        {
+            bool reg = false;
+            var withdraw = _clienterWithdrawFormDao.GetById(model.WithwardId);
+            if (withdraw == null)
+            {
+                return reg;
+            }
+            Transfer transfer = new Transfer();
+            TransferReturnModel tempmodel = transfer.TransferAccounts("",
+                (ParseHelper.ToDecimal(callback.amount) - withdraw.HandCharge).ToString(), callback.ledgerno);
+            if (tempmodel.code == "1") //易宝子账户到主账户打款 成功
+            {
+                using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+                {
+                    if (clienterFinanceDao.ClienterWithdrawReturn(model)
+                        && clienterFinanceDao.ClienterWithdrawPayFailed(model)
+                        && clienterFinanceDao.ModifyClienterBalanceRecordStatus(model.WithwardId.ToString())
+                        && clienterFinanceDao.ModifyClienterAmountInfo(model.WithwardId.ToString()))
+                    {
+
+                        _clienterDao.UpdateForWithdrawC(new UpdateForWithdrawPM
+                        {
+                            Id = withdraw.ClienterId,
+                            Money = -withdraw.HandCharge
+                        }); //更新骑士表的余额，可提现余额
+                        if (withdraw.HandChargeOutlay == 0) //个人支出手续费  增加手续费扣款记录流水 
+                        {
+                            _clienterBalanceRecordDao.Insert(new ClienterBalanceRecord()
+                            {
+                                ClienterId = withdraw.ClienterId, //骑士Id(Clienter表）
+                                Amount = -withdraw.HandCharge, //流水金额
+                                Status = (int) ClienterBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
+                                RecordType = (int) ClienterBalanceRecordRecordType.ProcedureFee,
+                                Operator = "易宝系统回调",
+                                WithwardId = withdraw.Id,
+                                RelationNo = withdraw.WithwardNo,
+                                Remark = "易宝提现失败扣除手续费"
+                            });
+                        }
+                        reg = true;
+                        tran.Complete();
+                    }
+                }
+            }
+            else
+            {
+                LogHelper.LogWriterString("易宝子账户到主账户打款导致失败，提现单号为:" + model.WithwardId);
+            }
+            return reg;
+        }
         /// <summary>
         /// 获取骑士提款收支记录列表
         /// danny-20150513
