@@ -433,8 +433,9 @@ SELECT PhoneNo AS Phone,0 AS PemType FROM clienter(NOLOCK) WHERE Status=1
         /// 注册超人
         /// </summary>
         /// <param name="model"></param>
+        /// <param name="timespan">时间戳</param>
         /// <returns></returns>
-        public int AddClienter(clienter model)
+        public int AddClienter(clienter model,string timespan)
         {
             string sql = @"INSERT INTO clienter
                            ([PhoneNo]
@@ -446,9 +447,10 @@ SELECT PhoneNo AS Phone,0 AS PemType FROM clienter(NOLOCK) WHERE Status=1
                            ,[City]
                            ,[CityId]
                            ,[GroupId]
-                           ,[DeliveryCompanyId])
+                           ,[DeliveryCompanyId]
+                           ,[Timespan])
                      VALUES
-                       (@PhoneNo,@recommendPhone,@Password,@Status,@InsertTime,@InviteCode,@City,@CityId,@GroupId,@DeliveryCompanyId );
+                       (@PhoneNo,@recommendPhone,@Password,@Status,@InsertTime,@InviteCode,@City,@CityId,@GroupId,@DeliveryCompanyId,@Timespan );
                     select SCOPE_IDENTITY() as id;";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@PhoneNo", SqlDbType.NVarChar);
@@ -462,6 +464,7 @@ SELECT PhoneNo AS Phone,0 AS PemType FROM clienter(NOLOCK) WHERE Status=1
             parm.AddWithValue("@CityId", model.CityId);
             parm.AddWithValue("@GroupId", model.GroupId);
             parm.AddWithValue("@DeliveryCompanyId", (object)model.DeliveryCompanyId);
+            parm.AddWithValue("@Timespan", timespan);
             object i = DbHelper.ExecuteScalar(SuperMan_Write, sql, parm);
             if (i != null)
             {

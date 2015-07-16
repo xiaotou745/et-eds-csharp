@@ -330,7 +330,7 @@ namespace Ets.Service.Provider.Clienter
                     clienter.CityId = model.CityId;
                 }
             }
-            int id = clienterDao.AddClienter(clienter);
+            int id = clienterDao.AddClienter(clienter,model.Timespan);
             var resultModel = new ClientRegisterResultModel
             {
                 userId = id,
