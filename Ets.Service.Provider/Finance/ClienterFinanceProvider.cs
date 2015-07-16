@@ -91,7 +91,10 @@ namespace Ets.Service.Provider.Finance
                                   OpenCity = withdrawCpm.OpenCity,//城市
                                   OpenCityCode = withdrawCpm.OpenCityCode,//城市代码
                                   OpenProvince = withdrawCpm.OpenProvince,//省份
-                                  OpenProvinceCode = withdrawCpm.OpenProvinceCode//省份代码
+                                  OpenProvinceCode = withdrawCpm.OpenProvinceCode,//省份代码
+                                  HandCharge = 1,//手续费
+                                  HandChargeOutlay = withdrawCpm.WithdrawPrice>100?1:0,//手续费支出方
+                                  HandChargeThreshold = 100//手续费阈值
                               });
                     #endregion
 
