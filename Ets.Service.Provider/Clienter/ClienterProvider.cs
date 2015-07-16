@@ -37,6 +37,9 @@ using Ets.Service.IProvider.Common;
 using Ets.Model.DataModel.Business;
 using Ets.Service.IProvider.DeliveryCompany;
 using Ets.Service.Provider.DeliveryCompany;
+using Ets.Model.DataModel.DeliveryCompany;
+using Ets.Service.IProvider.GlobalConfig;
+using Ets.Dao.GlobalConfig;
 
 namespace Ets.Service.Provider.Clienter
 {
@@ -46,6 +49,7 @@ namespace Ets.Service.Provider.Clienter
         readonly OrderDao orderDao = new OrderDao();
         readonly OrderOtherDao orderOtherDao = new OrderOtherDao();
         readonly OrderChildDao orderChildDao = new OrderChildDao();
+        readonly GlobalConfigDao globalConfigDao = new GlobalConfigDao();
         readonly ClienterBalanceRecordDao clienterBalanceRecordDao = new ClienterBalanceRecordDao();
         readonly BusinessDao businessDao = new BusinessDao();
         readonly BusinessClienterRelationDao businessClienterDao = new BusinessClienterRelationDao();
@@ -53,6 +57,7 @@ namespace Ets.Service.Provider.Clienter
         readonly DeliveryCompanyProvider deliveryCompanyProvider = new DeliveryCompanyProvider();
         readonly IAreaProvider iAreaProvider = new AreaProvider();
         readonly IOrderOtherProvider iOrderOtherProvider = new OrderOtherProvider();
+
 
         /// <summary>
         /// 骑士上下班功能 add by caoheyang 20150312
@@ -641,8 +646,8 @@ namespace Ets.Service.Provider.Clienter
             GlobalConfigModel globalSetting = new GlobalConfigProvider().GlobalConfigMethod(0);
             //取到任务的接单时间、从缓存中读取完成任务时间限制，判断要用户点击完成时间>接单时间+限制时间 
             int limitFinish = ParseHelper.ToInt(globalSetting.CompleteTimeSet, 0);
-
-            if (limitFinish > 0)
+           
+            if (limitFinish>0)
             {
                 DateTime yuJiFinish = myOrderInfo.GrabTime.Value.AddMinutes(limitFinish);
                 if (DateTime.Compare(DateTime.Now, yuJiFinish) < 0)  //小于0说明用户完成时间 太快
@@ -651,7 +656,7 @@ namespace Ets.Service.Provider.Clienter
                     return model;
                 }
             }
-
+          
             if (!new OrderDao().IsOrNotFinish(myOrderInfo.Id))//是否有未完成子订单
             {
                 model.FinishOrderStatus = FinishOrderStatus.ExistNotPayChildOrder;
@@ -991,7 +996,7 @@ namespace Ets.Service.Provider.Clienter
                 {
                     if (CheckOrderPay(myOrderInfo.Id))
                     {
-                        UpdateClienterTotalAccount(myOrderInfo, null);
+                        UpdateClienterTotalAccount(myOrderInfo);
                     }
                 }
             }
@@ -1003,7 +1008,7 @@ namespace Ets.Service.Provider.Clienter
                 {
                     if (CheckOrderPay(myOrderInfo.Id))
                     {
-                        UpdateClienterTotalAccount(myOrderInfo, null);
+                        UpdateClienterTotalAccount(myOrderInfo);
                     }
                 }
             }
@@ -1016,7 +1021,7 @@ namespace Ets.Service.Provider.Clienter
                 {
                     if (CheckOrderPay(myOrderInfo.Id))
                     {
-                        UpdateClienterTotalAccount(myOrderInfo, null, 1);
+                        UpdateClienterTotalAccount(myOrderInfo, 1);
                         iOrderOtherProvider.UpdateIsJoinWithdraw(myOrderInfo.Id);
                     }
                 }
@@ -1048,7 +1053,7 @@ namespace Ets.Service.Provider.Clienter
                 {
                     if (CheckOrderPay(myOrderInfo.Id))
                     {
-                        UpdateClienterTotalAccount(myOrderInfo, parModel);
+                        UpdateClienterTotalAccount(myOrderInfo);
                     }
                 }
                 return true;
@@ -1061,7 +1066,7 @@ namespace Ets.Service.Provider.Clienter
                 {
                     if (CheckOrderPay(myOrderInfo.Id))
                     {
-                        UpdateClienterTotalAccount(myOrderInfo, parModel);
+                        UpdateClienterTotalAccount(myOrderInfo);
                     }
                 }
                 return true;
@@ -1096,7 +1101,7 @@ namespace Ets.Service.Provider.Clienter
                 {
                     if (CheckOrderPay(myOrderInfo.Id))
                     {
-                        UpdateClienterTotalAccount(myOrderInfo, parModel, 1);
+                        UpdateClienterTotalAccount(myOrderInfo, 1);
                         iOrderOtherProvider.UpdateIsJoinWithdraw(myOrderInfo.Id);
                     }
                 }
@@ -1186,7 +1191,7 @@ namespace Ets.Service.Provider.Clienter
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.HadCancelQualification);
             }
 
-            var myorder = new Ets.Dao.Order.OrderDao().GetOrderDetailByOrderNo(orderNo);
+            var myorder = new Ets.Dao.Order.OrderDao().GetByOrderNo(orderNo);
             if (myorder == null)
             {
                 return Ets.Model.Common.ResultModel<Ets.Model.ParameterModel.Clienter.RushOrderResultModel>.Conclude(RushOrderStatus.OrderIsNotExist);  //订单不存在
@@ -1213,13 +1218,33 @@ namespace Ets.Service.Provider.Clienter
                     new OrderProvider().AsyncOrderStatus(orderNo);//同步第三方订单
                     Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", myorder.businessId.ToString(), string.Empty);
                 });
-
+                Task.Factory.StartNew(() =>
+                {
+                    UpdateDeliveryCompanyOrderCommssion(myorder, userId);
+                });
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Success);
             }
 
             return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Failed);
         }
+        /// <summary>
+        /// 计算物流公司的订单的佣金
+        /// </summary>
+        /// <param name="orderModel"></param>
+        private void UpdateDeliveryCompanyOrderCommssion(OrderListModel orderModel, int clienterId)
+        {
+            //此时orderModel中还没获取到clienterId，因此不能用orderModel.clienterId
+            DeliveryCompanyModel companyDetail = deliveryCompanyProvider.GetDeliveryCompanyByClienterID(clienterId);
+            if (companyDetail != null && companyDetail.IsEnable==1)
+            {
+                DeliveryCompanyPriceProvider pro = new DeliveryCompanyPriceProvider();
+               decimal orderCommission= pro.GetCurrenOrderCommission(orderModel, companyDetail);
+               decimal deliveryCompanySettleMoney = pro.GetDeliveryCompanySettleMoney(orderModel, companyDetail);
+                //更新订单的佣金
+               orderDao.UpdateDeliveryCompanyOrderCommssion(orderModel.Id.ToString(), orderCommission, deliveryCompanySettleMoney, companyDetail.Id);
 
+            }
+        }
         /// <summary>
         /// 获取骑士详情
         /// hulingbo 20150511
@@ -1357,42 +1382,32 @@ namespace Ets.Service.Provider.Clienter
         /// zhaohailong20150706
         /// </summary>
         /// <param name="myOrderInfo"></param>
-        /// <param name="parModel"></param>
+        /// 
         /// <returns></returns>
-        private bool CheckIsNotRealOrder(OrderListModel myOrderInfo, OrderCompleteModel parModel)
+        private bool CheckIsNotRealOrder(OrderListModel myOrderInfo)
         {
             OrderMapDetail mapDetail = orderDao.GetOrderMapDetail(myOrderInfo.Id);
-            if (mapDetail != null)
-            {
-                if (parModel != null)
-                {
-                    mapDetail.CompleteLatitude = parModel.Latitude;
-                    mapDetail.CompleteLongitude = parModel.Longitude;
-                }
+            int distance = orderDao.GetDistanceByPoint(mapDetail.TakeLatitude, mapDetail.TakeLongitude, mapDetail.CompleteLatitude, mapDetail.CompleteLongitude);
 
-
-                if (mapDetail.TakeLatitude == mapDetail.CompleteLatitude &&
-                    mapDetail.TakeLongitude == mapDetail.CompleteLongitude
-                    )
-                {
-                    return true;
-                }
-            }
-            //if (!(myOrderInfo.GrabTime.Value.AddMinutes(5) < DateTime.Now &&
-            //DateTime.Now < myOrderInfo.GrabTime.Value.AddMinutes(120)))
-            //{
-            //    return true;
-            //}
-            if ((ParseHelper.ToDatetime(mapDetail.ActualDoneDate,DateTime.Now) < myOrderInfo.GrabTime.Value.AddMinutes(5) ||
-          ParseHelper.ToDatetime(mapDetail.ActualDoneDate,DateTime.Now) > myOrderInfo.GrabTime.Value.AddMinutes(120)))
+            GlobalConfigModel globalSetting = globalConfigDao.GlobalConfigMethod(0);
+            if (distance <= ParseHelper.ToInt(globalSetting.TakeCompleteDistance, 0))
             {
                 return true;
             }
-            //if (!(myOrderInfo.GrabTime.Value.AddMinutes(1) < DateTime.Now &&
-            //    DateTime.Now < myOrderInfo.GrabTime.Value.AddMinutes(5)))
-            //{
-            //    return true;
-            //}
+
+            DateTime actualDoneDate = actualDoneDate = ParseHelper.ToDatetime(mapDetail.ActualDoneDate);
+            if (!(myOrderInfo.GrabTime.Value.AddMinutes(5) < actualDoneDate &&
+                actualDoneDate < myOrderInfo.GrabTime.Value.AddMinutes(120)))
+            {
+                return true;
+            }
+
+            int num = orderDao.GetTotalOrderNumByClienterID(myOrderInfo.clienterId);
+            //如果骑士今天已经完成（或完成后，又取消了,不包含当前任务中的订单数量）的订单数量大于配置的值，则当前任务中的所有订单都扣除网站补贴
+            if (num - myOrderInfo.OrderCount > ParseHelper.ToInt(globalSetting.OrderCountSetting, 0))
+            {
+                return true;
+            }
             //ClienterDetailModel clienter = clienterDao.GetClienterDetailById(myOrderInfo.clienterId.ToString());
             //BusinessModel bussinessDetail = businessDao.GetById(myOrderInfo.businessId);
             //if (clienter.PhoneNo == bussinessDetail.PhoneNo)
@@ -1408,30 +1423,46 @@ namespace Ets.Service.Provider.Clienter
         /// </summary>
         /// <param name="myOrderInfo"></param>
         /// <param name="isNotRealOrder"></param>
-        private void UpdateClienterTotalAccount(OrderListModel myOrderInfo, OrderCompleteModel parModel, int operateType = 0)
+        private void UpdateClienterTotalAccount(OrderListModel myOrderInfo, int operateType = 0)
         {
             decimal realOrderCommission = myOrderInfo.OrderCommission == null ? 0 : myOrderInfo.OrderCommission.Value;
-            bool isNotRealOrder = false;
-         
-            isNotRealOrder = CheckIsNotRealOrder(myOrderInfo, parModel);
+
+            if (myOrderInfo.DeliveryCompanyID!=0)//物流公司接的订单
+            {
+                 orderDao.UpdateOrderRealOrderCommission(myOrderInfo.Id.ToString(), realOrderCommission);
+                 if (operateType == 0)
+                 {
+                     UpdateClienterAccount(myOrderInfo);
+                 }
+                 else
+                 {
+                     UpdateAccountBalanceAndWithdraw(myOrderInfo.clienterId, myOrderInfo);
+                 }
+                 return;
+            }
+
+
+
+            bool isNotRealOrder = CheckIsNotRealOrder(myOrderInfo);
             if (isNotRealOrder)
             {
                 orderOtherDao.UpdateOrderIsReal(myOrderInfo.Id);
                 realOrderCommission = realOrderCommission > myOrderInfo.SettleMoney ? myOrderInfo.SettleMoney : realOrderCommission;
             }
-            
             orderDao.UpdateOrderRealOrderCommission(myOrderInfo.Id.ToString(), realOrderCommission);
-            if (operateType == 0)
+            //一：先给骑士所有佣金
+            if (operateType==0)//线下支付
             {
-                UpdateClienterAccount(myOrderInfo);
+                UpdateClienterAccount(myOrderInfo);  
             }
-            else
+            else//线上支付
             {
-                UpdateAccountBalanceAndWithdraw(myOrderInfo.clienterId, myOrderInfo);
+                UpdateAccountBalanceAndWithdraw(myOrderInfo.clienterId,myOrderInfo);
             }
+
             if (isNotRealOrder)
             {
-                //如果是无效订单，则扣除网站补贴
+                //二：如果是无效订单，则扣除网站补贴
                 if (myOrderInfo.OrderCommission > myOrderInfo.SettleMoney)
                 {
                     decimal diffOrderCommission = myOrderInfo.SettleMoney - myOrderInfo.OrderCommission.Value;
@@ -1443,7 +1474,7 @@ namespace Ets.Service.Provider.Clienter
                     {
                         UpdateNotRealOrderClienterAccountAndWithdraw(myOrderInfo, diffOrderCommission);
                     }
-
+                  
                     orderDao.InsertNotRealOrderLog(myOrderInfo.Id, diffOrderCommission * (-1));
                 }
             }

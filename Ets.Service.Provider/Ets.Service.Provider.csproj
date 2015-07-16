@@ -78,7 +78,6 @@
     <Compile Include="Common\ServicePhone.cs" />
     <Compile Include="Common\TestUserProvider.cs" />
     <Compile Include="DeliveryCompany\DeliveryCompanyProvider.cs" />
-    <Compile Include="DeliveryManager\DeliveryManagerProvider.cs" />
     <Compile Include="Finance\BusinessBalanceRecordProvider.cs" />
     <Compile Include="Finance\BusinessFinanceProvider.cs" />
     <Compile Include="Finance\ClienterBalanceRecordProvider.cs" />
@@ -102,6 +101,7 @@
     <Compile Include="Order\AutoAdjustProvider.cs" />
     <Compile Include="Order\BreakEvenPointOrPriceProvider.cs" />
     <Compile Include="Order\CommissionFactory.cs" />
+    <Compile Include="Order\DeliveryCompanyPriceProvider.cs" />
     <Compile Include="Order\OrderChildProvider.cs" />
     <Compile Include="Order\OrderPriceProvider.cs" />
     <Compile Include="Order\DefaultOrPriceProvider.cs" />

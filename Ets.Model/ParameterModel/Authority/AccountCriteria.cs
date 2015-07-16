@@ -21,9 +21,6 @@ namespace Ets.Model.ParameterModel.Authority
         /// 操作类型（0：添加 1：修改）
         /// </summary>
         public string OptionType { get; set; }
-        /// <summary>
-        /// 配送公司ID集合
-        /// </summary>
-        public string DcIdList { get; set; }
+
     }
 }

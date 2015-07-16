@@ -34,10 +34,6 @@ namespace ETS.Const
         /// </summary>
         public const string Ets_Service_Provider_Common_GetOpenCity_New = "Ets_Service_Provider_Common_GetOpenCity_New";
         /// <summary>
-        /// 获取银行省市缓存key
-        /// </summary>
-        public const string Ets_Service_Provider_Common_GetPublicBankCity_New = "Ets_Service_Provider_Common_GetPublicBankCity_New";
-        /// <summary>
         /// C端注册验证码缓存key
         /// </summary>
         public const string PostRegisterInfo_C = "PostRegisterInfo_C_";

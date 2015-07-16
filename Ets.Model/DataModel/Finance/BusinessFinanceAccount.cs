@@ -65,21 +65,6 @@ namespace Ets.Model.DataModel.Finance
         /// 最后更新时间
         /// </summary>
         public DateTime UpdateTime { get; set; }
-        /// <summary>
-        /// 省名称
-        /// </summary>
-        public string OpenProvince { get; set; }
-        /// <summary>
-        /// 市区名称
-        /// </summary>
-        public string OpenCity { get; set; }
-        /// <summary>
-        /// 身份证号
-        /// </summary>
-        public string IDCard { get; set; }
-        /// <summary>
-        /// 商户手机号
-        /// </summary>
-        public string PhoneNo { get; set; }
+
     }
 }

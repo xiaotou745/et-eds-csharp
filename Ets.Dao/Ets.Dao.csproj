@@ -56,7 +56,6 @@
     <Compile Include="Common\TestUserDao.cs" />
     <Compile Include="DaoBase.cs" />
     <Compile Include="DeliveryCompany\DeliveryCompanyDao.cs" />
-    <Compile Include="DeliveryManager\DeliveryManagerDao.cs" />
     <Compile Include="Finance\BusinessFinanceDao.cs" />
     <Compile Include="Finance\BusinessBalanceRecordDao.cs" />
     <Compile Include="Finance\ClienterBalanceRecordDao.cs" />
