@@ -490,7 +490,7 @@ from  dbo.[clienter]
 where Timespan=@Timespan and phoneNo=@phoneNo;";
             IDbParameters dbSelectParameters = DbHelper.CreateDbParameters();
             dbSelectParameters.Add("phoneNo", DbType.String,20).Value=model.phoneNo;
-            dbSelectParameters.Add("Timespan", DbType.String, 50).Value = model.Timespan;
+            dbSelectParameters.Add("Timespan", DbType.String, 50).Value = model.timespan;
             object executeScalar = DbHelper.ExecuteScalar(SuperMan_Write, querysql, dbSelectParameters);
             isExist = ParseHelper.ToInt(executeScalar, 0) > 0;
 
