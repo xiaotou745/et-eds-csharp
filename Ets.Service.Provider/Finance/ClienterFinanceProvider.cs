@@ -148,12 +148,12 @@ namespace Ets.Service.Provider.Finance
             }
             if (string.IsNullOrWhiteSpace(withdrawCpm.OpenProvince))
                 return FinanceWithdrawC.NoOpenProvince;
-            if (withdrawCpm.OpenProvinceCode == 0)
-                return FinanceWithdrawC.NoOpenProvinceCode;
+            //if (withdrawCpm.OpenProvinceCode == 0)
+            //    return FinanceWithdrawC.NoOpenProvinceCode;
             if (string.IsNullOrWhiteSpace(withdrawCpm.OpenCity))
                 return FinanceWithdrawC.NoOpenCity;
-            if (withdrawCpm.OpenCityCode == 0)
-                return FinanceWithdrawC.NoOpenCityCode;
+            //if (withdrawCpm.OpenCityCode == 0)
+            //    return FinanceWithdrawC.NoOpenCityCode;
             if (!Regex.IsMatch(withdrawCpm.IDCard, @"^(^\d{15}$|^\d{18}$|^\d{17}(\d|X|x))$", RegexOptions.IgnoreCase))
                 return FinanceWithdrawC.NoIDCard;
             if (withdrawCpm.WithdrawPrice % 100 != 0 || withdrawCpm.WithdrawPrice < 100

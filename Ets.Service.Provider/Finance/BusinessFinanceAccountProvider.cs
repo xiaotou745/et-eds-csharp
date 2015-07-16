@@ -136,6 +136,7 @@ namespace Ets.Service.Provider.Finance
                 return ResultModel<object>.Conclude(boolRes);
             }
             BusinessFinanceAccount bfAccount = _businessFinanceAccountDao.GetById(cardModifyBpm.Id);
+            //TODO 验证该 商户id 下 是存在未完成的 提现申请单 ，如果存在不允许修改
             if (bfAccount != null)
             {
                 if (bfAccount.OpenBank != cardModifyBpm.OpenBank || bfAccount.OpenSubBank != cardModifyBpm.OpenSubBank ||
@@ -158,6 +159,7 @@ namespace Ets.Service.Provider.Finance
                             OpenProvince = cardModifyBpm.OpenProvince, //省名称
                             OpenCity = cardModifyBpm.OpenCity, //市区名称
                             IDCard = cardModifyBpm.IDCard //身份证号
+                            //TODO 营业执照判断
                         });
                         tran.Complete();
                     }

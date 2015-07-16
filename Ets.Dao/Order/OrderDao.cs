@@ -3192,9 +3192,9 @@ where   Id = @OrderId and FinishAll = 0";
         /// <returns></returns>
         public bool ClienterHasUnFinishedOrder(int clienterId)
         {
-            string sql = "select count(1) from [dbo].[order] where clienterId=@clientId and (Status=2 or Status=4);";
+            string sql = "select count(1) from [dbo].[order](nolock) where clienterId=@clientId and (Status=2 or Status=4);";
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@clientId", clienterId);
+            parm.Add("@clientId", DbType.Int32,4).Value = clienterId;
             return int.Parse(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm).ToString()) > 0;
         }
 
@@ -3246,7 +3246,7 @@ where   Id = @OrderId and FinishAll = 0";
             dbParameters.AddWithValue("@DeliveryCompanySettleMoney", deliveryCompanySettleMoney);
             dbParameters.AddWithValue("@DeliveryCompanyID", deliveryCompanyID);
             dbParameters.AddWithValue("@OrderId", orderID);
-            return DbHelper.ExecuteNonQuery(SuperMan_Read, sql, dbParameters);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
         }
         /// <summary>
         /// 获取骑士今天已完成(或完成后又取消了)的非物流公司的订单数量(不是任务数量)
@@ -3255,6 +3255,7 @@ where   Id = @OrderId and FinishAll = 0";
         /// <returns></returns>
         public int GetTotalOrderNumByClienterID(int clienterID)
         {
+            //todo,suoyin
             string sql = @"select isnull(sum(OrderCount)) as num from [order] (nolock) where clienterId=@clienterId and ActualDoneDate is not null and ActualDoneDate>=@beginDate and ActualDoneDate<@endDate";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("clienterId", DbType.Int32).Value = clienterID;
