@@ -71,13 +71,13 @@ namespace ETS.Pay.YeePay
         /// 1、ledgerno 非空 sourceledgerno 为空时：主账户转子账户
         /// 2、ledgerno 为空 sourceledgerno 非空时：子账户转主账户
         /// </summary>
-        /// <param name="requestid">请求号 在主帐号下唯一 MAX(50 )</param>
         /// <param name="ledgerno">子账户商户编号</param>
         /// <param name="amount">转账金额 单位：元</param>
         /// <param name="sourceledgerno">子账户商编</param>
         /// <returns>成功  失败</returns>
-        public TransferReturnModel TransferAccounts(string requestid, string ledgerno, string amount, string sourceledgerno)
+        public TransferReturnModel TransferAccounts( string ledgerno, string amount, string sourceledgerno)
         {
+            string requestid = TimeHelper.GetTimeStamp(false);
             //商户编号   
             string customernumber = KeyConfig.YeepayAccountId;
             //密钥   

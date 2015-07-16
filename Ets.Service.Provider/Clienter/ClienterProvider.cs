@@ -312,6 +312,9 @@ namespace Ets.Service.Provider.Clienter
 
             if (!string.IsNullOrEmpty(model.recommendPhone) && (wuliuCode == -1))//如果推荐人手机号在B端C端都不存在提示信息 
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberNotExist);
+            //如果已注册  add by 彭宜   20150716
+            if (clienterDao.IsExist(model))
+                return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.HasExist);
             var clienter = ClientRegisterInfoModelTranslator.Instance.Translate(model);
             //根据用户传递的  名称，取得 国标编码 wc,这里的 city 是二级 ，已和康珍 确认过
             //新版的 骑士 注册， 城市 非 必填
@@ -327,7 +330,7 @@ namespace Ets.Service.Provider.Clienter
                     clienter.CityId = model.CityId;
                 }
             }
-            int id = clienterDao.AddClienter(clienter);
+            int id = clienterDao.AddClienter(clienter,model.Timespan);
             var resultModel = new ClientRegisterResultModel
             {
                 userId = id,

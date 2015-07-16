@@ -100,7 +100,6 @@ where  ClienterId=@ClienterId ";
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
 
-
         /// <summary>
         /// 更新易宝信息根据Id
         /// </summary>

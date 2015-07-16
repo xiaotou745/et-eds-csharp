@@ -120,9 +120,12 @@ namespace SuperManWebApi.Controllers
         }
         #endregion
 
+       
         /// <summary>
         /// 易宝转账回调接口  add by caoheyang  20150715
         /// </summary>
+        [HttpGet]
+        [HttpPost]
         public void YeePayCashTransferCallback()
         {
             string data = HttpContext.Current.Request["data"];
