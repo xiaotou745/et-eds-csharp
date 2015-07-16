@@ -22,5 +22,30 @@ namespace Ets.Model.ParameterModel.Finance
         /// </summary>
         [Range(0.01, int.MaxValue, ErrorMessage = "提现金额不能小于0.01元")]
         public decimal WithdrawPrice { get; set; }
+        /// <summary>
+        /// 省名称
+        /// </summary>
+        [Required(ErrorMessage = "省份不能为空")]
+        public string OpenProvince { get; set; }
+        /// <summary>
+        /// 市区名称
+        /// </summary>
+        [Required(ErrorMessage = "城市不能为空")]
+        public string OpenCity { get; set; }
+        /// <summary>
+        /// 身份证号
+        /// </summary>
+        [Required(ErrorMessage = "身份证号不能为空")]
+        public string IDCard { get; set; }
+        /// <summary>
+        /// 省代码
+        /// </summary>
+        [Required(ErrorMessage = "省份代码不能为空")]
+        public int OpenProvinceCode { get; set; }
+        /// <summary>
+        /// 市区代码
+        /// </summary>
+        [Required(ErrorMessage = "城市代码不能为空")]
+        public int OpenCityCode { get; set; }
     }
 }

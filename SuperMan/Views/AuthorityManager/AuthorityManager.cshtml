@@ -1,6 +1,7 @@
 ﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Authority.account>
 @using System.Diagnostics
 @using Ets.Model;
+@using Ets.Model.DataModel.DeliveryCompany
 @using Ets.Model.DomainModel.Area
 @using SuperMan.App_Start
 @using Ets.Service.Provider.User
@@ -122,6 +123,25 @@
                         }
                     </div>
                 </div>
+                <div style="width:500px;" id="divDeliveryCompany">
+                    <label class="control-label">物流公司管理</label>
+                    <a href="javascript:funDcChangeList();"><div id="dcChange">请选择</div></a>
+                    <div id="DcItemList" style="float: left;display:none;">
+                        @{
+                            var openDC = ViewBag.openDcList as IList<DeliveryCompanyModel>;
+                            if (openDC != null && openDC.Count > 0)
+                            {
+                                foreach (var item in openDC)
+                                {
+                                    <div style="width: 100px;float: left">
+                                        <input type="checkbox" name="checkDeliveryCompany" id="@item.Id" value="@item.Id" />
+                                        <label>@item.DeliveryCompanyName</label>
+                                    </div>
+                                }
+                            }
+                        }
+                    </div>
+                </div>
                 <div style="float: left;width:500px">
                     <label class="control-label" for="input01">是否启用</label>
                     <input name="isEnable" id="isEnableY" type="radio" value="1" checked="checked" /> 启用
@@ -181,11 +201,19 @@
         var checkedOfAll = $("#selectAll").prop("checked");
         $("input[name='checkMenus']").prop("checked", checkedOfAll);
     }
+    //物流公司绑定显示隐藏
     function funControlCityList() {
         if ($("#cityList").is(":visible")) {
             $("#cityList").hide();
         } else {
             $("#cityList").show();
+        }
+    }
+    function funDcChangeList() {
+        if ($("#DcItemList").is(":visible")) {
+            $("#DcItemList").hide();
+        } else {
+            $("#DcItemList").show();
         }
     }
     $("#btnAddAccount").click(function () {
@@ -195,8 +223,16 @@
                 cityCodeList = cityCodeList + $(this).val() + ",";
             }
         });
+        var DCidList = "";
+        $("input[name='checkDeliveryCompany']").each(function() {
+            if ($(this).is(':checked')) {
+                DCidList = DCidList + $(this).val() + ",";
+            }
+        });
         if (cityCodeList.length > 0)
             cityCodeList = cityCodeList.substring(0, cityCodeList.length - 1);
+        if (DCidList.length > 0)
+            DCidList = DCidList.substring(0, DCidList.length - 1);
         var id = $("#accountId").val();//用户Id
         var accountName = $("#accountName").val();//用户名称
         var loginName = $("#loginName").val();//登陆名称
@@ -233,7 +269,7 @@
         if (confirm("确定要提交用户信息吗？")) {
             var paramaters = {
                 "Id": id, "userName": accountName, "loginName": loginName, "password": password, "groupId": groupId, "status": status, "cityCodeList": cityCodeList, "optionType": optionType,
-                "accountType": accountType
+                "accountType": accountType, "dcidlist": DCidList
             };
             var url = "/AuthorityManager/Add";
             $.ajax({

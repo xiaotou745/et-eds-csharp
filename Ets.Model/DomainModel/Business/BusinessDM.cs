@@ -167,5 +167,21 @@ namespace Ets.Model.DomainModel.Business
         /// 单次配送的外送费
         /// </summary>
         public decimal? DistribSubsidy { get; set; }
+        /// <summary>
+        /// 结算比例
+        /// </summary>
+        public decimal? BusinessCommission { get; set; }
+        /// <summary>
+        /// 结算类型：1：固定比例 2：固定金额
+        /// </summary>
+        public int CommissionType { get; set; }
+        /// <summary>
+        /// 固定金额
+        /// </summary>
+        public decimal CommissionFixValue { get; set; }
+        /// <summary>
+        /// 余额
+        /// </summary>
+        public decimal BalancePrice { get; set; }
     }
 }

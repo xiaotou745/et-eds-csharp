@@ -235,38 +235,5 @@ update  dbo.DeliveryCompany
                 return null;
             return MapRows<DeliveryCompanyModel>(dt)[0]; 
         }
-
-        /// <summary>
-        /// 根据骑士id获取骑士所属物流公司(不管物流公司是否启用)
-        /// </summary>
-        /// <param name="clienterID"></param>
-        /// <returns></returns>
-        public DeliveryCompanyModel GetDeliveryCompanyByClienterID(int clienterID)
-        {
-            string sql = @"SELECT b.Id ,
-                                    b.DeliveryCompanyName ,
-                                    b.DeliveryCompanyCode ,
-                                    b.IsEnable ,
-                                    b.SettleType ,
-                                    b.ClienterFixMoney ,
-                                    b.ClienterSettleRatio ,
-                                    b.DeliveryCompanySettleMoney ,
-                                    b.DeliveryCompanyRatio ,
-                                    b.BusinessQuantity ,
-                                    b.ClienterQuantity ,
-                                    b.CreateTime ,
-                                    b.CreateName ,
-                                    b.ModifyName ,
-                                    b.ModifyTime
-                            FROM    clienter c ( NOLOCK )
-                                    JOIN DeliveryCompany b ( NOLOCK ) ON c.DeliveryCompanyId = b.Id
-                            WHERE   c.id = @clienterID";
-            IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("@clienterID", clienterID);
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, dbParameters);
-            if (dt == null || dt.Rows.Count <= 0)
-                return null;
-            return MapRows<DeliveryCompanyModel>(dt)[0];
-        }
     }
 }
