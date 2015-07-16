@@ -166,7 +166,9 @@ namespace Ets.Model.ParameterModel.Business
         [DisplayText("添加商铺失败")]
         Faild = 114,
         [DisplayText("注册失败")]
-        ClientRegisterFaild=115
+        ClientRegisterFaild=115,
+        [DisplayText("骑士已存在")]
+        HasExist=116
     }
     //状态:0未审核，1已通过，2未审核且未添加地址，3审核中，4审核被拒绝
     public enum BusiStatus : int

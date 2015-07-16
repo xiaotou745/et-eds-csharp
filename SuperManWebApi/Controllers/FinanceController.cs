@@ -11,6 +11,7 @@ using ETS.Enums;
 using Ets.Model.Common;
 using Ets.Model.DomainModel.Area;
 using Ets.Model.ParameterModel.Finance;
+using Ets.Service.IProvider.Common;
 using Ets.Service.IProvider.Finance;
 using Ets.Service.Provider.Common;
 using Ets.Service.Provider.Finance;
@@ -118,7 +119,7 @@ namespace SuperManWebApi.Controllers
         [ApiVersionStatistic]
         public ResultModel<AreaModelList> GetBankProvinceCity([FromBody]BankProvinceCityPM bankProvinceCityPM)
         {
-            AreaProvider area = new AreaProvider();
+            IAreaProvider area = new AreaProvider();
 
             return area.GetPublicBankCity(bankProvinceCityPM.DataVersion, false);
         }

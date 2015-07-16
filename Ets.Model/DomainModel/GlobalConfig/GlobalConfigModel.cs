@@ -145,6 +145,10 @@ namespace Ets.Model.DomainModel.GlobalConfig
         /// <summary>
         /// 骑士提现小于等于X元支付手续费
         /// </summary>
+        public string OrderCountSetting { get; set; }
+        /// <summary>
+        /// 骑士提现小于等于X元支付手续费
+        /// </summary>
         public string ClienterWithdrawCommissionAccordingMoney { get; set; }
     }
 }

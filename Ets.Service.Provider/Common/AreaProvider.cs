@@ -69,6 +69,26 @@ namespace Ets.Service.Provider.Common
         }
 
         /// <summary>
+        /// 修改开发城市后更新Redis缓存
+        /// danny-20150413
+        /// </summary>
+        /// <param name="version"></param>
+        /// <returns></returns>
+        public void ResetOpenCityListRedis()
+        {
+
+            AreaModelList areaList = new AreaModelList();
+            var redis = new ETS.NoSql.RedisCache.RedisCache();
+            IList<Model.DomainModel.Area.AreaModel> list = dao.GetOpenCitySql();
+            areaList.AreaModels = list;
+            areaList.Version = Config.ApiVersion;
+            if (list != null)
+            {
+                redis.Set(RedissCacheKey.Ets_Service_Provider_Common_GetOpenCity_New, JsonHelper.ToJson(areaList));
+            }
+        }
+
+        /// <summary>
         /// 获取银行省市信息
         /// 彭宜   20150715
         /// </summary>
@@ -105,25 +125,6 @@ namespace Ets.Service.Provider.Common
             return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.Newest, areaList);
         }
 
-        /// <summary>
-        /// 修改开发城市后更新Redis缓存
-        /// danny-20150413
-        /// </summary>
-        /// <param name="version"></param>
-        /// <returns></returns>
-        public void ResetOpenCityListRedis()
-        {
-
-            AreaModelList areaList = new AreaModelList();
-            var redis = new ETS.NoSql.RedisCache.RedisCache();
-            IList<Model.DomainModel.Area.AreaModel> list = dao.GetOpenCitySql();
-            areaList.AreaModels = list;
-            areaList.Version = Config.ApiVersion;
-            if (list != null)
-            {
-                redis.Set(RedissCacheKey.Ets_Service_Provider_Common_GetOpenCity_New, JsonHelper.ToJson(areaList));
-            }
-        }
         ///// <summary>
         ///// 获取开通城市(只有市)
         ///// danny-20150414
