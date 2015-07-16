@@ -1,0 +1,77 @@
+﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Clienter.ClienterListModel>
+@using Ets.Model.DomainModel.Clienter;
+@using Webdiyer.WebControls.Mvc;
+@{
+    ViewBag.Title = "Order";
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+}
+<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+<link href="~/Content/jQuery-File-Upload/css/jquery.fileupload-ui.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-2.1.1.js"></script>
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script src="~/Scripts/jquery-ui-1.8.20.js"></script>
+<script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
+<script type="text/javascript" src="~/Content/jQuery-File-Upload/js/jquery.ui.widget.js"></script>
+<script type="text/javascript" src="~/Content/jQuery-File-Upload/js/jquery.iframe-transport.js"></script>
+<script type="text/javascript" src="~/Content/jQuery-File-Upload/js/jquery.fileupload.js"></script>
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置：物流订单管理 > 骑士管理
+    </h2>
+    @using (Ajax.BeginForm("PostSuperManManager", new RouteValueDictionary { { "pageindex", "" } },
+        new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
+        new RouteValueDictionary { { "id", "searchForm" } }))
+    {
+        <div class="SearchMd">
+            <table border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td>
+                        <span class="">骑士名称: </span>
+                        <input id="txtSuperManName" type="tel" name="clienterName" />
+                        <span class="">审核状态: </span>
+                        <select name="status" class="selectw" id="superManStatus" style="width:143px">
+                            <option value="-1">全部</option>
+                            <option value="1">审核通过</option>
+                            <option value="0">被拒绝</option>
+                            <option value="2">未审核</option>
+                            <option value="3">审核中</option>
+                        </select>
+                        <span class="">骑士电话: </span>
+                        <input id="txtSuperManPhone" type="text" name="clienterPhone" value="" />
+                        <input id="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" name="GroupId" />
+
+                        @*<input id="btnAdd" class="searchBtn" type="button" value="新增骑士">*@
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="">筛选城市: </span>
+                        @Html.DropDownList("businessCity", new SelectList(ViewBag.openCityList.Result.AreaModels, "Name", "Name"), "--无--", new { style = "width:155px" })
+                        <span class="">物流公司: </span>
+                        @Html.DropDownList("deliveryCompany", new SelectList(ViewBag.deliveryCompanyList, "CompanyId", "CompanyName"), new { style = "width:155px" })
+                        @*<span>提现时间: </span>
+                            <input id="txtPubStart" readonly="readonly" type="text" name="txtPubStart" />*@
+                        <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
+                        <input value="导出" class="searchBtn" type="button" id="btnImport">
+                    </td>
+                </tr>
+            </table>
+        </div>
+    }
+    @*@section Scripts{@{Html.RegisterMvcPagerScriptResource();}}*@
+    <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <div class="bd clearfix" id="dataList">
+        @Html.Partial("_PostSuperManManager", Model)
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+
+        $("#btnImport").click(function () {
+            var data = $("#searchForm").serialize();
+            var url ="@Url.Action("SuperManExport")";
+            url = url + "?" + data;
+            window.location.href = url;
+        });
+    });
+</script>

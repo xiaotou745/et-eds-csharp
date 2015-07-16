@@ -1,0 +1,67 @@
+﻿@charset "UTF-8";
+html,body{
+  height:100%;
+}
+body{
+  background-color:#fff;
+  font-size:12px;
+  line-height:1.5;
+  font-family:STHeiti, arial, verdana, helvetica, sans-serif;
+}
+body ,h1,h2,h3,ul,li,p{
+  margin: 0;
+  padding: 0;
+}
+h1,h2,h3,h4,h5{
+  font-weight: 300;
+}
+ul,li{
+  list-style:none;
+}
+*{
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    outline:none;
+    -webkit-tap-highlight-color:rgba(0,0,0,0);
+}
+.qs-wrap{
+  width:100%;
+  height:100%;
+  background:#006699 url(/Images/iphone-qs.png) no-repeat center 100px;
+  background-size:90%;
+}
+.sh-wrap{
+  width:100%;
+  height:100%;
+  background:#031447 url(/Images/iphone-sh.png) no-repeat center 100px;
+  background-size:90%;
+}
+.btn{
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  height:220px;
+  padding:50px 0;
+  background-color:#e8eaf1;
+  text-align: center;
+}
+.btn img{
+  width:70%;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
