@@ -36,7 +36,7 @@ namespace Ets.Service.Provider.Pay
         //AlipayIntegrate alipayIntegrate = new AlipayIntegrate();
         OrderChildDao orderChildDao = new OrderChildDao();
         private IBusinessFinanceProvider iBusinessFinanceProvider = new BusinessFinanceProvider();
-        private  IClienterFinanceProvider iClienterFinanceProvider = new ClienterFinanceProvider();
+        private IClienterFinanceProvider iClienterFinanceProvider = new ClienterFinanceProvider();
         #region 生成支付宝、微信二维码订单
 
         /// <summary>
@@ -354,12 +354,12 @@ namespace Ets.Service.Provider.Pay
         /// <returns></returns>
         public ResultModel<BusinessRechargeResultModel> BusinessRecharge(BusinessRechargeModel model)
         {
-            LogHelper.LogWriter("=============商家充值支付请求数据：", model); 
+            LogHelper.LogWriter("=============商家充值支付请求数据：", model);
 
             // string.Concat(model.productId, "_", model.orderId, "_", model.childId, "_", model.payStyle);
 
             #region 金额验证
-            if (model.payAmount <=0 || model.payAmount > 100000)
+            if (model.payAmount <= 0 || model.payAmount > 100000)
             {
                 return ResultModel<BusinessRechargeResultModel>.Conclude(AliPayStatus.fail);
             }
@@ -622,47 +622,58 @@ namespace Ets.Service.Provider.Pay
 
         public bool YeePayCashTransferCallback(string data)
         {
+            bool result = false;
             string username = "易宝提现回调";
-            CashTransferCallback model = JsonHelper.JsonConvertToObject<CashTransferCallback>(ResponseYeePay.OutRes(data));
+            CashTransferCallback model = JsonHelper.JsonConvertToObject<CashTransferCallback>(data);
             int withwardId = ParseHelper.ToInt(model.cashrequestid.Substring(2));
-            if (model.cashrequestid.Substring(0, 1) == "B")  //B端逻辑
+            if (model.status == "SUCCESS") //提现成功 走 成功的逻辑
             {
-                if (model.status == "SUCCESS")  //提现成功 走 成功的逻辑
+                if (model.cashrequestid.Substring(0, 1) == "B") //B端逻辑
                 {
-                    iBusinessFinanceProvider.BusinessWithdrawPayOk( new BusinessWithdrawLog()
+                    iBusinessFinanceProvider.BusinessWithdrawPayOk(new BusinessWithdrawLog()
                     {
                         Operator = username,
                         Remark = "易宝提现打款成功" + model.desc,
                         Status = BusinessWithdrawFormStatus.Success.GetHashCode(),
                         WithwardId = withwardId
                     });
+                    result = true;
                 }
-                else if (model.status == "FAIL")  //提现失败 走 失败的逻辑
+                else if (model.cashrequestid.Substring(0, 1) == "C") //C端逻辑
                 {
-                    iBusinessFinanceProvider.BusinessWithdrawPayFailed( new BusinessWithdrawLogModel()
+                    if (model.status == "SUCCESS") //提现成功 走 成功的逻辑
+                    {
+                        iClienterFinanceProvider.ClienterWithdrawPayOk(new ClienterWithdrawLog()
+                        {
+                            Operator = username,
+                            Remark = "易宝提现打款成功" + model.desc,
+                            Status = ClienterWithdrawFormStatus.Success.GetHashCode(),
+                            WithwardId = withwardId
+                        });
+                    }
+                    result = true;
+                }
+            }
+            else if (model.status == "FAIL") //提现失败 走 失败的逻辑
+            {
+                Transfer transfer = new Transfer();
+                TransferReturnModel tempmodel= transfer.TransferAccounts("", model.amount, model.ledgerno);
+                if (tempmodel.code == "1")
+                {
+
+                } if (model.cashrequestid.Substring(0, 1) == "B") //B端逻辑
+                {
+                    iBusinessFinanceProvider.BusinessWithdrawPayFailed(new BusinessWithdrawLogModel()
                     {
                         Operator = username,
                         Remark = "易宝提现打款失败，" + model.desc,
                         Status = BusinessWithdrawFormStatus.Error.GetHashCode(),
-                        WithwardId =withwardId,
+                        WithwardId = withwardId,
                         PayFailedReason = ""
-
                     }); //商户提现失败
+                    result = true;
                 }
-            }
-            else if (model.cashrequestid.Substring(0, 1) == "C") //C端逻辑
-            {
-                if (model.status == "SUCCESS") //提现成功 走 成功的逻辑
-                {
-                    iClienterFinanceProvider.ClienterWithdrawPayOk(new ClienterWithdrawLog()
-                    {
-                        Operator = username,
-                        Remark = "易宝提现打款成功" + model.desc,
-                        Status = ClienterWithdrawFormStatus.Success.GetHashCode(),
-                        WithwardId = withwardId
-                    });
-                }
-                else if (model.status == "FAIL") //提现失败 走 失败的逻辑
+                else if (model.cashrequestid.Substring(0, 1) == "C") //C端逻辑
                 {
                     iClienterFinanceProvider.ClienterWithdrawPayFailed(new ClienterWithdrawLogModel()
                     {
@@ -672,13 +683,12 @@ namespace Ets.Service.Provider.Pay
                         WithwardId = withwardId,
                         PayFailedReason = ""
                     });
+                    result = true;
                 }
+                
             }
-            else
-            {
-                return false;
-            }
-            return true;
+            return result;
         }
+
     }
 }
