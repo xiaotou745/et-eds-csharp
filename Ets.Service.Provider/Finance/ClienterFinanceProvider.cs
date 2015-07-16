@@ -602,7 +602,6 @@ namespace Ets.Service.Provider.Finance
                         && clienterFinanceDao.ModifyClienterBalanceRecordStatus(model.WithwardId.ToString())
                         && clienterFinanceDao.ModifyClienterAmountInfo(model.WithwardId.ToString()))
                     {
-
                         _clienterDao.UpdateForWithdrawC(new UpdateForWithdrawPM
                         {
                             Id = withdraw.ClienterId,
