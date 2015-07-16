@@ -311,6 +311,8 @@ namespace Ets.Service.Provider.Clienter
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PasswordEmpty);
             if (string.IsNullOrEmpty(code) || model.verifyCode != code) //判断验码法录入是否正确
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.IncorrectCheckCode);
+            if (string.IsNullOrEmpty(model.timespan)) //判断时间戳是否为空
+                return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.TimespanEmpty);
             var wuliuCode = string.IsNullOrWhiteSpace(model.recommendPhone) ? 0 : clienterDao.CheckRecommendPhone(model.recommendPhone);//获取物流公司编码
             model.DeliveryCompanyId = wuliuCode;
 
@@ -334,7 +336,7 @@ namespace Ets.Service.Provider.Clienter
                     clienter.CityId = model.CityId;
                 }
             }
-            int id = clienterDao.AddClienter(clienter,model.Timespan);
+            int id = clienterDao.AddClienter(clienter, model.timespan);
             var resultModel = new ClientRegisterResultModel
             {
                 userId = id,
@@ -1214,12 +1216,9 @@ namespace Ets.Service.Provider.Clienter
             {
                 Task.Factory.StartNew(() =>
                 {
+                    UpdateDeliveryCompanyOrderCommssion(myorder, userId);
                     new OrderProvider().AsyncOrderStatus(orderNo);//同步第三方订单
                     Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", myorder.businessId.ToString(), string.Empty);
-                });
-                Task.Factory.StartNew(() =>
-                {
-                    UpdateDeliveryCompanyOrderCommssion(myorder, userId);
                 });
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Success);
             }
@@ -1227,7 +1226,7 @@ namespace Ets.Service.Provider.Clienter
             return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Failed);
         }
         /// <summary>
-        /// 计算物流公司的订单的佣金
+        /// 计算物流公司的订单的佣金,zhaohailong
         /// </summary>
         /// <param name="orderModel"></param>
         private void UpdateDeliveryCompanyOrderCommssion(OrderListModel orderModel, int clienterId)
@@ -1402,7 +1401,7 @@ namespace Ets.Service.Provider.Clienter
 
             int num = orderDao.GetTotalOrderNumByClienterID(myOrderInfo.clienterId);
             //如果骑士今天已经完成（或完成后，又取消了,不包含当前任务中的订单数量）的订单数量大于配置的值，则当前任务中的所有订单都扣除网站补贴
-            if (num - myOrderInfo.OrderCount > ParseHelper.ToInt(globalSetting.OrderCountSetting, 0))
+            if (num - myOrderInfo.OrderCount > ParseHelper.ToInt(globalSetting.OrderCountSetting, 50))
             {
                 return true;
             }

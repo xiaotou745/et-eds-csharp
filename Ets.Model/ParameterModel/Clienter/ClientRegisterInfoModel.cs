@@ -50,7 +50,7 @@ namespace Ets.Model.ParameterModel.Clienter
         /// <summary>
         /// 时间戳
         /// </summary>
-        public string Timespan { get; set; }
+        public string timespan { get; set; }
     }
     public class ClientRegisterResultModel
     {

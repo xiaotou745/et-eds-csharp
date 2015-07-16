@@ -40,12 +40,10 @@ namespace Ets.Model.ParameterModel.Finance
         /// <summary>
         /// 省代码
         /// </summary>
-        [Required(ErrorMessage = "省份代码不能为空")]
         public int OpenProvinceCode { get; set; }
         /// <summary>
         /// 市区代码
         /// </summary>
-        [Required(ErrorMessage = "城市代码不能为空")]
         public int OpenCityCode { get; set; }
     }
 }

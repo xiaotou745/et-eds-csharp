@@ -4,10 +4,12 @@ using Ets.Dao.User;
 using ETS.Enums;
 using ETS.Extension;
 using Ets.Model.Common;
+using Ets.Model.Common.YeePay;
 using Ets.Model.DataModel.Business;
 using Ets.Model.DataModel.Finance;
 using Ets.Model.DomainModel.Finance;
 using Ets.Model.ParameterModel.Finance;
+using ETS.Pay.YeePay;
 using ETS.Security;
 using Ets.Service.IProvider.Finance;
 using ETS.Data.PageData;
@@ -349,7 +351,6 @@ namespace Ets.Service.Provider.Finance
         public bool BusinessWithdrawPayFailed(BusinessWithdrawLogModel model)
         {
             bool reg = false;
-
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 if (businessFinanceDao.BusinessWithdrawReturn(model)   //提现返现
@@ -357,29 +358,68 @@ namespace Ets.Service.Provider.Finance
                     && businessFinanceDao.ModifyBusinessBalanceRecordStatus(model.WithwardId.ToString())  //修改流水 
                     && businessFinanceDao.ModifyBusinessAmountInfo(model.WithwardId.ToString()))  //提现单
                 {
-                    var withdraw = _businessWithdrawFormDao.GetById(model.WithwardId);
-                    if (withdraw.HandChargeOutlay == 0) //个人支出手续费  增加手续费扣款记录流水 
-                    {
-                        _businessDao.UpdateForWithdrawC(new UpdateForWithdrawPM()
-                        {
-                            Id = withdraw.BusinessId,
-                            Money = -withdraw.HandCharge
-                        }); //更新商户表的余额，可提现余额
-                        _businessBalanceRecordDao.Insert(new BusinessBalanceRecord()
-                        {
-                            BusinessId = withdraw.BusinessId,//商户Id
-                            Amount = -withdraw.HandCharge,//手续费金额
-                            Status = (int)BusinessBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
-                            RecordType = (int)BusinessBalanceRecordRecordType.ProcedureFee,
-                            Operator = "易宝系统回调",
-                            WithwardId = withdraw.Id,
-                            RelationNo = withdraw.WithwardNo,
-                            Remark = "易宝提现失败扣除手续费",
-                        });
-                    }
                     reg = true;
                     tran.Complete();
                 }
+            }
+            return reg;
+        }
+
+
+        /// <summary>
+        /// 易宝打款失败回调处理逻辑 
+        /// add by caoheyang  20150716
+        /// </summary>
+        /// <param name="model"></param>
+        ///  <param name="callback"></param>
+        /// <returns></returns>
+        public bool BusinessWithdrawPayFailed(BusinessWithdrawLogModel model, CashTransferCallback callback)
+        {
+            bool reg = false;
+            var withdraw = _businessWithdrawFormDao.GetById(model.WithwardId);  //提现单
+            if (withdraw == null)
+            {
+                return false;
+            }
+            Transfer transfer = new Transfer();
+            TransferReturnModel tempmodel = transfer.TransferAccounts("",
+                (ParseHelper.ToDecimal(callback.amount) - withdraw.HandCharge).ToString(),callback.ledgerno);
+            if (tempmodel.code == "1") //易宝子账户到主账户打款 成功
+            {
+                using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+                {
+                    if (businessFinanceDao.BusinessWithdrawReturn(model) //提现返现
+                        && businessFinanceDao.BusinessWithdrawPayFailed(model) //更新打款失败
+                        && businessFinanceDao.ModifyBusinessBalanceRecordStatus(model.WithwardId.ToString()) //修改流水 
+                        && businessFinanceDao.ModifyBusinessAmountInfo(model.WithwardId.ToString())) //提现单
+                    {
+                        if (withdraw.HandChargeOutlay == 0) //个人支出手续费  增加手续费扣款记录流水 
+                        {
+                            _businessDao.UpdateForWithdrawC(new UpdateForWithdrawPM()
+                            {
+                                Id = withdraw.BusinessId,
+                                Money = -withdraw.HandCharge
+                            }); //更新商户表的余额，可提现余额
+                            _businessBalanceRecordDao.Insert(new BusinessBalanceRecord()
+                            {
+                                BusinessId = withdraw.BusinessId, //商户Id
+                                Amount = -withdraw.HandCharge, //手续费金额
+                                Status = (int) BusinessBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
+                                RecordType = (int) BusinessBalanceRecordRecordType.ProcedureFee,
+                                Operator = "易宝系统回调",
+                                WithwardId = withdraw.Id,
+                                RelationNo = withdraw.WithwardNo,
+                                Remark = "易宝提现失败扣除手续费",
+                            });
+                        }
+                        reg = true;
+                        tran.Complete();
+                    }
+                }
+            }
+            else
+            {
+                LogHelper.LogWriterString("易宝子账户到主账户打款导致失败，提现单号为:" + model.WithwardId);
             }
             return reg;
         }

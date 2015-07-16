@@ -528,7 +528,7 @@ namespace Ets.Service.Provider.Authority
         /// <param name="criteria"></param>
         /// <returns></returns>
         public DealResultInfo AddAccount(AccountCriteria criteria)
-        {
+        {//TODO:
             var dealResultInfo = new DealResultInfo
             {
                 DealFlag = false

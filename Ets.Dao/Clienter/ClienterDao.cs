@@ -487,11 +487,10 @@ SELECT PhoneNo AS Phone,0 AS PemType FROM clienter(NOLOCK) WHERE Status=1
             const string querysql = @"
 select  count(1) 
 from  dbo.[clienter]  
-where Timespan=@Timespan and phoneNo=@phoneNo and RecommendPhone=@RecommendPhone;";
+where Timespan=@Timespan and phoneNo=@phoneNo;";
             IDbParameters dbSelectParameters = DbHelper.CreateDbParameters();
             dbSelectParameters.Add("phoneNo", DbType.String,20).Value=model.phoneNo;
-            dbSelectParameters.Add("Timespan", DbType.String, 50).Value = model.Timespan;
-            dbSelectParameters.Add("RecommendPhone", DbType.String,40).Value = model.recommendPhone;
+            dbSelectParameters.Add("Timespan", DbType.String, 50).Value = model.timespan;
             object executeScalar = DbHelper.ExecuteScalar(SuperMan_Write, querysql, dbSelectParameters);
             isExist = ParseHelper.ToInt(executeScalar, 0) > 0;
 
