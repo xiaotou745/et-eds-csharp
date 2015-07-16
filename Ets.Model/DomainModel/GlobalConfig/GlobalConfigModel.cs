@@ -136,7 +136,15 @@ namespace Ets.Model.DomainModel.GlobalConfig
         /// 雇主任务时间限制
         /// </summary>
         public string EmployerTaskTimeSet { get; set; }
-        
 
+        /// <summary>
+        /// 无效订单判定时取货点和完成点的距离(米)
+        /// </summary>
+        public string TakeCompleteDistance { get; set; }
+
+        /// <summary>
+        /// 无效订单判定时累计完成订单数量
+        /// </summary>
+        public string OrderCountSetting { get; set; }
     }
 }
