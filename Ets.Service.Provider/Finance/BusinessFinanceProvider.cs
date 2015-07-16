@@ -295,6 +295,7 @@ namespace Ets.Service.Provider.Finance
         public bool BusinessWithdrawPayOk(BusinessWithdrawLog model)
         {
             bool reg = false;
+            
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 if (businessFinanceDao.BusinessWithdrawPayOk(model))

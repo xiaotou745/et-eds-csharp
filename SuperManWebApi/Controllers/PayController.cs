@@ -1,4 +1,5 @@
-﻿using Ets.Model.Common;
+﻿using System.Web;
+using Ets.Model.Common;
 using Ets.Model.Common.AliPay;
 using Ets.Model.DomainModel.Business;
 using Ets.Model.ParameterModel.AliPay;
@@ -116,6 +117,17 @@ namespace SuperManWebApi.Controllers
         {
             return payProvider.ReturnWxpay();
         }
+        #endregion
+
+        #region 易宝
+        /// <summary>
+        /// 易宝转账回调接口  add by caoheyang  20150715
+        /// </summary>
+        public void YeePayCashTransferCallback()
+        {
+            string data = HttpContext.Current.Request["data"];
+            payProvider.YeePayCashTransferCallback(data);
+        } 
         #endregion
 
     }
