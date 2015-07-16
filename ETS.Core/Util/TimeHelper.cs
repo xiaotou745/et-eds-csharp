@@ -28,7 +28,7 @@ namespace ETS.Util
         }
 
         /// <summary>  
-        /// 获取当前时间
+        /// 获取当前时间戳  
         /// </summary>  
         /// <param name="timestamp">时间戳</param>  
         /// <param name="bflag">为真时获取10位时间戳,为假时获取13位时间戳.</param>  

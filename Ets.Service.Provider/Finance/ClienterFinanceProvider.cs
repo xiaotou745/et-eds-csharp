@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 using Ets.Dao.Clienter;
 using Ets.Dao.Finance;
 using ETS.Enums;
@@ -11,7 +10,6 @@ using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.Finance;
 using Ets.Model.DomainModel.Finance;
 using Ets.Model.ParameterModel.Finance;
-using ETS.Pay.YeePay;
 using ETS.Security;
 using Ets.Service.IProvider.Finance;
 using ETS.Transaction;
@@ -66,7 +64,7 @@ namespace Ets.Service.Provider.Finance
                 {
                     _clienterDao.UpdateForWithdrawC(new UpdateForWithdrawPM
                     {
-                        Id = withdrawCpm.ClienterId,
+                        Id=withdrawCpm.ClienterId,
                         Money = -withdrawCpm.WithdrawPrice
                     }); //更新骑士表的余额，可提现余额
                     string withwardNo = Helper.generateOrderCode(withdrawCpm.ClienterId);
@@ -131,10 +129,10 @@ namespace Ets.Service.Provider.Finance
         {
             if (withdrawCpm == null)
             {
-                return FinanceWithdrawC.NoPara;
+                return  FinanceWithdrawC.NoPara;
             }
-            if (withdrawCpm.WithdrawPrice % 100 != 0 || withdrawCpm.WithdrawPrice < 100
-                || withdrawCpm.WithdrawPrice > 3000) //提现金额小于500 加2手续费
+            if (withdrawCpm.WithdrawPrice % 100 != 0 || withdrawCpm.WithdrawPrice < 100 
+                || withdrawCpm.WithdrawPrice >3000) //提现金额小于500 加2手续费
             {
                 return FinanceWithdrawC.MoneyDoubleError;
             }
@@ -146,7 +144,7 @@ namespace Ets.Service.Provider.Finance
             }
             else if (clienter.AllowWithdrawPrice < withdrawCpm.WithdrawPrice) //可提现金额小于提现金额，提现失败
             {
-                return FinanceWithdrawC.MoneyError;
+                return  FinanceWithdrawC.MoneyError;
             }
             else if (clienter.AccountBalance < clienter.AllowWithdrawPrice) //账户余额小于 可提现金额，提现失败 账号异常
             {
@@ -175,10 +173,10 @@ namespace Ets.Service.Provider.Finance
         {
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                FinanceCardBindC checkbool = CheckCardBindC(cardBindCpm);  //验证数据合法性
-                if (checkbool != FinanceCardBindC.Success)
+                 FinanceCardBindC checkbool = CheckCardBindC(cardBindCpm);  //验证数据合法性
+                 if (checkbool != FinanceCardBindC.Success) 
                 {
-                    return ResultModel<object>.Conclude(checkbool);
+                    return ResultModel<object>.Conclude(checkbool); 
                 }
                 int result = _clienterFinanceAccountDao.Insert(new ClienterFinanceAccount()
                 {
@@ -192,61 +190,11 @@ namespace Ets.Service.Provider.Finance
                     OpenBank = cardBindCpm.OpenBank, //开户行
                     OpenSubBank = cardBindCpm.OpenSubBank, //开户支行
                     CreateBy = cardBindCpm.CreateBy,//创建人  当前登录人
-                    UpdateBy = cardBindCpm.CreateBy,//新增时最后修改人与新增人一致  当前登录人
-                    OpenCity = cardBindCpm.OpenCity,//开户行
-                    OpenProvince = cardBindCpm.OpenProvince,//开户市
-                    IDCard = cardBindCpm.IDCard,//身份证号
+                    UpdateBy = cardBindCpm.CreateBy//新增时最后修改人与新增人一致  当前登录人
                 });
                 tran.Complete();
+                return ResultModel<object>.Conclude(FinanceCardBindC.Success);
             }
-            #region 异步请求易宝注册接口
-            Task.Factory.StartNew(() =>
-            {
-                //请求易宝注册接口,如果成功,则更新账户易宝key和status
-                var clienter = _clienterDao.GetById(cardBindCpm.ClienterId);
-                if (clienter == null)
-                {
-                    ETS.Util.LogHelper.LogWriter(new ArgumentException("clienter值为null"), "ClienterFinanceProvider.CardBindC-绑定银行账户");
-                    return;
-                }
-                string requestid = TimeHelper.GetTimeStamp(false);
-                string bindmobile = clienter.PhoneNo;  //绑定手机
-                string customertype = (cardBindCpm.BelongType == 0 ?
-                    CustomertypeEnum.PERSON.ToString() : CustomertypeEnum.ENTERPRISE.ToString()); //注册类型  PERSON ：个人 ENTERPRISE：企业个人 ENTERPRISE：企业
-                string signedname = cardBindCpm.TrueName; //签约名   商户签约名；个人，填写姓名；企业，填写企业名称。
-                string linkman = cardBindCpm.TrueName; //联系人
-                string idcard = cardBindCpm.IDCard; //身份证  customertype为PERSON时，必填
-                string businesslicence = ""; //营业执照号 customertype为ENTERPRISE时，必填
-                string legalperson = cardBindCpm.TrueName;
-                string bankaccountnumber = cardBindCpm.AccountNo; //银行卡号 
-                string bankname = cardBindCpm.OpenBank; //开户行
-                string accountname = cardBindCpm.TrueName; //开户名
-                string bankaccounttype = (cardBindCpm.BelongType == 0 ?
-                    BankaccounttypeEnum.PrivateCash.ToString() : BankaccounttypeEnum.PublicCash.ToString());  //银行卡类别  PrivateCash：对私 PublicCash： 对公
-                string bankprovince = cardBindCpm.OpenProvince;
-                string bankcity = cardBindCpm.OpenCity;
-                var result1 = new Register().RegSubaccount(requestid, bindmobile, customertype, signedname, linkman,
-                idcard, businesslicence, legalperson, bankaccountnumber, bankname,
-                accountname, bankaccounttype, bankprovince, bankcity);//注册帐号
-                if (result1 != null && !string.IsNullOrEmpty(result1.code) && result1.code.Trim() == "1")
-                {
-                    _clienterFinanceAccountDao.UpdateYeepayInfo(cardBindCpm.ClienterId, result1.ledgerno, 0);
-                }
-                else
-                {
-                    if (result1 == null)
-                    {
-                        ETS.Util.LogHelper.LogWriterString("骑士绑定易宝支付失败", string.Format("返回结果为null"));
-                    }
-                    else
-                    {
-                        ETS.Util.LogHelper.LogWriterString("骑士绑定易宝支付失败", string.Format("易宝错误信息:code{0},ledgerno:{1},hmac{2},msg{3}", 
-                            result1.code, result1.ledgerno, result1.hmac, result1.msg));
-                    }
-                }
-            });
-            #endregion
-            return ResultModel<object>.Conclude(FinanceCardBindC.Success);
         }
 
         /// <summary>
@@ -254,13 +202,13 @@ namespace Ets.Service.Provider.Finance
         /// </summary>
         /// <param name="cardBindCpm">参数实体</param>
         /// <returns></returns>
-        private FinanceCardBindC CheckCardBindC(CardBindCPM cardBindCpm)
+        private  FinanceCardBindC CheckCardBindC(CardBindCPM cardBindCpm)
         {
             if (cardBindCpm == null)
             {
                 return FinanceCardBindC.NoPara;
             }
-            if (cardBindCpm.BelongType == (int)ClienterFinanceAccountBelongType.Conpany
+            if (cardBindCpm.BelongType == (int)ClienterFinanceAccountBelongType.Conpany 
                 && string.IsNullOrWhiteSpace(cardBindCpm.OpenSubBank)) //公司帐户开户支行不能为空
             {
                 return FinanceCardBindC.BelongTypeError;
@@ -285,85 +233,22 @@ namespace Ets.Service.Provider.Finance
             {
                 return ResultModel<object>.Conclude(checkbool);
             }
-            ClienterFinanceAccount cfAccount = _clienterFinanceAccountDao.GetById(cardModifyCpm.Id);
-            if (cfAccount != null)
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                if (cfAccount.OpenBank != cardModifyCpm.OpenBank || cfAccount.OpenSubBank != cardModifyCpm.OpenSubBank ||
-                    cfAccount.OpenProvince != cardModifyCpm.OpenCity || cfAccount.IDCard != cardModifyCpm.IDCard ||
-                    cfAccount.TrueName != cardModifyCpm.TrueName ||
-                    cfAccount.AccountNo != DES.Encrypt(cardModifyCpm.AccountNo))
+                _clienterFinanceAccountDao.Update(new ClienterFinanceAccount()
                 {
-                    //1.修改
-                    using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
-                    {
-                        _clienterFinanceAccountDao.Update(new ClienterFinanceAccount()
-                        {
-                            Id = cardModifyCpm.Id,
-                            ClienterId = cardModifyCpm.ClienterId, //骑士ID
-                            TrueName = cardModifyCpm.TrueName, //户名
-                            AccountNo = DES.Encrypt(cardModifyCpm.AccountNo), //卡号(DES加密)
-                            BelongType = cardModifyCpm.BelongType, //账号类别  0 个人账户 1 公司账户  
-                            OpenBank = cardModifyCpm.OpenBank, //开户行
-                            OpenSubBank = cardModifyCpm.OpenSubBank, //开户支行
-                            UpdateBy = cardModifyCpm.UpdateBy, //修改人  当前登录人
-                            OpenProvince = cardModifyCpm.OpenProvince, //省名称
-                            OpenCity = cardModifyCpm.OpenCity, //市区名称
-                            IDCard = cardModifyCpm.IDCard //身份证号
-                        });
-                        tran.Complete();
-                    }
-                }
-                else
-                {
-                    return ResultModel<object>.Conclude(FinanceCardModifyC.NoModify);
-                }
+                    Id = cardModifyCpm.Id,
+                    ClienterId = cardModifyCpm.ClienterId,//骑士ID
+                    TrueName = cardModifyCpm.TrueName, //户名
+                    AccountNo = DES.Encrypt(cardModifyCpm.AccountNo), //卡号(DES加密)
+                    BelongType = cardModifyCpm.BelongType,//账号类别  0 个人账户 1 公司账户  
+                    OpenBank = cardModifyCpm.OpenBank, //开户行
+                    OpenSubBank = cardModifyCpm.OpenSubBank, //开户支行
+                    UpdateBy = cardModifyCpm.UpdateBy//修改人  当前登录人
+                });
+                tran.Complete();
+                return ResultModel<object>.Conclude(SystemState.Success);
             }
-            else
-            {
-                return ResultModel<object>.Conclude(FinanceCardModifyC.BelongTypeError);
-            }
-
-            #region 2.异步调用注册ebao
-
-            string requestid = TimeHelper.GetTimeStamp(false);
-            string bindmobile = cfAccount.PhoneNo; //绑定手机
-            string customertype = (cardModifyCpm.BelongType == 0 ? CustomertypeEnum.PERSON.ToString() : CustomertypeEnum.ENTERPRISE.ToString()); //注册类型PERSON ：个人 ENTERPRISE：企业个人 ENTERPRISE：企业
-            string signedname = cardModifyCpm.TrueName; //签约名   商户签约名；个人，填写姓名；企业，填写企业名称。
-            string linkman = cardModifyCpm.TrueName; //联系人
-            string idcard = cardModifyCpm.IDCard; //身份证  customertype为PERSON时，必填
-            string businesslicence = ""; //营业执照号 customertype为ENTERPRISE时，必填
-            string legalperson = cardModifyCpm.TrueName;
-            string bankaccountnumber = cardModifyCpm.AccountNo; //银行卡号 
-            string bankname = cardModifyCpm.OpenBank; //开户行
-            string accountname = cardModifyCpm.TrueName; //开户名
-            string bankaccounttype = (cardModifyCpm.BelongType == 0 ? BankaccounttypeEnum.PrivateCash.ToString(): BankaccounttypeEnum.PublicCash.ToString()); //银行卡类别  PrivateCash：对私 PublicCash： 对公
-            string bankprovince = cardModifyCpm.OpenProvince;
-            string bankcity = cardModifyCpm.OpenCity;
-            var registResult = new Register().RegSubaccount(requestid, bindmobile, customertype, signedname, linkman,
-                idcard, businesslicence, legalperson, bankaccountnumber, bankname,
-                accountname, bankaccounttype, bankprovince, bankcity); //注册帐号
-            if (registResult != null && !string.IsNullOrEmpty(registResult.code) && registResult.code.Trim() == "1")   //绑定成功，更新易宝key
-            {
-                _clienterFinanceAccountDao.UpdateYeepayInfoById(cardModifyCpm.Id, registResult.ledgerno, 0);
-            }
-            else
-            {
-                _clienterFinanceAccountDao.UpdateYeepayInfoById(cardModifyCpm.Id, "", 1);  //绑定失败，更新易宝key
-                if (registResult == null)
-                {
-                    LogHelper.LogWriterString("骑士绑定易宝支付失败", string.Format("返回结果为null"));
-                }
-                else
-                {
-                    LogHelper.LogWriterString("骑士绑定易宝支付失败",
-                        string.Format("易宝错误信息:code{0},ledgerno:{1},hmac{2},msg{3}",
-                            registResult.code, registResult.ledgerno, registResult.hmac, registResult.msg));
-                }
-            } 
-            #endregion
-
-
-            return ResultModel<object>.Conclude(SystemState.Success);
         }
 
         /// <summary>
@@ -382,7 +267,6 @@ namespace Ets.Service.Provider.Finance
             {
                 return FinanceCardModifyC.BelongTypeError;
             }
-
             return FinanceCardModifyC.Success;
         }
 
@@ -394,11 +278,11 @@ namespace Ets.Service.Provider.Finance
         /// <param name="clienterId">骑士id</param>
         /// <returns></returns>
         public ResultModel<object> GetRecords(int clienterId)
-        {
-            IList<FinanceRecordsDM> records = _clienterBalanceRecordDao.GetByClienterId(clienterId);
-            return ResultModel<object>.Conclude(SystemState.Success,
-              TranslateRecords(records));
-        }
+         {
+             IList<FinanceRecordsDM> records = _clienterBalanceRecordDao.GetByClienterId(clienterId);
+             return ResultModel<object>.Conclude(SystemState.Success,
+               TranslateRecords(records));
+         }
 
         /// <summary>
         /// 骑士交易流水API 信息处理转换 add by caoheyang 20150512
@@ -408,14 +292,14 @@ namespace Ets.Service.Provider.Finance
         private IList<FinanceRecordsDMList> TranslateRecords(IList<FinanceRecordsDM> records)
         {
             IList<FinanceRecordsDMList> datas = new List<FinanceRecordsDMList>();
-            datas.Add(new FinanceRecordsDMList() { MonthIfo = "本月", Datas = new List<FinanceRecordsDM>() });
-            int index = 0;
+            datas.Add(new FinanceRecordsDMList() {MonthIfo = "本月", Datas = new List<FinanceRecordsDM>()});
+            int index = 0; 
             foreach (var temp in records)
             {
-                temp.StatusStr = ((ClienterBalanceRecordStatus)Enum.Parse(typeof(ClienterBalanceRecordStatus),
+                temp.StatusStr = ((ClienterBalanceRecordStatus) Enum.Parse(typeof (ClienterBalanceRecordStatus),
                     temp.Status.ToString(), false)).GetDisplayText(); //流水状态文本
                 temp.RecordTypeStr =
-                    ((ClienterBalanceRecordRecordType)Enum.Parse(typeof(ClienterBalanceRecordRecordType),
+                    ((ClienterBalanceRecordRecordType) Enum.Parse(typeof (ClienterBalanceRecordRecordType),
                         temp.RecordType.ToString(), false)).GetDisplayText(); //交易类型文本
                 if (datas[index].MonthIfo == temp.MonthInfo)
                 {
@@ -629,7 +513,7 @@ namespace Ets.Service.Provider.Finance
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.ClienterPhoneNo));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.OpenBank));
                 strBuilder.AppendLine(string.Format("<td>{0}</td></tr>", item.TrueName));
-
+                
             }
             strBuilder.AppendLine("</table>");
             return strBuilder.ToString();

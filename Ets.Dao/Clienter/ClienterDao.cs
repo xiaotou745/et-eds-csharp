@@ -83,11 +83,11 @@ namespace Ets.Dao.Clienter
             {
                 if (criteria.status.Value == OrderQueryType.Success.GetHashCode())
                 {
-                    where += " and o.IsEnable=1 and o.[Status]= " + criteria.status.Value;
+                    where += " and o.[Status]= " + criteria.status.Value;
                 }
                 if (criteria.status.Value == OrderQueryType.Working.GetHashCode())//此处查询的未进行中的订单（已接单，已取货）
                 {
-                    where += " and o.IsEnable=1 and o.[Status] in (2,4)";
+                    where += " and o.[Status] in (2,4)";
                 }
             }
             else

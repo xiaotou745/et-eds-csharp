@@ -144,7 +144,6 @@
     </div>
     <input type="hidden" value="@Model.OrderNo" id="OrderNo" />
     <input type="hidden" value="@Model.Id" id="OrderId" />
-    <input type="hidden" value="@Model.IsEnable" id="IsEnable" />
     <hr />
     <div style="float:left;width:1000px;padding-top:30px">
         <lable style="font-size:13px;font-weight:bold;">订单流转记录：</lable>
@@ -230,14 +229,7 @@
 </div>
 <script>
     var adminjs = new adminglass(); //实例化后台类
-    
     $("#btnCancel").click(function () {
-        var orderOptionLog = $('#orderOptionLog').val();
-        if ($("#IsEnable").val().trim() == "0") {
-            alert("已删除的订单不能取消！");
-            return false;
-        }
-        
         adminjs.openwinbox('#OrderOptionShow');
 
     });

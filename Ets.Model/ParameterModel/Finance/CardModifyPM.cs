@@ -64,21 +64,5 @@ namespace Ets.Model.ParameterModel.Finance
         /// </summary>
         [Required(ErrorMessage = "版本号不能为空")]
         public string Version { get; set; }
-
-        /// <summary>
-        /// 省名称
-        /// </summary>
-        [Required(ErrorMessage = "省市区不能为空")]
-        public string OpenProvince { get; set; }
-        /// <summary>
-        /// 市区名称
-        /// </summary>
-        [Required(ErrorMessage = "省市区不能为空")]
-        public string OpenCity { get; set; }
-        /// <summary>
-        /// 身份证号
-        /// </summary>
-        [Required(ErrorMessage = "身份证号不能为空")]
-        public string IDCard { get; set; }
     }
 }

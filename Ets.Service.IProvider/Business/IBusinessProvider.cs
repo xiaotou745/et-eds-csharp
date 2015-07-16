@@ -269,15 +269,6 @@ namespace Ets.Service.IProvider.Business
         /// <returns></returns>
         BusinessInfo GetDistribSubsidy(int id);
         /// <summary>
-        /// 获取商家发布任务需要的信息(包含商户外送费,当前任务结算金额,剩余余额)
-        /// add by 彭宜   20150714
-        /// </summary>
-        /// <param name="id">商户id</param>
-        /// <param name="orderChildCount">子订单数量</param>
-        /// <param name="amount">订单金额</param>
-        /// <returns></returns>
-        BusiDistribSubsidyResultModel GetBusinessPushOrderInfo(int id, int orderChildCount, decimal amount);
-        /// <summary>
         /// 判断商户是否存在      
         /// </summary>
         /// <UpdateBy>hulingbo</UpdateBy>

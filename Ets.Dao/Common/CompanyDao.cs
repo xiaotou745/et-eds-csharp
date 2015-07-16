@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ETS.Data.Core;
 using ETS.Extension;
 using Ets.Model.Common;
 using Ets.Model.DomainModel.DeliveryCompany;
@@ -30,28 +29,6 @@ namespace Ets.Dao.Common
             if (!ds.HasData())
             {
                 list=MapRows<CompanyModel>(DataTableHelper.GetTable(ds));
-            }
-            return list;
-        }
-        /// <summary>
-        /// 物流订单管理-骑士管理 下拉框
-        /// </summary>
-        /// <param name="accountId"></param>
-        /// <returns></returns>
-        public IList<CompanyModel> GetCompanyListByAccountID(int accountId)
-        {
-            const string sql =
-                @"SELECT DC.DeliveryCompanyName AS CompanyName,DC.[ID] AS CompanyId FROM AccountDeliveryRelation AD(NOLOCK)
-                    JOIN DeliveryCompany DC(NOLOCK) ON AD.DeliveryCompanyID=DC.Id
-                    WHERE AD.AccountId=@AccountId AND DC.IsEnable=1";
-            IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.Add("@AccountId", DbType.Int32);
-            dbParameters.SetValue("@AccountId",accountId);
-            DataSet ds = DbHelper.ExecuteDataset(SuperMan_Read, sql,dbParameters);
-            IList<CompanyModel> list = new List<CompanyModel>();
-            if (!ds.HasData())
-            {
-                list = MapRows<CompanyModel>(DataTableHelper.GetTable(ds));
             }
             return list;
         }

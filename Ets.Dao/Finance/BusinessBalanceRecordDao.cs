@@ -97,7 +97,7 @@ case substring(convert(varchar(100), OperateTime, 23),1,7)
     else convert(varchar(4),datepart(Year,OperateTime))+'年'+convert(varchar(4),datepart(month,OperateTime)) +'月' end
 as MonthInfo
 from  BusinessBalanceRecord (nolock)
-where  BusinessId=@BusinessId and IsEnable=1
+where  BusinessId=@BusinessId 
 order by OperateTime desc";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("BusinessId", businessId);

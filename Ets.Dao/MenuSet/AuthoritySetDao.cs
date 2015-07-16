@@ -825,50 +825,5 @@ WHERE acr.AccountId=@AccountId;";
             string orderByColumn = " Id ASC";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
         }
-        /// <summary>
-        /// 获取用户物流公司权限
-        /// </summary>
-        /// <param name="accountId"></param>
-        /// <returns></returns>
-        public IList<AccountDCRelationModel> GetAccountDCRel(int accountId)
-        {
-            string sql = @"SELECT DeliveryCompanyID FROM AccountDeliveryRelation(nolock)
-                            WHERE AccountId=@AccountId";
-            var parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@AccountId", accountId);
-            var dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
-            return MapRows<AccountDCRelationModel>(dt);
-        }
-
-        /// <summary>
-        /// 删除用户配送公司
-        /// danny-20150522
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public bool DeleteAccountDCRelation(int AccountId)
-        {
-            string sql = @" DELETE FROM [AccountDeliveryRelation] WHERE AccountId=@AccountId;";
-            var parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@AccountId", AccountId);
-            return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm)) > 0;
-        }
-        /// <summary>
-        /// 添加用户城市对应关系
-        /// danny-20150522
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public bool AddAccountDCRelation(int DeliveryCompanyID, int AccountId, string CreateBy)
-        {
-            string sql = @"
-INSERT INTO AccountDeliveryRelation (AccountId,DeliveryCompanyID,CreateBy) 
-VALUES(@AccountId,@DeliveryCompanyID,@CreateBy)";
-            var parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@AccountId", (object)AccountId);
-            parm.AddWithValue("@DeliveryCompanyID", (object)DeliveryCompanyID);
-            parm.AddWithValue("@CreateBy", (object)CreateBy);
-            return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm)) > 0;
-        }
     }
 }
