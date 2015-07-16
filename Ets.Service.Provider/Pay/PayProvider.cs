@@ -624,7 +624,7 @@ namespace Ets.Service.Provider.Pay
         {
             bool result = false;
             string username = "易宝提现回调";
-            CashTransferCallback model = JsonHelper.JsonConvertToObject<CashTransferCallback>(data);
+            CashTransferCallback model = JsonHelper.JsonConvertToObject<CashTransferCallback>(ResponseYeePay.OutRes(data,true));
             int withwardId = ParseHelper.ToInt(model.cashrequestid.Substring(2));
             if (model.status == "SUCCESS") //提现成功 走 成功的逻辑
             {
