@@ -34,7 +34,6 @@
                     <input type="text" name="clienterOrderPageSize" value="@globalConfigModel.ClienterOrderPageSize" id="clienterOrderPageSize" style="width: 100px" />条
                     <input type="hidden" name="oldClienterOrderPageSize" value="@globalConfigModel.ClienterOrderPageSize" id="oldClienterOrderPageSize" />
                 </td>
-
             </tr>
             <tr>
                 <td>
@@ -74,6 +73,11 @@
             </tr>
             <tr>
                 <td>
+                    <span>易宝支付手续费金额:</span>
+                    <input type="text" name="withdrawCommission" value="@globalConfigModel.WithdrawCommission" id="withdrawCommission" style="width: 100px" />元
+                    <input type="hidden" name="oldWithdrawCommission" value="@globalConfigModel.WithdrawCommission" id="oldWithdrawCommission" />
+                </td>
+                <td>
                     <input type="button" value="提交修改" class="searchBtn" id="btnCommit" />
                 </td>
             </tr>
@@ -92,6 +96,7 @@
             var completeTimeSet = $("#completeTimeSet").val(); //骑士完成任务时间限制
             var employerTaskTimeSet = $("#employerTaskTimeSet").val(); //雇主任务时间限制
             var clienterWithdrawCommissionAccordingMoney = $("#clienterWithdrawCommissionAccordingMoney").val(); //骑士提现小于等于X元支付手续费
+            var withdrawCommission = $("#withdrawCommission").val(); //易宝支付手续费金额
             var orderCountSetting = $("#orderCountSetting").val(); //无效订单判定时累计完成订单数量
             var takeCompleteDistance = $("#takeCompleteDistance").val(); //无效订单判定时取货点和完成点的距离
 
@@ -103,8 +108,10 @@
             var oldCompleteTimeSet = $("#oldCompleteTimeSet").val(); //骑士完成任务时间限制（之前）
             var oldEmployerTaskTimeSet = $("#oldEmployerTaskTimeSet").val(); //雇主任务时间限制（之前）
             var oldClienterWithdrawCommissionAccordingMoney = $("#oldClienterWithdrawCommissionAccordingMoney").val(); //骑士提现小于等于X元支付手续费（之前）
+            var oldWithdrawCommission = $("#oldWithdrawCommission").val(); //易宝支付手续费金额（之前）
             var oldOrderCountSetting = $("#oldOrderCountSetting").val(); //无效订单判定时累计完成订单数量
             var oldTakeCompleteDistance = $("#oldTakeCompleteDistance").val(); //无效订单判定时取货点和完成点的距离
+
 
             var pageOk = true;
             $(":text").each(function (index, obj) {
@@ -210,9 +217,14 @@
                 alert('对不起，您输入的雇主任务时间格式不正确!');
                 return;
             }
+            var reg2 = /^\d+$/;
+            if (withdrawCommission == "" || !reg2.test(withdrawCommission)) {
+                alert('易宝支付手续费金额不合法!');
+                return;
+            }
 
-
-            if (clienterWithdrawCommissionAccordingMoney == oldClienterWithdrawCommissionAccordingMoney &&
+            if (withdrawCommission==oldWithdrawCommission&&
+                clienterWithdrawCommissionAccordingMoney == oldClienterWithdrawCommissionAccordingMoney &&
 	            hasUnFinishedOrderUploadTimeInterval == oldHasUnFinishedOrderUploadTimeInterval &&
 	            allFinishedOrderUploadTimeInterval == oldAllFinishedOrderUploadTimeInterval &&
 	            pushRadius == oldPushRadius &&
@@ -225,8 +237,10 @@
                 alert("没有需要修改的信息!");
                 return;
             }
+            
             if (confirm("确定提交修改?")) {
                 var pars = {
+                    "withdrawCommission": withdrawCommission,
                     "clienterWithdrawCommissionAccordingMoney": clienterWithdrawCommissionAccordingMoney,
                     "hasUnFinishedOrderUploadTimeInterval": hasUnFinishedOrderUploadTimeInterval,
                     "allFinishedOrderUploadTimeInterval": allFinishedOrderUploadTimeInterval,

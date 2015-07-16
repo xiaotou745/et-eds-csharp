@@ -5,12 +5,14 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Ets.Dao.Clienter;
 using Ets.Dao.Finance;
+using Ets.Dao.GlobalConfig;
 using ETS.Enums;
 using ETS.Extension;
 using Ets.Model.Common;
 using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.Finance;
 using Ets.Model.DomainModel.Finance;
+using Ets.Model.DomainModel.GlobalConfig;
 using Ets.Model.ParameterModel.Finance;
 using ETS.Pay.YeePay;
 using ETS.Security;
@@ -71,6 +73,7 @@ namespace Ets.Service.Provider.Finance
                         Money = -withdrawCpm.WithdrawPrice
                     }); //更新骑士表的余额，可提现余额
                     string withwardNo = Helper.generateOrderCode(withdrawCpm.ClienterId);
+                    GlobalConfigModel globalConfig = GlobalConfigDao.GlobalConfigGet(0);
                     #region 骑士提现
                     long withwardId = _clienterWithdrawFormDao.Insert(new ClienterWithdrawForm()
                               {
@@ -92,9 +95,9 @@ namespace Ets.Service.Provider.Finance
                                   OpenCityCode = withdrawCpm.OpenCityCode,//城市代码
                                   OpenProvince = withdrawCpm.OpenProvince,//省份
                                   OpenProvinceCode = withdrawCpm.OpenProvinceCode,//省份代码
-                                  HandCharge = 1,//手续费
-                                  HandChargeOutlay = withdrawCpm.WithdrawPrice > 100 ? 1 : 0,//手续费支出方
-                                  HandChargeThreshold = 100//手续费阈值
+                                  HandCharge = Convert.ToInt32(globalConfig.WithdrawCommission),//手续费
+                                  HandChargeOutlay = withdrawCpm.WithdrawPrice > Convert.ToInt32(globalConfig.ClienterWithdrawCommissionAccordingMoney) ? HandChargeOutlay.EDaiSong : HandChargeOutlay.Private,//手续费支出方
+                                  HandChargeThreshold = Convert.ToInt32(globalConfig.ClienterWithdrawCommissionAccordingMoney)//手续费阈值
                               });
                     #endregion
 
