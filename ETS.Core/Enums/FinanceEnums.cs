@@ -25,8 +25,19 @@ namespace ETS.Enums
         MoneyError = 4,
         [DisplayText("提现金额必须在100元-3000元之间，且为100的倍数。")]
         MoneyDoubleError = 5,
+        [DisplayText("缺少省份参数")]
+        NoOpenProvince = 6,
+        [DisplayText("缺少省份Code参数")]
+        NoOpenProvinceCode = 7,
+        [DisplayText("缺少城市参数")]
+        NoOpenCity = 8,
+        [DisplayText("缺少城市Code参数")]
+        NoOpenCityCode = 9,
+        [DisplayText("缺少身份证号")]
+        NoIDCard = 10,
         [DisplayText("未传参")]
         NoPara = -2
+
     }
     /// <summary>
     /// 骑士绑定金融账号涉及到的各种返回状态枚举 add by caoheyang 20150509
@@ -75,7 +86,11 @@ namespace ETS.Enums
         [DisplayText("系统错误")]
         SystemError = 0,
         [DisplayText("未传参")]
-        NoPara = -2
+        NoPara = -2,
+        [DisplayText("无需修改")]
+        NoModify = 100,
+        [DisplayText("请先注册或账户被封")]
+        FisrtRegist = 101
     }
     /// <summary>
     ///骑士余额流水   流水状态(1、交易成功 2、交易中）枚举 add by caoheyang 20150509
@@ -209,7 +224,11 @@ namespace ETS.Enums
         [DisplayText("系统错误")]
         SystemError = 0,
         [DisplayText("未传参")]
-        NoPara = -2
+        NoPara = -2,
+        [DisplayText("无需修改")]
+        NoModify = 100,
+        [DisplayText("请先注册或账户被封")]
+        FisrtRegist = 101
     }
     /// <summary>
     ///商户余额流水   流水状态(1、交易成功 2、交易中）枚举 add by caoheyang 20150511
@@ -244,8 +263,9 @@ namespace ETS.Enums
         [DisplayText("订单菜品费")]
         OrderMeals = 8,
         [DisplayText("充值")]
-        Recharge = 9
-        
+        Recharge = 9,
+        [DisplayText("手续费")]
+        ProcedureFee = 10
     }
 
     /// <summary>

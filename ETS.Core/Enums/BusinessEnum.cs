@@ -110,6 +110,8 @@ namespace ETS.Enums
         FailedGet = -2,
         [DisplayText("请传递版本号")]
         NoVersion = -3,
+        [DisplayText("订单数量错误")]
+        OrderCountError = -4,
         [DisplayText("失败")]
         Failed = 101
     }

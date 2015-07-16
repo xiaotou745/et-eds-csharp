@@ -4,6 +4,7 @@ using Ets.Model.Common.AliPay;
 using Ets.Model.DomainModel.Business;
 using Ets.Model.ParameterModel.AliPay;
 using Ets.Model.ParameterModel.Business;
+using ETS.Pay.YeePay;
 using Ets.Service.IProvider.Pay;
 using Ets.Service.Provider.Pay;
 using ETS.Enums;
@@ -119,7 +120,6 @@ namespace SuperManWebApi.Controllers
         }
         #endregion
 
-        #region 易宝
         /// <summary>
         /// 易宝转账回调接口  add by caoheyang  20150715
         /// </summary>
@@ -127,8 +127,6 @@ namespace SuperManWebApi.Controllers
         {
             string data = HttpContext.Current.Request["data"];
             payProvider.YeePayCashTransferCallback(data);
-        } 
-        #endregion
-
+        }
     }
 }

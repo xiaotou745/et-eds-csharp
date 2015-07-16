@@ -183,10 +183,30 @@ namespace Ets.Service.Provider.Business
                         return false;
                     }
                 }
-                if (globalConfigModel.UploadTimeInterval != "0")
+                if (globalConfigModel.AllFinishedOrderUploadTimeInterval != "0")
                 {
-                    globalConfig.KeyName = "UploadTimeInterval";
-                    globalConfig.Value = globalConfigModel.UploadTimeInterval;
+                    globalConfig.KeyName = "AllFinishedOrderUploadTimeInterval";
+                    globalConfig.Value = globalConfigModel.AllFinishedOrderUploadTimeInterval;
+                    reg = businessGroupDao.UpdateGlobalConfig(globalConfig);
+                    if (!reg)
+                    {
+                        return false;
+                    }
+                }
+                if (globalConfigModel.HasUnFinishedOrderUploadTimeInterval != "0")
+                {
+                    globalConfig.KeyName = "HasUnFinishedOrderUploadTimeInterval";
+                    globalConfig.Value = globalConfigModel.HasUnFinishedOrderUploadTimeInterval;
+                    reg = businessGroupDao.UpdateGlobalConfig(globalConfig);
+                    if (!reg)
+                    {
+                        return false;
+                    }
+                }
+                if (globalConfigModel.ClienterWithdrawCommissionAccordingMoney != "0")
+                {
+                    globalConfig.KeyName = "ClienterWithdrawCommissionAccordingMoney";
+                    globalConfig.Value = globalConfigModel.ClienterWithdrawCommissionAccordingMoney;
                     reg = businessGroupDao.UpdateGlobalConfig(globalConfig);
                     if (!reg)
                     {
@@ -227,26 +247,6 @@ namespace Ets.Service.Provider.Business
                 {
                     globalConfig.KeyName = "EmployerTaskTimeSet";
                     globalConfig.Value = globalConfigModel.EmployerTaskTimeSet;
-                    reg = businessGroupDao.UpdateGlobalConfig(globalConfig);
-                    if (!reg)
-                    {
-                        return false;
-                    }
-                }
-                if (ParseHelper.ToInt(globalConfigModel.OrderCountSetting) >= 0)
-                {
-                    globalConfig.KeyName = "OrderCountSetting";
-                    globalConfig.Value = globalConfigModel.OrderCountSetting;
-                    reg = businessGroupDao.UpdateGlobalConfig(globalConfig);
-                    if (!reg)
-                    {
-                        return false;
-                    }
-                }
-                if (ParseHelper.ToInt(globalConfigModel.TakeCompleteDistance) >= 0)
-                {
-                    globalConfig.KeyName = "TakeCompleteDistance";
-                    globalConfig.Value = globalConfigModel.TakeCompleteDistance;
                     reg = businessGroupDao.UpdateGlobalConfig(globalConfig);
                     if (!reg)
                     {

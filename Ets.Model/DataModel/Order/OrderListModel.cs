@@ -288,13 +288,26 @@ namespace Ets.Model.DataModel.Order
         /// 最终给骑士的佣金
         /// </summary>
         public decimal RealOrderCommission { get; set; }
+
         /// <summary>
-        /// 物流公司结算金额
+        /// 是否删除
         /// </summary>
-        public decimal DeliveryCompanySettleMoney { get; set; }
+        public int IsEnable { get; set; }
         /// <summary>
-        /// 物流公司id
+        /// 结算类型
         /// </summary>
-        public int DeliveryCompanyID { get; set; }
+        public string SettleType { get; set; }
+        /// <summary>
+        /// 配送公司结算数值
+        /// </summary>
+        public decimal SettleValue { get; set; }
+        /// <summary>
+        /// 骑士结算数值
+        /// </summary>
+        public decimal SuperManSettleValue { get; set; }
+        /// <summary>
+        /// 取货时间
+        /// </summary>
+        public DateTime? TakeTime { get; set; }
     }
 }
