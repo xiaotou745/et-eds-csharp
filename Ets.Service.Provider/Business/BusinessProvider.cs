@@ -257,7 +257,7 @@ namespace Ets.Service.Provider.Business
             {
                 returnEnum = BusinessRegisterStatus.RecommendPhoneError;//填入的推荐人手机号有误
             }
-            if (string.IsNullOrEmpty(model.Timespan)) //判断时间戳是否为空
+            if (string.IsNullOrEmpty(model.timespan)) //判断时间戳是否为空
             {
                 returnEnum = BusinessRegisterStatus.TimespanEmpty;
             }
