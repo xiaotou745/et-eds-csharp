@@ -47,6 +47,10 @@ namespace Ets.Model.ParameterModel.Clienter
 
         public int DeliveryCompanyId { get; set; }
 
+        /// <summary>
+        /// 时间戳
+        /// </summary>
+        public string Timespan { get; set; }
     }
     public class ClientRegisterResultModel
     {

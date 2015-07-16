@@ -86,5 +86,15 @@ namespace Ets.Service.IProvider.Common
         /// <param name="cityId"></param>
         /// <returns></returns>
         IList<AreaModel> GetOpenCityDistrict(int cityId);
+
+        /// <summary>
+        /// 获取银行省市信息
+        /// 彭宜   20150716
+        /// </summary>
+        /// <param name="dataversion">数据版本号</param>
+        /// <param name="isResultData"></param>
+        /// <returns></returns>
+        Model.Common.ResultModel<Model.DomainModel.Area.AreaModelList> GetPublicBankCity(string dataversion,
+            bool isResultData = true);
     }
 }

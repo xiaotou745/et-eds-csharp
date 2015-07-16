@@ -86,7 +86,6 @@ namespace Ets.Model.DataModel.Finance
         /// 骑士手机号
         /// </summary>
         public string PhoneNo { get; set; }
-        
     }
 
 }

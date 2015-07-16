@@ -38,14 +38,15 @@ namespace ETS.Extension
         public static IEnumItem GetEnumItem(Type enumType, Enum item)
         {
             var name = item.ToString();
-
-            var mi = enumType.GetMember(name).First();
-            var dtAttribute = mi.GetCustomAttributes(typeof(DisplayTextAttribute), false).FirstOrDefault();
-
             var text = name;
-            if (dtAttribute != null)
+            var mi = enumType.GetMember(name).FirstOrDefault();
+            if (mi!=null)
             {
-                text = (dtAttribute as DisplayTextAttribute).DisplayText;
+                var dtAttribute = mi.GetCustomAttributes(typeof(DisplayTextAttribute), false).FirstOrDefault();
+                if (dtAttribute != null)
+                {
+                    text = (dtAttribute as DisplayTextAttribute).DisplayText;
+                }
             }
             var enumItem = new EnumItem { Value = Convert.ToInt32(item), Name = item.ToString(), Text = text };
             return enumItem;

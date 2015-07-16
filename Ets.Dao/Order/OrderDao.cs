@@ -1441,7 +1441,10 @@ select top 1
         o.IsPay,
         b.Name BusinessName,
         o.SettleMoney,
-        oo.GrabTime
+        oo.GrabTime,
+        o.Amount,
+        o.DeliveryCompanySettleMoney,
+        o.DeliveryCompanyID
 from    [order] o with ( nolock )
         join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
         join dbo.business b with ( nolock ) on o.businessId = b.Id
@@ -1505,7 +1508,10 @@ select top 1
         o.SettleMoney,
         o.IsPay,   
         o.ActualDoneDate,
-        oo.GrabTime
+        oo.GrabTime,
+        o.Amount,
+        o.DeliveryCompanySettleMoney,
+        o.DeliveryCompanyID
 from    [order] o with ( nolock )
         join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
         join dbo.business b with ( nolock ) on o.businessId = b.Id
@@ -3190,6 +3196,73 @@ where   Id = @OrderId and FinishAll = 0";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@clientId", clienterId);
             return int.Parse(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm).ToString()) > 0;
+        }
+
+        /// <summary>
+        /// 根据两个点的经纬度计算两点之间的距离
+        /// </summary>
+        /// <param name="firstLatitude"></param>
+        /// <param name="firstLongitude"></param>
+        /// <param name="secondLatitude"></param>
+        /// <param name="secondLongitude"></param>
+        /// <returns></returns>
+        public int GetDistanceByPoint(double firstLatitude, double firstLongitude, double secondLatitude, double secondLongitude)
+        {
+
+            string sql = @"select (round(
+                                    [geography]::Point(@firstLatitude,@firstLongitude,4326)
+                                    .STDistance(
+                                    [geography]::Point(@secondLatitude,@secondLongitude,4326) )
+                                    ,0
+                                    )
+                              )";
+
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@firstLatitude", firstLatitude);
+            parm.AddWithValue("@firstLongitude", firstLongitude);
+            parm.AddWithValue("@secondLatitude", secondLatitude);
+            parm.AddWithValue("@secondLongitude", secondLongitude);
+            object obj = DbHelper.ExecuteScalar(SuperMan_Read, sql, parm);
+            return ParseHelper.ToInt(obj, 0);
+        }
+
+        /// <summary>
+        /// 更新物流公司的订单的佣金数据
+        /// </summary>
+        /// <param name="orderID"></param>
+        /// <param name="orderCommission"></param>
+        /// <param name="deliveryCompanySettleMoney"></param>
+        /// <param name="deliveryCompanyID"></param>
+        /// <returns></returns>
+        public int UpdateDeliveryCompanyOrderCommssion(string orderID, decimal orderCommission, decimal deliveryCompanySettleMoney, int deliveryCompanyID)
+        {
+            string sql = @" update [Order] set OrderCommission=@OrderCommission,
+                                                DeliveryCompanySettleMoney=@DeliveryCompanySettleMoney,
+                                                DeliveryCompanyID=@DeliveryCompanyID 
+                            where id=@orderId";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@OrderCommission", orderCommission);
+            dbParameters.AddWithValue("@DeliveryCompanySettleMoney", deliveryCompanySettleMoney);
+            dbParameters.AddWithValue("@DeliveryCompanyID", deliveryCompanyID);
+            dbParameters.AddWithValue("@OrderId", orderID);
+            return DbHelper.ExecuteNonQuery(SuperMan_Read, sql, dbParameters);
+        }
+        /// <summary>
+        /// 获取骑士今天已完成(或完成后又取消了)的非物流公司的订单数量(不是任务数量)
+        /// </summary>
+        /// <param name="clienterID"></param>
+        /// <returns></returns>
+        public int GetTotalOrderNumByClienterID(int clienterID)
+        {
+            string sql = @"select isnull(sum(OrderCount)) as num from [order] (nolock) where clienterId=@clienterId and ActualDoneDate is not null and ActualDoneDate>=@beginDate and ActualDoneDate<@endDate";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("clienterId", DbType.Int32).Value = clienterID;
+            dbParameters.Add("beginDate", DbType.DateTime).Value = DateTime.Now.Date.ToString();
+            dbParameters.Add("endDate", DbType.DateTime).Value = DateTime.Now.AddDays(1).Date.ToString();
+
+            object obj = DbHelper.ExecuteScalar(SuperMan_Read, sql, dbParameters);
+            return ParseHelper.ToInt(obj, 0);
         }
     }
 }

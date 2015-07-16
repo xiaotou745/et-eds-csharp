@@ -50,8 +50,8 @@ namespace Ets.Service.Provider.Finance
 
         private ClienterDao clienterDao = new ClienterDao();
         #endregion
-        
-   
+
+
 
         /// <summary>
         /// 根据参数获取商家提现申请单列表
@@ -78,7 +78,7 @@ namespace Ets.Service.Provider.Finance
                 BusinessModel business = new BusinessModel();
                 var businessFinanceAccount = new BusinessFinanceAccount();//商户金融账号信息
                 FinanceWithdrawB checkbool = CheckWithdrawB(withdrawBpm, ref business, ref businessFinanceAccount);
-                if (checkbool!=FinanceWithdrawB.Success)  //验证失败 此次提款操作无效 直接返回相关错误信息
+                if (checkbool != FinanceWithdrawB.Success)  //验证失败 此次提款操作无效 直接返回相关错误信息
                 {
                     return ResultModel<object>.Conclude(checkbool);
                 }
@@ -86,7 +86,7 @@ namespace Ets.Service.Provider.Finance
                 {
                     _businessDao.UpdateForWithdrawC(new UpdateForWithdrawPM()
                     {
-                        Id=withdrawBpm.BusinessId,
+                        Id = withdrawBpm.BusinessId,
                         Money = -withdrawBpm.WithdrawPrice
                     }); //更新商户表的余额，可提现余额
                     string withwardNo = Helper.generateOrderCode(withdrawBpm.BusinessId);
@@ -153,7 +153,7 @@ namespace Ets.Service.Provider.Finance
                 var businessFinanceAccount = new BusinessFinanceAccount();//商户金融账号信息
                 FinanceWithdrawB checkbool = CheckWithdrawB(withdrawBBackPM, ref business, ref businessFinanceAccount);
                 if (checkbool != FinanceWithdrawB.Success)  //验证失败 此次提款操作无效 直接返回相关错误信息
-                {                    
+                {
                     return ResultModel<object>.Conclude(checkbool);
                 }
                 else
@@ -224,7 +224,7 @@ namespace Ets.Service.Provider.Finance
         {
             if (withdrawBpm == null)
             {
-                return  FinanceWithdrawB.NoPara;
+                return FinanceWithdrawB.NoPara;
             }
             business = _businessDao.GetById(withdrawBpm.BusinessId);//获取商户信息
             if (business == null || business.Status == null
@@ -243,14 +243,14 @@ namespace Ets.Service.Provider.Finance
             businessFinanceAccount = _businessFinanceAccountDao.GetById(withdrawBpm.FinanceAccountId);//获取商户金融账号信息
             if (businessFinanceAccount == null || businessFinanceAccount.BusinessId != withdrawBpm.BusinessId)
             {
-                return  FinanceWithdrawB.FinanceAccountError;
+                return FinanceWithdrawB.FinanceAccountError;
             }
             return FinanceWithdrawB.Success;
         }
 
         #endregion
-        
- 
+
+
         /// <summary>
         /// 根据申请单Id获取商家提现申请单
         /// danny-20150511
@@ -279,12 +279,12 @@ namespace Ets.Service.Provider.Finance
         /// <returns></returns>
         public bool BusinessWithdrawAudit(BusinessWithdrawLog model)
         {
-           bool isBussinessIDValid= clienterDao.IsBussinessOrClienterValidByID(0, model.WithwardId);
-           if (isBussinessIDValid)
-           {
-               return businessFinanceDao.BusinessWithdrawAudit(model);
-           }
-           throw new Exception("提款单对应的商户已经被取消资格，请联系客服");
+            bool isBussinessIDValid = clienterDao.IsBussinessOrClienterValidByID(0, model.WithwardId);
+            if (isBussinessIDValid)
+            {
+                return businessFinanceDao.BusinessWithdrawAudit(model);
+            }
+            throw new Exception("提款单对应的商户已经被取消资格，请联系客服");
         }
         /// <summary>
         /// 商户提现申请单确认打款
@@ -350,23 +350,35 @@ namespace Ets.Service.Provider.Finance
         {
             bool reg = false;
 
-  
-
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                if (businessFinanceDao.BusinessWithdrawReturn(model))
+                if (businessFinanceDao.BusinessWithdrawReturn(model)   //提现返现
+                    && businessFinanceDao.BusinessWithdrawPayFailed(model) //更新打款失败
+                    && businessFinanceDao.ModifyBusinessBalanceRecordStatus(model.WithwardId.ToString())  //修改流水 
+                    && businessFinanceDao.ModifyBusinessAmountInfo(model.WithwardId.ToString()))  //提现单
                 {
-                    if (businessFinanceDao.BusinessWithdrawPayFailed(model))
+                    var withdraw = _businessWithdrawFormDao.GetById(model.WithwardId);
+                    if (withdraw.HandChargeOutlay == 0) //个人支出手续费  增加手续费扣款记录流水 
                     {
-                        if (businessFinanceDao.ModifyBusinessBalanceRecordStatus(model.WithwardId.ToString()))
+                        _businessDao.UpdateForWithdrawC(new UpdateForWithdrawPM()
                         {
-                            if (businessFinanceDao.ModifyBusinessAmountInfo(model.WithwardId.ToString()))
-                            {
-                                reg = true;
-                                tran.Complete();
-                            }
-                        }
+                            Id = withdraw.BusinessId,
+                            Money = -withdraw.HandCharge
+                        }); //更新商户表的余额，可提现余额
+                        _businessBalanceRecordDao.Insert(new BusinessBalanceRecord()
+                        {
+                            BusinessId = withdraw.BusinessId,//商户Id
+                            Amount = -withdraw.HandCharge,//手续费金额
+                            Status = (int)BusinessBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
+                            RecordType = (int)BusinessBalanceRecordRecordType.ProcedureFee,
+                            Operator = "易宝系统回调",
+                            WithwardId = withdraw.Id,
+                            RelationNo = withdraw.WithwardNo,
+                            Remark = "易宝提现失败扣除手续费",
+                        });
                     }
+                    reg = true;
+                    tran.Complete();
                 }
             }
             return reg;
@@ -425,7 +437,7 @@ namespace Ets.Service.Provider.Finance
             foreach (var item in list)
             {
                 strBuilder.AppendLine(string.Format("<tr><td>{0}</td>", item.BusinessName));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>",item.BusinessPhoneNo));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.BusinessPhoneNo));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.OpenBank));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.TrueName));
                 strBuilder.AppendLine(string.Format("<td>'{0}'</td>", ParseHelper.ToDecrypt(item.AccountNo)));

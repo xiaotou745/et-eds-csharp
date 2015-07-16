@@ -262,7 +262,7 @@ namespace Ets.Service.Provider.Finance
                     }
                     else
                     {
-                        ETS.Util.LogHelper.LogWriterString("骑士绑定易宝支付失败", string.Format("易宝错误信息:code{0},ledgerno:{1},hmac{2},msg{3}", 
+                        ETS.Util.LogHelper.LogWriterString("骑士绑定易宝支付失败", string.Format("易宝错误信息:code{0},ledgerno:{1},hmac{2},msg{3}",
                             result1.code, result1.ledgerno, result1.hmac, result1.msg));
                     }
                 }

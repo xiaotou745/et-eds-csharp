@@ -253,6 +253,36 @@ namespace Ets.Service.Provider.Business
                         return false;
                     }
                 }
+if (ParseHelper.ToInt(globalConfigModel.OrderCountSetting) >= 0)
+                {
+                    globalConfig.KeyName = "OrderCountSetting";
+                    globalConfig.Value = globalConfigModel.OrderCountSetting;
+                    reg = businessGroupDao.UpdateGlobalConfig(globalConfig);
+                    if (!reg)
+                    {
+                        return false;
+                    }
+                }
+                if (ParseHelper.ToInt(globalConfigModel.TakeCompleteDistance) >= 0)
+                {
+                    globalConfig.KeyName = "TakeCompleteDistance";
+                    globalConfig.Value = globalConfigModel.TakeCompleteDistance;
+                    reg = businessGroupDao.UpdateGlobalConfig(globalConfig);
+                    if (!reg)
+                    {
+                        return false;
+                    }
+                }
+ 				if (!string.IsNullOrWhiteSpace(globalConfigModel.WithdrawCommission))
+                {
+                    globalConfig.KeyName = "WithdrawCommission";
+                    globalConfig.Value = globalConfigModel.WithdrawCommission;
+                    reg = businessGroupDao.UpdateGlobalConfig(globalConfig);
+                    if (!reg)
+                    {
+                        return false;
+                    }
+                }<<<<<<< .mine
                 if (!string.IsNullOrWhiteSpace(globalConfigModel.WithdrawCommission))
                 {
                     globalConfig.KeyName = "WithdrawCommission";
@@ -263,6 +293,38 @@ namespace Ets.Service.Provider.Business
                         return false;
                     }
                 }
+
+
+
+
+
+
+
+
+
+
+=======
+                if (ParseHelper.ToInt(globalConfigModel.OrderCountSetting) >= 0)
+                {
+                    globalConfig.KeyName = "OrderCountSetting";
+                    globalConfig.Value = globalConfigModel.OrderCountSetting;
+                    reg = businessGroupDao.UpdateGlobalConfig(globalConfig);
+                    if (!reg)
+                    {
+                        return false;
+                    }
+                }
+                if (ParseHelper.ToInt(globalConfigModel.TakeCompleteDistance) >= 0)
+                {
+                    globalConfig.KeyName = "TakeCompleteDistance";
+                    globalConfig.Value = globalConfigModel.TakeCompleteDistance;
+                    reg = businessGroupDao.UpdateGlobalConfig(globalConfig);
+                    if (!reg)
+                    {
+                        return false;
+                    }
+                }
+>>>>>>> .theirs
                 tran.Complete();
                 DeleteGlobalConfigRedisByGroupId(globalConfigModel.GroupId);
                 return true;

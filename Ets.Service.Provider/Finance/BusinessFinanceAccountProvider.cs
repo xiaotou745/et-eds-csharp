@@ -48,27 +48,28 @@ namespace Ets.Service.Provider.Finance
         {
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                FinanceCardBindB checkbool = CheckCardBindB(cardBindBpm);  //验证数据合法性
+                FinanceCardBindB checkbool = CheckCardBindB(cardBindBpm); //验证数据合法性
                 if (checkbool != FinanceCardBindB.Success)
                 {
                     return ResultModel<object>.Conclude(checkbool);
                 }
                 int result = _businessFinanceAccountDao.Insert(new BusinessFinanceAccount()
                 {
-                    BusinessId = cardBindBpm.BusinessId,//商户ID
+                    BusinessId = cardBindBpm.BusinessId, //商户ID
                     TrueName = cardBindBpm.TrueName, //户名
                     AccountNo = DES.Encrypt(cardBindBpm.AccountNo), //卡号(DES加密)  
-                    IsEnable = true,// 是否有效(true：有效 0：无效）  新增时true 
+                    IsEnable = true, // 是否有效(true：有效 0：无效）  新增时true 
                     AccountType = cardBindBpm.AccountType == 0
-                        ? (int)BusinessFinanceAccountType.WangYin : cardBindBpm.AccountType,  //账号类型 
-                    BelongType = cardBindBpm.BelongType,//账号类别  0 个人账户 1 公司账户  
+                        ? (int)BusinessFinanceAccountType.WangYin
+                        : cardBindBpm.AccountType, //账号类型 
+                    BelongType = cardBindBpm.BelongType, //账号类别  0 个人账户 1 公司账户  
                     OpenBank = cardBindBpm.OpenBank, //开户行
                     OpenSubBank = cardBindBpm.OpenSubBank, //开户支行
-                    CreateBy = cardBindBpm.CreateBy,//创建人  当前登录人
-                    UpdateBy = cardBindBpm.CreateBy,//新增时最后修改人与新增人一致  当前登录人
-                    OpenCity = cardBindBpm.OpenCity,//开户行
-                    OpenProvince = cardBindBpm.OpenProvince,//开户市
-                    IDCard = cardBindBpm.IDCard,//营业执照
+                    CreateBy = cardBindBpm.CreateBy, //创建人  当前登录人
+                    UpdateBy = cardBindBpm.CreateBy, //新增时最后修改人与新增人一致  当前登录人
+                    OpenCity = cardBindBpm.OpenCity, //开户行
+                    OpenProvince = cardBindBpm.OpenProvince, //开户市
+                    IDCard = cardBindBpm.IDCard, //营业执照
                 });
                 tran.Complete();
             }
@@ -158,18 +159,15 @@ namespace Ets.Service.Provider.Finance
                             OpenCity = cardModifyBpm.OpenCity, //市区名称
                             IDCard = cardModifyBpm.IDCard //身份证号
                         });
-                        tran.Complete(); 
+                        tran.Complete();
                     }
-                }
-                else
-                {
-                    return ResultModel<object>.Conclude(FinanceCardModifyB.NoModify);
                 }
             }
             else
             {
                 return ResultModel<object>.Conclude(FinanceCardModifyB.BelongTypeError);
             }
+
             #region 2.异步调用注册ebao
 
             string requestid = TimeHelper.GetTimeStamp(false);

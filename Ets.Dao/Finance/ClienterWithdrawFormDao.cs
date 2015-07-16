@@ -124,7 +124,8 @@ from  ClienterWithdrawForm (nolock)" + condition;
         {
             ClienterWithdrawForm model = new ClienterWithdrawForm();
             const string querysql = @"
-select  Id,WithwardNo,ClienterId,BalancePrice,AllowWithdrawPrice,Status,Amount,Balance,WithdrawTime,Auditor,AuditTime,AuditFailedReason,Payer,PayTime,PayFailedReason
+select  Id,WithwardNo,ClienterId,BalancePrice,AllowWithdrawPrice,Status,Amount,Balance,WithdrawTime,
+Auditor,AuditTime,AuditFailedReason,Payer,PayTime,PayFailedReason,HandChargeThreshold,HandCharge,HandChargeOutlay 
 from  ClienterWithdrawForm (nolock)
 where  Id=@Id ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
