@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ETS.Enums;
 
 namespace Ets.Model.DataModel.Finance
 {
@@ -131,7 +132,7 @@ namespace Ets.Model.DataModel.Finance
         /// <summary>
         /// 手续费支出方:0个人,1易代送
         /// </summary>
-        public int HandChargeOutlay { get; set; }
+        public HandChargeOutlay HandChargeOutlay { get; set; }
     }
 
 }

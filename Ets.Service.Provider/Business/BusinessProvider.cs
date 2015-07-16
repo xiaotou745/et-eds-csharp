@@ -257,6 +257,10 @@ namespace Ets.Service.Provider.Business
             {
                 returnEnum = BusinessRegisterStatus.RecommendPhoneError;//填入的推荐人手机号有误
             }
+            if (string.IsNullOrEmpty(model.Timespan)) //判断时间戳是否为空
+            {
+                returnEnum = BusinessRegisterStatus.TimespanEmpty;
+            }
             else if (businessDao.IsExist(model))
             {
                 returnEnum = BusinessRegisterStatus.HasExist;//商户已存在

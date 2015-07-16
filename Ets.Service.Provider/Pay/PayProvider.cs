@@ -624,7 +624,7 @@ namespace Ets.Service.Provider.Pay
         {
             bool result = false;
             string username = "易宝提现回调";
-            CashTransferCallback model = JsonHelper.JsonConvertToObject<CashTransferCallback>(data);
+            CashTransferCallback model = JsonHelper.JsonConvertToObject<CashTransferCallback>(ResponseYeePay.OutRes(data,true));
             int withwardId = ParseHelper.ToInt(model.cashrequestid.Substring(2));
             if (model.status == "SUCCESS") //提现成功 走 成功的逻辑
             {
@@ -641,24 +641,18 @@ namespace Ets.Service.Provider.Pay
                 }
                 else if (model.cashrequestid.Substring(0, 1) == "C") //C端逻辑
                 {
-                        iClienterFinanceProvider.ClienterWithdrawPayOk(new ClienterWithdrawLog()
-                        {
-                            Operator = username,
-                            Remark = "易宝提现打款成功" + model.desc,
-                            Status = ClienterWithdrawFormStatus.Success.GetHashCode(),
-                            WithwardId = withwardId
-                        });
+                    iClienterFinanceProvider.ClienterWithdrawPayOk(new ClienterWithdrawLog()
+                    {
+                        Operator = username,
+                        Remark = "易宝提现打款成功" + model.desc,
+                        Status = ClienterWithdrawFormStatus.Success.GetHashCode(),
+                        WithwardId = withwardId
+                    });
                     result = true;
                 }
             }
             else if (model.status == "FAIL") //提现失败 走 失败的逻辑
             {
-                Transfer transfer = new Transfer();
-                TransferReturnModel tempmodel = transfer.TransferAccounts("", model.amount, model.ledgerno);
-                if (tempmodel.code == "1")
-                {
-
-                } 
                 if (model.cashrequestid.Substring(0, 1) == "B") //B端逻辑
                 {
                     iBusinessFinanceProvider.BusinessWithdrawPayFailed(new BusinessWithdrawLogModel()
@@ -668,7 +662,7 @@ namespace Ets.Service.Provider.Pay
                         Status = BusinessWithdrawFormStatus.Error.GetHashCode(),
                         WithwardId = withwardId,
                         PayFailedReason = ""
-                    }); //商户提现失败
+                    },model); //商户提现失败
                     result = true;
                 }
                 else if (model.cashrequestid.Substring(0, 1) == "C") //C端逻辑
@@ -680,10 +674,9 @@ namespace Ets.Service.Provider.Pay
                         Status = ClienterWithdrawFormStatus.Error.GetHashCode(),
                         WithwardId = withwardId,
                         PayFailedReason = ""
-                    });
+                    }, model);
                     result = true;
                 }
-
             }
             return result;
 

@@ -469,11 +469,10 @@ select @@IDENTITY";
             const string querysql = @"
 select  count(1) 
 from  dbo.[business]  
-where Timespan=@Timespan and phoneNo=@phoneNo and RecommendPhone=@RecommendPhone;";
+where Timespan=@Timespan and phoneNo=@phoneNo;";
             IDbParameters dbSelectParameters = DbHelper.CreateDbParameters();
             dbSelectParameters.Add("phoneNo", DbType.String, 20).Value = model.phoneNo;
             dbSelectParameters.Add("Timespan", DbType.String, 50).Value = model.Timespan;
-            dbSelectParameters.Add("RecommendPhone", DbType.String, 20).Value = model.RecommendPhone;
             object executeScalar = DbHelper.ExecuteScalar(SuperMan_Write, querysql, dbSelectParameters);
             isExist = ParseHelper.ToInt(executeScalar, 0) > 0;
 
