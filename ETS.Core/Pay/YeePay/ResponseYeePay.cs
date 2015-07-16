@@ -18,7 +18,7 @@ namespace ETS.Pay.YeePay
         /// <param name="result">返回值</param>
         /// <param name="key">商户密钥</param>
         /// <returns></returns>
-        public  static string OutRes(string result, string key)
+        private  static string OutRes(string result, string key)
         {
             var js = new JavaScriptSerializer();
             var resModle = js.Deserialize<ResponseModel>(result);
@@ -42,5 +42,17 @@ namespace ETS.Pay.YeePay
         {
             return OutRes(result, KeyConfig.YeepayHmac);
         }
+       
+       /// <summary>
+       /// 
+       /// </summary>
+       /// <param name="result"></param>
+       /// <param name="forCallBack"></param>
+       /// <returns></returns>
+        public static string OutRes(string result, bool forCallBack)
+        {
+            return AESUtil.Decrypt(result, KeyConfig.YeepayHmac);
+        }
+
     }
 }
