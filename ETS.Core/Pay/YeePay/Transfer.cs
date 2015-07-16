@@ -142,7 +142,7 @@ namespace ETS.Pay.YeePay
         /// <returns></returns>
         public TransferReturnModel CashTransfer(APP app, int withdrawFormId, string ledgerno, string amount, string callbackurl)
         {
-            string requestid = app.ToString() + withdrawFormId;
+            string requestid = app.ToString()+"-" + withdrawFormId;
             //商户编号   
             string customernumber = KeyConfig.YeepayAccountId;
             //密钥   
