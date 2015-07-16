@@ -31,4 +31,8 @@
     </tbody>
 </table>
 @{ViewBag.ActionName = "PostIndex";}
-@Html.Partial("~/views/shared/PagerControl.cshtml", Model)
+@{
+    if (Model != null) { 
+    Html.Partial("~/views/shared/PagerControl.cshtml", Model);
+    }
+    }
