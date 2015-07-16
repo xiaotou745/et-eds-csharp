@@ -38,7 +38,7 @@ namespace Ets.Dao.Business
         public virtual PageInfo<T> GetOrdersAppToSql<T>(Ets.Model.ParameterModel.Business.BussOrderParaModelApp paraModel)
         {
             #region where
-            string whereStr = "1=1 ";  //where查询条件实体类
+            string whereStr = "1=1 and o.IsEnable=1";  //where查询条件实体类
             if (paraModel.userId != null)  //订单商户id
                 whereStr += " and o.businessId=" + paraModel.userId.ToString();
 
@@ -1544,16 +1544,20 @@ where BusinessId=@BusinessId and IsEnable=1";
         }
 
         /// <summary>
-        /// 获取商家外送费
+        /// 获取商家外送费,订单结算费用等信息
         /// </summary>
-        /// <UpdateBy>hulingbo</UpdateBy>
-        /// <UpdateTime>20150511</UpdateTime>
+        /// <UpdateBy>pengyi</UpdateBy>
+        /// <UpdateTime>20150714</UpdateTime>
         /// <param name="id">商家Id</param>
         /// <returns></returns>
         public BusinessInfo GetDistribSubsidy(int id)
         {
             string querSql = @"
-select  isnull(DistribSubsidy,0) as DistribSubsidy from  Business (nolock) 
+select  isnull(DistribSubsidy,0) as DistribSubsidy, 
+            b.BusinessCommission,
+            b.CommissionType, 
+            b.CommissionFixValue,
+            b.BalancePrice from Business b (nolock) 
 where Id=@Id";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);
@@ -1561,8 +1565,11 @@ where Id=@Id";
             return DbHelper.QueryForObjectDelegate<BusinessInfo>(SuperMan_Read, querSql, dbParameters,
              dataRow => new BusinessInfo
              {
-                 DistribSubsidy = ParseHelper.ToDecimal(dataRow["DistribSubsidy"], 0)
-
+                 DistribSubsidy = ParseHelper.ToDecimal(dataRow["DistribSubsidy"], 0),
+                 BusinessCommission = ParseHelper.ToDecimal(dataRow["BusinessCommission"], 0),
+                 BalancePrice = ParseHelper.ToDecimal(dataRow["BalancePrice"], 0),
+                 CommissionFixValue = ParseHelper.ToDecimal(dataRow["CommissionFixValue"], 0),
+                 CommissionType = ParseHelper.ToInt(dataRow["CommissionType"], 0)
              });
         }
 

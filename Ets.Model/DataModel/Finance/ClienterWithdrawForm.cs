@@ -99,8 +99,39 @@ namespace Ets.Model.DataModel.Finance
         /// 开户支行
         /// </summary>
         public string OpenSubBank { get; set; }
+        /// <summary>
+        /// 省名称
+        /// </summary>
+        public string OpenProvince { get; set; }
+        /// <summary>
+        /// 市区名称
+        /// </summary>
+        public string OpenCity { get; set; }
+        /// <summary>
+        /// 身份证号
+        /// </summary>
+        public string IDCard { get; set; }
+        /// <summary>
+        /// 省代码
+        /// </summary>
+        public int OpenProvinceCode { get; set; }
+        /// <summary>
+        /// 市区代码
+        /// </summary>
+        public int OpenCityCode { get; set; }
 
-
+        /// <summary>
+        /// 手续费阈值,例如100
+        /// </summary>
+        public decimal HandChargeThreshold { get; set; }
+        /// <summary>
+        /// 手续费,例如1元
+        /// </summary>
+        public decimal HandCharge { get; set; }
+        /// <summary>
+        /// 手续费支出方:0个人,1易代送
+        /// </summary>
+        public int HandChargeOutlay { get; set; }
     }
 
 }
