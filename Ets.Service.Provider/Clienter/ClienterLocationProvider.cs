@@ -33,6 +33,8 @@ namespace Ets.Service.Provider.Clienter
             try
             {
                 long id = clienterLocationDao.Insert(TranslateInsertModel(model));
+                //return ResultModel<object>.Conclude(SystemState.Success,
+                //    new { PushTime = GlobalConfigDao.GlobalConfigGet(0).UploadTimeInterval });
                 return ResultModel<object>.Conclude(SystemState.Success,
                     new { PushTime = GetUploadLocationInterval(model.ClienterId) });
             }

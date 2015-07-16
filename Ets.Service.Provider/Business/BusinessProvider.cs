@@ -966,7 +966,7 @@ namespace Ets.Service.Provider.Business
             }
             redis.Add(keycheck, 1, new TimeSpan(0, 1, 0));
             #endregion
-           
+
             string tempcode = obj.ToString().Aggregate("", (current, c) => current + (c.ToString() + ','));
 
             bool userStatus = businessDao.CheckBusinessExistPhone(model.PhoneNumber);

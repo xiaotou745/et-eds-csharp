@@ -88,7 +88,7 @@ namespace Ets.Dao.Order
         LEFT JOIN dbo.business b WITH ( NOLOCK ) ON b.Id = o.businessId 
         left join dbo.OrderOther oo (nolock) on o.Id = oo.OrderId ");
             //条件
-            StringBuilder whereStr = new StringBuilder(" 1=1 ");
+            StringBuilder whereStr = new StringBuilder(" 1=1 and o.IsEnable=1 ");
             if (criteria.userId != 0)
             {
                 whereStr.AppendFormat(" AND o.clienterId = {0}", criteria.userId);
@@ -800,6 +800,7 @@ select @@IDENTITY ";
                                         ,oo.ReceiptPic                                        
                                         ,o.OtherCancelReason
                                         ,o.OriginalOrderNo
+                                        ,o.IsEnable
                                     FROM [order] o WITH ( NOLOCK )
                                     LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                     LEFT JOIN clienter c WITH (NOLOCK) ON o.clienterId=c.Id
@@ -1440,10 +1441,7 @@ select top 1
         o.IsPay,
         b.Name BusinessName,
         o.SettleMoney,
-        oo.GrabTime,
-        o.Amount,
-        o.DeliveryCompanySettleMoney,
-        o.DeliveryCompanyID
+        oo.GrabTime
 from    [order] o with ( nolock )
         join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
         join dbo.business b with ( nolock ) on o.businessId = b.Id
@@ -1507,10 +1505,7 @@ select top 1
         o.SettleMoney,
         o.IsPay,   
         o.ActualDoneDate,
-        oo.GrabTime,
-        o.Amount,
-        o.DeliveryCompanySettleMoney,
-        o.DeliveryCompanyID
+        oo.GrabTime
 from    [order] o with ( nolock )
         join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
         join dbo.business b with ( nolock ) on o.businessId = b.Id
@@ -2372,7 +2367,7 @@ select top {0}
 from    dbo.[order] a ( nolock )
         join dbo.business b ( nolock ) on a.businessId = b.Id
         left join dbo.BusinessExpressRelation ber (nolock) on a.businessId=ber.BusinessId
-where a.status = 0 and ber.IsEnable=1 and a.ReceviceCity=@ReceviceCity and ber.ExpressId=@ExpressId
+where a.status = 0 and a.IsEnable=1 and ber.IsEnable=1 and a.ReceviceCity=@ReceviceCity and ber.ExpressId=@ExpressId
 order by a.Id desc", model.TopNum);
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -2415,7 +2410,7 @@ select top {0} a.Id,a.OrderCommission,a.OrderCount,
 from dbo.[order] a (nolock)
         join dbo.business b (nolock) on a.businessId=b.Id
         left join dbo.BusinessExpressRelation ber (nolock) on a.businessId=ber.BusinessId
-where a.status=0  and ber.IsEnable=1 and ber.ExpressId=@ExpressId
+where a.status=0 and a.IsEnable=1 and ber.IsEnable=1 and ber.ExpressId=@ExpressId
 and  geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint)<= @PushRadius
 order by geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint) asc
 ", model.TopNum);
@@ -2460,7 +2455,7 @@ select top {0}
 		round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) as DistanceToBusiness 
 from    dbo.[order] a ( nolock )
         join dbo.business b ( nolock ) on a.businessId = b.Id
-where   a.status = 0  and( b.IsBind=0 or (b.IsBind=1 and DATEDIFF(minute,a.PubDate,GETDATE())>{1}))
+where   a.status = 0 and a.IsEnable=1  and( b.IsBind=0 or (b.IsBind=1 and DATEDIFF(minute,a.PubDate,GETDATE())>{1}))
         {2}
 order by a.Id desc", model.TopNum, model.ExclusiveOrderTime, whereStr);
             }
@@ -2489,7 +2484,7 @@ from    dbo.[order] a ( nolock )
                             and temp.IsBind = 1
                             and temp.ClienterId = {1}
                   ) as c on a.BusinessId = c.BusinessId        
-where   a.status = 0
+where   a.status = 0 and a.IsEnable=1
         and ( b.IsBind = 0
               or ( b.IsBind = 1
                    and DATEDIFF(minute, a.PubDate, GETDATE()) > {2}
@@ -2538,7 +2533,7 @@ as PubDate,
 round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) as DistanceToBusiness 
 from dbo.[order] a (nolock)
 join dbo.business b (nolock) on a.businessId=b.Id
-where a.status=0  and( b.IsBind=0 or (b.IsBind=1 and DATEDIFF(minute,a.PubDate,GETDATE())>{1}))
+where a.status=0 and a.IsEnable=1 and( b.IsBind=0 or (b.IsBind=1 and DATEDIFF(minute,a.PubDate,GETDATE())>{1}))
 and  geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint)<= @PushRadius
 order by geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint) asc
 ", model.TopNum, model.ExclusiveOrderTime);
@@ -2569,7 +2564,7 @@ left join ( select  distinct
                             and temp.IsBind = 1
                             and temp.ClienterId = {1}
                   ) as c on a.BusinessId = c.BusinessId        
-where a.status=0 
+where a.status=0 and a.IsEnable=1
 and ( b.IsBind = 0
               or ( b.IsBind = 1
                    and DATEDIFF(minute, a.PubDate, GETDATE()) > {2}
@@ -2617,7 +2612,7 @@ round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistan
 from dbo.[order] a (nolock)
 join dbo.business b (nolock) on a.businessId=b.Id
 join (select  distinct(temp.BusinessId) from BusinessClienterRelation  temp where temp.IsEnable=1 and  temp.IsBind =1 and temp.ClienterId=@ClienterId ) as c on a.BusinessId=c.BusinessId
-where a.status=0 
+where a.status=0 and a.IsEnable=1
 order by a.id desc 
 ", model.TopNum);
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -3064,7 +3059,7 @@ where   Id = @OrderId and FinishAll = 0";
             return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters) == 1 ? true : false;
         }
         /// <summary>
-        /// 根据orderID获取订单地图数据(发单，取货，抢单，完成的时间如果为null，此方法会返回1900-01-01)
+        /// 根据orderID获取订单地图数据
         /// </summary>
         /// <param name="orderID"></param>
         /// <returns></returns>
@@ -3184,73 +3179,6 @@ where   Id = @OrderId and FinishAll = 0";
         }
 
         /// <summary>
-        /// 根据两个点的经纬度计算两点之间的距离
-        /// </summary>
-        /// <param name="firstLatitude"></param>
-        /// <param name="firstLongitude"></param>
-        /// <param name="secondLatitude"></param>
-        /// <param name="secondLongitude"></param>
-        /// <returns></returns>
-        public int GetDistanceByPoint(double firstLatitude, double firstLongitude, double secondLatitude, double secondLongitude)
-        {
-
-            string sql = @"select (round(
-                                    [geography]::Point(@firstLatitude,@firstLongitude,4326)
-                                    .STDistance(
-                                    [geography]::Point(@secondLatitude,@secondLongitude,4326) )
-                                    ,0
-                                    )
-                              )";
-
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@firstLatitude", firstLatitude);
-            parm.AddWithValue("@firstLongitude", firstLongitude);
-            parm.AddWithValue("@secondLatitude", secondLatitude);
-            parm.AddWithValue("@secondLongitude", secondLongitude);
-            object obj = DbHelper.ExecuteScalar(SuperMan_Read, sql, parm);
-            return ParseHelper.ToInt(obj, 0);
-        }
-
-        /// <summary>
-        /// 更新物流公司的订单的佣金数据
-        /// </summary>
-        /// <param name="orderID"></param>
-        /// <param name="orderCommission"></param>
-        /// <param name="deliveryCompanySettleMoney"></param>
-        /// <param name="deliveryCompanyID"></param>
-        /// <returns></returns>
-        public int UpdateDeliveryCompanyOrderCommssion(string orderID,decimal orderCommission, decimal deliveryCompanySettleMoney, int deliveryCompanyID)
-        {
-            string sql = @" update [Order] set OrderCommission=@OrderCommission,
-                                                DeliveryCompanySettleMoney=@DeliveryCompanySettleMoney,
-                                                DeliveryCompanyID=@DeliveryCompanyID 
-                            where id=@orderId";
-
-            IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("@OrderCommission", orderCommission);
-            dbParameters.AddWithValue("@DeliveryCompanySettleMoney", deliveryCompanySettleMoney);
-            dbParameters.AddWithValue("@DeliveryCompanyID", deliveryCompanyID);
-            dbParameters.AddWithValue("@OrderId", orderID);
-            return DbHelper.ExecuteNonQuery(SuperMan_Read, sql, dbParameters);
-        }
-        /// <summary>
-        /// 获取骑士今天已完成(或完成后又取消了)的非物流公司的订单数量(不是任务数量)
-        /// </summary>
-        /// <param name="clienterID"></param>
-        /// <returns></returns>
-        public int GetTotalOrderNumByClienterID(int clienterID)
-        {
-            string sql = @"select isnull(sum(OrderCount)) as num from [order] (nolock) where clienterId=@clienterId and ActualDoneDate is not null and ActualDoneDate>=@beginDate and ActualDoneDate<@endDate";
-            IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.Add("clienterId", DbType.Int32).Value = clienterID;
-            dbParameters.Add("beginDate", DbType.DateTime).Value = DateTime.Now.Date.ToString();
-            dbParameters.Add("endDate", DbType.DateTime).Value = DateTime.Now.AddDays(1).Date.ToString();
-       
-            object obj= DbHelper.ExecuteScalar(SuperMan_Read, sql, dbParameters);
-            return ParseHelper.ToInt(obj, 0);
-        }
-
-        /// <summary>
         /// 骑士目前是否有未完成的订单
         /// add by 彭宜   20150714
         /// </summary>
@@ -3261,7 +3189,7 @@ where   Id = @OrderId and FinishAll = 0";
             string sql = "select count(1) from [dbo].[order] where clienterId=@clientId and (Status=2 or Status=4);";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@clientId", clienterId);
-            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm).ToString(),0) > 0;
+            return int.Parse(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm).ToString()) > 0;
         }
     }
 }

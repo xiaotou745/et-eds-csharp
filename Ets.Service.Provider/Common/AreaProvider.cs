@@ -67,6 +67,7 @@ namespace Ets.Service.Provider.Common
             }
             return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.Newest, areaList);
         }
+
         /// <summary>
         /// 修改开发城市后更新Redis缓存
         /// danny-20150413

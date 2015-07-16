@@ -66,7 +66,7 @@ namespace SuperManWebApi.Controllers
 
             try
             {
-                BusinessDM businessDM = iBusinessProvider.GetDetails(model.BussinessId);               
+                BusinessDM businessDM = iBusinessProvider.GetDetails(model.BussinessId);
                 return Ets.Model.Common.ResultModel<BusinessDM>.Conclude(GetBussinessStatus.Success, businessDM);
             }
             catch (Exception ex)
@@ -157,7 +157,7 @@ namespace SuperManWebApi.Controllers
                     return ResultModel<BusiModifyResultModelDM>.Conclude(UpdateBusinessInfoBReturnEnums.UpFailed);
                 }
                 model.CheckPicUrl = imgInfo.PicUrl;
-             
+
             }
             #endregion
 
@@ -179,7 +179,7 @@ namespace SuperManWebApi.Controllers
                 model.BusinessLicensePic = imgInfoLicen.PicUrl;
             }
             #endregion
-           
+
             //修改商户地址信息，返回当前商户的状态
             return iBusinessProvider.UpdateBusinessInfoB(model);
         }

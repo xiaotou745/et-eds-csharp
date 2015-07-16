@@ -105,6 +105,7 @@
     <Compile Include="DataModel\Subsidy\CrossShopModel.cs" />
     <Compile Include="DataModel\Order\OrderOther.cs" />
     <Compile Include="DataModel\Order\OrderSubsidiesLog.cs" />
+    <Compile Include="DomainModel\Authority\AccountDCRelationModel.cs" />
     <Compile Include="DomainModel\Business\BusinessExpressRelationModel.cs" />
     <Compile Include="DomainModel\DeliveryCompany\BatchImportClienterExcelDM.cs" />
     <Compile Include="DomainModel\Area\DMAreaCodeInfo.cs" />

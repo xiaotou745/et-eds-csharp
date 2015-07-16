@@ -34,8 +34,8 @@ namespace Ets.Dao.Finance
         public int Insert(BusinessFinanceAccount businessFinanceAccount)
         {
             const string insertSql = @"
-insert into BusinessFinanceAccount(BusinessId,TrueName,AccountNo,IsEnable,AccountType,BelongType,OpenBank,OpenSubBank,CreateBy,UpdateBy)
-values(@BusinessId,@TrueName,@AccountNo,@IsEnable,@AccountType,@BelongType,@OpenBank,@OpenSubBank,@CreateBy,@UpdateBy)
+insert into BusinessFinanceAccount(BusinessId,TrueName,AccountNo,IsEnable,AccountType,BelongType,OpenBank,OpenSubBank,OpenProvince,OpenCity,IDCard,CreateBy,UpdateBy)
+values(@BusinessId,@TrueName,@AccountNo,@IsEnable,@AccountType,@BelongType,@OpenBank,@OpenSubBank,@OpenProvince,@OpenCity,@IDCard,@CreateBy,@UpdateBy)
 select @@IDENTITY";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("BusinessId", businessFinanceAccount.BusinessId); //商户ID
@@ -64,7 +64,7 @@ select @@IDENTITY";
             const string updateSql = @"
 update  BusinessFinanceAccount
 set  TrueName=@TrueName,AccountNo=@AccountNo,BelongType=@BelongType,OpenBank=@OpenBank,
-OpenSubBank=@OpenSubBank,UpdateBy=@UpdateBy
+OpenSubBank=@OpenSubBank,UpdateBy=@UpdateBy,OpenProvince=@OpenProvince,OpenCity=@OpenCity,IDCard=@IDCard 
 where  Id=@Id ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Id", businessFinanceAccount.Id);
@@ -74,6 +74,9 @@ where  Id=@Id ";
             dbParameters.AddWithValue("OpenBank", businessFinanceAccount.OpenBank);
             dbParameters.AddWithValue("OpenSubBank", businessFinanceAccount.OpenSubBank);
             dbParameters.AddWithValue("UpdateBy", businessFinanceAccount.UpdateBy);
+            dbParameters.Add("OpenProvince", DbType.String).Value = businessFinanceAccount.OpenProvince;
+            dbParameters.Add("OpenCity", DbType.String).Value = businessFinanceAccount.OpenCity;
+            dbParameters.Add("IDCard", DbType.String).Value = businessFinanceAccount.IDCard;
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
 
@@ -122,9 +125,9 @@ where  Id=@Id ";
         {
             BusinessFinanceAccount model = null;
             const string querysql = @"
-select  Id,BusinessId,TrueName,AccountNo,IsEnable,AccountType,BelongType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime
-from  BusinessFinanceAccount (nolock)
-where  Id=@Id and IsEnable=1";
+ select  a.Id,a.BusinessId,a.TrueName,a.AccountNo,a.IsEnable,a.AccountType,a.BelongType,a.OpenBank,a.OpenSubBank,a.CreateBy,a.CreateTime,a.UpdateBy,a.UpdateTime,a.OpenProvince,a.OpenCity,a.IDCard,b.PhoneNo
+from  dbo.BusinessFinanceAccount (nolock) a join dbo.business b (nolock) on a.BusinessId = b.Id
+where  a.Id=@Id and a.IsEnable=1 ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Id", id);
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
@@ -172,7 +175,7 @@ from  BusinessFinanceAccount
 where  BusinessId=@BusinessId and IsEnable=1";  //事物内不加锁
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("BusinessId", businessId);
-           return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, querysql, dbParameters));     
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, querysql, dbParameters));
         }
 
         /// <summary>

@@ -155,15 +155,5 @@ namespace Ets.Service.Provider.DeliveryCompany
                 return ResultModel<DeliveryCompanyResultModel>.Conclude(DeliveryStatus.HadExist, null);
             }
         }
-
-        /// <summary>
-        /// 根据骑士id获取骑士所属物流公司数据
-        /// </summary>
-        /// <param name="clienterID"></param>
-        /// <returns></returns>
-        public DeliveryCompanyModel GetDeliveryCompanyByClienterID(int clienterID)
-        {
-            return dao.GetDeliveryCompanyByClienterID(clienterID);
-        }
     }
 }

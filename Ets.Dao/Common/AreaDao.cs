@@ -76,22 +76,6 @@ where   IsPublic = 1;
             return MapRows<AreaModel>(DataTableHelper.GetTable(ds));
         }
 
-        /// <summary>
-        /// 获得开户银行省市
-        /// 彭宜    20150715
-        /// </summary>
-        /// <returns></returns>
-        public IList<AreaModel> GetPublicBankCitySql()
-        {
-            string sql = string.Format(@" SELECT   a.Code ,
-                        a.Name ,
-                        a.ParentId ,
-                        a.JiBie
-               FROM     dbo.PublicBankCity a ( NOLOCK )");
-            DataSet ds = DbHelper.ExecuteDataset(SuperMan_Read, sql);
-            return MapRows<AreaModel>(DataTableHelper.GetTable(ds));
-        }
-
        /// <summary>
         /// 根据省市区名称获取对应的省市区编码 add by caoheyang 20150407
        /// </summary>
@@ -140,6 +124,22 @@ where   p.name =@ProvinceName
                WHERE    a.ParentId = 0
                         AND a.Code IN ( {0} )
             ", ConfigSettings.Instance.OpenCityCode);
+            DataSet ds = DbHelper.ExecuteDataset(SuperMan_Read, sql);
+            return MapRows<AreaModel>(DataTableHelper.GetTable(ds));
+        }
+
+        /// <summary>
+        /// 获得开户银行省市
+        /// 彭宜    20150715
+        /// </summary>
+        /// <returns></returns>
+        public IList<AreaModel> GetPublicBankCitySql()
+        {
+            string sql = string.Format(@" SELECT   a.Code ,
+                        a.Name ,
+                        a.ParentId ,
+                        a.JiBie
+               FROM     dbo.PublicBankCity a ( NOLOCK )");
             DataSet ds = DbHelper.ExecuteDataset(SuperMan_Read, sql);
             return MapRows<AreaModel>(DataTableHelper.GetTable(ds));
         }
