@@ -90,7 +90,9 @@ where  Id=@Id ";
         {
             BusinessWithdrawForm model = new BusinessWithdrawForm();
             const string querysql = @"
-select  Id,WithwardNo,BusinessId,BalancePrice,AllowWithdrawPrice,Status,Amount,Balance,WithdrawTime,Auditor,AuditTime,AuditFailedReason,Payer,PayTime,PayFailedReason
+select  Id,WithwardNo,BusinessId,BalancePrice,AllowWithdrawPrice,Status,Amount,Balance,
+WithdrawTime,Auditor,AuditTime,AuditFailedReason,Payer,PayTime,PayFailedReason
+,HandChargeThreshold,HandCharge,HandChargeOutlay 
 from  BusinessWithdrawForm (nolock)
 where  Id=@Id ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();

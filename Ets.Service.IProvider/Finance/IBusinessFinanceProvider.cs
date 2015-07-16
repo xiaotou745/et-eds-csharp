@@ -1,4 +1,5 @@
 ﻿using Ets.Model.Common;
+using Ets.Model.Common.YeePay;
 using Ets.Model.DataModel.Business;
 using Ets.Model.DataModel.Finance;
 using Ets.Model.DomainModel.Finance;
@@ -76,6 +77,15 @@ namespace Ets.Service.IProvider.Finance
         /// <param name="model"></param>
         /// <returns></returns>
         bool BusinessWithdrawPayFailed(BusinessWithdrawLogModel model);
+
+        /// <summary>
+        /// 易宝打款失败回调处理逻辑 
+        /// add by caoheyang  20150716
+        /// </summary>
+        /// <param name="model"></param>
+        ///  <param name="callback"></param>
+        /// <returns></returns>
+        bool BusinessWithdrawPayFailed(BusinessWithdrawLogModel model, CashTransferCallback callback);
  		/// <summary>
         /// 获取商户提款收支记录列表
         /// danny-20150512

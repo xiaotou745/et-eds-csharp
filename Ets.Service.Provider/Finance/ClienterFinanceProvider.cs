@@ -5,12 +5,15 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Ets.Dao.Clienter;
 using Ets.Dao.Finance;
+using Ets.Dao.GlobalConfig;
 using ETS.Enums;
 using ETS.Extension;
 using Ets.Model.Common;
+using Ets.Model.Common.YeePay;
 using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.Finance;
 using Ets.Model.DomainModel.Finance;
+using Ets.Model.DomainModel.GlobalConfig;
 using Ets.Model.ParameterModel.Finance;
 using ETS.Pay.YeePay;
 using ETS.Security;
@@ -71,6 +74,7 @@ namespace Ets.Service.Provider.Finance
                         Money = -withdrawCpm.WithdrawPrice
                     }); //更新骑士表的余额，可提现余额
                     string withwardNo = Helper.generateOrderCode(withdrawCpm.ClienterId);
+                    GlobalConfigModel globalConfig = GlobalConfigDao.GlobalConfigGet(0);
                     #region 骑士提现
                     long withwardId = _clienterWithdrawFormDao.Insert(new ClienterWithdrawForm()
                               {
@@ -92,9 +96,9 @@ namespace Ets.Service.Provider.Finance
                                   OpenCityCode = withdrawCpm.OpenCityCode,//城市代码
                                   OpenProvince = withdrawCpm.OpenProvince,//省份
                                   OpenProvinceCode = withdrawCpm.OpenProvinceCode,//省份代码
-                                  HandCharge = 1,//手续费
-                                  HandChargeOutlay = withdrawCpm.WithdrawPrice>100?1:0,//手续费支出方
-                                  HandChargeThreshold = 100//手续费阈值
+                                  HandCharge = Convert.ToInt32(globalConfig.WithdrawCommission),//手续费
+                                  HandChargeOutlay = withdrawCpm.WithdrawPrice > Convert.ToInt32(globalConfig.ClienterWithdrawCommissionAccordingMoney) ? HandChargeOutlay.EDaiSong : HandChargeOutlay.Private,//手续费支出方
+                                  HandChargeThreshold = Convert.ToInt32(globalConfig.ClienterWithdrawCommissionAccordingMoney)//手续费阈值
                               });
                     #endregion
 
@@ -142,13 +146,13 @@ namespace Ets.Service.Provider.Finance
             {
                 return FinanceWithdrawC.NoPara;
             }
-            if (string.IsNullOrWhiteSpace(withdrawCpm.OpenProvince)) 
+            if (string.IsNullOrWhiteSpace(withdrawCpm.OpenProvince))
                 return FinanceWithdrawC.NoOpenProvince;
-            if (withdrawCpm.OpenProvinceCode==0)
+            if (withdrawCpm.OpenProvinceCode == 0)
                 return FinanceWithdrawC.NoOpenProvinceCode;
             if (string.IsNullOrWhiteSpace(withdrawCpm.OpenCity))
                 return FinanceWithdrawC.NoOpenCity;
-            if (withdrawCpm.OpenCityCode==0)
+            if (withdrawCpm.OpenCityCode == 0)
                 return FinanceWithdrawC.NoOpenCityCode;
             if (!Regex.IsMatch(withdrawCpm.IDCard, @"^(^\d{15}$|^\d{18}$|^\d{17}(\d|X|x))$", RegexOptions.IgnoreCase))
                 return FinanceWithdrawC.NoIDCard;
@@ -355,7 +359,7 @@ namespace Ets.Service.Provider.Finance
             string bankaccountnumber = cardModifyCpm.AccountNo; //银行卡号 
             string bankname = cardModifyCpm.OpenBank; //开户行
             string accountname = cardModifyCpm.TrueName; //开户名
-            string bankaccounttype = (cardModifyCpm.BelongType == 0 ? BankaccounttypeEnum.PrivateCash.ToString(): BankaccounttypeEnum.PublicCash.ToString()); //银行卡类别  PrivateCash：对私 PublicCash： 对公
+            string bankaccounttype = (cardModifyCpm.BelongType == 0 ? BankaccounttypeEnum.PrivateCash.ToString() : BankaccounttypeEnum.PublicCash.ToString()); //银行卡类别  PrivateCash：对私 PublicCash： 对公
             string bankprovince = cardModifyCpm.OpenProvince;
             string bankcity = cardModifyCpm.OpenCity;
             var registResult = new Register().RegSubaccount(requestid, bindmobile, customertype, signedname, linkman,
@@ -378,7 +382,7 @@ namespace Ets.Service.Provider.Finance
                         string.Format("易宝错误信息:code{0},ledgerno:{1},hmac{2},msg{3}",
                             registResult.code, registResult.ledgerno, registResult.hmac, registResult.msg));
                 }
-            } 
+            }
             #endregion
 
 
@@ -559,24 +563,76 @@ namespace Ets.Service.Provider.Finance
             bool reg = false;
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                if (clienterFinanceDao.ClienterWithdrawReturn(model))
+                if (clienterFinanceDao.ClienterWithdrawReturn(model)
+                    && clienterFinanceDao.ClienterWithdrawPayFailed(model)
+                    && clienterFinanceDao.ModifyClienterBalanceRecordStatus(model.WithwardId.ToString())
+                    && clienterFinanceDao.ModifyClienterAmountInfo(model.WithwardId.ToString()))
                 {
-                    if (clienterFinanceDao.ClienterWithdrawPayFailed(model))
-                    {
-                        if (clienterFinanceDao.ModifyClienterBalanceRecordStatus(model.WithwardId.ToString()))
-                        {
-                            if (clienterFinanceDao.ModifyClienterAmountInfo(model.WithwardId.ToString()))
-                            {
-                                reg = true;
-                                tran.Complete();
-                            }
-                        }
-                    }
+                    reg = true;
+                    tran.Complete();
                 }
             }
             return reg;
         }
 
+        /// <summary>
+        /// 易宝打款失败回调处理逻辑 
+        /// add by caoheyang  20150716
+        /// </summary>
+        /// <param name="model"></param>
+        ///  <param name="callback"></param>
+        /// <returns></returns>
+        public bool ClienterWithdrawPayFailed(ClienterWithdrawLogModel model,CashTransferCallback callback)
+        {
+            bool reg = false;
+            var withdraw = _clienterWithdrawFormDao.GetById(model.WithwardId);
+            if (withdraw == null)
+            {
+                return reg;
+            }
+            Transfer transfer = new Transfer();
+            TransferReturnModel tempmodel = transfer.TransferAccounts("",
+                (ParseHelper.ToDecimal(callback.amount) - withdraw.HandCharge).ToString(), callback.ledgerno);
+            if (tempmodel.code == "1") //易宝子账户到主账户打款 成功
+            {
+                using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+                {
+                    if (clienterFinanceDao.ClienterWithdrawReturn(model)
+                        && clienterFinanceDao.ClienterWithdrawPayFailed(model)
+                        && clienterFinanceDao.ModifyClienterBalanceRecordStatus(model.WithwardId.ToString())
+                        && clienterFinanceDao.ModifyClienterAmountInfo(model.WithwardId.ToString()))
+                    {
+
+                        _clienterDao.UpdateForWithdrawC(new UpdateForWithdrawPM
+                        {
+                            Id = withdraw.ClienterId,
+                            Money = -withdraw.HandCharge
+                        }); //更新骑士表的余额，可提现余额
+                        if (withdraw.HandChargeOutlay == 0) //个人支出手续费  增加手续费扣款记录流水 
+                        {
+                            _clienterBalanceRecordDao.Insert(new ClienterBalanceRecord()
+                            {
+                                ClienterId = withdraw.ClienterId, //骑士Id(Clienter表）
+                                Amount = -withdraw.HandCharge, //流水金额
+                                Status = (int) ClienterBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
+                                RecordType = (int) ClienterBalanceRecordRecordType.ProcedureFee,
+                                Operator = "易宝系统回调",
+                                WithwardId = withdraw.Id,
+                                RelationNo = withdraw.WithwardNo,
+                                Remark = "易宝提现失败扣除手续费"
+                            });
+                        }
+                        reg = true;
+                        tran.Complete();
+                    }
+                }
+            }
+            else
+            {
+                LogHelper.LogWriterString("易宝子账户到主账户打款导致失败，提现单号为:" + model.WithwardId);
+            }
+            return reg;
+        }
         /// <summary>
         /// 获取骑士提款收支记录列表
         /// danny-20150513

@@ -13,12 +13,13 @@
     <h2 class="crumbs">
         您所在位置：数据统计 > 配送数据分析
     </h2>
-    <div class="SearchMd" style="width:1000px">
+   
         <h4 style="color:black;font-weight:600">任务配送数据分析</h4>
 @using (Ajax.BeginForm("DistributionAnalyze", new RouteValueDictionary { { "pageindex", "1" } },
     new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
     new RouteValueDictionary { { "id", "searchForm" } }))
 {
+     <div class="SearchMd">
         <table border="0" cellspacing="0" cellpadding="0">
             <tr>
                 <td>配送距离范围：</td>
@@ -101,11 +102,12 @@
                 <td></td>
             </tr>
         </table>
+         </div>
 }
             <div class="bd clearfix" id="dataList">
                 @Html.Partial("_PartialDistributionAnalyze", Model)
             </div>
-     </div>
+
 </div>
 <iframe id="proxy" name="proxy" height="0" width="0"></iframe>
 <script>
