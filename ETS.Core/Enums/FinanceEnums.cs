@@ -411,5 +411,12 @@ namespace ETS.Enums
         Failed,
         [DisplayText("手机号不能为空")]
         PhoneEmpty
+    }
+
+    public enum HandChargeOutlay
+    {
+        Private=0,//个人出手续费
+        EDaiSong=1//E代送
+        
     }   
 }

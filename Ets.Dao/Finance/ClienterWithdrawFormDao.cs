@@ -59,7 +59,7 @@ select @@IDENTITY";
             dbParameters.AddWithValue("IDCard", clienterWithdrawForm.IDCard);//身份证号
             dbParameters.AddWithValue("HandChargeThreshold", clienterWithdrawForm.HandChargeThreshold);//手续费阈值  
             dbParameters.AddWithValue("HandCharge", clienterWithdrawForm.HandCharge); //手续费
-            dbParameters.AddWithValue("HandChargeOutlay", clienterWithdrawForm.HandChargeOutlay);//手续费支付方
+            dbParameters.AddWithValue("HandChargeOutlay", (object)clienterWithdrawForm.HandChargeOutlay);//手续费支付方
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters); //提现单号
             return ParseHelper.ToLong(result);
         }

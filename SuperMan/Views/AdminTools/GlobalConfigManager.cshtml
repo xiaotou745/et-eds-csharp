@@ -33,9 +33,7 @@
                     <input type="hidden" name="oldClienterOrderPageSize" value="@globalConfigModel.ClienterOrderPageSize" id="oldClienterOrderPageSize" />
                 </td>
                 
-                <td>
-                    <input  type="button" value="提交修改" class="searchBtn" id="btnCommit" />
-                </td>
+                
             </tr>
             <tr>
                 <td>
@@ -59,6 +57,16 @@
                     <input type="hidden" name="oldEmployerTaskTimeSet" value="@globalConfigModel.ClienterWithdrawCommissionAccordingMoney" id="oldClienterWithdrawCommissionAccordingMoney" />
                 </td>
             </tr>
+            <tr>
+                <td>
+                    <span>易宝支付手续费金额:</span>
+                    <input type="text" name="withdrawCommission" value="@globalConfigModel.WithdrawCommission" id="withdrawCommission" style="width: 100px" />元
+                    <input type="hidden" name="oldWithdrawCommission" value="@globalConfigModel.WithdrawCommission" id="oldWithdrawCommission" />
+                </td>
+                <td>
+                    <input type="button" value="提交修改" class="searchBtn" id="btnCommit" />
+                </td> 
+            </tr>
         </table>
     </div>
 </div>
@@ -74,6 +82,7 @@
             var completeTimeSet = $("#completeTimeSet").val(); //骑士完成任务时间限制
             var employerTaskTimeSet = $("#employerTaskTimeSet").val(); //雇主任务时间限制
             var clienterWithdrawCommissionAccordingMoney = $("#clienterWithdrawCommissionAccordingMoney").val(); //骑士提现小于等于X元支付手续费
+            var withdrawCommission = $("#withdrawCommission").val(); //易宝支付手续费金额
 
             var oldHasUnFinishedOrderUploadTimeInterval = $("#oldHasUnFinishedOrderUploadTimeInterval").val(); //骑士有待完成任务经纬度上传时间间隔（之前）
             var oldAllFinishedOrderUploadTimeInterval = $("#oldAllFinishedOrderUploadTimeInterval").val(); //骑士没有待完成任务经纬度上传时间间隔（之前）
@@ -83,7 +92,7 @@
             var oldCompleteTimeSet = $("#oldCompleteTimeSet").val(); //骑士完成任务时间限制（之前）
             var oldEmployerTaskTimeSet = $("#oldEmployerTaskTimeSet").val(); //雇主任务时间限制（之前）
             var oldClienterWithdrawCommissionAccordingMoney = $("#oldClienterWithdrawCommissionAccordingMoney").val(); //骑士提现小于等于X元支付手续费（之前）
-
+            var oldWithdrawCommission = $("#oldWithdrawCommission").val(); //易宝支付手续费金额（之前）
             if (isNaN(hasUnFinishedOrderUploadTimeInterval)) {
                 alert("请输入正确的数字!");
                 return;
@@ -161,14 +170,20 @@
                 alert('对不起，您输入的雇主任务时间格式不正确!');
                 return;
             }
-                               
+            var reg2 = /^\d+$/;
+            if (withdrawCommission == "" || !reg2.test(withdrawCommission)) {
+                alert('易宝支付手续费金额不合法!');
+                return;
+            }
+
        
-            if (clienterWithdrawCommissionAccordingMoney == oldClienterWithdrawCommissionAccordingMoney && hasUnFinishedOrderUploadTimeInterval == oldHasUnFinishedOrderUploadTimeInterval && allFinishedOrderUploadTimeInterval == oldAllFinishedOrderUploadTimeInterval && pushRadius == oldPushRadius && clienterOrderPageSize == oldClienterOrderPageSize && exclusiveOrderTime == oldExclusiveOrderTime && completeTimeSet == oldCompleteTimeSet && employerTaskTimeSet == oldEmployerTaskTimeSet) {
+            if (withdrawCommission==oldWithdrawCommission&&clienterWithdrawCommissionAccordingMoney == oldClienterWithdrawCommissionAccordingMoney && hasUnFinishedOrderUploadTimeInterval == oldHasUnFinishedOrderUploadTimeInterval && allFinishedOrderUploadTimeInterval == oldAllFinishedOrderUploadTimeInterval && pushRadius == oldPushRadius && clienterOrderPageSize == oldClienterOrderPageSize && exclusiveOrderTime == oldExclusiveOrderTime && completeTimeSet == oldCompleteTimeSet && employerTaskTimeSet == oldEmployerTaskTimeSet) {
                 alert("没有需要修改的信息!");
                 return;
             }
+            
             if (confirm("确定提交修改?")) {
-                var pars = {"clienterWithdrawCommissionAccordingMoney":clienterWithdrawCommissionAccordingMoney, "hasUnFinishedOrderUploadTimeInterval": hasUnFinishedOrderUploadTimeInterval, "allFinishedOrderUploadTimeInterval": allFinishedOrderUploadTimeInterval, "pushRadius": pushRadius, "clienterOrderPageSize": clienterOrderPageSize, "exclusiveOrderTime": exclusiveOrderTime, "completeTimeSet": completeTimeSet, "employerTaskTimeSet": employerTaskTimeSet };
+                var pars = { "withdrawCommission": withdrawCommission, "clienterWithdrawCommissionAccordingMoney": clienterWithdrawCommissionAccordingMoney, "hasUnFinishedOrderUploadTimeInterval": hasUnFinishedOrderUploadTimeInterval, "allFinishedOrderUploadTimeInterval": allFinishedOrderUploadTimeInterval, "pushRadius": pushRadius, "clienterOrderPageSize": clienterOrderPageSize, "exclusiveOrderTime": exclusiveOrderTime, "completeTimeSet": completeTimeSet, "employerTaskTimeSet": employerTaskTimeSet };
                 var url = "/AdminTools/ModifyGlobalConfig";
                 $.ajax({
                     type: 'POST',

@@ -253,6 +253,16 @@ namespace Ets.Service.Provider.Business
                         return false;
                     }
                 }
+                if (!string.IsNullOrWhiteSpace(globalConfigModel.WithdrawCommission))
+                {
+                    globalConfig.KeyName = "WithdrawCommission";
+                    globalConfig.Value = globalConfigModel.WithdrawCommission;
+                    reg = businessGroupDao.UpdateGlobalConfig(globalConfig);
+                    if (!reg)
+                    {
+                        return false;
+                    }
+                }
                 tran.Complete();
                 DeleteGlobalConfigRedisByGroupId(globalConfigModel.GroupId);
                 return true;

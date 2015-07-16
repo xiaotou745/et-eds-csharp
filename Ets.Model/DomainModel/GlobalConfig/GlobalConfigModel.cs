@@ -146,5 +146,9 @@ namespace Ets.Model.DomainModel.GlobalConfig
         /// 骑士提现小于等于X元支付手续费
         /// </summary>
         public string ClienterWithdrawCommissionAccordingMoney { get; set; }
+        /// <summary>
+        /// 提现扣除手续费数值
+        /// </summary>
+        public string WithdrawCommission { get; set; }
     }
 }
