@@ -29,5 +29,12 @@ namespace Ets.Service.IProvider.DeliveryCompany
         PageInfo<DeliveryCompanyModel> Get(DeliveryCompanyCriteria deliveryCompanyCriteria);
 
         ResultModel<DeliveryCompanyResultModel> Add(DeliveryCompanyModel deliveryCompanyModel);
+
+        /// <summary>
+        /// 根据骑士id获取骑士所属物流公司数据
+        /// </summary>
+        /// <param name="clienterID"></param>
+        /// <returns></returns>
+        DeliveryCompanyModel GetDeliveryCompanyByClienterID(int clienterID);
     }
 }

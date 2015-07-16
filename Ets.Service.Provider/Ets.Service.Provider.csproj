@@ -102,6 +102,7 @@
     <Compile Include="Order\AutoAdjustProvider.cs" />
     <Compile Include="Order\BreakEvenPointOrPriceProvider.cs" />
     <Compile Include="Order\CommissionFactory.cs" />
+    <Compile Include="Order\DeliveryCompanyPriceProvider.cs" />
     <Compile Include="Order\OrderChildProvider.cs" />
     <Compile Include="Order\OrderPriceProvider.cs" />
     <Compile Include="Order\DefaultOrPriceProvider.cs" />

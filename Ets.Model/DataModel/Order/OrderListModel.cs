@@ -309,5 +309,13 @@ namespace Ets.Model.DataModel.Order
         /// 取货时间
         /// </summary>
         public DateTime? TakeTime { get; set; }
+        /// <summary>
+        /// 物流公司结算金额
+        /// </summary>
+        public decimal DeliveryCompanySettleMoney { get; set; }
+        /// <summary>
+        /// 物流公司id
+        /// </summary>
+        public int DeliveryCompanyID { get; set; }
     }
 }
