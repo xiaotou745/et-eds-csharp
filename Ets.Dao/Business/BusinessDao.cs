@@ -1545,7 +1545,7 @@ where Id=@Id";
 
             #region 商家金融账号表
             const string queryBFAccountSql = @"
-select  Id,BusinessId,TrueName,AccountNo,IsEnable,AccountType,BelongType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime,OpenProvince,OpenCity 
+select  Id,BusinessId,TrueName,AccountNo,IsEnable,AccountType,BelongType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime,OpenProvince,OpenCity,IDCard 
 from  BusinessFinanceAccount (nolock) 
 where BusinessId=@BusinessId and IsEnable=1";
             IDbParameters dbBFAccountParameters = DbHelper.CreateDbParameters();
@@ -1577,6 +1577,10 @@ where BusinessId=@BusinessId and IsEnable=1";
                 if (dataRow["OpenCity"] != null && dataRow["OpenCity"] != DBNull.Value)
                 {
                     bf.OpenCity = dataRow["OpenCity"].ToString();
+                }
+                if (dataRow["IDCard"] != null && dataRow["IDCard"] != DBNull.Value)
+                {
+                    bf.OpenCity = dataRow["IDCard"].ToString();
                 }
                 bf.CreateBy = dataRow["CreateBy"].ToString();
                 bf.CreateTime = ParseHelper.ToDatetime(dataRow["CreateTime"]);
