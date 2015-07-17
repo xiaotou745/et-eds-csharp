@@ -108,6 +108,16 @@ namespace ETS.Enums
         Newest = 0,
         [DisplayText("非最新")]
         UnNewest = 1
-    } 
+    }
 
+    /// <summary>
+    /// 银行省市区信息
+    /// </summary>
+    public enum BankCityStatus
+    {
+        [DisplayText("失败")]
+        Failed = 0,
+        [DisplayText("成功")]
+        Success = 1
+    } 
 }

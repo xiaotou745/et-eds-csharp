@@ -713,6 +713,7 @@ SELECT bfa.[Id]
       ,bwf.HandChargeThreshold
       ,bwf.HandCharge
       ,bwf.HandChargeOutlay
+      ,WithdrawTime
   FROM [BusinessFinanceAccount] bfa with(nolock)
   join BusinessWithdrawForm bwf with(nolock) on bwf.BusinessId=bfa.BusinessId and bwf.Id=@withwardId 
   join business b with(nolock) on b.id=bfa.BusinessId";

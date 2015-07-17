@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using ETS;
 using Ets.Dao.Finance;
 using Ets.Dao.User;
 using ETS.Enums;
@@ -316,6 +317,12 @@ namespace Ets.Service.Provider.Finance
             if (busiFinanceAccount == null)
             {
                 dealResultInfo.DealMsg = "获取提现单信息失败！";
+                return dealResultInfo;
+            }
+            if (busiFinanceAccount.WithdrawTime < ParseHelper.ToDatetime(Config.WithdrawTime))
+            {
+                dealResultInfo.DealFlag = BusinessWithdrawPayOk(model);
+                dealResultInfo.DealMsg = dealResultInfo.DealFlag ? "打款成功！" : "打款失败！";
                 return dealResultInfo;
             }
             decimal amount = busiFinanceAccount.HandChargeOutlay == 0

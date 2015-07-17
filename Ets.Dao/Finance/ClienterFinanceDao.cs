@@ -642,6 +642,7 @@ SELECT cfa.[Id]
       ,cwf.HandChargeThreshold
       ,cwf.HandCharge
       ,cwf.HandChargeOutlay
+      ,WithdrawTime
   FROM [ClienterFinanceAccount] cfa with(nolock)
   join ClienterWithdrawForm cwf with(nolock) on cwf.ClienterId=cfa.ClienterId and cwf.Id=@withwardId";
             IDbParameters parm = DbHelper.CreateDbParameters();
