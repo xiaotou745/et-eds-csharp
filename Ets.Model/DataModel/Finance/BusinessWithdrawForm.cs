@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ETS.Enums;
 
 namespace Ets.Model.DataModel.Finance
 {
@@ -96,6 +97,26 @@ namespace Ets.Model.DataModel.Finance
         /// </summary>
         public string OpenSubBank { get; set; }
         /// <summary>
+        /// 省名称
+        /// </summary>
+        public string OpenProvince { get; set; }
+        /// <summary>
+        /// 市区名称
+        /// </summary>
+        public string OpenCity { get; set; } 
+        /// <summary>
+        /// 省代码
+        /// </summary>
+        public int OpenProvinceCode { get; set; }
+        /// <summary>
+        /// 市区代码
+        /// </summary>
+        public int OpenCityCode { get; set; }
+        /// <summary>
+        /// 对私身份证号或对公营业执照号 
+        /// </summary>
+        public string IDCard { get; set; }
+        /// <summary>
         /// 手续费阈值,例如100
         /// </summary>
         public decimal HandChargeThreshold { get; set; }
@@ -106,7 +127,7 @@ namespace Ets.Model.DataModel.Finance
         /// <summary>
         /// 手续费支出方:0个人,1易代送
         /// </summary>
-        public int HandChargeOutlay { get; set; }
+        public HandChargeOutlay HandChargeOutlay { get; set; }
 
     }
 }

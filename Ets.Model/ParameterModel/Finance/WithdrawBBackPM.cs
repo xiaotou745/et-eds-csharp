@@ -28,5 +28,10 @@ namespace Ets.Model.ParameterModel.Finance
         /// 备注
         /// </summary>
         public string Remarks { get; set; }
+
+        /// <summary>
+        /// 对公营业执照,对私身份证号
+        /// </summary>
+        public string IDCard { get; set; }
     }
 }

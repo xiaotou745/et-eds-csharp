@@ -21,6 +21,9 @@ using ETS.Transaction.Common;
 using ETS.Util;
 using Ets.Dao.Business;
 using Ets.Dao.Clienter;
+using Ets.Dao.GlobalConfig;
+using Ets.Model.DomainModel.GlobalConfig;
+
 namespace Ets.Service.Provider.Finance
 {
     public class BusinessFinanceProvider : IBusinessFinanceProvider
@@ -166,6 +169,7 @@ namespace Ets.Service.Provider.Finance
                         Money = -withdrawBBackPM.WithdrawPrice
                     }); //更新商户表的余额，可提现余额
                     string withwardNo = Helper.generateOrderCode(withdrawBBackPM.BusinessId);
+                    GlobalConfigModel globalConfig = GlobalConfigDao.GlobalConfigGet(0);
                     #region 商户提现
                     long withwardId = _businessWithdrawFormDao.Insert(new BusinessWithdrawForm()
                     {
@@ -181,7 +185,17 @@ namespace Ets.Service.Provider.Finance
                         AccountType = businessFinanceAccount.AccountType, //账号类型：
                         BelongType = businessFinanceAccount.BelongType,//账号类别  0 个人账户 1 公司账户  
                         OpenBank = businessFinanceAccount.OpenBank,//开户行
-                        OpenSubBank = businessFinanceAccount.OpenSubBank //开户支行
+                        OpenSubBank = businessFinanceAccount.OpenSubBank, //开户支行
+
+                        IDCard = withdrawBBackPM.IDCard,//申请提款身份证号
+                        OpenCity = withdrawBBackPM.OpenCity,//城市
+                        OpenCityCode = withdrawBBackPM.OpenCityCode,//城市代码
+                        OpenProvince = withdrawBBackPM.OpenProvince,//省份
+                        OpenProvinceCode = withdrawBBackPM.OpenProvinceCode,//省份代码
+                                  HandCharge = Convert.ToInt32(globalConfig.WithdrawCommission),//手续费
+                        HandChargeOutlay = withdrawBBackPM.WithdrawPrice > Convert.ToInt32(globalConfig.ClienterWithdrawCommissionAccordingMoney) ? HandChargeOutlay.EDaiSong : HandChargeOutlay.Private,//手续费支出方
+                                  HandChargeThreshold = Convert.ToInt32(globalConfig.ClienterWithdrawCommissionAccordingMoney)//手续费阈值
+                              
                     });
                     #endregion
 

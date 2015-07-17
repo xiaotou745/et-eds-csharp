@@ -80,11 +80,7 @@ namespace Ets.Model.DataModel.Finance
         /// <summary>
         /// 商户手机号
         /// </summary>
-        public string PhoneNo { get; set; }
-        /// <summary>
-        /// 营业执照
-        /// </summary>
-        public string BusinessLicence { get; set; }
+        public string PhoneNo { get; set; } 
         /// <summary>
         /// 易宝key
         /// </summary>
@@ -101,5 +97,7 @@ namespace Ets.Model.DataModel.Finance
         /// 提现金额
         /// </summary>
         public decimal Amount { get; set; }
+
+        public string BusinessLicence { get; set; }
     }
 }
