@@ -228,14 +228,9 @@ namespace Ets.Service.Provider.Finance
             Task.Factory.StartNew(() =>
             {
                 //请求易宝注册接口,如果成功,则更新账户易宝key和status
-                var clienter = _clienterDao.GetById(cardBindCpm.ClienterId);
-                if (clienter == null)
-                {
-                    ETS.Util.LogHelper.LogWriter(new ArgumentException("clienter值为null"), "ClienterFinanceProvider.CardBindC-绑定银行账户");
-                    return;
-                }
+                var phoneNo = _clienterDao.GetPhoneNo(cardBindCpm.ClienterId);
                 string requestid = TimeHelper.GetTimeStamp(false);
-                string bindmobile = clienter.PhoneNo;  //绑定手机
+                string bindmobile = phoneNo;  //绑定手机
                 string customertype = (cardBindCpm.BelongType == 0 ?
                     CustomertypeEnum.PERSON.ToString() : CustomertypeEnum.ENTERPRISE.ToString()); //注册类型  PERSON ：个人 ENTERPRISE：企业个人 ENTERPRISE：企业
                 string signedname = cardBindCpm.TrueName; //签约名   商户签约名；个人，填写姓名；企业，填写企业名称。
