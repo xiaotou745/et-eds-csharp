@@ -687,7 +687,7 @@ where b.Id=@BusinessId;");
         /// </summary>
         /// <param name="withwardId">提款单Id</param>
         /// <returns></returns>
-        public BusinessFinanceAccount GetBusinessFinanceAccount(string withwardId)
+        public BusinessFinanceAccountModel GetBusinessFinanceAccount(string withwardId)
         {
             string sql = @"  
 SELECT bfa.[Id]
@@ -710,6 +710,9 @@ SELECT bfa.[Id]
       ,bfa.[YeepayStatus]
       ,b.IDCard BusiIDCard
       ,bwf.Amount
+      ,bwf.HandChargeThreshold
+      ,bwf.HandCharge
+      ,bwf.HandChargeOutlay
   FROM [BusinessFinanceAccount] bfa with(nolock)
   join BusinessWithdrawForm bwf with(nolock) on bwf.BusinessId=bfa.BusinessId and bwf.Id=@withwardId 
   join business b with(nolock) on b.id=bfa.BusinessId";
@@ -720,7 +723,7 @@ SELECT bfa.[Id]
             {
                 return null;
             }
-            return MapRows<BusinessFinanceAccount>(dt)[0];
+            return MapRows<BusinessFinanceAccountModel>(dt)[0];
         }
     }
        

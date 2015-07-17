@@ -530,7 +530,84 @@ namespace Ets.Service.Provider.Finance
             }
             return reg;
         }
-
+        /// <summary>
+        /// 骑士提现申请单确认打款调用易宝接口
+        /// danny-20150717
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public DealResultInfo ClienterWithdrawPaying(ClienterWithdrawLog model)
+        {
+            var dealResultInfo = new DealResultInfo
+            {
+                DealFlag = false
+            };
+            var cliFinanceAccount = clienterFinanceDao.GetClienterFinanceAccount(model.WithwardId.ToString());
+            if (cliFinanceAccount == null)
+            {
+                dealResultInfo.DealMsg = "获取提现单信息失败！";
+                return dealResultInfo;
+            }
+            decimal amount = cliFinanceAccount.HandChargeOutlay == 0
+                ? cliFinanceAccount.Amount
+                : cliFinanceAccount.Amount + cliFinanceAccount.HandCharge;
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                //注册易宝子账户逻辑
+                if (string.IsNullOrEmpty(cliFinanceAccount.YeepayKey) || cliFinanceAccount.YeepayStatus == 1)
+                {
+                    var brp = new BusinessRegisterParameter
+                    {
+                        bindmobile = cliFinanceAccount.PhoneNo,
+                        signedname = cliFinanceAccount.TrueName,
+                        customertype =
+                            cliFinanceAccount.BelongType == 0
+                                ? CustomertypeEnum.PERSON.ToString()
+                                : CustomertypeEnum.ENTERPRISE.ToString(),
+                        linkman = cliFinanceAccount.TrueName,
+                        idcard = cliFinanceAccount.IDCard,
+                        businesslicence = cliFinanceAccount.IDCard,
+                        legalperson = cliFinanceAccount.TrueName,
+                        bankaccountnumber = cliFinanceAccount.AccountNo,
+                        bankname = cliFinanceAccount.OpenBank,
+                        accountname = cliFinanceAccount.TrueName,
+                        bankprovince = cliFinanceAccount.OpenProvince,
+                        bankcity = cliFinanceAccount.OpenCity
+                    };
+                    var dr = DealRegCliSubAccount(brp);
+                    if (!dr.DealFlag)
+                    {
+                        dealResultInfo.DealMsg = dr.DealMsg;
+                        return dealResultInfo;
+                    }
+                    cliFinanceAccount.YeepayKey = dr.SuccessId; //子账户id
+                }
+                //转账逻辑
+                var regTransfer = new Transfer().TransferAccounts("", amount.ToString(),
+                    cliFinanceAccount.YeepayKey); //转账   子账户转给总账户
+                if (regTransfer.code != "1")
+                {
+                    dealResultInfo.DealMsg = "骑士易宝自动转账失败：" + regTransfer.code;
+                    return dealResultInfo;
+                }
+                var regCash = new Transfer().CashTransfer(APP.B, ParseHelper.ToInt(model.WithwardId),
+                    cliFinanceAccount.YeepayKey, amount.ToString(), "配置"); //提现
+                if (regCash.code != "1")
+                {
+                    dealResultInfo.DealMsg = "骑士易宝自动提现失败：" + regCash.code;
+                    return dealResultInfo;
+                }
+                if (!clienterFinanceDao.ClienterWithdrawPayOk(model))
+                {
+                    dealResultInfo.DealMsg = "更改提现单状态为打款中失败！";
+                    return dealResultInfo;
+                }
+                dealResultInfo.DealFlag = true;
+                dealResultInfo.DealMsg = "骑士提现单确认打款处理成功，等待银行打款！";
+                tran.Complete();
+                return dealResultInfo;
+            }
+        }
         /// <summary>
         /// 骑士提现申请单审核拒绝
         /// danny-20150513
@@ -758,6 +835,48 @@ namespace Ets.Service.Provider.Finance
         public bool ClienterRecharge(ClienterOptionLog model)
         {
             return clienterFinanceDao.ClienterRecharge(model);
+        }
+        /// <summary>
+        /// 调用商户易宝子账号注册接口并对返回值进行处理
+        /// danny-20150716
+        /// </summary>
+        /// <param name="model"></param>
+        public DealResultInfo DealRegCliSubAccount(BusinessRegisterParameter model)
+        {
+            var dealResultInfo = new DealResultInfo
+            {
+                DealFlag = false
+            };
+            var registResult = new Register().RegSubaccount(model.requestid, model.bindmobile, model.customertype, model.signedname, model.linkman, model.idcard, model.businesslicence, model.legalperson, model.bankaccountnumber, model.bankname, model.accountname, model.bankaccounttype, model.bankprovince, model.bankcity);//注册帐号
+            if (registResult != null && !string.IsNullOrEmpty(registResult.code) && registResult.code.Trim() == "1")   //绑定成功，更新易宝key
+            {
+                if (!_clienterFinanceAccountDao.ModifyYeepayInfoById(Convert.ToInt32(model.accountid), registResult.ledgerno, 0))
+                {
+                    dealResultInfo.DealMsg = "调用易宝用户注册成功，回写数据库失败！";
+                }
+                else
+                {
+                    dealResultInfo.DealFlag = true;
+                    dealResultInfo.SuccessId = registResult.ledgerno;
+                    dealResultInfo.DealMsg = "骑士绑定易宝支付成功！";
+                }
+            }
+            else
+            {
+                _clienterFinanceAccountDao.ModifyYeepayInfoById(Convert.ToInt32(model.accountid), "", 1);
+                if (registResult == null)
+                {
+                    dealResultInfo.DealMsg = "骑士绑定易宝支付失败,返回结果为null!";
+                }
+                else
+                {
+                    LogHelper.LogWriterString("骑士绑定易宝支付失败",
+                        string.Format("易宝错误信息:code{0},ledgerno:{1},hmac{2},msg{3}",
+                            registResult.code, registResult.ledgerno, registResult.hmac, registResult.msg));
+                    dealResultInfo.DealMsg = string.Format("商户绑定易宝支付失败,易宝错误信息:code{0},ledgerno:{1},hmac{2},msg{3}", registResult.code, registResult.ledgerno, registResult.hmac, registResult.msg);
+                }
+            }
+            return dealResultInfo;
         }
     }
 }

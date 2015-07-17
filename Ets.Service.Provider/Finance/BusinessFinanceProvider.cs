@@ -301,6 +301,14 @@ namespace Ets.Service.Provider.Finance
                 DealFlag = false
             };
             var busiFinanceAccount = businessFinanceDao.GetBusinessFinanceAccount(model.WithwardId.ToString());
+            if (busiFinanceAccount == null)
+            {
+                dealResultInfo.DealMsg = "获取提现单信息失败！";
+                return dealResultInfo;
+            }
+            decimal amount = busiFinanceAccount.HandChargeOutlay == 0
+                ? busiFinanceAccount.Amount
+                : busiFinanceAccount.Amount + busiFinanceAccount.HandCharge;
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 //注册易宝子账户逻辑
@@ -333,7 +341,7 @@ namespace Ets.Service.Provider.Finance
                     busiFinanceAccount.YeepayKey = dr.SuccessId; //子账户id
                 }
                 //转账逻辑
-                var regTransfer = new Transfer().TransferAccounts("", busiFinanceAccount.Amount.ToString(),
+                var regTransfer = new Transfer().TransferAccounts("", amount.ToString(),
                     busiFinanceAccount.YeepayKey); //转账   子账户转给总账户
                 if (regTransfer.code != "1")
                 {
@@ -341,10 +349,15 @@ namespace Ets.Service.Provider.Finance
                     return dealResultInfo;
                 }
                 var regCash = new Transfer().CashTransfer(APP.B, ParseHelper.ToInt(model.WithwardId),
-                    busiFinanceAccount.YeepayKey, busiFinanceAccount.Amount.ToString(), "配置"); //提现
+                    busiFinanceAccount.YeepayKey, amount.ToString(), "配置"); //提现
                 if (regCash.code != "1")
                 {
                     dealResultInfo.DealMsg = "商户易宝自动提现失败：" + regCash.code;
+                    return dealResultInfo;
+                }
+                if(!businessFinanceDao.BusinessWithdrawPayOk(model))
+                {
+                    dealResultInfo.DealMsg = "更改提现单状态为打款中失败！";
                     return dealResultInfo;
                 }
                 dealResultInfo.DealFlag = true;
