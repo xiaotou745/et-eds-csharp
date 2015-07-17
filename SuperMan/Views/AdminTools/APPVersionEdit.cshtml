@@ -1,0 +1,240 @@
+﻿@model Ets.Model.Common.AppVerionModel
+@{
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+    var dealType = @ViewBag.dealType;
+}
+
+<script src="~/Content/My97DatePicker/WdatePicker.js"></script>
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script src="~/Scripts/jquery-ui-1.8.20.js"></script>
+<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+<script src="~/Scripts/ajaxfileupload.js"></script>
+<div style="width:800px;height:auto;border: 1px #dcdcdc solid">
+    <h2 class="crumbs">
+        您所在位置：管理员 > APP版本控制 > 添加新版本
+    </h2>
+    <div style="width:798px;height:auto;padding-left:10px;border:1px #dcdcdc solid;border-left:hidden;border-right:hidden;border-top:hidden">
+        <div style="width:780px;height:25px;margin-top:10px">
+            <div style="float: left;margin-left: 15px">
+                <label>客户端类型：</label>
+            </div>
+            <div style="float:left;width:650px">
+                <input name="rPlatForm" id="rAndroid" type="radio" value="1" checked="checked" /> Android
+                <input name="rPlatForm" id="rIOS" type="radio" value="2" /> IOS
+                <input type="hidden" id="hidDealType" name="hidDealType" value="@dealType" />
+                <input type="hidden" id="hidId" name="hidId" value="@(Model!=null?Model.ID:0)" />
+                @if (dealType == 1)
+                {
+                    <input type="hidden" id="hidPlatForm" name="hidPlatForm" value="@Model.PlatForm" />
+                }
+            </div>
+        </div>
+        <div style="width:780px;height:25px;margin-top:10px">
+            <div style="float: left;margin-left: 25px">
+                <label>用户类型：</label>
+            </div>
+            <div style="float:left;width:650px">
+                <input name="rUserType" id="rClienter" type="radio" value="1" checked="checked" /> 骑士
+                <input name="rUserType" id="rBusiness" type="radio" value="2" /> 商家
+                @if (dealType == 1)
+                {
+                    <input type="hidden" id="hidUserType" name="hidUserType" value="@Model.UserType" />
+                }
+            </div>
+        </div>
+        <div style="width:780px;height:25px;margin-top:10px">
+            <div style="float: left;margin-left: 30px">
+                <label>版 本 号：</label>
+            </div>
+            <div style="float: left;width:650px;">
+                <input name="version" id="version" type="text" value="">
+                @if (dealType == 1)
+                {
+                    <input type="hidden" id="hidVersion" name="hidVersion" value="@Model.Version" />
+                }
+            </div>
+        </div>
+        <div style="width:780px;height:25px;margin-top:10px">
+            <div style="float: left">
+                <label>是否强制更新：</label>
+            </div>
+            <div style="float:left;width:650px">
+                <input name="rIsMust" id="rIsMustN" type="radio" value="0" checked="checked" /> 否
+                <input name="rIsMust" id="rIsMustY" type="radio" value="1" /> 是
+                @if (dealType == 1)
+                {
+                    <input type="hidden" id="hidIsMust" name="hidIsMust" value="@Model.IsMust" />
+                }
+            </div>
+        </div>
+        <div style="width:780px;height:25px;margin-top:10px">
+            <div style="float: left;margin-left: 25px">
+                <label>下载地址：</label>
+            </div>
+            <div style="float: left;width:650px;">
+                <input name="updateUrl" id="updateUrl" type="text" value="">
+                @if (dealType == 1)
+                {
+                    <input type="hidden" id="hidUpdateUrl" name="hidUpdateUrl" value="@Model.UpdateUrl" />
+                }
+            </div>
+        </div>
+        <div style="width:780px;height:100px;margin-top:10px">
+            <div style="float:left;">
+                <label>提示更新内容：</label>
+            </div>
+            <div style="float:left;width:650px">
+                <textarea cols="70" rows="5" id="message"></textarea>
+                @if (dealType == 1)
+                {
+                    <input type="hidden" id="hidMessage" name="hidMessage" value="@Model.Message" />
+                }
+            </div>
+        </div>
+        <div style="width:780px;height:25px;margin-top:10px">
+            <div style="float: left;margin-left: 25px">
+                <label>发布类型：</label>
+            </div>
+            <div style="float:left;width:650px">
+                <input name="rSendType" id="rTiming" type="radio" value="1" checked="checked" /> 定时发布
+                <input name="rSendType" id="rRealtime" type="radio" value="0" /> 实时发布
+                @if (dealType == 1)
+                {
+                    <input type="hidden" id="hidSendType" name="hidSendType" value="@Model.IsTiming" />
+                }
+            </div>
+        </div>
+        <div style="width:780px;height:25px;margin-top:10px" id="divSendTime">
+            <div style="float: left">
+                <label>设置发布时间：</label>
+            </div>
+            <div id="datepicker" style="float:left;width:350px">
+                <input type="text" name="txtSendTime" id="txtSendTime" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'%y-%M-%d %H:{%m+5}:%s'})" class="Wdate" />
+                @if (dealType == 1)
+                {
+                    <input type="hidden" id="hidSendTime" name="hidSendTime" value="@Model.TimingDate" />
+                }
+            </div>
+        </div>
+        <div class="SearchMd" style="border-bottom:hidden;width:798px;height:65px;margin-top:10px;border-top: solid 1px #dcdcdc;margin-left:-10px">
+            <div style="margin-left: 100px;float: left"><input type="button" value="确认" class="searchBtn" id="btnCommit" /></div>
+            <div style="margin-left: 180px;float: left"><input type="button" value="关闭" class="searchBtn" id="btnClose" /></div>
+            <br />
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var hidDealType = $("#hidDealType").val();
+        if (hidDealType == 1) {
+            var hidPlatForm = $("#hidPlatForm").val();
+            var hidUserType = $("#hidUserType").val();
+            var hidVersion = $("#hidVersion").val();
+            var hidIsMust = $("#hidIsMust").val();
+            var hidUpdateUrl = $("#hidUpdateUrl").val();
+            var hidMessage = $("#hidMessage").val();
+            var hidSendType = $("#hidSendType").val();
+            var hidSendTime = $("#hidSendTime").val();
+            if (hidPlatForm == 1) {
+                $("#rAndroid").attr("checked", "checked");
+            }
+            else {
+                $("#rIOS").attr("checked", "checked");
+            }
+            if (hidUserType == 1) {
+                $("#rClienter").attr("checked", "checked");
+            }
+            else {
+                $("#rBusiness").attr("checked", "checked");
+            }
+            $('#version').val(hidVersion);
+            if (hidIsMust == 1) {
+                $("#rIsMustY").attr("checked", "checked");
+            }
+            else {
+                $("#rIsMustN").attr("checked", "checked");
+            }
+            $('#updateUrl').val(hidUpdateUrl);
+            $('#message').text(hidMessage);
+            if (hidSendType == 1) {
+                $("#rTiming").attr("checked", "checked");
+                $("#divSendTime").show();
+
+            }
+            else {
+                $("#rRealtime").attr("checked", "checked");
+                $("#divSendTime").hide();
+            }
+            $("#txtSendTime").val(hidSendTime);
+        }
+        window.location.hash = '';
+    });
+    //根据发布类型控制发布时间的显示隐藏
+    $('input[name="rSendType"]').click(function () {
+        var chkSendType = $('input[name="rSendType"]:checked').val();
+        if (chkSendType == 0) {
+            $("#divSendTime").hide();
+        }
+        else {
+            $("#divSendTime").show();
+        }
+    });
+
+    $("#btnCommit").click(function () {
+        var platForm = $('input[name="rPlatForm"]:checked').val();
+        var userType = $('input[name="rUserType"]:checked').val();
+        var version = $("#version").val();
+        var isMust = $('input[name="rIsMust"]:checked').val();
+        var updateUrl = $("#updateUrl").val();
+        var message = $("#message").val();
+        var isTiming = $('input[name="rSendType"]:checked').val();
+        var timingDate = $("#txtSendTime").val();
+        var dealType = $("#hidDealType").val();
+        var hidId = $("#hidId").val();
+        if (version.trim().length == 0) {
+            alert("版本号不能为空！");
+            return;
+        }
+        if (updateUrl.trim().length == 0) {
+            alert("下载地址不能为空！");
+            return;
+        }
+        if (message.trim().length <5) {
+            alert("提示更新内容长度不少于5个汉字！");
+            return;
+        }
+        var remStr = "";
+        if (isTiming == 1) {
+            if (timingDate.trim().length == 0) {
+                alert("设定发布时间不能为空！");
+                return;
+            }
+            remStr = "确定提交吗？";
+        } else {
+            remStr = "是否确认发布版本？";
+        }
+        if (confirm(remStr)) {
+            var paramaters = {
+                "ID": hidId, "platForm": platForm, "userType": userType, "version": version, "isMust": isMust, "updateUrl": updateUrl, "message": message, "isTiming": isTiming, "timingDate": timingDate, "dealType": dealType
+            };
+            var url = "/AdminTools/EditAPPVersion";
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: paramaters,
+                success: function (result) {
+                    if (result.IsSuccess) {
+                        alert(result.Message);
+                        window.location.href = "/AdminTools/APPVersionManager";
+                    } else {
+                        alert(result.Message);
+                    }
+
+                }
+            });
+        }
+    });
+    $("#btnClose").click(function () {
+        window.location.href = "/AdminTools/APPVersionManager";
+    });
+</script>

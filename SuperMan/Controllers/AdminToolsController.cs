@@ -1,4 +1,6 @@
 ﻿using Ets.Model.Common;
+using Ets.Model.DomainModel.Common;
+using Ets.Model.ParameterModel.Common;
 using Ets.Service.IProvider.Common;
 using Ets.Service.Provider.Common;
 using System.Web;
@@ -12,6 +14,7 @@ namespace SuperMan.Controllers
     public class AdminToolsController : BaseController
     {
         readonly IBusinessGroupProvider iBusinessGroupProvider = new BusinessGroupProvider();
+        readonly IAppVersionProvider iAppVersionProvider = new AppVersionProvider();
         private static IAdminToolsProvider adminToolsProvider
         {
             get { return new AdminToolsProvider(); }
@@ -110,6 +113,90 @@ namespace SuperMan.Controllers
             globalConfigModel.OptName = UserContext.Current.Name;
             var reg = iBusinessGroupProvider.ModifyGlobalConfig(globalConfigModel);
             return Json(new ResultModel(reg, reg ? "保存成功！" : "保存失败！"), JsonRequestBehavior.AllowGet);
+        }
+        /// <summary>
+        /// 加载默认APP版本控制列表
+        /// danny-20150715
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public ActionResult APPVersionManager()
+        {
+            var criteria = new AppVerionSearchCriteria();
+            var pagedList = iAppVersionProvider.GetAppVersionList(criteria);
+            return View(pagedList);
+        }
+
+        /// <summary>
+        /// 按条件查询APP版本控制列表
+        /// danny-20150715
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult PostAPPVersionManager(int pageindex = 1)
+        {
+            var criteria = new AppVerionSearchCriteria();
+            TryUpdateModel(criteria);
+            var pagedList = iAppVersionProvider.GetAppVersionList(criteria);
+            return PartialView("_APPVersionList", pagedList);
+        }
+        /// <summary>
+        ///添加APP版本控制
+        /// danny-20150715
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public ActionResult APPVersionEdit()
+        {
+            return View();
+        }
+        /// <summary>
+        /// App版本详情
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        public ActionResult APPVersionDetail(int Id)
+        {
+            var appVersionDetailModel = iAppVersionProvider.GetAppVersionById(Id);
+            ViewBag.dealType = 1;//修改
+            return View("APPVersionEdit", appVersionDetailModel);
+        }
+
+        /// <summary>
+        /// 编辑App版本信息（新增和修改公用）
+        /// danny-20150715
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult EditAPPVersion(AppVersionModel model)
+        {
+            model.OptUserName = UserContext.Current.Name;
+            var reg = iAppVersionProvider.EditAppVersion(model);
+            return Json(new Ets.Model.Common.ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.DenyGet);
+        }
+        /// <summary>
+        /// 编辑App版本信息（新增和修改公用）
+        /// danny-20150715
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult CancelAPPVersion(AppVersionModel model)
+        {
+            model.OptUserName = UserContext.Current.Name;
+            var reg = iAppVersionProvider.CancelAppVersion(model);
+            return Json(new Ets.Model.Common.ResultModel(reg, reg ? "取消成功！" : "取消失败！"), JsonRequestBehavior.DenyGet);
+        }
+        /// <summary>
+        /// App版本详情
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        public ActionResult ViewAPPVersionDetail(int Id)
+        {
+            var appVersionDetailModel = iAppVersionProvider.GetAppVersionById(Id);
+            return View("APPVersionDetail", appVersionDetailModel);
         }
     }
 }
