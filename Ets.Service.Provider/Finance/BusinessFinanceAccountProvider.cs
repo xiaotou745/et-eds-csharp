@@ -84,8 +84,8 @@ namespace Ets.Service.Provider.Finance
                     UpdateBy = cardBindBpm.CreateBy, //新增时最后修改人与新增人一致  当前登录人
                     OpenCity = cardBindBpm.OpenCity, //开户行
                     OpenProvince = cardBindBpm.OpenProvince, //开户市
-                    IDCard = cardBindBpm.IDCard ?? "", //身份证
-                    BusinessLicence = cardBindBpm.IDCard ?? "",//营业执照
+                    IDCard = cardBindBpm.IDCard ?? "" //身份证
+                    
                 });
                 tran.Complete();
             }
