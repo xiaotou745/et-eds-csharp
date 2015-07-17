@@ -3242,10 +3242,10 @@ where   Id = @OrderId and FinishAll = 0";
                             where id=@orderId";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("@OrderCommission", orderCommission);
-            dbParameters.AddWithValue("@DeliveryCompanySettleMoney", deliveryCompanySettleMoney);
-            dbParameters.AddWithValue("@DeliveryCompanyID", deliveryCompanyID);
-            dbParameters.AddWithValue("@OrderId", orderID);
+            dbParameters.Add("@OrderCommission",DbType.Decimal).Value= orderCommission;
+            dbParameters.Add("@DeliveryCompanySettleMoney",DbType.Decimal).Value= deliveryCompanySettleMoney;
+            dbParameters.Add("@DeliveryCompanyID",DbType.Int32).Value=  deliveryCompanyID;
+            dbParameters.Add("@OrderId",DbType.Int32).Value=  ParseHelper.ToInt(orderID,0);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
         }
         /// <summary>
@@ -3255,8 +3255,12 @@ where   Id = @OrderId and FinishAll = 0";
         /// <returns></returns>
         public int GetTotalOrderNumByClienterID(int clienterID)
         {
-            //todo,suoyin
-            string sql = @"select isnull(sum(OrderCount)) as num from [order] (nolock) where clienterId=@clienterId and ActualDoneDate is not null and ActualDoneDate>=@beginDate and ActualDoneDate<@endDate";
+            string sql = @"SELECT  ISNULL(SUM(OrderCount), 0) AS num
+                            FROM    [order] (NOLOCK)
+                            WHERE   clienterId = @clienterId
+                                    AND ActualDoneDate IS NOT NULL
+                                    AND ActualDoneDate >= @beginDate
+                                    AND ActualDoneDate < @endDate";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("clienterId", DbType.Int32).Value = clienterID;
             dbParameters.Add("beginDate", DbType.DateTime).Value = DateTime.Now.Date.ToString();

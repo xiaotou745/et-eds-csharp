@@ -11,6 +11,7 @@ using Ets.Model.DataModel.DeliveryCompany;
 using Ets.Model.ParameterModel.DeliveryCompany;
 using ETS.Data.PageData;
 using ETS.Util;
+using ETS.Const;
 
 namespace Ets.Dao.DeliveryCompany
 {
@@ -121,7 +122,12 @@ select @@IDENTITY ";
                 dbParameters.Add("@DeliveryCompanyRatio", DbType.Decimal).Value = 0;
             }
             dbParameters.Add("@CreateName", DbType.String).Value = deliveryCompanyModel.CreateName;
-            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters));
+            int deliveryCompanyID=ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters));
+            if (deliveryCompanyID>0)
+            {
+                UpdateRedis(deliveryCompanyID);
+            }
+            return deliveryCompanyID;
         }
 
         public int Modify(DeliveryCompanyModel deliveryCompanyModel)
@@ -177,7 +183,12 @@ update  dbo.DeliveryCompany
                 //dbParameters.Add("@DeliveryCompanyRatio", DbType.Decimal).Value = 0;
             }
             dbParameters.Add("@ModifyName", DbType.String).Value = deliveryCompanyModel.ModifyName;
-            return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, upSql.ToString(), dbParameters));
+            int result= ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, upSql.ToString(), dbParameters));
+            if (result > 0)
+            {
+                UpdateRedis(deliveryCompanyModel.Id);
+            }
+            return result;
         }
 
         public DeliveryCompanyModel GetById(int Id)
@@ -243,6 +254,23 @@ update  dbo.DeliveryCompany
         /// <returns></returns>
         public DeliveryCompanyModel GetDeliveryCompanyByClienterID(int clienterID)
         {
+            var redis = new ETS.NoSql.RedisCache.RedisCache();
+            string cacheKey = string.Format(RedissCacheKey.ClienterGetDeliveryCompany, clienterID);//缓存的KEY
+            DeliveryCompanyModel model = redis.Get<DeliveryCompanyModel>(cacheKey);
+            if (model != null)
+            {
+                return model;
+            }
+            model = GetDeliveryCompanyByClienterIDFromDB(clienterID);
+            if (model==null)
+            {
+                model = new DeliveryCompanyModel();
+            }
+            redis.Set(cacheKey, model);
+            return model;
+        }
+        private DeliveryCompanyModel GetDeliveryCompanyByClienterIDFromDB(int clienterID)
+        {
             string sql = @"SELECT b.Id ,
                                     b.DeliveryCompanyName ,
                                     b.DeliveryCompanyCode ,
@@ -262,11 +290,72 @@ update  dbo.DeliveryCompany
                                     JOIN DeliveryCompany b ( NOLOCK ) ON c.DeliveryCompanyId = b.Id
                             WHERE   c.id = @clienterID";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("@clienterID", clienterID);
+            dbParameters.Add("@clienterID",DbType.Int32).Value= clienterID;
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, dbParameters);
             if (dt == null || dt.Rows.Count <= 0)
                 return null;
             return MapRows<DeliveryCompanyModel>(dt)[0];
+        }
+        /// <summary>
+        /// 更新一个物流公司的所有redis缓存
+        /// </summary>
+        /// <param name="Id"></param>
+        private void UpdateRedis(int Id)
+        {
+            string sql = @"SELECT   c.id AS clienterID ,
+                                    b.Id ,
+                                    b.DeliveryCompanyName ,
+                                    b.DeliveryCompanyCode ,
+                                    b.IsEnable ,
+                                    b.SettleType ,
+                                    b.ClienterFixMoney ,
+                                    b.ClienterSettleRatio ,
+                                    b.DeliveryCompanySettleMoney ,
+                                    b.DeliveryCompanyRatio ,
+                                    b.BusinessQuantity ,
+                                    b.ClienterQuantity ,
+                                    b.CreateTime ,
+                                    b.CreateName ,
+                                    b.ModifyName ,
+                                    b.ModifyTime
+                           FROM     clienter c ( NOLOCK )
+                                    JOIN DeliveryCompany b ( NOLOCK ) ON c.DeliveryCompanyId = b.Id
+                            where b.id=@id";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("@id", DbType.Int32).Value = Id;
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, dbParameters);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                string clienterID = "";
+                string cacheKey = "";
+                DeliveryCompanyModel company = null;
+                var redis = new ETS.NoSql.RedisCache.RedisCache();
+                foreach (DataRow item in dt.Rows)
+                {
+                    if (company == null)
+                    {
+                        company = new DeliveryCompanyModel();
+                        company.Id = ParseHelper.ToInt(item["Id"]);
+                        company.DeliveryCompanyName = ParseHelper.ToString(item["DeliveryCompanyName"]);
+                        company.DeliveryCompanyCode = ParseHelper.ToString(item["DeliveryCompanyCode"]);
+                        company.IsEnable = ParseHelper.ToInt(item["IsEnable"]);
+                        company.SettleType = ParseHelper.ToInt(item["SettleType"]);
+                        company.ClienterFixMoney = ParseHelper.ToDecimal(item["ClienterFixMoney"]);
+                        company.ClienterSettleRatio = ParseHelper.ToDecimal(item["ClienterSettleRatio"]);
+                        company.DeliveryCompanySettleMoney = ParseHelper.ToDecimal(item["DeliveryCompanySettleMoney"]);
+                        company.DeliveryCompanyRatio = ParseHelper.ToDecimal(item["DeliveryCompanyRatio"]);
+                        company.BusinessQuantity = ParseHelper.ToInt(item["BusinessQuantity"]);
+                        company.ClienterQuantity = ParseHelper.ToInt(item["ClienterQuantity"]);
+                        company.CreateTime = ParseHelper.ToDatetime(item["CreateTime"]);
+                        company.CreateName = ParseHelper.ToString(item["CreateName"]);
+                        company.ModifyName = ParseHelper.ToString(item["ModifyName"]);
+                        company.ModifyTime = ParseHelper.ToDatetime(item["ModifyTime"]);
+                    }
+                    clienterID = ParseHelper.ToString(item["clienterID"]);
+                    cacheKey = string.Format(RedissCacheKey.ClienterGetDeliveryCompany, clienterID);//缓存的KEY
+                    redis.Set(cacheKey, company);
+                }
+            }
         }
     }
 }
