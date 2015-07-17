@@ -314,23 +314,23 @@ namespace Ets.Service.Provider.Finance
                 //注册易宝子账户逻辑
                 if (string.IsNullOrEmpty(busiFinanceAccount.YeepayKey) || busiFinanceAccount.YeepayStatus == 1)
                 {
-                    var brp = new BusinessRegisterParameter
+                    var brp = new YeeRegisterParameter
                     {
-                        bindmobile = busiFinanceAccount.PhoneNo,
-                        signedname = busiFinanceAccount.TrueName,
-                        customertype =
+                        BindMobile = busiFinanceAccount.PhoneNo,
+                        SignedName = busiFinanceAccount.TrueName,
+                        CustomerType =
                             busiFinanceAccount.BelongType == 0
-                                ? CustomertypeEnum.PERSON.ToString()
-                                : CustomertypeEnum.ENTERPRISE.ToString(),
-                        linkman = busiFinanceAccount.TrueName,
-                        idcard = busiFinanceAccount.BusiIDCard,
-                        businesslicence = busiFinanceAccount.IDCard,
-                        legalperson = busiFinanceAccount.TrueName,
-                        bankaccountnumber = busiFinanceAccount.AccountNo,
-                        bankname = busiFinanceAccount.OpenBank,
-                        accountname = busiFinanceAccount.TrueName,
-                        bankprovince = busiFinanceAccount.OpenProvince,
-                        bankcity = busiFinanceAccount.OpenCity
+                                ? CustomertypeEnum.PERSON
+                                : CustomertypeEnum.ENTERPRISE,
+                        LinkMan = busiFinanceAccount.TrueName,
+                        IdCard = busiFinanceAccount.BusiIDCard,
+                        BusinessLicence = busiFinanceAccount.IDCard,
+                        LegalPerson = busiFinanceAccount.TrueName,
+                        BankAccountNumber = busiFinanceAccount.AccountNo,
+                        BankName = busiFinanceAccount.OpenBank,
+                        AccountName = busiFinanceAccount.TrueName,
+                        BankProvince = busiFinanceAccount.OpenProvince,
+                        BankCity = busiFinanceAccount.OpenCity
                     };
                     var dr = DealRegBusiSubAccount(brp);
                     if (!dr.DealFlag)
@@ -640,16 +640,16 @@ namespace Ets.Service.Provider.Finance
         /// danny-20150716
         /// </summary>
         /// <param name="model"></param>
-        public DealResultInfo DealRegBusiSubAccount(BusinessRegisterParameter model)
+        public DealResultInfo DealRegBusiSubAccount(YeeRegisterParameter model)
         {
             var dealResultInfo = new DealResultInfo
             {
                 DealFlag = false
             };
-            var registResult = new Register().RegSubaccount(model.requestid, model.bindmobile, model.customertype, model.signedname, model.linkman, model.idcard, model.businesslicence, model.legalperson, model.bankaccountnumber, model.bankname, model.accountname, model.bankaccounttype, model.bankprovince, model.bankcity);//注册帐号
+            var registResult = new Register().RegSubaccount(model);//注册帐号
             if (registResult != null && !string.IsNullOrEmpty(registResult.code) && registResult.code.Trim() == "1")   //绑定成功，更新易宝key
             {
-                if (!_businessFinanceAccountDao.ModifyYeepayInfoById(Convert.ToInt32(model.accountid), registResult.ledgerno, 0))
+                if (!_businessFinanceAccountDao.ModifyYeepayInfoById(Convert.ToInt32(model.AccountId), registResult.ledgerno, 0))
                 {
                     dealResultInfo.DealMsg = "调用易宝用户注册成功，回写数据库失败！";
                 }
@@ -662,7 +662,7 @@ namespace Ets.Service.Provider.Finance
             }
             else
             {
-                _businessFinanceAccountDao.ModifyYeepayInfoById(Convert.ToInt32(model.accountid), "", 1);
+                _businessFinanceAccountDao.ModifyYeepayInfoById(Convert.ToInt32(model.AccountId), "", 1);
                 if (registResult == null)
                 {
                     dealResultInfo.DealMsg = "商户绑定易宝支付失败,返回结果为null!";
