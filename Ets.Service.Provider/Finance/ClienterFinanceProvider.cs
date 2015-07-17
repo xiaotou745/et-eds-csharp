@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using ETS;
 using Ets.Dao.Clienter;
 using Ets.Dao.Finance;
 using Ets.Dao.GlobalConfig;
@@ -543,7 +544,7 @@ namespace Ets.Service.Provider.Finance
                 dealResultInfo.DealMsg = "获取提现单信息失败！";
                 return dealResultInfo;
             }
-            if (cliFinanceAccount.WithdrawTime > ParseHelper.ToDatetime("2015-07-17 00:00:00"))
+            if (cliFinanceAccount.WithdrawTime < ParseHelper.ToDatetime(Config.WithdrawTime))
             {
                dealResultInfo.DealFlag= ClienterWithdrawPayOk(model);
                dealResultInfo.DealMsg = dealResultInfo.DealFlag ? "打款成功！" : "打款失败！";
