@@ -308,6 +308,11 @@ namespace Ets.Service.Provider.Finance
             {
                 return ResultModel<object>.Conclude(checkbool);
             }
+            int withdrawCount= _clienterWithdrawFormDao.GetByClienterId(cardModifyCpm.ClienterId);
+            if (withdrawCount > 0) //该骑士是否存在未完成的提现单
+            {
+                return ResultModel<object>.Conclude(FinanceCardModifyC.NoModify);
+            }
             ClienterFinanceAccount cfAccount = _clienterFinanceAccountDao.GetById(cardModifyCpm.Id);
             if (cfAccount != null)
             {
