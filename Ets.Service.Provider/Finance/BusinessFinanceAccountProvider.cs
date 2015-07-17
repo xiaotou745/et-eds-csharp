@@ -54,7 +54,7 @@ namespace Ets.Service.Provider.Finance
                 return ResultModel<object>.Conclude(FinanceCardBindB.IDCardError);
             }
             //绑定公司账户
-            if (cardBindBpm.BelongType == 1 && string.IsNullOrEmpty(cardBindBpm.BusinessLicence))
+            if (cardBindBpm.BelongType == 1 && string.IsNullOrEmpty(cardBindBpm.IDCard))
             {
                 return ResultModel<object>.Conclude(FinanceCardBindB.BusinessLicenceError);
             }
@@ -84,7 +84,7 @@ namespace Ets.Service.Provider.Finance
                     OpenCity = cardBindBpm.OpenCity, //开户行
                     OpenProvince = cardBindBpm.OpenProvince, //开户市
                     IDCard = cardBindBpm.IDCard ?? "", //身份证
-                    BusinessLicence = cardBindBpm.BusinessLicence ?? "",//营业执照
+                    BusinessLicence = cardBindBpm.IDCard ?? "",//营业执照
                 });
                 tran.Complete();
             }
@@ -105,7 +105,7 @@ namespace Ets.Service.Provider.Finance
                 string signedname = cardBindBpm.TrueName; //签约名   商户签约名；个人，填写姓名；企业，填写企业名称。
                 string linkman = cardBindBpm.TrueName; //联系人
                 string idcard = cardBindBpm.IDCard ??  ""; //身份证  customertype为PERSON时  选填
-                string businesslicence = cardBindBpm.BusinessLicence ?? ""; //营业执照号  必填
+                string businesslicence = cardBindBpm.IDCard ?? ""; //营业执照号  必填
                 string legalperson = cardBindBpm.TrueName;
                 string bankaccountnumber = cardBindBpm.AccountNo; //银行卡号 
                 string bankname = cardBindBpm.OpenBank; //开户行
