@@ -60,8 +60,10 @@
     <Compile Include="Common\PagedList.cs" />
     <Compile Include="Common\TestUserModel.cs" />
     <Compile Include="Common\VersionCheckModel.cs" />
+    <Compile Include="Common\YeePay\BusinessRegisterParameter.cs" />
     <Compile Include="Common\YeePay\CashTransferCallback.cs" />
     <Compile Include="DataModel\Authority\AccountCityRelation.cs" />
+    <Compile Include="DataModel\Authority\AccountDcRelation.cs" />
     <Compile Include="DataModel\Business\BusiModifyResultModelDM.cs" />
     <Compile Include="DataModel\Business\BusinessClienterRelation.cs" />
     <Compile Include="DataModel\Business\BusinessCommissionDM.cs" />
@@ -107,6 +109,7 @@
     <Compile Include="DataModel\Order\OrderSubsidiesLog.cs" />
     <Compile Include="DomainModel\Authority\AccountDCRelationModel.cs" />
     <Compile Include="DomainModel\Business\BusinessExpressRelationModel.cs" />
+    <Compile Include="DomainModel\Common\APPVersionModel.cs" />
     <Compile Include="DomainModel\DeliveryCompany\BatchImportClienterExcelDM.cs" />
     <Compile Include="DomainModel\Area\DMAreaCodeInfo.cs" />
     <Compile Include="DomainModel\Authority\AccountCityRelationModel.cs" />
@@ -255,6 +258,7 @@
     <Compile Include="ParameterModel\Clienter\RushOrderResultModel.cs" />
     <Compile Include="ParameterModel\Clienter\UploadIconModel.cs" />
     <Compile Include="ParameterModel\Clienter\CustomerIconUploader.cs" />
+    <Compile Include="ParameterModel\Common\APPVersionSerchCriteria.cs" />
     <Compile Include="ParameterModel\Common\DataManageSearchCriteria.cs" />
     <Compile Include="ParameterModel\Common\OpenCitySearchCriteria.cs" />
     <Compile Include="ParameterModel\Clienter\UploadReceiptModel.cs" />

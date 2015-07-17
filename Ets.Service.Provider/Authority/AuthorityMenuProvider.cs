@@ -528,7 +528,7 @@ namespace Ets.Service.Provider.Authority
         /// <param name="criteria"></param>
         /// <returns></returns>
         public DealResultInfo AddAccount(AccountCriteria criteria)
-        {//TODO:
+        {
             var dealResultInfo = new DealResultInfo
             {
                 DealFlag = false
@@ -587,12 +587,14 @@ namespace Ets.Service.Provider.Authority
                 }
                 if (!string.IsNullOrWhiteSpace(criteria.CityCodeList))
                 {
-                    var cityCodeList = criteria.CityCodeList.Split(',');
+                    var cityCodeList = criteria.CityCodeList.Split('|');
                     
-                    authoritySetDao.DeleteAccountCityRelation(accountCityRelation);
+                    //authoritySetDao.DeleteAccountCityRelation(accountCityRelation);
                     foreach (var cityCode in cityCodeList)
                     {
-                        accountCityRelation.CityId = ParseHelper.ToInt(cityCode);
+                        var tempstr = cityCode.Split(',');
+                        accountCityRelation.CityId = ParseHelper.ToInt(tempstr[0]);
+                        accountCityRelation.IsEnable = ParseHelper.ToInt(tempstr[1]);
                         if (!authoritySetDao.AddAccountCityRelation(accountCityRelation))
                         {
                             dealResultInfo.DealMsg = "插入用户和城市关联信息失败!";
@@ -602,11 +604,18 @@ namespace Ets.Service.Provider.Authority
                 }
                 if (!string.IsNullOrWhiteSpace(criteria.DcIdList))
                 {
-                    var dclist = criteria.DcIdList.Split(',');
-                    authoritySetDao.DeleteAccountDCRelation(accountCityRelation.AccountId);
+                    var dclist = criteria.DcIdList.Split('|');
                     foreach (string dcid in dclist)
                     {
-                        if (!authoritySetDao.AddAccountDCRelation(Convert.ToInt32(dcid), accountCityRelation.AccountId, criteria.OptUserName))
+                        var temp = dcid.Split(',');
+                        var mode = new AccountDcRelation()
+                        {
+                            AccountId = accountCityRelation.AccountId,
+                            CreateBy = criteria.OptUserName,
+                            DeliveryCompanyID = ParseHelper.ToInt(temp[0]),
+                            IsEnable = ParseHelper.ToInt(temp[1])
+                        };
+                        if (!authoritySetDao.AddAccountDCRelation(mode))
                         {
                             dealResultInfo.DealMsg = "插入用户和配送公司关联信息失败!";
                             return dealResultInfo;

@@ -11,6 +11,7 @@ namespace Ets.Model.DataModel.DeliveryCompany
     /// Generate By: tools.etaoshi.com 
     /// Generate Time: 2015-07-06 13:28:46 
     /// </summary>
+    [Serializable]
     public class DeliveryCompanyModel
     {
 
