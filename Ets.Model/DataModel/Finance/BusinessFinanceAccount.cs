@@ -74,12 +74,16 @@ namespace Ets.Model.DataModel.Finance
         /// </summary>
         public string OpenCity { get; set; }
         /// <summary>
-        /// 身份证号
+        /// 身份证号、营业执照 ，对公营业执照，对私身份照
         /// </summary>
         public string IDCard { get; set; }
         /// <summary>
         /// 商户手机号
         /// </summary>
         public string PhoneNo { get; set; }
+        /// <summary>
+        /// 营业执照
+        /// </summary>
+        public string BusinessLicence { get; set; }
     }
 }

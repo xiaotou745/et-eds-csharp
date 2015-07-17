@@ -11,6 +11,7 @@ using System.Data;
 using System.Text;
 using Ets.Dao.Order;
 using Ets.Model.DataModel.Order;
+using ETS.Util;
 
 namespace Ets.Dao.Finance
 {
@@ -117,6 +118,25 @@ from BusinessWithdrawForm bwf with(nolock)
             }
             return MapRows<BusinessWithdrawFormModel>(dt)[0];
         }
+
+        /// <summary>
+        /// 查询该商户有无审核通过的体提现申请单
+        /// wc-20150717
+        /// </summary>
+        /// <param name="businessId">提款单Id</param>
+        /// <returns></returns>
+        public int GetBusinessWithdrawByBusinessId(int businessId)
+        {
+            string sql = @"  
+ select count(1)  FROM  dbo.BusinessWithdrawForm a (nolock)
+        where a.[Status] = 2 and a.BusinessId = @businessId ";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("@businessId", DbType.Int32).Value = businessId;
+            var count = DbHelper.ExecuteScalar(SuperMan_Read, sql, parm); 
+            return ParseHelper.ToInt(count, 0);
+        }
+
+
         /// <summary>
         /// 获取商户提款单操作日志
         /// danny-20150511

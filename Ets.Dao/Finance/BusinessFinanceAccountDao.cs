@@ -34,8 +34,8 @@ namespace Ets.Dao.Finance
         public int Insert(BusinessFinanceAccount businessFinanceAccount)
         {
             const string insertSql = @"
-insert into BusinessFinanceAccount(BusinessId,TrueName,AccountNo,IsEnable,AccountType,BelongType,OpenBank,OpenSubBank,OpenProvince,OpenCity,IDCard,CreateBy,UpdateBy)
-values(@BusinessId,@TrueName,@AccountNo,@IsEnable,@AccountType,@BelongType,@OpenBank,@OpenSubBank,@OpenProvince,@OpenCity,@IDCard,@CreateBy,@UpdateBy)
+insert into BusinessFinanceAccount(BusinessId,TrueName,AccountNo,IsEnable,AccountType,BelongType,OpenBank,OpenSubBank,OpenProvince,OpenCity,IDCard,BusinessLicence,CreateBy,UpdateBy)
+values(@BusinessId,@TrueName,@AccountNo,@IsEnable,@AccountType,@BelongType,@OpenBank,@OpenSubBank,@OpenProvince,@OpenCity,@IDCard,@BusinessLicence,@CreateBy,@UpdateBy)
 select @@IDENTITY";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("BusinessId", businessFinanceAccount.BusinessId); //商户ID
@@ -48,7 +48,8 @@ select @@IDENTITY";
             dbParameters.AddWithValue("OpenSubBank", businessFinanceAccount.OpenSubBank); //开户支行
             dbParameters.AddWithValue("CreateBy", businessFinanceAccount.CreateBy); //添加人
             dbParameters.AddWithValue("UpdateBy", businessFinanceAccount.UpdateBy); //最后更新人
-            dbParameters.AddWithValue("IDCard", businessFinanceAccount.IDCard); //营业执照
+            dbParameters.AddWithValue("IDCard", businessFinanceAccount.IDCard); //身份证
+            dbParameters.AddWithValue("BusinessLicence", businessFinanceAccount.BusinessLicence); //营业执照
             dbParameters.AddWithValue("OpenProvince", businessFinanceAccount.OpenProvince); //开户省
             dbParameters.AddWithValue("OpenCity", businessFinanceAccount.OpenCity); //开户市
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters);
@@ -77,25 +78,6 @@ where  Id=@Id ";
             dbParameters.Add("OpenProvince", DbType.String).Value = businessFinanceAccount.OpenProvince;
             dbParameters.Add("OpenCity", DbType.String).Value = businessFinanceAccount.OpenCity;
             dbParameters.Add("IDCard", DbType.String).Value = businessFinanceAccount.IDCard;
-            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
-        }
-
-        /// <summary>
-        /// 更新易宝信息
-        /// </summary>
-        /// <param name="businessId">商户Id</param>
-        /// <param name="yeepayKey">易宝Key</param>
-        /// <param name="yeepayStatus">易宝账户状态  0正常 1失败</param>
-        public void UpdateYeepayInfo(int businessId, string yeepayKey, byte yeepayStatus)
-        {
-            const string updateSql = @"
-update  BusinessFinanceAccount
-set  YeepayKey=@YeepayKey,YeepayStatus=@YeepayStatus
-where  BusinessId=@BusinessId ";
-            IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("YeepayKey", yeepayKey);
-            dbParameters.AddWithValue("YeepayStatus", yeepayStatus);
-            dbParameters.AddWithValue("BusinessId", businessId);
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
 
