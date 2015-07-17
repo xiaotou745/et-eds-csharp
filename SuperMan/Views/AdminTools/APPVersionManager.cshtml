@@ -1,0 +1,87 @@
+﻿@model ETS.Data.PageData.PageInfo<Ets.Model.Common.AppVerionModel>
+@{
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+}
+<link href="/Content/themes/base/jquery-ui.css" rel="stylesheet">
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script src="~/Scripts/jquery-ui-1.8.20.js"></script>
+
+<script type="text/javascript" src="~/Content/jQuery-File-Upload/js/jquery.iframe-transport.js"></script>
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置 消息管理> 消息群发管理
+    </h2>
+    <div class="SearchMd">
+        <table>
+            <tr>
+                <td>
+                    <input type="button" value="添加版本" class="searchBtn" id="btnAddVersion" onclick="addMessage();" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    @using (Ajax.BeginForm("PostAPPVersionManager", new RouteValueDictionary { { "pageindex", "" } },
+        new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
+        new RouteValueDictionary { { "id", "searchForm" } }))
+    {
+        <input type="submit" value="查询" class="searchBtn" id="btnSearch" style="display:none " />
+    }
+    <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <div class="bd clearfix" id="dataList">
+        @Html.Partial("_APPVersionList", Model)
+    </div>
+    <div id="divviewdetail">
+
+    </div>
+</div>
+<script type="text/javascript">
+    var adminjs = new adminglass(); //实例化后台类
+    $(document).ready(function () {
+
+    });
+    //添加App版本信息
+    function addMessage() {
+        window.location.href = "/AdminTools/APPVersionEdit";
+    }
+    function funCancel(Id) {
+        if (!window.confirm("确认要取消发布？")) {
+            return;
+        }
+        var paramaters = { "ID": Id };
+        var url = "/AdminTools/CancelAPPVersion";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert(result.Message);
+                    window.location.href = "/AdminTools/APPVersionManager";
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
+    }
+    //详情
+    function funViewDetail(id) {
+        //adminjs.openwinbox('#APPVersionDetailDivShow');
+        $.ajax({
+            type: 'POST',
+            url: "/AdminTools/ViewAPPVersionDetail?Id="+id,
+            data: {},
+            success: function (data) {
+                $('#divviewdetail').html(data);
+                adminjs.openwinbox('#APPVersionDetailDivShow');
+            }
+        });
+    }
+    //关闭弹层
+    $('#btnCanel').live("click", function () {
+        adminjs.closewinbox('.add-openbox');
+        return false;
+    });
+</script>
+<script src="~/Scripts/mvcpager.js"></script>
+
+
