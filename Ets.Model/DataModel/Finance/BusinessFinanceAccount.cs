@@ -85,5 +85,21 @@ namespace Ets.Model.DataModel.Finance
         /// 营业执照
         /// </summary>
         public string BusinessLicence { get; set; }
+        /// <summary>
+        /// 易宝key
+        /// </summary>
+        public string YeepayKey { get; set; }
+        /// <summary>
+        /// 易宝账户状态 0正常 1失败
+        /// </summary>
+        public int YeepayStatus { get; set; }
+        /// <summary>
+        /// 商户身份证号
+        /// </summary>
+        public string BusiIDCard { get; set; }
+        /// <summary>
+        /// 提现金额
+        /// </summary>
+        public decimal Amount { get; set; }
     }
 }

@@ -744,12 +744,30 @@ namespace SuperMan.Controllers
             var reg = iBusinessProvider.ModifyBusinessExpress(busiId, deliveryCompanyList, UserContext.Current.Name);
             return Json(new Ets.Model.Common.ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.DenyGet);
         }
-
-
-        public JsonResult GetOpenProvince()
+         
+        /// <summary>
+        /// 获取省市
+        /// </summary>
+        /// <param name="jiBie"></param>
+        /// <returns></returns>
+        public JsonResult GetOpenProvince(int jiBie)
         {
+            //获取版本号  
             var openProvince = new AreaProvider().GetPublicBankCity("1.0");
-            var openProvinceJiBie = openProvince.Result.AreaModels.ToList().Select(i => i.JiBie = 1);
+            var openProvinceJiBie = openProvince.Result.AreaModels.ToList().Where(i => i.JiBie == jiBie);
+            return Json(openProvinceJiBie);
+        }
+
+        /// <summary>
+        /// 获取市区
+        /// </summary>
+        /// <param name="jiBie"></param>
+        /// <returns></returns>
+        public JsonResult GetOpenCity(int jiBie,int parrentId)
+        {
+            //获取版本号  
+            var openProvince = new AreaProvider().GetPublicBankCity("1.0");
+            var openProvinceJiBie = openProvince.Result.AreaModels.ToList().Where(i => i.JiBie == jiBie && i.ParentId == parrentId);
             return Json(openProvinceJiBie);
         }
     }

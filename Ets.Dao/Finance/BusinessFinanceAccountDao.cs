@@ -34,8 +34,8 @@ namespace Ets.Dao.Finance
         public int Insert(BusinessFinanceAccount businessFinanceAccount)
         {
             const string insertSql = @"
-insert into BusinessFinanceAccount(BusinessId,TrueName,AccountNo,IsEnable,AccountType,BelongType,OpenBank,OpenSubBank,OpenProvince,OpenCity,IDCard,BusinessLicence,CreateBy,UpdateBy)
-values(@BusinessId,@TrueName,@AccountNo,@IsEnable,@AccountType,@BelongType,@OpenBank,@OpenSubBank,@OpenProvince,@OpenCity,@IDCard,@BusinessLicence,@CreateBy,@UpdateBy)
+insert into BusinessFinanceAccount(BusinessId,TrueName,AccountNo,IsEnable,AccountType,BelongType,OpenBank,OpenSubBank,OpenProvince,OpenCity,IDCard,CreateBy,UpdateBy)
+values(@BusinessId,@TrueName,@AccountNo,@IsEnable,@AccountType,@BelongType,@OpenBank,@OpenSubBank,@OpenProvince,@OpenCity,@IDCard,@CreateBy,@UpdateBy)
 select @@IDENTITY";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("BusinessId", businessFinanceAccount.BusinessId); //商户ID
@@ -49,7 +49,6 @@ select @@IDENTITY";
             dbParameters.AddWithValue("CreateBy", businessFinanceAccount.CreateBy); //添加人
             dbParameters.AddWithValue("UpdateBy", businessFinanceAccount.UpdateBy); //最后更新人
             dbParameters.AddWithValue("IDCard", businessFinanceAccount.IDCard); //身份证
-            dbParameters.AddWithValue("BusinessLicence", businessFinanceAccount.BusinessLicence); //营业执照
             dbParameters.AddWithValue("OpenProvince", businessFinanceAccount.OpenProvince); //开户省
             dbParameters.AddWithValue("OpenCity", businessFinanceAccount.OpenCity); //开户市
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters);
@@ -98,6 +97,26 @@ where  Id=@Id ";
             dbParameters.AddWithValue("YeepayStatus", yeepayStatus);
             dbParameters.AddWithValue("Id", id);
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+        }
+        /// <summary>
+        /// 更新易宝信息通过Id（带返回值）
+        /// danny-20150716
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="yeepayKey"></param>
+        /// <param name="yeepayStatus"></param>
+        /// <returns></returns>
+        public bool ModifyYeepayInfoById(int id, string yeepayKey, byte yeepayStatus)
+        {
+            const string updateSql = @"
+update  BusinessFinanceAccount
+set  YeepayKey=@YeepayKey,YeepayStatus=@YeepayStatus
+where  Id=@Id ";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("YeepayKey", yeepayKey);
+            dbParameters.AddWithValue("YeepayStatus", yeepayStatus);
+            dbParameters.AddWithValue("Id", id);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters) > 0;
         }
 
         /// <summary>

@@ -17,13 +17,8 @@ namespace Ets.Model.ParameterModel.Finance
         /// </summary>
         [Range(1, int.MaxValue, ErrorMessage = "商家不能为空")]
         public int BusinessId { get; set; }
-        //TODO 身份证和营业执照分开
         /// <summary>
-        /// 营业执照号 
-        /// </summary>
-        public string BusinessLicence { get; set; }
-        /// <summary>
-        /// 身份证号
+        /// 个人账户时是身份证号，公司账户时候是营业执照号
         /// </summary>
         public string IDCard { get; set; }
     }

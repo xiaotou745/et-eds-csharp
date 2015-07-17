@@ -681,6 +681,47 @@ where b.Id=@BusinessId;");
             }
             return MapRows<BusinessRechargeDetail>(dt)[0];
         }
+        /// <summary>
+        /// 根据申请单Id获取商家金融账号信息
+        /// danny-20150716
+        /// </summary>
+        /// <param name="withwardId">提款单Id</param>
+        /// <returns></returns>
+        public BusinessFinanceAccount GetBusinessFinanceAccount(string withwardId)
+        {
+            string sql = @"  
+SELECT bfa.[Id]
+      ,bfa.[BusinessId]
+      ,bfa.[TrueName]
+      ,bfa.[AccountNo]
+      ,bfa.[IsEnable]
+      ,bfa.[AccountType]
+      ,bfa.[BelongType]
+      ,bfa.[OpenBank]
+      ,bfa.[OpenSubBank]
+      ,bfa.[CreateBy]
+      ,bfa.[CreateTime]
+      ,bfa.[UpdateBy]
+      ,bfa.[UpdateTime]
+      ,bfa.[IDCard]
+      ,bfa.[OpenProvince]
+      ,bfa.[OpenCity]
+      ,bfa.[YeepayKey]
+      ,bfa.[YeepayStatus]
+      ,b.IDCard BusiIDCard
+      ,bwf.Amount
+  FROM [BusinessFinanceAccount] bfa with(nolock)
+  join BusinessWithdrawForm bwf with(nolock) on bwf.BusinessId=bfa.BusinessId and bwf.Id=@withwardId 
+  join business b with(nolock) on b.id=bfa.BusinessId";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@withwardId", withwardId);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            if (dt == null || dt.Rows.Count <= 0)
+            {
+                return null;
+            }
+            return MapRows<BusinessFinanceAccount>(dt)[0];
+        }
     }
        
 }

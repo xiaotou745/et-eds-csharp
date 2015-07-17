@@ -2,10 +2,7 @@ USE [superman]
 GO
 
   ALTER TABLE [dbo].[BusinessFinanceAccount] ADD [IDCard] varchar(90) NULL DEFAULT '' ;
-  EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'身份证号' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'BusinessFinanceAccount', @level2type=N'COLUMN',@level2name=N'IDCard'
-GO
-  ALTER TABLE [dbo].[BusinessFinanceAccount] ADD [BusinessLicence] varchar(90) NULL DEFAULT '' ;
-  EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'营业执照号' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'BusinessFinanceAccount', @level2type=N'COLUMN',@level2name=N'BusinessLicence'
+  EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'个人账户时是身份证号，公司账户时候是营业执照号' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'BusinessFinanceAccount', @level2type=N'COLUMN',@level2name=N'IDCard'
 GO
 ALTER TABLE [dbo].[BusinessFinanceAccount] ADD [OpenProvince] varchar(45) NULL DEFAULT '' ;
   EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'开户省' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'BusinessFinanceAccount', @level2type=N'COLUMN',@level2name=N'OpenProvince'
