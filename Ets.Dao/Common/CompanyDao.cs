@@ -43,7 +43,7 @@ namespace Ets.Dao.Common
             const string sql =
                 @"SELECT DC.DeliveryCompanyName AS CompanyName,DC.[ID] AS CompanyId FROM AccountDeliveryRelation AD(NOLOCK)
                     JOIN DeliveryCompany DC(NOLOCK) ON AD.DeliveryCompanyID=DC.Id
-                    WHERE AD.AccountId=@AccountId AND DC.IsEnable=1";
+                    WHERE AD.AccountId=@AccountId AND AD.IsEnable=1";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("@AccountId", DbType.Int32);
             dbParameters.SetValue("@AccountId",accountId);
