@@ -611,5 +611,47 @@ where b.Id=@ClienterId;");
             parm.AddWithValue("@ClienterId", model.ClienterId);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
+         /// <summary>
+        /// 根据申请单Id获取商家金融账号信息
+        /// danny-20150716
+        /// </summary>
+        /// <param name="withwardId">提款单Id</param>
+        /// <returns></returns>
+        public ClienterFinanceAccountModel GetClienterFinanceAccount(string withwardId)
+        {
+            string sql = @"  
+SELECT cfa.[Id]
+      ,cfa.[ClienterId]
+      ,cfa.[TrueName]
+      ,cfa.[AccountNo]
+      ,cfa.[IsEnable]
+      ,cfa.[AccountType]
+      ,cfa.[BelongType]
+      ,cfa.[OpenBank]
+      ,cfa.[OpenSubBank]
+      ,cfa.[CreateBy]
+      ,cfa.[CreateTime]
+      ,cfa.[UpdateBy]
+      ,cfa.[UpdateTime]
+      ,cfa.[IDCard]
+      ,cfa.[OpenProvince]
+      ,cfa.[OpenCity]
+      ,cfa.[YeepayKey]
+      ,cfa.[YeepayStatus]
+      ,cwf.Amount
+      ,cwf.HandChargeThreshold
+      ,cwf.HandCharge
+      ,cwf.HandChargeOutlay
+  FROM [ClienterFinanceAccount] cfa with(nolock)
+  join ClienterWithdrawForm cwf with(nolock) on cwf.ClienterId=cfa.ClienterId and cwf.Id=@withwardId";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@withwardId", withwardId);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            if (dt == null || dt.Rows.Count <= 0)
+            {
+                return null;
+            }
+            return MapRows<ClienterFinanceAccountModel>(dt)[0];
+        }
     }
 }

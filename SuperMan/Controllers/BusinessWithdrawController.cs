@@ -172,11 +172,11 @@ namespace SuperMan.Controllers
             {
                 Operator = UserContext.Current.Name,
                 Remark = "商户提款申请单确认打款",
-                Status = BusinessWithdrawFormStatus.Success.GetHashCode(),
+                Status = BusinessWithdrawFormStatus.Paying.GetHashCode(),
                 WithwardId = Convert.ToInt64(withwardId)
             };
-            bool reg = iBusinessFinanceProvider.BusinessWithdrawPayOk(businessWithdrawLog);
-            return Json(new ResultModel(reg, reg ? "确认打款成功！" : "确认打款失败！"), JsonRequestBehavior.DenyGet);
+            var reg = iBusinessFinanceProvider.BusinessWithdrawPaying(businessWithdrawLog);
+            return Json(new ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.DenyGet);
         }
         /// <summary>
         /// 商户提款申请单审核拒绝

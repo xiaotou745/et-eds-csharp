@@ -126,9 +126,11 @@
     <Compile Include="DomainModel\DeliveryCompany\CompanyModelList.cs" />
     <Compile Include="DomainModel\DeliveryCompany\DeliveryCompanyResultModel.cs" />
     <Compile Include="DomainModel\Finance\BusinessBalanceRecordModel.cs" />
+    <Compile Include="DomainModel\Finance\BusinessFinanceAccountModel.cs" />
     <Compile Include="DomainModel\Finance\BusinessWithdrawFormModel.cs" />
     <Compile Include="DomainModel\Finance\BusinessWithdrawLogModel.cs" />
     <Compile Include="DomainModel\Finance\ClienterBalanceRecordModel.cs" />
+    <Compile Include="DomainModel\Finance\ClienterFinanceAccountModel.cs" />
     <Compile Include="DomainModel\Finance\ClienterWithdrawFormModel.cs" />
     <Compile Include="DomainModel\Finance\ClienterWithdrawLogModel.cs" />
     <Compile Include="DomainModel\Finance\FinanceRecordsDM.cs" />

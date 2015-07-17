@@ -1108,6 +1108,20 @@ where  Id=@Id ";
             }
             return model;
         }
+        /// <summary>
+        /// 获得骑士电话   add by 彭宜    20150717
+        /// </summary>
+        /// <param name="id">骑士id</param>
+        /// <returns>电话号码</returns>
+        public string GetPhoneNo(int id)
+        {
+            string querSql = @"
+select  PhoneNo
+            from clienter (nolock) 
+where Id=@Id";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);
+            return Convert.ToString(DbHelper.ExecuteScalar(SuperMan_Read, querSql, dbParameters));
+        }
         public IDictionary<int, clienter> GetByIds(IList<int> ids)
         {
             const string querysql = @"
