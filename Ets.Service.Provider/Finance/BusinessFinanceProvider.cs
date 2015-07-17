@@ -185,17 +185,15 @@ namespace Ets.Service.Provider.Finance
                         AccountType = businessFinanceAccount.AccountType, //账号类型：
                         BelongType = businessFinanceAccount.BelongType,//账号类别  0 个人账户 1 公司账户  
                         OpenBank = businessFinanceAccount.OpenBank,//开户行
-                        OpenSubBank = businessFinanceAccount.OpenSubBank, //开户支行
-
-                        IDCard = withdrawBBackPM.IDCard,//申请提款身份证号
+                        OpenSubBank = businessFinanceAccount.OpenSubBank, //开户支行 
+                        IDCard = withdrawBBackPM.IDCard,//申请提款身份证号或营业执照
                         OpenCity = withdrawBBackPM.OpenCity,//城市
                         OpenCityCode = withdrawBBackPM.OpenCityCode,//城市代码
                         OpenProvince = withdrawBBackPM.OpenProvince,//省份
                         OpenProvinceCode = withdrawBBackPM.OpenProvinceCode,//省份代码
                                   HandCharge = Convert.ToInt32(globalConfig.WithdrawCommission),//手续费
                         HandChargeOutlay = withdrawBBackPM.WithdrawPrice > Convert.ToInt32(globalConfig.ClienterWithdrawCommissionAccordingMoney) ? HandChargeOutlay.EDaiSong : HandChargeOutlay.Private,//手续费支出方
-                                  HandChargeThreshold = Convert.ToInt32(globalConfig.ClienterWithdrawCommissionAccordingMoney)//手续费阈值
-                              
+                                  HandChargeThreshold = Convert.ToInt32(globalConfig.ClienterWithdrawCommissionAccordingMoney)//手续费阈值 
                     });
                     #endregion
 

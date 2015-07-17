@@ -349,24 +349,24 @@ namespace Ets.Service.Provider.Finance
             }
 
             #region 2.异步调用注册ebao
-
-            string requestid = TimeHelper.GetTimeStamp(false);
-            string bindmobile = cfAccount.PhoneNo; //绑定手机
-            string customertype = (cardModifyCpm.BelongType == 0 ? CustomertypeEnum.PERSON.ToString() : CustomertypeEnum.ENTERPRISE.ToString()); //注册类型PERSON ：个人 ENTERPRISE：企业个人 ENTERPRISE：企业
-            string signedname = cardModifyCpm.TrueName; //签约名   商户签约名；个人，填写姓名；企业，填写企业名称。
-            string linkman = cardModifyCpm.TrueName; //联系人
-            string idcard = cardModifyCpm.IDCard; //身份证  customertype为PERSON时，必填
-            string businesslicence = ""; //营业执照号 customertype为ENTERPRISE时，必填
-            string legalperson = cardModifyCpm.TrueName;
-            string bankaccountnumber = cardModifyCpm.AccountNo; //银行卡号 
-            string bankname = cardModifyCpm.OpenBank; //开户行
-            string accountname = cardModifyCpm.TrueName; //开户名
-            string bankaccounttype = (cardModifyCpm.BelongType == 0 ? BankaccounttypeEnum.PrivateCash.ToString() : BankaccounttypeEnum.PublicCash.ToString()); //银行卡类别  PrivateCash：对私 PublicCash： 对公
-            string bankprovince = cardModifyCpm.OpenProvince;
-            string bankcity = cardModifyCpm.OpenCity;
-            var registResult = new Register().RegSubaccount(requestid, bindmobile, customertype, signedname, linkman,
-                idcard, businesslicence, legalperson, bankaccountnumber, bankname,
-                accountname, bankaccounttype, bankprovince, bankcity); //注册帐号
+            var cYeeRegisterParameter = new YeeRegisterParameter()
+            { 
+                AccountName = cardModifyCpm.TrueName,
+                BankAccountNumber = cardModifyCpm.AccountNo,
+                BankCity = cardModifyCpm.OpenCity,
+                BankName = cardModifyCpm.OpenBank,
+                BankProvince = cardModifyCpm.OpenProvince,
+                BindMobile = cfAccount.PhoneNo, //绑定手机
+                BusinessLicence = "",
+                IdCard = cardModifyCpm.IDCard,
+                CustomerType = (cardModifyCpm.BelongType == 0
+                    ? CustomertypeEnum.PERSON
+                    : CustomertypeEnum.ENTERPRISE),
+                LegalPerson = cardModifyCpm.TrueName,
+                LinkMan = cardModifyCpm.TrueName,
+                SignedName = cardModifyCpm.TrueName
+            };
+            var registResult = new Register().RegSubaccount(cYeeRegisterParameter); //注册帐号
             if (registResult != null && !string.IsNullOrEmpty(registResult.code) && registResult.code.Trim() == "1")   //绑定成功，更新易宝key
             {
                 _clienterFinanceAccountDao.UpdateYeepayInfoById(cardModifyCpm.Id, registResult.ledgerno, 0);
