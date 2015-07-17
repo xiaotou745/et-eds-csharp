@@ -68,7 +68,12 @@ namespace ETS.Enums
         /// 未传参
         /// </summary>
         [DisplayText("未传参")]
-        NoPara = -2
+        NoPara = -2,
+        /// <summary>
+        /// 身份证号为空
+        /// </summary>
+        [DisplayText("身份证号为空")]
+        IDCardError = -3
     }
 
     /// <summary>
@@ -107,7 +112,7 @@ namespace ETS.Enums
     ///骑士余额流水   交易类型(1：订单佣金 2：取消订单 3：提现申请 4：提现拒绝 5：打款失败 6：系统奖励 7：系统赔偿) 枚举 add by caoheyang 20150509
     /// </summary>
     public enum ClienterBalanceRecordRecordType
-    {    
+    {
         /// <summary>
         /// 订单佣金
         /// </summary>
@@ -235,7 +240,11 @@ namespace ETS.Enums
         [DisplayText("系统错误")]
         SystemError = 0,
         [DisplayText("未传参")]
-        NoPara = -2
+        NoPara = -2,
+        [DisplayText("身份证号不能为空")]
+        IDCardError = -3,
+        [DisplayText("营业执照号不能为空")]
+        BusinessLicenceError = -4,
     }
 
     /// <summary>
@@ -320,11 +329,11 @@ namespace ETS.Enums
         /// </summary>
         [DisplayText("充值")]
         Recharge = 9,
-         /// <summary>
-         /// 系统金额归零
-         /// </summary>
+        /// <summary>
+        /// 系统金额归零
+        /// </summary>
         [DisplayText("系统金额归零")]
-        SysClearMoney= 10,
+        SysClearMoney = 10,
         /// <summary>
         /// 手续费
         /// </summary>
@@ -479,8 +488,8 @@ namespace ETS.Enums
 
     public enum HandChargeOutlay
     {
-        Private=0,//个人出手续费
-        EDaiSong=1//E代送
-        
-    }   
+        Private = 0,//个人出手续费
+        EDaiSong = 1//E代送
+
+    }
 }

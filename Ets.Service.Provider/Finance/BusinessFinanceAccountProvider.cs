@@ -46,14 +46,27 @@ namespace Ets.Service.Provider.Finance
         /// <returns></returns>
         public ResultModel<object> CardBindB(CardBindBPM cardBindBpm)
         {
+            #region 参数验证
+            //绑定个人账户
+            if (cardBindBpm.BelongType == 0 && string.IsNullOrEmpty(cardBindBpm.IDCard))
+            {
+                return ResultModel<object>.Conclude(FinanceCardBindB.IDCardError);
+            }
+            //绑定公司账户
+            if (cardBindBpm.BelongType == 1 && string.IsNullOrEmpty(cardBindBpm.BusinessLicence))
+            {
+                return ResultModel<object>.Conclude(FinanceCardBindB.BusinessLicenceError);
+            }
+            FinanceCardBindB checkbool = CheckCardBindB(cardBindBpm); //验证数据合法性
+            if (checkbool != FinanceCardBindB.Success)
+            {
+                return ResultModel<object>.Conclude(checkbool);
+            }
+            #endregion
+            var id = 0;
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                FinanceCardBindB checkbool = CheckCardBindB(cardBindBpm); //验证数据合法性
-                if (checkbool != FinanceCardBindB.Success)
-                {
-                    return ResultModel<object>.Conclude(checkbool);
-                }
-                int result = _businessFinanceAccountDao.Insert(new BusinessFinanceAccount()
+                id = _businessFinanceAccountDao.Insert(new BusinessFinanceAccount()
                 {
                     BusinessId = cardBindBpm.BusinessId, //商户ID
                     TrueName = cardBindBpm.TrueName, //户名
@@ -69,7 +82,8 @@ namespace Ets.Service.Provider.Finance
                     UpdateBy = cardBindBpm.CreateBy, //新增时最后修改人与新增人一致  当前登录人
                     OpenCity = cardBindBpm.OpenCity, //开户行
                     OpenProvince = cardBindBpm.OpenProvince, //开户市
-                    IDCard = cardBindBpm.IDCard, //营业执照
+                    IDCard = cardBindBpm.IDCard ?? "", //身份证
+                    BusinessLicence = cardBindBpm.BusinessLicence ?? "",//营业执照
                 });
                 tran.Complete();
             }
@@ -80,7 +94,7 @@ namespace Ets.Service.Provider.Finance
                 var business = _businessDao.GetById(cardBindBpm.BusinessId);
                 if (business == null)
                 {
-                    ETS.Util.LogHelper.LogWriter(new ArgumentException("business值为null"), "BusinessFinanceAccountProvider.CardBindB-绑定银行账户");
+                    ETS.Util.LogHelper.LogWriter(new ArgumentException("business值为null"), "BusinessFinanceAccountProvider.CardBindB-绑定银行账户失败");
                     return;
                 }
                 string requestid = TimeHelper.GetTimeStamp(false);
@@ -89,8 +103,8 @@ namespace Ets.Service.Provider.Finance
                     CustomertypeEnum.PERSON.ToString() : CustomertypeEnum.ENTERPRISE.ToString()); //注册类型  PERSON ：个人 ENTERPRISE：企业个人 ENTERPRISE：企业
                 string signedname = cardBindBpm.TrueName; //签约名   商户签约名；个人，填写姓名；企业，填写企业名称。
                 string linkman = cardBindBpm.TrueName; //联系人
-                string idcard = cardBindBpm.BelongType == 0 ? cardBindBpm.IDCard : ""; //身份证  customertype为PERSON时，必填
-                string businesslicence = cardBindBpm.BelongType == 0 ? "" : cardBindBpm.IDCard; //营业执照号 customertype为ENTERPRISE时，必填
+                string idcard = cardBindBpm.IDCard ??  ""; //身份证  customertype为PERSON时  选填
+                string businesslicence = cardBindBpm.BusinessLicence ?? ""; //营业执照号  必填
                 string legalperson = cardBindBpm.TrueName;
                 string bankaccountnumber = cardBindBpm.AccountNo; //银行卡号 
                 string bankname = cardBindBpm.OpenBank; //开户行
@@ -104,7 +118,7 @@ namespace Ets.Service.Provider.Finance
                 accountname, bankaccounttype, bankprovince, bankcity);//注册帐号
                 if (result != null && !string.IsNullOrEmpty(result.code) && result.code.Trim() == "1")
                 {
-                    _businessFinanceAccountDao.UpdateYeepayInfo(cardBindBpm.BusinessId, result.ledgerno, 0);
+                    _businessFinanceAccountDao.UpdateYeepayInfoById(id, result.ledgerno, 0);
                 }
                 else
                 {

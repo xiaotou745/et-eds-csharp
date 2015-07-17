@@ -3192,7 +3192,7 @@ where   Id = @OrderId and FinishAll = 0";
         /// <returns></returns>
         public bool ClienterHasUnFinishedOrder(int clienterId)
         {
-            string sql = "select count(1) from [dbo].[order] where clienterId=@clientId and (Status=2 or Status=4);";
+            string sql = "select count(1) from [dbo].[order]  (nolock) where clienterId=@clientId and (Status=2 or Status=4);";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@clientId", clienterId);
             return int.Parse(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm).ToString()) > 0;

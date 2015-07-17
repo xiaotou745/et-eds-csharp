@@ -189,21 +189,23 @@ namespace Ets.Service.Provider.Finance
         #region 骑士金融账号绑定/修改
 
         /// <summary>
-        /// 骑士绑定银行卡功能 add by caoheyang 20150511 
-        /// TODO  目前只支付网银
+        /// 骑士绑定银行卡功能 add by caoheyang 20150511    modify by 彭宜  20150717   绑定银行卡时会和易宝支付关联
         /// </summary>
         /// <param name="cardBindCpm">参数实体</param>
         /// <returns></returns>
         public ResultModel<object> CardBindC(CardBindCPM cardBindCpm)
         {
+            #region 参数验证
+            FinanceCardBindC checkbool = CheckCardBindC(cardBindCpm);  //验证数据合法性
+            if (checkbool != FinanceCardBindC.Success)
+            {
+                return ResultModel<object>.Conclude(checkbool);
+            }
+            #endregion
+            var result = 0;
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                FinanceCardBindC checkbool = CheckCardBindC(cardBindCpm);  //验证数据合法性
-                if (checkbool != FinanceCardBindC.Success)
-                {
-                    return ResultModel<object>.Conclude(checkbool);
-                }
-                int result = _clienterFinanceAccountDao.Insert(new ClienterFinanceAccount()
+                result = _clienterFinanceAccountDao.Insert(new ClienterFinanceAccount()
                 {
                     ClienterId = cardBindCpm.ClienterId,//骑士ID
                     TrueName = cardBindCpm.TrueName, //户名
@@ -253,7 +255,7 @@ namespace Ets.Service.Provider.Finance
                 accountname, bankaccounttype, bankprovince, bankcity);//注册帐号
                 if (result1 != null && !string.IsNullOrEmpty(result1.code) && result1.code.Trim() == "1")
                 {
-                    _clienterFinanceAccountDao.UpdateYeepayInfo(cardBindCpm.ClienterId, result1.ledgerno, 0);
+                    _clienterFinanceAccountDao.UpdateYeepayInfoById(result, result1.ledgerno, 0);
                 }
                 else
                 {
@@ -582,7 +584,7 @@ namespace Ets.Service.Provider.Finance
         /// <param name="model"></param>
         ///  <param name="callback"></param>
         /// <returns></returns>
-        public bool ClienterWithdrawPayFailed(ClienterWithdrawLogModel model,CashTransferCallback callback)
+        public bool ClienterWithdrawPayFailed(ClienterWithdrawLogModel model, CashTransferCallback callback)
         {
             bool reg = false;
             var withdraw = _clienterWithdrawFormDao.GetById(model.WithwardId);
@@ -614,8 +616,8 @@ namespace Ets.Service.Provider.Finance
                             {
                                 ClienterId = withdraw.ClienterId, //骑士Id(Clienter表）
                                 Amount = -withdraw.HandCharge, //流水金额
-                                Status = (int) ClienterBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
-                                RecordType = (int) ClienterBalanceRecordRecordType.ProcedureFee,
+                                Status = (int)ClienterBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
+                                RecordType = (int)ClienterBalanceRecordRecordType.ProcedureFee,
                                 Operator = "易宝系统回调",
                                 WithwardId = withdraw.Id,
                                 RelationNo = withdraw.WithwardNo,
