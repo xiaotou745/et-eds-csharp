@@ -148,12 +148,12 @@ namespace Ets.Service.Provider.Finance
             }
             if (string.IsNullOrWhiteSpace(withdrawCpm.OpenProvince))
                 return FinanceWithdrawC.NoOpenProvince;
-            if (withdrawCpm.OpenProvinceCode == 0)
-                return FinanceWithdrawC.NoOpenProvinceCode;
+            //if (withdrawCpm.OpenProvinceCode == 0)
+            //    return FinanceWithdrawC.NoOpenProvinceCode;
             if (string.IsNullOrWhiteSpace(withdrawCpm.OpenCity))
                 return FinanceWithdrawC.NoOpenCity;
-            if (withdrawCpm.OpenCityCode == 0)
-                return FinanceWithdrawC.NoOpenCityCode;
+            //if (withdrawCpm.OpenCityCode == 0)
+            //    return FinanceWithdrawC.NoOpenCityCode;
             if (!Regex.IsMatch(withdrawCpm.IDCard, @"^(^\d{15}$|^\d{18}$|^\d{17}(\d|X|x))$", RegexOptions.IgnoreCase))
                 return FinanceWithdrawC.NoIDCard;
             if (withdrawCpm.WithdrawPrice % 100 != 0 || withdrawCpm.WithdrawPrice < 100
@@ -309,6 +309,11 @@ namespace Ets.Service.Provider.Finance
             if (checkbool != FinanceCardModifyC.Success)
             {
                 return ResultModel<object>.Conclude(checkbool);
+            }
+            int withdrawCount= _clienterWithdrawFormDao.GetByClienterId(cardModifyCpm.ClienterId);
+            if (withdrawCount > 0) //该骑士是否存在未完成的提现单
+            {
+                return ResultModel<object>.Conclude(FinanceCardModifyC.NoModify);
             }
             ClienterFinanceAccount cfAccount = _clienterFinanceAccountDao.GetById(cardModifyCpm.Id);
             if (cfAccount != null)
@@ -604,7 +609,6 @@ namespace Ets.Service.Provider.Finance
                         && clienterFinanceDao.ModifyClienterBalanceRecordStatus(model.WithwardId.ToString())
                         && clienterFinanceDao.ModifyClienterAmountInfo(model.WithwardId.ToString()))
                     {
-
                         _clienterDao.UpdateForWithdrawC(new UpdateForWithdrawPM
                         {
                             Id = withdraw.ClienterId,

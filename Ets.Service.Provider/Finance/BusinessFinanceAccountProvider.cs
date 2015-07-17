@@ -26,6 +26,7 @@ namespace Ets.Service.Provider.Finance
     public class BusinessFinanceAccountProvider : IBusinessFinanceAccountProvider
     {
         private readonly BusinessFinanceAccountDao _businessFinanceAccountDao = new BusinessFinanceAccountDao();
+        private readonly BusinessFinanceDao _businessFinanceDao = new BusinessFinanceDao();
         private readonly BusinessDao _businessDao = new BusinessDao();
         /// <summary>
         /// 获取金额账号Id
@@ -148,6 +149,12 @@ namespace Ets.Service.Provider.Finance
             if (boolRes != FinanceCardModifyB.Success)
             {
                 return ResultModel<object>.Conclude(boolRes);
+            } 
+            //TODO 验证该 商户id 下 是存在未完成的 提现申请单 ，如果存在不允许修改 
+            int withdrawCount = _businessFinanceDao.GetBusinessWithdrawByBusinessId(cardModifyBpm.BusinessId);
+            if (withdrawCount > 0)
+            {
+                return ResultModel<object>.Conclude(FinanceCardModifyB.ForbitModify); 
             }
             BusinessFinanceAccount bfAccount = _businessFinanceAccountDao.GetById(cardModifyBpm.Id);
             if (bfAccount != null)
@@ -171,7 +178,7 @@ namespace Ets.Service.Provider.Finance
                             UpdateBy = cardModifyBpm.UpdateBy, //修改人  当前登录人
                             OpenProvince = cardModifyBpm.OpenProvince, //省名称
                             OpenCity = cardModifyBpm.OpenCity, //市区名称
-                            IDCard = cardModifyBpm.IDCard //身份证号
+                            IDCard = cardModifyBpm.IDCard //公司账户时存营业执照，个人账户存身份证号码
                         });
                         tran.Complete();
                     }
@@ -189,8 +196,8 @@ namespace Ets.Service.Provider.Finance
             string customertype = (cardModifyBpm.BelongType == 0 ? CustomertypeEnum.PERSON.ToString() : CustomertypeEnum.ENTERPRISE.ToString()); //注册类型PERSON ：个人 ENTERPRISE：企业个人 ENTERPRISE：企业
             string signedname = cardModifyBpm.TrueName; //签约名   商户签约名；个人，填写姓名；企业，填写企业名称。
             string linkman = cardModifyBpm.TrueName; //联系人
-            string idcard = cardModifyBpm.IDCard; //身份证  customertype为PERSON时，必填
-            string businesslicence = ""; //营业执照号 customertype为ENTERPRISE时，必填
+            string idcard = cardModifyBpm.IDCard; //身份证  customertype为PERSON时，必填 
+            string businesslicence = cardModifyBpm.BelongType == 0 ? "" : cardModifyBpm.IDCard; //营业执照号 customertype为ENTERPRISE时，必填
             string legalperson = cardModifyBpm.TrueName;
             string bankaccountnumber = cardModifyBpm.AccountNo; //银行卡号 
             string bankname = cardModifyBpm.OpenBank; //开户行

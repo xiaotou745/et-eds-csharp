@@ -31,6 +31,7 @@ namespace Ets.Dao.Finance
         /// </summary>
         public long Insert(ClienterWithdrawForm clienterWithdrawForm)
         {
+            //TODO 修改ADD
             const string insertSql = @"
 insert into ClienterWithdrawForm(WithwardNo,ClienterId,BalancePrice,AllowWithdrawPrice,Status,Amount,Balance,
 TrueName,AccountNo,AccountType,BelongType,OpenBank,OpenSubBank,OpenProvince,OpenCity,OpenProvinceCode,OpenCityCode,IDCard,HandChargeThreshold,HandCharge,HandChargeOutlay)
@@ -137,6 +138,21 @@ where  Id=@Id ";
             }
             return model;
         }
+
+        /// <summary>
+        /// 判断该骑士是否有未完成的体现申请单
+        /// <param name="id">id</param>
+        /// </summary>
+        public int GetByClienterId(int clienterId)
+        {
+            const string querysql = @" select count(1) FROM dbo.ClienterWithdrawForm(nolock) a
+ where a.[Status]=2 and a.ClienterId=@clienterId";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("@clienterId", DbType.Int32).Value = clienterId;
+            var count = DbHelper.ExecuteScalar(SuperMan_Read, querysql, dbParameters); 
+            return ParseHelper.ToInt(count,0);
+        }
+
 
         #endregion
         #region  Other Members
