@@ -1184,7 +1184,7 @@ where Id=@Id";
 
             #region 骑士金融账号表
             const string queryCFAccountSql = @"
-select  Id,ClienterId,TrueName,AccountNo,IsEnable,AccountType,BelongType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime
+select  Id,ClienterId,TrueName,AccountNo,IsEnable,AccountType,BelongType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime,OpenProvince,OpenCity  
 from  ClienterFinanceAccount (nolock) 
 where ClienterId=@ClienterId  and IsEnable=1";
 
@@ -1209,6 +1209,14 @@ where ClienterId=@ClienterId  and IsEnable=1";
                 if (dataRow["OpenSubBank"] != null && dataRow["OpenSubBank"] != DBNull.Value)
                 {
                     bf.OpenSubBank = dataRow["OpenSubBank"].ToString();
+                }
+                if (dataRow["OpenProvince"] != null && dataRow["OpenProvince"] != DBNull.Value)
+                {
+                    bf.OpenProvince = dataRow["OpenProvince"].ToString();
+                }
+                if (dataRow["OpenCity"] != null && dataRow["OpenCity"] != DBNull.Value)
+                {
+                    bf.OpenCity = dataRow["OpenCity"].ToString();
                 }
                 bf.CreateBy = dataRow["CreateBy"].ToString();
                 bf.CreateTime = ParseHelper.ToDatetime(dataRow["CreateTime"]);
