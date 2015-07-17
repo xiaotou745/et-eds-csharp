@@ -86,6 +86,14 @@ namespace Ets.Model.DataModel.Finance
         /// 骑士手机号
         /// </summary>
         public string PhoneNo { get; set; }
+        /// <summary>
+        /// 易宝key
+        /// </summary>
+        public string YeepayKey { get; set; }
+        /// <summary>
+        /// 易宝账户状态 0正常 1失败
+        /// </summary>
+        public int YeepayStatus { get; set; }
     }
 
 }

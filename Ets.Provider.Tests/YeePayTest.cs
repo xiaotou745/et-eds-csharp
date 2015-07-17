@@ -115,7 +115,7 @@ namespace Ets.Provider.Tests
         [Test]
         public void CashTransfer()
         {
-            var result = new Transfer().CashTransfer(APP.B, 97, "10012474356", "3", "http://edstest130.yitaoyun.net/pay/YeePayCashTransferCallback");//提现
+            var result = new Transfer().CashTransfer(APP.B, 97, "10012474356", "3");//提现
         }
 
 

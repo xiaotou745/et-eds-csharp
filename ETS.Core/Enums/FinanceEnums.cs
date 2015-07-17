@@ -163,7 +163,7 @@ namespace ETS.Enums
     }
 
     /// <summary>
-    ///骑士提现 提现状态(1待审核 2 审核通过 3打款完成 -1审核拒绝 -2 打款失败) 枚举 add by caoheyang 20150509
+    ///骑士提现 提现状态(1待审核 2 审核通过 3打款完成 20 打款中 -1审核拒绝 -2 打款失败) 枚举 add by caoheyang 20150509
     /// </summary>
     public enum ClienterWithdrawFormStatus
     {
@@ -176,7 +176,9 @@ namespace ETS.Enums
         [DisplayText("审核拒绝")]
         TurnDown = -1,
         [DisplayText("打款失败")]
-        Error = -2
+        Error = -2,
+        [DisplayText("打款中")]
+        Paying = 20
     }
 
     /// <summary>
@@ -346,7 +348,7 @@ namespace ETS.Enums
     }
 
     /// <summary>
-    ///商户提现 提现状态(1待审核 2 审核通过 3打款完成 -1审核拒绝 -2 打款失败) 枚举 add by caoheyang 20150509
+    ///商户提现 提现状态(1待审核 2 审核通过 3打款完成 20打款中 -1审核拒绝 -2 打款失败) 枚举 add by caoheyang 20150509
     /// </summary>
     public enum BusinessWithdrawFormStatus
     {
@@ -359,7 +361,9 @@ namespace ETS.Enums
         [DisplayText("审核拒绝")]
         TurnDown = -1,
         [DisplayText("打款失败")]
-        Error = -2
+        Error = -2,
+        [DisplayText("打款中")]
+        Paying = 20,
     }
 
     /// <summary>

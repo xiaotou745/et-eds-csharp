@@ -84,8 +84,8 @@ namespace Ets.Service.Provider.Finance
                     UpdateBy = cardBindBpm.CreateBy, //新增时最后修改人与新增人一致  当前登录人
                     OpenCity = cardBindBpm.OpenCity, //开户行
                     OpenProvince = cardBindBpm.OpenProvince, //开户市
-                    IDCard = cardBindBpm.IDCard ?? "", //身份证
-                    BusinessLicence = cardBindBpm.IDCard ?? "",//营业执照
+                    IDCard = cardBindBpm.IDCard ?? "" //身份证
+                    
                 });
                 tran.Complete();
             }
@@ -94,32 +94,40 @@ namespace Ets.Service.Provider.Finance
             {
                 //请求易宝注册接口,如果成功,则更新账户易宝key和status
                 var phoneNo = _businessDao.GetPhoneNo(cardBindBpm.BusinessId);
-                var paramter = new BusinessRegisterParameter()
+                var parameter = new YeeRegisterParameter()
                 {
-                    accountid = cardBindBpm.AccountNo,
-                    accountname = cardBindBpm.TrueName,
-                    bankaccountnumber = cardBindBpm.AccountNo,
-                    bankaccounttype = (cardBindBpm.BelongType == 0
-                        ? BankaccounttypeEnum.PrivateCash.ToString()
-                        : BankaccounttypeEnum.PublicCash.ToString()),
-                    bankcity = cardBindBpm.OpenBank,
-                    bankname = cardBindBpm.OpenBank,
-                    bankprovince = cardBindBpm.OpenProvince,
-                    bindmobile = phoneNo ?? "",
-                    businesslicence = cardBindBpm.IDCard ?? "",
-                    customertype = (cardBindBpm.BelongType == 0
-                        ? CustomertypeEnum.PERSON.ToString()
-                        : CustomertypeEnum.ENTERPRISE.ToString()),
-                    idcard = cardBindBpm.IDCard ?? "",
-                    legalperson = cardBindBpm.TrueName,
-                    linkman = cardBindBpm.TrueName,
-                    requestid = TimeHelper.GetTimeStamp(false),
-                    signedname = cardBindBpm.TrueName,
+                    AccountName = cardBindBpm.TrueName,
+                    BankAccountNumber = cardBindBpm.AccountNo,
+                    BankCity = cardBindBpm.OpenCity,
+                    BankName = cardBindBpm.OpenBank,
+                    BankProvince = cardBindBpm.OpenProvince,
+                    BindMobile = phoneNo,
+                    BusinessLicence = cardBindBpm.BelongType == 0 ? "" : cardBindBpm.IDCard,
+                    IdCard = cardBindBpm.BelongType == 1 ? "" : cardBindBpm.IDCard,
+                    CustomerType = (cardBindBpm.BelongType == 0
+                        ? CustomertypeEnum.PERSON
+                        : CustomertypeEnum.ENTERPRISE),
+                    LegalPerson = cardBindBpm.TrueName,
+                    LinkMan = cardBindBpm.TrueName,
+                    SignedName = cardBindBpm.TrueName,
                 };
-                var dealInfo = new BusinessFinanceProvider().DealRegBusiSubAccount(paramter);
-                if (dealInfo.DealFlag)
+                var result = new Register().RegSubaccount(parameter);//注册帐号
+                if (result != null && !string.IsNullOrEmpty(result.code) && result.code.Trim() == "1")
                 {
-                    _businessFinanceAccountDao.UpdateYeepayInfoById(id, dealInfo.SuccessId, 0);
+                    _businessFinanceAccountDao.UpdateYeepayInfoById(id, result.ledgerno, 0);
+                }
+                else
+                {
+                    if (result == null)
+                    {
+                        //ETS.Util.LogHelper.LogWriterString("商户绑定易宝支付失败", string.Format("返回结果为null"));
+                        return;
+                    }
+                    else
+                    {
+                        ETS.Util.LogHelper.LogWriterString("商户绑定易宝支付失败", string.Format("易宝错误信息:code{0},ledgerno:{1},hmac{2},msg{3}",
+                            result.code, result.ledgerno, result.hmac, result.msg));
+                    }
                 }
             });
             #endregion
@@ -178,24 +186,24 @@ namespace Ets.Service.Provider.Finance
             }
 
             #region 2.异步调用注册ebao
-
-            string requestid = TimeHelper.GetTimeStamp(false);
-            string bindmobile = bfAccount.PhoneNo; //绑定手机
-            string customertype = (cardModifyBpm.BelongType == 0 ? CustomertypeEnum.PERSON.ToString() : CustomertypeEnum.ENTERPRISE.ToString()); //注册类型PERSON ：个人 ENTERPRISE：企业个人 ENTERPRISE：企业
-            string signedname = cardModifyBpm.TrueName; //签约名   商户签约名；个人，填写姓名；企业，填写企业名称。
-            string linkman = cardModifyBpm.TrueName; //联系人
-            string idcard = cardModifyBpm.IDCard; //身份证  customertype为PERSON时，必填 
-            string businesslicence = cardModifyBpm.BelongType == 0 ? "" : cardModifyBpm.IDCard; //营业执照号 customertype为ENTERPRISE时，必填
-            string legalperson = cardModifyBpm.TrueName;
-            string bankaccountnumber = cardModifyBpm.AccountNo; //银行卡号 
-            string bankname = cardModifyBpm.OpenBank; //开户行
-            string accountname = cardModifyBpm.TrueName; //开户名
-            string bankaccounttype = (cardModifyBpm.BelongType == 0 ? BankaccounttypeEnum.PrivateCash.ToString() : BankaccounttypeEnum.PublicCash.ToString()); //银行卡类别  PrivateCash：对私 PublicCash： 对公
-            string bankprovince = cardModifyBpm.OpenProvince;
-            string bankcity = cardModifyBpm.OpenCity;
-            var registResult = new Register().RegSubaccount(requestid, bindmobile, customertype, signedname, linkman,
-                idcard, businesslicence, legalperson, bankaccountnumber, bankname,
-                accountname, bankaccounttype, bankprovince, bankcity); //注册帐号
+            var bYeeRegisterParameter = new YeeRegisterParameter()
+            {
+                AccountName = cardModifyBpm.TrueName,
+                BankAccountNumber = cardModifyBpm.AccountNo,
+                BankCity = cardModifyBpm.OpenCity,
+                BankName = cardModifyBpm.OpenBank,
+                BankProvince = cardModifyBpm.OpenProvince,
+                BindMobile = bfAccount.PhoneNo, //绑定手机
+                BusinessLicence = cardModifyBpm.BelongType == 0 ? "" : cardModifyBpm.IDCard,
+                IdCard = cardModifyBpm.IDCard,
+                CustomerType = (cardModifyBpm.BelongType == 0
+                    ? CustomertypeEnum.PERSON
+                    : CustomertypeEnum.ENTERPRISE),
+                LegalPerson = cardModifyBpm.TrueName,
+                LinkMan = cardModifyBpm.TrueName,
+                SignedName = cardModifyBpm.TrueName
+            }; 
+            var registResult = new Register().RegSubaccount(bYeeRegisterParameter); //注册帐号
             if (registResult != null && !string.IsNullOrEmpty(registResult.code) && registResult.code.Trim() == "1")   //绑定成功，更新易宝key
             {
                 _businessFinanceAccountDao.UpdateYeepayInfoById(cardModifyBpm.Id, registResult.ledgerno, 0);

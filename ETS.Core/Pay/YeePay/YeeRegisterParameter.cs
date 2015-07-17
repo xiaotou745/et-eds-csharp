@@ -124,5 +124,9 @@ namespace ETS.Pay.YeePay
             get { return _manualSettle; }
             set { _manualSettle = value; }
         }
+        /// <summary>
+        /// 金融账号表Id
+        /// </summary>
+        public string AccountId { get; set; }
     }
 }

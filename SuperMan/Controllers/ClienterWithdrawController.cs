@@ -161,7 +161,7 @@ namespace SuperMan.Controllers
             {
                 Operator = UserContext.Current.Name,
                 Remark = "骑士提款申请单确认打款",
-                Status = ClienterWithdrawFormStatus.Success.GetHashCode(),
+                Status = ClienterWithdrawFormStatus.Paying.GetHashCode(),
                 WithwardId = Convert.ToInt64(withwardId)
             };
             var reg = iClienterFinanceProvider.ClienterWithdrawPayOk(clienterWithdrawLog);

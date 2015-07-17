@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using ETS;
 using Ets.Dao.Finance;
 using Ets.Dao.User;
 using ETS.Enums;
@@ -21,6 +22,9 @@ using ETS.Transaction.Common;
 using ETS.Util;
 using Ets.Dao.Business;
 using Ets.Dao.Clienter;
+using Ets.Dao.GlobalConfig;
+using Ets.Model.DomainModel.GlobalConfig;
+
 namespace Ets.Service.Provider.Finance
 {
     public class BusinessFinanceProvider : IBusinessFinanceProvider
@@ -166,6 +170,7 @@ namespace Ets.Service.Provider.Finance
                         Money = -withdrawBBackPM.WithdrawPrice
                     }); //更新商户表的余额，可提现余额
                     string withwardNo = Helper.generateOrderCode(withdrawBBackPM.BusinessId);
+                    GlobalConfigModel globalConfig = GlobalConfigDao.GlobalConfigGet(0);
                     #region 商户提现
                     long withwardId = _businessWithdrawFormDao.Insert(new BusinessWithdrawForm()
                     {
@@ -181,7 +186,15 @@ namespace Ets.Service.Provider.Finance
                         AccountType = businessFinanceAccount.AccountType, //账号类型：
                         BelongType = businessFinanceAccount.BelongType,//账号类别  0 个人账户 1 公司账户  
                         OpenBank = businessFinanceAccount.OpenBank,//开户行
-                        OpenSubBank = businessFinanceAccount.OpenSubBank //开户支行
+                        OpenSubBank = businessFinanceAccount.OpenSubBank, //开户支行 
+                        IDCard = withdrawBBackPM.IDCard,//申请提款身份证号或营业执照
+                        OpenCity = withdrawBBackPM.OpenCity,//城市
+                        OpenCityCode = withdrawBBackPM.OpenCityCode,//城市代码
+                        OpenProvince = withdrawBBackPM.OpenProvince,//省份
+                        OpenProvinceCode = withdrawBBackPM.OpenProvinceCode,//省份代码
+                                  HandCharge = Convert.ToInt32(globalConfig.WithdrawCommission),//手续费
+                        HandChargeOutlay = withdrawBBackPM.WithdrawPrice > Convert.ToInt32(globalConfig.ClienterWithdrawCommissionAccordingMoney) ? HandChargeOutlay.EDaiSong : HandChargeOutlay.Private,//手续费支出方
+                                  HandChargeThreshold = Convert.ToInt32(globalConfig.ClienterWithdrawCommissionAccordingMoney)//手续费阈值 
                     });
                     #endregion
 
@@ -301,28 +314,42 @@ namespace Ets.Service.Provider.Finance
                 DealFlag = false
             };
             var busiFinanceAccount = businessFinanceDao.GetBusinessFinanceAccount(model.WithwardId.ToString());
+            if (busiFinanceAccount == null)
+            {
+                dealResultInfo.DealMsg = "获取提现单信息失败！";
+                return dealResultInfo;
+            }
+            if (busiFinanceAccount.WithdrawTime < ParseHelper.ToDatetime(Config.WithdrawTime))
+            {
+                dealResultInfo.DealFlag = BusinessWithdrawPayOk(model);
+                dealResultInfo.DealMsg = dealResultInfo.DealFlag ? "打款成功！" : "打款失败！";
+                return dealResultInfo;
+            }
+            decimal amount = busiFinanceAccount.HandChargeOutlay == 0
+                ? busiFinanceAccount.Amount
+                : busiFinanceAccount.Amount + busiFinanceAccount.HandCharge;
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 //注册易宝子账户逻辑
                 if (string.IsNullOrEmpty(busiFinanceAccount.YeepayKey) || busiFinanceAccount.YeepayStatus == 1)
                 {
-                    var brp = new BusinessRegisterParameter
+                    var brp = new YeeRegisterParameter
                     {
-                        bindmobile = busiFinanceAccount.PhoneNo,
-                        signedname = busiFinanceAccount.TrueName,
-                        customertype =
+                        BindMobile = busiFinanceAccount.PhoneNo,
+                        SignedName = busiFinanceAccount.TrueName,
+                        CustomerType =
                             busiFinanceAccount.BelongType == 0
-                                ? CustomertypeEnum.PERSON.ToString()
-                                : CustomertypeEnum.ENTERPRISE.ToString(),
-                        linkman = busiFinanceAccount.TrueName,
-                        idcard = busiFinanceAccount.BusiIDCard,
-                        businesslicence = busiFinanceAccount.IDCard,
-                        legalperson = busiFinanceAccount.TrueName,
-                        bankaccountnumber = busiFinanceAccount.AccountNo,
-                        bankname = busiFinanceAccount.OpenBank,
-                        accountname = busiFinanceAccount.TrueName,
-                        bankprovince = busiFinanceAccount.OpenProvince,
-                        bankcity = busiFinanceAccount.OpenCity
+                                ? CustomertypeEnum.PERSON
+                                : CustomertypeEnum.ENTERPRISE,
+                        LinkMan = busiFinanceAccount.TrueName,
+                        IdCard = busiFinanceAccount.BusiIDCard,
+                        BusinessLicence = busiFinanceAccount.IDCard,
+                        LegalPerson = busiFinanceAccount.TrueName,
+                        BankAccountNumber = busiFinanceAccount.AccountNo,
+                        BankName = busiFinanceAccount.OpenBank,
+                        AccountName = busiFinanceAccount.TrueName,
+                        BankProvince = busiFinanceAccount.OpenProvince,
+                        BankCity = busiFinanceAccount.OpenCity
                     };
                     var dr = DealRegBusiSubAccount(brp);
                     if (!dr.DealFlag)
@@ -333,7 +360,7 @@ namespace Ets.Service.Provider.Finance
                     busiFinanceAccount.YeepayKey = dr.SuccessId; //子账户id
                 }
                 //转账逻辑
-                var regTransfer = new Transfer().TransferAccounts("", busiFinanceAccount.Amount.ToString(),
+                var regTransfer = new Transfer().TransferAccounts("", amount.ToString(),
                     busiFinanceAccount.YeepayKey); //转账   子账户转给总账户
                 if (regTransfer.code != "1")
                 {
@@ -341,10 +368,15 @@ namespace Ets.Service.Provider.Finance
                     return dealResultInfo;
                 }
                 var regCash = new Transfer().CashTransfer(APP.B, ParseHelper.ToInt(model.WithwardId),
-                    busiFinanceAccount.YeepayKey, busiFinanceAccount.Amount.ToString(), "配置"); //提现
+                    busiFinanceAccount.YeepayKey, amount.ToString()); //提现
                 if (regCash.code != "1")
                 {
                     dealResultInfo.DealMsg = "商户易宝自动提现失败：" + regCash.code;
+                    return dealResultInfo;
+                }
+                if(!businessFinanceDao.BusinessWithdrawPayOk(model))
+                {
+                    dealResultInfo.DealMsg = "更改提现单状态为打款中失败！";
                     return dealResultInfo;
                 }
                 dealResultInfo.DealFlag = true;
@@ -627,16 +659,16 @@ namespace Ets.Service.Provider.Finance
         /// danny-20150716
         /// </summary>
         /// <param name="model"></param>
-        public DealResultInfo DealRegBusiSubAccount(BusinessRegisterParameter model)
+        public DealResultInfo DealRegBusiSubAccount(YeeRegisterParameter model)
         {
             var dealResultInfo = new DealResultInfo
             {
                 DealFlag = false
             };
-            var registResult = new Register().RegSubaccount(model.requestid, model.bindmobile, model.customertype, model.signedname, model.linkman, model.idcard, model.businesslicence, model.legalperson, model.bankaccountnumber, model.bankname, model.accountname, model.bankaccounttype, model.bankprovince, model.bankcity);//注册帐号
+            var registResult = new Register().RegSubaccount(model);//注册帐号
             if (registResult != null && !string.IsNullOrEmpty(registResult.code) && registResult.code.Trim() == "1")   //绑定成功，更新易宝key
             {
-                if (!_businessFinanceAccountDao.ModifyYeepayInfoById(Convert.ToInt32(model.accountid), registResult.ledgerno, 0))
+                if (!_businessFinanceAccountDao.ModifyYeepayInfoById(Convert.ToInt32(model.AccountId), registResult.ledgerno, 0))
                 {
                     dealResultInfo.DealMsg = "调用易宝用户注册成功，回写数据库失败！";
                 }
@@ -649,7 +681,7 @@ namespace Ets.Service.Provider.Finance
             }
             else
             {
-                _businessFinanceAccountDao.ModifyYeepayInfoById(Convert.ToInt32(model.accountid), "", 1);
+                _businessFinanceAccountDao.ModifyYeepayInfoById(Convert.ToInt32(model.AccountId), "", 1);
                 if (registResult == null)
                 {
                     dealResultInfo.DealMsg = "商户绑定易宝支付失败,返回结果为null!";

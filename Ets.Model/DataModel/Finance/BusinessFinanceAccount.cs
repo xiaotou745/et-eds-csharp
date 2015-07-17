@@ -77,14 +77,11 @@ namespace Ets.Model.DataModel.Finance
         /// 身份证号、营业执照 ，对公营业执照，对私身份照
         /// </summary>
         public string IDCard { get; set; }
+
         /// <summary>
         /// 商户手机号
         /// </summary>
         public string PhoneNo { get; set; }
-        /// <summary>
-        /// 营业执照
-        /// </summary>
-        public string BusinessLicence { get; set; }
         /// <summary>
         /// 易宝key
         /// </summary>
@@ -93,13 +90,6 @@ namespace Ets.Model.DataModel.Finance
         /// 易宝账户状态 0正常 1失败
         /// </summary>
         public int YeepayStatus { get; set; }
-        /// <summary>
-        /// 商户身份证号
-        /// </summary>
-        public string BusiIDCard { get; set; }
-        /// <summary>
-        /// 提现金额
-        /// </summary>
-        public decimal Amount { get; set; }
+        
     }
 }
