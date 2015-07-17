@@ -29,6 +29,10 @@ namespace Ets.Model.DomainModel.Finance
         /// 手续费支出方:0个人,1易代送
         /// </summary>
         public int HandChargeOutlay { get; set; }
+        /// <summary>
+        /// 提现时间
+        /// </summary>
+        public DateTime WithdrawTime { get; set; }
         
     }
 }

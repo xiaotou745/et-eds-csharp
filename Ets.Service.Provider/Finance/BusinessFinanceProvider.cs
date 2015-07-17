@@ -306,6 +306,12 @@ namespace Ets.Service.Provider.Finance
                 dealResultInfo.DealMsg = "获取提现单信息失败！";
                 return dealResultInfo;
             }
+            if (busiFinanceAccount.WithdrawTime > ParseHelper.ToDatetime("2015-07-17 00:00:00"))
+            {
+                dealResultInfo.DealFlag = BusinessWithdrawPayOk(model);
+                dealResultInfo.DealMsg = dealResultInfo.DealFlag ? "打款成功！" : "打款失败！";
+                return dealResultInfo;
+            }
             decimal amount = busiFinanceAccount.HandChargeOutlay == 0
                 ? busiFinanceAccount.Amount
                 : busiFinanceAccount.Amount + busiFinanceAccount.HandCharge;
