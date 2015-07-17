@@ -120,9 +120,9 @@ namespace Ets.Service.Provider.Common
             if (Config.BankCityVersion == dataversion && !isResultData)
             {
                 areaList.AreaModels = null;
-                return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.UnNewest, areaList);
+                return ResultModel<AreaModelList>.Conclude(ETS.Enums.BankCityStatus.Success, areaList);
             }
-            return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.Newest, areaList);
+            return ResultModel<AreaModelList>.Conclude(ETS.Enums.BankCityStatus.Success, areaList);
         }
 
         ///// <summary>
