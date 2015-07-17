@@ -56,6 +56,58 @@ namespace Ets.Provider.Tests
                 accountname, bankaccounttype, bankprovince, bankcity);//注册帐号
         }
 
+
+        /// <summary>
+        /// 注册
+        /// </summary>
+        [Test]
+        public void Register1()
+        {
+
+            string requestid = TimeHelper.GetTimeStamp(false);
+
+            string bindmobile = "18553507220";  //绑定手机
+
+            string customertype = CustomertypeEnum.PERSON.ToString(); //注册类型  PERSON ：个人 ENTERPRISE：企业个人 ENTERPRISE：企业
+
+            string signedname = "曹赫洋"; //签约名   商户签约名；个人，填写姓名；企业，填写企业名称。
+
+            string linkman = "曹赫洋"; //联系人
+
+            string idcard = "370685199110161712"; //身份证  customertype为PERSON时，必填
+
+            string businesslicence = ""; //营业执照号 customertype为ENTERPRISE时，必填
+
+            string legalperson = "曹赫洋";
+
+            string bankaccountnumber = "6226200105376660"; //银行卡号           交通银行  6222620910009103866
+
+            string bankname = "民生银行"; //开户行
+
+            string accountname = "曹赫洋"; //开户名
+
+            string bankaccounttype = BankaccounttypeEnum.PrivateCash.ToString();  //银行卡类别  PrivateCash：对私 PublicCash： 对公
+
+            string bankprovince = "北京";
+
+            string bankcity = "北京";
+
+            var result1 = new Register().RegSubaccount(new YeeRegisterParameter()
+            {
+                BindMobile = "18553507220",
+                CustomerType=CustomertypeEnum.PERSON,
+                SignedName = "曹赫洋",
+                LinkMan = "曹赫洋",
+                IdCard = "370685199110161712",
+                LegalPerson = "曹赫洋",
+                BankAccountNumber = "6226200105376660",
+                BankName = "民生银行",
+                AccountName = "曹赫洋",
+                BankProvince = "北京",
+                BankCity = "北京"
+            });//注册帐号
+        }
+
         /// <summary>
         /// 提现
         /// </summary>
