@@ -68,99 +68,6 @@ namespace SuperManWebApi.Controllers
         }
 
         /// <summary>
-        /// 订单合法性验证
-        /// </summary>
-        /// <UpdateBy>hulingbo</UpdateBy>
-        /// <UpdateTime>20150515</UpdateTime>
-        /// <param name="model"></param>
-        /// <param name="order"></param>
-        /// <returns></returns>
-        ResultModel<BusiOrderResultModel> Verification(BussinessOrderInfoPM model, out  order order)
-        {
-            bool isOneKeyPubOrder = false;
-            BussinessStatusModel buStatus = iBusinessProvider.GetUserStatus(model.userId);
-            if (buStatus != null && buStatus.OneKeyPubOrder == 1)
-                isOneKeyPubOrder = true;
-
-            order = null;
-            var version = model.Version;
-            if (string.IsNullOrWhiteSpace(version)) //版本号 
-            {
-                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.NoVersion);
-            }
-            //if (!isOneKeyPubOrder && !StringHelper.CheckPhone(model.recevicePhone))
-            //{
-            //    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.RecevicePhoneErr);
-            //}
-            if (!isOneKeyPubOrder && string.IsNullOrEmpty(model.recevicePhone))//手机号
-            {
-                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.RecevicePhoneIsNULL);
-            }
-            if (!isOneKeyPubOrder && string.IsNullOrEmpty(model.receviceAddress))
-            {
-                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.ReceviceAddressIsNULL);
-            }
-
-            if (!iBusinessProvider.HaveQualification(model.userId))//验证该商户有无发布订单资格 
-            {
-                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.HadCancelQualification);
-            }
-            int orderChileCount = model.listOrderChlid.Count;
-            if (orderChileCount >= 16 || orderChileCount <= 0)
-            {
-                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.OrderCountError);
-            }
-            decimal amount = 0;
-            for (int i = 0; i < orderChileCount; i++)//子订单价格
-            {
-                if (model.listOrderChlid[i].GoodPrice < 5m)
-                {
-                    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.AmountLessThanTen);
-                }
-                if (model.listOrderChlid[i].GoodPrice > 1000m)
-                {
-                    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.AmountMoreThanFiveThousand);
-                }
-                amount += model.listOrderChlid[i].GoodPrice;
-
-            }
-            if (model.Amount != amount)
-            {
-                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.AmountIsNotEqual);
-            }
-
-            if (model.OrderCount <= 0 || model.OrderCount > 15) //判断录入订单数量是否符合要求
-            {
-                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.OrderCountError);
-            }
-            if (model.OrderCount != model.listOrderChlid.Count)//主订单与子订单数量
-            {
-                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.CountIsNotEqual);
-            }
-            BusListResultModel business = null;
-            //= iBusinessProvider.GetBusiness(model.userId)
-
-            order = iOrderProvider.TranslateOrder(model, out business);
-            if (order.CommissionType == OrderCommissionType.FixedRatio.GetHashCode() && order.BusinessCommission < 10m) //商户结算比例不能小于10
-            {
-                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.BusiSettlementRatioError);
-            }
-
-            if (business == null) //如果商户不允许可透支发单，验证余额是否满足结算费用，如果不满足，提示：“您的余额不足，请及时充值!”
-            {
-                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.BusinessEmpty);  //未取到商户信息
-            }
-            if (buStatus.IsAllowOverdraft == 0) //0不允许透支
-            {
-                if (business.BalancePrice < order.SettleMoney)
-                {
-                    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.BusiBalancePriceLack);
-                }
-            }
-            return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.VerificationSuccess);
-        }
-
-        /// <summary>
         /// 获取订单详情                
         /// </summary>
         /// <UpdateBy>hulingbo</UpdateBy>
@@ -271,74 +178,6 @@ namespace SuperManWebApi.Controllers
                 }
                 //上传成功后返回图片全路径
                 return ResultModel<UploadReceiptResultModel>.Conclude(UploadIconStatus.Success, new UploadReceiptResultModel() { OrderId = orderId, OrderChildList = listOrderChild, HadUploadCount = orderOther.HadUploadCount, NeedUploadCount = orderOther.NeedUploadCount });
-            }
-        }
-
-        /// <summary>
-        /// 删除小票信息 不需要了
-        /// wc
-        /// </summary>
-        /// <param name="Version"></param>
-        /// <returns></returns>
-        [HttpPost]
-        [ApiVersionStatistic]
-        public ResultModel<UploadReceiptResultModel> TicketRemove()
-        {
-            if (HttpContext.Current.Request.Form.Count == 0)
-            {
-                return ResultModel<UploadReceiptResultModel>.Conclude(UploadIconStatus.NOFormParameter);
-            }
-            var orderId = ParseHelper.ToInt(HttpContext.Current.Request.Form["OrderId"], 0); //订单Id
-            var orderChildId = ParseHelper.ToInt(HttpContext.Current.Request.Form["OrderChildId"], 0); //子订单Id
-            var receiptPic = HttpContext.Current.Request.Form["ReceiptPicAddress"];  //小票上传地址
-            var version = HttpContext.Current.Request.Form["Version"]; //版本号  1.0
-            if (orderId == 0)
-                return ResultModel<UploadReceiptResultModel>.Conclude(UploadIconStatus.InvalidOrderId);
-            if (orderChildId == 0)
-                return ResultModel<UploadReceiptResultModel>.Conclude(UploadIconStatus.NoOrderChildId);
-            if (string.IsNullOrWhiteSpace(version)) //版本号 
-                return ResultModel<UploadReceiptResultModel>.Conclude(UploadIconStatus.NoVersion);
-            if (!receiptPic.StartsWith("http", StringComparison.OrdinalIgnoreCase))
-                return ResultModel<UploadReceiptResultModel>.Conclude(UploadIconStatus.ReceiptAddressInvalid);
-            UploadReceiptModel uploadReceiptModel = new UploadReceiptModel() { OrderId = orderId, ReceiptPic = receiptPic, HadUploadCount = -1 };
-            ETS.Util.LogHelper.LogWriter("删除小票参数", new { version = version, receiptPic = receiptPic, orderId = orderId, orderChildId = orderChildId });
-            //删除前先判断   订单状态已完成 和已经上传的小票数量 等于需要上传的小票数量相等 时 不允许删除小票
-            OrderOther orderOther = iClienterProvider.GetReceipt(orderId);
-            //判断订单信息，状态是否为已完成， 已经上传的小票数量是否和 需要上传的一样， 若一样则无法删除
-            if (orderOther != null)
-            {
-                if (orderOther.OrderStatus ==OrderStatus.Status1.GetHashCode() && orderOther.NeedUploadCount == orderOther.HadUploadCount)
-                {
-                    return ResultModel<UploadReceiptResultModel>.Conclude(UploadIconStatus.DeleteFailed);
-                }
-            }
-            else
-            {
-                return ResultModel<UploadReceiptResultModel>.Conclude(UploadIconStatus.CannotFindOrder);
-            }
-            //判断是否存在小票 
-            List<OrderChildForTicket> orderChild = iClienterProvider.GetOrderChildInfo(orderId, orderChildId);
-            if (orderChild != null && orderChild.Count > 0)
-            {
-                if (string.IsNullOrWhiteSpace(orderChild[0].TicketUrl) || orderChild[0].HasUploadTicket)  //没有小票，请先上传
-                {
-                    return ResultModel<UploadReceiptResultModel>.Conclude(UploadIconStatus.FirstUpload);
-                }
-            }
-            else
-            {
-                return ResultModel<UploadReceiptResultModel>.Conclude(UploadIconStatus.DeleteFailed);
-            }
-            //删除小票的时候更新orderother表，更新 orderchild表
-            OrderOther delOrderOther = iClienterProvider.DeleteReceipt(uploadReceiptModel);
-            if (delOrderOther.Id > 0)
-            {
-                //List<string> listReceiptPic = ImageCommon.ReceiptPicConvert(delOrderOther.ReceiptPic); 
-                return ResultModel<UploadReceiptResultModel>.Conclude(UploadIconStatus.Success, new UploadReceiptResultModel() { OrderId = delOrderOther.OrderId, HadUploadCount = delOrderOther.HadUploadCount, NeedUploadCount = delOrderOther.NeedUploadCount });
-            }
-            else
-            {
-                return ResultModel<UploadReceiptResultModel>.Conclude(UploadIconStatus.DeleteFailed);
             }
         }
 
@@ -509,5 +348,100 @@ namespace SuperManWebApi.Controllers
         {
             return receviceAddressProvider.RemoveAddressB(model);
         }
+
+        #region 用户自定义方法
+        /// <summary>
+        /// 订单合法性验证
+        /// </summary>
+        /// <UpdateBy>hulingbo</UpdateBy>
+        /// <UpdateTime>20150515</UpdateTime>
+        /// <param name="model"></param>
+        /// <param name="order"></param>
+        /// <returns></returns>
+        ResultModel<BusiOrderResultModel> Verification(BussinessOrderInfoPM model, out  order order)
+        {
+            bool isOneKeyPubOrder = false;
+            BussinessStatusModel buStatus = iBusinessProvider.GetUserStatus(model.userId);
+            if (buStatus != null && buStatus.OneKeyPubOrder == 1)
+                isOneKeyPubOrder = true;
+
+            order = null;
+            var version = model.Version;
+            if (string.IsNullOrWhiteSpace(version)) //版本号 
+            {
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.NoVersion);
+            }
+            //if (!isOneKeyPubOrder && !StringHelper.CheckPhone(model.recevicePhone))
+            //{
+            //    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.RecevicePhoneErr);
+            //}
+            if (!isOneKeyPubOrder && string.IsNullOrEmpty(model.recevicePhone))//手机号
+            {
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.RecevicePhoneIsNULL);
+            }
+            if (!isOneKeyPubOrder && string.IsNullOrEmpty(model.receviceAddress))
+            {
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.ReceviceAddressIsNULL);
+            }
+
+            if (!iBusinessProvider.HaveQualification(model.userId))//验证该商户有无发布订单资格 
+            {
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.HadCancelQualification);
+            }
+            int orderChileCount = model.listOrderChlid.Count;
+            if (orderChileCount >= 16 || orderChileCount <= 0)
+            {
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.OrderCountError);
+            }
+            decimal amount = 0;
+            for (int i = 0; i < orderChileCount; i++)//子订单价格
+            {
+                if (model.listOrderChlid[i].GoodPrice < 5m)
+                {
+                    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.AmountLessThanTen);
+                }
+                if (model.listOrderChlid[i].GoodPrice > 1000m)
+                {
+                    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.AmountMoreThanFiveThousand);
+                }
+                amount += model.listOrderChlid[i].GoodPrice;
+
+            }
+            if (model.Amount != amount)
+            {
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.AmountIsNotEqual);
+            }
+
+            if (model.OrderCount <= 0 || model.OrderCount > 15) //判断录入订单数量是否符合要求
+            {
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.OrderCountError);
+            }
+            if (model.OrderCount != model.listOrderChlid.Count)//主订单与子订单数量
+            {
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.CountIsNotEqual);
+            }
+            BusListResultModel business = null;
+            //= iBusinessProvider.GetBusiness(model.userId)
+
+            order = iOrderProvider.TranslateOrder(model, out business);
+            if (order.CommissionType == OrderCommissionType.FixedRatio.GetHashCode() && order.BusinessCommission < 10m) //商户结算比例不能小于10
+            {
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.BusiSettlementRatioError);
+            }
+
+            if (business == null) //如果商户不允许可透支发单，验证余额是否满足结算费用，如果不满足，提示：“您的余额不足，请及时充值!”
+            {
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.BusinessEmpty);  //未取到商户信息
+            }
+            if (buStatus.IsAllowOverdraft == 0) //0不允许透支
+            {
+                if (business.BalancePrice < order.SettleMoney)
+                {
+                    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.BusiBalancePriceLack);
+                }
+            }
+            return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.VerificationSuccess);
+        }
+        #endregion
     }
 }
