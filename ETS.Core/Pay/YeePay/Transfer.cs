@@ -128,9 +128,9 @@ namespace ETS.Pay.YeePay
         /// <param name="withdrawFormId">提现单id 用来生成体现单号</param>
         /// <param name="ledgerno">子账户商户编号</param>
         /// <param name="amount">转账金额 单位：元  参数只要实际转款金额</param>
-        /// <param name="callbackurl">回调接口 提现成功与否返回data</param>
+        ///// <param name="callbackurl">回调接口 提现成功与否返回data</param>
         /// <returns></returns>
-        public TransferReturnModel CashTransfer(APP app, int withdrawFormId, string ledgerno, string amount, string callbackurl)
+        public TransferReturnModel CashTransfer(APP app, int withdrawFormId, string ledgerno, string amount)
         {
             string requestid = app.ToString() + "-" + withdrawFormId;
             //商户编号   
@@ -138,7 +138,7 @@ namespace ETS.Pay.YeePay
             //密钥   
             string hmackey = KeyConfig.YeepayHmac;
 
-            return CashTransfer(customernumber, hmackey, requestid, ledgerno, amount, callbackurl);
+            return CashTransfer(customernumber, hmackey, requestid, ledgerno, amount, Config.YeePayNotifyUrl);
 
         }
     }

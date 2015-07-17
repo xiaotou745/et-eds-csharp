@@ -33,9 +33,9 @@ namespace Ets.Dao.Finance
         {
             const string insertSql = @"
 insert into BusinessWithdrawForm(WithwardNo,BusinessId,BalancePrice,AllowWithdrawPrice,Status,Amount,Balance,
-TrueName,AccountNo,AccountType,BelongType,OpenBank,OpenSubBank)
+TrueName,AccountNo,AccountType,BelongType,OpenBank,OpenSubBank,OpenProvince,OpenCity,OpenProvinceCode,OpenCityCode,IDCard,HandChargeThreshold,HandCharge,HandChargeOutlay)
 values(@WithwardNo,@BusinessId,@BalancePrice,@AllowWithdrawPrice,@Status,@Amount,@Balance,
-@TrueName,@AccountNo,@AccountType,@BelongType,@OpenBank,@OpenSubBank)
+@TrueName,@AccountNo,@AccountType,@BelongType,@OpenBank,@OpenSubBank,@OpenProvince,@OpenCity,@OpenProvinceCode,@OpenCityCode,@IDCard,@HandChargeThreshold,@HandCharge,@HandChargeOutlay)
 
 select @@IDENTITY";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -52,7 +52,14 @@ select @@IDENTITY";
             dbParameters.AddWithValue("BelongType", businessWithdrawForm.BelongType);//账号类别  0 个人账户 1 公司账户  
             dbParameters.AddWithValue("OpenBank", businessWithdrawForm.OpenBank); //开户行
             dbParameters.AddWithValue("OpenSubBank", businessWithdrawForm.OpenSubBank);//开户支行
-
+            dbParameters.Add("OpenProvince",DbType.String).Value= businessWithdrawForm.OpenProvince; //易宝省份
+            dbParameters.Add("OpenCity", DbType.String).Value=businessWithdrawForm.OpenCity;//易宝城市
+            dbParameters.Add("OpenProvinceCode",DbType.String).Value= businessWithdrawForm.OpenProvinceCode;//易宝省份代码  
+            dbParameters.Add("OpenCityCode", DbType.String).Value=businessWithdrawForm.OpenCityCode; //易宝城市代码
+            dbParameters.Add("IDCard",DbType.String).Value= businessWithdrawForm.IDCard;//身份证号
+            dbParameters.Add("HandChargeThreshold",DbType.Decimal).Value= businessWithdrawForm.HandChargeThreshold;//手续费阈值  
+            dbParameters.Add("HandCharge",DbType.Decimal).Value= businessWithdrawForm.HandCharge; //手续费
+            dbParameters.Add("HandChargeOutlay",DbType.Int32).Value= businessWithdrawForm.HandChargeOutlay.GetHashCode();//手续费支付方
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters); //提现单号
             return ParseHelper.ToLong(result);
         }
