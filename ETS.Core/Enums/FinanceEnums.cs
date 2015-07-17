@@ -90,7 +90,9 @@ namespace ETS.Enums
         [DisplayText("无需修改")]
         NoModify = 100,
         [DisplayText("请先注册或账户被封")]
-        FisrtRegist = 101
+        FisrtRegist = 101,
+        [DisplayText("原银行账户存在未完成的提现单，无法修改")]
+        ForbitModify = 102
     }
     /// <summary>
     ///骑士余额流水   流水状态(1、交易成功 2、交易中）枚举 add by caoheyang 20150509
@@ -257,7 +259,9 @@ namespace ETS.Enums
         [DisplayText("无需修改")]
         NoModify = 100,
         [DisplayText("请先注册或账户被封")]
-        FisrtRegist = 101
+        FisrtRegist = 101,
+        [DisplayText("原银行账户存在未完成的提现单，无法修改")]
+        ForbitModify = 102
     }
     /// <summary>
     ///商户余额流水   流水状态(1、交易成功 2、交易中）枚举 add by caoheyang 20150511
