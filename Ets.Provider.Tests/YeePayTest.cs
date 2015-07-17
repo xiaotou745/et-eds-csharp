@@ -99,6 +99,7 @@ namespace Ets.Provider.Tests
                 SignedName = "曹赫洋",
                 LinkMan = "曹赫洋",
                 IdCard = "370685199110161712",
+                BusinessLicence="",
                 LegalPerson = "曹赫洋",
                 BankAccountNumber = "6226200105376660",
                 BankName = "民生银行",
