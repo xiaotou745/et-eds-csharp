@@ -11,15 +11,18 @@
     <h2 class="crumbs">
         您所在位置 消息管理> 消息群发管理
     </h2>
-    <div class="SearchMd">
-        <table>
-            <tr>
-                <td>
-                    <input type="button" value="添加版本" class="searchBtn" id="btnAddVersion" onclick="addMessage();" />
-                </td>
-            </tr>
-        </table>
-    </div>
+    @if (SuperMan.App_Start.UserContext.Current.HasAuthority(72))
+    {
+        <div class="SearchMd">
+            <table>
+                <tr>
+                    <td>
+                        <input type="button" value="添加版本" class="searchBtn" id="btnAddVersion" onclick=" addMessage(); " />
+                    </td>
+                </tr>
+            </table>
+        </div>
+    }
     @using (Ajax.BeginForm("PostAPPVersionManager", new RouteValueDictionary { { "pageindex", "" } },
         new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
         new RouteValueDictionary { { "id", "searchForm" } }))
