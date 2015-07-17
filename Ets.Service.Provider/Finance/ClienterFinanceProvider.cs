@@ -543,6 +543,12 @@ namespace Ets.Service.Provider.Finance
                 dealResultInfo.DealMsg = "获取提现单信息失败！";
                 return dealResultInfo;
             }
+            if (cliFinanceAccount.WithdrawTime > ParseHelper.ToDatetime("2015-07-17 00:00:00"))
+            {
+               dealResultInfo.DealFlag= ClienterWithdrawPayOk(model);
+               dealResultInfo.DealMsg = dealResultInfo.DealFlag ? "打款成功！" : "打款失败！";
+                return dealResultInfo;
+            }
             decimal amount = cliFinanceAccount.HandChargeOutlay == 0
                 ? cliFinanceAccount.Amount
                 : cliFinanceAccount.Amount + cliFinanceAccount.HandCharge;
