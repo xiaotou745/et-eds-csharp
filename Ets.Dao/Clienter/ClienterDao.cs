@@ -1220,7 +1220,7 @@ where ClienterId=@ClienterId  and IsEnable=1";
                 }
                 if (dataRow["IDCard"] != null && dataRow["IDCard"] != DBNull.Value)
                 {
-                    bf.OpenCity = dataRow["IDCard"].ToString();
+                    bf.IDCard = dataRow["IDCard"].ToString();
                 }
                 bf.CreateBy = dataRow["CreateBy"].ToString();
                 bf.CreateTime = ParseHelper.ToDatetime(dataRow["CreateTime"]);
