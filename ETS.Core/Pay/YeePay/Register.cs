@@ -93,7 +93,7 @@ namespace ETS.Pay.YeePay
             }
             catch (Exception ex)
             {
-                LogHelper.LogWriter(ex, "");  //TODO  异常记录
+                LogHelper.LogWriter(ex, "易宝注册子账户失败");  
                 return null;
             }
 
