@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Ets.Dao.Business;
 using Ets.Dao.Finance;
+using Ets.Model.Common.YeePay;
 using Ets.Model.DataModel.Finance;
 using Ets.Model.ParameterModel.Finance;
 using ETS.Pay.YeePay;
@@ -92,46 +93,33 @@ namespace Ets.Service.Provider.Finance
             Task.Factory.StartNew(() =>
             {
                 //请求易宝注册接口,如果成功,则更新账户易宝key和status
-                var business = _businessDao.GetById(cardBindBpm.BusinessId);
-                if (business == null)
+                var phoneNo = _businessDao.GetPhoneNo(cardBindBpm.BusinessId);
+                var paramter = new BusinessRegisterParameter()
                 {
-                    ETS.Util.LogHelper.LogWriter(new ArgumentException("business值为null"), "BusinessFinanceAccountProvider.CardBindB-绑定银行账户失败");
-                    return;
-                }
-                string requestid = TimeHelper.GetTimeStamp(false);
-                string bindmobile = business.PhoneNo;  //绑定手机
-                string customertype = (cardBindBpm.BelongType == 0 ?
-                    CustomertypeEnum.PERSON.ToString() : CustomertypeEnum.ENTERPRISE.ToString()); //注册类型  PERSON ：个人 ENTERPRISE：企业个人 ENTERPRISE：企业
-                string signedname = cardBindBpm.TrueName; //签约名   商户签约名；个人，填写姓名；企业，填写企业名称。
-                string linkman = cardBindBpm.TrueName; //联系人
-                string idcard = cardBindBpm.IDCard ??  ""; //身份证  customertype为PERSON时  选填
-                string businesslicence = cardBindBpm.IDCard ?? ""; //营业执照号  必填
-                string legalperson = cardBindBpm.TrueName;
-                string bankaccountnumber = cardBindBpm.AccountNo; //银行卡号 
-                string bankname = cardBindBpm.OpenBank; //开户行
-                string accountname = cardBindBpm.TrueName; //开户名
-                string bankaccounttype = (cardBindBpm.BelongType == 0 ?
-                    BankaccounttypeEnum.PrivateCash.ToString() : BankaccounttypeEnum.PublicCash.ToString());  //银行卡类别  PrivateCash：对私 PublicCash： 对公
-                string bankprovince = cardBindBpm.OpenProvince;
-                string bankcity = cardBindBpm.OpenCity;
-                var result = new Register().RegSubaccount(requestid, bindmobile, customertype, signedname, linkman,
-                idcard, businesslicence, legalperson, bankaccountnumber, bankname,
-                accountname, bankaccounttype, bankprovince, bankcity);//注册帐号
-                if (result != null && !string.IsNullOrEmpty(result.code) && result.code.Trim() == "1")
+                    accountid = cardBindBpm.AccountNo,
+                    accountname = cardBindBpm.TrueName,
+                    bankaccountnumber = cardBindBpm.AccountNo,
+                    bankaccounttype = (cardBindBpm.BelongType == 0
+                        ? BankaccounttypeEnum.PrivateCash.ToString()
+                        : BankaccounttypeEnum.PublicCash.ToString()),
+                    bankcity = cardBindBpm.OpenBank,
+                    bankname = cardBindBpm.OpenBank,
+                    bankprovince = cardBindBpm.OpenProvince,
+                    bindmobile = phoneNo ?? "",
+                    businesslicence = cardBindBpm.IDCard ?? "",
+                    customertype = (cardBindBpm.BelongType == 0
+                        ? CustomertypeEnum.PERSON.ToString()
+                        : CustomertypeEnum.ENTERPRISE.ToString()),
+                    idcard = cardBindBpm.IDCard ?? "",
+                    legalperson = cardBindBpm.TrueName,
+                    linkman = cardBindBpm.TrueName,
+                    requestid = TimeHelper.GetTimeStamp(false),
+                    signedname = cardBindBpm.TrueName,
+                };
+                var dealInfo = new BusinessFinanceProvider().DealRegBusiSubAccount(paramter);
+                if (dealInfo.DealFlag)
                 {
-                    _businessFinanceAccountDao.UpdateYeepayInfoById(id, result.ledgerno, 0);
-                }
-                else
-                {
-                    if (result == null)
-                    {
-                        ETS.Util.LogHelper.LogWriterString("商户绑定易宝支付失败", string.Format("返回结果为null"));
-                    }
-                    else
-                    {
-                        ETS.Util.LogHelper.LogWriterString("商户绑定易宝支付失败", string.Format("易宝错误信息:code{0},ledgerno:{1},hmac{2},msg{3}",
-                            result.code, result.ledgerno, result.hmac, result.msg));
-                    }
+                    _businessFinanceAccountDao.UpdateYeepayInfoById(id, dealInfo.SuccessId, 0);
                 }
             });
             #endregion
@@ -149,12 +137,12 @@ namespace Ets.Service.Provider.Finance
             if (boolRes != FinanceCardModifyB.Success)
             {
                 return ResultModel<object>.Conclude(boolRes);
-            } 
+            }
             //TODO 验证该 商户id 下 是存在未完成的 提现申请单 ，如果存在不允许修改 
             int withdrawCount = _businessFinanceDao.GetBusinessWithdrawByBusinessId(cardModifyBpm.BusinessId);
             if (withdrawCount > 0)
             {
-                return ResultModel<object>.Conclude(FinanceCardModifyB.ForbitModify); 
+                return ResultModel<object>.Conclude(FinanceCardModifyB.ForbitModify);
             }
             BusinessFinanceAccount bfAccount = _businessFinanceAccountDao.GetById(cardModifyBpm.Id);
             if (bfAccount != null)

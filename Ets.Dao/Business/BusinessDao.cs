@@ -1454,6 +1454,21 @@ where  Id=@Id ";
             }
             return model;
         }
+
+        /// <summary>
+        /// 获得商户电话   add by 彭宜    20150717
+        /// </summary>
+        /// <param name="id">商户id</param>
+        /// <returns>电话号码</returns>
+        public string GetPhoneNo(int id)
+        {
+            string querSql = @"
+select  PhoneNo
+            from Business (nolock) 
+where Id=@Id";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);
+            return Convert.ToString(DbHelper.ExecuteScalar(SuperMan_Read, querSql, dbParameters));
+        }
         /// <summary>
         /// 根据商品户ID集合查询商户信息
         /// </summary>
