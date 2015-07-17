@@ -132,63 +132,63 @@ namespace SuperManWebApi.Controllers
 
 
 
-        /// <summary>
-        /// Ado.net  add  王超
-        /// C端获取我的任务列表 最近任务 登录未登录根据城市有没有值判断。
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>      
-        [ExecuteTimeLog]
-        [HttpPost]
-        public ResultModel<ClientOrderResultModel[]> GetJobList_C(ClientOrderInfoModel model)
-        {
-            degree.longitude = model.longitude;
-            degree.latitude = model.latitude;
-            var pIndex = ParseHelper.ToInt(model.pageIndex, 1);
-            var pSize = ParseHelper.ToInt(model.pageSize, PageSizeType.App_PageSize.GetHashCode());
-            var criteria = new ClientOrderSearchCriteria()
-            {
-                PagingRequest = new PagingResult(pIndex, pSize),
-                userId = model.userId,
-                status = model.status,
-                isLatest = model.isLatest,
-                city = string.IsNullOrWhiteSpace(model.city) ? null : model.city.Trim(),
-                cityId = string.IsNullOrWhiteSpace(model.cityId) ? null : model.cityId.Trim()
-            };
+        ///// <summary>
+        ///// Ado.net  add  王超
+        ///// C端获取我的任务列表 最近任务 登录未登录根据城市有没有值判断。
+        ///// </summary>
+        ///// <param name="model"></param>
+        ///// <returns></returns>      
+        //[ExecuteTimeLog]
+        //[HttpPost]
+        //public ResultModel<ClientOrderResultModel[]> GetJobList_C(ClientOrderInfoModel model)
+        //{
+        //    degree.longitude = model.longitude;
+        //    degree.latitude = model.latitude;
+        //    var pIndex = ParseHelper.ToInt(model.pageIndex, 1);
+        //    var pSize = ParseHelper.ToInt(model.pageSize, PageSizeType.App_PageSize.GetHashCode());
+        //    var criteria = new ClientOrderSearchCriteria()
+        //    {
+        //        PagingRequest = new PagingResult(pIndex, pSize),
+        //        userId = model.userId,
+        //        status = model.status,
+        //        isLatest = model.isLatest,
+        //        city = string.IsNullOrWhiteSpace(model.city) ? null : model.city.Trim(),
+        //        cityId = string.IsNullOrWhiteSpace(model.cityId) ? null : model.cityId.Trim()
+        //    };
 
-            var pagedList = new OrderProvider().GetOrders(criteria);
-            pagedList = pagedList.OrderBy(i => i.distance_OrderBy).ToList();
-            return ResultModel<ClientOrderResultModel[]>.Conclude(GetOrdersStatus.Success, pagedList.ToArray());
-        }
+        //    var pagedList = new OrderProvider().GetOrders(criteria);
+        //    pagedList = pagedList.OrderBy(i => i.distance_OrderBy).ToList();
+        //    return ResultModel<ClientOrderResultModel[]>.Conclude(GetOrdersStatus.Success, pagedList.ToArray());
+        //}
 
-        /// <summary>
-        /// Ado.net add 王超
-        /// 未登录时获取最新任务     登录未登录根据城市有没有值判断。
-        /// </summary>
-        /// <returns></returns>        
-        [ExecuteTimeLog]
-        [HttpGet]
-        public ResultModel<ClientOrderNoLoginResultModel[]> GetJobListNoLoginLatest_C()
-        {
-            ClientOrderInfoModel model = new ClientOrderInfoModel();
-            model.city = string.IsNullOrWhiteSpace(HttpContext.Current.Request["city"]) ? null : HttpContext.Current.Request["city"].Trim();//城市
-            model.cityId = string.IsNullOrWhiteSpace(HttpContext.Current.Request["cityId"]) ? null : HttpContext.Current.Request["cityId"].Trim(); //城市编码
-            degree.longitude = ParseHelper.ToDouble(HttpContext.Current.Request["longitude"]);
-            degree.latitude = ParseHelper.ToDouble(HttpContext.Current.Request["latitude"]);
-            var pIndex = ParseHelper.ToInt(model.pageIndex, 1);
-            var pSize = ParseHelper.ToInt(model.pageSize, PageSizeType.App_PageSize.GetHashCode());
-            var criteria = new ClientOrderSearchCriteria()
-            {
-                PagingRequest = new PagingResult(pIndex, pSize),
-                city = model.city,
-                cityId = model.cityId
-            };
+        ///// <summary>
+        ///// Ado.net add 王超
+        ///// 未登录时获取最新任务     登录未登录根据城市有没有值判断。
+        ///// </summary>
+        ///// <returns></returns>        
+        //[ExecuteTimeLog]
+        //[HttpGet]
+        //public ResultModel<ClientOrderNoLoginResultModel[]> GetJobListNoLoginLatest_C()
+        //{
+        //    ClientOrderInfoModel model = new ClientOrderInfoModel();
+        //    model.city = string.IsNullOrWhiteSpace(HttpContext.Current.Request["city"]) ? null : HttpContext.Current.Request["city"].Trim();//城市
+        //    model.cityId = string.IsNullOrWhiteSpace(HttpContext.Current.Request["cityId"]) ? null : HttpContext.Current.Request["cityId"].Trim(); //城市编码
+        //    degree.longitude = ParseHelper.ToDouble(HttpContext.Current.Request["longitude"]);
+        //    degree.latitude = ParseHelper.ToDouble(HttpContext.Current.Request["latitude"]);
+        //    var pIndex = ParseHelper.ToInt(model.pageIndex, 1);
+        //    var pSize = ParseHelper.ToInt(model.pageSize, PageSizeType.App_PageSize.GetHashCode());
+        //    var criteria = new ClientOrderSearchCriteria()
+        //    {
+        //        PagingRequest = new PagingResult(pIndex, pSize),
+        //        city = model.city,
+        //        cityId = model.cityId
+        //    };
 
-            var pagedList = new OrderProvider().GetOrdersNoLoginLatest(criteria);
-            pagedList = pagedList.OrderBy(i => i.distance_OrderBy).ToList();
+        //    var pagedList = new OrderProvider().GetOrdersNoLoginLatest(criteria);
+        //    pagedList = pagedList.OrderBy(i => i.distance_OrderBy).ToList();
 
-            return ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, pagedList.ToArray());
-        }
+        //    return ResultModel<ClientOrderNoLoginResultModel[]>.Conclude(GetOrdersNoLoginStatus.Success, pagedList.ToArray());
+        //}
 
 
         /// <summary>

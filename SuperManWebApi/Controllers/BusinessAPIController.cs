@@ -46,47 +46,6 @@ namespace SuperManWebApi.Controllers
             return bprovider.PostRegisterInfo_B(model);
         }
 
-
-
-        /// <summary>
-        /// B端注册，供第三方使用-平扬 2015.3.27修改成 ado方式
-        /// </summary>
-        /// <param name="model">注册用户基本数据信息</param>
-        /// <returns></returns>        
-        [HttpPost]
-        public ResultModel<NewBusiRegisterResultModel> NewPostRegisterInfo_B(NewRegisterInfoModel model)
-        {
-            var bprovider = new BusinessProvider();
-            return bprovider.NewPostRegisterInfo_B(model);
-        }
-
-
-        /// <summary>
-        /// B端取消订单，供第三方使用-2015.3.27-平扬改
-        /// </summary>
-        /// <param name="model">订单基本数据信息</param>
-        /// <returns></returns>        
-        [HttpPost]
-        public ResultModel<OrderCancelResultModel> NewOrderCancel(OrderCancelModel model)
-        {
-
-            var bprovider = new BusinessProvider();
-            return bprovider.NewOrderCancel(model);
-        }
-
-        /// <summary>
-        /// 接收订单，供第三方使用
-        /// 窦海超本地连调通过，因为是易淘食要对接，暂时没有内网测试
-        /// 2015年3月30日 17:41:50
-        /// </summary>
-        /// <param name="model">订单基本数据信息</param>
-        /// <returns></returns>
-        [HttpPost]
-        public ResultModel<NewPostPublishOrderResultModel> NewPostPublishOrder_B(NewPostPublishOrderModel model)
-        {
-            return new OrderProvider().NewPostPublishOrder_B(model);
-        }
-
         /// <summary>
         /// B端登录
         /// </summary>
@@ -96,7 +55,6 @@ namespace SuperManWebApi.Controllers
         public ResultModel<BusiLoginResultModel> PostLogin_B(LoginModel model)
         {
             return new BusinessProvider().PostLogin_B(model);
-
         }
 
         /// <summary>
@@ -154,6 +112,56 @@ namespace SuperManWebApi.Controllers
 
 
         /// <summary>
+        /// b端修改密码 edit by caoheyang 20150203 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>        
+        [HttpPost]
+        public ResultModel<BusiModifyPwdResultModel> PostForgetPwd_B(BusiForgetPwdInfoModel model)
+        {
+            return new BusinessProvider().PostForgetPwd_B(model);
+        }
+
+        /// <summary>
+        /// 请求动态验证码  (注册)
+        /// 窦海超
+        /// 2015年3月26日 17:46:08
+        /// </summary>
+        /// <param name="PhoneNumber">手机号码</param>
+        /// <returns></returns>        
+        [HttpGet]
+        public SimpleResultModel CheckCode(string PhoneNumber)
+        {
+
+            return new BusinessProvider().CheckCode(PhoneNumber);
+        }
+
+        /// <summary>
+        /// 请求动态验证码  (找回密码)
+        /// </summary>
+        /// <param name="PhoneNumber"></param>
+        /// <returns></returns>        
+        [HttpGet]
+        public SimpleResultModel CheckCodeFindPwd(string PhoneNumber)
+        {
+            BusinessProvider businessProvider = new BusinessProvider();
+            return businessProvider.CheckCodeFindPwd(PhoneNumber);
+        }
+
+        /// <summary>
+        /// 请求语音动态验证码
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>        
+        [HttpPost]
+        public SimpleResultModel VoiceCheckCode(SmsParaModel model)
+        {
+            BusinessProvider businessProvider = new BusinessProvider();
+            return businessProvider.VoiceCheckCode(model);
+
+        }
+
+        /// <summary>
         /// 获取订单列表
         /// </summary>
         /// <returns></returns>        
@@ -184,6 +192,114 @@ namespace SuperManWebApi.Controllers
             return ResultModel<BusiGetOrderModel[]>.Conclude(GetOrdersStatus.Success, list.ToArray());
         }
 
+        /// <summary>
+        /// 取消订单 Edit  caoheyang 20150521 
+        /// </summary>
+        /// <remarks>取消订单时返给商家结算费，优化，大整改</remarks>
+        /// <param name="paramodel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ResultModel<bool> CancelOrder_B(CancelOrderBPM paramodel)
+        {
+            return iOrderProvider.CancelOrderB(paramodel);
+        }
+
+        /// <summary>
+        /// 客服电话获取
+        /// 窦海超
+        /// 2015年3月16日 11:44:54
+        /// </summary>
+        /// <param name="CityName">城市名称</param>
+        /// <returns></returns>        
+        [HttpGet]
+        public ResultModel<ResultModelServicePhone> GetCustomerServicePhone(string CityName)
+        {
+            return ResultModel<ResultModelServicePhone>.Conclude(
+                ServicePhoneStatus.Success,
+                new ServicePhone().GetCustomerServicePhone(CityName)
+                );
+        }
+        /// <summary>
+        /// 获取用户状态
+        /// 平扬
+        /// 2015年3月31日 
+        /// </summary>
+        /// <returns></returns>        
+        [HttpPost]
+        public ResultModel<BussinessStatusModel> GetUserStatus(UserStatusModel parModel)
+        {
+            var model = iBusinessProvider.GetUserStatus(parModel.userId);
+            if (model != null)
+            {
+                return ResultModel<BussinessStatusModel>.Conclude(
+                UserStatus.Success,
+                model
+                );
+            }
+            return ResultModel<BussinessStatusModel>.Conclude(
+                UserStatus.Error,
+                null
+                );
+        }
+
+
+        /// <summary>
+        /// 获取开通城市的省市区 
+        /// 窦海超  
+        /// 2015年3月16日 11:44:54
+        /// </summary>
+        /// <param name="Version">版本号</param>
+        /// <returns></returns>        
+        [HttpGet]
+        [ApiVersionStatistic]
+        public ResultModel<AreaModelList> GetOpenCity(string Version)
+        {
+            AreaProvider area = new AreaProvider();
+
+            return area.GetOpenCity(Version, false);
+        }
+
+        #region 第三方调用
+        /// <summary>
+        /// B端注册，供第三方使用-平扬 2015.3.27修改成 ado方式
+        /// </summary>
+        /// <param name="model">注册用户基本数据信息</param>
+        /// <returns></returns>        
+        [HttpPost]
+        public ResultModel<NewBusiRegisterResultModel> NewPostRegisterInfo_B(NewRegisterInfoModel model)
+        {
+            var bprovider = new BusinessProvider();
+            return bprovider.NewPostRegisterInfo_B(model);
+        }
+
+
+        /// <summary>
+        /// B端取消订单，供第三方使用-2015.3.27-平扬改
+        /// </summary>
+        /// <param name="model">订单基本数据信息</param>
+        /// <returns></returns>        
+        [HttpPost]
+        public ResultModel<OrderCancelResultModel> NewOrderCancel(OrderCancelModel model)
+        {
+
+            var bprovider = new BusinessProvider();
+            return bprovider.NewOrderCancel(model);
+        }
+
+        /// <summary>
+        /// 接收订单，供第三方使用
+        /// 窦海超本地连调通过，因为是易淘食要对接，暂时没有内网测试
+        /// 2015年3月30日 17:41:50
+        /// </summary>
+        /// <param name="model">订单基本数据信息</param>
+        /// <returns></returns>
+        [HttpPost]
+        public ResultModel<NewPostPublishOrderResultModel> NewPostPublishOrder_B(NewPostPublishOrderModel model)
+        {
+            return new OrderProvider().NewPostPublishOrder_B(model);
+        }
+
+        #endregion
 
         #region 美团等第三方订单处理
 
@@ -220,7 +336,7 @@ namespace SuperManWebApi.Controllers
             List<string> errors = new List<string>();
             for (int i = 0; i < orders.Length; i++)
             {
-                int res = orderProvider.UpdateOrderStatus(orders[i],OrderStatus.Status0.GetHashCode(), "",OrderStatus.Status30.GetHashCode());
+                int res = orderProvider.UpdateOrderStatus(orders[i], OrderStatus.Status0.GetHashCode(), "", OrderStatus.Status30.GetHashCode());
                 if (res <= 0)
                     errors.Add(orders[i]);
             }
@@ -242,7 +358,7 @@ namespace SuperManWebApi.Controllers
             }
             var orderProvider = new OrderProvider();
             string[] orders = orderlist.Split(',');
-            int i = orders.Count(s => orderProvider.UpdateOrderStatus(s, OrderStatus.Status3.GetHashCode(), note,OrderStatus.Status30.GetHashCode()) > 0);
+            int i = orders.Count(s => orderProvider.UpdateOrderStatus(s, OrderStatus.Status3.GetHashCode(), note, OrderStatus.Status30.GetHashCode()) > 0);
             return ResultModel<int>.Conclude(PubOrderStatus.Success, i);
         }
 
@@ -267,6 +383,9 @@ namespace SuperManWebApi.Controllers
 
 
         #endregion
+
+
+        #region 临时 旧接口，现在没有调用
         /// <summary>
         /// 地址管理
         /// 改 ado.net wc
@@ -327,55 +446,6 @@ namespace SuperManWebApi.Controllers
             return ResultModel<BusiOrderCountResultModel>.Conclude(GetOrdersStatus.Success, resultModel);
         }
 
-        /// <summary>
-        /// 请求动态验证码  (注册)
-        /// 窦海超
-        /// 2015年3月26日 17:46:08
-        /// </summary>
-        /// <param name="PhoneNumber">手机号码</param>
-        /// <returns></returns>        
-        [HttpGet]
-        public SimpleResultModel CheckCode(string PhoneNumber)
-        {
-
-            return new BusinessProvider().CheckCode(PhoneNumber);
-        }
-
-        /// <summary>
-        /// 请求动态验证码  (找回密码)
-        /// </summary>
-        /// <param name="PhoneNumber"></param>
-        /// <returns></returns>        
-        [HttpGet]
-        public SimpleResultModel CheckCodeFindPwd(string PhoneNumber)
-        {
-            BusinessProvider businessProvider = new BusinessProvider();
-            return businessProvider.CheckCodeFindPwd(PhoneNumber);
-        }
-
-        /// <summary>
-        /// 请求语音动态验证码
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>        
-        [HttpPost]
-        public SimpleResultModel VoiceCheckCode(SmsParaModel model)
-        {
-            BusinessProvider businessProvider = new BusinessProvider();
-            return businessProvider.VoiceCheckCode(model);
-
-        }
-
-        /// <summary>
-        /// b端修改密码 edit by caoheyang 20150203 
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>        
-        [HttpPost]
-        public ResultModel<BusiModifyPwdResultModel> PostForgetPwd_B(BusiForgetPwdInfoModel model)
-        {
-            return new BusinessProvider().PostForgetPwd_B(model);
-        }
 
 
         /// <summary> 
@@ -403,109 +473,6 @@ namespace SuperManWebApi.Controllers
                 return SimpleResultModel.Conclude(DistribSubsidyStatus.Failed);
             }
         }
-
-
-
-        /// <summary>
-        /// 取消订单 Edit  caoheyang 20150521 
-        /// </summary>
-        /// <remarks>取消订单时返给商家结算费，优化，大整改</remarks>
-        /// <param name="paramodel"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public ResultModel<bool> CancelOrder_B(CancelOrderBPM paramodel)
-        {
-            return iOrderProvider.CancelOrderB(paramodel);
-        }
-        ///// <summary>
-        ///// 流转图片
-        ///// </summary>
-        ///// <param name="Bytes"></param>
-        ///// <returns></returns>
-        //private Image byteArrayToImage(byte[] Bytes)
-        //{
-        //    using (MemoryStream ms = new MemoryStream(Bytes))
-        //    {
-        //        Image outputImg = Image.FromStream(ms);
-        //        return outputImg;
-        //    }
-        //}
-        ///// <summary>
-        ///// 文件转图片
-        ///// </summary>
-        ///// <param name="FilePath">文件路径</param>
-        ///// <returns></returns>
-        //private byte[] imageToByteArray(string FilePath)
-        //{
-        //    using (MemoryStream ms = new MemoryStream())
-        //    {
-        //        using (Image imageIn = Image.FromFile(FilePath))
-        //        {
-        //            using (Bitmap bmp = new Bitmap(imageIn))
-        //            {
-        //                bmp.Save(ms, imageIn.RawFormat);
-        //            }
-        //        }
-        //        return ms.ToArray();
-        //    }
-        //}
-
-
-
-        /// <summary>
-        /// 客服电话获取
-        /// 窦海超
-        /// 2015年3月16日 11:44:54
-        /// </summary>
-        /// <param name="CityName">城市名称</param>
-        /// <returns></returns>        
-        [HttpGet]
-        public ResultModel<ResultModelServicePhone> GetCustomerServicePhone(string CityName)
-        {
-            return ResultModel<ResultModelServicePhone>.Conclude(
-                ServicePhoneStatus.Success,
-                new ServicePhone().GetCustomerServicePhone(CityName)
-                );
-        }
-        /// <summary>
-        /// 获取用户状态
-        /// 平扬
-        /// 2015年3月31日 
-        /// </summary>
-        /// <returns></returns>        
-        [HttpPost]
-        public ResultModel<BussinessStatusModel> GetUserStatus(UserStatusModel parModel)
-        {
-            var model = iBusinessProvider.GetUserStatus(parModel.userId);
-            if (model != null)
-            {
-                return ResultModel<BussinessStatusModel>.Conclude(
-                UserStatus.Success,
-                model
-                );
-            }
-            return ResultModel<BussinessStatusModel>.Conclude(
-                UserStatus.Error,
-                null
-                );
-        }
-
-
-        /// <summary>
-        /// 获取开通城市的省市区 
-        /// 窦海超  
-        /// 2015年3月16日 11:44:54
-        /// </summary>
-        /// <param name="Version">版本号</param>
-        /// <returns></returns>        
-        [HttpGet]
-        [ApiVersionStatistic]
-        public ResultModel<AreaModelList> GetOpenCity(string Version)
-        {
-            AreaProvider area = new AreaProvider();
-
-            return area.GetOpenCity(Version, false);
-        }
-
+        #endregion
     }
 }
