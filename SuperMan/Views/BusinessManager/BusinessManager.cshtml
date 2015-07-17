@@ -57,11 +57,12 @@
                             <option value="0">线下结算</option>
                             <option value="1">线上结算</option>
                         </select>
-                        
+
                     </td>
                 </tr>
                 <tr>
-                    <td><span class="">推荐人电话: </span>
+                    <td>
+                        <span class="">推荐人电话: </span>
                         <input id="txtRecommendPhone" type="text" name="RecommendPhone" />
                         <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
                         @if (SuperMan.App_Start.UserContext.Current.HasAuthority(40))
@@ -301,7 +302,7 @@
             <div class="control-group">
                 <label>充值金额：</label>
                 <input name="busRechargeAmount" id="busRechargeAmount" type="text">元
-                <label  style="font-size: 10px;color: red">（充值金额范围:1.00-50000.00元）</label>
+                <label style="font-size: 10px;color: red">（充值金额范围:1.00-50000.00元）</label>
             </div>
             <div class="control-group">
                 <label>操作描述：</label>
@@ -340,13 +341,10 @@
             </div>
             <div class="control-group">
                 <label>省：</label>
+                <select id="openProvince"></select>
             </div>
             <div class="control-group">
                 <label>市区：</label>
-            </div>
-            <div class="control-group">
-                <label>市区：</label>
-                <input type=""/>
             </div>
             <div class="control-group">
                 <label>身份证号：</label>
@@ -373,8 +371,20 @@
 <script>
     var adminjs = new adminglass(); //实例化后台类
     $(document).ready(function () {
+        GetOpenProvince();
         window.location.hash = '';
-    })
+    });
+
+    function GetOpenProvince() {
+        var openProvinceInfo = $('#openProvince');
+        openProvinceInfo.append('<option value="" selected="selected">--省市--</option>');
+        $.post("/BusinessManager/GetOpenProvince", "",
+            function (data) {
+                $.each(data, function (i, item) {
+                    openProvinceInfo.append('<option value="' + item.Code + '">' + item.Name + '</option>');
+                });
+            });
+    }
 
     //设置结算比例-外送费
     $("#btnCommissionConfim").on('click', function () {
@@ -459,9 +469,14 @@
             busGroupId = 0;
         }
         var paramaters = {
-            "id": busiId, "businessName": busiName, "businessPhone": busiPhone,
-            "businessSourceId": busiSourceId, "groupId": busGroupId,
-            "oldBusiSourceId": oldBusiSourceId, "oldBusGroupId": oldBusGroupId, "mealsSettleMode": busiMealsSettleMode
+            "id": busiId,
+            "businessName": busiName,
+            "businessPhone": busiPhone,
+            "businessSourceId": busiSourceId,
+            "groupId": busGroupId,
+            "oldBusiSourceId": oldBusiSourceId,
+            "oldBusGroupId": oldBusGroupId,
+            "mealsSettleMode": busiMealsSettleMode
         };
         var url = "/BusinessManager/ModifyBusiness";
         $.ajax({
@@ -546,9 +561,11 @@
             }
         });
     });
+
     function showaddBusiness() {
         adminjs.openwinbox('#BusinessAddDiv');
     }
+
     //商户充值
     $("#btnRechargeCommit").on('click', function () {
         var busiId = $("#busId").val(); //商户id
@@ -564,13 +581,15 @@
             alert("请输入正确的金额！");
             return;
         }
-        if (busiRechargeAmount < 1 || busiRechargeAmount>50000) {
+        if (busiRechargeAmount < 1 || busiRechargeAmount > 50000) {
             alert("充值金额须在1-50000元之间！");
             return;
         }
-        if (confirm("确定要为商户：" + busiName + "  充值：" + busiRechargeAmount+"元？")) {
+        if (confirm("确定要为商户：" + busiName + "  充值：" + busiRechargeAmount + "元？")) {
             var paramaters = {
-                "BusinessId": busiId, "RechargeAmount": busiRechargeAmount, "Remark": rechargeLog
+                "BusinessId": busiId,
+                "RechargeAmount": busiRechargeAmount,
+                "Remark": rechargeLog
             };
             var url = "/BusinessManager/BusinessRecharge";
             $.ajax({
@@ -610,16 +629,18 @@
         }
         if (confirm("是否确认提款?")) {
             var paramaters = {
-                "BusinessId": withdrawId, "WithdrawPrice": withdrawAmount, "Remarks": withdrawLog
+                "BusinessId": withdrawId,
+                "WithdrawPrice": withdrawAmount,
+                "Remarks": withdrawLog
             };
             var url = "/BusinessManager/Withdraw";
             $.ajax({
                 type: 'POST',
                 url: url,
                 data: paramaters,
-                success: function (result) {        
+                success: function (result) {
 
-                    if (result.Status=="1") {                     
+                    if (result.Status == "1") {
                         alert(result.Message);
                         window.location.href = "/BusinessManager/BusinessManager";
                     } else {
@@ -639,11 +660,26 @@
         if (a == 1) {
             $("#divCommissionFixValue").hide();
             $("#divbusCommissionText").show();
-        }
-        else {
+        } else {
             $("#divbusCommissionText").hide();
             $("#divCommissionFixValue").show();
         }
     });
+    //选择省时触发联动
+    //$('#OpenProvince').change(function() {
+    //    LoadOpenCityInfo();
+    //});
+
+    function LoadOpenCityInfo() {
+        var selBussinessID = $('#OpenProvince').val();
+        selBussinessID.append('<option value="" selected="selected">--市区--</option>');
+        $.post("/BusinessManager/GetBussinessByCityInfo",
+            { ProvinceCode: $("#BoxProvinceCode").val(), CityCode: $('#BoxCityCode').val(), GroupId: $("#HidGroupID").val() },
+            function (data) {
+                $.each(data, function (i, item) {
+                    selBussinessID.append('<option  value="' + item.Id + '">' + item.Name + '</option>');
+                });
+            });
+    }
 </script>
 <script src="~/Scripts/mvcpager.js"></script>

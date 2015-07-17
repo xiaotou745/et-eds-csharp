@@ -58,3 +58,6 @@ VALUES  ( N'TakeCompleteDistance' , -- KeyName - nvarchar(100)
           0 , -- GroupId - int
           -1  -- StrategyId - int
         )
+go
+create index index_order_actualDoneDate on [order](ActualDoneDate) 
+go

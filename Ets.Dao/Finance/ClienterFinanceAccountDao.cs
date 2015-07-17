@@ -82,25 +82,6 @@ where  Id=@Id ";
         }
 
         /// <summary>
-        /// 更新易宝信息
-        /// </summary>
-        /// <param name="clienterId">骑士Id</param>
-        /// <param name="yeepayKey">易宝Key</param>
-        /// <param name="yeepayStatus">易宝账户状态  0正常 1失败</param>
-        public void UpdateYeepayInfo(int clienterId, string yeepayKey, byte yeepayStatus)
-        {
-            const string updateSql = @"
-update ClienterFinanceAccount
-set  YeepayKey=@YeepayKey,YeepayStatus=@YeepayStatus
-where  ClienterId=@ClienterId ";
-            IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("YeepayKey", yeepayKey);
-            dbParameters.AddWithValue("YeepayStatus", yeepayStatus);
-            dbParameters.AddWithValue("ClienterId", clienterId);
-            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
-        }
-
-        /// <summary>
         /// 更新易宝信息根据Id
         /// </summary>
         /// <param name="Id">Id</param>
