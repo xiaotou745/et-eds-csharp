@@ -708,21 +708,32 @@ namespace Ets.Dao.MenuSet
         public bool AddAccountCityRelation(AccountCityRelation model)
         {
             string sql = @"
-INSERT INTO [AccountCityRelation]
-    ([AccountId]
-    ,[CityId]
-    ,[CreateBy]
-    ,[UpdateBy])
-VALUES
-    (@AccountId
-    ,@CityId
-    ,@CreateBy
-    ,@UpdateBy);";
+MERGE INTO AccountCityRelation adr
+	USING(values(@Accountid,@CityId)) AS adrNew(AccountId,CityId)
+		ON adr.AccountId=adr.AccountId AND  adr.CityId=adrNew.CityId
+	WHEN MATCHED 
+	THEN UPDATE 
+		 SET adr.AccountId=@Accountid,
+             adr.CityId=@CityId,
+             adr.IsEnable=@IsEnable,
+             adr.UpdateBy=@UpdateBy
+	WHEN NOT MATCHED 
+		  THEN INSERT
+					(AccountId,
+					CityId,
+					CreateBy,
+					IsEnable) 
+					VALUES 
+					(@AccountId,
+					@CityId,
+					@CreateBy,
+					@IsEnable);;";
             var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@AccountId", model.AccountId);
             parm.AddWithValue("@CityId", model.CityId);
             parm.AddWithValue("@CreateBy", model.CreateBy);
             parm.AddWithValue("@UpdateBy", model.UpdateBy);
+            parm.AddWithValue("@IsEnable", model.IsEnable);
             return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm)) > 0;
         }
         /// <summary>
@@ -833,7 +844,7 @@ WHERE acr.AccountId=@AccountId;";
         public IList<AccountDCRelationModel> GetAccountDCRel(int accountId)
         {
             string sql = @"SELECT DeliveryCompanyID FROM AccountDeliveryRelation(nolock)
-                            WHERE AccountId=@AccountId";
+                            WHERE AccountId=@AccountId AND IsEnable=1";
             var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@AccountId", accountId);
             var dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
@@ -859,15 +870,34 @@ WHERE acr.AccountId=@AccountId;";
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public bool AddAccountDCRelation(int DeliveryCompanyID, int AccountId, string CreateBy)
+        public bool AddAccountDCRelation(AccountDcRelation addmodel)
         {
             string sql = @"
-INSERT INTO AccountDeliveryRelation (AccountId,DeliveryCompanyID,CreateBy) 
-VALUES(@AccountId,@DeliveryCompanyID,@CreateBy)";
+MERGE INTO AccountDeliveryRelation adr
+	USING(values(@Accountid,@DeliveryCompanyID)) AS adrNew(AccountId,DeliveryCompanyID)
+		ON adr.AccountId=adr.AccountId AND  adr.DeliveryCompanyID=adrNew.DeliveryCompanyID
+	WHEN MATCHED 
+	THEN UPDATE 
+		 SET adr.AccountId=@Accountid,
+             adr.DeliveryCompanyID=@DeliveryCompanyID,
+             adr.CreateBy=@CreateBy,
+             adr.IsEnable=@IsEnable
+	WHEN NOT MATCHED 
+		  THEN INSERT
+					(AccountId,
+					DeliveryCompanyID,
+					CreateBy,
+					IsEnable) 
+					VALUES 
+					(@AccountId,
+					@DeliveryCompanyID,
+					@CreateBy,
+					@IsEnable);";
             var parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@AccountId", (object)AccountId);
-            parm.AddWithValue("@DeliveryCompanyID", (object)DeliveryCompanyID);
-            parm.AddWithValue("@CreateBy", (object)CreateBy);
+            parm.Add("@AccountId",DbType.Int32,4).Value=addmodel.AccountId;
+            parm.Add("@DeliveryCompanyID", DbType.Int32, 4).Value=addmodel.DeliveryCompanyID;
+            parm.Add("@CreateBy", DbType.String).Value=addmodel.CreateBy;
+            parm.Add("@IsEnable", DbType.Int32,4).Value = addmodel.IsEnable;
             return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm)) > 0;
         }
     }

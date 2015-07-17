@@ -127,13 +127,15 @@
         });
         if (accountCityRef.length > 0) {
             for (var i = 0; i < accountCityRef.length; i++) {
-                $("#DcItemList :checkbox[id='" + accountCityRef[i].CityId + "']").prop("checked", true);
-                strCityNameList = strCityNameList + accountCityRef[i].CityName + ",";
+                if (accountCityRef[i].IsEnable == 1) {
+                    $("#cityList :checkbox[id='" + accountCityRef[i].CityId + "']").prop("checked", true);
+                    strCityNameList = strCityNameList + accountCityRef[i].CityName + ",";
+                }
             }
         }
         if (accountDcRef.length > 0) {
             for (var i = 0; i < accountDcRef.length; i++) {
-                $(":checkbox[id='" + accountDcRef[i].DeliveryCompanyID + "']").prop("checked", true);
+                $("#DcItemList :checkbox[id='" + accountDcRef[i].DeliveryCompanyID + "']").prop("checked", true);
             }
         }
         if (strCityNameList.length > 0) {

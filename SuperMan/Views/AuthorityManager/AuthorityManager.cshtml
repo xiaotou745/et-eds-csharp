@@ -29,7 +29,7 @@
                         @if (UserContext.Current.HasAuthority(26))
                         {
                             <input type="button" value="添加用户" class="searchBtn" id="btnAdd" />
-                        }   
+                        }
                     </td>
                 </tr>
             </table>
@@ -110,7 +110,7 @@
                             if (openCityList != null && openCityList.Count > 0)
                             {
                                 <div style="width: 100px;float: left">
-                                    <input type="checkbox" name="checkMenus" id="selectAll" onclick="checkAll()" />全选/取消
+                                    <input type="checkbox" name="All" id="selectAll" onclick="checkAll()" />全选/取消
                                 </div>
                                 foreach (var item in openCityList)
                                 {
@@ -166,6 +166,7 @@
         $("#selAcountType").change(fn);
         function fn() {
             $("#divCity").toggle($("#selAcountType").val() != 1);
+
         }
         //
         ////查询
@@ -219,14 +220,24 @@
     $("#btnAddAccount").click(function () {
         var cityCodeList = "";
         $("input[name='checkMenus']").each(function () {
-            if ($(this).is(':checked')) {
-                cityCodeList = cityCodeList + $(this).val() + ",";
+            if ($("#selAcountType").val() == 1) {
+                cityCodeList = cityCodeList + $(this).val() + "," + "1" + "|";
+            }
+            else {
+                if ($(this).is(':checked')) {
+                    cityCodeList = cityCodeList + $(this).val() + ",1" + "|";
+                } else {
+                    cityCodeList = cityCodeList + $(this).val() + ",0" + "|";
+                }
             }
         });
         var DCidList = "";
-        $("input[name='checkDeliveryCompany']").each(function() {
+        alert($("#selAcountType").val());        $("input[name='checkDeliveryCompany']").each(function () {
             if ($(this).is(':checked')) {
-                DCidList = DCidList + $(this).val() + ",";
+                DCidList = DCidList + $(this).val() + "," + "1" + "|";
+            }
+            else {
+                DCidList = DCidList + $(this).val() + "," + "0" + "|";
             }
         });
         if (cityCodeList.length > 0)
@@ -250,11 +261,11 @@
             alert("请输入登陆名称!");
             return;
         }
-        if (password == ""&& optionType=="0") {
+        if (password == "" && optionType == "0") {
             alert("请输入登陆密码!");
             return;
         }
-        if (confirmPassword == ""&&optionType=="0") {
+        if (confirmPassword == "" && optionType == "0") {
             alert("请输入确认密码!");
             return;
         }
@@ -283,11 +294,11 @@
                     } else {
                         alert(result.Message);
                     }
-                    
+
                 }
             });
         }
     });
-    
+
 </script>
 <script src="~/Scripts/mvcpager.js"></script>
