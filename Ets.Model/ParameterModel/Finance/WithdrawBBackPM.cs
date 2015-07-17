@@ -27,6 +27,6 @@ namespace Ets.Model.ParameterModel.Finance
         /// <summary>
         /// 备注
         /// </summary>
-        public string Remarks    { get; set; }
+        public string Remarks { get; set; }
     }
 }

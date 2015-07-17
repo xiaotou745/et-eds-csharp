@@ -137,6 +137,24 @@ namespace ETS.Pay.YeePay
 
         }
 
+        /// <summary>
+        ///  子账户注册 
+        /// </summary>
+        /// <param name="model">参数实体model </param>
+        /// <returns></returns>
+        public RegisterReturnModel RegSubaccount(YeeRegisterParameter model)
+        {
+            //商户编号   
+            string customernumber = KeyConfig.YeepayAccountId;
+            //密钥   
+            string hmackey = KeyConfig.YeepayHmac;
 
+            return RegSubaccount(customernumber, hmackey, model.RequestId, model.BindMobile,
+                model.CustomerType.ToString(),
+                model.SignedName, model.LinkMan, model.IdCard ?? "",
+                model.BusinessLicence ?? "", model.LegalPerson, model.MinsettleAmount, model.RiskReserveday,
+                model.BankAccountNumber, model.BankName,
+                model.AccountName, model.BankAccountType, model.BankProvince, model.BankCity, model.ManualSettle);
+        }
     }
 }

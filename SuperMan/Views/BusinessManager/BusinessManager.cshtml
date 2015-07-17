@@ -341,10 +341,15 @@
             </div>
             <div class="control-group">
                 <label>省：</label>
-                <select id="openProvince"></select>
+                <select id="openProvince">
+                    <option value="" selected="selected">--省市--</option>
+                </select>
             </div>
             <div class="control-group">
                 <label>市区：</label>
+                <select id="openCity">
+                    <option value="" selected="selected">--市区--</option>
+                </select>
             </div>
             <div class="control-group">
                 <label>身份证号：</label>
@@ -374,23 +379,50 @@
         GetOpenProvince();
         window.location.hash = '';
     });
-
+    //获取省市
     function GetOpenProvince() {
+        var paramaters = {
+            "jiBie": 1
+        };
         var openProvinceInfo = $('#openProvince');
-        openProvinceInfo.append('<option value="" selected="selected">--省市--</option>');
+        //openProvinceInfo.append('<option value="" selected="selected">--省市--</option>');
         $.ajax({
             type: 'POST',
             url: '/BusinessManager/GetOpenProvince',
-            data: '',
-            success: function (result) {
-                alert(result);
+            data: paramaters,
+            success: function (result) { 
                 $.each(result, function (i, item) {
                     openProvinceInfo.append('<option value="' + item.Code + '">' + item.Name + '</option>');
                 });
             }
         }); 
     }
-
+    //选择省时触发联动
+    $('#openProvince').change(function () {
+        //alert($('#openProvince').val() + ":::" + $('#openProvince').find("option:selected").text());
+        LoadOpenCityInfo();
+    });
+    //获取市区
+    function LoadOpenCityInfo() {
+        //var parrentId = $()
+        var paramaters = {
+            "jiBie": 2,
+            "parrentId": $('#openProvince').val()
+    };
+        var openCityInfo = $('#openCity');
+        openCityInfo.empty();
+        //openCityInfo.append('<option value="" selected="selected">--市区--</option>');
+        $.ajax({
+            type: 'POST',
+            url: '/BusinessManager/GetOpenCity',
+            data: paramaters,
+            success: function (result) {
+                $.each(result, function (i, item) {
+                    openCityInfo.append('<option value="' + item.Code + '">' + item.Name + '</option>');
+                });
+            }
+        });
+    }
     //设置结算比例-外送费
     $("#btnCommissionConfim").on('click', function () {
         var busCommissionHid = $("#busCommissionHid").val(); //商户id
@@ -619,10 +651,19 @@
         var busiName = $("#withdrawPhone").val(); //商户电话
         var withdrawAmount = $("#withdrawAmount").val();
         var withdrawLog = $("#withdrawLog").val();
+        var selectProvinceCode = $("openProvince").val();
+        var selectProvinceName = $("openProvince").find("option:selected").text();
+        var selectCityCode = $("openCity").val();
+        var selectCityName = $("openCity").find("option:selected").text();
+        var idCard = $("idCard").val();
+        var businessLicense = $("businessLicense").val();
         //if (rechargeLog.trim().length == 0) {
         //    alert("请输入充值操作描述!");
         //    return;
         //}
+        if (selectProvinceName == "--省市--" || selectCityName == "--市区--") {
+            alert("请选择省市");
+        }
         var decimalFormat = /^[0-9]*(\.[0-9]{1,2})?$/;
         if (!decimalFormat.test(withdrawAmount)) {
             alert("请输入正确的金额！");
@@ -631,12 +672,18 @@
         if (withdrawAmount < 1 || withdrawAmount > 1000000) {
             alert("请输入正确的提款金额，大于1元小于1,000,000！");
             return;
-        }
+        }  
         if (confirm("是否确认提款?")) {
             var paramaters = {
                 "BusinessId": withdrawId,
                 "WithdrawPrice": withdrawAmount,
-                "Remarks": withdrawLog
+                "Remarks": withdrawLog,
+                "OpenProvinceCode": selectProvinceCode,
+                "OpenProvince": selectProvinceName,
+                "selectCityCode": selectCityCode,
+                "OpenCity": selectCityName,
+                "idCard": idCard,
+                "businessLicense": businessLicense
             };
             var url = "/BusinessManager/Withdraw";
             $.ajax({
@@ -670,21 +717,6 @@
             $("#divCommissionFixValue").show();
         }
     });
-    //选择省时触发联动
-    //$('#OpenProvince').change(function() {
-    //    LoadOpenCityInfo();
-    //});
-
-    function LoadOpenCityInfo() {
-        var selBussinessID = $('#OpenProvince').val();
-        selBussinessID.append('<option value="" selected="selected">--市区--</option>');
-        $.post("/BusinessManager/GetBussinessByCityInfo",
-            { ProvinceCode: $("#BoxProvinceCode").val(), CityCode: $('#BoxCityCode').val(), GroupId: $("#HidGroupID").val() },
-            function (data) {
-                $.each(data, function (i, item) {
-                    selBussinessID.append('<option  value="' + item.Id + '">' + item.Name + '</option>');
-                });
-            });
-    }
+    
 </script>
 <script src="~/Scripts/mvcpager.js"></script>
