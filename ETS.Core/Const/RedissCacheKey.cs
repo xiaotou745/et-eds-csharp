@@ -91,5 +91,10 @@ namespace ETS.Const
         /// 商户对应骑士
         /// </summary>
         public const string BusinessClienter = "BusinessClienter_{0}";
+
+        /// <summary>
+        /// 骑士获取自己的物流公司
+        /// </summary>
+        public const string ClienterGetDeliveryCompany = "Clienter_GetDeliveryCompany_{0}";
     }
 }

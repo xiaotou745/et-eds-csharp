@@ -1233,13 +1233,13 @@ namespace Ets.Service.Provider.Clienter
         {
             //此时orderModel中还没获取到clienterId，因此不能用orderModel.clienterId
             DeliveryCompanyModel companyDetail = deliveryCompanyProvider.GetDeliveryCompanyByClienterID(clienterId);
-            if (companyDetail != null && companyDetail.IsEnable==1)
+            if (companyDetail != null && companyDetail.IsEnable == 1)
             {
                 DeliveryCompanyPriceProvider pro = new DeliveryCompanyPriceProvider();
-               decimal orderCommission= pro.GetCurrenOrderCommission(orderModel, companyDetail);
-               decimal deliveryCompanySettleMoney = pro.GetDeliveryCompanySettleMoney(orderModel, companyDetail);
+                decimal orderCommission = pro.GetCurrenOrderCommission(orderModel, companyDetail);
+                decimal deliveryCompanySettleMoney = pro.GetDeliveryCompanySettleMoney(orderModel, companyDetail);
                 //更新订单的佣金
-               orderDao.UpdateDeliveryCompanyOrderCommssion(orderModel.Id.ToString(), orderCommission, deliveryCompanySettleMoney, companyDetail.Id);
+                orderDao.UpdateDeliveryCompanyOrderCommssion(orderModel.Id.ToString(), orderCommission, deliveryCompanySettleMoney, companyDetail.Id);
 
             }
         }
@@ -1386,7 +1386,7 @@ namespace Ets.Service.Provider.Clienter
             OrderMapDetail mapDetail = orderDao.GetOrderMapDetail(myOrderInfo.Id);
             int distance = orderDao.GetDistanceByPoint(mapDetail.TakeLatitude, mapDetail.TakeLongitude, mapDetail.CompleteLatitude, mapDetail.CompleteLongitude);
 
-            GlobalConfigModel globalSetting = globalConfigDao.GlobalConfigMethod(0);
+            GlobalConfigModel globalSetting = GlobalConfigDao.GlobalConfigGet(0);
             if (distance <= ParseHelper.ToInt(globalSetting.TakeCompleteDistance, 0))
             {
                 return true;
