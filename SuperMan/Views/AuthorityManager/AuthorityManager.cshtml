@@ -232,7 +232,7 @@
             }
         });
         var DCidList = "";
-        alert($("#selAcountType").val());        $("input[name='checkDeliveryCompany']").each(function () {
+        $("input[name='checkDeliveryCompany']").each(function () {
             if ($(this).is(':checked')) {
                 DCidList = DCidList + $(this).val() + "," + "1" + "|";
             }

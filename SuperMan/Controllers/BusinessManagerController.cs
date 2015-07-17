@@ -744,13 +744,14 @@ namespace SuperMan.Controllers
             var reg = iBusinessProvider.ModifyBusinessExpress(busiId, deliveryCompanyList, UserContext.Current.Name);
             return Json(new Ets.Model.Common.ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.DenyGet);
         }
-
+         
 
         public JsonResult GetOpenProvince()
         {
             var openProvince = new AreaProvider().GetPublicBankCity("1.0");
             var openProvinceJiBie = openProvince.Result.AreaModels.ToList().Select(i => i.JiBie = 1);
-            return Json(openProvinceJiBie);
+            var kk = Json(openProvinceJiBie);
+            return kk;
         }
     }
 }

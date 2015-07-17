@@ -98,6 +98,26 @@ where  Id=@Id ";
             dbParameters.AddWithValue("Id", id);
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
+        /// <summary>
+        /// 更新易宝信息通过Id（带返回值）
+        /// danny-20150716
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="yeepayKey"></param>
+        /// <param name="yeepayStatus"></param>
+        /// <returns></returns>
+        public bool ModifyYeepayInfoById(int id, string yeepayKey, byte yeepayStatus)
+        {
+            const string updateSql = @"
+update  BusinessFinanceAccount
+set  YeepayKey=@YeepayKey,YeepayStatus=@YeepayStatus
+where  Id=@Id ";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("YeepayKey", yeepayKey);
+            dbParameters.AddWithValue("YeepayStatus", yeepayStatus);
+            dbParameters.AddWithValue("Id", id);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters) > 0;
+        }
 
         /// <summary>
         /// 根据ID获取对象

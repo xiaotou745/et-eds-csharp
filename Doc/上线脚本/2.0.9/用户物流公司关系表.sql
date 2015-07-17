@@ -14,6 +14,7 @@ CREATE TABLE [dbo].[AccountDeliveryRelation](
 	[DeliveryCompanyID] [int] NOT NULL,
 	[CreateTime] [datetime] NOT NULL,
 	[CreateBy] [nvarchar](50) NULL,
+	[IsEnable] [int] NOT NULL
  CONSTRAINT [PK_AccountDeliveryRelation] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC
@@ -37,7 +38,12 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'创建人' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'AccountDeliveryRelation', @level2type=N'COLUMN',@level2name=N'CreateBy'
 GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'是否启用 1 启用 0不启用' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'AccountDeliveryRelation', @level2type=N'COLUMN',@level2name=N'IsEnable'
+GO
+
 ALTER TABLE [dbo].[AccountDeliveryRelation] ADD  CONSTRAINT [DF_AccountDeliveryRelation_CreateTime]  DEFAULT (getdate()) FOR [CreateTime]
+GO
+ALTER TABLE [dbo].[AccountDeliveryRelation] ADD  CONSTRAINT [DF_AccountDeliveryRelation_IsEnable]  DEFAULT (0) FOR [IsEnable]
 GO
 
 

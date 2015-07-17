@@ -378,12 +378,17 @@
     function GetOpenProvince() {
         var openProvinceInfo = $('#openProvince');
         openProvinceInfo.append('<option value="" selected="selected">--省市--</option>');
-        $.post("/BusinessManager/GetOpenProvince", "",
-            function (data) {
-                $.each(data, function (i, item) {
+        $.ajax({
+            type: 'POST',
+            url: '/BusinessManager/GetOpenProvince',
+            data: '',
+            success: function (result) {
+                alert(result);
+                $.each(result, function (i, item) {
                     openProvinceInfo.append('<option value="' + item.Code + '">' + item.Name + '</option>');
                 });
-            });
+            }
+        }); 
     }
 
     //设置结算比例-外送费

@@ -141,7 +141,7 @@ where  Id=@Id ";
 
         /// <summary>
         /// 判断该骑士是否有未完成的体现申请单
-        /// <param name="id">id</param>
+        /// <param name="clienterId">id</param>
         /// </summary>
         public int GetByClienterId(int clienterId)
         {
