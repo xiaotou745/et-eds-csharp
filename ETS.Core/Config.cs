@@ -115,5 +115,10 @@ namespace ETS
         }
 
         #endregion
+
+        /// <summary>
+        /// 易宝支付回调地址
+        /// </summary>
+        public static string YeePayNotifyUrl { get { return ConfigKey("YeePayNotifyUrl").TrimEnd('/') + "/pay/YeePayCashTransferCallback"; } }
     }
 }

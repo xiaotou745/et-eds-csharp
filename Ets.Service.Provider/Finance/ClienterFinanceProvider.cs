@@ -586,7 +586,7 @@ namespace Ets.Service.Provider.Finance
                     return dealResultInfo;
                 }
                 var regCash = new Transfer().CashTransfer(APP.B, ParseHelper.ToInt(model.WithwardId),
-                    cliFinanceAccount.YeepayKey, amount.ToString(), "配置"); //提现
+                    cliFinanceAccount.YeepayKey, amount.ToString()); //提现
                 if (regCash.code != "1")
                 {
                     dealResultInfo.DealMsg = "骑士易宝自动提现失败：" + regCash.code;
