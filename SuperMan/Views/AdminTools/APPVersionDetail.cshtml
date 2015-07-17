@@ -1,0 +1,68 @@
+﻿@model Ets.Model.Common.AppVerionModel
+@{
+    Layout = null;
+
+}
+<div class="add-openbox add-form" id="APPVersionDetailDivShow" style="width:auto;">
+    <div style="width:450px;height:auto;border: 1px #dcdcdc solid">
+        <h2 class="crumbs">
+            版本详情
+        </h2>
+        <div style="width:450px;height:auto;padding-left:10px;border:1px #dcdcdc solid;border-left:hidden;border-right:hidden;border-top:hidden">
+            <div style="width:430px;height:25px;">
+                <div style="float: left">
+                    <label>客户端类型：</label>
+                    @(Model.PlatForm == 1 ? "Android" : "IOS ")
+                </div>
+            </div>
+            <div style="width:430px;height:25px;">
+                <div style="float: left">
+                    <label>用户类型：</label>
+                    @(Model.PlatForm == 1 ? "骑士" : "商家 ")
+                </div>
+            </div>
+            <div style="width:430px;height:25px;">
+                <div style="float: left">
+                    <label>版本号：@Model.Version</label>
+                </div>
+            </div>
+            <div style="width:430px;height:25px;">
+                <div style="float: left">
+                    <label>是否强制更新：</label>
+                    @(Model.IsMust == 1 ? "是" : "否 ")
+                </div>
+            </div>
+            <div style="width:430px;height:25px;">
+                <div style="float: left">
+                    <label>发布类型：</label>
+                    @(Model.IsTiming == 1 ? "定时发布" : "实时发布 ")
+                </div>
+            </div>
+            <div style="width:430px;height:25px;">
+                <div style="float: left">
+                    <label>发布时间：@Model.TimingDate</label>
+                </div>
+            </div>
+            <div style="width:430px;height:25px;">
+                <div style="float: left">
+                    <label>下载地址：@Model.UpdateUrl</label>
+                </div>
+            </div>
+            <div style="width:430px;height:auto;">
+                <div style="float: left;width:430px;">
+                    <label>更新内容：@Model.Message</label><br>
+                </div>
+            </div>
+            <div style="clear:both;"></div>
+            <div style="width:430px;height:25px;">
+                <div style="float: left">
+                    <label>操作人：@Model.UpdateBy</label>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <p class="btnbox">
+        <input value="关闭" type="button" id="btnCanel" class="qxBtn" />
+    </p>
+</div>

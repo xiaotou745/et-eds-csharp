@@ -46,6 +46,7 @@
     <Compile Include="Clienter\IClienterLocationProvider.cs" />
     <Compile Include="Clienter\ICrossShopStatisticLogProvider.cs" />
     <Compile Include="Common\IAdminToolsProvider.cs" />
+    <Compile Include="Common\IAppVersionProvider.cs" />
     <Compile Include="Common\IAreaProvider.cs" />
     <Compile Include="Common\IExportSqlManageProvider.cs" />
     <Compile Include="Common\IGroupProvider.cs" />
