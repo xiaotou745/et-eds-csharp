@@ -549,7 +549,13 @@ select @@IDENTITY ";
                                     ,case when o.OrderFrom=0 then '客户端' else g.GroupName end GroupName
                                     ,o.[Adjustment]
                                     ,ISNULL(oo.HadUploadCount,0) HadUploadCount
-                                    ,oo.GrabToCompleteDistance
+                                    ,CASE ISNULL(oo.GrabLatitude, 0)
+                                          WHEN 0 THEN -1
+                                          ELSE CASE ISNULL(oo.CompleteLatitude, 0)
+                                                 WHEN 0 THEN -1
+                                                 ELSE oo.GrabToCompleteDistance
+                                               END
+                                        END AS GrabToCompleteDistance
                                     ,o.BusinessCommission --商家结算比例
                                     ";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
@@ -3088,7 +3094,14 @@ where   Id = @OrderId and FinishAll = 0";
                                     ISNULL(TakeTime, '') AS TakeTime,
                                     ISNULL(CompleteLongitude, 0) AS CompleteLongitude,
                                     ISNULL(CompleteLatitude, 0) AS CompleteLatitude,
-                                    ISNULL(ab.ActualDoneDate, '') AS ActualDoneDate
+                                    ISNULL(ab.ActualDoneDate, '') AS ActualDoneDate，
+                                    CASE ISNULL(ord.GrabLatitude, 0)
+                                        WHEN 0 THEN -1
+                                        ELSE CASE ISNULL(ord.CompleteLatitude, 0)
+                                                WHEN 0 THEN -1
+                                                ELSE ord.GrabToCompleteDistance
+                                            END
+                                    END AS GrabToCompleteDistance
                             FROM  [order] (NOLOCK) ab  
                                     JOIN OrderOther (NOLOCK) ord ON ord.OrderId = ab.Id
                                     JOIN business (NOLOCK) c ON c.id = ab.businessId 

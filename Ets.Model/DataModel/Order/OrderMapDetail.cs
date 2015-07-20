@@ -60,5 +60,10 @@ namespace Ets.Model.DataModel.Order
         /// 骑士完成订单时间
         /// </summary>
         public string ActualDoneDate { get; set; }
+
+        /// <summary>
+        /// 抢单和完成点之间的距离
+        /// </summary>
+        public double GrabToCompleteDistance { get; set; }
     }
 }

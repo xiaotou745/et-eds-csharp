@@ -1385,13 +1385,15 @@ namespace Ets.Service.Provider.Clienter
         private bool CheckIsNotRealOrder(OrderListModel myOrderInfo)
         {
             OrderMapDetail mapDetail = orderDao.GetOrderMapDetail(myOrderInfo.Id);
-            int distance = orderDao.GetDistanceByPoint(mapDetail.TakeLatitude, mapDetail.TakeLongitude, mapDetail.CompleteLatitude, mapDetail.CompleteLongitude);
-
             GlobalConfigModel globalSetting = GlobalConfigDao.GlobalConfigGet(0);
-            if (distance <= ParseHelper.ToInt(globalSetting.TakeCompleteDistance, 0))
+            if (mapDetail.GrabToCompleteDistance > -1)//如果抢单和完成两个点的坐标都有效，才进行距离判断
             {
-                return true;
+                if (mapDetail.GrabToCompleteDistance <= ParseHelper.ToInt(globalSetting.TakeCompleteDistance, 0))
+                {
+                    return true;
+                }
             }
+
 
             DateTime actualDoneDate = actualDoneDate = ParseHelper.ToDatetime(mapDetail.ActualDoneDate);
             if (!(myOrderInfo.GrabTime.Value.AddMinutes(5) < actualDoneDate &&
