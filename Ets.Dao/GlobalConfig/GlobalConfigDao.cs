@@ -27,7 +27,7 @@ namespace Ets.Dao.GlobalConfig
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             string cacheKey = string.Format(RedissCacheKey.Ets_Dao_GlobalConfig_GlobalConfigGet, GroupId);//缓存的KEY
             model = redis.Get<GlobalConfigModel>(cacheKey);
-            if (CurrentGlobalVersion != ETS.Config.GlobalVersion || model == null)
+            if (model == null)
             {
                 CurrentGlobalVersion = ETS.Config.GlobalVersion;
                 model = new GlobalConfigDao().GlobalConfigMethod(GroupId);
