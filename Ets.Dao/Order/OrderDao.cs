@@ -3094,7 +3094,7 @@ where   Id = @OrderId and FinishAll = 0";
                                     ISNULL(TakeTime, '') AS TakeTime,
                                     ISNULL(CompleteLongitude, 0) AS CompleteLongitude,
                                     ISNULL(CompleteLatitude, 0) AS CompleteLatitude,
-                                    ISNULL(ab.ActualDoneDate, '') AS ActualDoneDate，
+                                    ISNULL(ab.ActualDoneDate, '') AS ActualDoneDate,
                                     CASE ISNULL(ord.GrabLatitude, 0)
                                         WHEN 0 THEN -1
                                         ELSE CASE ISNULL(ord.CompleteLatitude, 0)

@@ -66,9 +66,9 @@
                     <input type="hidden" name="oldOrderCountSetting" value="@globalConfigModel.OrderCountSetting" id="oldOrderCountSetting" />
                 </td>
                 <td>
-                    <span>无效订单判定时取货点和完成点的距离:</span>
-                    <input type="text" name="takeCompleteDistance" value="@globalConfigModel.TakeCompleteDistance" id="takeCompleteDistance" style="width: 100px" />米
-                    <input type="hidden" name="oldTakeCompleteDistance" value="@globalConfigModel.TakeCompleteDistance" id="oldTakeCompleteDistance" />
+                    <span>无效订单判定时抢单点和完成点的距离:</span>
+                    <input type="text" name="grabToCompleteDistance" value="@globalConfigModel.GrabToCompleteDistance" id="grabToCompleteDistance" style="width: 100px" />米
+                    <input type="hidden" name="oldGrabToCompleteDistance" value="@globalConfigModel.GrabToCompleteDistance" id="oldGrabToCompleteDistance" />
                 </td>
             </tr>
             <tr>
@@ -98,7 +98,7 @@
             var clienterWithdrawCommissionAccordingMoney = $("#clienterWithdrawCommissionAccordingMoney").val(); //骑士提现小于等于X元支付手续费
             var withdrawCommission = $("#withdrawCommission").val(); //易宝支付手续费金额
             var orderCountSetting = $("#orderCountSetting").val(); //无效订单判定时累计完成订单数量
-            var takeCompleteDistance = $("#takeCompleteDistance").val(); //无效订单判定时取货点和完成点的距离
+            var grabToCompleteDistance = $("#grabToCompleteDistance").val(); //无效订单判定时抢单点和完成点的距离
 
             var oldHasUnFinishedOrderUploadTimeInterval = $("#oldHasUnFinishedOrderUploadTimeInterval").val(); //骑士有待完成任务经纬度上传时间间隔（之前）
             var oldAllFinishedOrderUploadTimeInterval = $("#oldAllFinishedOrderUploadTimeInterval").val(); //骑士没有待完成任务经纬度上传时间间隔（之前）
@@ -110,7 +110,7 @@
             var oldClienterWithdrawCommissionAccordingMoney = $("#oldClienterWithdrawCommissionAccordingMoney").val(); //骑士提现小于等于X元支付手续费（之前）
             var oldWithdrawCommission = $("#oldWithdrawCommission").val(); //易宝支付手续费金额（之前）
             var oldOrderCountSetting = $("#oldOrderCountSetting").val(); //无效订单判定时累计完成订单数量
-            var oldTakeCompleteDistance = $("#oldTakeCompleteDistance").val(); //无效订单判定时取货点和完成点的距离
+            var oldGrabToCompleteDistance = $("#oldGrabToCompleteDistance").val(); //无效订单判定时抢单点和完成点的距离
 
 
             var pageOk = true;
@@ -132,12 +132,12 @@
                 alert("无效订单判定时累计完成订单数量请输入大于零的值!");
                 return;
             }
-            if (isNaN(takeCompleteDistance)) {
-                alert("无效订单判定时取货点和完成点的距离请输入正确的数字!");
+            if (isNaN(grabToCompleteDistance)) {
+                alert("无效订单判定时抢单点和完成点的距离请输入正确的数字!");
                 return;
             }
-            if (takeCompleteDistance < 0) {
-                alert("无效订单判定时取货点和完成点的距离请输入大于零的值!");
+            if (grabToCompleteDistance < 0) {
+                alert("无效订单判定时抢单点和完成点的距离请输入大于零的值!");
                 return;
             }
             if (isNaN(hasUnFinishedOrderUploadTimeInterval)) {
@@ -233,7 +233,7 @@
 	            completeTimeSet == oldCompleteTimeSet &&
 	            employerTaskTimeSet == oldEmployerTaskTimeSet &&
 	            orderCountSetting == oldOrderCountSetting &&
-                takeCompleteDistance == oldTakeCompleteDistance) {
+                grabToCompleteDistance == oldGrabToCompleteDistance) {
                 alert("没有需要修改的信息!");
                 return;
             }
@@ -250,7 +250,7 @@
                     "completeTimeSet": completeTimeSet,
                     "employerTaskTimeSet": employerTaskTimeSet,
                     "orderCountSetting": orderCountSetting,
-                    "takeCompleteDistance": takeCompleteDistance
+                    "grabToCompleteDistance": grabToCompleteDistance
                 };
                 var url = "/AdminTools/ModifyGlobalConfig";
                 $.ajax({
