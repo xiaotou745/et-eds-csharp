@@ -24,7 +24,7 @@ CREATE TABLE [dbo].[AppVersion](
 	[UpdateDate] [datetime] NOT NULL,
 	[UpdateBy] [nvarchar](50) NULL,
 	[IsTiming] [int] NULL,
-	[TimingDate] [datetime] NULL,
+	[TimingDate] [datetime] NOT NULL,
 	[PubStatus] [int] NOT NULL,
  CONSTRAINT [PK_AppVersion] PRIMARY KEY CLUSTERED 
 (
@@ -92,6 +92,9 @@ ALTER TABLE [dbo].[AppVersion] ADD  CONSTRAINT [DF_AppVersion_IsTiming]  DEFAULT
 GO
 
 ALTER TABLE [dbo].[AppVersion] ADD  DEFAULT ((0)) FOR [PubStatus]
+GO
+
+ALTER TABLE [dbo].[AppVersion] ADD  DEFAULT (getdate()) FOR [TimingDate]
 GO
 
 
