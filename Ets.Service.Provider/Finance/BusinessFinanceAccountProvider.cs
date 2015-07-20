@@ -227,6 +227,16 @@ namespace Ets.Service.Provider.Finance
             return ResultModel<object>.Conclude(SystemState.Success);
         }
 
+        /// <summary>
+        /// 获取该商户的金融账户信息
+        /// wc
+        /// </summary>
+        /// <param name="busiId"></param>
+        /// <returns></returns>
+        public BusinessFinanceAccount GetFinanceAccountByBusiId(int busiId)
+        {
+            return _businessFinanceAccountDao.GetFinanceAccountByBusiId(busiId);
+        }
 
         #region 用户自定义方法
         /// <summary>

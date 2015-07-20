@@ -341,24 +341,30 @@
             </div>
             <div class="control-group">
                 <label>省：</label>
-                <select id="openProvince">
+                <input type="text" disabled="disabled" id="openProvince"/>
+                <input type="hidden" id="openProvinceCode" />
+                @*<select id="openProvince">
                     <option value="" selected="selected">--省市--</option>
-                </select>
+                </select>*@
             </div>
             <div class="control-group">
                 <label>市区：</label>
+                <input type="text" disabled="disabled" id="openCity"/>
+                <input type="hidden" id="openCityCode"/>
+                @*<label>市区：</label>
                 <select id="openCity">
                     <option value="" selected="selected">--市区--</option>
-                </select>
+                </select>*@
             </div>
             <div class="control-group">
-                <label>身份证号：</label>
-                <input type="text" id="idCard" />
+                <label>身份证号/营业执照：</label>
+                <input type="text" id="idCard" disabled="disabled" />
             </div>
             <div class="control-group">
-                <label>营业执照：</label>
-                <input type="text" id="businessLicense" />
+                <label>账户类型：</label>
+                <input type="text" id="accountType" disabled="disabled" />
             </div>
+
             <div class="control-group">
                 <label>备注：</label>
                 <div class="controls">
@@ -376,7 +382,7 @@
 <script>
     var adminjs = new adminglass(); //实例化后台类
     $(document).ready(function () {
-        GetOpenProvince();
+        //GetOpenProvince(); 
         window.location.hash = '';
     });
     //获取省市
@@ -423,6 +429,8 @@
             }
         });
     }
+
+    
     //设置结算比例-外送费
     $("#btnCommissionConfim").on('click', function () {
         var busCommissionHid = $("#busCommissionHid").val(); //商户id
@@ -651,19 +659,15 @@
         var busiName = $("#withdrawPhone").val(); //商户电话
         var withdrawAmount = $("#withdrawAmount").val();
         var withdrawLog = $("#withdrawLog").val();
-        var selectProvinceCode = $("openProvince").val();
-        var selectProvinceName = $("openProvince").find("option:selected").text();
-        var selectCityCode = $("openCity").val();
-        var selectCityName = $("openCity").find("option:selected").text();
-        var idCard = $("idCard").val();
-        var businessLicense = $("businessLicense").val();
+        var selectProvinceName = $("#openProvince").val();
+        var selectProvinceCode = $("#openProvinceCode").val();
+        var selectCityName = $("#openCity").val();
+        var selectCityCode = $("#openCityCode").val();
+        var idCard = $("#idCard").val();
         //if (rechargeLog.trim().length == 0) {
         //    alert("请输入充值操作描述!");
         //    return;
-        //}
-        if (selectProvinceName == "--省市--" || selectCityName == "--市区--") {
-            alert("请选择省市");
-        }
+        //} 
         var decimalFormat = /^[0-9]*(\.[0-9]{1,2})?$/;
         if (!decimalFormat.test(withdrawAmount)) {
             alert("请输入正确的金额！");
@@ -672,7 +676,8 @@
         if (withdrawAmount < 1 || withdrawAmount > 1000000) {
             alert("请输入正确的提款金额，大于1元小于1,000,000！");
             return;
-        }  
+        }
+
         if (confirm("是否确认提款?")) {
             var paramaters = {
                 "BusinessId": withdrawId,
@@ -682,8 +687,7 @@
                 "OpenProvince": selectProvinceName,
                 "selectCityCode": selectCityCode,
                 "OpenCity": selectCityName,
-                "idCard": idCard,
-                "businessLicense": businessLicense
+                "idCard": idCard
             };
             var url = "/BusinessManager/Withdraw";
             $.ajax({

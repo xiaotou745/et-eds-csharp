@@ -32,6 +32,7 @@ using Ets.Service.IProvider.Clienter;
 using Ets.Service.IProvider.Business;
 using Ets.Service.Provider.Business;
 using Ets.Model.Common;
+using Ets.Model.DataModel.Finance;
 using Ets.Service.IProvider.Distribution;
 using Ets.Model.DomainModel.Statistics;
 using Ets.Service.Provider.Statistics;
@@ -78,7 +79,13 @@ namespace SuperMan.Controllers
             var pagedList = iBusinessProvider.GetBusinesses(criteria);
             return View(pagedList);
         }
+        [HttpPost]
+        public ContentResult GetBusiFinanceAccount(int busiId)
+        {
+            BusinessFinanceAccount bfa = iBusinessFinanceAccountProvider.GetFinanceAccountByBusiId(busiId);
 
+            return new ContentResult { Content = Newtonsoft.Json.JsonConvert.SerializeObject(bfa) };
+        }
 
         [HttpPost]
         public ActionResult PostBusinessManager(int pageindex = 1)
