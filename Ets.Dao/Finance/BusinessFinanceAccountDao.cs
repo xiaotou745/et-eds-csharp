@@ -199,5 +199,32 @@ where BusinessId=@businessId";
             return ParseHelper.ToInt(obj, 0);
         }
         #endregion
+
+        public BusinessFinanceAccount GetFinanceAccountByBusiId(int busiId)
+        {
+            string selSql = @"select top 1 b.Id ,
+        b.BusinessId ,
+        b.TrueName ,
+        b.AccountNo ,
+        b.AccountType ,
+        b.BelongType ,
+        b.OpenBank ,
+        b.OpenSubBank ,
+        b.IDCard ,
+        b.OpenProvince ,
+        b.OpenCity ,
+        b.YeepayKey ,
+        b.YeepayStatus FROM dbo.BusinessFinanceAccount b (nolock)
+        where b.IsEnable = 1 and b.BusinessId = @BusinessId
+        order by b.Id desc";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("BusinessId", busiId);
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, selSql, dbParameters));
+            if (DataTableHelper.CheckDt(dt))
+            {
+                return DataTableHelper.ConvertDataTableList<BusinessFinanceAccount>(dt)[0];
+            }
+            return null;
+        }
     }
 }

@@ -12,7 +12,6 @@
             @*<th>第三方ID</th>*@
             <th>电话</th>
             <th>地址</th>
-            
             <th>申请时间</th>
             <th>推荐人手机号</th>
             <th>所属集团</th>
@@ -360,6 +359,7 @@
     }
     
     function funcBusinessWithdraw(id, name, phone) {
+        GetBusiFinanceAccount(id);
         $('#withdrawId').val(0);
         $('#withdrawName').val('');
         $('#withdrawPhone').val('');
@@ -367,8 +367,35 @@
         $('#withdrawLog').val('');
         $('#withdrawId').val(id);
         $('#withdrawName').val(name);
-        $('#withdrawPhone').val(phone); 
+        $('#withdrawPhone').val(phone);
         adminjs.openwinbox('#BusinessWithdraw');
     }
-
+    function GetBusiFinanceAccount(busiId) { 
+        var paramaters = {
+            "busiId": busiId
+        };
+        $.ajax({
+            type: 'POST',
+            async:true,
+            url: '/BusinessManager/GetBusiFinanceAccount',
+            data: paramaters,
+            success: function (result) {
+                if (result != null) {
+                    var bfa = $.parseJSON(result);
+                    $("#openProvince").val(bfa.OpenProvince);
+                    $("#openProvinceCode").val('');
+                    $("#openCity").val(bfa.OpenCity);
+                    $("#openCityCode").val('');
+                    $("#idCard").val(bfa.IDCard);
+                    if (bfa.BelongType == 0) {
+                        $("#accountType").val('个人账户');
+                    } else if (bfa.BelongType == 1) {
+                        $("#accountType").val('个人账户');
+                    } else {
+                        $("#accountType").val('未知');
+                    }
+                }
+            }
+        });
+    }
 </script>

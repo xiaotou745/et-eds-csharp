@@ -1,5 +1,6 @@
 ﻿
 using Ets.Model.Common;
+using Ets.Model.DataModel.Finance;
 using Ets.Model.ParameterModel.Finance;
 namespace Ets.Service.IProvider.Finance
 {
@@ -26,6 +27,13 @@ namespace Ets.Service.IProvider.Finance
         /// <param name="cardModifyBpm">参数实体</param>
         /// <returns></returns>
         ResultModel<object> CardModifyB(CardModifyBPM cardModifyBpm);
+        /// <summary>
+        /// 获取该商户的金融账户信息
+        /// wc
+        /// </summary>
+        /// <param name="busiId"></param>
+        /// <returns></returns>
+        BusinessFinanceAccount GetFinanceAccountByBusiId(int busiId);
     }
 
 }
