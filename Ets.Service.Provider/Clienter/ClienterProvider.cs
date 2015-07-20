@@ -647,9 +647,10 @@ namespace Ets.Service.Provider.Clienter
             GlobalConfigModel globalSetting = new GlobalConfigProvider().GlobalConfigMethod(0);
             //取到任务的接单时间、从缓存中读取完成任务时间限制，判断要用户点击完成时间>接单时间+限制时间 
             int limitFinish = ParseHelper.ToInt(globalSetting.CompleteTimeSet, 0);
-
+            //LogHelper.LogWriter("完成时间:" + limitFinish);
             if (limitFinish > 0)
             {
+                //LogHelper.LogWriter("完成太快时间:" + limitFinish);
                 DateTime yuJiFinish = myOrderInfo.GrabTime.Value.AddMinutes(limitFinish);
                 if (DateTime.Compare(DateTime.Now, yuJiFinish) < 0)  //小于0说明用户完成时间 太快
                 {
@@ -1426,27 +1427,27 @@ namespace Ets.Service.Provider.Clienter
         private void UpdateClienterTotalAccount(OrderListModel myOrderInfo, int operateType = 0)
         {
             decimal realOrderCommission = myOrderInfo.OrderCommission == null ? 0 : myOrderInfo.OrderCommission.Value;
-            
-            if (myOrderInfo.DeliveryCompanyID!=0)//物流公司接的订单
+
+            if (myOrderInfo.DeliveryCompanyID != 0)//物流公司接的订单
             {
-                 orderDao.UpdateOrderRealOrderCommission(myOrderInfo.Id.ToString(), realOrderCommission);
-                 if (operateType == 0)
-                 {
-                     UpdateClienterAccount(myOrderInfo);
-                 }
-                 else
-                 {
-                     UpdateAccountBalanceAndWithdraw(myOrderInfo.clienterId, myOrderInfo);
-                 }
-                 return;
+                orderDao.UpdateOrderRealOrderCommission(myOrderInfo.Id.ToString(), realOrderCommission);
+                if (operateType == 0)
+                {
+                    UpdateClienterAccount(myOrderInfo);
+                }
+                else
+                {
+                    UpdateAccountBalanceAndWithdraw(myOrderInfo.clienterId, myOrderInfo);
+                }
+                return;
             }
-			bool isNotRealOrder = CheckIsNotRealOrder(myOrderInfo);
+            bool isNotRealOrder = CheckIsNotRealOrder(myOrderInfo);
             if (isNotRealOrder)
             {
                 orderOtherDao.UpdateOrderIsReal(myOrderInfo.Id);
                 realOrderCommission = realOrderCommission > myOrderInfo.SettleMoney ? myOrderInfo.SettleMoney : realOrderCommission;
             }
-            
+
             orderDao.UpdateOrderRealOrderCommission(myOrderInfo.Id.ToString(), realOrderCommission);
             if (operateType == 0)//线下支付
             {

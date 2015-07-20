@@ -81,8 +81,8 @@
         var txtOrderPubStart = $("#txtOrderPubStart").val();
         var txtOrderPubEnd = $("#txtOrderPubEnd").val();
         var businessCity = $("#businessCity option:selected").val();
-        var orderStatus = $("#StatusSelect option:selected").val();
-        var deliveryCompany =$("#deliveryCompany option:selected").val();
+        var orderStatus = $("#StatusSelect option:selected").val() == undefined? -1 : $("#StatusSelect option:selected").val();
+        var deliveryCompany = $("#deliveryCompany option:selected").val() == undefined ? -1 : $("#deliveryCompany option:selected").val();
         if (txtOrderPubStart == "" || txtOrderPubEnd == "") {
             alert("请输入时间范围!");
             return;
