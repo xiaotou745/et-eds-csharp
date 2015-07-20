@@ -769,7 +769,7 @@ SELECT acr.[Id]
       ,ppc.name CityName
 FROM [AccountCityRelation] acr with(nolock)
 JOIN PublicProvinceCity ppc with(nolock) on acr.CityId=ppc.code
-WHERE acr.AccountId=@AccountId;";
+WHERE acr.AccountId=@AccountId and acr.IsEnable=1;";
             var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@AccountId", accountId);
             var dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
