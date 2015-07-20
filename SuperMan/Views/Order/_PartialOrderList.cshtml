@@ -38,7 +38,7 @@ width: 100%;
             <th>订单来源</th>
             <th>订单状态</th>
             <th>已上传/共需上传</th>
-            <th>取餐-完成</th>
+            <th>抢单-完成</th>
             <th>操作</th>
         </tr>
     </thead>
@@ -51,8 +51,25 @@ width: 100%;
            
                 foreach (var item in Model.Records)
                 {
-                    string grabToCompleteStyle = ETS.Util.ParseHelper.ToDouble(item.GrabToCompleteDistance) == 0.0 ? "color:red;font-weight:900" : "color:green";
-                    string grabToCompleteStr = ETS.Util.ParseHelper.ToDouble(item.GrabToCompleteDistance) == 0.0 ? "重合" : "不重合";
+                    double distance = ETS.Util.ParseHelper.ToDouble(item.GrabToCompleteDistance);
+                    string grabToCompleteStyle = "";
+                    string grabToCompleteStr = "";
+                    if (distance==-1)//抢单和完成的坐标有一个未知时
+                    {
+                        grabToCompleteStyle = "color:black";
+                        grabToCompleteStr = "未知";
+                    }
+                    else if (distance == 0.0)//抢单和完成的坐标重合
+                    {
+                         grabToCompleteStyle = "color:red;font-weight:900";
+                         grabToCompleteStr = "重合";
+                    }
+                    else //抢单和完成的坐标不重合
+                    {
+                         grabToCompleteStyle = "color:green";
+                         grabToCompleteStr = "不重合";
+                    }
+                   
                     var diffHour = (DateTime.Now - DateTime.Parse(item.PubDate != null ? item.PubDate.ToString() : DateTime.Now.ToString())).TotalHours;
                     string val = diffHour > 10 && item.Status == 0 ? "red" : diffHour > 8 && item.Status == 0 ? "blue" : diffHour > 5 && item.Status == 0 ? "yellow" : "none";
                     i++;
