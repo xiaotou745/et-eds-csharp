@@ -169,6 +169,7 @@ namespace SuperMan.Controllers
             var criteria = new OrderSearchCriteria();
             TryUpdateModel(criteria);
             criteria.AuthorityCityNameListStr =iAreaProvider.GetAuthorityCityNameListStr(UserType);
+            criteria.deliveryCompany=string.IsNullOrWhiteSpace(criteria.deliveryCompany) ? "-1" : criteria.deliveryCompany;
             if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
             {
                 return PartialView("_PostOrderManager");
