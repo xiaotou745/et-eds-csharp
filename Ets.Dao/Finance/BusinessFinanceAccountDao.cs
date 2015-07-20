@@ -64,7 +64,7 @@ select @@IDENTITY";
             const string updateSql = @"
 update  BusinessFinanceAccount
 set  TrueName=@TrueName,AccountNo=@AccountNo,BelongType=@BelongType,OpenBank=@OpenBank,
-OpenSubBank=@OpenSubBank,UpdateBy=@UpdateBy,OpenProvince=@OpenProvince,OpenCity=@OpenCity,IDCard=@IDCard 
+OpenSubBank=@OpenSubBank,UpdateBy=@UpdateBy,OpenProvince=@OpenProvince,OpenCity=@OpenCity,IDCard=@IDCard,OpenProvinceCode=@OpenProvinceCode,OpenCityCode=@OpenCityCode  
 where  Id=@Id ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Id", businessFinanceAccount.Id);
@@ -76,6 +76,8 @@ where  Id=@Id ";
             dbParameters.AddWithValue("UpdateBy", businessFinanceAccount.UpdateBy);
             dbParameters.Add("OpenProvince", DbType.String).Value = businessFinanceAccount.OpenProvince;
             dbParameters.Add("OpenCity", DbType.String).Value = businessFinanceAccount.OpenCity;
+            dbParameters.Add("OpenProvinceCode", DbType.Int32).Value = businessFinanceAccount.OpenProvinceCode;
+            dbParameters.Add("OpenCityCode", DbType.Int32).Value = businessFinanceAccount.OpenCityCode;
             dbParameters.Add("IDCard", DbType.String).Value = businessFinanceAccount.IDCard;
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }

@@ -173,7 +173,9 @@ namespace Ets.Service.Provider.Finance
                             OpenSubBank = cardModifyBpm.OpenSubBank, //开户支行
                             UpdateBy = cardModifyBpm.UpdateBy, //修改人  当前登录人
                             OpenProvince = cardModifyBpm.OpenProvince, //省名称
+                            OpenProvinceCode = cardModifyBpm.OpenProvinceCode, 
                             OpenCity = cardModifyBpm.OpenCity, //市区名称
+                            OpenCityCode = cardModifyBpm.OpenCityCode, 
                             IDCard = cardModifyBpm.IDCard //公司账户时存营业执照，个人账户存身份证号码
                         });
                         tran.Complete();

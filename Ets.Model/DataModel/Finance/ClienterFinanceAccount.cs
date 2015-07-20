@@ -79,6 +79,14 @@ namespace Ets.Model.DataModel.Finance
         /// </summary>
         public string OpenCity { get; set; }
         /// <summary>
+        /// 省Code
+        /// </summary>
+        public int OpenProvinceCode { get; set; }
+        /// <summary>
+        /// 市Code
+        /// </summary>
+        public int OpenCityCode { get; set; }
+        /// <summary>
         /// 身份证号
         /// </summary>
         public string IDCard { get; set; }

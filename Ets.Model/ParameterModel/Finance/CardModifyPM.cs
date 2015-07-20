@@ -71,10 +71,20 @@ namespace Ets.Model.ParameterModel.Finance
         [Required(ErrorMessage = "省市区不能为空")]
         public string OpenProvince { get; set; }
         /// <summary>
+        /// 省名称
+        /// </summary>
+        [Required(ErrorMessage = "省市区不能为空")]
+        public int OpenProvinceCode { get; set; }
+        /// <summary>
         /// 市区名称
         /// </summary>
         [Required(ErrorMessage = "省市区不能为空")]
         public string OpenCity { get; set; }
+        /// <summary>
+        /// 市区名称
+        /// </summary>
+        [Required(ErrorMessage = "省市区不能为空")]
+        public int OpenCityCode { get; set; }
         /// <summary>
         /// 身份证号
         /// </summary>

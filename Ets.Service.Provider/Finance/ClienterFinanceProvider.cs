@@ -333,7 +333,9 @@ namespace Ets.Service.Provider.Finance
                             OpenSubBank = cardModifyCpm.OpenSubBank, //开户支行
                             UpdateBy = cardModifyCpm.UpdateBy, //修改人  当前登录人
                             OpenProvince = cardModifyCpm.OpenProvince, //省名称
+                            OpenProvinceCode = cardModifyCpm.OpenProvinceCode,
                             OpenCity = cardModifyCpm.OpenCity, //市区名称
+                            OpenCityCode = cardModifyCpm.OpenCityCode, 
                             IDCard = cardModifyCpm.IDCard //身份证号
                         });
                         tran.Complete();

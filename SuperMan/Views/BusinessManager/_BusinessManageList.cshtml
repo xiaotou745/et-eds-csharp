@@ -383,14 +383,14 @@
                 if (result != null) {
                     var bfa = $.parseJSON(result);
                     $("#openProvince").val(bfa.OpenProvince);
-                    $("#openProvinceCode").val('');
+                    $("#openProvinceCode").val(bfa.OpenProvinceCode);
                     $("#openCity").val(bfa.OpenCity);
-                    $("#openCityCode").val('');
+                    $("#openCityCode").val(bfa.OpenCityCode);
                     $("#idCard").val(bfa.IDCard);
                     if (bfa.BelongType == 0) {
                         $("#accountType").val('个人账户');
                     } else if (bfa.BelongType == 1) {
-                        $("#accountType").val('个人账户');
+                        $("#accountType").val('公司账户');
                     } else {
                         $("#accountType").val('未知');
                     }
