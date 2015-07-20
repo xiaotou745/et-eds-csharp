@@ -125,6 +125,13 @@
                 accountDcRef = result;
             }
         });
+        //每次加载数据前先清除
+        $("input[name='checkDeliveryCompany']").each(function() {
+            $(this).prop("checked", false);
+        });
+        $("input[name='checkMenus']").each(function() {
+            $(this).prop("checked", false);
+        });
         if (accountCityRef.length > 0) {
             for (var i = 0; i < accountCityRef.length; i++) {
                 if (accountCityRef[i].IsEnable == 1) {
