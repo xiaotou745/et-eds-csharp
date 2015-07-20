@@ -25,7 +25,7 @@ namespace Ets.Dao.GlobalConfig
             GlobalConfigModel model = null;
             #region redis判断，如果没有加到redis中
             var redis = new ETS.NoSql.RedisCache.RedisCache();
-            string cacheKey = string.Concat(RedissCacheKey.Ets_Dao_GlobalConfig_GlobalConfigGet, GroupId, "_", ETS.Config.GlobalVersion);//缓存的KEY
+            string cacheKey = string.Concat(RedissCacheKey.Ets_Dao_GlobalConfig_GlobalConfigGet, GroupId);//缓存的KEY
             model = redis.Get<GlobalConfigModel>(cacheKey);
             if (model == null)
             {
