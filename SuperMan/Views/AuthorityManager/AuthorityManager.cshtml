@@ -163,13 +163,15 @@
 </div>
 <script>
     var adminjs = new adminglass(); //实例化后台类
-    $(document).ready(function () {
+    $(document).ready(function() {
         $("#selAcountType").change(fn);
+
         function fn() {
             $("#divCity").toggle($("#selAcountType").val() != 1);
 
         }
-        //
+
+//
         ////查询
         //$("#btnSearch").on('click', function () {
         //    criteria = {
@@ -179,7 +181,7 @@
         //    refresh(0);
         //});
         //添加帐户
-        $("#btnAdd").on('click', function () {
+        $("#btnAdd").on('click', function() {
             $("#selAcountType").val('1');
             $('#accountId').val('0');
             $('#optionType').val('0');
@@ -192,13 +194,17 @@
             $('#confirmPassword').val('');
             $("#isEnableY").attr("checked", "checked");
             $(":checkbox[name='checkMenus']").prop("checked", false);
+            $("input[name='checkDeliveryCompany']").each(function () {
+                $(this).prop("checked", false);
+            });
             $('#statusFin').text("添加账号");
             $('#cityNameList').text("请选择");
             adminjs.openwinbox('#AddAccountShow');
             $("#divCity").hide();
+            $("#DcItemList").hide();
         });
         window.location.hash = '';
-    })
+    });
     function checkAll() {
         var checkedOfAll = $("#selectAll").prop("checked");
         $("input[name='checkMenus']").prop("checked", checkedOfAll);

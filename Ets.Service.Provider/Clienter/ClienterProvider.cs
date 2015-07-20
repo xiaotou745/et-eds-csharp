@@ -1388,7 +1388,7 @@ namespace Ets.Service.Provider.Clienter
             GlobalConfigModel globalSetting = GlobalConfigDao.GlobalConfigGet(0);
             if (mapDetail.GrabToCompleteDistance > -1)//如果抢单和完成两个点的坐标都有效，才进行距离判断
             {
-                if (mapDetail.GrabToCompleteDistance <= ParseHelper.ToInt(globalSetting.TakeCompleteDistance, 0))
+                if (mapDetail.GrabToCompleteDistance <= ParseHelper.ToInt(globalSetting.GrabToCompleteDistance, 0))
                 {
                     return true;
                 }
