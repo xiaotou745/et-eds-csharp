@@ -143,9 +143,9 @@ namespace Ets.Model.DomainModel.GlobalConfig
         public string EmployerTaskTimeSet { get; set; }
 
 		/// <summary>
-        /// 无效订单判定时取货点和完成点的距离(米)
+        /// 无效订单判定时抢单点和完成点的距离(米)
         /// </summary>
-        public string TakeCompleteDistance { get; set; }
+        public string GrabToCompleteDistance { get; set; }
 		
 		/// <summary>
         /// 无效订单判定时累计完成订单数量

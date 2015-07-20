@@ -275,10 +275,10 @@ namespace Ets.Service.Provider.Business
                         return false;
                     }
                 }
-                if (ParseHelper.ToInt(globalConfigModel.TakeCompleteDistance) >= 0)
+                if (ParseHelper.ToInt(globalConfigModel.GrabToCompleteDistance) >= 0)
                 {
-                    globalConfig.KeyName = "TakeCompleteDistance";
-                    globalConfig.Value = globalConfigModel.TakeCompleteDistance;
+                    globalConfig.KeyName = "GrabToCompleteDistance";
+                    globalConfig.Value = globalConfigModel.GrabToCompleteDistance;
                     reg = businessGroupDao.UpdateGlobalConfig(globalConfig);
                     if (!reg)
                     {

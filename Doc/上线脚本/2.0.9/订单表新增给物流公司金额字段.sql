@@ -51,13 +51,15 @@ INSERT INTO dbo.GlobalConfig
           GroupId ,
           StrategyId
         )
-VALUES  ( N'TakeCompleteDistance' , -- KeyName - nvarchar(100)
+VALUES  ( N'GrabToCompleteDistance' , -- KeyName - nvarchar(100)
           N'0' , -- Value - nvarchar(500)
           GETDATE(),
-          N'无效订单判定时取货点和完成点的距离(米)' , -- Remark - nvarchar(200)
+          N'无效订单判定时抢单点和完成点的距离(米)' , -- Remark - nvarchar(200)
           0 , -- GroupId - int
           -1  -- StrategyId - int
         )
 go
 create index index_order_actualDoneDate on [order](ActualDoneDate) 
 go
+
+
