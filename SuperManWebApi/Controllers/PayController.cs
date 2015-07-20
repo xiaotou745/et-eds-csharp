@@ -130,7 +130,7 @@ namespace SuperManWebApi.Controllers
         {
             string data = HttpContext.Current.Request["data"];
             payProvider.YeePayCashTransferCallback(data);
-            HttpContext.Current.Response.Write("SUCCESSETS");
+            HttpContext.Current.Response.Write("SUCCESS");
             HttpContext.Current.Response.End();
         }
     }
