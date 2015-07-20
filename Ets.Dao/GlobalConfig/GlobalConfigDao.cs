@@ -14,7 +14,7 @@ namespace Ets.Dao.GlobalConfig
 {
     public class GlobalConfigDao : ETS.Dao.DaoBase
     {
-        private static string CurrentGlobalVersion = string.Empty;
+        //private static string CurrentGlobalVersion = string.Empty;
         /// <summary>
         /// 获取全局变量表数据,已加入缓存
         /// 窦海超
@@ -25,11 +25,11 @@ namespace Ets.Dao.GlobalConfig
             GlobalConfigModel model = null;
             #region redis判断，如果没有加到redis中
             var redis = new ETS.NoSql.RedisCache.RedisCache();
-            string cacheKey = string.Format(RedissCacheKey.Ets_Dao_GlobalConfig_GlobalConfigGet, GroupId);//缓存的KEY
+            string cacheKey = string.Concat(RedissCacheKey.Ets_Dao_GlobalConfig_GlobalConfigGet, GroupId, "_", ETS.Config.GlobalVersion);//缓存的KEY
             model = redis.Get<GlobalConfigModel>(cacheKey);
             if (model == null)
             {
-                CurrentGlobalVersion = ETS.Config.GlobalVersion;
+                //CurrentGlobalVersion = ETS.Config.GlobalVersion;
                 model = new GlobalConfigDao().GlobalConfigMethod(GroupId);
                 redis.Set(cacheKey, model);
             }
@@ -64,7 +64,7 @@ namespace Ets.Dao.GlobalConfig
         /// <returns></returns>
         public string GetCommissionFormulaMode(int GroupId)
         {
-            string sql = "select Value from GlobalConfig(nolock) where keyname='CommissionFormulaMode'and GroupId="+GroupId;
+            string sql = "select Value from GlobalConfig(nolock) where keyname='CommissionFormulaMode'and GroupId=" + GroupId;
             object dt = DbHelper.ExecuteScalar(SuperMan_Read, sql);
             if (dt != null)
             {
@@ -81,7 +81,7 @@ namespace Ets.Dao.GlobalConfig
         /// <returns></returns>
         public bool UpdateCommissionFormulaMode(string value, int GroupId)
         {
-            string sql = "update GlobalConfig set Value=@Value,LastUpdateTime=getdate() where keyname='CommissionFormulaMode' and GroupId="+GroupId;
+            string sql = "update GlobalConfig set Value=@Value,LastUpdateTime=getdate() where keyname='CommissionFormulaMode' and GroupId=" + GroupId;
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("@value", SqlDbType.NVarChar, 500);
             dbParameters.SetValue("value", value);
