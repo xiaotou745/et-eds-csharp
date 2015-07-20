@@ -710,10 +710,10 @@ namespace Ets.Dao.MenuSet
             string sql = @"
 MERGE INTO AccountCityRelation adr
 	USING(values(@Accountid,@CityId)) AS adrNew(AccountId,CityId)
-		ON adr.AccountId=adr.AccountId AND  adr.CityId=adrNew.CityId
+		ON adr.AccountId=adrNew.Accountid AND  adr.CityId=adrNew.CityId
 	WHEN MATCHED 
 	THEN UPDATE 
-		 SET adr.AccountId=@Accountid,
+		 SET 
              adr.CityId=@CityId,
              adr.IsEnable=@IsEnable,
              adr.UpdateBy=@UpdateBy
@@ -875,10 +875,10 @@ WHERE acr.AccountId=@AccountId and acr.IsEnable=1;";
             string sql = @"
 MERGE INTO AccountDeliveryRelation adr
 	USING(values(@Accountid,@DeliveryCompanyID)) AS adrNew(AccountId,DeliveryCompanyID)
-		ON adr.AccountId=adr.AccountId AND  adr.DeliveryCompanyID=adrNew.DeliveryCompanyID
+		ON adr.AccountId=adrNew.Accountid AND  adr.DeliveryCompanyID=adrNew.DeliveryCompanyID
 	WHEN MATCHED 
 	THEN UPDATE 
-		 SET adr.AccountId=@Accountid,
+		 SET 
              adr.DeliveryCompanyID=@DeliveryCompanyID,
              adr.CreateBy=@CreateBy,
              adr.IsEnable=@IsEnable
