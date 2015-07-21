@@ -42,7 +42,8 @@ namespace SuperMan.Controllers
                 Status = -1,
                 GroupId = SuperMan.App_Start.UserContext.Current.GroupId,
                 AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType),
-                deliveryCompany = dclist.Count>0?dclist[0].CompanyId.ToString():"-1"
+                deliveryCompany = dclist.Count>0?dclist[0].CompanyId.ToString():"-1",
+                UserType = UserType
             };
             if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
             {
@@ -63,6 +64,7 @@ namespace SuperMan.Controllers
             int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;
             criteria.AuthorityCityNameListStr =
                iAreaProvider.GetAuthorityCityNameListStr(ParseHelper.ToInt(UserType));
+            criteria.UserType = UserType;
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(UserType);
             if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
             {
@@ -153,7 +155,8 @@ namespace SuperMan.Controllers
                 orderStatus = -1,
                 //GroupId = UserContext.Current.GroupId,
                 AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType),
-                deliveryCompany = dclist.Count > 0 ? dclist[0].CompanyId.ToString() : "-1"
+                deliveryCompany = dclist.Count > 0 ? dclist[0].CompanyId.ToString() : "-1",
+                UserType = UserType
             };
             var pagedList = iDeliveryManagerProvider.GetOrderList(criteria);
             return View(pagedList);
@@ -170,6 +173,7 @@ namespace SuperMan.Controllers
             TryUpdateModel(criteria);
             criteria.AuthorityCityNameListStr =iAreaProvider.GetAuthorityCityNameListStr(UserType);
             criteria.deliveryCompany=string.IsNullOrWhiteSpace(criteria.deliveryCompany) ? "-1" : criteria.deliveryCompany;
+            criteria.UserType = UserType;
             if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
             {
                 return PartialView("_PostOrderManager");

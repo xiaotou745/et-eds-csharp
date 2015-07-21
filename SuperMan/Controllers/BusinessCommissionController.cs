@@ -40,7 +40,8 @@ namespace SuperMan.Controllers
                {
                    T1 = t1.ToString(),
                    T2 = t2.ToString(),
-                   AuthorityCityNameListStr = authorityCityNameListStr
+                   AuthorityCityNameListStr = authorityCityNameListStr,
+                   UserType = userType
                };
             if (userType > 0 && string.IsNullOrWhiteSpace(authorityCityNameListStr))
             {
@@ -140,7 +141,7 @@ namespace SuperMan.Controllers
             criteria.T1 = date1.ToString();
             criteria.T2 = date2.ToString();
             criteria.AuthorityCityNameListStr = authorityCityNameListStr;
-            
+            criteria.UserType = userType;
             if (userType > 0 && string.IsNullOrWhiteSpace(authorityCityNameListStr))
             {
                 return PartialView("_BusinessCommissionList");

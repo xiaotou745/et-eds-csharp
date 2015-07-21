@@ -125,5 +125,10 @@ namespace ETS
         /// 提现单历史数据处理时间限制
         /// </summary>
         public static string WithdrawTime { get { return ConfigKey("WithdrawTime"); } }
+
+        /// <summary>
+        /// 18位身份证正则表达式
+        /// </summary>
+        public const string IDCARD_REG = "^[1-9][0-9]{5}(19[0-9]{2}|200[0-9]|2010)(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])[0-9]{3}[0-9xX]$";
     }
 }
