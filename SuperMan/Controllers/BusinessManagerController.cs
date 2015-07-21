@@ -70,6 +70,7 @@ namespace SuperMan.Controllers
                 Status = -1,
                 GroupId = UserContext.Current.GroupId,
                 MealsSettleMode = -1,
+                UserType = UserType,
                 AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType)
             };
             if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
@@ -95,6 +96,7 @@ namespace SuperMan.Controllers
             int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
             criteria.AuthorityCityNameListStr =
                 iAreaProvider.GetAuthorityCityNameListStr(ParseHelper.ToInt(UserType));
+            criteria.UserType = UserType;
             ViewBag.txtGroupId = UserContext.Current.GroupId;//集团id
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(UserType);
             if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))

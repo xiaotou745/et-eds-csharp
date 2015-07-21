@@ -33,7 +33,17 @@ namespace SuperMan.Controllers
         public ActionResult BusinessWithdraw()
         {
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(0);
-            var criteria = new BusinessWithdrawSearchCriteria() {WithdrawStatus=0};
+            int userType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
+            var criteria = new BusinessWithdrawSearchCriteria()
+            {
+                WithdrawStatus=0,
+                UserType = userType,
+                AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(userType)
+            };
+            if (userType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
+            {
+                return View();
+            }
             var pagedList = iBusinessFinanceProvider.GetBusinessWithdrawList(criteria);
             return View(pagedList);
         }
@@ -47,10 +57,16 @@ namespace SuperMan.Controllers
         public ActionResult PostBusinessWithdraw(int pageindex = 1)
         {
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(0);
+            int userType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
             var criteria = new BusinessWithdrawSearchCriteria();
             TryUpdateModel(criteria);
+            criteria.UserType = userType;
+            criteria.AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(userType);
+            if (userType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
+            {
+                return View();
+            }
             var pagedList = iBusinessFinanceProvider.GetBusinessWithdrawList(criteria);
-
             return PartialView("_BusinessWithdrawList", pagedList);
         }
         /// <summary>

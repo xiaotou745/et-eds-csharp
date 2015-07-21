@@ -137,7 +137,7 @@ namespace ETS.Pay.YeePay
             //密钥   
             string hmackey = KeyConfig.YeepayHmac;
 
-            return CashTransfer(customernumber, hmackey, requestid, ledgerno, amount, Config.YeePayNotifyUrl);
+            return CashTransfer(customernumber, hmackey, requestid, ledgerno, Math.Round( ParseHelper.ToDecimal(amount),2 ).ToString(), Config.YeePayNotifyUrl);
 
         }
     }

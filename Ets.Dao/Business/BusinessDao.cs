@@ -421,7 +421,7 @@ and a.PhoneNo=@PhoneNo";
             //{
             //    sbSqlWhere.AppendFormat(" AND b.City IN ({0}) ", criteria.AuthorityCityNameListStr.Trim());
             //}
-            if (!string.IsNullOrEmpty(criteria.AuthorityCityNameListStr))
+            if (!string.IsNullOrEmpty(criteria.AuthorityCityNameListStr)&&criteria.UserType!=0)
             {
                 sbSqlWhere.AppendFormat(" AND b.City IN ({0}) ", criteria.AuthorityCityNameListStr.Trim());
             }
@@ -2297,7 +2297,7 @@ VALUES
             {
                 sqlwhere += string.Format(" AND B.City='{0}' ", criteria.BusinessCity);
             }
-            if (criteria.AuthorityCityNameListStr != null && !string.IsNullOrEmpty(criteria.AuthorityCityNameListStr.Trim()))
+            if (criteria.AuthorityCityNameListStr != null && !string.IsNullOrEmpty(criteria.AuthorityCityNameListStr.Trim())&&criteria.UserType!=0)
             {
                 sqlwhere += string.Format("  AND B.City IN({0}) ", criteria.AuthorityCityNameListStr);
             }

@@ -38,5 +38,11 @@ namespace Ets.Model.Common
         /// </summary>
         public string AuthorityCityNameListStr { get; set; }
 
+        /// <summary>
+        /// 用户类型（1：全部城市权限 2：部分城市权限）
+        /// </summary>
+        public int UserType { get; set; }
+        
+
     }
 }
