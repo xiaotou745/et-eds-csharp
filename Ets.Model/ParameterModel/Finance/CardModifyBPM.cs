@@ -17,5 +17,9 @@ namespace Ets.Model.ParameterModel.Finance
         /// </summary>
         [Range(1, int.MaxValue, ErrorMessage = "商家不能为空")]
         public int BusinessId { get; set; }
+        /// <summary>
+        /// 身份证号 或营业执照
+        /// </summary>
+        public string IDCard { get; set; }
     }
 }

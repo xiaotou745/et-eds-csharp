@@ -51,6 +51,7 @@ namespace Ets.Model.ParameterModel.Finance
         /// <summary>
         /// 开户支行
         /// </summary>
+        [MinLength(5,ErrorMessage ="开户支行不少于5个汉字")]
         public string OpenSubBank { get; set; }
 
         /// <summary>
@@ -66,29 +67,25 @@ namespace Ets.Model.ParameterModel.Finance
         public string Version { get; set; }
 
         /// <summary>
-        /// 省名称
+        /// 开户省
         /// </summary>
-        [Required(ErrorMessage = "省市区不能为空")]
+        [Required(ErrorMessage = "请选择开户省份")]
         public string OpenProvince { get; set; }
         /// <summary>
-        /// 省名称
+        /// 省编码
         /// </summary>
-        [Required(ErrorMessage = "省市区不能为空")]
+        [Required(ErrorMessage = "开户省编码不能为空")]
         public int OpenProvinceCode { get; set; }
         /// <summary>
-        /// 市区名称
+        /// 开户市
         /// </summary>
-        [Required(ErrorMessage = "省市区不能为空")]
+        [Required(ErrorMessage = "请选择开户城市")]
         public string OpenCity { get; set; }
         /// <summary>
-        /// 市区名称
+        /// 市编码
         /// </summary>
-        [Required(ErrorMessage = "省市区不能为空")]
+        [Required(ErrorMessage = "开户市编码不能为空")]
         public int OpenCityCode { get; set; }
-        /// <summary>
-        /// 身份证号
-        /// </summary>
-        [Required(ErrorMessage = "身份证号不能为空")]
-        public string IDCard { get; set; }
+        
     }
 }
