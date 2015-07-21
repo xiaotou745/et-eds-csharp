@@ -37,7 +37,7 @@ namespace Ets.Service.Provider.MyPush
                 //string masterSecret = "";
                 //if (tagId == 0) //C端
                 //{
-                     
+
                 //    appKey = "dce902893245e99461b9a5c8";// Your App Key from JPush
                 //    masterSecret = "fdc95d37d67c9472ad4e0e96";// Your Master Secret from JPush
                 //}
@@ -52,7 +52,7 @@ namespace Ets.Service.Provider.MyPush
                 if (jPushKey != null)
                 {
                     foreach (var aKeyValue in jPushKey)
-                    { 
+                    {
                         JPushClient client = new JPushClient(aKeyValue.Key, aKeyValue.Value);
                         Audience audience = null;
                         if (tagId == 0) //C端
@@ -90,7 +90,7 @@ namespace Ets.Service.Provider.MyPush
                 LogHelper.LogWriter(ex, parm);
             }
         }
-         
+
         /// <summary>
         /// 极光推送方法
         /// </summary>
@@ -134,6 +134,7 @@ namespace Ets.Service.Provider.MyPush
                         PushPayload pushPayload = new PushPayload();
                         pushPayload.platform = Platform.android_ios();
                         pushPayload.audience = audience;
+                        pushPayload.ResetOptionsApnsProduction(true);
                         Notification notification = new Notification().setAlert(model.Alert); //不需要写弹出内容
                         notification.AndroidNotification = new AndroidNotification().setTitle(model.Title);
                         notification.IosNotification =
@@ -171,7 +172,7 @@ namespace Ets.Service.Provider.MyPush
         {
             Dictionary<string, string> jPushKey = new Dictionary<string, string>();
             if (tagId == 0)
-            { 
+            {
                 jPushKey.Add("dce902893245e99461b9a5c8", "fdc95d37d67c9472ad4e0e96");
                 jPushKey.Add("53ee4401ba14b10f32dc4bcf", "2671f78e5291d889b85fadc0");
             }
@@ -185,6 +186,6 @@ namespace Ets.Service.Provider.MyPush
                 return null;
             }
             return jPushKey;
-        } 
+        }
     }
 }
