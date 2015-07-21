@@ -66,6 +66,7 @@ namespace Ets.Service.Provider.MyPush
                         PushPayload pushPayload = new PushPayload();
                         pushPayload.platform = Platform.android_ios();
                         pushPayload.audience = audience;
+                        pushPayload.options.apns_production = true;
                         Notification notification = new Notification().setAlert(alert);
                         notification.AndroidNotification = new AndroidNotification().setTitle(title);
                         notification.IosNotification =
