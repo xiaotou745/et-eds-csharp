@@ -282,6 +282,22 @@ namespace Ets.Service.Provider.Finance
             {
                 return FinanceCardModifyB.BelongTypeError;
             }
+
+            if (cardModifyBpm.BelongType == (int) BusinessFinanceAccountBelongType.Conpany)
+            {
+                if (string.IsNullOrWhiteSpace(cardModifyBpm.IDCard) || cardModifyBpm.IDCard.Trim().Length <15)
+                {
+                    return FinanceCardModifyB.BusinessLicenceError;
+                }
+            }
+            if (cardModifyBpm.BelongType == (int)BusinessFinanceAccountBelongType.Self)
+            {
+                if (string.IsNullOrWhiteSpace(cardModifyBpm.IDCard) || cardModifyBpm.IDCard.Trim().Length < 18)
+                {
+                    return FinanceCardModifyB.IDCardError;
+                }
+            }
+
             return FinanceCardModifyB.Success;
         }
         #endregion
