@@ -110,7 +110,11 @@ select bwf.Id,
        bwf.OpenBank,
        bwf.OpenSubBank,
        bwf.TrueName,
-       bwf.AccountNo
+       bwf.AccountNo,
+       bwf.OpenProvince,
+       bwf.OpenCity,
+       bwf.BelongType,
+       bwf.IDCard
 from BusinessWithdrawForm bwf with(nolock)
   join business b with(nolock) on bwf.BusinessId=b.Id and bwf.Id=@Id  ";
             IDbParameters parm = DbHelper.CreateDbParameters();
