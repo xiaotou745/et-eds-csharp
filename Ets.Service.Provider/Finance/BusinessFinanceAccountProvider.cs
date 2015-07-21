@@ -50,12 +50,12 @@ namespace Ets.Service.Provider.Finance
         {
             #region 参数验证
             //绑定个人账户
-            if (cardBindBpm.BelongType == 0 && string.IsNullOrEmpty(cardBindBpm.IDCard))
+            if (cardBindBpm.BelongType == 0 && (string.IsNullOrEmpty(cardBindBpm.IDCard) || cardBindBpm.IDCard.Length < 18))
             {
                 return ResultModel<object>.Conclude(FinanceCardBindB.IDCardError);
             }
             //绑定公司账户
-            if (cardBindBpm.BelongType == 1 && string.IsNullOrEmpty(cardBindBpm.IDCard))
+            if (cardBindBpm.BelongType == 1 && (string.IsNullOrEmpty(cardBindBpm.IDCard) || cardBindBpm.IDCard.Length < 15))
             {
                 return ResultModel<object>.Conclude(FinanceCardBindB.BusinessLicenceError);
             }
@@ -174,9 +174,9 @@ namespace Ets.Service.Provider.Finance
                             OpenSubBank = cardModifyBpm.OpenSubBank, //开户支行
                             UpdateBy = cardModifyBpm.UpdateBy, //修改人  当前登录人
                             OpenProvince = cardModifyBpm.OpenProvince, //省名称
-                            OpenProvinceCode = cardModifyBpm.OpenProvinceCode, 
+                            OpenProvinceCode = cardModifyBpm.OpenProvinceCode,
                             OpenCity = cardModifyBpm.OpenCity, //市区名称
-                            OpenCityCode = cardModifyBpm.OpenCityCode, 
+                            OpenCityCode = cardModifyBpm.OpenCityCode,
                             IDCard = cardModifyBpm.IDCard //公司账户时存营业执照，个人账户存身份证号码
                         });
                         tran.Complete();
@@ -205,7 +205,7 @@ namespace Ets.Service.Provider.Finance
                 LegalPerson = cardModifyBpm.TrueName,
                 LinkMan = cardModifyBpm.TrueName,
                 SignedName = cardModifyBpm.TrueName
-            }; 
+            };
             var registResult = new Register().RegSubaccount(bYeeRegisterParameter); //注册帐号
             if (registResult != null && !string.IsNullOrEmpty(registResult.code) && registResult.code.Trim() == "1")   //绑定成功，更新易宝key
             {
