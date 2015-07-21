@@ -134,7 +134,8 @@ namespace Ets.Service.Provider.MyPush
                         PushPayload pushPayload = new PushPayload();
                         pushPayload.platform = Platform.android_ios();
                         pushPayload.audience = audience;
-                        pushPayload.ResetOptionsApnsProduction(true);
+                        pushPayload.options.apns_production = true;
+                        //pushPayload.ResetOptionsApnsProduction(true);
                         Notification notification = new Notification().setAlert(model.Alert); //不需要写弹出内容
                         notification.AndroidNotification = new AndroidNotification().setTitle(model.Title);
                         notification.IosNotification =
