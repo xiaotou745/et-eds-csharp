@@ -54,6 +54,10 @@ namespace Ets.Dao.Finance
             {
                 sbSqlWhere.AppendFormat(" AND b.City='{0}' ", criteria.BusinessCity.Trim());
             }
+            if (criteria.AuthorityCityNameListStr != null && !string.IsNullOrEmpty(criteria.AuthorityCityNameListStr.Trim()) && criteria.UserType != 0)
+            {
+                sbSqlWhere.AppendFormat("  AND B.City IN({0}) ", criteria.AuthorityCityNameListStr);
+            }
             if (criteria.WithdrawStatus != 0)
             {
                 sbSqlWhere.AppendFormat(" AND bwf.Status={0} ", criteria.WithdrawStatus);
@@ -106,7 +110,11 @@ select bwf.Id,
        bwf.OpenBank,
        bwf.OpenSubBank,
        bwf.TrueName,
-       bwf.AccountNo
+       bwf.AccountNo,
+       bwf.OpenProvince,
+       bwf.OpenCity,
+       bwf.BelongType,
+       bwf.IDCard
 from BusinessWithdrawForm bwf with(nolock)
   join business b with(nolock) on bwf.BusinessId=b.Id and bwf.Id=@Id  ";
             IDbParameters parm = DbHelper.CreateDbParameters();
