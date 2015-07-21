@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ETS;
 
 namespace Ets.Model.ParameterModel.Finance
 {
@@ -22,6 +23,7 @@ namespace Ets.Model.ParameterModel.Finance
         /// 身份证号
         /// </summary>
         [Required(ErrorMessage = "身份证号不能为空")]
+        [RegularExpression(Config.IDCARD_REG, ErrorMessage = "请正确填写18位有效身份证号码")]
         public string IDCard { get; set; }
     }
 }

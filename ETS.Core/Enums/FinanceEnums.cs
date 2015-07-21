@@ -245,9 +245,9 @@ namespace ETS.Enums
         SystemError = 0,
         [DisplayText("未传参")]
         NoPara = -2,
-        [DisplayText("身份证号不能为空")]
+        [DisplayText("请正确填写18位有效身份证号码")]
         IDCardError = -3,
-        [DisplayText("营业执照号不能为空")]
+        [DisplayText("请正确填写15位有效营业执照号码")]
         BusinessLicenceError = -4,
     }
 

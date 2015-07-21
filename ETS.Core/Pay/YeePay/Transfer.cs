@@ -67,7 +67,7 @@ namespace ETS.Pay.YeePay
         /// 2、ledgerno 为空 sourceledgerno 非空时：子账户转主账户
         /// </summary>
         /// <param name="ledgerno">子账户商户编号</param>
-        /// <param name="amount">转账金额 单位：元  ，参数只要实际转款金额</param></param>
+        /// <param name="amount">转账金额 单位：元  ，参数只要实际转款金额</param>
         /// <param name="sourceledgerno">子账户商编</param>
         /// <returns>成功  失败</returns>
         public TransferReturnModel TransferAccounts(string ledgerno, string amount, string sourceledgerno)
@@ -128,7 +128,6 @@ namespace ETS.Pay.YeePay
         /// <param name="withdrawFormId">提现单id 用来生成体现单号</param>
         /// <param name="ledgerno">子账户商户编号</param>
         /// <param name="amount">转账金额 单位：元  参数只要实际转款金额</param>
-        ///// <param name="callbackurl">回调接口 提现成功与否返回data</param>
         /// <returns></returns>
         public TransferReturnModel CashTransfer(APP app, int withdrawFormId, string ledgerno, string amount)
         {
@@ -138,7 +137,7 @@ namespace ETS.Pay.YeePay
             //密钥   
             string hmackey = KeyConfig.YeepayHmac;
 
-            return CashTransfer(customernumber, hmackey, requestid, ledgerno, amount, Config.YeePayNotifyUrl);
+            return CashTransfer(customernumber, hmackey, requestid, ledgerno, Math.Round( ParseHelper.ToDecimal(amount),2 ).ToString(), Config.YeePayNotifyUrl);
 
         }
     }

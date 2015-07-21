@@ -68,10 +68,10 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.NOFormParameter);
             }
-            var strUserId = HttpContext.Current.Request.Form["userId"]; //用户Id
+            int UserId = ParseHelper.ToInt(HttpContext.Current.Request.Form["userId"],0); //用户Id
             var strIdCard = HttpContext.Current.Request.Form["IDCard"]; //身份证号
             var trueName = HttpContext.Current.Request.Form["trueName"]; //真实姓名
-            if (!iClienterProvider.CheckClienterExistById(int.Parse(strUserId)))
+            if (UserId == 0 || !iClienterProvider.CheckClienterExistById(UserId))
             {
                 return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.InvalidUserId);
             }
@@ -88,17 +88,17 @@ namespace SuperManWebApi.Controllers
 
             ImageHelper ih = new ImageHelper();
             //手持照片
-            ImgInfo handImg = ih.UploadImg(fileHand, ParseHelper.ToInt(strUserId, 0), ImageType.Clienter);
+            ImgInfo handImg = ih.UploadImg(fileHand, UserId, ImageType.Clienter);
             //身份证照片
-            ImgInfo sfhImg = ih.UploadImg(file, ParseHelper.ToInt(strUserId, 0), ImageType.Clienter);
+            ImgInfo sfhImg = ih.UploadImg(file, UserId, ImageType.Clienter);
 
-            var upResult = iClienterProvider.UpdateClientPicInfo(new ClienterModel { Id = int.Parse(strUserId), PicUrl = sfhImg.PicUrl, PicWithHandUrl = handImg.PicUrl, TrueName = trueName, IDCard = strIdCard });
+            var upResult = iClienterProvider.UpdateClientPicInfo(new ClienterModel { Id = UserId, PicUrl = sfhImg.PicUrl, PicWithHandUrl = handImg.PicUrl, TrueName = trueName, IDCard = strIdCard });
             if (!upResult)
             {
-                return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.UpFailed, new UploadIconModel() { Id = ParseHelper.ToInt(strUserId), ImagePath = "" });
+                return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.UpFailed, new UploadIconModel() { Id = UserId, ImagePath = "" });
             }
             var relativePath = Path.Combine(CustomerIconUploader.Instance.GetPhysicalPath(ImageType.Clienter), sfhImg.FileName).ToForwardSlashPath();
-            return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.Success, new UploadIconModel() { Id = ParseHelper.ToInt(strUserId), ImagePath = relativePath });
+            return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.Success, new UploadIconModel() { Id = UserId, ImagePath = relativePath });
         }
         /// <summary>
         /// 获取我的任务   根据状态判断是已完成任务还是我的任务
