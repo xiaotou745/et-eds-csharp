@@ -17,5 +17,10 @@ namespace Ets.Model.ParameterModel.Finance
         /// </summary>
         [Range(1, int.MaxValue, ErrorMessage = "骑士不能为空")]
         public int ClienterId { get; set; }
+        /// <summary>
+        /// 身份证号
+        /// </summary>
+        [Required(ErrorMessage = "身份证号不能为空")]
+        public string IDCard { get; set; }
     }
 }

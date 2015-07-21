@@ -51,6 +51,7 @@ namespace Ets.Model.ParameterModel.Finance
         /// <summary>
         /// 开户支行
         /// </summary>
+        [MinLength(5,ErrorMessage ="开户支行不少于5个汉字")]
         public string OpenSubBank { get; set; }
 
         /// <summary>
@@ -85,10 +86,6 @@ namespace Ets.Model.ParameterModel.Finance
         /// </summary>
         [Required(ErrorMessage = "省市区不能为空")]
         public int OpenCityCode { get; set; }
-        /// <summary>
-        /// 身份证号
-        /// </summary>
-        [Required(ErrorMessage = "身份证号不能为空")]
-        public string IDCard { get; set; }
+        
     }
 }
