@@ -360,8 +360,8 @@ namespace Ets.Service.Provider.Finance
                     busiFinanceAccount.YeepayKey = dr.SuccessId; //子账户id
                 }
                 //转账逻辑
-                var regTransfer = new Transfer().TransferAccounts("", amount.ToString(),
-                    busiFinanceAccount.YeepayKey); //转账   子账户转给总账户
+                var regTransfer = new Transfer().TransferAccounts(busiFinanceAccount.YeepayKey, amount.ToString(),""
+                    ); //转账   子账户转给总账户
                 if (regTransfer.code != "1")
                 {
                     dealResultInfo.DealMsg = "商户易宝自动转账失败：" + regTransfer.code;
