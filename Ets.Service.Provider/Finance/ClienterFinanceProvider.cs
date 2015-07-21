@@ -222,6 +222,8 @@ namespace Ets.Service.Provider.Finance
                     OpenCity = cardBindCpm.OpenCity,//开户行
                     OpenProvince = cardBindCpm.OpenProvince,//开户市
                     IDCard = cardBindCpm.IDCard,//身份证号
+                    OpenCityCode = cardBindCpm.OpenCityCode,//市编码
+                    OpenProvinceCode = cardBindCpm.OpenProvinceCode,//省编码
                 });
                 tran.Complete();
             }

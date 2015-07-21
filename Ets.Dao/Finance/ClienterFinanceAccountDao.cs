@@ -34,8 +34,8 @@ namespace Ets.Dao.Finance
         public int Insert(ClienterFinanceAccount clienterFinanceAccount)
         {
             const string insertSql = @"
-insert into ClienterFinanceAccount(ClienterId,TrueName,AccountNo,IsEnable,AccountType,BelongType,OpenBank,OpenSubBank,OpenProvince,OpenCity,IDCard,CreateBy,UpdateBy)
-values(@ClienterId,@TrueName,@AccountNo,@IsEnable,@AccountType,@BelongType,@OpenBank,@OpenSubBank,@OpenProvince,@OpenCity,@IDCard,@CreateBy,@UpdateBy)
+insert into ClienterFinanceAccount(ClienterId,TrueName,AccountNo,IsEnable,AccountType,BelongType,OpenBank,OpenSubBank,OpenProvince,OpenCity,OpenProvinceCode,OpenCityCode,IDCard,CreateBy,UpdateBy)
+values(@ClienterId,@TrueName,@AccountNo,@IsEnable,@AccountType,@BelongType,@OpenBank,@OpenSubBank,@OpenProvince,@OpenCity,@OpenProvinceCode,@OpenCityCode,@IDCard,@CreateBy,@UpdateBy)
 select @@IDENTITY";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("ClienterId", clienterFinanceAccount.ClienterId); //骑士ID
@@ -51,6 +51,8 @@ select @@IDENTITY";
             dbParameters.AddWithValue("IDCard", clienterFinanceAccount.IDCard); //身份证号
             dbParameters.AddWithValue("OpenProvince", clienterFinanceAccount.OpenProvince); //开户省
             dbParameters.AddWithValue("OpenCity", clienterFinanceAccount.OpenCity); //开户市
+            dbParameters.AddWithValue("OpenProvinceCode", clienterFinanceAccount.OpenProvinceCode); //开户省编码
+            dbParameters.AddWithValue("OpenCityCode", clienterFinanceAccount.OpenCityCode); //开户市编码
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters);
             return ParseHelper.ToInt(result);
         }
