@@ -45,6 +45,7 @@ namespace SuperMan.Controllers
             var criteria = new OrderSearchCriteria()
             {
                 orderStatus = -1,
+                UserType = UserType,
                 //GroupId = UserContext.Current.GroupId,
                 AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType)
             };
@@ -65,6 +66,7 @@ namespace SuperMan.Controllers
             TryUpdateModel(criteria);
             criteria.AuthorityCityNameListStr =
                 iAreaProvider.GetAuthorityCityNameListStr(UserType);
+            criteria.UserType = UserType;
             //指派超人时  以下代码 有用，现在 注释掉  wc 
             //var superManModel = iDistributionProvider.GetClienterModelByGroupID(ViewBag.txtGroupId);
             //if (superManModel != null)

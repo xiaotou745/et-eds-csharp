@@ -53,6 +53,7 @@ namespace SuperMan.Controllers
             {
                 Status = -1,
                 GroupId = SuperMan.App_Start.UserContext.Current.GroupId,
+                UserType = UserType,
                 AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType)
 
             };
@@ -76,6 +77,7 @@ namespace SuperMan.Controllers
 
             criteria.AuthorityCityNameListStr =
                 iAreaProvider.GetAuthorityCityNameListStr(ParseHelper.ToInt(UserType));
+            criteria.UserType = UserType;
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(UserType);
             if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
             {

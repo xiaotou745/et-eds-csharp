@@ -57,7 +57,7 @@ namespace Ets.Dao.DeliveryManager
             {
                 sbSqlWhere.AppendFormat(" AND C.DeliveryCompanyId={0} ", criteria.deliveryCompany);
             }
-            if (!string.IsNullOrEmpty(criteria.AuthorityCityNameListStr))
+            if (!string.IsNullOrEmpty(criteria.AuthorityCityNameListStr)&&criteria.UserType!=0)
             {
                 sbSqlWhere.AppendFormat(" AND C.City IN ({0}) ", criteria.AuthorityCityNameListStr.Trim());
             }
@@ -128,7 +128,7 @@ namespace Ets.Dao.DeliveryManager
             {
                 sbSqlWhere.AppendFormat(" AND b.City='{0}' ", criteria.businessCity.Trim());
             }
-            if (criteria.AuthorityCityNameListStr != null && !string.IsNullOrEmpty(criteria.AuthorityCityNameListStr.Trim()))
+            if (criteria.AuthorityCityNameListStr != null && !string.IsNullOrEmpty(criteria.AuthorityCityNameListStr.Trim())&&criteria.UserType!=0)
             {
                 sbSqlWhere.AppendFormat(" AND b.City IN({0}) ", criteria.AuthorityCityNameListStr.Trim());
             }

@@ -54,6 +54,10 @@ namespace Ets.Dao.Finance
             {
                 sbSqlWhere.AppendFormat(" AND b.City='{0}' ", criteria.BusinessCity.Trim());
             }
+            if (criteria.AuthorityCityNameListStr != null && !string.IsNullOrEmpty(criteria.AuthorityCityNameListStr.Trim()) && criteria.UserType != 0)
+            {
+                sbSqlWhere.AppendFormat("  AND B.City IN({0}) ", criteria.AuthorityCityNameListStr);
+            }
             if (criteria.WithdrawStatus != 0)
             {
                 sbSqlWhere.AppendFormat(" AND bwf.Status={0} ", criteria.WithdrawStatus);
