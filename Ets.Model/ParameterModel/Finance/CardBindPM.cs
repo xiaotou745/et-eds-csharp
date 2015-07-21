@@ -51,11 +51,12 @@ namespace Ets.Model.ParameterModel.Finance
         /// <summary>
         /// 开户支行
         /// </summary>
+        [MinLength(5, ErrorMessage = "开户行支行地址不少于5个汉字")]
         public string OpenSubBank { get; set; }
         /// <summary>
         /// 开户省
         /// </summary>
-        [Required(ErrorMessage = "开户省不能为空")]
+        [Required(ErrorMessage = "请选择开户省份")]
         public string OpenProvince { get; set; }
         /// <summary>
         /// 省编码
@@ -65,7 +66,7 @@ namespace Ets.Model.ParameterModel.Finance
         /// <summary>
         /// 开户市
         /// </summary>
-        [Required(ErrorMessage = "开户市不能为空")]
+        [Required(ErrorMessage = "请选择开户城市")]
         public string OpenCity { get; set; }
         /// <summary>
         /// 市编码

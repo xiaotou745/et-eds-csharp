@@ -245,9 +245,9 @@ namespace ETS.Enums
         SystemError = 0,
         [DisplayText("未传参")]
         NoPara = -2,
-        [DisplayText("身份证号不能为空")]
+        [DisplayText("请正确填写18位有效身份证号码")]
         IDCardError = -3,
-        [DisplayText("营业执照号不能为空")]
+        [DisplayText("请正确填写15位有效营业执照号码")]
         BusinessLicenceError = -4,
     }
 
@@ -272,7 +272,11 @@ namespace ETS.Enums
         [DisplayText("请先注册或账户被封")]
         FisrtRegist = 101,
         [DisplayText("原银行账户存在未完成的提现单，无法修改")]
-        ForbitModify = 102
+        ForbitModify = 102,
+        [DisplayText("请正确填写18位有效身份证号码")]
+        IDCardError = 103,
+        [DisplayText("请正确填写15位有效营业执照号码")]
+        BusinessLicenceError = 104
     }
     /// <summary>
     ///商户余额流水   流水状态(1、交易成功 2、交易中）枚举 add by caoheyang 20150511
