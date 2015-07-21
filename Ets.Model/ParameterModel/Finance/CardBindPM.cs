@@ -58,10 +58,20 @@ namespace Ets.Model.ParameterModel.Finance
         [Required(ErrorMessage = "开户省不能为空")]
         public string OpenProvince { get; set; }
         /// <summary>
+        /// 省编码
+        /// </summary>
+        [Required(ErrorMessage = "开户省编码不能为空")]
+        public int OpenProvinceCode { get; set; }
+        /// <summary>
         /// 开户市
         /// </summary>
         [Required(ErrorMessage = "开户市不能为空")]
         public string OpenCity { get; set; }
+        /// <summary>
+        /// 市编码
+        /// </summary>
+        [Required(ErrorMessage = "开户市编码不能为空")]
+        public int OpenCityCode { get; set; }
         /// <summary>
         /// 创建人
         /// </summary>
