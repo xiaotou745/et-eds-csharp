@@ -1102,7 +1102,7 @@ namespace Ets.Service.Provider.Business
             //结算类型：1：固定比例 2：固定金额
             if (busiInfo.CommissionType == 1)
             {
-                result.OrderBalance = amount * busiInfo.BusinessCommission;
+                result.OrderBalance = amount * busiInfo.BusinessCommission / 100;//busiInfo.BusinessCommission  该参数在数据库中是个整数
             }
             else
             {
