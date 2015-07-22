@@ -16,9 +16,9 @@ namespace Ets.Service.IProvider.Finance
         /// <summary>
         /// 骑士提现功能 add by caoheyang 20150509
         /// </summary>
-        /// <param name="withdrawCpm">参数实体</param>
+        /// <param name="model">参数实体</param>
         /// <returns></returns>
-        ResultModel<object> WithdrawC(WithdrawCPM withdrawCpm);
+        ResultModel<object> WithdrawC(WithdrawCriteria model);
 
         /// <summary>
         /// 骑士绑定银行卡功能 add by caoheyang 20150511
@@ -152,5 +152,13 @@ namespace Ets.Service.IProvider.Finance
         /// <param name="criteria"></param>
         /// <returns></returns>
         PageInfo<ClienterBalanceRecord> GetClienterBalanceRecordListOfPaging(ClienterBalanceRecordSerchCriteria criteria);
+
+        /// <summary>
+        /// 骑士提现申请单确认打款调用易宝接口
+        /// danny-20150717
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        DealResultInfo ClienterWithdrawPaying(ClienterWithdrawLog model);
     }
 }

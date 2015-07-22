@@ -40,7 +40,9 @@ namespace Ets.Dao.Finance
                                     bwf.Payer,
                                     bwf.PayTime,
                                     bwf.AuditFailedReason,
-                                    bwf.PayFailedReason ";
+                                    bwf.PayFailedReason,
+                                    bwf.HandChargeOutlay,
+                                    bwf.HandCharge";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrWhiteSpace(criteria.BusinessName))
             {
@@ -137,7 +139,7 @@ from BusinessWithdrawForm bwf with(nolock)
         {
             string sql = @"  
  select count(1)  FROM  dbo.BusinessWithdrawForm a (nolock)
-        where a.[Status] = 2 and a.BusinessId = @businessId ";
+        where a.[Status] in(1,2) and a.BusinessId = @businessId ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@businessId", DbType.Int32).Value = businessId;
             var count = DbHelper.ExecuteScalar(SuperMan_Read, sql, parm); 

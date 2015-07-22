@@ -129,6 +129,11 @@ namespace ETS
         /// <summary>
         /// 18位身份证正则表达式
         /// </summary>
-        public const string IDCARD_REG = "^[1-9][0-9]{5}(19[0-9]{2}|200[0-9]|2010)(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])[0-9]{3}[0-9xX]$";
+        public const string IDCARD_REG = @"^\d{17}(?:\d|x|X)$";
+
+        /// <summary>
+        /// 开户支行不能少于5个汉字的正则
+        /// </summary>
+        public const string OPEN_SUB_BANK_REG = "^[\u4E00-\u9FFF]{3,}$";
     }
 }

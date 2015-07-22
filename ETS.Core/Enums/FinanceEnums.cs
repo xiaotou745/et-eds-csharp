@@ -35,6 +35,8 @@ namespace ETS.Enums
         NoOpenCityCode = 9,
         [DisplayText("缺少身份证号")]
         NoIDCard = 10,
+        [DisplayText("请完善银行卡信息")]
+        BankInfoError = 11,
         [DisplayText("未传参")]
         NoPara = -2
 
