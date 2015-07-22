@@ -225,8 +225,11 @@ namespace SuperMan.Controllers
             strBuilder.AppendLine("<td>接单时间</td>");
             strBuilder.AppendLine("<td>取货时间</td>"); 
             strBuilder.AppendLine("<td>完成时间</td>");
-            strBuilder.AppendLine("<td>配送费</td>");
+            //strBuilder.AppendLine("<td>配送费</td>");
             strBuilder.AppendLine("<td>订单金额</td>");
+            strBuilder.AppendLine("<td>结算类型</td>");
+            strBuilder.AppendLine("<td>公司结算数值</td>");
+            strBuilder.AppendLine("<td>骑士结算数值</td>");
             strBuilder.AppendLine("<td>订单状态</td>");
             strBuilder.AppendLine("<td>城市</td>");
             strBuilder.AppendLine("<td>是否在线支付</td>");
@@ -245,8 +248,11 @@ namespace SuperMan.Controllers
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.GrabTime));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.GrabTime));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.ActualDoneDate));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.DistribSubsidy));
+               // strBuilder.AppendLine(string.Format("<td>{0}</td>", item.DistribSubsidy));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.Amount));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.SettleType));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.SettleValue));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.SuperManSettleValue));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", statusView));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.BusinessCity));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.MealsSettleMode==1?"是":"否"));
