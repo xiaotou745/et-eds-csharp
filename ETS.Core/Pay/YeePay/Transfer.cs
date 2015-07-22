@@ -15,7 +15,7 @@ namespace ETS.Pay.YeePay
         public Transfer()
         {
         }
-        
+
         /// <summary>
         /// 转账接口
         /// 1、ledgerno 非空 sourceledgerno 为空时：主账户转子账户
@@ -58,13 +58,13 @@ namespace ETS.Pay.YeePay
 
             var datas = "customernumber=" + customernumber + "&data=" + data;
 
-            var result = HTTPHelper.HttpPost(KeyConfig.TransferAccountsUrl, datas, null); 
+            var result = HTTPHelper.HttpPost(KeyConfig.TransferAccountsUrl, datas, null);
             #endregion
 
             return JsonHelper.JsonConvertToObject<TransferReturnModel>(ResponseYeePay.OutRes(result));
-        
+
         }
-     
+
         /// <summary>
         /// 易宝提现功能 
         /// </summary>
@@ -109,7 +109,7 @@ namespace ETS.Pay.YeePay
 
             var datas = "customernumber=" + customernumber + "&data=" + data;
 
-            var result = HTTPHelper.HttpPost(KeyConfig.CashTransferUrl, datas, null); 
+            var result = HTTPHelper.HttpPost(KeyConfig.CashTransferUrl, datas, null);
             #endregion
 
             return JsonHelper.JsonConvertToObject<TransferReturnModel>(ResponseYeePay.OutRes(result));
