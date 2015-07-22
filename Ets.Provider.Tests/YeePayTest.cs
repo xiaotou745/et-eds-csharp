@@ -71,8 +71,15 @@ namespace Ets.Provider.Tests
         [Test]
         public void TransferAccounts()
         {
-            var result = new Transfer().TransferAccounts("10012474356", "5", "");//转账   主账户转给子账户
-            //var result1 = new Transfer().TransferAccounts( "", "10", "10012474356");//转账   子账户转给总账户
+            var model= new PayProvider().TransferAccountsYee(new YeeTransferParameter()
+            {
+                UserType=0,
+                WithdrawId=1,
+                Ledgerno = "",
+                SourceLedgerno = "10012474356",
+                Amount="47.8",
+                Payer = 1//支出方 0 主账户 1 子账户
+            });
         }
      
     }

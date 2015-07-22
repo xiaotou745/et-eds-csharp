@@ -19,24 +19,10 @@ namespace ETS.Pay.YeePay
         public int UserType { get; set; }
 
         /// <summary>
-        /// 请求号 在主帐号下唯一 MAX(50 )
-        /// </summary>
-        public string RequestId { get; set; }
-
-        /// <summary>
-        /// APP  B /C
-        /// </summary>
-        public APP App { get; set;  }
-
-        /// <summary>
         /// 提现单号
         /// </summary>
         public long WithdrawId { get; set; }
 
-        /// <summary>
-        /// 商户编号 易代送公司主账号 
-        /// </summary>
-        public string CustomerNumber { get; set; }
       
         /// <summary>
         /// 易宝子账户编码    ledgerno非空sourceledgerno为空时：主账户转子账户（customernumber → ledgerno）
@@ -55,12 +41,12 @@ namespace ETS.Pay.YeePay
         /// <summary>
         /// 支出方 0 主账户 1 子账户
         /// </summary>
-        public string Payer { get; set; }
+        public int Payer { get; set; }
 
         /// <summary>
         /// 商户编号 易代送公司主账号  不需要方法调用方传,调用方内部赋值
         /// </summary>
-        public string CustomerNumberr { get; set; }
+        public string CustomerNumber { get; set; }
         /// <summary>
         /// 商户密钥 不需要方法调用方传,调用方内部赋值
         /// </summary>
@@ -70,5 +56,10 @@ namespace ETS.Pay.YeePay
         /// 签名信息   不需要方法调用方传,调用方内部赋值
         /// </summary>
         public string Hmac { get; set; }
+
+        /// <summary>
+        /// 请求号 在主帐号下唯一 MAX(50 ) 不需要方法调用方传,调用方内部赋值
+        /// </summary>
+        public string RequestId { get; set; }
     }
 }

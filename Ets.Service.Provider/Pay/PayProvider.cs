@@ -768,8 +768,8 @@ namespace Ets.Service.Provider.Pay
                 Ledgerno = model.Ledgerno,
                 SourceLedgerno = "",
                 Amount = model.Amount,
-                TransferType = "1", //发起提现  
-                Payer = "1",  //提现支出方是 1 子账户
+                TransferType = 1, //发起提现  
+                Payer = 1,  //提现支出方是 1 子账户
                 Code = retunModel.code,
                 Hmac = model.Hmac,
                 Msg = retunModel.msg,
@@ -786,10 +786,10 @@ namespace Ets.Service.Provider.Pay
         public TransferReturnModel TransferAccountsYee(YeeTransferParameter para)
         {
             Transfer transfer = new Transfer();
-            TransferReturnModel retunModel = transfer.TransferAccounts(para.Ledgerno, para.Amount, para.SourceLedgerno);
+            TransferReturnModel retunModel = transfer.TransferAccounts(ref para);
             if (retunModel != null && retunModel.code == "1")  //易宝返回成功 记录所有当前请求相关的数据
             {
-                new YeePayRecordDao().Insert(new YeePayRecord());
+                new YeePayRecordDao().Insert(TransferYeeModel(para,retunModel));
             }
             return retunModel;
         }
@@ -811,8 +811,8 @@ namespace Ets.Service.Provider.Pay
                 Ledgerno = model.Ledgerno,
                 SourceLedgerno = model.SourceLedgerno,
                 Amount = model.Amount,
-                TransferType = "0", //发起提现  
-                Payer = model.Payer,
+                TransferType = 0, //发起提现  
+                Payer =model.Payer,
                 Code = retunModel.code,
                 Hmac = model.Hmac,
                 Msg = retunModel.msg,
