@@ -36,7 +36,9 @@ namespace Ets.Dao.Finance
                                     cwf.Payer,
                                     cwf.PayTime,
                                     cwf.AuditFailedReason,
-                                    cwf.PayFailedReason ";
+                                    cwf.PayFailedReason,
+                                    cwf.HandCharge,
+                                    cwf.HandChargeOutlay ";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrWhiteSpace(criteria.ClienterName))
             {

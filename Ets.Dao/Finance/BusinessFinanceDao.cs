@@ -40,7 +40,9 @@ namespace Ets.Dao.Finance
                                     bwf.Payer,
                                     bwf.PayTime,
                                     bwf.AuditFailedReason,
-                                    bwf.PayFailedReason ";
+                                    bwf.PayFailedReason,
+                                    bwf.HandChargeOutlay,
+                                    bwf.HandCharge";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrWhiteSpace(criteria.BusinessName))
             {
