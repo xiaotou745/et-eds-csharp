@@ -483,12 +483,13 @@ namespace Ets.Service.Provider.Finance
             IPayProvider payProvider = new PayProvider();
             TransferReturnModel tempmodel = payProvider.TransferAccountsYee(new YeeTransferParameter()
             {
-                
+                UserType = 1,
+                WithdrawId = model.WithwardId,
+                Ledgerno = "",
+                SourceLedgerno =callback.ledgerno,
+                Amount = (ParseHelper.ToDecimal(callback.amount) - withdraw.HandCharge).ToString()
             });
 
-            //Transfer transfer = new Transfer();
-            //TransferReturnModel tempmodel = transfer.TransferAccounts("",
-            //    (ParseHelper.ToDecimal(callback.amount) - withdraw.HandCharge).ToString(),callback.ledgerno);
             if (tempmodel.code == "1") //易宝子账户到主账户打款 成功
             {
                 using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
