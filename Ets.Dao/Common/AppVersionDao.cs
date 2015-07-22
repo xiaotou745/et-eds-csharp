@@ -99,7 +99,15 @@ INSERT INTO [AppVersion]
            ,@CreateBy
            ,@UpdateBy
            ,@IsTiming
-           ,@TimingDate);");
+           ,");
+            if (model.TimingDate != null)
+            {
+                sql += "@TimingDate);";
+            }
+            else
+            {
+                sql += "getdate());";
+            }
             var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Version", model.Version);
             parm.AddWithValue("@IsMust", model.IsMust);
@@ -110,7 +118,7 @@ INSERT INTO [AppVersion]
             parm.AddWithValue("@CreateBy", model.OptUserName);
             parm.AddWithValue("@UpdateBy", model.OptUserName);
             parm.AddWithValue("@IsTiming", model.IsTiming);
-            parm.AddWithValue("@TimingDate", model.TimingDate);
+            parm.AddWithValue("@TimingDate",model.TimingDate);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
         /// <summary>
