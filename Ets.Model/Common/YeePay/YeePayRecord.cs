@@ -73,7 +73,7 @@ namespace Ets.Model.Common.YeePay
         /// <summary>
         /// 提现单号
         /// </summary>
-        public string WithdrawId { get; set; }
+        public long WithdrawId { get; set; }
         /// <summary>
         /// 用户类型（0骑士 1商家  默认 0）
         /// </summary>
