@@ -134,6 +134,6 @@ namespace ETS
         /// <summary>
         /// 开户支行不能少于5个汉字的正则
         /// </summary>
-        public const string OPEN_SUB_BANK_REG = "^[\u4E00-\u9FFF]{5,}$";
+        public const string OPEN_SUB_BANK_REG = "^[\u4E00-\u9FFF]{3,}$";
     }
 }
