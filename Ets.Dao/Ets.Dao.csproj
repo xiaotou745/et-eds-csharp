@@ -54,6 +54,8 @@
     <Compile Include="Common\GroupDao.cs" />
     <Compile Include="Common\ServicePhoneDao.cs" />
     <Compile Include="Common\TestUserDao.cs" />
+    <Compile Include="Common\YeePay\YeePayRecordDao.cs" />
+    <Compile Include="Common\YeePay\YeePayUserDao.cs" />
     <Compile Include="DaoBase.cs" />
     <Compile Include="DeliveryCompany\DeliveryCompanyDao.cs" />
     <Compile Include="DeliveryManager\DeliveryManagerDao.cs" />
