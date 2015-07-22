@@ -16,9 +16,9 @@ namespace Ets.Service.IProvider.Finance
         /// <summary>
         /// 骑士提现功能 add by caoheyang 20150509
         /// </summary>
-        /// <param name="withdrawCpm">参数实体</param>
+        /// <param name="model">参数实体</param>
         /// <returns></returns>
-        ResultModel<object> WithdrawC(WithdrawCPM withdrawCpm);
+        ResultModel<object> WithdrawC(WithdrawCriteria model);
 
         /// <summary>
         /// 骑士绑定银行卡功能 add by caoheyang 20150511

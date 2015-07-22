@@ -286,6 +286,7 @@
     <Compile Include="ParameterModel\Finance\UpdateForWithdrawPM.cs" />
     <Compile Include="ParameterModel\Finance\WithdrawBBackPM.cs" />
     <Compile Include="ParameterModel\Finance\WithdrawBPM.cs" />
+    <Compile Include="ParameterModel\Finance\WithdrawCriteria.cs" />
     <Compile Include="ParameterModel\Finance\WithdrawPM.cs" />
     <Compile Include="ParameterModel\Finance\WithdrawCPM.cs" />
     <Compile Include="ParameterModel\Group\GetJobCPM.cs" />
