@@ -139,7 +139,7 @@ from BusinessWithdrawForm bwf with(nolock)
         {
             string sql = @"  
  select count(1)  FROM  dbo.BusinessWithdrawForm a (nolock)
-        where a.[Status] = 2 and a.BusinessId = @businessId ";
+        where a.[Status] in(1,2) and a.BusinessId = @businessId ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@businessId", DbType.Int32).Value = businessId;
             var count = DbHelper.ExecuteScalar(SuperMan_Read, sql, parm); 
