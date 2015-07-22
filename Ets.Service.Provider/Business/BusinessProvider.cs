@@ -1302,13 +1302,23 @@ namespace Ets.Service.Provider.Business
             {
                 if (businessDao.RemoveClienterBind(model))
                 {
-                    if (businessDao.UpdateBusinessIsBind(model.BusinessId, 0))
+
+                    if (businessDao.UpdateClienterIsBind(model.ClienterId, 0))
                     {
-                        if (businessDao.UpdateClienterIsBind(model.ClienterId, 0))
+                        if (businessDao.GetBusinessBindClienterQty(model.BusinessId) == 0)
+                        {
+                            if (businessDao.UpdateBusinessIsBind(model.BusinessId, 0))
+                            {
+                                reg = true;
+                                tran.Complete();
+                            }
+                        }
+                        else
                         {
                             reg = true;
                             tran.Complete();
                         }
+                        
                     }
 
                 }
