@@ -36,12 +36,13 @@ namespace ETS.Pay.YeePay
         /// <param name="bankprovince">开户省</param>
         /// <param name="bankcity">开户市</param>
         /// <param name="manualsettle">自助结算</param>
+        /// <param name="model">自助结算</param>
         /// <returns></returns>
         public RegisterReturnModel RegSubaccount(string customernumber, string hmackey, string requestid,
             string bindmobile, string customertype, string signedname, string linkman,
             string idcard, string businesslicence, string legalperson, string minsettleamount,
             string riskreserveday, string bankaccountnumber, string bankname, string accountname,
-            string bankaccounttype, string bankprovince, string bankcity, string manualsettle)
+            string bankaccounttype, string bankprovince, string bankcity, string manualsettle, ref YeeRegisterParameter model)
         {
             try
             {
@@ -89,51 +90,22 @@ namespace ETS.Pay.YeePay
 
                 var result = HTTPHelper.HttpPost(KeyConfig.RegisterUrl, datas, null);
 
-                return JsonHelper.JsonConvertToObject<RegisterReturnModel>(ResponseYeePay.OutRes(result));
+                RegisterReturnModel returnModel= JsonHelper.JsonConvertToObject<RegisterReturnModel>(ResponseYeePay.OutRes(result));
+               
+                #region 获取请求内赋值参数
+                model.CustomerNumberr = customernumber;
+                model.HmacKey = hmackey;
+                model.Ledgerno = returnModel.ledgerno;
+                model.Hmac = returnModel.hmac; 
+                #endregion
+
+                return returnModel;
             }
             catch (Exception ex)
             {
                 LogHelper.LogWriter(ex, "易宝注册子账户失败");  
                 return null;
             }
-
-        }
-
-        /// <summary>
-        /// 子账户注册   TODO 改成类
-        /// </summary>
-        /// <param name="requestid">注册请求号   guid</param>
-        /// <param name="bindmobile">绑定手机</param>
-        /// <param name="customertype">注册类型  PERSON ：个人 ENTERPRISE：企业</param>
-        /// <param name="signedname">签约名   商户签约名；个人，填写姓名；企业，填写企业名称。</param>
-        /// <param name="linkman">联系人</param>
-        /// <param name="idcard">身份证  customertype为PERSON时，必填</param>
-        /// <param name="businesslicence">营业执照号 customertype为ENTERPRISE时，必填</param>
-        /// <param name="legalperson">姓名  PERSON时，idcard对应的姓名； ENTERPRISE时，企业的法人姓名</param>
-        /// <param name="bankaccountnumber">银行卡号</param>
-        /// <param name="bankname">开户行</param>
-        /// <param name="accountname">开户名</param>
-        /// <param name="bankaccounttype">银行卡类别  PrivateCash：对私 PublicCash： 对公</param>
-        /// <param name="bankprovince">开户省</param>
-        /// <param name="bankcity">开户市</param>
-        /// <param name="minsettleamount">起结金额  默认 0.1</param>
-        /// <param name="riskreserveday">结算周期 默认 1 </param>
-        /// <param name="manualsettle">自助结算  N自助结算： N - 隔天自动打款； Y - 不会自动打款，需要通过提现接口或商户后台功能进行结算。   默认Y</param>
-        /// <returns></returns>
-        public RegisterReturnModel RegSubaccount(string requestid, string bindmobile, string customertype,
-            string signedname, string linkman, string idcard, string businesslicence,
-            string legalperson,
-            string bankaccountnumber, string bankname, string accountname,
-            string bankaccounttype, string bankprovince, string bankcity, string minsettleamount = "0.1", string riskreserveday = "1", string manualsettle = "Y")
-        {
-            //商户编号   
-            string customernumber = KeyConfig.YeepayAccountId;
-            //密钥   
-            string hmackey = KeyConfig.YeepayHmac;
-
-            return RegSubaccount(customernumber, hmackey, requestid, bindmobile, customertype, signedname, linkman, idcard,
-                businesslicence, legalperson, minsettleamount, riskreserveday, bankaccountnumber, bankname, accountname,
-                bankaccounttype, bankprovince, bankcity, manualsettle);
 
         }
 
@@ -154,7 +126,7 @@ namespace ETS.Pay.YeePay
                 model.SignedName, model.LinkMan, model.IdCard ?? "",
                 model.BusinessLicence ?? "", model.LegalPerson, model.MinsettleAmount, model.RiskReserveday,
                 model.BankAccountNumber, model.BankName,
-                model.AccountName, model.BankAccountType, model.BankProvince, model.BankCity, model.ManualSettle);
+                model.AccountName, model.BankAccountType, model.BankProvince, model.BankCity, model.ManualSettle,ref model);
         }
     }
 }
