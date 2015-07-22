@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Ets.Model.Common;
+using Ets.Service.Provider.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -23,7 +25,12 @@ namespace SuperMan.Controllers
                 //如果是苹果产品
                 if (CheckAgent())
                 {
-                    Response.Write("<script>window.location='http://fir.im/lazt';</script>");//这里要把易淘食的下载地址放过来 
+                    VersionCheckModel model = new VersionCheckModel()
+                    {
+                        PlatForm = 2,
+                        UserType = 2
+                    };
+                    Download(model);
                 }
                 else
                 {
@@ -34,6 +41,16 @@ namespace SuperMan.Controllers
             ViewBag.UserAgent = userAgent;
 
             return View();
+        }
+
+        private void Download(VersionCheckModel model)
+        {
+            AppVersionProvider appversion = new AppVersionProvider();
+            AppVerionModel resultModel = appversion.VersionCheck(model);
+            if (resultModel != null)
+            {
+                Response.Write("<script>window.location='" + resultModel.UpdateUrl + "';</script>");//这里要把易淘食的下载地址放过来 
+            }
         }
 
         public ActionResult edsC()
@@ -50,7 +67,12 @@ namespace SuperMan.Controllers
                 //如果是苹果产品
                 if (CheckAgent())
                 {
-                    Response.Write("<script>window.location='http://fir.im/vjk8';</script>");//这里要把易淘食的下载地址放过来 
+                    VersionCheckModel model = new VersionCheckModel()
+                    {
+                        PlatForm = 2,
+                        UserType = 1
+                    };
+                    Download(model); 
                 }
                 else
                 {
