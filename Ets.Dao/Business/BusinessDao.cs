@@ -2105,6 +2105,27 @@ VALUES
             }
         }
         /// <summary>
+        /// 查询骑士绑定商户数量
+        /// danny-20150722
+        /// </summary>
+        /// <param name="clienterId">骑士Id</param>
+        /// <returns></returns>
+        public int GetClienterBindBusinessQty(int clienterId)
+        {
+            try
+            {
+                string sql = "SELECT COUNT(1) FROM BusinessClienterRelation bcr WITH(NOLOCK) WHERE bcr.IsBind = 1 AND bcr.IsEnable=1 AND ClienterId=@ClienterId;";
+                var parm = DbHelper.CreateDbParameters();
+                parm.AddWithValue("@ClienterId", clienterId);
+                return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm));
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(ex, "查询骑士绑定商户数量");
+                return 0;
+            }
+        }
+        /// <summary>
         /// 修改骑士绑定关系
         /// danny-20150608
         /// </summary>

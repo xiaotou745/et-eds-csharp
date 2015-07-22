@@ -52,7 +52,7 @@ namespace Ets.Model.ParameterModel.Finance
         /// <summary>
         /// 开户支行
         /// </summary>
-        [RegularExpression(Config.OPEN_SUB_BANK_REG, ErrorMessage = "开户行支行地址不少于5个汉字")]
+        [RegularExpression(Config.OPEN_SUB_BANK_REG, ErrorMessage = "开户行支行地址不少于3个汉字")]
         public string OpenSubBank { get; set; }
         /// <summary>
         /// 开户省
