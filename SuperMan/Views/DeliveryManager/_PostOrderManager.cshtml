@@ -59,17 +59,21 @@
                         <td>@item.PubDate</td>
                         <td>@item.ActualDoneDate</td>
                         <td>@item.OrderCount</td>
-                        <td style="color:red;font-weight:600">@item.Amount</td>
+                        <td style="color: red; font-weight: 600">@item.Amount</td>
                         <td>@item.SettleType</td>
                         <td>@item.SettleValue</td>
                         <td>@item.SuperManSettleValue</td>
-                        <td style="color:@Html.Raw(val)">@ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.OrderStatusCommon)item.Status).GetType(), (ETS.Enums.OrderStatusCommon)item.Status).Text</td>
+                        <td style="color: @Html.Raw(val)">@ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.OrderStatusCommon) item.Status).GetType(), (ETS.Enums.OrderStatusCommon) item.Status).Text</td>
                         <td>@item.HadUploadCount.ToString()/@item.OrderCount.ToString()</td>
-                        <td style="color:@Html.Raw(strread)">@(item.IsNotRealOrder==1?"是":"否")</td>
+                        <td style="color: @Html.Raw(strread)">@(item.IsNotRealOrder == 1 ? "是" : "否")</td>
                     </tr>
                 }
             }
-        }
+            else
+            {
+               <script> alert('暂无数据');</script>
+            }
+}
     </tbody>
 </table>
 @{

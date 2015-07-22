@@ -22,7 +22,8 @@ namespace ETS.Pay.YeePay
         /// </summary>
         public string RequestId
         {
-            get { return TimeHelper.GetTimeStamp(false); }
+            get;
+            set;
         }
 
         /// <summary>
@@ -128,5 +129,35 @@ namespace ETS.Pay.YeePay
         /// 金融账号表Id
         /// </summary>
         public string AccountId { get; set; }
+
+
+
+        /// <summary>
+        /// 用户id （骑士id/商户id）   
+        /// </summary>
+        public int UserId { get; set; }
+        /// <summary>
+        /// 用户类型（0骑士 1商家  默认 0） 
+        /// </summary>
+        public int UserType { get; set; } 
+
+        /// <summary>
+        /// 商户编号 易代送公司主账号  不需要方法调用方传,调用方内部赋值
+        /// </summary>
+        public string CustomerNumberr { get; set; }
+        /// <summary>
+        /// 商户密钥 不需要方法调用方传,调用方内部赋值
+        /// </summary>
+        public string HmacKey { get; set; }
+
+        /// <summary>
+        /// 易宝子账户编码（由易宝返回的） 不需要方法调用方传,调用方内部赋值
+        /// </summary>
+        public string Ledgerno { get; set; }
+
+        /// <summary>
+        /// 签名信息   不需要方法调用方传,调用方内部赋值
+        /// </summary>
+        public string Hmac { get; set; }
     }
 }
