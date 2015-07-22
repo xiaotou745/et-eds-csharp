@@ -21,7 +21,7 @@ namespace Ets.Model.Common.YeePay
 		/// <summary>
 		/// 用户id （骑士id/商户id）
 		/// </summary>
-		public string UserId { get; set; }
+		public int UserId { get; set; }
 		/// <summary>
 		/// 用户类型（0骑士 1商家  默认 0）
 		/// </summary>

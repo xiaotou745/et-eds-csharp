@@ -1,4 +1,5 @@
-﻿using Ets.Model.Common.YeePay;
+﻿using Ets.Dao.Common.YeePay;
+using Ets.Model.Common.YeePay;
 using Ets.Model.DomainModel.Finance;
 using ETS.Pay.YeePay;
 using Ets.Service.IProvider.Finance;
@@ -37,6 +38,7 @@ namespace Ets.Service.Provider.Pay
         OrderChildDao orderChildDao = new OrderChildDao();
         private IBusinessFinanceProvider iBusinessFinanceProvider = new BusinessFinanceProvider();
         private IClienterFinanceProvider iClienterFinanceProvider = new ClienterFinanceProvider();
+
         #region 生成支付宝、微信二维码订单
 
         /// <summary>
@@ -615,7 +617,8 @@ namespace Ets.Service.Provider.Pay
         #endregion
 
 
-        /// <summary>
+      #region 易宝相关
+		  /// <summary>
         /// 易宝转账回调接口
         /// </summary>
         /// <param name="data"></param>
@@ -682,5 +685,56 @@ namespace Ets.Service.Provider.Pay
 
         }
 
+        /// <summary> 
+        /// 注册易宝子账户 add by caoheyang 20150722
+        /// </summary>
+        /// <param name="para"></param>
+        public RegisterReturnModel RegisterYee(YeeRegisterParameter para)
+        {
+           Register regisiter = new Register();
+           RegisterReturnModel retunModel=  regisiter.RegSubaccount(para);
+           if (retunModel!=null&&retunModel.code == "1")  //易宝返回成功 记录所有当前请求相关的数据
+            {
+                new YeePayUserDao().Insert(TranslateRegisterYeeModel(para));
+            }
+            return retunModel;
+        }
+
+        /// <summary>
+        /// 根据易宝注册参数 转  YeePayUser 实体 add by caoheyang 20150722
+        /// </summary>
+        /// <param name="para"></param>
+        /// <returns></returns>
+        private YeePayUser TranslateRegisterYeeModel(YeeRegisterParameter para)
+        {
+            return new YeePayUser()
+            {
+                UserId = para.UserId,
+                UserType = para.UserType,
+                RequestId = para.RequestId,
+                CustomerNumberr = para.CustomerNumberr,
+                HmacKey = para.HmacKey,
+                BindMobile = para.BindMobile,
+                CustomerType = para.CustomerType.ToString(),
+                SignedName = para.SignedName,
+                LinkMan = para.LinkMan,
+                IdCard = para.IdCard,
+                BusinessLicence = para.BusinessLicence,
+                LegalPerson = para.LegalPerson,
+                MinsettleAmount = para.MinsettleAmount,
+                Riskreserveday = para.RiskReserveday,
+                BankAccountNumber = para.BankAccountNumber,
+                BankName = para.BankName,
+                AccountName = para.AccountName,
+                BankAccountType = para.BankAccountType,
+                BankProvince = para.BankProvince,
+                BankCity = para.BankCity,
+                ManualSettle = para.ManualSettle,
+                Hmac = para.Hmac,
+                Ledgerno = para.Ledgerno
+            };
+        }
+
+        #endregion
     }
 }

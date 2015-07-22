@@ -24,8 +24,14 @@ namespace Ets.Dao.Common.YeePay
         public long Insert(YeePayUser yeePayUser)
         {
             const string insertSql = @"
-insert into YeePayUser(UserId,UserType,RequestId,CustomerNumberr,HmacKey,BindMobile,CustomerType,SignedName,LinkMan,IdCard,BusinessLicence,LegalPerson,MinsettleAmount,Riskreserveday,BankAccountNumber,BankName,AccountName,BankAccountType,BankProvince,BankCity,ManualSettle,Hmac,Addtime,Ledgerno,BalanceRecord)
-values(@UserId,@UserType,@RequestId,@CustomerNumberr,@HmacKey,@BindMobile,@CustomerType,@SignedName,@LinkMan,@IdCard,@BusinessLicence,@LegalPerson,@MinsettleAmount,@Riskreserveday,@BankAccountNumber,@BankName,@AccountName,@BankAccountType,@BankProvince,@BankCity,@ManualSettle,@Hmac,@Addtime,@Ledgerno,@BalanceRecord)
+insert into YeePayUser(UserId,UserType,RequestId,CustomerNumberr,HmacKey,BindMobile,CustomerType,
+SignedName,LinkMan,IdCard,BusinessLicence,LegalPerson,MinsettleAmount,
+Riskreserveday,BankAccountNumber,BankName,AccountName,BankAccountType,BankProvince,
+BankCity,ManualSettle,Hmac,Ledgerno)
+values(@UserId,@UserType,@RequestId,@CustomerNumberr,@HmacKey,@BindMobile,@CustomerType,
+@SignedName,@LinkMan,@IdCard,@BusinessLicence,@LegalPerson,@MinsettleAmount,
+@Riskreserveday,@BankAccountNumber,@BankName,@AccountName,@BankAccountType,@BankProvince,
+@BankCity,@ManualSettle,@Hmac,@Ledgerno)
 
 select @@IDENTITY";
 
@@ -52,10 +58,7 @@ select @@IDENTITY";
             dbParameters.AddWithValue("BankCity", yeePayUser.BankCity);
             dbParameters.AddWithValue("ManualSettle", yeePayUser.ManualSettle);
             dbParameters.AddWithValue("Hmac", yeePayUser.Hmac);
-            dbParameters.AddWithValue("Addtime", yeePayUser.Addtime);
             dbParameters.AddWithValue("Ledgerno", yeePayUser.Ledgerno);
-            dbParameters.AddWithValue("BalanceRecord", yeePayUser.BalanceRecord);
-
             return ParseHelper.ToLong(DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters));
 
         }
