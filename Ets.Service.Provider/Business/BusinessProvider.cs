@@ -1102,7 +1102,7 @@ namespace Ets.Service.Provider.Business
             //结算类型：1：固定比例 2：固定金额
             if (busiInfo.CommissionType == 1)
             {
-                result.OrderBalance = amount * busiInfo.BusinessCommission;
+                result.OrderBalance = amount * busiInfo.BusinessCommission / 100;//busiInfo.BusinessCommission  该参数在数据库中是个整数
             }
             else
             {
@@ -1267,9 +1267,14 @@ namespace Ets.Service.Provider.Business
                     }
                     else//解绑
                     {
-                        if (businessDao.UpdateClienterIsBind(model.ClienterId, 0))
+                        if (businessDao.GetClienterBindBusinessQty(model.ClienterId) > 0)
                         {
-                            if (businessDao.GetBusinessBindClienterQty(model.BusinessId) == 0)
+                            if (businessDao.GetBusinessBindClienterQty(model.BusinessId) > 0)
+                            {
+                                reg = true;
+                                tran.Complete();
+                            }
+                            else
                             {
                                 if (businessDao.UpdateBusinessIsBind(model.BusinessId, 0))
                                 {
@@ -1277,10 +1282,24 @@ namespace Ets.Service.Provider.Business
                                     tran.Complete();
                                 }
                             }
-                            else
+                        }
+                        else
+                        {
+                            if (businessDao.UpdateClienterIsBind(model.ClienterId, 0))
                             {
-                                reg = true;
-                                tran.Complete();
+                                if (businessDao.GetBusinessBindClienterQty(model.BusinessId) > 0)
+                                {
+                                    reg = true;
+                                    tran.Complete();
+                                }
+                                else
+                                {
+                                    if (businessDao.UpdateBusinessIsBind(model.BusinessId, 0))
+                                    {
+                                        reg = true;
+                                        tran.Complete();
+                                    }
+                                }
                             }
                         }
                     }
@@ -1302,15 +1321,33 @@ namespace Ets.Service.Provider.Business
             {
                 if (businessDao.RemoveClienterBind(model))
                 {
-                    if (businessDao.UpdateBusinessIsBind(model.BusinessId, 0))
+                    if (businessDao.GetClienterBindBusinessQty(model.ClienterId) > 0)
                     {
-                        if (businessDao.UpdateClienterIsBind(model.ClienterId, 0))
+                        if (businessDao.GetBusinessBindClienterQty(model.BusinessId) > 0)
                         {
                             reg = true;
                             tran.Complete();
                         }
                     }
-
+                    else
+                    {
+                        if (businessDao.UpdateClienterIsBind(model.ClienterId, 0))
+                        {
+                            if (businessDao.GetBusinessBindClienterQty(model.BusinessId) > 0)
+                            {
+                                reg = true;
+                                tran.Complete();
+                            }
+                            else
+                            {
+                                if (businessDao.UpdateBusinessIsBind(model.BusinessId, 0))
+                                {
+                                    reg = true;
+                                    tran.Complete();
+                                }
+                            }
+                        }
+                    }
                 }
             }
             return reg;

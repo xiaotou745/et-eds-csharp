@@ -39,12 +39,12 @@ namespace SuperManWebApi.Controllers
         /// <summary>
         /// 骑士提现功能 add by caoheyang 20150509
         /// </summary>
-        /// <param name="withdrawCpm">参数实体</param>
+        /// <param name="model">参数实体</param>
         /// <returns></returns>
         [HttpPost]
-        public ResultModel<object> WithdrawC([FromBody]WithdrawCPM withdrawCpm)
+        public ResultModel<object> WithdrawC([FromBody]WithdrawCriteria model)
         {
-            return iClienterFinanceProvider.WithdrawC(withdrawCpm);
+            return iClienterFinanceProvider.WithdrawC(model);
         }
 
         /// <summary>

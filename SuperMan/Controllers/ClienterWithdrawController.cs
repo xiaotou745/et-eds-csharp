@@ -164,8 +164,8 @@ namespace SuperMan.Controllers
                 Status = ClienterWithdrawFormStatus.Paying.GetHashCode(),
                 WithwardId = Convert.ToInt64(withwardId)
             };
-            var reg = iClienterFinanceProvider.ClienterWithdrawPayOk(clienterWithdrawLog);
-            return Json(new ResultModel(reg, reg ? "确认打款成功！" : "确认打款失败！"), JsonRequestBehavior.DenyGet);
+            var reg = iClienterFinanceProvider.ClienterWithdrawPaying(clienterWithdrawLog);
+            return Json(new ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.DenyGet);
         }
         /// <summary>
         /// 骑士提款申请单审核拒绝
