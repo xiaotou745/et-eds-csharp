@@ -628,7 +628,22 @@ namespace Ets.Service.Provider.Pay
             bool result = false;
             string username = "易宝提现回调";
             CashTransferCallback model = JsonHelper.JsonConvertToObject<CashTransferCallback>(ResponseYeePay.OutRes(data, true));
-            int withwardId = ParseHelper.ToInt(model.cashrequestid.Substring(2));
+            int withwardId = ParseHelper.ToInt(model.cashrequestid.Substring(2)); //提现单id
+
+            new YeePayRecordDao().Insert(new YeePayRecord()
+            {
+                WithdrawId = withwardId,
+                RequestId = model.cashrequestid,
+                CustomerNumber = model.customernumber,
+                Ledgerno = model.ledgerno,
+                Amount = model.amount,
+                Status = model.status,
+                Lastno = model.lastno,
+                Desc = model.desc,
+                TransferType = 2,
+                UserType = model.cashrequestid.Substring(0, 1) == "C" ? 0 : 1
+            });
+      
             if (model.status == "SUCCESS") //提现成功 走 成功的逻辑
             {
                 if (model.cashrequestid.Substring(0, 1) == "B") //B端逻辑

@@ -17,6 +17,8 @@ using ETS.Data.PageData;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Ets.Service.IProvider.Pay;
+using Ets.Service.Provider.Pay;
 using ETS.Transaction;
 using ETS.Transaction.Common;
 using ETS.Util;
@@ -478,9 +480,15 @@ namespace Ets.Service.Provider.Finance
             {
                 return false;
             }
-            Transfer transfer = new Transfer();
-            TransferReturnModel tempmodel = transfer.TransferAccounts("",
-                (ParseHelper.ToDecimal(callback.amount) - withdraw.HandCharge).ToString(),callback.ledgerno);
+            IPayProvider payProvider = new PayProvider();
+            TransferReturnModel tempmodel = payProvider.TransferAccountsYee(new YeeTransferParameter()
+            {
+                
+            });
+
+            //Transfer transfer = new Transfer();
+            //TransferReturnModel tempmodel = transfer.TransferAccounts("",
+            //    (ParseHelper.ToDecimal(callback.amount) - withdraw.HandCharge).ToString(),callback.ledgerno);
             if (tempmodel.code == "1") //易宝子账户到主账户打款 成功
             {
                 using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())

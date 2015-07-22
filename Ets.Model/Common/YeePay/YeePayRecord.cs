@@ -79,6 +79,15 @@ namespace Ets.Model.Common.YeePay
         /// </summary>
         public int UserType { get; set; }
 
+        /// <summary>
+        /// 卡号后四位
+        /// </summary>
+        public string Lastno { get; set; }
+        /// <summary>
+        /// 提现状态描述
+        /// </summary>
+        public string Desc { get; set; }
+
     }
 
 }
