@@ -685,8 +685,8 @@ namespace Ets.Service.Provider.Pay
 
         }
 
-        /// <summary>
-        /// 注册易宝子账户
+        /// <summary> 
+        /// 注册易宝子账户 add by caoheyang 20150722
         /// </summary>
         /// <param name="para"></param>
         public RegisterReturnModel RegisterYee(YeeRegisterParameter para)
