@@ -224,48 +224,6 @@ namespace Ets.Service.Provider.Finance
                 });
                 tran.Complete();
             }
-            #region 异步请求易宝注册接口
-            Task.Factory.StartNew(() =>
-            {
-                //请求易宝注册接口,如果成功,则更新账户易宝key和status
-                var phoneNo = _clienterDao.GetPhoneNo(cardBindCpm.ClienterId);
-                var parameter = new YeeRegisterParameter()
-                {
-                    AccountName = cardBindCpm.TrueName,
-                    BankAccountNumber = cardBindCpm.AccountNo,
-                    BankCity = cardBindCpm.OpenCity,
-                    BankName = cardBindCpm.OpenBank,
-                    BankProvince = cardBindCpm.OpenProvince,
-                    BindMobile = phoneNo,
-                    BusinessLicence = "",
-                    IdCard = cardBindCpm.IDCard,
-                    CustomerType = (cardBindCpm.BelongType == 0
-                        ? CustomertypeEnum.PERSON
-                        : CustomertypeEnum.ENTERPRISE),
-                    LegalPerson = cardBindCpm.TrueName,
-                    LinkMan = cardBindCpm.TrueName,
-                    SignedName = cardBindCpm.TrueName,
-                };
-                var result1 = new Register().RegSubaccount(parameter);//注册帐号
-                if (result1 != null && !string.IsNullOrEmpty(result1.code) && result1.code.Trim() == "1")
-                {
-                    _clienterFinanceAccountDao.UpdateYeepayInfoById(result, result1.ledgerno, 0);
-                }
-                else
-                {
-                    if (result1 == null)
-                    {
-                        //ETS.Util.LogHelper.LogWriterString("骑士绑定易宝支付失败", string.Format("返回结果为null"));
-                        return;
-                    }
-                    else
-                    {
-                        ETS.Util.LogHelper.LogWriterString("骑士绑定易宝支付失败", string.Format("易宝错误信息:code{0},ledgerno:{1},hmac{2},msg{3}",
-                            result1.code, result1.ledgerno, result1.hmac, result1.msg));
-                    }
-                }
-            });
-            #endregion
             return ResultModel<object>.Conclude(FinanceCardBindC.Success);
         }
 

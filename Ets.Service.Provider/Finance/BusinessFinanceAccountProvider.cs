@@ -90,48 +90,6 @@ namespace Ets.Service.Provider.Finance
                 });
                 tran.Complete();
             }
-            #region 异步请求易宝注册接口
-            Task.Factory.StartNew(() =>
-            {
-                //请求易宝注册接口,如果成功,则更新账户易宝key和status
-                var phoneNo = _businessDao.GetPhoneNo(cardBindBpm.BusinessId);
-                var parameter = new YeeRegisterParameter()
-                {
-                    AccountName = cardBindBpm.TrueName,
-                    BankAccountNumber = cardBindBpm.AccountNo,
-                    BankCity = cardBindBpm.OpenCity,
-                    BankName = cardBindBpm.OpenBank,
-                    BankProvince = cardBindBpm.OpenProvince,
-                    BindMobile = phoneNo,
-                    BusinessLicence = cardBindBpm.BelongType == 0 ? "" : cardBindBpm.IDCard,
-                    IdCard = cardBindBpm.BelongType == 1 ? "" : cardBindBpm.IDCard,
-                    CustomerType = (cardBindBpm.BelongType == 0
-                        ? CustomertypeEnum.PERSON
-                        : CustomertypeEnum.ENTERPRISE),
-                    LegalPerson = cardBindBpm.TrueName,
-                    LinkMan = cardBindBpm.TrueName,
-                    SignedName = cardBindBpm.TrueName,
-                };
-                var result = new Register().RegSubaccount(parameter);//注册帐号
-                if (result != null && !string.IsNullOrEmpty(result.code) && result.code.Trim() == "1")
-                {
-                    _businessFinanceAccountDao.UpdateYeepayInfoById(id, result.ledgerno, 0);
-                }
-                else
-                {
-                    if (result == null)
-                    {
-                        //ETS.Util.LogHelper.LogWriterString("商户绑定易宝支付失败", string.Format("返回结果为null"));
-                        return;
-                    }
-                    else
-                    {
-                        ETS.Util.LogHelper.LogWriterString("商户绑定易宝支付失败", string.Format("易宝错误信息:code{0},ledgerno:{1},hmac{2},msg{3}",
-                            result.code, result.ledgerno, result.hmac, result.msg));
-                    }
-                }
-            });
-            #endregion
             return ResultModel<object>.Conclude(SystemState.Success);
         }
 
