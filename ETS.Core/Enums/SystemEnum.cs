@@ -25,6 +25,8 @@ namespace ETS.Enums
 
     public enum VersionStatus
     {
+        [DisplayText("调用第三方友盟")]
+        ThirdParty = -1,
         [DisplayText("获取失败")]
         Failed = 0,
         [DisplayText("获取成功")]
@@ -40,9 +42,9 @@ namespace ETS.Enums
     public enum AuditStatus
     {
         [DisplayText("审核取消")]
-        Status0=0,
+        Status0 = 0,
         [DisplayText("审核通过")]
-        Status1 = 1,  
+        Status1 = 1,
     }
     #endregion
 
@@ -59,14 +61,14 @@ namespace ETS.Enums
     }
 
     #endregion
-  
+
 
     public enum AppType
     {
         [DisplayText("B端")]
-        FormB=1,
+        FormB = 1,
         [DisplayText("BC端")]
-        FormC = 0, 
+        FormC = 0,
     }
 
     /// <summary>
@@ -77,15 +79,15 @@ namespace ETS.Enums
     public enum SuperPlatform
     {
         [DisplayText("商家")]
-        FromBusiness=0,
+        FromBusiness = 0,
         [DisplayText("骑士")]
         FromClienter = 1,
         [DisplayText("服务平台")]
-        ServicePlatform=2,
+        ServicePlatform = 2,
         [DisplayText("管理后台")]
-        ManagementBackground= 3,
+        ManagementBackground = 3,
         [DisplayText("第三方对接平台")]
-        ThirdParty = 4,         
+        ThirdParty = 4,
     }
 
     /// <summary>
@@ -119,5 +121,5 @@ namespace ETS.Enums
         Failed = 0,
         [DisplayText("成功")]
         Success = 1
-    } 
+    }
 }
