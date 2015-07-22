@@ -173,6 +173,7 @@ namespace Ets.Service.Provider.Finance
                             OpenBank = cardModifyBpm.OpenBank, //开户行
                             OpenSubBank = cardModifyBpm.OpenSubBank, //开户支行
                             UpdateBy = cardModifyBpm.UpdateBy, //修改人  当前登录人
+                            YeepayStatus = 1,
                             OpenProvince = cardModifyBpm.OpenProvince, //省名称
                             OpenProvinceCode = cardModifyBpm.OpenProvinceCode,
                             OpenCity = cardModifyBpm.OpenCity, //市区名称
@@ -189,42 +190,42 @@ namespace Ets.Service.Provider.Finance
             }
 
             #region 2.异步调用注册ebao
-            var bYeeRegisterParameter = new YeeRegisterParameter()
-            {
-                AccountName = cardModifyBpm.TrueName,
-                BankAccountNumber = cardModifyBpm.AccountNo,
-                BankCity = cardModifyBpm.OpenCity,
-                BankName = cardModifyBpm.OpenBank,
-                BankProvince = cardModifyBpm.OpenProvince,
-                BindMobile = bfAccount.PhoneNo, //绑定手机
-                BusinessLicence = cardModifyBpm.BelongType == 0 ? "" : cardModifyBpm.IDCard,
-                IdCard = cardModifyBpm.IDCard,
-                CustomerType = (cardModifyBpm.BelongType == 0
-                    ? CustomertypeEnum.PERSON
-                    : CustomertypeEnum.ENTERPRISE),
-                LegalPerson = cardModifyBpm.TrueName,
-                LinkMan = cardModifyBpm.TrueName,
-                SignedName = cardModifyBpm.TrueName
-            };
-            var registResult = new Register().RegSubaccount(bYeeRegisterParameter); //注册帐号
-            if (registResult != null && !string.IsNullOrEmpty(registResult.code) && registResult.code.Trim() == "1")   //绑定成功，更新易宝key
-            {
-                _businessFinanceAccountDao.UpdateYeepayInfoById(cardModifyBpm.Id, registResult.ledgerno, 0);
-            }
-            else
-            {
-                _businessFinanceAccountDao.UpdateYeepayInfoById(cardModifyBpm.Id, "", 1);  //绑定失败，更新易宝key
-                if (registResult == null)
-                {
-                    LogHelper.LogWriterString("商户绑定易宝支付失败", string.Format("返回结果为null"));
-                }
-                else
-                {
-                    LogHelper.LogWriterString("商户绑定易宝支付失败",
-                        string.Format("易宝错误信息:code{0},ledgerno:{1},hmac{2},msg{3}",
-                            registResult.code, registResult.ledgerno, registResult.hmac, registResult.msg));
-                }
-            }
+            //var bYeeRegisterParameter = new YeeRegisterParameter()
+            //{
+            //    AccountName = cardModifyBpm.TrueName,
+            //    BankAccountNumber = cardModifyBpm.AccountNo,
+            //    BankCity = cardModifyBpm.OpenCity,
+            //    BankName = cardModifyBpm.OpenBank,
+            //    BankProvince = cardModifyBpm.OpenProvince,
+            //    BindMobile = bfAccount.PhoneNo, //绑定手机
+            //    BusinessLicence = cardModifyBpm.BelongType == 0 ? "" : cardModifyBpm.IDCard,
+            //    IdCard = cardModifyBpm.IDCard,
+            //    CustomerType = (cardModifyBpm.BelongType == 0
+            //        ? CustomertypeEnum.PERSON
+            //        : CustomertypeEnum.ENTERPRISE),
+            //    LegalPerson = cardModifyBpm.TrueName,
+            //    LinkMan = cardModifyBpm.TrueName,
+            //    SignedName = cardModifyBpm.TrueName
+            //};
+            //var registResult = new Register().RegSubaccount(bYeeRegisterParameter); //注册帐号
+            //if (registResult != null && !string.IsNullOrEmpty(registResult.code) && registResult.code.Trim() == "1")   //绑定成功，更新易宝key
+            //{
+            //    _businessFinanceAccountDao.UpdateYeepayInfoById(cardModifyBpm.Id, registResult.ledgerno, 0);
+            //}
+            //else
+            //{
+            //    _businessFinanceAccountDao.UpdateYeepayInfoById(cardModifyBpm.Id, "", 1);  //绑定失败，更新易宝key
+            //    if (registResult == null)
+            //    {
+            //        LogHelper.LogWriterString("商户绑定易宝支付失败", string.Format("返回结果为null"));
+            //    }
+            //    else
+            //    {
+            //        LogHelper.LogWriterString("商户绑定易宝支付失败",
+            //            string.Format("易宝错误信息:code{0},ledgerno:{1},hmac{2},msg{3}",
+            //                registResult.code, registResult.ledgerno, registResult.hmac, registResult.msg));
+            //    }
+            //}
             #endregion
 
             return ResultModel<object>.Conclude(SystemState.Success);
