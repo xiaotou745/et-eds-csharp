@@ -743,7 +743,7 @@ namespace Ets.Service.Provider.Pay
         public TransferReturnModel CashTransferYee(YeeCashTransferParameter model)
         {
             Transfer transfer = new Transfer();
-            TransferReturnModel retunModel = transfer.CashTransfer(model.App, model.WithdrawId, model.Ledgerno, model.Amount);
+            TransferReturnModel retunModel = transfer.CashTransfer(ref model);
             if (retunModel != null && retunModel.code == "1")  //易宝返回成功 记录所有当前请求相关的数据
             {
                 new YeePayRecordDao().Insert(CashTransferYeeModel(model, retunModel));
@@ -803,6 +803,9 @@ namespace Ets.Service.Provider.Pay
         /// <returns></returns>
         private YeePayRecord TransferYeeModel(YeeTransferParameter model, TransferReturnModel retunModel)
         {
+            int payer = string.IsNullOrWhiteSpace(model.Ledgerno) && !string.IsNullOrWhiteSpace(model.SourceLedgerno)
+                ? 1
+                : 0;//0 主账户 1 子账户
             return new YeePayRecord()
             {
                 RequestId = model.RequestId,
@@ -812,7 +815,7 @@ namespace Ets.Service.Provider.Pay
                 SourceLedgerno = model.SourceLedgerno,
                 Amount = model.Amount,
                 TransferType = 0, //发起提现  
-                Payer =model.Payer,
+                Payer = payer,
                 Code = retunModel.code,
                 Hmac = model.Hmac,
                 Msg = retunModel.msg,

@@ -38,10 +38,6 @@ namespace ETS.Pay.YeePay
         /// </summary>
         public string Amount { get; set; }
   
-        /// <summary>
-        /// 支出方 0 主账户 1 子账户
-        /// </summary>
-        public int Payer { get; set; }
 
         /// <summary>
         /// 商户编号 易代送公司主账号  不需要方法调用方传,调用方内部赋值

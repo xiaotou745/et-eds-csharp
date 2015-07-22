@@ -50,7 +50,16 @@ namespace Ets.Provider.Tests
         [Test]
         public void CashTransfer()
         {
-            var result = new Transfer().CashTransfer(APP.B, 97, "10012474356", "3");//提现
+            //var result = new Transfer().CashTransfer(APP.B, -1, "10012474356", "0.1");//提现
+
+            var result1 = new PayProvider().CashTransferYee(new YeeCashTransferParameter()
+            {
+                UserType = 1,
+                WithdrawId = 1212,
+                Ledgerno = "10012474356",
+                App = APP.B,
+                Amount = "0.2"
+            });
         }
 
 
@@ -73,12 +82,11 @@ namespace Ets.Provider.Tests
         {
             var model= new PayProvider().TransferAccountsYee(new YeeTransferParameter()
             {
-                UserType=0,
-                WithdrawId=1,
-                Ledgerno = "",
-                SourceLedgerno = "10012474356",
-                Amount="47.8",
-                Payer = 1//支出方 0 主账户 1 子账户
+                UserType=1,
+                WithdrawId=1212,
+                Ledgerno = "10012474356",
+                SourceLedgerno = "",
+                Amount="2"
             });
         }
      
