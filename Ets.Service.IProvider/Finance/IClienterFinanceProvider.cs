@@ -152,5 +152,13 @@ namespace Ets.Service.IProvider.Finance
         /// <param name="criteria"></param>
         /// <returns></returns>
         PageInfo<ClienterBalanceRecord> GetClienterBalanceRecordListOfPaging(ClienterBalanceRecordSerchCriteria criteria);
+
+        /// <summary>
+        /// 骑士提现申请单确认打款调用易宝接口
+        /// danny-20150717
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        DealResultInfo ClienterWithdrawPaying(ClienterWithdrawLog model);
     }
 }

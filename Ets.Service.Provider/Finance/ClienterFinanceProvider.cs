@@ -600,14 +600,14 @@ namespace Ets.Service.Provider.Finance
                     cliFinanceAccount.YeepayKey); //转账   子账户转给总账户
                 if (regTransfer.code != "1")
                 {
-                    dealResultInfo.DealMsg = "骑士易宝自动转账失败：" + regTransfer.code;
+                    dealResultInfo.DealMsg = "骑士易宝自动转账失败："+regTransfer.msg+"(" + regTransfer.code+")";
                     return dealResultInfo;
                 }
                 var regCash = new Transfer().CashTransfer(APP.B, ParseHelper.ToInt(model.WithwardId),
                     cliFinanceAccount.YeepayKey, amount.ToString()); //提现
                 if (regCash.code != "1")
                 {
-                    dealResultInfo.DealMsg = "骑士易宝自动提现失败：" + regCash.code;
+                    dealResultInfo.DealMsg = "骑士易宝自动提现失败："+ regCash.msg+"("+ regCash.code+")";
                     return dealResultInfo;
                 }
                 if (!clienterFinanceDao.ClienterWithdrawPayOk(model))
