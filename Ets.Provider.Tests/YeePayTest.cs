@@ -28,11 +28,11 @@ namespace Ets.Provider.Tests
             var result1 = new PayProvider().RegisterYee(new YeeRegisterParameter()
             {
                 BindMobile = "18553507220",
-                CustomerType=CustomertypeEnum.PERSON,
+                CustomerType=CustomertypeEnum.ENTERPRISE,
                 SignedName = "曹赫洋",
                 LinkMan = "曹赫洋",
-                IdCard = "370685199110161712",
-                BusinessLicence="",
+                IdCard = "",
+                BusinessLicence="2323232323232",
                 LegalPerson = "曹赫洋",
                 BankAccountNumber = "6226200105376660",
                 BankName = "民生银行",

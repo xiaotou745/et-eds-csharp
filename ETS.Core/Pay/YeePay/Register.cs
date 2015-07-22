@@ -120,7 +120,7 @@ namespace ETS.Pay.YeePay
             string customernumber = KeyConfig.YeepayAccountId;
             //密钥   
             string hmackey = KeyConfig.YeepayHmac;
-
+            model.RequestId = TimeHelper.GetTimeStamp(false);
             return RegSubaccount(customernumber, hmackey, model.RequestId, model.BindMobile,
                 model.CustomerType.ToString(),
                 model.SignedName, model.LinkMan, model.IdCard ?? "",

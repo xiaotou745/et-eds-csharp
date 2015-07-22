@@ -22,7 +22,8 @@ namespace ETS.Pay.YeePay
         /// </summary>
         public string RequestId
         {
-            get { return TimeHelper.GetTimeStamp(false); }
+            get;
+            set;
         }
 
         /// <summary>
