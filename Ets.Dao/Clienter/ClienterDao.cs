@@ -593,7 +593,7 @@ where c.Id=@clienterId ";
             parm.AddWithValue("@clienterId", userId);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             IList<ClienterStatusModel> list = MapRows<ClienterStatusModel>(dt);
-            if (list == null && list.Count <= 0)
+            if (list == null || list.Count <= 0)
             {
                 return null;
             }
