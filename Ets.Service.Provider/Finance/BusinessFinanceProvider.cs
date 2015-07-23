@@ -351,7 +351,9 @@ namespace Ets.Service.Provider.Finance
                         BankName = busiFinanceAccount.OpenBank,
                         AccountName = busiFinanceAccount.TrueName,
                         BankProvince = busiFinanceAccount.OpenProvince,
-                        BankCity = busiFinanceAccount.OpenCity
+                        BankCity = busiFinanceAccount.OpenCity,
+                        UserId = busiFinanceAccount.BusinessId,
+                        UserType = UserTypeYee.Business.GetHashCode()
                     };
                     var dr = DealRegBusiSubAccount(brp);
                     if (!dr.DealFlag)
@@ -361,16 +363,34 @@ namespace Ets.Service.Provider.Finance
                     }
                     busiFinanceAccount.YeepayKey = dr.SuccessId; //子账户id
                 }
+
                 //转账逻辑
-                var regTransfer = new Transfer().TransferAccounts(busiFinanceAccount.YeepayKey, amount.ToString(),""
-                    ); //转账   子账户转给总账户
+                var regTransfer = new PayProvider().TransferAccountsYee(new YeeTransferParameter()
+                {
+                    UserType = UserTypeYee.Business.GetHashCode(),
+                    WithdrawId = busiFinanceAccount.Id,
+                    Ledgerno = busiFinanceAccount.YeepayKey,
+                    SourceLedgerno = "",
+                    Amount = amount.ToString()
+                });
+                //var regTransfer = new Transfer().TransferAccounts(busiFinanceAccount.YeepayKey, amount.ToString(),""
+                //    ); //转账   子账户转给总账户
                 if (regTransfer.code != "1")
                 {
                     dealResultInfo.DealMsg = "商户易宝自动转账失败：" + regTransfer.msg + "(" + regTransfer.code+")";
                     return dealResultInfo;
                 }
-                var regCash = new Transfer().CashTransfer(APP.B, ParseHelper.ToInt(model.WithwardId),
-                    busiFinanceAccount.YeepayKey, amount.ToString()); //提现
+                //提现逻辑
+                var regCash = new PayProvider().CashTransferYee(new YeeCashTransferParameter()
+                {
+                    UserType = UserTypeYee.Business.GetHashCode(),
+                    WithdrawId = busiFinanceAccount.Id,
+                    Ledgerno = busiFinanceAccount.YeepayKey,
+                    App = APP.B,
+                    Amount = amount.ToString()
+                });
+                //var regCash = new Transfer().CashTransfer(APP.B, ParseHelper.ToInt(model.WithwardId),
+                //    busiFinanceAccount.YeepayKey, amount.ToString()); //提现
                 if (regCash.code != "1")
                 {
                     dealResultInfo.DealMsg = "商户易宝自动提现失败："+regCash.msg+"(" + regCash.code+")";
