@@ -37,7 +37,7 @@
             <td>累计提款：￥@ParseHelper.ToSplitByPercentile(false, Model.HasWithdrawPrice)</td>
         </tr>
         <tr class="trclass">
-            <td>开户行：@Model.OpenBank</td>
+            <td>开户银行：@Model.OpenBank</td>
             <td>开户支行：@Model.OpenSubBank</td>
             <td>账户名：@Model.TrueName</td>
             <td>银行账号：@ParseHelper.ToDecrypt(Model.AccountNo)</td>
@@ -53,11 +53,15 @@
                 {
                     <td>账户类型：个人账户</td>
                 }
-                else
+                else if (Model.BelongType == 1)
                 {
                     <td>账户类型：企业账户</td>
                 }
+                else
+                {
+                    <td>账户类型：</td>
                 }
+}
         </tr>
     </table>
     @if (Model.Status == 1)
