@@ -141,6 +141,10 @@ namespace Ets.Service.Provider.Finance
                         tran.Complete();
                     }
                 }
+                else
+                {
+                    return ResultModel<object>.Conclude(FinanceCardModifyB.NoModify);
+                }
             }
             else
             {

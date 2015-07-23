@@ -268,7 +268,7 @@ namespace Ets.Service.Provider.Finance
             int withdrawCount= _clienterWithdrawFormDao.GetByClienterId(cardModifyCpm.ClienterId);
             if (withdrawCount > 0) //该骑士是否存在未完成的提现单
             {
-                return ResultModel<object>.Conclude(FinanceCardModifyC.NoModify);
+                return ResultModel<object>.Conclude(FinanceCardModifyC.ForbitModify);
             }
             ClienterFinanceAccount cfAccount = _clienterFinanceAccountDao.GetById(cardModifyCpm.Id);
             if (cfAccount != null)

@@ -81,7 +81,7 @@ where  Id=@Id ";
             dbParameters.Add("OpenProvinceCode", DbType.Int32).Value = clienterFinanceAccount.OpenProvinceCode;
             dbParameters.Add("OpenCityCode", DbType.Int32).Value = clienterFinanceAccount.OpenCityCode;
             dbParameters.Add("IDCard", DbType.String).Value = clienterFinanceAccount.IDCard;
-            dbParameters.Add("YeepayStatus", DbType.SByte).Value = clienterFinanceAccount.YeepayStatus;
+            dbParameters.Add("YeepayStatus", DbType.Int16).Value = clienterFinanceAccount.YeepayStatus;
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
 
