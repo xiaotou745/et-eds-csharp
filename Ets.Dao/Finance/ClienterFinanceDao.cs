@@ -640,6 +640,7 @@ SELECT cfa.[Id]
       ,cfa.[OpenCity]
       ,cfa.[YeepayKey]
       ,cfa.[YeepayStatus]
+      ,cwf.IDCard CliIDCard
       ,cwf.Amount
       ,cwf.HandChargeThreshold
       ,cwf.HandCharge

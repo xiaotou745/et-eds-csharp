@@ -718,7 +718,7 @@ SELECT bfa.[Id]
       ,bfa.[OpenCity]
       ,bfa.[YeepayKey]
       ,bfa.[YeepayStatus]
-      ,b.IDCard BusiIDCard
+      ,bwf.IDCard BusiIDCard
       ,b.PhoneNo
       ,bwf.Amount
       ,bwf.HandChargeThreshold
