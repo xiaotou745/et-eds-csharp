@@ -557,6 +557,7 @@ select @@IDENTITY ";
                                                END
                                         END AS GrabToCompleteDistance
                                     ,o.BusinessCommission --商家结算比例
+                                    ,oo.IsNotRealOrder
                                     ";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrWhiteSpace(criteria.businessName))
