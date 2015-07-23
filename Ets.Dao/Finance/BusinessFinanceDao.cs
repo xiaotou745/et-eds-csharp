@@ -719,11 +719,12 @@ SELECT bfa.[Id]
       ,bfa.[YeepayKey]
       ,bfa.[YeepayStatus]
       ,b.IDCard BusiIDCard
+      ,b.PhoneNo
       ,bwf.Amount
       ,bwf.HandChargeThreshold
       ,bwf.HandCharge
       ,bwf.HandChargeOutlay
-      ,WithdrawTime
+      ,bwf.WithdrawTime
   FROM [BusinessFinanceAccount] bfa with(nolock)
   join BusinessWithdrawForm bwf with(nolock) on bwf.BusinessId=bfa.BusinessId and bwf.Id=@withwardId 
   join business b with(nolock) on b.id=bfa.BusinessId";
