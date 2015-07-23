@@ -12,6 +12,7 @@
             <th>更新内容</th>
             <th>发布类型</th>
             <th>发布状态</th>
+            <th>发布时间</th>
             <th>操作人</th>
             <th>操作</th>
         </tr>
@@ -33,6 +34,7 @@
                         <td title="@item.Message" width="200px">@(item.Message.Length > 15 ? item.Message.Substring(0, 15) +"…": item.Message)</td>
                         <td>@(item.IsTiming == 1 ? "定时发布" : "实时发布")</td>
                         <td>@(item.PubStatus == 0 ? "待发布" : item.PubStatus == 1 ? "已发布" : "取消发布")</td>
+                        <td>@item.TimingDate</td>
                         <td>@item.UpdateBy</td>
                         <td>
                             @{
