@@ -64,6 +64,6 @@ namespace Ets.Model.DataModel.Order
         /// <summary>
         /// 抢单和完成点之间的距离
         /// </summary>
-        public int GrabToCompleteDistance { get; set; }
+        public double GrabToCompleteDistance { get; set; }
     }
 }
