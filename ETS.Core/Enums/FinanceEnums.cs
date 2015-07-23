@@ -94,7 +94,7 @@ namespace ETS.Enums
         SystemError = 0,
         [DisplayText("未传参")]
         NoPara = -2,
-        [DisplayText("无需修改")]
+        [DisplayText("请修改绑定银行卡信息")]
         NoModify = 100,
         [DisplayText("请先注册或账户被封")]
         FisrtRegist = 101,
@@ -269,7 +269,7 @@ namespace ETS.Enums
         SystemError = 0,
         [DisplayText("未传参")]
         NoPara = -2,
-        [DisplayText("无需修改")]
+        [DisplayText("请修改绑定银行卡信息")]
         NoModify = 100,
         [DisplayText("请先注册或账户被封")]
         FisrtRegist = 101,
