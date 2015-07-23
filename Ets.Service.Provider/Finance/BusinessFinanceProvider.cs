@@ -347,13 +347,14 @@ namespace Ets.Service.Provider.Finance
                         IdCard = busiFinanceAccount.BusiIDCard,
                         BusinessLicence = busiFinanceAccount.IDCard,
                         LegalPerson = busiFinanceAccount.TrueName,
-                        BankAccountNumber = busiFinanceAccount.AccountNo,
+                        BankAccountNumber = ParseHelper.ToDecrypt(busiFinanceAccount.AccountNo),
                         BankName = busiFinanceAccount.OpenBank,
                         AccountName = busiFinanceAccount.TrueName,
                         BankProvince = busiFinanceAccount.OpenProvince,
                         BankCity = busiFinanceAccount.OpenCity,
                         UserId = busiFinanceAccount.BusinessId,
-                        UserType = UserTypeYee.Business.GetHashCode()
+                        UserType = UserTypeYee.Business.GetHashCode(),
+                        AccountId = busiFinanceAccount.Id.ToString()
                     };
                     var dr = DealRegBusiSubAccount(brp);
                     if (!dr.DealFlag)

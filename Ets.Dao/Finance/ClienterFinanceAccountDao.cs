@@ -66,7 +66,7 @@ select @@IDENTITY";
             const string updateSql = @"
 update  ClienterFinanceAccount
 set  TrueName=@TrueName,AccountNo=@AccountNo,BelongType=@BelongType,OpenBank=@OpenBank,
-OpenSubBank=@OpenSubBank,UpdateBy=@UpdateBy,OpenProvince=@OpenProvince,OpenCity=@OpenCity,IDCard=@IDCard,OpenProvinceCode=@OpenProvinceCode,OpenCityCode=@OpenCityCode 
+OpenSubBank=@OpenSubBank,UpdateBy=@UpdateBy,OpenProvince=@OpenProvince,OpenCity=@OpenCity,IDCard=@IDCard,OpenProvinceCode=@OpenProvinceCode,OpenCityCode=@OpenCityCode ,YeepayStatus=@YeepayStatus 
 where  Id=@Id ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Id", clienterFinanceAccount.Id);
@@ -81,7 +81,7 @@ where  Id=@Id ";
             dbParameters.Add("OpenProvinceCode", DbType.Int32).Value = clienterFinanceAccount.OpenProvinceCode;
             dbParameters.Add("OpenCityCode", DbType.Int32).Value = clienterFinanceAccount.OpenCityCode;
             dbParameters.Add("IDCard", DbType.String).Value = clienterFinanceAccount.IDCard;
-
+            dbParameters.Add("YeepayStatus", DbType.SByte).Value = clienterFinanceAccount.YeepayStatus;
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
 
