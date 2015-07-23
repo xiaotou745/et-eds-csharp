@@ -88,8 +88,7 @@ width: 100%;
                         <td>@item.OrderCommission</td>
                         @{
                             decimal butie = 0.00M;
-                            if ((int)ETS.Enums.OrderStatusCommon.Finish == item.Status ||
-                                (int)ETS.Enums.OrderStatusCommon.Cancel == item.Status)
+                            if (1 == item.IsNotRealOrder)
                             {
                                 butie = item.OrderCommission.Value - item.RealOrderCommission;
                             }
