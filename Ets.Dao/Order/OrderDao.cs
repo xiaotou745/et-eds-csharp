@@ -3278,7 +3278,7 @@ where   Id = @OrderId and FinishAll = 0";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("clienterId", DbType.Int32).Value = clienterID;
             dbParameters.Add("beginDate", DbType.DateTime).Value = DateTime.Now.Date.ToString();
-            dbParameters.Add("endDate", DbType.DateTime).Value = DateTime.Now.AddDays(1).Date.ToString();
+            dbParameters.Add("endDate", DbType.DateTime).Value = DateTime.Now.ToString();
 
             object obj = DbHelper.ExecuteScalar(SuperMan_Read, sql, dbParameters);
             return ParseHelper.ToInt(obj, 0);
