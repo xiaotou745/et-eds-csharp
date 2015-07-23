@@ -27,7 +27,7 @@ namespace Ets.Dao.Common
         {
             const string querysql = @"
 SELECT TOP 1 [Version],IsMust,UpdateUrl,[Message] FROM dbo.AppVersion 
-WHERE [PlatForm]=@PlatForm AND UserType=@UserType and TimingDate<getdate()
+WHERE  PubStatus<>2 and [PlatForm]=@PlatForm AND UserType=@UserType and TimingDate<getdate()
 ORDER BY [Version] DESC";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@PlatForm", vcmodel.PlatForm);

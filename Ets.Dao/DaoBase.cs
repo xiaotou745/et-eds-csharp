@@ -84,14 +84,14 @@ namespace ETS.Dao
                     {
                         continue;
                     }
-                    try
-                    {
+                    //try
+                    //{
                         propertyInfo.SetValue(t, obj, null);
-                    }
-                    catch (Exception ex)
-                    {
-                        //throw ex;
-                    }
+                    //}
+                    //catch (Exception ex)
+                    //{
+                    //    throw ex;
+                    //}
                 }
             }
 
