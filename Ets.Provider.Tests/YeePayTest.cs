@@ -40,7 +40,7 @@ namespace Ets.Provider.Tests
                 BankProvince = "北京",
                 BankCity = "北京",
                 UserId=1,
-                UserType=0
+                UserType=UserTypeYee.Business.GetHashCode()
             });//注册帐号
         }
 
@@ -50,7 +50,16 @@ namespace Ets.Provider.Tests
         [Test]
         public void CashTransfer()
         {
-            var result = new Transfer().CashTransfer(APP.B, 97, "10012474356", "3");//提现
+            //var result = new Transfer().CashTransfer(APP.B, -1, "10012474356", "0.1");//提现
+
+            var result1 = new PayProvider().CashTransferYee(new YeeCashTransferParameter()
+            {
+                UserType = UserTypeYee.Business.GetHashCode(),
+                WithdrawId = 1212,
+                Ledgerno = "10012474356",
+                App = APP.B,
+                Amount = "0.2"
+            });
         }
 
 
@@ -71,8 +80,14 @@ namespace Ets.Provider.Tests
         [Test]
         public void TransferAccounts()
         {
-            var result = new Transfer().TransferAccounts("10012474356", "5", "");//转账   主账户转给子账户
-            //var result1 = new Transfer().TransferAccounts( "", "10", "10012474356");//转账   子账户转给总账户
+            var model= new PayProvider().TransferAccountsYee(new YeeTransferParameter()
+            {
+                UserType=1,
+                WithdrawId=1212,
+                Ledgerno = "10012474356",
+                SourceLedgerno = "",
+                Amount="2"
+            });
         }
      
     }

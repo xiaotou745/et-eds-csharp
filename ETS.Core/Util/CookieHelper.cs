@@ -26,7 +26,7 @@ namespace ETS.Util
             HttpCookie cookie = HttpContext.Current.Request.Cookies[cookieName];
             if (cookie != null && cookie.Values.Count > 0)
             {
-                data = HttpUtility.UrlDecode(cookie.Value, Encoding.GetEncoding("UTF-8"));
+                data = cookie.Value;
             }
             return data;
         }
@@ -45,7 +45,7 @@ namespace ETS.Util
                 cookie.Domain = "." + CookieHost;
             }
             cookie.Expires = expires;
-            cookie.Value = HttpUtility.UrlEncode(data, Encoding.GetEncoding("UTF-8"));
+            cookie.Value = data;
             HttpContext.Current.Response.Cookies.Add(cookie);
         }
 
@@ -61,7 +61,7 @@ namespace ETS.Util
             {
                 cookie.Domain = "." + CookieHost;
             }
-            cookie.Value = HttpUtility.UrlEncode(data, Encoding.GetEncoding("UTF-8"));
+            cookie.Value = data;
             HttpContext.Current.Response.Cookies.Add(cookie);
         }
 

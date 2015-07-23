@@ -61,4 +61,67 @@ namespace ETS.Pay.YeePay
         c = 2
 
     }
+
+    /// <summary>
+    ///用户类型（0骑士 1商家  默认 0）  add By caoheyang 20150723
+    /// </summary>
+    public enum UserTypeYee
+    {
+
+        /// <summary>
+        /// 骑士
+        /// </summary>
+        [Description("骑士")]
+        Clienter = 0,
+        /// <summary>
+        /// 商家
+        /// </summary>
+        [Description("商家")]
+        Business = 1
+      
+    }
+  
+
+    /// <summary>
+    /// 交易类型 0  转账 1发起提现 2回调提现  add By caoheyang 20150723
+    /// </summary>
+    public enum TransferTypeYee
+    {
+        /// <summary>
+        /// 转账
+        /// </summary>
+        [Description("转账")]
+        Transfer = 0,
+        /// <summary>
+        /// 发起提现
+        /// </summary>
+        [Description("发起提现")]
+        Withdraw = 1,
+               /// <summary>
+        /// 回调提现
+        /// </summary>
+        [Description("回调提现")]
+        CallBack = 2
+
+    }
+
+
+    /// <summary>
+    ///支出方 0 主账户 1 子账户  add By caoheyang 20150723
+    /// </summary>
+    public enum PayerYee
+    {
+        /// <summary>
+        /// 主账户
+        /// </summary>
+        [Description("主账户")]
+        Main = 0,
+        /// <summary>
+        /// 子账户
+        /// </summary>
+        [Description("子账户")]
+        Child = 1
+      
+
+    }
 }

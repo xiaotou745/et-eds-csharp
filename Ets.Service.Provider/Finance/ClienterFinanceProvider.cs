@@ -19,6 +19,8 @@ using Ets.Model.ParameterModel.Finance;
 using ETS.Pay.YeePay;
 using ETS.Security;
 using Ets.Service.IProvider.Finance;
+using Ets.Service.IProvider.Pay;
+using Ets.Service.Provider.Pay;
 using ETS.Transaction;
 using ETS.Transaction.Common;
 using ETS.Util;
@@ -533,7 +535,9 @@ namespace Ets.Service.Provider.Finance
                         BankName = cliFinanceAccount.OpenBank,
                         AccountName = cliFinanceAccount.TrueName,
                         BankProvince = cliFinanceAccount.OpenProvince,
-                        BankCity = cliFinanceAccount.OpenCity
+                        BankCity = cliFinanceAccount.OpenCity,
+                        UserId = cliFinanceAccount.ClienterId,
+                        UserType = UserTypeYee.Clienter.GetHashCode()
                     };
                     var dr = DealRegCliSubAccount(brp);
                     if (!dr.DealFlag)
@@ -544,15 +548,32 @@ namespace Ets.Service.Provider.Finance
                     cliFinanceAccount.YeepayKey = dr.SuccessId; //子账户id
                 }
                 //转账逻辑
-                var regTransfer = new Transfer().TransferAccounts("", amount.ToString(),
-                    cliFinanceAccount.YeepayKey); //转账   子账户转给总账户
+                var regTransfer = new PayProvider().TransferAccountsYee(new YeeTransferParameter()
+                {
+                    UserType = UserTypeYee.Clienter.GetHashCode(),
+                    WithdrawId = cliFinanceAccount.Id,
+                    Ledgerno = cliFinanceAccount.YeepayKey,
+                    SourceLedgerno = "",
+                    Amount = amount.ToString()
+                });
+                //var regTransfer = new Transfer().TransferAccounts("", amount.ToString(),
+                //    cliFinanceAccount.YeepayKey); //转账   子账户转给总账户
                 if (regTransfer.code != "1")
                 {
                     dealResultInfo.DealMsg = "骑士易宝自动转账失败："+regTransfer.msg+"(" + regTransfer.code+")";
                     return dealResultInfo;
                 }
-                var regCash = new Transfer().CashTransfer(APP.B, ParseHelper.ToInt(model.WithwardId),
-                    cliFinanceAccount.YeepayKey, amount.ToString()); //提现
+                //提现逻辑
+                var regCash = new PayProvider().CashTransferYee(new YeeCashTransferParameter()
+                {
+                    UserType = UserTypeYee.Clienter.GetHashCode(),
+                    WithdrawId = cliFinanceAccount.Id,
+                    Ledgerno = cliFinanceAccount.YeepayKey,
+                    App = APP.c,
+                    Amount = amount.ToString()
+                });
+                //var regCash = new Transfer().CashTransfer(APP.B, ParseHelper.ToInt(model.WithwardId),
+                //    cliFinanceAccount.YeepayKey, amount.ToString()); //提现
                 if (regCash.code != "1")
                 {
                     dealResultInfo.DealMsg = "骑士易宝自动提现失败："+ regCash.msg+"("+ regCash.code+")";
@@ -635,9 +656,18 @@ namespace Ets.Service.Provider.Finance
             {
                 return reg;
             }
-            Transfer transfer = new Transfer();
-            TransferReturnModel tempmodel = transfer.TransferAccounts("",
-                (ParseHelper.ToDecimal(callback.amount) - withdraw.HandCharge).ToString(), callback.ledgerno);
+            IPayProvider payProvider = new PayProvider();
+            TransferReturnModel tempmodel = payProvider.TransferAccountsYee(new YeeTransferParameter()
+            {
+                UserType = 0,
+                WithdrawId = model.WithwardId,
+                Ledgerno = "",
+                SourceLedgerno = callback.ledgerno,
+                Amount = (ParseHelper.ToDecimal(callback.amount) - withdraw.HandCharge).ToString()
+            });
+            //Transfer transfer = new Transfer();
+            //TransferReturnModel tempmodel = transfer.TransferAccounts("",
+            //    (ParseHelper.ToDecimal(callback.amount) - withdraw.HandCharge).ToString(), callback.ledgerno);
             if (tempmodel.code == "1") //易宝子账户到主账户打款 成功
             {
                 using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())

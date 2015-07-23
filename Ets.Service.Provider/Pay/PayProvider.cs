@@ -628,7 +628,22 @@ namespace Ets.Service.Provider.Pay
             bool result = false;
             string username = "易宝提现回调";
             CashTransferCallback model = JsonHelper.JsonConvertToObject<CashTransferCallback>(ResponseYeePay.OutRes(data, true));
-            int withwardId = ParseHelper.ToInt(model.cashrequestid.Substring(2));
+            int withwardId = ParseHelper.ToInt(model.cashrequestid.Substring(2).Substring(0, model.cashrequestid.Substring(2).IndexOf('-'))); //提现单id
+
+            new YeePayRecordDao().Insert(new YeePayRecord()
+            {
+                WithdrawId = withwardId,
+                RequestId = model.cashrequestid,
+                CustomerNumber = model.customernumber,
+                Ledgerno = model.ledgerno,
+                Amount = model.amount,
+                Status = model.status,
+                Lastno = model.lastno,
+                Desc = model.desc,
+                TransferType =  TransferTypeYee.CallBack.GetHashCode(),
+                UserType = model.cashrequestid.Substring(0, 1) == "C" ? UserTypeYee.Clienter.GetHashCode() : UserTypeYee.Business.GetHashCode() 
+            });
+      
             if (model.status == "SUCCESS") //提现成功 走 成功的逻辑
             {
                 if (model.cashrequestid.Substring(0, 1) == "B") //B端逻辑
@@ -743,7 +758,7 @@ namespace Ets.Service.Provider.Pay
         public TransferReturnModel CashTransferYee(YeeCashTransferParameter model)
         {
             Transfer transfer = new Transfer();
-            TransferReturnModel retunModel = transfer.CashTransfer(model.App, model.WithdrawId, model.Ledgerno, model.Amount);
+            TransferReturnModel retunModel = transfer.CashTransfer(ref model);
             if (retunModel != null && retunModel.code == "1")  //易宝返回成功 记录所有当前请求相关的数据
             {
                 new YeePayRecordDao().Insert(CashTransferYeeModel(model, retunModel));
@@ -768,8 +783,8 @@ namespace Ets.Service.Provider.Pay
                 Ledgerno = model.Ledgerno,
                 SourceLedgerno = "",
                 Amount = model.Amount,
-                TransferType = "1", //发起提现  
-                Payer = "1",  //提现支出方是 1 子账户
+                TransferType = TransferTypeYee.Withdraw.GetHashCode(), //发起提现  
+                Payer = PayerYee.Child.GetHashCode(),  //提现支出方是 1 子账户
                 Code = retunModel.code,
                 Hmac = model.Hmac,
                 Msg = retunModel.msg,
@@ -786,10 +801,10 @@ namespace Ets.Service.Provider.Pay
         public TransferReturnModel TransferAccountsYee(YeeTransferParameter para)
         {
             Transfer transfer = new Transfer();
-            TransferReturnModel retunModel = transfer.TransferAccounts(para.Ledgerno, para.Amount, para.SourceLedgerno);
+            TransferReturnModel retunModel = transfer.TransferAccounts(ref para);
             if (retunModel != null && retunModel.code == "1")  //易宝返回成功 记录所有当前请求相关的数据
             {
-                new YeePayRecordDao().Insert(new YeePayRecord());
+                new YeePayRecordDao().Insert(TransferYeeModel(para,retunModel));
             }
             return retunModel;
         }
@@ -803,6 +818,9 @@ namespace Ets.Service.Provider.Pay
         /// <returns></returns>
         private YeePayRecord TransferYeeModel(YeeTransferParameter model, TransferReturnModel retunModel)
         {
+            int payer = string.IsNullOrWhiteSpace(model.Ledgerno) && !string.IsNullOrWhiteSpace(model.SourceLedgerno)
+                ? PayerYee.Child.GetHashCode()
+                : PayerYee.Main.GetHashCode();//0 主账户 1 子账户
             return new YeePayRecord()
             {
                 RequestId = model.RequestId,
@@ -811,8 +829,8 @@ namespace Ets.Service.Provider.Pay
                 Ledgerno = model.Ledgerno,
                 SourceLedgerno = model.SourceLedgerno,
                 Amount = model.Amount,
-                TransferType = "0", //发起提现  
-                Payer = model.Payer,
+                TransferType =TransferTypeYee.Transfer.GetHashCode(), //转账
+                Payer = payer,
                 Code = retunModel.code,
                 Hmac = model.Hmac,
                 Msg = retunModel.msg,

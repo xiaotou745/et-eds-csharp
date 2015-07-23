@@ -23,10 +23,11 @@ namespace Ets.Dao.Common.YeePay
         public long Insert(YeePayRecord yeePayRecord)
         {
             const string insertSql = @"
-insert into YeePayRecord(RequestId,CustomerNumber,HmacKey,Ledgerno,SourceLedgerno,Amount,TransferType,Payer,Code,Hmac,Msg,CallbackUrl,Status,WithdrawId,UserType)
-values(@RequestId,@CustomerNumber,@HmacKey,@Ledgerno,@SourceLedgerno,@Amount,@TransferType,@Payer,@Code,@Hmac,@Msg,@CallbackUrl,@Status,@WithdrawId,@UserType)
+insert into YeePayRecord(RequestId,CustomerNumber,HmacKey,Ledgerno,SourceLedgerno,Amount,TransferType,Payer,Code,Hmac,Msg,CallbackUrl,Status,WithdrawId,UserType,Lastno,[Desc])
+values(@RequestId,@CustomerNumber,@HmacKey,@Ledgerno,@SourceLedgerno,@Amount,@TransferType,@Payer,@Code,@Hmac,@Msg,@CallbackUrl,@Status,@WithdrawId,@UserType,@Lastno,@Desc)
 
 select @@IDENTITY";
+
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("RequestId", yeePayRecord.RequestId);
             dbParameters.AddWithValue("CustomerNumber", yeePayRecord.CustomerNumber);
@@ -43,6 +44,11 @@ select @@IDENTITY";
             dbParameters.AddWithValue("Status", yeePayRecord.Status);
             dbParameters.AddWithValue("WithdrawId", yeePayRecord.WithdrawId);
             dbParameters.AddWithValue("UserType", yeePayRecord.UserType);
+            dbParameters.AddWithValue("Lastno", yeePayRecord.Lastno);
+            dbParameters.AddWithValue("Desc", yeePayRecord.Desc);
+
+
+
             return  ParseHelper.ToLong(DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters));
         
         }

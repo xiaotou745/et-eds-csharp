@@ -1,5 +1,6 @@
 ﻿using Ets.Model.Common;
 using Ets.Model.Common.AliPay;
+using Ets.Model.Common.YeePay;
 using Ets.Model.DomainModel.Business;
 using Ets.Model.ParameterModel.AliPay;
 using Ets.Model.ParameterModel.Business;
@@ -8,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ETS.Pay.YeePay;
 
 namespace Ets.Service.IProvider.Pay
 {
@@ -77,5 +79,24 @@ namespace Ets.Service.IProvider.Pay
         /// </summary>
         /// <param name="data"></param>
         bool YeePayCashTransferCallback(string data);
+
+        /// <summary> 
+        /// 注册易宝子账户 add by caoheyang 20150722
+        /// </summary>
+        /// <param name="para"></param>
+        RegisterReturnModel RegisterYee(YeeRegisterParameter para);
+
+        /// <summary>
+        /// 易宝提现  add by caoheyang 20150722
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        TransferReturnModel CashTransferYee(YeeCashTransferParameter model);
+
+        /// <summary> 
+        /// 易宝转账 add by caoheyang 20150722
+        /// </summary>
+        /// <param name="para"></param>
+        TransferReturnModel TransferAccountsYee(YeeTransferParameter para);
     }
 }
