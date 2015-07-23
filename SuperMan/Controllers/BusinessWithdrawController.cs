@@ -32,8 +32,9 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         public ActionResult BusinessWithdraw()
         {
-            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(0);
+            
             int userType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(userType);
             var criteria = new BusinessWithdrawSearchCriteria()
             {
                 WithdrawStatus=0,
@@ -56,8 +57,9 @@ namespace SuperMan.Controllers
         [HttpPost]
         public ActionResult PostBusinessWithdraw(int pageindex = 1)
         {
-            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(0);
+           
             int userType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(userType);
             var criteria = new BusinessWithdrawSearchCriteria();
             TryUpdateModel(criteria);
             criteria.UserType = userType;
