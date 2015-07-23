@@ -109,6 +109,30 @@ namespace Ets.Service.Provider.Common
             if (areaList.AreaModels == null || areaList.AreaModels.Count <= 0)
             {
                 var list = dao.GetPublicBankCitySql();
+                AreaModel xg = new AreaModel()
+                {
+                    Code = 32,
+                    Name = "香港",
+                    ParentId = 0,
+                    JiBie = 1
+                };
+                AreaModel am = new AreaModel()
+                {
+                    Code = 33,
+                    Name = "澳门",
+                    ParentId = 0,
+                    JiBie = 1
+                };
+                AreaModel tw = new AreaModel()
+                {
+                    Code = 34,
+                    Name = "台湾",
+                    ParentId = 0,
+                    JiBie = 1
+                };
+                list.Add(xg);
+                list.Add(am);
+                list.Add(tw);
                 areaList = new AreaModelList();
                 areaList.AreaModels = list;
                 if (list != null)
@@ -235,7 +259,7 @@ namespace Ets.Service.Provider.Common
             else
             {
                 cacheAreaModelList = dao.GetRegionInfo().ToList();
-                redis.Add(key, JsonHelper.ToJson(cacheAreaModelList),DateTime.Now.AddDays(1));
+                redis.Add(key, JsonHelper.ToJson(cacheAreaModelList), DateTime.Now.AddDays(1));
             }
             //cacheAreaModelList = CacheFactory.Instance[key] as List<AreaModelTranslate>;
             //if (cacheAreaModelList == null) //为null的时候，取数据库

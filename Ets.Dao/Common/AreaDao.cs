@@ -139,7 +139,7 @@ where   p.name =@ProvinceName
                         a.Name ,
                         a.ParentId ,
                         a.JiBie
-               FROM     dbo.PublicBankCity a ( NOLOCK )");
+               FROM     dbo.PublicBankCity a ( NOLOCK )  where code>100");
             DataSet ds = DbHelper.ExecuteDataset(SuperMan_Read, sql);
             return MapRows<AreaModel>(DataTableHelper.GetTable(ds));
         }
