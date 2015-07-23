@@ -35,6 +35,7 @@ namespace Ets.Service.Provider.Common
         /// <returns></returns>
         public PageInfo<AppVerionModel> GetAppVersionList(AppVerionSearchCriteria criteria)
         {
+            appVersionDao.UpdateAppVersionPubStatus();
             return appVersionDao.GetAppVersionList<AppVerionModel>(criteria);
         }
         /// <summary>
