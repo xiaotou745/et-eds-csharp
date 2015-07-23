@@ -32,7 +32,7 @@
                         <td>@(item.IsMust == 1 ? "是" : "否")</td>
                         <td title="@item.Message" width="200px">@(item.Message.Length > 15 ? item.Message.Substring(0, 15) +"…": item.Message)</td>
                         <td>@(item.IsTiming == 1 ? "定时发布" : "实时发布")</td>
-                        <td>@(item.PubStatus == 0 ? "待发布" : item.IsTiming == 1 ? "已发布" : "取消发布")</td>
+                        <td>@(item.PubStatus == 0 ? "待发布" : item.PubStatus == 1 ? "已发布" : "取消发布")</td>
                         <td>@item.UpdateBy</td>
                         <td>
                             @{
