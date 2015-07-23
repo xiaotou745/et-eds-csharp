@@ -268,7 +268,7 @@
             alert("请输入登陆名称!");
             return;
         }
-        var reg = /^[u4E00-u9FA5]+$/;
+        var reg = /^[0-9a-zA-Z]+$/;
         if (!reg.test(loginName)) {
             alert("登录名不能包含汉字!");
             return;

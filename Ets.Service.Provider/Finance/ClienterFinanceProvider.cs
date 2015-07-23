@@ -515,82 +515,82 @@ namespace Ets.Service.Provider.Finance
             decimal amount = cliFinanceAccount.HandChargeOutlay == 0
                 ? cliFinanceAccount.Amount
                 : cliFinanceAccount.Amount + cliFinanceAccount.HandCharge;
-            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            //using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            //{
+            //注册易宝子账户逻辑
+            if (string.IsNullOrEmpty(cliFinanceAccount.YeepayKey) || cliFinanceAccount.YeepayStatus == 1)
             {
-                //注册易宝子账户逻辑
-                if (string.IsNullOrEmpty(cliFinanceAccount.YeepayKey) || cliFinanceAccount.YeepayStatus == 1)
+                var brp = new YeeRegisterParameter
                 {
-                    var brp = new YeeRegisterParameter
-                    {
-                        BindMobile = cliFinanceAccount.PhoneNo,
-                        SignedName = cliFinanceAccount.TrueName,
-                        CustomerType =
-                            cliFinanceAccount.BelongType == 0
-                                ? CustomertypeEnum.PERSON
-                                : CustomertypeEnum.ENTERPRISE,
-                        LinkMan = cliFinanceAccount.TrueName,
-                        IdCard = cliFinanceAccount.IDCard,
-                        BusinessLicence = cliFinanceAccount.IDCard,
-                        LegalPerson = cliFinanceAccount.TrueName,
-                        BankAccountNumber = ParseHelper.ToDecrypt(cliFinanceAccount.AccountNo),
-                        BankName = cliFinanceAccount.OpenBank,
-                        AccountName = cliFinanceAccount.TrueName,
-                        BankProvince = cliFinanceAccount.OpenProvince,
-                        BankCity = cliFinanceAccount.OpenCity,
-                        UserId = cliFinanceAccount.ClienterId,
-                        UserType = UserTypeYee.Clienter.GetHashCode(),
-                        AccountId = cliFinanceAccount.Id.ToString()
-                    };
-                    var dr = DealRegCliSubAccount(brp);
-                    if (!dr.DealFlag)
-                    {
-                        dealResultInfo.DealMsg = dr.DealMsg;
-                        return dealResultInfo;
-                    }
-                    cliFinanceAccount.YeepayKey = dr.SuccessId; //子账户id
-                }
-                //转账逻辑
-                var regTransfer = new PayProvider().TransferAccountsYee(new YeeTransferParameter()
-                {
+                    BindMobile = cliFinanceAccount.PhoneNo,
+                    SignedName = cliFinanceAccount.TrueName,
+                    CustomerType =
+                        cliFinanceAccount.BelongType == 0
+                            ? CustomertypeEnum.PERSON
+                            : CustomertypeEnum.ENTERPRISE,
+                    LinkMan = cliFinanceAccount.TrueName,
+                    IdCard = cliFinanceAccount.IDCard,
+                    BusinessLicence = cliFinanceAccount.IDCard,
+                    LegalPerson = cliFinanceAccount.TrueName,
+                    BankAccountNumber = ParseHelper.ToDecrypt(cliFinanceAccount.AccountNo),
+                    BankName = cliFinanceAccount.OpenBank,
+                    AccountName = cliFinanceAccount.TrueName,
+                    BankProvince = cliFinanceAccount.OpenProvince,
+                    BankCity = cliFinanceAccount.OpenCity,
+                    UserId = cliFinanceAccount.ClienterId,
                     UserType = UserTypeYee.Clienter.GetHashCode(),
-                    WithdrawId = cliFinanceAccount.Id,
-                    Ledgerno = cliFinanceAccount.YeepayKey,
-                    SourceLedgerno = "",
-                    Amount = amount.ToString()
-                });
-                //var regTransfer = new Transfer().TransferAccounts("", amount.ToString(),
-                //    cliFinanceAccount.YeepayKey); //转账   子账户转给总账户
-                if (regTransfer.code != "1")
+                    AccountId = cliFinanceAccount.Id.ToString()
+                };
+                var dr = DealRegCliSubAccount(brp);
+                if (!dr.DealFlag)
                 {
-                    dealResultInfo.DealMsg = "骑士易宝自动转账失败："+regTransfer.msg+"(" + regTransfer.code+")";
+                    dealResultInfo.DealMsg = dr.DealMsg;
                     return dealResultInfo;
                 }
-                //提现逻辑
-                var regCash = new PayProvider().CashTransferYee(new YeeCashTransferParameter()
-                {
-                    UserType = UserTypeYee.Clienter.GetHashCode(),
-                    WithdrawId = cliFinanceAccount.Id,
-                    Ledgerno = cliFinanceAccount.YeepayKey,
-                    App = APP.c,
-                    Amount = amount.ToString()
-                });
-                //var regCash = new Transfer().CashTransfer(APP.B, ParseHelper.ToInt(model.WithwardId),
-                //    cliFinanceAccount.YeepayKey, amount.ToString()); //提现
-                if (regCash.code != "1")
-                {
-                    dealResultInfo.DealMsg = "骑士易宝自动提现失败："+ regCash.msg+"("+ regCash.code+")";
-                    return dealResultInfo;
-                }
-                if (!clienterFinanceDao.ClienterWithdrawPayOk(model))
-                {
-                    dealResultInfo.DealMsg = "更改提现单状态为打款中失败！";
-                    return dealResultInfo;
-                }
-                dealResultInfo.DealFlag = true;
-                dealResultInfo.DealMsg = "骑士提现单确认打款处理成功，等待银行打款！";
-                tran.Complete();
+                cliFinanceAccount.YeepayKey = dr.SuccessId; //子账户id
+            }
+            //转账逻辑
+            var regTransfer = new PayProvider().TransferAccountsYee(new YeeTransferParameter()
+            {
+                UserType = UserTypeYee.Clienter.GetHashCode(),
+                WithdrawId = cliFinanceAccount.Id,
+                Ledgerno = cliFinanceAccount.YeepayKey,
+                SourceLedgerno = "",
+                Amount = amount.ToString()
+            });
+            //var regTransfer = new Transfer().TransferAccounts("", amount.ToString(),
+            //    cliFinanceAccount.YeepayKey); //转账   子账户转给总账户
+            if (regTransfer.code != "1")
+            {
+                dealResultInfo.DealMsg = "骑士易宝自动转账失败："+regTransfer.msg+"(" + regTransfer.code+")";
                 return dealResultInfo;
             }
+            //提现逻辑
+            var regCash = new PayProvider().CashTransferYee(new YeeCashTransferParameter()
+            {
+                UserType = UserTypeYee.Clienter.GetHashCode(),
+                WithdrawId = cliFinanceAccount.Id,
+                Ledgerno = cliFinanceAccount.YeepayKey,
+                App = APP.c,
+                Amount = amount.ToString()
+            });
+            //var regCash = new Transfer().CashTransfer(APP.B, ParseHelper.ToInt(model.WithwardId),
+            //    cliFinanceAccount.YeepayKey, amount.ToString()); //提现
+            if (regCash.code != "1")
+            {
+                dealResultInfo.DealMsg = "骑士易宝自动提现失败："+ regCash.msg+"("+ regCash.code+")";
+                return dealResultInfo;
+            }
+            if (!clienterFinanceDao.ClienterWithdrawPayOk(model))
+            {
+                dealResultInfo.DealMsg = "更改提现单状态为打款中失败！";
+                return dealResultInfo;
+            }
+            dealResultInfo.DealFlag = true;
+            dealResultInfo.DealMsg = "骑士提现单确认打款处理成功，等待银行打款！";
+            //tran.Complete();
+            return dealResultInfo;
+            //}
         }
         /// <summary>
         /// 骑士提现申请单审核拒绝

@@ -330,83 +330,83 @@ namespace Ets.Service.Provider.Finance
             decimal amount = busiFinanceAccount.HandChargeOutlay == 0
                 ? busiFinanceAccount.Amount
                 : busiFinanceAccount.Amount + busiFinanceAccount.HandCharge;
-            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            //using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            //{
+            //注册易宝子账户逻辑
+            if (string.IsNullOrEmpty(busiFinanceAccount.YeepayKey) || busiFinanceAccount.YeepayStatus == 1)
             {
-                //注册易宝子账户逻辑
-                if (string.IsNullOrEmpty(busiFinanceAccount.YeepayKey) || busiFinanceAccount.YeepayStatus == 1)
+                var brp = new YeeRegisterParameter
                 {
-                    var brp = new YeeRegisterParameter
-                    {
-                        BindMobile = busiFinanceAccount.PhoneNo,
-                        SignedName = busiFinanceAccount.TrueName,
-                        CustomerType =
-                            busiFinanceAccount.BelongType == 0
-                                ? CustomertypeEnum.PERSON
-                                : CustomertypeEnum.ENTERPRISE,
-                        LinkMan = busiFinanceAccount.TrueName,
-                        IdCard = busiFinanceAccount.BusiIDCard,
-                        BusinessLicence = busiFinanceAccount.IDCard,
-                        LegalPerson = busiFinanceAccount.TrueName,
-                        BankAccountNumber = ParseHelper.ToDecrypt(busiFinanceAccount.AccountNo),
-                        BankName = busiFinanceAccount.OpenBank,
-                        AccountName = busiFinanceAccount.TrueName,
-                        BankProvince = busiFinanceAccount.OpenProvince,
-                        BankCity = busiFinanceAccount.OpenCity,
-                        UserId = busiFinanceAccount.BusinessId,
-                        UserType = UserTypeYee.Business.GetHashCode(),
-                        AccountId = busiFinanceAccount.Id.ToString()
-                    };
-                    var dr = DealRegBusiSubAccount(brp);
-                    if (!dr.DealFlag)
-                    {
-                        dealResultInfo.DealMsg = dr.DealMsg;
-                        return dealResultInfo;
-                    }
-                    busiFinanceAccount.YeepayKey = dr.SuccessId; //子账户id
+                    BindMobile = busiFinanceAccount.PhoneNo,
+                    SignedName = busiFinanceAccount.TrueName,
+                    CustomerType =
+                        busiFinanceAccount.BelongType == 0
+                            ? CustomertypeEnum.PERSON
+                            : CustomertypeEnum.ENTERPRISE,
+                    LinkMan = busiFinanceAccount.TrueName,
+                    IdCard = busiFinanceAccount.BusiIDCard,
+                    BusinessLicence = busiFinanceAccount.IDCard,
+                    LegalPerson = busiFinanceAccount.TrueName,
+                    BankAccountNumber = ParseHelper.ToDecrypt(busiFinanceAccount.AccountNo),
+                    BankName = busiFinanceAccount.OpenBank,
+                    AccountName = busiFinanceAccount.TrueName,
+                    BankProvince = busiFinanceAccount.OpenProvince,
+                    BankCity = busiFinanceAccount.OpenCity,
+                    UserId = busiFinanceAccount.BusinessId,
+                    UserType = UserTypeYee.Business.GetHashCode(),
+                    AccountId = busiFinanceAccount.Id.ToString()
+                };
+                var dr = DealRegBusiSubAccount(brp);
+                if (!dr.DealFlag)
+                {
+                    dealResultInfo.DealMsg = dr.DealMsg;
+                    return dealResultInfo;
                 }
+                busiFinanceAccount.YeepayKey = dr.SuccessId; //子账户id
+            }
 
-                //转账逻辑
-                var regTransfer = new PayProvider().TransferAccountsYee(new YeeTransferParameter()
-                {
-                    UserType = UserTypeYee.Business.GetHashCode(),
-                    WithdrawId = busiFinanceAccount.Id,
-                    Ledgerno = busiFinanceAccount.YeepayKey,
-                    SourceLedgerno = "",
-                    Amount = amount.ToString()
-                });
-                //var regTransfer = new Transfer().TransferAccounts(busiFinanceAccount.YeepayKey, amount.ToString(),""
-                //    ); //转账   子账户转给总账户
-                if (regTransfer.code != "1")
-                {
-                    dealResultInfo.DealMsg = "商户易宝自动转账失败：" + regTransfer.msg + "(" + regTransfer.code+")";
-                    return dealResultInfo;
-                }
-                //提现逻辑
-                var regCash = new PayProvider().CashTransferYee(new YeeCashTransferParameter()
-                {
-                    UserType = UserTypeYee.Business.GetHashCode(),
-                    WithdrawId = busiFinanceAccount.Id,
-                    Ledgerno = busiFinanceAccount.YeepayKey,
-                    App = APP.B,
-                    Amount = amount.ToString()
-                });
-                //var regCash = new Transfer().CashTransfer(APP.B, ParseHelper.ToInt(model.WithwardId),
-                //    busiFinanceAccount.YeepayKey, amount.ToString()); //提现
-                if (regCash.code != "1")
-                {
-                    dealResultInfo.DealMsg = "商户易宝自动提现失败："+regCash.msg+"(" + regCash.code+")";
-                    return dealResultInfo;
-                }
-                if(!businessFinanceDao.BusinessWithdrawPayOk(model))
-                {
-                    dealResultInfo.DealMsg = "更改提现单状态为打款中失败！";
-                    return dealResultInfo;
-                }
-                dealResultInfo.DealFlag = true;
-                dealResultInfo.DealMsg = "商户提现单确认打款处理成功，等待银行打款！";
-                tran.Complete();
+            //转账逻辑
+            var regTransfer = new PayProvider().TransferAccountsYee(new YeeTransferParameter()
+            {
+                UserType = UserTypeYee.Business.GetHashCode(),
+                WithdrawId = busiFinanceAccount.Id,
+                Ledgerno = busiFinanceAccount.YeepayKey,
+                SourceLedgerno = "",
+                Amount = amount.ToString()
+            });
+            //var regTransfer = new Transfer().TransferAccounts(busiFinanceAccount.YeepayKey, amount.ToString(),""
+            //    ); //转账   子账户转给总账户
+            if (regTransfer.code != "1")
+            {
+                dealResultInfo.DealMsg = "商户易宝自动转账失败：" + regTransfer.msg + "(" + regTransfer.code+")";
                 return dealResultInfo;
             }
+            //提现逻辑
+            var regCash = new PayProvider().CashTransferYee(new YeeCashTransferParameter()
+            {
+                UserType = UserTypeYee.Business.GetHashCode(),
+                WithdrawId = busiFinanceAccount.Id,
+                Ledgerno = busiFinanceAccount.YeepayKey,
+                App = APP.B,
+                Amount = amount.ToString()
+            });
+            //var regCash = new Transfer().CashTransfer(APP.B, ParseHelper.ToInt(model.WithwardId),
+            //    busiFinanceAccount.YeepayKey, amount.ToString()); //提现
+            if (regCash.code != "1")
+            {
+                dealResultInfo.DealMsg = "商户易宝自动提现失败："+regCash.msg+"(" + regCash.code+")";
+                return dealResultInfo;
+            }
+            if(!businessFinanceDao.BusinessWithdrawPayOk(model))
+            {
+                dealResultInfo.DealMsg = "更改提现单状态为打款中失败！";
+                return dealResultInfo;
+            }
+            dealResultInfo.DealFlag = true;
+            dealResultInfo.DealMsg = "商户提现单确认打款处理成功，等待银行打款！";
+            //tran.Complete();
+            return dealResultInfo;
+            //}
         }
         /// <summary>
         /// 商户提现申请单确认打款

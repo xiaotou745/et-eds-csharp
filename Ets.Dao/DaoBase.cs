@@ -42,11 +42,11 @@ namespace ETS.Dao
                 return lstT;
             }
 
-            Type type = typeof (T);
+            Type type = typeof(T);
             PropertyInfo[] typeProperties = type.GetProperties();
             foreach (DataRow dataRow in table.Rows)
             {
-                T t = (T) type.Assembly.CreateInstance(type.FullName);
+                T t = (T)type.Assembly.CreateInstance(type.FullName);
                 lstT.Add(t);
 
                 foreach (DataColumn dataColumn in table.Columns)
@@ -61,12 +61,12 @@ namespace ETS.Dao
                     object obj = (dataRow[dataColumn.ColumnName] == DBNull.Value) ? "" : dataRow[dataColumn.ColumnName];
                     if (!string.IsNullOrEmpty(obj.ToString()))
                     {
-                        if (dataColumn.DataType == typeof (DateTime) && propertyInfo.PropertyType == typeof (String))
+                        if (dataColumn.DataType == typeof(DateTime) && propertyInfo.PropertyType == typeof(String))
                         {
                             obj = ((DateTime)dataRow[dataColumn.ColumnName]).ToString();
                         }
-                            
-                        if (dataColumn.DataType == typeof (String) && propertyInfo.PropertyType == typeof (DateTime))
+
+                        if (dataColumn.DataType == typeof(String) && propertyInfo.PropertyType == typeof(DateTime))
                         {
                             DateTime temp;
                             obj = DateTime.TryParse(obj.ToString(), out temp);
@@ -74,11 +74,11 @@ namespace ETS.Dao
                     }
                     //时间类型或者整形,则跳过赋值
                     if (string.IsNullOrEmpty(obj.ToString())
-                        && (propertyInfo.PropertyType == typeof (DateTime)
-                            || propertyInfo.PropertyType == typeof (int)
-                            || propertyInfo.PropertyType == typeof (Int16)
-                            || propertyInfo.PropertyType == typeof (Int32)
-                            || propertyInfo.PropertyType == typeof (Int64)
+                        && (propertyInfo.PropertyType == typeof(DateTime)
+                            || propertyInfo.PropertyType == typeof(int)
+                            || propertyInfo.PropertyType == typeof(Int16)
+                            || propertyInfo.PropertyType == typeof(Int32)
+                            || propertyInfo.PropertyType == typeof(Int64)
                            )
                         )
                     {
