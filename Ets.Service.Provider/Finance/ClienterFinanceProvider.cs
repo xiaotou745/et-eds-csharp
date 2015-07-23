@@ -173,10 +173,10 @@ namespace Ets.Service.Provider.Finance
             {
                 return FinanceWithdrawC.FinanceAccountError;
             }
-            if (!Regex.IsMatch(clienterFinanceAccount.IDCard, Config.IDCARD_REG, RegexOptions.IgnoreCase) || 
+            if (string.IsNullOrEmpty(clienterFinanceAccount.IDCard) || !Regex.IsMatch(clienterFinanceAccount.IDCard, Config.IDCARD_REG, RegexOptions.IgnoreCase) || 
                 string.IsNullOrEmpty(clienterFinanceAccount.OpenCity) ||string.IsNullOrEmpty(clienterFinanceAccount.OpenProvince) ||
                 string.IsNullOrEmpty(clienterFinanceAccount.OpenBank) || string.IsNullOrEmpty(clienterFinanceAccount.OpenSubBank) ||
-                !Regex.IsMatch(clienterFinanceAccount.OpenSubBank, Config.OPEN_SUB_BANK_REG))
+                string.IsNullOrEmpty(clienterFinanceAccount.OpenSubBank) || !Regex.IsMatch(clienterFinanceAccount.OpenSubBank, Config.OPEN_SUB_BANK_REG))
             {
                 return FinanceWithdrawC.BankInfoError;
             }
