@@ -142,7 +142,7 @@ namespace ETS.Pay.YeePay
             #region 第三方交互逻辑
             var js = new JavaScriptSerializer();
 
-            string[] stringArray = { customernumber, requestid, para.Ledgerno, para.Amount, callbackurl };
+            string[] stringArray = { customernumber, requestid, para.Ledgerno, Math.Round(ParseHelper.ToDecimal(para.Amount), 2).ToString(), callbackurl };
 
             var hmac = Digest.getHmac(stringArray, hmackey);//生成hmac签名
 
