@@ -29,6 +29,11 @@ namespace Ets.Model.DomainModel.Finance
         /// 提现时间
         /// </summary>
         public DateTime WithdrawTime { get; set; }
+        /// <summary>
+        /// 提现人身份证号
+        /// </summary>
+        public string CliIDCard { get; set; }
+        
         
     }
 }

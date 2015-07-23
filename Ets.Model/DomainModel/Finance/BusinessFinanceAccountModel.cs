@@ -10,7 +10,7 @@ namespace Ets.Model.DomainModel.Finance
     public class BusinessFinanceAccountModel : BusinessFinanceAccount
     {
         /// <summary>
-        /// 商户身份证号
+        /// 提现人身份证号
         /// </summary>
         public string BusiIDCard { get; set; }
         /// <summary>

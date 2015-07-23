@@ -529,7 +529,7 @@ namespace Ets.Service.Provider.Finance
                             ? CustomertypeEnum.PERSON
                             : CustomertypeEnum.ENTERPRISE,
                     LinkMan = cliFinanceAccount.TrueName,
-                    IdCard = cliFinanceAccount.IDCard,
+                    IdCard = cliFinanceAccount.CliIDCard,
                     BusinessLicence = cliFinanceAccount.IDCard,
                     LegalPerson = cliFinanceAccount.TrueName,
                     BankAccountNumber = ParseHelper.ToDecrypt(cliFinanceAccount.AccountNo),
