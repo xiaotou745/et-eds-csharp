@@ -88,6 +88,7 @@ INSERT INTO [AppVersion]
            ,[CreateBy]
            ,[UpdateBy]
            ,[IsTiming]
+           ,[PubStatus]
            ,[TimingDate])
      VALUES
            (@Version
@@ -99,6 +100,7 @@ INSERT INTO [AppVersion]
            ,@CreateBy
            ,@UpdateBy
            ,@IsTiming
+           ,@PubStatus
            ,");
             if (model.TimingDate != null)
             {
@@ -119,6 +121,7 @@ INSERT INTO [AppVersion]
             parm.AddWithValue("@UpdateBy", model.OptUserName);
             parm.AddWithValue("@IsTiming", model.IsTiming);
             parm.AddWithValue("@TimingDate",model.TimingDate);
+            parm.AddWithValue("@PubStatus", model.IsTiming==0?1:0);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
         /// <summary>
@@ -156,6 +159,19 @@ INSERT INTO [AppVersion]
             parm.AddWithValue("@UpdateBy", model.OptUserName);
             parm.AddWithValue("@Id", model.ID);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
+        }
+
+        /// <summary>
+        /// 修改APP版本状态为已发布（类型为定时发布、状态为待发布、发布时间小于当前时间）
+        /// danny-20150723
+        /// </summary>
+        /// <returns></returns>
+        public bool UpdateAppVersionPubStatus()
+        {
+            string sql = @"UPDATE AppVersion 
+                            SET PubStatus=1
+                        WHERE  IsTiming=1 AND PubStatus=0 AND TimingDate<getdate();";
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql) > 0;
         }
         /// <summary>
         /// 用Id查询升级信息

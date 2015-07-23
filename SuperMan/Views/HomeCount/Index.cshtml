@@ -152,9 +152,36 @@
         </table>
     </p>
 
+   
+        <hr />
+
+
+
+        @*<h3 style="color:black;font-weight:600">最近20天数据统计</h3>*@
+        <div>
+            <p>
+                @using (Ajax.BeginForm("PostIndex", new RouteValueDictionary { { "pageindex", "" } },
+            new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
+            new RouteValueDictionary { { "id", "searchForm" } }))
+                {
+                    <div class="SearchMd" style="padding:0">
+                        <h3 style="color:black;font-weight:600">每天数据统计</h3>
+                        <input id="txtOrderPubStart" readonly="readonly" type="text" name="orderPubStart" />
+                        <span class="">到: </span>
+                        <input id="txtOrderPubEnd" readonly="readonly" type="text" name="orderPubEnd" />
+                        <input type="submit" value="查询" class="searchBtn" id="btnSearch" /><br /><br />
+                    </div>
+                }
+                <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+                <div class="bd clearfix" id="dataList" style="width:100%">
+                    @Html.Partial("_PartialIndex", Model)
+                </div>
+
+            </p>
+        </div>
     <hr />
     <h3 style="color:black;font-weight:600">跨店抢单骑士统计</h3>
-    
+
     @*<h3 style="color:black;font-weight:600">最近20天数据统计</h3>*@
     <div>
         <p>
@@ -195,32 +222,6 @@
             </table>
         </p>
 
-        <hr />
-
-
-
-        @*<h3 style="color:black;font-weight:600">最近20天数据统计</h3>*@
-        <div>
-            <p>
-                @using (Ajax.BeginForm("PostIndex", new RouteValueDictionary { { "pageindex", "" } },
-            new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
-            new RouteValueDictionary { { "id", "searchForm" } }))
-                {
-                    <div class="SearchMd" style="padding:0">
-                        <h3 style="color:black;font-weight:600">每天数据统计</h3>
-                        <input id="txtOrderPubStart" readonly="readonly" type="text" name="orderPubStart" />
-                        <span class="">到: </span>
-                        <input id="txtOrderPubEnd" readonly="readonly" type="text" name="orderPubEnd" />
-                        <input type="submit" value="查询" class="searchBtn" id="btnSearch" /><br /><br />
-                    </div>
-                }
-                <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
-                <div class="bd clearfix" id="dataList" style="width:100%">
-                    @Html.Partial("_PartialIndex", Model)
-                </div>
-
-            </p>
-        </div>
     </div>
     
 </div>

@@ -532,13 +532,14 @@ namespace Ets.Service.Provider.Finance
                         IdCard = cliFinanceAccount.IDCard,
                         BusinessLicence = cliFinanceAccount.IDCard,
                         LegalPerson = cliFinanceAccount.TrueName,
-                        BankAccountNumber = cliFinanceAccount.AccountNo,
+                        BankAccountNumber = ParseHelper.ToDecrypt(cliFinanceAccount.AccountNo),
                         BankName = cliFinanceAccount.OpenBank,
                         AccountName = cliFinanceAccount.TrueName,
                         BankProvince = cliFinanceAccount.OpenProvince,
                         BankCity = cliFinanceAccount.OpenCity,
                         UserId = cliFinanceAccount.ClienterId,
-                        UserType = UserTypeYee.Clienter.GetHashCode()
+                        UserType = UserTypeYee.Clienter.GetHashCode(),
+                        AccountId = cliFinanceAccount.Id.ToString()
                     };
                     var dr = DealRegCliSubAccount(brp);
                     if (!dr.DealFlag)
