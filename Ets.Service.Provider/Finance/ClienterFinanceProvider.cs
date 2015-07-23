@@ -535,7 +535,9 @@ namespace Ets.Service.Provider.Finance
                         BankName = cliFinanceAccount.OpenBank,
                         AccountName = cliFinanceAccount.TrueName,
                         BankProvince = cliFinanceAccount.OpenProvince,
-                        BankCity = cliFinanceAccount.OpenCity
+                        BankCity = cliFinanceAccount.OpenCity,
+                        UserId = cliFinanceAccount.ClienterId,
+                        UserType = UserTypeYee.Clienter.GetHashCode()
                     };
                     var dr = DealRegCliSubAccount(brp);
                     if (!dr.DealFlag)
@@ -546,15 +548,32 @@ namespace Ets.Service.Provider.Finance
                     cliFinanceAccount.YeepayKey = dr.SuccessId; //子账户id
                 }
                 //转账逻辑
-                var regTransfer = new Transfer().TransferAccounts("", amount.ToString(),
-                    cliFinanceAccount.YeepayKey); //转账   子账户转给总账户
+                var regTransfer = new PayProvider().TransferAccountsYee(new YeeTransferParameter()
+                {
+                    UserType = UserTypeYee.Clienter.GetHashCode(),
+                    WithdrawId = cliFinanceAccount.Id,
+                    Ledgerno = cliFinanceAccount.YeepayKey,
+                    SourceLedgerno = "",
+                    Amount = amount.ToString()
+                });
+                //var regTransfer = new Transfer().TransferAccounts("", amount.ToString(),
+                //    cliFinanceAccount.YeepayKey); //转账   子账户转给总账户
                 if (regTransfer.code != "1")
                 {
                     dealResultInfo.DealMsg = "骑士易宝自动转账失败："+regTransfer.msg+"(" + regTransfer.code+")";
                     return dealResultInfo;
                 }
-                var regCash = new Transfer().CashTransfer(APP.B, ParseHelper.ToInt(model.WithwardId),
-                    cliFinanceAccount.YeepayKey, amount.ToString()); //提现
+                //提现逻辑
+                var regCash = new PayProvider().CashTransferYee(new YeeCashTransferParameter()
+                {
+                    UserType = UserTypeYee.Clienter.GetHashCode(),
+                    WithdrawId = cliFinanceAccount.Id,
+                    Ledgerno = cliFinanceAccount.YeepayKey,
+                    App = APP.c,
+                    Amount = amount.ToString()
+                });
+                //var regCash = new Transfer().CashTransfer(APP.B, ParseHelper.ToInt(model.WithwardId),
+                //    cliFinanceAccount.YeepayKey, amount.ToString()); //提现
                 if (regCash.code != "1")
                 {
                     dealResultInfo.DealMsg = "骑士易宝自动提现失败："+ regCash.msg+"("+ regCash.code+")";
