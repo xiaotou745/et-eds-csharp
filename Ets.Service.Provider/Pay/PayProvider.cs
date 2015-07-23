@@ -1,4 +1,5 @@
-﻿using Ets.Model.Common.YeePay;
+﻿using Ets.Dao.Common.YeePay;
+using Ets.Model.Common.YeePay;
 using Ets.Model.DomainModel.Finance;
 using ETS.Pay.YeePay;
 using Ets.Service.IProvider.Finance;
@@ -37,6 +38,7 @@ namespace Ets.Service.Provider.Pay
         OrderChildDao orderChildDao = new OrderChildDao();
         private IBusinessFinanceProvider iBusinessFinanceProvider = new BusinessFinanceProvider();
         private IClienterFinanceProvider iClienterFinanceProvider = new ClienterFinanceProvider();
+
         #region 生成支付宝、微信二维码订单
 
         /// <summary>
@@ -615,6 +617,7 @@ namespace Ets.Service.Provider.Pay
         #endregion
 
 
+        #region 易宝相关
         /// <summary>
         /// 易宝转账回调接口
         /// </summary>
@@ -624,8 +627,23 @@ namespace Ets.Service.Provider.Pay
         {
             bool result = false;
             string username = "易宝提现回调";
-            CashTransferCallback model = JsonHelper.JsonConvertToObject<CashTransferCallback>(ResponseYeePay.OutRes(data,true));
-            int withwardId = ParseHelper.ToInt(model.cashrequestid.Substring(2));
+            CashTransferCallback model = JsonHelper.JsonConvertToObject<CashTransferCallback>(ResponseYeePay.OutRes(data, true));
+            int withwardId = ParseHelper.ToInt(model.cashrequestid.Substring(2).Substring(0, model.cashrequestid.Substring(2).IndexOf('-'))); //提现单id
+
+            new YeePayRecordDao().Insert(new YeePayRecord()
+            {
+                WithdrawId = withwardId,
+                RequestId = model.cashrequestid,
+                CustomerNumber = model.customernumber,
+                Ledgerno = model.ledgerno,
+                Amount = model.amount,
+                Status = model.status,
+                Lastno = model.lastno,
+                Desc = model.desc,
+                TransferType =  TransferTypeYee.CallBack.GetHashCode(),
+                UserType = model.cashrequestid.Substring(0, 1) == "C" ? UserTypeYee.Clienter.GetHashCode() : UserTypeYee.Business.GetHashCode() 
+            });
+      
             if (model.status == "SUCCESS") //提现成功 走 成功的逻辑
             {
                 if (model.cashrequestid.Substring(0, 1) == "B") //B端逻辑
@@ -662,7 +680,7 @@ namespace Ets.Service.Provider.Pay
                         Status = BusinessWithdrawFormStatus.Error.GetHashCode(),
                         WithwardId = withwardId,
                         PayFailedReason = ""
-                    },model); //商户提现失败
+                    }, model); //商户提现失败
                     result = true;
                 }
                 else if (model.cashrequestid.Substring(0, 1) == "C") //C端逻辑
@@ -682,5 +700,146 @@ namespace Ets.Service.Provider.Pay
 
         }
 
+        /// <summary> 
+        /// 注册易宝子账户 add by caoheyang 20150722
+        /// </summary>
+        /// <param name="para"></param>
+        public RegisterReturnModel RegisterYee(YeeRegisterParameter para)
+        {
+            Register regisiter = new Register();
+            RegisterReturnModel retunModel = regisiter.RegSubaccount(para);
+            if (retunModel != null && retunModel.code == "1")  //易宝返回成功 记录所有当前请求相关的数据
+            {
+                new YeePayUserDao().Insert(TranslateRegisterYeeModel(para));
+            }
+            return retunModel;
+        }
+
+        /// <summary>
+        /// 根据易宝注册参数 转  YeePayUser 实体 add by caoheyang 20150722
+        /// </summary>
+        /// <param name="para"></param>
+        /// <returns></returns>
+        private YeePayUser TranslateRegisterYeeModel(YeeRegisterParameter para)
+        {
+            return new YeePayUser()
+            {
+                UserId = para.UserId,
+                UserType = para.UserType,
+                RequestId = para.RequestId,
+                CustomerNumberr = para.CustomerNumberr,
+                HmacKey = para.HmacKey,
+                BindMobile = para.BindMobile,
+                CustomerType = para.CustomerType.ToString(),
+                SignedName = para.SignedName,
+                LinkMan = para.LinkMan,
+                IdCard = para.IdCard,
+                BusinessLicence = para.BusinessLicence,
+                LegalPerson = para.LegalPerson,
+                MinsettleAmount = para.MinsettleAmount,
+                Riskreserveday = para.RiskReserveday,
+                BankAccountNumber = para.BankAccountNumber,
+                BankName = para.BankName,
+                AccountName = para.AccountName,
+                BankAccountType = para.BankAccountType,
+                BankProvince = para.BankProvince,
+                BankCity = para.BankCity,
+                ManualSettle = para.ManualSettle,
+                Hmac = para.Hmac,
+                Ledgerno = para.Ledgerno
+            };
+        }
+
+        /// <summary>
+        /// 易宝提现  add by caoheyang 20150722
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public TransferReturnModel CashTransferYee(YeeCashTransferParameter model)
+        {
+            Transfer transfer = new Transfer();
+            TransferReturnModel retunModel = transfer.CashTransfer(ref model);
+            if (retunModel != null && retunModel.code == "1")  //易宝返回成功 记录所有当前请求相关的数据
+            {
+                new YeePayRecordDao().Insert(CashTransferYeeModel(model, retunModel));
+            }
+            return retunModel;
+        }
+
+
+        /// <summary>
+        /// 根据易宝发起提现参数 转  YeePayRecord 实体 add by caoheyang 20150722
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="retunModel"></param>
+        /// <returns></returns>
+        private YeePayRecord CashTransferYeeModel(YeeCashTransferParameter model, TransferReturnModel retunModel)
+        {
+            return new YeePayRecord()
+            {
+                RequestId = model.RequestId,
+                CustomerNumber = model.CustomerNumber,
+                HmacKey = model.HmacKey,
+                Ledgerno = model.Ledgerno,
+                SourceLedgerno = "",
+                Amount = model.Amount,
+                TransferType = TransferTypeYee.Withdraw.GetHashCode(), //发起提现  
+                Payer = PayerYee.Child.GetHashCode(),  //提现支出方是 1 子账户
+                Code = retunModel.code,
+                Hmac = model.Hmac,
+                Msg = retunModel.msg,
+                CallbackUrl = model.CallbackUrl,
+                WithdrawId = model.WithdrawId,
+                UserType = model.UserType
+            };
+        }
+
+        /// <summary> 
+        /// 易宝转账 add by caoheyang 20150722
+        /// </summary>
+        /// <param name="para"></param>
+        public TransferReturnModel TransferAccountsYee(YeeTransferParameter para)
+        {
+            Transfer transfer = new Transfer();
+            TransferReturnModel retunModel = transfer.TransferAccounts(ref para);
+            if (retunModel != null && retunModel.code == "1")  //易宝返回成功 记录所有当前请求相关的数据
+            {
+                new YeePayRecordDao().Insert(TransferYeeModel(para,retunModel));
+            }
+            return retunModel;
+        }
+
+
+        /// <summary>
+        /// 根据易宝转账参数 转  YeePayRecord 实体 add by caoheyang 20150722
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="retunModel"></param>
+        /// <returns></returns>
+        private YeePayRecord TransferYeeModel(YeeTransferParameter model, TransferReturnModel retunModel)
+        {
+            int payer = string.IsNullOrWhiteSpace(model.Ledgerno) && !string.IsNullOrWhiteSpace(model.SourceLedgerno)
+                ? PayerYee.Child.GetHashCode()
+                : PayerYee.Main.GetHashCode();//0 主账户 1 子账户
+            return new YeePayRecord()
+            {
+                RequestId = model.RequestId,
+                CustomerNumber = model.CustomerNumber,
+                HmacKey = model.HmacKey,
+                Ledgerno = model.Ledgerno,
+                SourceLedgerno = model.SourceLedgerno,
+                Amount = model.Amount,
+                TransferType =TransferTypeYee.Transfer.GetHashCode(), //转账
+                Payer = payer,
+                Code = retunModel.code,
+                Hmac = model.Hmac,
+                Msg = retunModel.msg,
+                CallbackUrl = "",
+                WithdrawId = model.WithdrawId,
+                UserType = model.UserType
+            };
+        }
+
+        #endregion
     }
 }

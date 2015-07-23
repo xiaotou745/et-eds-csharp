@@ -45,11 +45,11 @@ namespace Ets.Model.Common.YeePay
         /// <summary>
         /// 0  转账 1发起提现 2回调提现
         /// </summary>
-        public string TransferType { get; set; }
+        public int TransferType { get; set; }
         /// <summary>
         /// 支出方 0 主账户 1 子账户
         /// </summary>
-        public string Payer { get; set; }
+        public int Payer { get; set; }
         /// <summary>
         /// 易宝返回状态吗
         /// </summary>
@@ -73,11 +73,20 @@ namespace Ets.Model.Common.YeePay
         /// <summary>
         /// 提现单号
         /// </summary>
-        public string WithdrawId { get; set; }
+        public long WithdrawId { get; set; }
         /// <summary>
         /// 用户类型（0骑士 1商家  默认 0）
         /// </summary>
         public int UserType { get; set; }
+
+        /// <summary>
+        /// 卡号后四位
+        /// </summary>
+        public string Lastno { get; set; }
+        /// <summary>
+        /// 提现状态描述
+        /// </summary>
+        public string Desc { get; set; }
 
     }
 

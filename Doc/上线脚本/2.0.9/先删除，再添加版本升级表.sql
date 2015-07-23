@@ -97,7 +97,3 @@ GO
 ALTER TABLE [dbo].[AppVersion] ADD  DEFAULT (getdate()) FOR [TimingDate]
 GO
 
-
-SELECT * FROM dbo.AppVersion
-
-

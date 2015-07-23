@@ -47,7 +47,7 @@
                 <label>版 本 号：</label>
             </div>
             <div style="float: left;width:650px;">
-                <input name="version" id="version" type="text" value="">
+                <input name="version" id="version" type="text" value="" onkeyup="value=value.replace(/[^\d]/g,'')" maxlength="5">
                 @if (dealType == 1)
                 {
                     <input type="hidden" id="hidVersion" name="hidVersion" value="@Model.Version" />

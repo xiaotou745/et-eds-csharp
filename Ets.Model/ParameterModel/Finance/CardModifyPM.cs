@@ -52,7 +52,7 @@ namespace Ets.Model.ParameterModel.Finance
         /// <summary>
         /// 开户支行
         /// </summary>
-        [RegularExpression(Config.OPEN_SUB_BANK_REG, ErrorMessage = "开户行支行地址不少于3个汉字")]
+        [MinLength(3, ErrorMessage = "开户支行输入有误，请重新输入")]
         public string OpenSubBank { get; set; }
 
         /// <summary>
@@ -87,6 +87,6 @@ namespace Ets.Model.ParameterModel.Finance
         /// </summary>
         [Required(ErrorMessage = "开户市编码不能为空")]
         public int OpenCityCode { get; set; }
-        
+
     }
 }
