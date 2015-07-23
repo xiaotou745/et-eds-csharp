@@ -131,7 +131,7 @@ namespace SuperMan.Controllers
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.TrueName));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.WorkStatus==0?"上班":"下班"));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.PhoneNo));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.IDCard));
+                strBuilder.AppendLine(string.Format("<td>'{0}'</td>", item.IDCard));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.InsertTime));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", statusView));
                 strBuilder.AppendLine("</tr>");
@@ -240,7 +240,7 @@ namespace SuperMan.Controllers
             {
                 var statusView =ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.OrderStatusCommon) item.Status).GetType(),
                         (ETS.Enums.OrderStatusCommon) item.Status).Text;
-                strBuilder.AppendLine(string.Format("<tr><td>{0}</td>", item.OrderNo));
+                strBuilder.AppendLine(string.Format("<tr><td>'{0}'</td>", item.OrderNo));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.BusinessName));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.clienterId));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.ClienterName));
