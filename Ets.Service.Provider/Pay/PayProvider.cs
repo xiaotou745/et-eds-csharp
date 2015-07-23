@@ -628,7 +628,7 @@ namespace Ets.Service.Provider.Pay
             bool result = false;
             string username = "易宝提现回调";
             CashTransferCallback model = JsonHelper.JsonConvertToObject<CashTransferCallback>(ResponseYeePay.OutRes(data, true));
-            int withwardId = ParseHelper.ToInt(model.cashrequestid.Substring(2)); //提现单id
+            int withwardId = ParseHelper.ToInt(model.cashrequestid.Substring(2).Substring(0, model.cashrequestid.Substring(2).IndexOf('-'))); //提现单id
 
             new YeePayRecordDao().Insert(new YeePayRecord()
             {
@@ -640,8 +640,8 @@ namespace Ets.Service.Provider.Pay
                 Status = model.status,
                 Lastno = model.lastno,
                 Desc = model.desc,
-                TransferType = 2,
-                UserType = model.cashrequestid.Substring(0, 1) == "C" ? 0 : 1
+                TransferType =  TransferTypeYee.CallBack.GetHashCode(),
+                UserType = model.cashrequestid.Substring(0, 1) == "C" ? UserTypeYee.Clienter.GetHashCode() : UserTypeYee.Business.GetHashCode() 
             });
       
             if (model.status == "SUCCESS") //提现成功 走 成功的逻辑
@@ -783,8 +783,8 @@ namespace Ets.Service.Provider.Pay
                 Ledgerno = model.Ledgerno,
                 SourceLedgerno = "",
                 Amount = model.Amount,
-                TransferType = 1, //发起提现  
-                Payer = 1,  //提现支出方是 1 子账户
+                TransferType = TransferTypeYee.Withdraw.GetHashCode(), //发起提现  
+                Payer = PayerYee.Child.GetHashCode(),  //提现支出方是 1 子账户
                 Code = retunModel.code,
                 Hmac = model.Hmac,
                 Msg = retunModel.msg,
@@ -819,8 +819,8 @@ namespace Ets.Service.Provider.Pay
         private YeePayRecord TransferYeeModel(YeeTransferParameter model, TransferReturnModel retunModel)
         {
             int payer = string.IsNullOrWhiteSpace(model.Ledgerno) && !string.IsNullOrWhiteSpace(model.SourceLedgerno)
-                ? 1
-                : 0;//0 主账户 1 子账户
+                ? PayerYee.Child.GetHashCode()
+                : PayerYee.Main.GetHashCode();//0 主账户 1 子账户
             return new YeePayRecord()
             {
                 RequestId = model.RequestId,
@@ -829,7 +829,7 @@ namespace Ets.Service.Provider.Pay
                 Ledgerno = model.Ledgerno,
                 SourceLedgerno = model.SourceLedgerno,
                 Amount = model.Amount,
-                TransferType = 0, //发起提现  
+                TransferType =TransferTypeYee.Transfer.GetHashCode(), //转账
                 Payer = payer,
                 Code = retunModel.code,
                 Hmac = model.Hmac,

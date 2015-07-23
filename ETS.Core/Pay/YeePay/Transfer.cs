@@ -130,7 +130,7 @@ namespace ETS.Pay.YeePay
         /// <returns></returns>
         public TransferReturnModel CashTransfer(ref YeeCashTransferParameter para)
         {
-            string requestid = para.App.ToString() + "-" +para.WithdrawId;
+            string requestid = para.App.ToString() + "-" + para.WithdrawId + "-" + TimeHelper.GetTimeStamp(false);
             //商户编号   
             string customernumber = KeyConfig.YeepayAccountId;
             //密钥   

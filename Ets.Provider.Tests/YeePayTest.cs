@@ -40,7 +40,7 @@ namespace Ets.Provider.Tests
                 BankProvince = "北京",
                 BankCity = "北京",
                 UserId=1,
-                UserType=0
+                UserType=UserTypeYee.Business.GetHashCode()
             });//注册帐号
         }
 
@@ -54,7 +54,7 @@ namespace Ets.Provider.Tests
 
             var result1 = new PayProvider().CashTransferYee(new YeeCashTransferParameter()
             {
-                UserType = 1,
+                UserType = UserTypeYee.Business.GetHashCode(),
                 WithdrawId = 1212,
                 Ledgerno = "10012474356",
                 App = APP.B,
