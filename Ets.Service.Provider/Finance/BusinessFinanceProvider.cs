@@ -194,9 +194,9 @@ namespace Ets.Service.Provider.Finance
                         OpenCityCode = withdrawBBackPM.OpenCityCode,//城市代码
                         OpenProvince = withdrawBBackPM.OpenProvince,//省份
                         OpenProvinceCode = withdrawBBackPM.OpenProvinceCode,//省份代码
-                                  HandCharge = Convert.ToInt32(globalConfig.WithdrawCommission),//手续费
+                        HandCharge = Convert.ToInt32(globalConfig.WithdrawCommission),//手续费
                         HandChargeOutlay = withdrawBBackPM.WithdrawPrice > Convert.ToInt32(globalConfig.ClienterWithdrawCommissionAccordingMoney) ? HandChargeOutlay.EDaiSong : HandChargeOutlay.Private,//手续费支出方
-                                  HandChargeThreshold = Convert.ToInt32(globalConfig.ClienterWithdrawCommissionAccordingMoney)//手续费阈值 
+                        HandChargeThreshold = Convert.ToInt32(globalConfig.ClienterWithdrawCommissionAccordingMoney)//手续费阈值 
                     });
                     #endregion
 
@@ -323,6 +323,7 @@ namespace Ets.Service.Provider.Finance
             }
             if (busiFinanceAccount.WithdrawTime < ParseHelper.ToDatetime(Config.WithdrawTime))
             {
+                model.Status = BusinessWithdrawFormStatus.Success.GetHashCode();
                 dealResultInfo.DealFlag = BusinessWithdrawPayOk(model);
                 dealResultInfo.DealMsg = dealResultInfo.DealFlag ? "打款成功！" : "打款失败！";
                 return dealResultInfo;
@@ -378,7 +379,7 @@ namespace Ets.Service.Provider.Finance
             //    ); //转账   子账户转给总账户
             if (regTransfer.code != "1")
             {
-                dealResultInfo.DealMsg = "商户易宝自动转账失败：" + regTransfer.msg + "(" + regTransfer.code+")";
+                dealResultInfo.DealMsg = "商户易宝自动转账失败：" + regTransfer.msg + "(" + regTransfer.code + ")";
                 return dealResultInfo;
             }
             //提现逻辑
@@ -394,10 +395,10 @@ namespace Ets.Service.Provider.Finance
             //    busiFinanceAccount.YeepayKey, amount.ToString()); //提现
             if (regCash.code != "1")
             {
-                dealResultInfo.DealMsg = "商户易宝自动提现失败："+regCash.msg+"(" + regCash.code+")";
+                dealResultInfo.DealMsg = "商户易宝自动提现失败：" + regCash.msg + "(" + regCash.code + ")";
                 return dealResultInfo;
             }
-            if(!businessFinanceDao.BusinessWithdrawPayOk(model))
+            if (!businessFinanceDao.BusinessWithdrawPayOk(model))
             {
                 dealResultInfo.DealMsg = "更改提现单状态为打款中失败！";
                 return dealResultInfo;
@@ -507,7 +508,7 @@ namespace Ets.Service.Provider.Finance
                 UserType = 1,
                 WithdrawId = model.WithwardId,
                 Ledgerno = "",
-                SourceLedgerno =callback.ledgerno,
+                SourceLedgerno = callback.ledgerno,
                 Amount = (ParseHelper.ToDecimal(callback.amount) - withdraw.HandCharge).ToString()
             });
 
@@ -531,8 +532,8 @@ namespace Ets.Service.Provider.Finance
                             {
                                 BusinessId = withdraw.BusinessId, //商户Id
                                 Amount = -withdraw.HandCharge, //手续费金额
-                                Status = (int) BusinessBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
-                                RecordType = (int) BusinessBalanceRecordRecordType.ProcedureFee,
+                                Status = (int)BusinessBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
+                                RecordType = (int)BusinessBalanceRecordRecordType.ProcedureFee,
                                 Operator = "易宝系统回调",
                                 WithwardId = withdraw.Id,
                                 RelationNo = withdraw.WithwardNo,

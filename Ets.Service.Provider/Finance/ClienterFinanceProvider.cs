@@ -173,8 +173,8 @@ namespace Ets.Service.Provider.Finance
             {
                 return FinanceWithdrawC.FinanceAccountError;
             }
-            if (string.IsNullOrEmpty(clienterFinanceAccount.IDCard) || !Regex.IsMatch(clienterFinanceAccount.IDCard, Config.IDCARD_REG, RegexOptions.IgnoreCase) || 
-                string.IsNullOrEmpty(clienterFinanceAccount.OpenCity) ||string.IsNullOrEmpty(clienterFinanceAccount.OpenProvince) ||
+            if (string.IsNullOrEmpty(clienterFinanceAccount.IDCard) || !Regex.IsMatch(clienterFinanceAccount.IDCard, Config.IDCARD_REG, RegexOptions.IgnoreCase) ||
+                string.IsNullOrEmpty(clienterFinanceAccount.OpenCity) || string.IsNullOrEmpty(clienterFinanceAccount.OpenProvince) ||
                 string.IsNullOrEmpty(clienterFinanceAccount.OpenBank) || string.IsNullOrEmpty(clienterFinanceAccount.OpenSubBank) ||
                 string.IsNullOrEmpty(clienterFinanceAccount.OpenSubBank) || !Regex.IsMatch(clienterFinanceAccount.OpenSubBank, Config.OPEN_SUB_BANK_REG))
             {
@@ -265,7 +265,7 @@ namespace Ets.Service.Provider.Finance
             {
                 return ResultModel<object>.Conclude(checkbool);
             }
-            int withdrawCount= _clienterWithdrawFormDao.GetByClienterId(cardModifyCpm.ClienterId);
+            int withdrawCount = _clienterWithdrawFormDao.GetByClienterId(cardModifyCpm.ClienterId);
             if (withdrawCount > 0) //该骑士是否存在未完成的提现单
             {
                 return ResultModel<object>.Conclude(FinanceCardModifyC.ForbitModify);
@@ -291,11 +291,11 @@ namespace Ets.Service.Provider.Finance
                             OpenBank = cardModifyCpm.OpenBank, //开户行
                             OpenSubBank = cardModifyCpm.OpenSubBank, //开户支行
                             UpdateBy = cardModifyCpm.UpdateBy, //修改人  当前登录人
-                            YeepayStatus =  1,//0正常1失败
+                            YeepayStatus = 1,//0正常1失败
                             OpenProvince = cardModifyCpm.OpenProvince, //省名称
                             OpenProvinceCode = cardModifyCpm.OpenProvinceCode,
                             OpenCity = cardModifyCpm.OpenCity, //市区名称
-                            OpenCityCode = cardModifyCpm.OpenCityCode, 
+                            OpenCityCode = cardModifyCpm.OpenCityCode,
                             IDCard = cardModifyCpm.IDCard //身份证号
                         });
                         tran.Complete();
@@ -508,8 +508,9 @@ namespace Ets.Service.Provider.Finance
             }
             if (cliFinanceAccount.WithdrawTime < ParseHelper.ToDatetime(Config.WithdrawTime))
             {
-               dealResultInfo.DealFlag= ClienterWithdrawPayOk(model);
-               dealResultInfo.DealMsg = dealResultInfo.DealFlag ? "打款成功！" : "打款失败！";
+                model.Status = ClienterWithdrawFormStatus.Success.GetHashCode();
+                dealResultInfo.DealFlag = ClienterWithdrawPayOk(model);
+                dealResultInfo.DealMsg = dealResultInfo.DealFlag ? "打款成功！" : "打款失败！";
                 return dealResultInfo;
             }
             decimal amount = cliFinanceAccount.HandChargeOutlay == 0
@@ -562,7 +563,7 @@ namespace Ets.Service.Provider.Finance
             //    cliFinanceAccount.YeepayKey); //转账   子账户转给总账户
             if (regTransfer.code != "1")
             {
-                dealResultInfo.DealMsg = "骑士易宝自动转账失败："+regTransfer.msg+"(" + regTransfer.code+")";
+                dealResultInfo.DealMsg = "骑士易宝自动转账失败：" + regTransfer.msg + "(" + regTransfer.code + ")";
                 return dealResultInfo;
             }
             //提现逻辑
@@ -578,7 +579,7 @@ namespace Ets.Service.Provider.Finance
             //    cliFinanceAccount.YeepayKey, amount.ToString()); //提现
             if (regCash.code != "1")
             {
-                dealResultInfo.DealMsg = "骑士易宝自动提现失败："+ regCash.msg+"("+ regCash.code+")";
+                dealResultInfo.DealMsg = "骑士易宝自动提现失败：" + regCash.msg + "(" + regCash.code + ")";
                 return dealResultInfo;
             }
             if (!clienterFinanceDao.ClienterWithdrawPayOk(model))
