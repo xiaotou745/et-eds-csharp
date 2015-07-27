@@ -105,8 +105,9 @@ width: 100%;
                         <td>@item.DistribSubsidy</td>
                         <td>@item.WebsiteSubsidy</td>
                         <td>@item.Adjustment</td>
-                        <td>@{
-                                item.CommissionType == 1 ? item.BusinessCommission+"%" : item.CommissionFixValue.ToString()}</td>
+                        <td>@{ var commission = item.CommissionType == 1 ? item.BusinessCommission + "%" : item.CommissionFixValue.ToString();}
+                            @commission
+                        </td>
                         <td>@item.GroupName</td>
                         <td style="color:@Html.Raw(val)">@ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.OrderStatusCommon)item.Status).GetType(), (ETS.Enums.OrderStatusCommon)item.Status).Text</td>
                         <td>@item.HadUploadCount.ToString()/@item.OrderCount.ToString()</td>  
