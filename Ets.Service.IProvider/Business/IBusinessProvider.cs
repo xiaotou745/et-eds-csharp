@@ -396,6 +396,13 @@ namespace Ets.Service.IProvider.Business
         /// /// <param name="optName">操作人</param>
         /// <returns></returns>
         DealResultInfo ModifyBusinessExpress(int busiId, string deliveryCompanyList, string optName);
+
+        /// <summary>
+        /// 商家坐标上传
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        ResultModel<object> InsertLocaltion(BusinessPushLocaltionPM model);
     }
 }
 

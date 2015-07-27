@@ -14,13 +14,13 @@
             <tr>
                 <td>
                     <span>骑士有待完成任务经纬度上传时间间隔:</span>
-                    <input type="text" name="uploadTimeInterval" value="@globalConfigModel.HasUnFinishedOrderUploadTimeInterval" id="hasUnFinishedOrderUploadTimeInterval" style="width: 100px" />秒
-                    <input type="hidden" name="oldUploadTimeInterval" value="@globalConfigModel.HasUnFinishedOrderUploadTimeInterval" id="oldHasUnFinishedOrderUploadTimeInterval" />
+                    <input type="text" name="hasUnFinishedOrderUploadTimeInterval" value="@globalConfigModel.HasUnFinishedOrderUploadTimeInterval" id="hasUnFinishedOrderUploadTimeInterval" style="width: 100px" />秒
+                    <input type="hidden" name="oldHasUnFinishedOrderUploadTimeInterval" value="@globalConfigModel.HasUnFinishedOrderUploadTimeInterval" id="oldHasUnFinishedOrderUploadTimeInterval" />
                 </td>
                 <td>
                     <span>骑士没有待完成任务经纬度上传时间间隔:</span>
-                    <input type="text" name="uploadTimeInterval" value="@globalConfigModel.AllFinishedOrderUploadTimeInterval" id="allFinishedOrderUploadTimeInterval" style="width: 100px" />秒
-                    <input type="hidden" name="oldUploadTimeInterval" value="@globalConfigModel.AllFinishedOrderUploadTimeInterval" id="oldAllFinishedOrderUploadTimeInterval" />
+                    <input type="text" name="allFinishedOrderUploadTimeInterval" value="@globalConfigModel.AllFinishedOrderUploadTimeInterval" id="allFinishedOrderUploadTimeInterval" style="width: 100px" />秒
+                    <input type="hidden" name="oldAllFinishedOrderUploadTimeInterval" value="@globalConfigModel.AllFinishedOrderUploadTimeInterval" id="oldAllFinishedOrderUploadTimeInterval" />
                 </td>
             </tr>
             <tr>
@@ -81,6 +81,13 @@
                     <input type="button" value="提交修改" class="searchBtn" id="btnCommit" />
                 </td>
             </tr>
+            <tr>
+                <td>
+                    <span>商家经纬度上传时间间隔:</span>
+                    <input type="text" name="businessUploadTimeInterval" value="@globalConfigModel.BusinessUploadTimeInterval" id="businessUploadTimeInterval" style="width: 100px" />秒
+                    <input type="hidden" name="oldBusinessUploadTimeInterval" value="@globalConfigModel.BusinessUploadTimeInterval" id="oldBusinessUploadTimeInterval" />
+                </td>
+            </tr>
         </table>
     </div>
 </div>
@@ -99,6 +106,7 @@
             var withdrawCommission = $("#withdrawCommission").val(); //易宝支付手续费金额
             var orderCountSetting = $("#orderCountSetting").val(); //无效订单判定时累计完成订单数量
             var grabToCompleteDistance = $("#grabToCompleteDistance").val(); //无效订单判定时抢单点和完成点的距离
+            var businessUploadTimeInterval = $("#businessUploadTimeInterval").val(); //商家经纬度上传时间间隔
 
             var oldHasUnFinishedOrderUploadTimeInterval = $("#oldHasUnFinishedOrderUploadTimeInterval").val(); //骑士有待完成任务经纬度上传时间间隔（之前）
             var oldAllFinishedOrderUploadTimeInterval = $("#oldAllFinishedOrderUploadTimeInterval").val(); //骑士没有待完成任务经纬度上传时间间隔（之前）
@@ -111,6 +119,7 @@
             var oldWithdrawCommission = $("#oldWithdrawCommission").val(); //易宝支付手续费金额（之前）
             var oldOrderCountSetting = $("#oldOrderCountSetting").val(); //无效订单判定时累计完成订单数量
             var oldGrabToCompleteDistance = $("#oldGrabToCompleteDistance").val(); //无效订单判定时抢单点和完成点的距离
+            var oldBusinessUploadTimeInterval = $("#oldBusinessUploadTimeInterval").val(); //商家经纬度上传时间间隔（之前）
 
 
             var pageOk = true;
@@ -154,6 +163,15 @@
                 return;
             }
             if (allFinishedOrderUploadTimeInterval < 0) {
+                alert("请输入大于零的值!");
+                return;
+            }
+
+            if (isNaN(businessUploadTimeInterval)) {
+                alert("请输入正确的数字!");
+                return;
+            }
+            if (businessUploadTimeInterval < 0) {
                 alert("请输入大于零的值!");
                 return;
             }
@@ -233,7 +251,8 @@
 	            completeTimeSet == oldCompleteTimeSet &&
 	            employerTaskTimeSet == oldEmployerTaskTimeSet &&
 	            orderCountSetting == oldOrderCountSetting &&
-                grabToCompleteDistance == oldGrabToCompleteDistance) {
+                grabToCompleteDistance == oldGrabToCompleteDistance && 
+                businessUploadTimeInterval == oldBusinessUploadTimeInterval) {
                 alert("没有需要修改的信息!");
                 return;
             }
@@ -250,7 +269,8 @@
                     "completeTimeSet": completeTimeSet,
                     "employerTaskTimeSet": employerTaskTimeSet,
                     "orderCountSetting": orderCountSetting,
-                    "grabToCompleteDistance": grabToCompleteDistance
+                    "grabToCompleteDistance": grabToCompleteDistance,
+                    "businessUploadTimeInterval": businessUploadTimeInterval
                 };
                 var url = "/AdminTools/ModifyGlobalConfig";
                 $.ajax({
