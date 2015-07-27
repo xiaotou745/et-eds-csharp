@@ -67,7 +67,7 @@ namespace SuperMan.Controllers
 
         public ActionResult Active()
         {
-            DateTime startDate = DateTime.Now.AddDays(-7).Date;
+            DateTime startDate = DateTime.Now.AddDays(-60).Date;
             DateTime endDate = DateTime.Now.AddDays(-1).Date;
 
             ViewBag.StartDate = startDate;

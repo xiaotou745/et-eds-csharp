@@ -53,9 +53,9 @@ namespace SuperMan.Controllers.API
                 return Json(new ResultModel(false, "时间条件不允许为null", null));
             }
 
-            if ((queryInfo.EndDate.Value.AddDays(1) - queryInfo.StartDate.Value).Days > 7)
+            if ((queryInfo.EndDate.Value.AddDays(1) - queryInfo.StartDate.Value).Days > 60)
             {
-                return Json(new ResultModel(false, "最多查询7天数据，请更改查询条件", null));
+                return Json(new ResultModel(false, "最多查询2月数据，请更改查询条件", null));
             }
 
             var lstActives = statisticsProvider.QueryActiveBusinessClienter(queryInfo);
