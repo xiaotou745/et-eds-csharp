@@ -64,6 +64,7 @@
     <Compile Include="Common\YeePay\CashTransferCallback.cs" />
     <Compile Include="Common\YeePay\YeePayRecord.cs" />
     <Compile Include="Common\YeePay\YeePayUser.cs" />
+    <Compile Include="Common\YeePay\YeePayUserBalanceRecord.cs" />
     <Compile Include="DataModel\Authority\AccountCityRelation.cs" />
     <Compile Include="DataModel\Authority\AccountDcRelation.cs" />
     <Compile Include="DataModel\Business\BusiModifyResultModelDM.cs" />
