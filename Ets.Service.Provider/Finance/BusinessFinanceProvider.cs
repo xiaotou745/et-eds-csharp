@@ -196,6 +196,7 @@ namespace Ets.Service.Provider.Finance
                         OpenProvinceCode = withdrawBBackPM.OpenProvinceCode,//省份代码
                         HandCharge = Convert.ToInt32(globalConfig.WithdrawCommission),//手续费
                         HandChargeOutlay = withdrawBBackPM.WithdrawPrice > Convert.ToInt32(globalConfig.ClienterWithdrawCommissionAccordingMoney) ? HandChargeOutlay.EDaiSong : HandChargeOutlay.Private,//手续费支出方
+                        PhoneNo = businessFinanceAccount.PhoneNo,
                         HandChargeThreshold = Convert.ToInt32(globalConfig.ClienterWithdrawCommissionAccordingMoney)//手续费阈值 
                     });
                     #endregion
