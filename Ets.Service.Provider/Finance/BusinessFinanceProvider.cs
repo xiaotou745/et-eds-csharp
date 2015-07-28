@@ -345,7 +345,7 @@ namespace Ets.Service.Provider.Finance
                             ? CustomertypeEnum.PERSON
                             : CustomertypeEnum.ENTERPRISE,
                     LinkMan = busiFinanceAccount.TrueName,
-                    IdCard = busiFinanceAccount.BusiIDCard,
+                    IdCard = string.IsNullOrEmpty(busiFinanceAccount.BusiIDCard)?busiFinanceAccount.IDCard : busiFinanceAccount.BusiIDCard,
                     BusinessLicence = busiFinanceAccount.IDCard,
                     LegalPerson = busiFinanceAccount.TrueName,
                     BankAccountNumber = ParseHelper.ToDecrypt(busiFinanceAccount.AccountNo),
