@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Text;
 using ETS.Const;
+using Ets.Dao.GlobalConfig;
 using Ets.Dao.Message;
 using Ets.Dao.User;
 using Ets.Model.Common;
@@ -1433,6 +1434,29 @@ namespace Ets.Service.Provider.Business
         public IList<BusinessExpressRelation> GetBusinessExpressRelationList(int businessId)
         {
             return businessDao.GetBusinessExpressRelationList(businessId);
+        }
+
+        /// <summary>
+        /// 插入骑士运行轨迹
+        /// </summary>
+        /// <UpdateBy>caoheyang</UpdateBy>
+        /// <UpdateTime>20150519</UpdateTime>
+        /// <param name="model">参数实体</param>
+        /// <returns></returns>
+        public ResultModel<object> InsertLocaltion(BusinessPushLocaltionPM model)
+        {
+            try
+            {
+                long id = businessDao.InsertLocation(model.BusinessId, model.Latitude, model.Latitude);
+                return ResultModel<object>.Conclude(SystemState.Success,
+                    new { PushTime = GlobalConfigDao.GlobalConfigGet(0).BusinessUploadTimeInterval });
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriterFromFilter(ex);
+                return ResultModel<object>.Conclude(SystemState.SystemError,
+                      new { PushTime = 0 });
+            }
         }
     }
 }

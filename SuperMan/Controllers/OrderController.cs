@@ -155,7 +155,7 @@ namespace SuperMan.Controllers
             strBuilder.AppendLine("<td>外送费用</td>");
             strBuilder.AppendLine("<td>每单补贴</td>");
             strBuilder.AppendLine("<td>任务补贴</td>");
-            strBuilder.AppendLine("<td>商家结算比例(%)</td>");
+            strBuilder.AppendLine("<td>商家结算</td>");
             strBuilder.AppendLine("</tr>");
             //输出数据.
             foreach (var oOrderListModel in paraModel.Records)
@@ -181,7 +181,7 @@ namespace SuperMan.Controllers
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.DistribSubsidy));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.WebsiteSubsidy));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.Adjustment));
-                strBuilder.AppendLine(string.Format("<td>{0}</td></tr>", oOrderListModel.BusinessCommission));
+                strBuilder.AppendLine(string.Format("<td>{0}</td></tr>", oOrderListModel.CommissionType == 1 ? oOrderListModel.BusinessCommission + "%" : oOrderListModel.CommissionFixValue.ToString()));
             }
             strBuilder.AppendLine("</table>");
             return strBuilder.ToString();
