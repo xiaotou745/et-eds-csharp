@@ -554,7 +554,7 @@ namespace Ets.Service.Provider.Finance
             var regTransfer = new PayProvider().TransferAccountsYee(new YeeTransferParameter()
             {
                 UserType = UserTypeYee.Clienter.GetHashCode(),
-                WithdrawId = cliFinanceAccount.Id,
+                WithdrawId = model.WithwardId,
                 Ledgerno = cliFinanceAccount.YeepayKey,
                 SourceLedgerno = "",
                 Amount = amount.ToString()
@@ -570,9 +570,9 @@ namespace Ets.Service.Provider.Finance
             var regCash = new PayProvider().CashTransferYee(new YeeCashTransferParameter()
             {
                 UserType = UserTypeYee.Clienter.GetHashCode(),
-                WithdrawId = cliFinanceAccount.Id,
+                WithdrawId = Convert.ToInt32(model.WithwardId),
                 Ledgerno = cliFinanceAccount.YeepayKey,
-                App = APP.c,
+                App = APP.C,
                 Amount = amount.ToString()
             });
             //var regCash = new Transfer().CashTransfer(APP.B, ParseHelper.ToInt(model.WithwardId),
