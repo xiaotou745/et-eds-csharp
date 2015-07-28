@@ -841,7 +841,7 @@ namespace Ets.Service.Provider.Finance
             {
                 DealFlag = false
             };
-            var registResult = new Register().RegSubaccount(model);//注册帐号
+            var registResult = new PayProvider().RegisterYee(model);//注册帐号
             if (registResult != null && !string.IsNullOrEmpty(registResult.code) && registResult.code.Trim() == "1")   //绑定成功，更新易宝key
             {
                 if (!_clienterFinanceAccountDao.ModifyYeepayInfoById(Convert.ToInt32(model.AccountId), registResult.ledgerno, 0))
