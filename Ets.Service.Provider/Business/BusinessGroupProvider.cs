@@ -205,6 +205,16 @@ namespace Ets.Service.Provider.Business
                         return false;
                     }
                 }
+                if (globalConfigModel.BusinessUploadTimeInterval != "0")
+                {
+                    globalConfig.KeyName = "BusinessUploadTimeInterval";
+                    globalConfig.Value = globalConfigModel.BusinessUploadTimeInterval;
+                    reg = businessGroupDao.UpdateGlobalConfig(globalConfig);
+                    if (!reg)
+                    {
+                        return false;
+                    }
+                }
                 if (globalConfigModel.ClienterWithdrawCommissionAccordingMoney != "0")
                 {
                     globalConfig.KeyName = "ClienterWithdrawCommissionAccordingMoney";

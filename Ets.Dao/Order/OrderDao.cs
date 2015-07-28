@@ -557,6 +557,8 @@ select @@IDENTITY ";
                                                END
                                         END AS GrabToCompleteDistance
                                     ,o.BusinessCommission --商家结算比例
+                                    ,o.CommissionFixValue --商家结算固定金额
+                                    ,o.CommissionType --结算类型
                                     ,oo.IsNotRealOrder
                                     ";
             var sbSqlWhere = new StringBuilder(" 1=1 ");

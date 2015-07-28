@@ -421,7 +421,7 @@ and a.PhoneNo=@PhoneNo";
             //{
             //    sbSqlWhere.AppendFormat(" AND b.City IN ({0}) ", criteria.AuthorityCityNameListStr.Trim());
             //}
-            if (!string.IsNullOrEmpty(criteria.AuthorityCityNameListStr)&&criteria.UserType!=0)
+            if (!string.IsNullOrEmpty(criteria.AuthorityCityNameListStr) && criteria.UserType != 0)
             {
                 sbSqlWhere.AppendFormat(" AND b.City IN ({0}) ", criteria.AuthorityCityNameListStr.Trim());
             }
@@ -1580,7 +1580,7 @@ where BusinessId=@BusinessId and IsEnable=1";
                 }
                 if (dataRow["OpenProvinceCode"] != null && dataRow["OpenProvinceCode"] != DBNull.Value)
                 {
-                    bf.OpenProvinceCode = ParseHelper.ToInt(dataRow["OpenProvinceCode"],0);
+                    bf.OpenProvinceCode = ParseHelper.ToInt(dataRow["OpenProvinceCode"], 0);
                 }
                 if (dataRow["OpenCityCode"] != null && dataRow["OpenCityCode"] != DBNull.Value)
                 {
@@ -2318,7 +2318,7 @@ VALUES
             {
                 sqlwhere += string.Format(" AND B.City='{0}' ", criteria.BusinessCity);
             }
-            if (criteria.AuthorityCityNameListStr != null && !string.IsNullOrEmpty(criteria.AuthorityCityNameListStr.Trim())&&criteria.UserType!=0)
+            if (criteria.AuthorityCityNameListStr != null && !string.IsNullOrEmpty(criteria.AuthorityCityNameListStr.Trim()) && criteria.UserType != 0)
             {
                 sqlwhere += string.Format("  AND B.City IN({0}) ", criteria.AuthorityCityNameListStr);
             }
@@ -2473,6 +2473,28 @@ MERGE INTO BusinessExpressRelation ber
             var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql));
             var list = ConvertDataTableList<BusinessPicModel>(dt);
             return list;
+        }
+
+        /// <summary>
+        /// 插入商家坐标位置    add by 彭宜    20150727
+        /// </summary>
+        /// <param name="businessId"></param>
+        /// <param name="longitude"></param>
+        /// <param name="latitude"></param>
+        /// <returns></returns>
+        public long InsertLocation(int businessId, decimal longitude, decimal latitude)
+        {
+            const string insertSql = @"
+insert into BusinessLocation(Longitude,Latitude,BusinessId)
+values(@Longitude,@Latitude,@BusinessId)
+select @@IDENTITY
+";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("Longitude", longitude);
+            dbParameters.AddWithValue("Latitude", latitude);
+            dbParameters.AddWithValue("BusinessId", businessId);
+            object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters);
+            return ParseHelper.ToLong(result);
         }
     }
 }

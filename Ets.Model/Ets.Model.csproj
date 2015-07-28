@@ -165,6 +165,7 @@
     <Compile Include="ParameterModel\Business\BusiDistribInfoPM.cs" />
     <Compile Include="ParameterModel\Business\BusiDistribSubsidyResultModel.cs" />
     <Compile Include="ParameterModel\Business\BusinessCommissionSearchCriteria.cs" />
+    <Compile Include="ParameterModel\Business\BusinessPushLocaltionPM.cs" />
     <Compile Include="ParameterModel\Business\BusinessRechargeModel.cs" />
     <Compile Include="ParameterModel\AliPay\PayModel.cs" />
     <Compile Include="ParameterModel\Area\ParaAreaNameInfo.cs" />
