@@ -211,5 +211,18 @@ namespace SuperMan.Controllers
         }
 
         #endregion
+
+        /// <summary>
+        /// 客户端APP启动热力图
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult AppActiveMap()
+        {
+            var list = new List<AppActiveInfo>();
+            list.AddRange(statisticsProvider.GetAppActiveInfos(1,"北京"));
+            list.AddRange(statisticsProvider.GetAppActiveInfos(2, "北京"));
+            ViewBag.LstAppActiveInfo = list;
+            return View();
+        }
     }
 }

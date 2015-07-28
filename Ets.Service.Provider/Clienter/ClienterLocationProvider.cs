@@ -60,6 +60,7 @@ namespace Ets.Service.Provider.Clienter
             temp.ClienterId = clienterPushLocaltionPm.ClienterId;
             temp.Longitude = clienterPushLocaltionPm.Longitude;
             temp.Latitude = clienterPushLocaltionPm.Latitude;
+            temp.Platform = clienterPushLocaltionPm.Platform;
             return temp;
         }
 

@@ -34,6 +34,9 @@ namespace Ets.Model.DataModel.Clienter
         /// 创建时间
         /// </summary>
         public DateTime CreateTime { get; set; }
-
+        /// <summary>
+        /// 客户端平台   如:ios    android
+        /// </summary>
+        public string Platform { get; set; }
     }
 }
