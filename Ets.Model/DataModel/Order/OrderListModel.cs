@@ -327,5 +327,9 @@ namespace Ets.Model.DataModel.Order
         /// 物流公司id
         /// </summary>
         public int DeliveryCompanyID { get; set; }
+        /// <summary>
+        /// 扣除补贴原因
+        /// </summary>
+        public string DeductCommissionReason { get; set; }
     }
 }

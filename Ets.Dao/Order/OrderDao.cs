@@ -806,7 +806,8 @@ select @@IDENTITY ";
                                         ,o.OriginalOrderNo
                                         ,oo.NeedUploadCount
                                         ,oo.HadUploadCount
-                                        ,oo.ReceiptPic                                        
+                                        ,oo.ReceiptPic
+                                        ,oo.DeductCommissionReason                                        
                                         ,o.OtherCancelReason
                                         ,o.OriginalOrderNo
                                         ,o.IsEnable

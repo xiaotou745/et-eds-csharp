@@ -1382,14 +1382,16 @@ namespace Ets.Service.Provider.Clienter
         /// </summary>
         /// <param name="myOrderInfo"></param>
         /// <returns></returns>
-        private bool CheckIsNotRealOrder(OrderListModel myOrderInfo)
+        private bool CheckIsNotRealOrder(OrderListModel myOrderInfo, out string reason)
         {
             OrderMapDetail mapDetail = orderDao.GetOrderMapDetail(myOrderInfo.Id);
             GlobalConfigModel globalSetting = GlobalConfigDao.GlobalConfigGet(0);
+            reason = "";
             if (mapDetail.GrabToCompleteDistance > -1)//如果抢单和完成两个点的坐标都有效，才进行距离判断
             {
                 if (mapDetail.GrabToCompleteDistance <= ParseHelper.ToInt(globalSetting.GrabToCompleteDistance, 0))
                 {
+                    reason = "接单完成位置重合";
                     return true;
                 }
             }
@@ -1399,13 +1401,16 @@ namespace Ets.Service.Provider.Clienter
             if (!(myOrderInfo.GrabTime.Value.AddMinutes(5) < actualDoneDate &&
                 actualDoneDate < myOrderInfo.GrabTime.Value.AddMinutes(120)))
             {
+                reason = "完成时间不在5-120分钟内";
                 return true;
             }
 
             int num = orderDao.GetTotalOrderNumByClienterID(myOrderInfo.clienterId);
+            var orderCountSetting = ParseHelper.ToInt(globalSetting.OrderCountSetting, 50);
             //如果骑士今天已经完成（或完成后，又取消了,不包含当前任务中的订单数量）的订单数量大于配置的值，则当前任务中的所有订单都扣除网站补贴
-            if (num - myOrderInfo.OrderCount > ParseHelper.ToInt(globalSetting.OrderCountSetting, 50))
+            if (num - myOrderInfo.OrderCount > orderCountSetting)
             {
+                reason = string.Format("完成订单量超过{0}个", orderCountSetting);
                 return true;
             }
 
@@ -1441,10 +1446,11 @@ namespace Ets.Service.Provider.Clienter
                 }
                 return;
             }
-            bool isNotRealOrder = CheckIsNotRealOrder(myOrderInfo);
+            var deductCommissionReason = "";
+            bool isNotRealOrder = CheckIsNotRealOrder(myOrderInfo, out deductCommissionReason);
             if (isNotRealOrder)
             {
-                orderOtherDao.UpdateOrderIsReal(myOrderInfo.Id);
+                
                 realOrderCommission = realOrderCommission > myOrderInfo.SettleMoney ? myOrderInfo.SettleMoney : realOrderCommission;
             }
 
@@ -1474,6 +1480,7 @@ namespace Ets.Service.Provider.Clienter
 
                     orderDao.InsertNotRealOrderLog(myOrderInfo.Id, diffOrderCommission * (-1));
                 }
+                orderOtherDao.UpdateOrderIsReal(myOrderInfo.Id, deductCommissionReason);
             }
         }
         /// <summary>
