@@ -681,6 +681,7 @@
     <Content Include="Views\AdminTools\APPVersionEdit.cshtml" />
     <Content Include="Views\AdminTools\APPVersionManager.cshtml" />
     <Content Include="Views\AdminTools\_APPVersionList.cshtml" />
+    <Content Include="Views\Statistical\AppActiveMap.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
