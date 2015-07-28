@@ -121,6 +121,7 @@
     <Compile Include="Business\BusinessProvider.cs" />
     <Compile Include="User\UserProvider.cs" />
     <Compile Include="WtihdrawRecords\WtihdrawRecordsProvider.cs" />
+    <Compile Include="YeePay\YeePayRunningProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ETS.Core\ETS.Core.csproj">

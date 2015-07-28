@@ -236,6 +236,7 @@
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\TestUserManagerController.cs" />
     <Compile Include="Controllers\UploadTestController.cs" />
+    <Compile Include="Controllers\YeePayRunningManagerController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -681,6 +682,8 @@
     <Content Include="Views\AdminTools\APPVersionEdit.cshtml" />
     <Content Include="Views\AdminTools\APPVersionManager.cshtml" />
     <Content Include="Views\AdminTools\_APPVersionList.cshtml" />
+    <Content Include="Views\YeePayRunningManager\YeePayRunningManager.cshtml" />
+    <Content Include="Views\YeePayRunningManager\_YeePayRunningList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
