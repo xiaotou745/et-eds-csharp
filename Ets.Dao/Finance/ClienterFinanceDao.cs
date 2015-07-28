@@ -1,4 +1,5 @@
 ﻿using ETS.Enums;
+using Ets.Model.Common.YeePay;
 using Ets.Model.DataModel.Finance;
 using Ets.Model.DomainModel.Finance;
 using Ets.Model.ParameterModel.Finance;
@@ -658,6 +659,41 @@ SELECT cfa.[Id]
                 return null;
             }
             return MapRows<ClienterFinanceAccountModel>(dt)[0];
+        }
+        /// <summary>
+        /// 添加易宝用户账户流水记录
+        /// danny-20150728
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool AddYeePayUserBalanceRecord(YeePayUserBalanceRecord model)
+        {
+            string sql = string.Format(@" 
+INSERT INTO [YeePayUserBalanceRecord]
+           ([LedgerNo]
+           ,[WithwardId]
+           ,[Amount]
+           ,[Balance]
+           ,[RecordType]
+           ,[Operator]
+           ,[Remark])
+     VALUES
+           (@LedgerNo,  
+           ,@WithwardId,
+           ,@Amount,
+           ,@Balance,
+           ,@RecordType, 
+           ,@Operator,
+           ,@Remark);");
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@LedgerNo", model.LedgerNo);
+            parm.AddWithValue("@WithwardId", model.WithwardId);
+            parm.AddWithValue("@Amount", model.Amount);
+            parm.AddWithValue("@Balance", model.Balance);
+            parm.AddWithValue("@RecordType", model.RecordType);
+            parm.AddWithValue("@Operator", model.Operator);
+            parm.AddWithValue("@Remark", model.Remark);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
     }
 }

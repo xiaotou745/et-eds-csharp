@@ -58,7 +58,7 @@ namespace ETS.Pay.YeePay
         /// 商家端
         /// </summary>
         [Description("对公")]
-        c = 2
+        C = 2
 
     }
 

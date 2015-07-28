@@ -554,11 +554,18 @@ namespace Ets.Service.Provider.Finance
             var regTransfer = new PayProvider().TransferAccountsYee(new YeeTransferParameter()
             {
                 UserType = UserTypeYee.Clienter.GetHashCode(),
-                WithdrawId = cliFinanceAccount.Id,
+                WithdrawId = model.WithwardId,
                 Ledgerno = cliFinanceAccount.YeepayKey,
                 SourceLedgerno = "",
                 Amount = amount.ToString()
             });
+            //clienterFinanceDao.AddYeePayUserBalanceRecord(new YeePayUserBalanceRecord()
+            //{
+            //    LedgerNo = cliFinanceAccount.YeepayKey,
+            //    WithwardId = model.WithwardId,
+
+
+            //});
             //var regTransfer = new Transfer().TransferAccounts("", amount.ToString(),
             //    cliFinanceAccount.YeepayKey); //转账   子账户转给总账户
             if (regTransfer.code != "1")
@@ -570,9 +577,9 @@ namespace Ets.Service.Provider.Finance
             var regCash = new PayProvider().CashTransferYee(new YeeCashTransferParameter()
             {
                 UserType = UserTypeYee.Clienter.GetHashCode(),
-                WithdrawId = cliFinanceAccount.Id,
+                WithdrawId = ParseHelper.ToInt(model.WithwardId),
                 Ledgerno = cliFinanceAccount.YeepayKey,
-                App = APP.c,
+                App = APP.C,
                 Amount = amount.ToString()
             });
             //var regCash = new Transfer().CashTransfer(APP.B, ParseHelper.ToInt(model.WithwardId),
@@ -841,7 +848,7 @@ namespace Ets.Service.Provider.Finance
             {
                 DealFlag = false
             };
-            var registResult = new Register().RegSubaccount(model);//注册帐号
+            var registResult = new PayProvider().RegisterYee(model);//注册帐号
             if (registResult != null && !string.IsNullOrEmpty(registResult.code) && registResult.code.Trim() == "1")   //绑定成功，更新易宝key
             {
                 if (!_clienterFinanceAccountDao.ModifyYeepayInfoById(Convert.ToInt32(model.AccountId), registResult.ledgerno, 0))
