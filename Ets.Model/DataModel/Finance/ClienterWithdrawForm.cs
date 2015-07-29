@@ -133,6 +133,10 @@ namespace Ets.Model.DataModel.Finance
         /// 手续费支出方:0个人,1易代送
         /// </summary>
         public HandChargeOutlay HandChargeOutlay { get; set; }
+        /// <summary>
+        /// 手机号
+        /// </summary>
+        public string PhoneNo { get; set; }
     }
 
 }

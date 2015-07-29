@@ -129,5 +129,6 @@ namespace Ets.Model.DataModel.Finance
         /// </summary>
         public HandChargeOutlay HandChargeOutlay { get; set; }
 
+        public string PhoneNo { get; set; }
     }
 }

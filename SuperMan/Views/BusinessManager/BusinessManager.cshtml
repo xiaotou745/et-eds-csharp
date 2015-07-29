@@ -385,51 +385,6 @@
         //GetOpenProvince(); 
         window.location.hash = '';
     });
-    //获取省市
-    function GetOpenProvince() {
-        var paramaters = {
-            "jiBie": 1
-        };
-        var openProvinceInfo = $('#openProvince');
-        //openProvinceInfo.append('<option value="" selected="selected">--省市--</option>');
-        $.ajax({
-            type: 'POST',
-            url: '/BusinessManager/GetOpenProvince',
-            data: paramaters,
-            success: function (result) { 
-                $.each(result, function (i, item) {
-                    openProvinceInfo.append('<option value="' + item.Code + '">' + item.Name + '</option>');
-                });
-            }
-        }); 
-    }
-    //选择省时触发联动
-    $('#openProvince').change(function () {
-        //alert($('#openProvince').val() + ":::" + $('#openProvince').find("option:selected").text());
-        LoadOpenCityInfo();
-    });
-    //获取市区
-    function LoadOpenCityInfo() {
-        //var parrentId = $()
-        var paramaters = {
-            "jiBie": 2,
-            "parrentId": $('#openProvince').val()
-    };
-        var openCityInfo = $('#openCity');
-        openCityInfo.empty();
-        //openCityInfo.append('<option value="" selected="selected">--市区--</option>');
-        $.ajax({
-            type: 'POST',
-            url: '/BusinessManager/GetOpenCity',
-            data: paramaters,
-            success: function (result) {
-                $.each(result, function (i, item) {
-                    openCityInfo.append('<option value="' + item.Code + '">' + item.Name + '</option>');
-                });
-            }
-        });
-    }
-
     
     //设置结算比例-外送费
     $("#btnCommissionConfim").on('click', function () {
