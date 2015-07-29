@@ -1405,7 +1405,7 @@ namespace Ets.Service.Provider.Clienter
                 return true;
             }
 
-            int num = orderDao.GetTotalOrderNumByClienterID(myOrderInfo.clienterId);
+            int num = orderDao.GetTotalOrderNumByClienterID(myOrderInfo.clienterId, actualDoneDate);
             var orderCountSetting = ParseHelper.ToInt(globalSetting.OrderCountSetting, 50);
             //如果骑士今天已经完成（或完成后，又取消了,不包含当前任务中的订单数量）的订单数量大于配置的值，则当前任务中的所有订单都扣除网站补贴
             if (num - myOrderInfo.OrderCount > orderCountSetting)
