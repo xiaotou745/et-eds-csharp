@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Text;
 using Ets.Model.DataModel.Clienter;
+using ETS.Util;
+
 namespace Ets.Dao.Finance
 {
     public class ClienterFinanceDao : DaoBase
@@ -253,7 +255,7 @@ UPDATE ClienterWithdrawForm
  SET    [Status] = @Status,
 		Payer=@Operator,
 		PayTime=getdate(),
-        PayFailedReason=@PayFailedReason
+        PayFailedReason=ISNULL(PayFailedReason,'')+@PayFailedReason
 OUTPUT
   Inserted.Id,
   Inserted.[Status],
@@ -661,7 +663,7 @@ where b.Id=@ClienterId;");
 //            return MapRows<ClienterFinanceAccountModel>(dt)[0];
 //        }
         /// <summary>
-        /// 根据申请单Id获取商家金融账号信息
+        /// 根据提现申请单Id获取商家金融账号信息
         /// danny-20150716
         /// </summary>
         /// <param name="withwardId">提款单Id</param>
@@ -681,7 +683,6 @@ SELECT cwf.[ClienterId]
       ,cwf.[OpenCity]
 	  ,ypu.Ledgerno YeepayKey
 	  ,cfa.YeepayStatus
-      ,c.IDCard CliIDCard
       ,cwf.Amount
       ,cwf.HandChargeThreshold
       ,cwf.HandCharge
@@ -692,15 +693,20 @@ SELECT cwf.[ClienterId]
 	  ,ISNULL(ypu.YeeBalance,0) YeeBalance
       ,cfa.Id
   FROM ClienterWithdrawForm cwf with(nolock)
-  JOIN dbo.clienter c WITH(NOLOCK) ON c.Id=cwf.ClienterId  and cwf.Id=@withwardId
-  JOIN dbo.ClienterFinanceAccount cfa WITH(NOLOCK) ON cfa.ClienterId=cwf.ClienterId
+  JOIN dbo.ClienterFinanceAccount cfa WITH(NOLOCK) ON cfa.ClienterId=cwf.ClienterId AND cwf.Id=@withwardId
   LEFT JOIN ( SELECT tblypu.UserId,tblypu.Ledgerno,tblypu.BankName,tblypu.BankAccountNumber,tblypu.BalanceRecord,tblypu.YeeBalance
 			  FROM(
-			  SELECT UserId,MAX(Addtime) Addtime
-			  FROM YeePayUser(NOLOCK) 
-			  GROUP BY UserId,BankName,BankAccountNumber) tbl
-			  JOIN YeePayUser tblypu (NOLOCK) ON  tblypu.Addtime=tbl.Addtime AND tblypu.UserId = tbl.UserId) ypu  
-		ON ypu.UserId=cwf.ClienterId  AND ypu.BankAccountNumber=cwf.AccountNo AND ypu.BankName=cwf.OpenBank ;
+			      SELECT UserId,BankName,BankAccountNumber,MAX(Addtime) Addtime
+			      FROM YeePayUser(NOLOCK) 
+			      GROUP BY UserId,BankName,BankAccountNumber) tbl
+			  JOIN YeePayUser tblypu (NOLOCK) 
+                ON  tblypu.Addtime=tbl.Addtime 
+                AND tblypu.UserId = tbl.UserId 
+                AND tblypu.BankName=tbl.BankName 
+                AND tblypu.BankAccountNumber=tbl.BankAccountNumber) ypu  
+	   ON  ypu.UserId=cwf.ClienterId  
+       AND ypu.BankAccountNumber=cwf.AccountNo 
+       AND ypu.BankName=cwf.OpenBank ;
 ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@withwardId", withwardId);
@@ -745,6 +751,26 @@ INSERT INTO [YeePayUserBalanceRecord]
             parm.AddWithValue("@Operator", model.Operator);
             parm.AddWithValue("@Remark", model.Remark);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
+        }
+        /// <summary>
+        /// 修改本系统易宝余额
+        /// danny-20150729
+        /// </summary>
+        /// <param name="yeepayKey">易宝账号</param>
+        /// <param name="amount">交易金额</param>
+        /// <returns></returns>
+        public int ModifyYeeBalanceRecord(string yeepayKey,decimal amount)
+        {
+            string sql = string.Format(@" 
+update YeePayUser
+set    BalanceRecord=BalanceRecord+@Amount,
+       UpdateTime=getdate()
+output Inserted.BalanceRecord
+where Ledgerno=@YeepayKey;");
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@YeepayKey", yeepayKey);
+            parm.AddWithValue("@Amount", amount);
+            return  ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm));
         }
     }
 }

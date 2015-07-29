@@ -57,6 +57,10 @@ namespace Ets.Service.Provider.Finance
         private BusinessFinanceDao businessFinanceDao = new BusinessFinanceDao();
 
         private ClienterDao clienterDao = new ClienterDao();
+        /// <summary>
+        /// 骑士财务dao
+        /// </summary>
+        private ClienterFinanceDao clienterFinanceDao = new ClienterFinanceDao();
         #endregion
 
 
@@ -312,6 +316,7 @@ namespace Ets.Service.Provider.Finance
         /// <returns></returns>
         public DealResultInfo BusinessWithdrawPaying(BusinessWithdrawLog model)
         {
+            #region 对象声明及初始化
             var dealResultInfo = new DealResultInfo
             {
                 DealFlag = false
@@ -322,6 +327,7 @@ namespace Ets.Service.Provider.Finance
                 dealResultInfo.DealMsg = "获取提现单信息失败！";
                 return dealResultInfo;
             }
+            //历史单据走之前逻辑
             if (busiFinanceAccount.WithdrawTime < ParseHelper.ToDatetime(Config.WithdrawTime))
             {
                 model.Status = BusinessWithdrawFormStatus.Success.GetHashCode();
@@ -329,12 +335,11 @@ namespace Ets.Service.Provider.Finance
                 dealResultInfo.DealMsg = dealResultInfo.DealFlag ? "打款成功！" : "打款失败！";
                 return dealResultInfo;
             }
-            decimal amount = busiFinanceAccount.HandChargeOutlay == 0
-                ? busiFinanceAccount.Amount
-                : busiFinanceAccount.Amount + busiFinanceAccount.HandCharge;
-            //using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
-            //{
-            //注册易宝子账户逻辑
+            //转账及提现金额（计算手续费）
+            var amount = busiFinanceAccount.HandChargeOutlay == 0 ? busiFinanceAccount.Amount : busiFinanceAccount.Amount + busiFinanceAccount.HandCharge;
+            #endregion
+
+            #region 注册易宝子账户逻辑
             if (string.IsNullOrEmpty(busiFinanceAccount.YeepayKey) || busiFinanceAccount.YeepayStatus == 1)
             {
                 var brp = new YeeRegisterParameter
@@ -346,7 +351,7 @@ namespace Ets.Service.Provider.Finance
                             ? CustomertypeEnum.PERSON
                             : CustomertypeEnum.ENTERPRISE,
                     LinkMan = busiFinanceAccount.TrueName,
-                    IdCard = string.IsNullOrEmpty(busiFinanceAccount.BusiIDCard)?busiFinanceAccount.IDCard : busiFinanceAccount.BusiIDCard,
+                    IdCard = busiFinanceAccount.IDCard,
                     BusinessLicence = busiFinanceAccount.IDCard,
                     LegalPerson = busiFinanceAccount.TrueName,
                     BankAccountNumber = ParseHelper.ToDecrypt(busiFinanceAccount.AccountNo),
@@ -366,8 +371,9 @@ namespace Ets.Service.Provider.Finance
                 }
                 busiFinanceAccount.YeepayKey = dr.SuccessId; //子账户id
             }
+            #endregion
 
-            //转账逻辑
+            #region 转账逻辑
             var regTransfer = new PayProvider().TransferAccountsYee(new YeeTransferParameter()
             {
                 UserType = UserTypeYee.Business.GetHashCode(),
@@ -376,14 +382,33 @@ namespace Ets.Service.Provider.Finance
                 SourceLedgerno = "",
                 Amount = amount.ToString()
             });
-            //var regTransfer = new Transfer().TransferAccounts(busiFinanceAccount.YeepayKey, amount.ToString(),""
-            //    ); //转账   子账户转给总账户
             if (regTransfer.code != "1")
             {
+                businessFinanceDao.BusinessWithdrawPayFailed(new BusinessWithdrawLogModel()
+                {
+                    Status =BusinessWithdrawFormStatus.Except.GetHashCode(),
+                    Operator = model.Operator,
+                    Remark = "易宝转账失败:" + regTransfer.msg + "(" + regTransfer.code + ")",
+                    PayFailedReason = "易宝转账失败:" + regTransfer.msg + "(" + regTransfer.code + ")",
+                    WithwardId = model.WithwardId
+                });
                 dealResultInfo.DealMsg = "商户易宝自动转账失败：" + regTransfer.msg + "(" + regTransfer.code + ")";
                 return dealResultInfo;
             }
-            //提现逻辑
+            clienterFinanceDao.AddYeePayUserBalanceRecord(new YeePayUserBalanceRecord()
+            {
+                LedgerNo = busiFinanceAccount.YeepayKey,
+                WithwardId = model.WithwardId,
+                Amount = amount,
+                Balance = busiFinanceAccount.BalanceRecord + amount,
+                RecordType = YeeRecordType.P2C.GetHashCode(),
+                Operator = model.Operator,
+                Remark = "易宝主账户向商户子账户转账【" + amount + "】元"
+            });
+            busiFinanceAccount.BalanceRecord = clienterFinanceDao.ModifyYeeBalanceRecord(busiFinanceAccount.YeepayKey, amount);
+            #endregion
+
+            #region 提现逻辑
             var regCash = new PayProvider().CashTransferYee(new YeeCashTransferParameter()
             {
                 UserType = UserTypeYee.Business.GetHashCode(),
@@ -392,13 +417,52 @@ namespace Ets.Service.Provider.Finance
                 App = APP.B,
                 Amount = amount.ToString()
             });
-            //var regCash = new Transfer().CashTransfer(APP.B, ParseHelper.ToInt(model.WithwardId),
-            //    busiFinanceAccount.YeepayKey, amount.ToString()); //提现
             if (regCash.code != "1")
             {
+                businessFinanceDao.BusinessWithdrawPayFailed(new BusinessWithdrawLogModel()
+                {
+                    Status = BusinessWithdrawFormStatus.Except.GetHashCode(),
+                    Operator = model.Operator,
+                    Remark = "易宝提现失败:" + regTransfer.msg + "(" + regTransfer.code + ")",
+                    PayFailedReason = "易宝提现失败:" + regTransfer.msg + "(" + regTransfer.code + ")",
+                    WithwardId = model.WithwardId
+                });
+                //转账成功提现失败时进行一次反转
+                var regRTransfer = new PayProvider().TransferAccountsYee(new YeeTransferParameter()
+                {
+                    UserType = UserTypeYee.Business.GetHashCode(),
+                    WithdrawId = model.WithwardId,
+                    Ledgerno = "",
+                    SourceLedgerno = busiFinanceAccount.YeepayKey,
+                    Amount = amount.ToString()
+                });
+                if (regRTransfer.code != "1")
+                {
+                    businessFinanceDao.BusinessWithdrawPayFailed(new BusinessWithdrawLogModel()
+                    {
+                        Status = BusinessWithdrawFormStatus.Except.GetHashCode(),
+                        Operator = model.Operator,
+                        Remark = "易宝子账户向主账户反转失败:" + regRTransfer.msg + "(" + regRTransfer.code + ") ",
+                        PayFailedReason = "易宝子账户向主账户反转失败:" + regTransfer.msg + "(" + regTransfer.code + ") ",
+                        WithwardId = model.WithwardId
+                    });
+                }
+                clienterFinanceDao.AddYeePayUserBalanceRecord(new YeePayUserBalanceRecord()
+                {
+                    LedgerNo = busiFinanceAccount.YeepayKey,
+                    WithwardId = model.WithwardId,
+                    Amount = amount,
+                    Balance = busiFinanceAccount.BalanceRecord - amount,
+                    RecordType = YeeRecordType.C2P.GetHashCode(),
+                    Operator = model.Operator,
+                    Remark = "易宝子账户向主账户反转【" + amount + "】元"
+                });
                 dealResultInfo.DealMsg = "商户易宝自动提现失败：" + regCash.msg + "(" + regCash.code + ")";
                 return dealResultInfo;
             }
+            #endregion
+
+            #region 回写数据库返回结果对象
             if (!businessFinanceDao.BusinessWithdrawPayOk(model))
             {
                 dealResultInfo.DealMsg = "更改提现单状态为打款中失败！";
@@ -406,9 +470,8 @@ namespace Ets.Service.Provider.Finance
             }
             dealResultInfo.DealFlag = true;
             dealResultInfo.DealMsg = "商户提现单确认打款处理成功，等待银行打款！";
-            //tran.Complete();
             return dealResultInfo;
-            //}
+            #endregion
         }
         /// <summary>
         /// 商户提现申请单确认打款
