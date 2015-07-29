@@ -25,13 +25,13 @@
                 <tr>
                 <td>
                     <span class="">充值日期: </span> 
-                    <input id="rechargeStart" class="Wdate" type="text" onfocus="WdatePicker({ maxDate: '#F{$dp.$D(\'rechargeEnd\')||\'%y-%M-%d\'}', dateFmt: 'yyyy-MM-dd 00:00:00' }) "/>
-                    <input id="rechargeEnd" class="Wdate" type="text" onfocus="WdatePicker({ minDate: '#F{$dp.$D(\'rechargeStart\')}', dateFmt: 'yyyy-MM-dd 23:59:59' }) "/>
+                    <input id="RechargeStarteTime" name="RechargeStarteTime" class="Wdate" type="text" onfocus="WdatePicker({ maxDate: '#F{$dp.$D(\'RechargeEndTime\')||\'%y-%M-%d\'}', dateFmt: 'yyyy-MM-dd 00:00:00' }) " />
+                    <input id="RechargeEndTime" name="RechargeEndTime" class="Wdate" type="text" onfocus="WdatePicker({ minDate: '#F{$dp.$D(\'RechargeStarteTime\')}', dateFmt: 'yyyy-MM-dd 23:59:59' }) " />
                 </td>
                     <td>
                         <span class="">操作日期: </span>
-                        <input id="optStart" class="Wdate" type="text" onfocus="WdatePicker({ maxDate: '#F{$dp.$D(\'optEnd\')||\'%y-%M-%d\'}', dateFmt: 'yyyy-MM-dd 00:00:00' }) " />
-                        <input id="optEnd" class="Wdate" type="text" onfocus="WdatePicker({ minDate: '#F{$dp.$D(\'optStart\')}', dateFmt: 'yyyy-MM-dd 23:59:59' }) " />
+                        <input id="OptStarteTime" name="OptStarteTime" class="Wdate" type="text" onfocus="WdatePicker({ maxDate: '#F{$dp.$D(\'OptEndTime\')||\'%y-%M-%d\'}', dateFmt: 'yyyy-MM-dd 00:00:00' }) " />
+                        <input id="OptEndTime" name="OptEndTime" class="Wdate" type="text" onfocus="WdatePicker({ minDate: '#F{$dp.$D(\'OptStarteTime\')}', dateFmt: 'yyyy-MM-dd 23:59:59' }) " />
                         <input type="submit" value="查询" class="searchBtn" id="btnSearch"/>&nbsp;&nbsp;
                         @if (SuperMan.App_Start.UserContext.Current.HasAuthority(77))
                         {
@@ -103,14 +103,14 @@
             success: function (result) {
                 if (result.IsSuccess) {
                     alert("添加记录成功!");
-                    window.location.href = "/YeePayRunningManager/YeePayRunningManager";
+                    window.location.href = "/YeePayRunningManager/AddYeePayRunning";
                 } else {
                     alert(result.Message);
                 }
             }
         });
     });
-      
+     
     //关闭弹层
     $('.J_closebox').click(function () {
         adminjs.closewinbox('.add-openbox');
