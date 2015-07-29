@@ -88,8 +88,8 @@ namespace Ets.Dao.YeePay
            @Remark  
          )";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.Add("LedgerNo", DbType.String).Value = yeePayRunningAccountModel.LedgerNo;
-            dbParameters.Add("RechargeAmount", DbType.String).Value = yeePayRunningAccountModel.RechargeAmount;
+            dbParameters.Add("LedgerNo", DbType.String).Value = "";
+            dbParameters.Add("RechargeAmount", DbType.Decimal).Value = yeePayRunningAccountModel.RechargeAmount;
             dbParameters.Add("Operator", DbType.String).Value = yeePayRunningAccountModel.Operator;
             dbParameters.Add("RechargeTime", DbType.DateTime).Value = yeePayRunningAccountModel.RechargeTime;
             dbParameters.Add("Remark", DbType.String).Value = yeePayRunningAccountModel.Remark;
