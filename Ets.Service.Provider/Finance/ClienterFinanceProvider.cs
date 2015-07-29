@@ -497,6 +497,7 @@ namespace Ets.Service.Provider.Finance
         /// <returns></returns>
         public DealResultInfo ClienterWithdrawPaying(ClienterWithdrawLog model)
         {
+            #region 对象声明及初始化
             var dealResultInfo = new DealResultInfo
             {
                 DealFlag = false
@@ -507,6 +508,7 @@ namespace Ets.Service.Provider.Finance
                 dealResultInfo.DealMsg = "获取提现单信息失败！";
                 return dealResultInfo;
             }
+            //历史单据走之前逻辑
             if (cliFinanceAccount.WithdrawTime < ParseHelper.ToDatetime(Config.WithdrawTime))
             {
                 model.Status = ClienterWithdrawFormStatus.Success.GetHashCode();
@@ -514,24 +516,20 @@ namespace Ets.Service.Provider.Finance
                 dealResultInfo.DealMsg = dealResultInfo.DealFlag ? "打款成功！" : "打款失败！";
                 return dealResultInfo;
             }
-            decimal amount = cliFinanceAccount.HandChargeOutlay == 0
-                ? cliFinanceAccount.Amount
-                : cliFinanceAccount.Amount + cliFinanceAccount.HandCharge;
-            //using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
-            //{
-            //注册易宝子账户逻辑
+            //转账及提现金额（计算手续费）
+            var amount = cliFinanceAccount.HandChargeOutlay == 0 ? cliFinanceAccount.Amount : cliFinanceAccount.Amount + cliFinanceAccount.HandCharge;
+            #endregion
+
+            #region 注册易宝子账户逻辑
             if (string.IsNullOrEmpty(cliFinanceAccount.YeepayKey) || cliFinanceAccount.YeepayStatus == 1)
             {
                 var brp = new YeeRegisterParameter
                 {
                     BindMobile = cliFinanceAccount.PhoneNo,
                     SignedName = cliFinanceAccount.TrueName,
-                    CustomerType =
-                        cliFinanceAccount.BelongType == 0
-                            ? CustomertypeEnum.PERSON
-                            : CustomertypeEnum.ENTERPRISE,
+                    CustomerType = cliFinanceAccount.BelongType == 0 ? CustomertypeEnum.PERSON : CustomertypeEnum.ENTERPRISE,
                     LinkMan = cliFinanceAccount.TrueName,
-                    IdCard = string.IsNullOrEmpty(cliFinanceAccount.CliIDCard) ? cliFinanceAccount.IDCard:cliFinanceAccount.CliIDCard,
+                    IdCard = cliFinanceAccount.IDCard,
                     BusinessLicence = cliFinanceAccount.IDCard,
                     LegalPerson = cliFinanceAccount.TrueName,
                     BankAccountNumber = ParseHelper.ToDecrypt(cliFinanceAccount.AccountNo),
@@ -551,7 +549,9 @@ namespace Ets.Service.Provider.Finance
                 }
                 cliFinanceAccount.YeepayKey = dr.SuccessId; //子账户id
             }
-            //转账逻辑
+            #endregion
+
+            #region 转账逻辑
             var regTransfer = new PayProvider().TransferAccountsYee(new YeeTransferParameter()
             {
                 UserType = UserTypeYee.Clienter.GetHashCode(),
@@ -560,21 +560,33 @@ namespace Ets.Service.Provider.Finance
                 SourceLedgerno = "",
                 Amount = amount.ToString()
             });
-            //clienterFinanceDao.AddYeePayUserBalanceRecord(new YeePayUserBalanceRecord()
-            //{
-            //    LedgerNo = cliFinanceAccount.YeepayKey,
-            //    WithwardId = model.WithwardId,
-
-
-            //});
-            //var regTransfer = new Transfer().TransferAccounts("", amount.ToString(),
-            //    cliFinanceAccount.YeepayKey); //转账   子账户转给总账户
-            if (regTransfer.code != "1")
+            if (regTransfer.code != "1")//转账失败
             {
+                clienterFinanceDao.ClienterWithdrawPayFailed(new ClienterWithdrawLogModel()
+                {
+                    Status = ClienterWithdrawFormStatus.Except.GetHashCode(),
+                    Operator = model.Operator,
+                    Remark = "易宝转账失败:" + regTransfer.msg + "(" + regTransfer.code + ")",
+                    PayFailedReason = "易宝转账失败:" + regTransfer.msg + "(" + regTransfer.code + ")",
+                    WithwardId = model.WithwardId
+                });
                 dealResultInfo.DealMsg = "骑士易宝自动转账失败：" + regTransfer.msg + "(" + regTransfer.code + ")";
                 return dealResultInfo;
             }
-            //提现逻辑
+            clienterFinanceDao.AddYeePayUserBalanceRecord(new YeePayUserBalanceRecord()
+            {
+                LedgerNo = cliFinanceAccount.YeepayKey,
+                WithwardId = model.WithwardId,
+                Amount = amount,
+                Balance = cliFinanceAccount.BalanceRecord + amount,
+                RecordType = YeeRecordType.P2C.GetHashCode(),
+                Operator = model.Operator,
+                Remark = "易宝主账户向骑士子账户转账【" + amount + "】元"
+            });
+            cliFinanceAccount.BalanceRecord = clienterFinanceDao.ModifyYeeBalanceRecord(cliFinanceAccount.YeepayKey, amount);
+            #endregion
+
+            #region 提现逻辑
             var regCash = new PayProvider().CashTransferYee(new YeeCashTransferParameter()
             {
                 UserType = UserTypeYee.Clienter.GetHashCode(),
@@ -583,13 +595,63 @@ namespace Ets.Service.Provider.Finance
                 App = APP.C,
                 Amount = amount.ToString()
             });
-            //var regCash = new Transfer().CashTransfer(APP.B, ParseHelper.ToInt(model.WithwardId),
-            //    cliFinanceAccount.YeepayKey, amount.ToString()); //提现
             if (regCash.code != "1")
             {
+                clienterFinanceDao.ClienterWithdrawPayFailed(new ClienterWithdrawLogModel()
+                {
+                    Status = ClienterWithdrawFormStatus.Except.GetHashCode(),
+                    Operator = model.Operator,
+                    Remark = "易宝提现失败:" + regTransfer.msg + "(" + regTransfer.code + ")",
+                    PayFailedReason = "易宝提现失败:" + regTransfer.msg + "(" + regTransfer.code + ")",
+                    WithwardId = model.WithwardId
+                });
+                //转账成功提现失败时进行一次反转
+                var regRTransfer = new PayProvider().TransferAccountsYee(new YeeTransferParameter()
+                {
+                    UserType = UserTypeYee.Clienter.GetHashCode(),
+                    WithdrawId = model.WithwardId,
+                    Ledgerno = "",
+                    SourceLedgerno = cliFinanceAccount.YeepayKey,
+                    Amount = amount.ToString()
+                });
+                if (regRTransfer.code != "1")
+                {
+                    clienterFinanceDao.ClienterWithdrawPayFailed(new ClienterWithdrawLogModel()
+                    {
+                        Status = ClienterWithdrawFormStatus.Except.GetHashCode(),
+                        Operator = model.Operator,
+                        Remark = "易宝子账户向主账户反转失败:" + regRTransfer.msg + "(" + regRTransfer.code + ") ",
+                        PayFailedReason = "易宝子账户向主账户反转失败:" + regTransfer.msg + "(" + regTransfer.code + ") ",
+                        WithwardId = model.WithwardId
+                    });
+                }
+                clienterFinanceDao.AddYeePayUserBalanceRecord(new YeePayUserBalanceRecord()
+                {
+                    LedgerNo = cliFinanceAccount.YeepayKey,
+                    WithwardId = model.WithwardId,
+                    Amount = amount,
+                    Balance = cliFinanceAccount.BalanceRecord - amount,
+                    RecordType = YeeRecordType.C2P.GetHashCode(),
+                    Operator = model.Operator,
+                    Remark = "易宝子账户向主账户反转【" + amount + "】元"
+                });
                 dealResultInfo.DealMsg = "骑士易宝自动提现失败：" + regCash.msg + "(" + regCash.code + ")";
                 return dealResultInfo;
             }
+            clienterFinanceDao.AddYeePayUserBalanceRecord(new YeePayUserBalanceRecord()
+            {
+                LedgerNo = cliFinanceAccount.YeepayKey,
+                WithwardId = model.WithwardId,
+                Amount = amount,
+                Balance = cliFinanceAccount.BalanceRecord - amount,
+                RecordType = YeeRecordType.Ccash.GetHashCode(),
+                Operator = model.Operator,
+                Remark = "易宝子账户提现【" + amount + "】元"
+            });
+            cliFinanceAccount.BalanceRecord = clienterFinanceDao.ModifyYeeBalanceRecord(cliFinanceAccount.YeepayKey, -amount);
+            #endregion
+
+            #region 回写数据库返回结果对象
             if (!clienterFinanceDao.ClienterWithdrawPayOk(model))
             {
                 dealResultInfo.DealMsg = "更改提现单状态为打款中失败！";
@@ -597,9 +659,8 @@ namespace Ets.Service.Provider.Finance
             }
             dealResultInfo.DealFlag = true;
             dealResultInfo.DealMsg = "骑士提现单确认打款处理成功，等待银行打款！";
-            //tran.Complete();
             return dealResultInfo;
-            //}
+            #endregion
         }
         /// <summary>
         /// 骑士提现申请单审核拒绝

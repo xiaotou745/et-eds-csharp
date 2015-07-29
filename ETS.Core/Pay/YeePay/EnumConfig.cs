@@ -124,4 +124,28 @@ namespace ETS.Pay.YeePay
       
 
     }
+    /// <summary>
+    ///易宝交易类型 1主账户向子账户转账 2子账户向主账户转账 3子账户提现
+    /// danny-20150729
+    /// </summary>
+    public enum YeeRecordType
+    {
+        /// <summary>
+        /// 主账户向子账户转账
+        /// </summary>
+        [Description("主账户向子账户转账")]
+        P2C = 1,
+        /// <summary>
+        /// 子账户向主账户转账
+        /// </summary>
+        [Description("子账户向主账户转账")]
+        C2P = 2,
+        /// <summary>
+        /// 子账户提现
+        /// </summary>
+        [Description("子账户提现")]
+        Ccash = 3,
+
+
+    }
 }

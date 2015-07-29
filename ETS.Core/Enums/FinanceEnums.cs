@@ -175,6 +175,8 @@ namespace ETS.Enums
         Allow = 2,
         [DisplayText("打款完成")]
         Success = 3,
+        [DisplayText("打款异常")]
+        Except = 4,
         [DisplayText("审核拒绝")]
         TurnDown = -1,
         [DisplayText("打款失败")]
@@ -364,6 +366,8 @@ namespace ETS.Enums
         Allow = 2,
         [DisplayText("打款完成")]
         Success = 3,
+        [DisplayText("打款异常")]
+        Except = 4,
         [DisplayText("审核拒绝")]
         TurnDown = -1,
         [DisplayText("打款失败")]
