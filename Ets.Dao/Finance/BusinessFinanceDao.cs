@@ -691,6 +691,52 @@ where b.Id=@BusinessId;");
             }
             return MapRows<BusinessRechargeDetail>(dt)[0];
         }
+//        /// <summary>
+//        /// 根据申请单Id获取商家金融账号信息
+//        /// danny-20150716
+//        /// </summary>
+//        /// <param name="withwardId">提款单Id</param>
+//        /// <returns></returns>
+//        public BusinessFinanceAccountModel GetBusinessFinanceAccount(string withwardId)
+//        {
+//            string sql = @"  
+//SELECT bfa.[Id]
+//      ,bfa.[BusinessId]
+//      ,bfa.[TrueName]
+//      ,bfa.[AccountNo]
+//      ,bfa.[IsEnable]
+//      ,bfa.[AccountType]
+//      ,bfa.[BelongType]
+//      ,bfa.[OpenBank]
+//      ,bfa.[OpenSubBank]
+//      ,bfa.[CreateBy]
+//      ,bfa.[CreateTime]
+//      ,bfa.[UpdateBy]
+//      ,bfa.[UpdateTime]
+//      ,bfa.[IDCard]
+//      ,bfa.[OpenProvince]
+//      ,bfa.[OpenCity]
+//      ,bfa.[YeepayKey]
+//      ,bfa.[YeepayStatus]
+//      ,bwf.IDCard BusiIDCard
+//      ,b.PhoneNo
+//      ,bwf.Amount
+//      ,bwf.HandChargeThreshold
+//      ,bwf.HandCharge
+//      ,bwf.HandChargeOutlay
+//      ,bwf.WithdrawTime
+//  FROM [BusinessFinanceAccount] bfa with(nolock)
+//  join BusinessWithdrawForm bwf with(nolock) on bwf.BusinessId=bfa.BusinessId and bwf.Id=@withwardId 
+//  join business b with(nolock) on b.id=bfa.BusinessId";
+//            IDbParameters parm = DbHelper.CreateDbParameters();
+//            parm.AddWithValue("@withwardId", withwardId);
+//            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+//            if (dt == null || dt.Rows.Count <= 0)
+//            {
+//                return null;
+//            }
+//            return MapRows<BusinessFinanceAccountModel>(dt)[0];
+//        }
         /// <summary>
         /// 根据申请单Id获取商家金融账号信息
         /// danny-20150716
@@ -700,34 +746,42 @@ where b.Id=@BusinessId;");
         public BusinessFinanceAccountModel GetBusinessFinanceAccount(string withwardId)
         {
             string sql = @"  
-SELECT bfa.[Id]
-      ,bfa.[BusinessId]
-      ,bfa.[TrueName]
-      ,bfa.[AccountNo]
-      ,bfa.[IsEnable]
-      ,bfa.[AccountType]
-      ,bfa.[BelongType]
-      ,bfa.[OpenBank]
-      ,bfa.[OpenSubBank]
-      ,bfa.[CreateBy]
-      ,bfa.[CreateTime]
-      ,bfa.[UpdateBy]
-      ,bfa.[UpdateTime]
-      ,bfa.[IDCard]
-      ,bfa.[OpenProvince]
-      ,bfa.[OpenCity]
-      ,bfa.[YeepayKey]
-      ,bfa.[YeepayStatus]
-      ,bwf.IDCard BusiIDCard
-      ,b.PhoneNo
-      ,bwf.Amount
-      ,bwf.HandChargeThreshold
-      ,bwf.HandCharge
-      ,bwf.HandChargeOutlay
-      ,bwf.WithdrawTime
-  FROM [BusinessFinanceAccount] bfa with(nolock)
-  join BusinessWithdrawForm bwf with(nolock) on bwf.BusinessId=bfa.BusinessId and bwf.Id=@withwardId 
-  join business b with(nolock) on b.id=bfa.BusinessId";
+SELECT     bwf.BusinessId
+		  ,bwf.TrueName
+		  ,bwf.AccountNo
+		  ,bwf.OpenBank
+		  ,bwf.OpenSubBank
+		  ,bwf.IDCard 
+		  ,bwf.OpenProvince
+		  ,bwf.OpenCity
+		  ,bwf.Amount
+		  ,bwf.HandChargeThreshold
+		  ,bwf.HandCharge
+		  ,bwf.HandChargeOutlay
+		  ,bwf.WithdrawTime
+		  ,bwf.PhoneNo
+		  ,bwf.AccountType
+		  ,bwf.BelongType
+          ,bfa.YeepayStatus
+		  ,ypu.Ledgerno YeepayKey
+		  ,ISNULL(ypu.BalanceRecord,0) BalanceRecord
+		  ,ISNULL(ypu.YeeBalance,0) YeeBalance
+          ,bfa.Id
+  FROM BusinessWithdrawForm bwf with(nolock)
+  JOIN BusinessFinanceAccount bfa with(nolock) ON bfa.BusinessId=bwf.BusinessId and bwf.Id=@withwardId 
+  LEFT JOIN ( SELECT tblypu.UserId,tblypu.Ledgerno,tblypu.BankName,tblypu.BankAccountNumber,tblypu.BalanceRecord,tblypu.YeeBalance
+			  FROM(
+			      SELECT UserId,BankName,BankAccountNumber,MAX(Addtime) Addtime
+			      FROM YeePayUser(NOLOCK) 
+			      GROUP BY UserId,BankName,BankAccountNumber) tbl
+			  JOIN YeePayUser tblypu (NOLOCK) 
+                ON  tblypu.Addtime=tbl.Addtime 
+                AND tblypu.UserId = tbl.UserId 
+                AND tblypu.BankName=tbl.BankName 
+                AND tblypu.BankAccountNumber=tbl.BankAccountNumber) ypu  
+		 ON ypu.UserId=bwf.BusinessId  
+        AND ypu.BankAccountNumber=bwf.AccountNo 
+        AND ypu.BankName=bwf.OpenBank";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@withwardId", withwardId);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);

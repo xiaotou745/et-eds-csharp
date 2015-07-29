@@ -64,6 +64,7 @@
     <Compile Include="Common\YeePay\CashTransferCallback.cs" />
     <Compile Include="Common\YeePay\YeePayRecord.cs" />
     <Compile Include="Common\YeePay\YeePayUser.cs" />
+    <Compile Include="Common\YeePay\YeePayUserBalanceRecord.cs" />
     <Compile Include="DataModel\Authority\AccountCityRelation.cs" />
     <Compile Include="DataModel\Authority\AccountDcRelation.cs" />
     <Compile Include="DataModel\Business\BusiModifyResultModelDM.cs" />
@@ -109,6 +110,7 @@
     <Compile Include="DataModel\Subsidy\CrossShopModel.cs" />
     <Compile Include="DataModel\Order\OrderOther.cs" />
     <Compile Include="DataModel\Order\OrderSubsidiesLog.cs" />
+    <Compile Include="DataModel\YeePay\YeePayRunningAccountModel.cs" />
     <Compile Include="DomainModel\Authority\AccountDCRelationModel.cs" />
     <Compile Include="DomainModel\Business\BusinessExpressRelationModel.cs" />
     <Compile Include="DomainModel\Common\APPVersionModel.cs" />
@@ -332,6 +334,7 @@
     <Compile Include="ParameterModel\WtihdrawRecords\IncomeModel.cs" />
     <Compile Include="ParameterModel\WtihdrawRecords\MyIncomeSearchCriteria.cs" />
     <Compile Include="ParameterModel\WtihdrawRecords\WithdrawRecordsModel.cs" />
+    <Compile Include="ParameterModel\YeePay\YeePayRunningCriteria.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserModel.cs" />
   </ItemGroup>

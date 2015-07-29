@@ -2,6 +2,7 @@
 using Ets.Model.Common.YeePay;
 using Ets.Model.DomainModel.Finance;
 using ETS.Pay.YeePay;
+using ETS.Security;
 using Ets.Service.IProvider.Finance;
 using Ets.Service.IProvider.Pay;
 using System;
@@ -738,7 +739,7 @@ namespace Ets.Service.Provider.Pay
                 LegalPerson = para.LegalPerson,
                 MinsettleAmount = para.MinsettleAmount,
                 Riskreserveday = para.RiskReserveday,
-                BankAccountNumber = para.BankAccountNumber,
+                BankAccountNumber = DES.Encrypt(para.BankAccountNumber),
                 BankName = para.BankName,
                 AccountName = para.AccountName,
                 BankAccountType = para.BankAccountType,
