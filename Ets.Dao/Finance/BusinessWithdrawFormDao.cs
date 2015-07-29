@@ -33,9 +33,9 @@ namespace Ets.Dao.Finance
         {
             const string insertSql = @"
 insert into BusinessWithdrawForm(WithwardNo,BusinessId,BalancePrice,AllowWithdrawPrice,Status,Amount,Balance,
-TrueName,AccountNo,AccountType,BelongType,OpenBank,OpenSubBank,OpenProvince,OpenCity,OpenProvinceCode,OpenCityCode,IDCard,HandChargeThreshold,HandCharge,HandChargeOutlay)
+TrueName,AccountNo,AccountType,BelongType,OpenBank,OpenSubBank,OpenProvince,OpenCity,OpenProvinceCode,OpenCityCode,IDCard,HandChargeThreshold,HandCharge,HandChargeOutlay,PhoneNo) 
 values(@WithwardNo,@BusinessId,@BalancePrice,@AllowWithdrawPrice,@Status,@Amount,@Balance,
-@TrueName,@AccountNo,@AccountType,@BelongType,@OpenBank,@OpenSubBank,@OpenProvince,@OpenCity,@OpenProvinceCode,@OpenCityCode,@IDCard,@HandChargeThreshold,@HandCharge,@HandChargeOutlay);
+@TrueName,@AccountNo,@AccountType,@BelongType,@OpenBank,@OpenSubBank,@OpenProvince,@OpenCity,@OpenProvinceCode,@OpenCityCode,@IDCard,@HandChargeThreshold,@HandCharge,@HandChargeOutlay,@PhoneNo);
 select @@IDENTITY";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("WithwardNo", DbType.String).Value = businessWithdrawForm.WithwardNo; //提现单号
@@ -59,6 +59,7 @@ select @@IDENTITY";
             dbParameters.Add("HandChargeThreshold", DbType.Decimal).Value = businessWithdrawForm.HandChargeThreshold;//手续费阈值  
             dbParameters.Add("HandCharge", DbType.Decimal).Value = businessWithdrawForm.HandCharge; //手续费
             dbParameters.Add("HandChargeOutlay", DbType.Int32).Value = businessWithdrawForm.HandChargeOutlay.GetHashCode();//手续费支付方
+            dbParameters.Add("PhoneNo", DbType.String).Value = businessWithdrawForm.PhoneNo; //手机号
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters); //提现单号
             return ParseHelper.ToLong(result);
         }

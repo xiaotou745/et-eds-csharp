@@ -34,11 +34,8 @@ namespace Ets.Dao.Finance
             //TODO 修改ADD
             const string insertSql = @"
 insert into ClienterWithdrawForm(WithwardNo,ClienterId,BalancePrice,AllowWithdrawPrice,Status,Amount,Balance,
-TrueName,AccountNo,AccountType,BelongType,OpenBank,OpenSubBank,OpenProvince,OpenCity,OpenProvinceCode,OpenCityCode,IDCard,HandChargeThreshold,HandCharge,HandChargeOutlay)
-values(@WithwardNo,@ClienterId,@BalancePrice,@AllowWithdrawPrice,@Status,@Amount,@Balance,
-@TrueName,@AccountNo,@AccountType,@BelongType,@OpenBank,@OpenSubBank,@OpenProvince,@OpenCity,@OpenProvinceCode,@OpenCityCode,@IDCard,@HandChargeThreshold,@HandCharge,@HandChargeOutlay)
-
-select @@IDENTITY";
+TrueName,AccountNo,AccountType,BelongType,OpenBank,OpenSubBank,OpenProvince,OpenCity,OpenProvinceCode,OpenCityCode,IDCard,HandChargeThreshold,HandCharge,HandChargeOutlay,PhoneNo) values(@WithwardNo,@ClienterId,@BalancePrice,@AllowWithdrawPrice,@Status,@Amount,@Balance,
+@TrueName,@AccountNo,@AccountType,@BelongType,@OpenBank,@OpenSubBank,@OpenProvince,@OpenCity,@OpenProvinceCode,@OpenCityCode,@IDCard,@HandChargeThreshold,@HandCharge,@HandChargeOutlay,@PhoneNo) ;select @@IDENTITY ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("WithwardNo", clienterWithdrawForm.WithwardNo); //提现单号
             dbParameters.AddWithValue("ClienterId", clienterWithdrawForm.ClienterId);  //骑士ID(clienter表)
@@ -61,6 +58,7 @@ select @@IDENTITY";
             dbParameters.AddWithValue("HandChargeThreshold", clienterWithdrawForm.HandChargeThreshold);//手续费阈值  
             dbParameters.AddWithValue("HandCharge", clienterWithdrawForm.HandCharge); //手续费
             dbParameters.AddWithValue("HandChargeOutlay", (object)clienterWithdrawForm.HandChargeOutlay);//手续费支付方
+            dbParameters.Add("PhoneNo", DbType.String).Value = clienterWithdrawForm.PhoneNo; //手机号
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters); //提现单号
             return ParseHelper.ToLong(result);
         }

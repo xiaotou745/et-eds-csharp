@@ -101,6 +101,7 @@ namespace Ets.Service.Provider.Finance
                                   OpenProvinceCode = clienterFinanceAccount.OpenProvinceCode,//省份代码
                                   HandCharge = Convert.ToInt32(globalConfig.WithdrawCommission),//手续费
                                   HandChargeOutlay = model.WithdrawPrice > Convert.ToInt32(globalConfig.ClienterWithdrawCommissionAccordingMoney) ? HandChargeOutlay.EDaiSong : HandChargeOutlay.Private,//手续费支出方
+                                  PhoneNo = clienterFinanceAccount.CreateBy, //手机号
                                   HandChargeThreshold = Convert.ToInt32(globalConfig.ClienterWithdrawCommissionAccordingMoney)//手续费阈值
                               });
                     #endregion
@@ -530,7 +531,7 @@ namespace Ets.Service.Provider.Finance
                             ? CustomertypeEnum.PERSON
                             : CustomertypeEnum.ENTERPRISE,
                     LinkMan = cliFinanceAccount.TrueName,
-                    IdCard = cliFinanceAccount.CliIDCard,
+                    IdCard = string.IsNullOrEmpty(cliFinanceAccount.CliIDCard) ? cliFinanceAccount.IDCard:cliFinanceAccount.CliIDCard,
                     BusinessLicence = cliFinanceAccount.IDCard,
                     LegalPerson = cliFinanceAccount.TrueName,
                     BankAccountNumber = ParseHelper.ToDecrypt(cliFinanceAccount.AccountNo),
