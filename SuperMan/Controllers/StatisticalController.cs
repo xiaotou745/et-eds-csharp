@@ -12,6 +12,7 @@ using Ets.Service.Provider.Common;
 using Ets.Service.IProvider.Common;
 using Ets.Service.IProvider.Business;
 using Ets.Service.Provider.Business;
+using SuperMan.App_Start;
 
 namespace SuperMan.Controllers
 {
@@ -218,11 +219,31 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         public ActionResult AppActiveMap()
         {
-            var list = new List<AppActiveInfo>();
-            list.AddRange(statisticsProvider.GetAppActiveInfos(1,"北京"));
-            list.AddRange(statisticsProvider.GetAppActiveInfos(2, "北京"));
-            ViewBag.LstAppActiveInfo = list;
+            int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
+            ViewBag.openCityList = areaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(UserType));
             return View();
+        }
+
+        /// <summary>
+        /// 获取热力图数据
+        /// </summary>
+        /// <param name="cityName">城市名</param>
+        /// <param name="userType">用户类型   0全部    1商家    2骑士</param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult AppActiveMap(string cityName,byte userType)
+        {
+            var list = new List<AppActiveInfo>();
+            if (userType == 0)
+            {
+                list.AddRange(statisticsProvider.GetAppActiveInfos(1, cityName));
+                list.AddRange(statisticsProvider.GetAppActiveInfos(2, cityName));
+            }
+            else
+            {
+                list.AddRange(statisticsProvider.GetAppActiveInfos(userType, cityName));
+            }
+            return Json(list);
         }
     }
 }

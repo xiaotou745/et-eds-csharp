@@ -11,7 +11,7 @@ namespace Ets.Model.DomainModel.Statistics
         /// <summary>
         /// 用户类型    1:商家    2:骑士
         /// </summary>
-        public byte UserType { get; set; }
+        public int UserType { get; set; }
 
         /// <summary>
         /// 名称
@@ -31,10 +31,10 @@ namespace Ets.Model.DomainModel.Statistics
         /// <summary>
         /// 经度
         /// </summary>
-        public decimal Longitude { get; set; }
+        public double Longitude { get; set; }
         /// <summary>
         /// 纬度
         /// </summary>
-        public decimal Latitude { get; set; }
+        public double Latitude { get; set; }
     }
 }

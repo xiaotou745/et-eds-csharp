@@ -25,7 +25,6 @@
 <script src="~/Scripts/jquery-ui-1.8.20.js"></script>
 <script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
 <link rel="stylesheet" type="text/css" href="~/Content/pagestyle/pagerstyles.css" />
-
 <div class="zpManage zpSh">
     <h2 class="crumbs">
         您所在位置：数据统计 > 客户端App启动热力图
@@ -41,13 +40,8 @@
                         <option value="2">骑士</option>
                     </select>
                     <span class="">城市筛选: </span>
-                    @Html.DropDownList("cityName", new SelectList(ViewBag.openCityList.Result.AreaModels, "Name", "Name"), new { style = "width:155px" })
+                    @Html.DropDownList("cityName", new SelectList(ViewBag.openCityList.Result.AreaModels, "Name", "Name"),  new { style = "width:155px" })
                     <input type="button" value="查询" class="searchBtn" id="btnSearch" />
-                </td>
-            </tr>
-            <tr>
-                <td>骑士:<img src="/Content/images/clientermarker.png" width="30px" height="30px"/>&#160;商家:<img src="/Content/images/businessmarker.png" width="30px" height="30px" />&#160;
-                    骑士数量:<span id="clienterCount"></span>&#160;&#160;&#160;商家数量:<span id="businessCount"></span>&#160;&#160;&#160;
                 </td>
             </tr>
         </table>
@@ -69,11 +63,25 @@
                     </tr>
                 </thead>
                 <tbody id="tbodyData">
-
+                    @*@{
+                        var count = 1;
+                        foreach (var activeInfo in lstAppActiveInfo)
+                        {
+                            var userTypeStr = activeInfo.UserType == 1 ? "商家" : "骑士";
+                            <tr>
+                                <td>@count</td>
+                                <td>@userTypeStr</td>
+                                <td>@activeInfo.TrueName</td>
+                                <td>@activeInfo.Phone</td>
+                                <td>@activeInfo.Platform</td>
+                            </tr>
+                            count++;
+                        }
+                    }*@
                 </tbody>
             </table>
-
-            <div data-ajax="true" data-ajax-dataformid="#searchForm" data-ajax-method="Post" data-ajax-update="#dataList" data-invalidpageerrmsg="页索引无效" data-maxpages="11" data-mvcpager="true" data-outrangeerrmsg="页索引超出范围" data-pageparameter="pageindex" id="pager" style="float:right"></div>
+            
+            <div data-ajax="true" data-ajax-dataformid="#searchForm" data-ajax-method="Post" data-ajax-update="#dataList" data-invalidpageerrmsg="页索引无效" data-maxpages="11" data-mvcpager="true" data-outrangeerrmsg="页索引超出范围" data-pageparameter="pageindex" data-urlformat="/Order/PostOrder?pageindex=__pageindex__" id="badoopager" style="float:right"><a disabled="disabled">首页</a>&nbsp;&nbsp;<a disabled="disabled">上一页</a>&nbsp;&nbsp;<span class="current">1</span>&nbsp;&nbsp;<a data-pageindex="2" href="/Order/PostOrder?pageindex=2">2</a>&nbsp;&nbsp;<a data-pageindex="3" href="/Order/PostOrder?pageindex=3">3</a>&nbsp;&nbsp;<a data-pageindex="4" href="/Order/PostOrder?pageindex=4">4</a>&nbsp;&nbsp;<a data-pageindex="5" href="/Order/PostOrder?pageindex=5">5</a>&nbsp;&nbsp;<a data-pageindex="6" href="/Order/PostOrder?pageindex=6">6</a>&nbsp;&nbsp;<a data-pageindex="7" href="/Order/PostOrder?pageindex=7">7</a>&nbsp;&nbsp;<a data-pageindex="8" href="/Order/PostOrder?pageindex=8">8</a>&nbsp;&nbsp;<a data-pageindex="9" href="/Order/PostOrder?pageindex=9">9</a>&nbsp;&nbsp;<a data-pageindex="10" href="/Order/PostOrder?pageindex=10">10</a>&nbsp;&nbsp;<a data-pageindex="11" href="/Order/PostOrder?pageindex=11">...</a>&nbsp;&nbsp;<a data-pageindex="2" href="/Order/PostOrder?pageindex=2">下一页</a>&nbsp;&nbsp;<a data-pageindex="11" href="/Order/PostOrder?pageindex=11">尾页</a>&nbsp;&nbsp;<input type="text" value="1" data-pageindexbox="true"><input type="button" data-submitbutton="true" value="跳转"></div>
         </div>
     </div>
 </div>
@@ -90,62 +98,30 @@
     var pageIndex = 1;//当前页码
     var pageSize = 20;//当前页的数量
 
-    var allData = null;
-
-    var businessIcon = new BMap.Icon("/Content/images/businessmarker.png", new BMap.Size(40, 40), {});
-    var clienterIcon = new BMap.Icon("/Content/images/clientermarker.png", new BMap.Size(40, 40), {});
-
-    var currentCity = null;
-
     $(function () {
         var userType = $("#userType").val();
         var cityName = $("#cityName").val();
         loadData(cityName, userType);
-        setCount();
     });
-
-    function setCount() {
-        var clientCount = 0;
-        var businessCount = 0;
-        if (allData != null) {
-            for (var i = 0; i < allData.length; i++) {
-                if (allData[i].UserType == 2) {
-                    clientCount++;
-                } else if (allData[i].UserType == 1) {
-                    businessCount++;
-                }
-            }
-        }
-        $("#clienterCount").html(clientCount);
-        $("#businessCount").html(businessCount);
-    }
 
     //查询数据
     $("#btnSearch").click(function () {
         var userType = $("#userType").val();
         var cityName = $("#cityName").val();
-        pageIndex = 1;
-        var tempCity = currentCity;
         loadData(cityName, userType);
-        if (tempCity != cityName) {
-            setCount();
-        }
     });
 
     function loadData(cityName, userType) {
         var paramaters = { "cityName": cityName, "userType": userType };
-        currentCity = cityName;
         cityName = cityName.trim().replace("市", "");
-        
         loadCityCenterPoint(cityName);
         var url = "/Statistical/AppActiveMap";
         $.ajax({
             type: 'POST',
             url: url,
             data: paramaters,
-            async: false,
+            async:true,
             success: function (result) {
-                allData = result;
                 loadDataToMap(result);
                 loadDataToTable(result);
                 return result;
@@ -177,8 +153,7 @@
         };
         if (data != null) {
             for (var i = 0; i < data.length; i++) {
-                var myIcon = data[i].UserType == 1 ? businessIcon : clienterIcon;
-                var marker = new BMap.Marker(new BMap.Point(data[i].Longitude, data[i].Latitude), { icon: myIcon });  // 创建标注
+                var marker = new BMap.Marker(new BMap.Point(data[i].Longitude, data[i].Latitude));  // 创建标注
                 var content = "电话:" + data[i].Phone + ",名称:" + data[i].TrueName;
                 map.addOverlay(marker);               // 将标注添加到地图中
                 addClickHandler(content, marker, opts, map);
@@ -188,30 +163,27 @@
 
     function loadDataToTable(data) {
         var html = "<tr><td>当前没有数据</td></tr>";
-        $("#pager").html("");//清空页码
-        if (data != null && data.length > 0) {
+        if (data != null | data.length > 0) {
             var arrStr = [];
-            var max = pageIndex * pageSize > data.length ? data.length : pageIndex * pageSize;
-            for (var i = (pageIndex - 1) * pageSize; i < max; i++) {
+            for (var i = 0; i < data.length; i++) {
                 arrStr.push("<tr>");
-                arrStr.push("<td>" + (i + 1) + "</td>");
+                arrStr.push("<td>" + (i+1) + "</td>");
                 arrStr.push("<td>" + data[i].TrueName + "</td>");
                 arrStr.push("<td>" + data[i].Phone + "</td>");
-                arrStr.push("<td>" + (data[i].UserType == 1 ? "商家" : "骑士") + "</td>");
+                arrStr.push("<td>" + data[i].UserType + "</td>");
                 arrStr.push("<td>" + data[i].Platform + "</td>");
                 arrStr.push("</tr>");
             }
             html = arrStr.join("");
-            showPager(data.length);
-        }
+        } 
         $("#tbodyData").html(html);
     }
 
     function addClickHandler(content, marker, opts, map) {
-        marker.addEventListener("click", function (e) {
-            openInfo(content, e, opts, map);
-        }
-    );
+            marker.addEventListener("click", function (e) {
+                openInfo(content, e, opts, map);
+            }
+		);
     }
 
     function openInfo(content, e, opts, map) {
@@ -223,59 +195,6 @@
 
     //分页
     function showPager(dataCount) {
-        if (dataCount <= 0) {
-            return;
-        }
-        var maxPageIndex = Math.ceil(dataCount / pageSize);//最大页码
-        //先显示前面1到10个页码
-        var arrStr = [];
-        if (pageIndex <= 1) {
-            arrStr.push("<a disabled=\"disabled\">首页</a>&#160;&#160;");
-            arrStr.push("<a disabled=\"disabled\">上一页</a>&#160;&#160;");
-            arrStr.push("<span class=\"current\">1</span>&#160;&#160;");
-        } else {
-            arrStr.push("<a href='javascript:void(0)' onclick='showPageData(1,1)'>首页</a>&#160;&#160;");
-            arrStr.push("<a href='javascript:void(0)' onclick='showPageData(1,2)'>上一页</a>&#160;&#160;");
-            arrStr.push("<a href='javascript:void(0)' onclick='showPageData(1,1)'>1</a>&#160;&#160;");
-        }
-        for (var i = 2; i < maxPageIndex + 1; i++) {
-            if (i == pageIndex) {
-                arrStr.push("<span class='current'>" + i + "</span>&#160;&#160;");
-            } else {
-                arrStr.push("<a href='javascript:void(0)' onclick='showPageData(" + i + ",1)'>" + i + "</a>&#160;&#160;");
-            }
-        }
-        if (maxPageIndex != pageIndex) {
-            arrStr.push("<a href='javascript:void(0)' onclick='showPageData(0,3)'>下一页</a>&#160;&#160;");
-            arrStr.push("<a href='javascript:void(0)' onclick='showPageData(0,4)'>尾页</a>&#160;&#160;");
-        } else {
-            arrStr.push("<a disabled=\"disabled\">下一页</a>&#160;&#160;");
-            arrStr.push("<a disabled=\"disabled\">尾页</a>&#160;&#160;");
-        }
-        arrStr.push("<input type=\"text\" data-pageindexbox=\"true\" id=\"txtPage\"><input type=\"button\" data-submitbutton=\"true\" value=\"跳转\" onclick='jump()'></input></input>");
-        $("#pager").html(arrStr.join(""));
-    }
-
-    //显示页面数据   i:要显示的页码    pageType:页码类型    1正常类型    2上一页     3下一页    4尾页
-    function showPageData(i, pageType) {
-        if (pageType == 2) {
-            pageIndex = pageIndex - 1;
-        } else if (pageType == 3) {
-            pageIndex = pageIndex + 1;
-        } else if (pageType == 4) {
-            var maxPageIndex = Math.ceil(allData.length / pageSize);
-            pageIndex = maxPageIndex;
-        } else {
-            pageIndex = i;
-        }
-        loadDataToTable(allData);
-    }
-
-    function jump() {
-        var p = Number($("#txtPage").val());
-        var maxPageIndex = Math.ceil(allData.length / pageSize);
-        p = p >= maxPageIndex ? maxPageIndex : p;
-        pageIndex = p;
-        loadDataToTable(allData);
+        
     }
 </script>

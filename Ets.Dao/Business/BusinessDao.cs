@@ -2506,9 +2506,9 @@ select @@IDENTITY
         public IList<AppActiveInfo> GetAppActiveInfos(string cityName)
         {
             const string sql = @"
-select 1 as UserType b.Name,b.Longitude,b.Landline,b.PhoneNo from business b where b.City=@City";
+select 1 as UserType, b.Name as TrueName,b.Longitude,b.Landline,b.PhoneNo as Phone from business b (NOLOCK) where b.City like @City";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("City", cityName);
+            dbParameters.AddWithValue("City", cityName+"%");
             var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, dbParameters));
             var list = MapRows<AppActiveInfo>(dt);
             return list;
