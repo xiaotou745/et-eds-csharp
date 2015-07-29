@@ -20,7 +20,7 @@ namespace Ets.Model.DataModel.YeePay
 		/// <summary>
 		/// 充值金额
 		/// </summary>
-		public decimal? RechargeAmount { get; set; }
+		public decimal RechargeAmount { get; set; }
 		/// <summary>
 		/// 操作人
 		/// </summary>
@@ -28,11 +28,11 @@ namespace Ets.Model.DataModel.YeePay
 		/// <summary>
 		/// 录入时间
 		/// </summary>
-        public string OperateTime { get; set; }
+        public DateTime OperateTime { get; set; }
 		/// <summary>
 		/// 充值时间
 		/// </summary>
-        public string RechargeTime { get; set; }
+        public DateTime RechargeTime { get; set; }
 		/// <summary>
 		/// 备注
 		/// </summary>
