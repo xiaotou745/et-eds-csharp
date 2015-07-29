@@ -102,25 +102,15 @@
             data: paramaters,
             success: function (result) {
                 if (result.IsSuccess) {
-                    alert("添加成功!");
-                    window.location.href = "/DeliveryCompany/DeliveryCompany";
+                    alert("添加记录成功!");
+                    window.location.href = "/YeePayRunningManager/YeePayRunningManager";
                 } else {
                     alert(result.Message);
                 }
             }
         });
     });
-
-    $('input[name="rDeliveryCheck"]').click(function () {
-        var a = $('input[name="rDeliveryCheck"]:checked').val();
-        if (a == 1) {  //结算比例
-            $("#lblClienterSettlement").html("%");
-            $("#lblDeliverySettlement").html("%");
-        } else {
-            $("#lblClienterSettlement").html("元/单");
-            $("#lblDeliverySettlement").html("元/单");
-        }
-    });
+      
     //关闭弹层
     $('.J_closebox').click(function () {
         adminjs.closewinbox('.add-openbox');
