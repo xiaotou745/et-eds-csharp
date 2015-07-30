@@ -294,6 +294,9 @@
         var p = Number($("#txtPage").val());
         var maxPageIndex = Math.ceil(allData.length / pageSize);
         p = p >= maxPageIndex ? maxPageIndex : p;
+        if (p <= 0) {
+            p = 1;
+        }
         pageIndex = p;
         loadDataToTable(allData);
     }
