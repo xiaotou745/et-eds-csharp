@@ -69,7 +69,10 @@ namespace Ets.Provider.Tests
         [Test]
         public void GetBalance()
         {
-            var result = new QueryBalance().GetBalance("10012474356");//账户余额
+            var result = new PayProvider().QueryBalanceYee(new YeeQueryBalanceParameter()
+            {
+                Ledgerno = "10012474356"
+            });//账户余额
         }
 
 

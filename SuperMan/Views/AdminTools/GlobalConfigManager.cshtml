@@ -77,6 +77,11 @@
                     <input type="text" name="withdrawCommission" value="@globalConfigModel.WithdrawCommission" id="withdrawCommission" style="width: 100px" />元
                     <input type="hidden" name="oldWithdrawCommission" value="@globalConfigModel.WithdrawCommission" id="oldWithdrawCommission" />
                 </td>
+                @*<td>
+                    <span>易宝活跃账户时间配置:</span>
+                    <input type="text" name="yeeAccountActiveTime" value="@globalConfigModel.YeeAccountActiveTime" id="yeeAccountActiveTime" style="width: 100px" />天
+                    <input type="hidden" name="oldYeeAccountActiveTime" value="@globalConfigModel.YeeAccountActiveTime" id="oldYeeAccountActiveTime" />
+                </td>*@
                 <td>
                     <span>商家经纬度上传时间间隔:</span>
                     <input type="text" name="businessUploadTimeInterval" value="@globalConfigModel.BusinessUploadTimeInterval" id="businessUploadTimeInterval" style="width: 100px" />秒
@@ -113,7 +118,7 @@
             var grabToCompleteDistance = $("#grabToCompleteDistance").val(); //无效订单判定时抢单点和完成点的距离
             var businessUploadTimeInterval = $("#businessUploadTimeInterval").val(); //商家经纬度上传时间间隔
             var searchClienterLocationTimeInterval = $("#searchClienterLocationTimeInterval").val(); //商家经纬度上传时间间隔
-
+            //var yeeAccountActiveTime = $("#yeeAccountActiveTime").val(); //易宝活跃账户时间配置
             var oldHasUnFinishedOrderUploadTimeInterval = $("#oldHasUnFinishedOrderUploadTimeInterval").val(); //骑士有待完成任务经纬度上传时间间隔（之前）
             var oldAllFinishedOrderUploadTimeInterval = $("#oldAllFinishedOrderUploadTimeInterval").val(); //骑士没有待完成任务经纬度上传时间间隔（之前）
             var oldPushRadius = $("#oldPushRadius").val(); //推送半径（之前）
@@ -127,7 +132,7 @@
             var oldGrabToCompleteDistance = $("#oldGrabToCompleteDistance").val(); //无效订单判定时抢单点和完成点的距离
             var oldBusinessUploadTimeInterval = $("#oldBusinessUploadTimeInterval").val(); //商家经纬度上传时间间隔（之前）
             var oldSearchClienterLocationTimeInterval = $("#oldSearchClienterLocationTimeInterval").val();
-
+            //var oldYeeAccountActiveTime = $("#oldYeeAccountActiveTime").val(); //易宝活跃账户时间配置（之前）
 
             var pageOk = true;
             $(":text").each(function (index, obj) {
@@ -246,6 +251,14 @@
                 alert("雇主任务时间限制不能为空!");
                 return;
             }
+            //if (yeeAccountActiveTime == "") {
+            //    alert("易宝活跃账户时间配置不能为空!");
+            //    return;
+            //}
+            //if (yeeAccountActiveTime < 0) {
+            //    alert("易宝活跃账户时间配置大于0!");
+            //    return;
+            //}
             var reg = /^\d{1,2}:\d{2}-\d{1,2}:\d{2}$/;
             if (!reg.test(employerTaskTimeSet)) {
                 alert('对不起，您输入的雇主任务时间格式不正确!');

@@ -34,5 +34,9 @@ namespace Ets.Model.DomainModel.Finance
 		/// 提款单状态
 		/// </summary>
         public int WithdrawStatus { get; set; }
+        /// <summary>
+		/// 超时时间（单位为：天）
+		/// </summary>
+        public int DateDiff { get; set; }
     }
 }
