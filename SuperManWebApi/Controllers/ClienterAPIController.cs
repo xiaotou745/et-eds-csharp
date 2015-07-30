@@ -68,7 +68,7 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.NOFormParameter);
             }
-            int UserId = ParseHelper.ToInt(HttpContext.Current.Request.Form["userId"],0); //用户Id
+            int UserId = ParseHelper.ToInt(HttpContext.Current.Request.Form["userId"], 0); //用户Id
             var strIdCard = HttpContext.Current.Request.Form["IDCard"]; //身份证号
             var trueName = HttpContext.Current.Request.Form["trueName"]; //真实姓名
             if (UserId == 0 || !iClienterProvider.CheckClienterExistById(UserId))
@@ -194,8 +194,6 @@ namespace SuperManWebApi.Controllers
         /// <summary>
         /// 修改密码
         /// </summary>
-        /// <param name="phoneNo"></param>
-        /// <param name="newPassword"></param>
         /// <returns></returns>        
         [HttpPost]
         public ResultModel<ClienterModifyPwdResultModel> PostModifyPwd_C(ModifyPwdInfoModel model)
@@ -223,6 +221,15 @@ namespace SuperManWebApi.Controllers
                 return ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeIsEmpty);
             }
             var redis = new RedisCache();
+
+            string key = string.Concat(RedissCacheKey.PostForgetPwdCount_C, model.phoneNo);
+            int excuteCount = redis.Get<int>(key);
+            if (excuteCount >= 10)
+            {
+                return ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.CountError);
+            }
+            redis.Set(key, excuteCount + 1, new TimeSpan(0, 5, 0));
+
             var code = redis.Get<string>(RedissCacheKey.PostForgetPwd_C + model.phoneNo);
             //start 需要验证 验证码是否正确
             if (string.IsNullOrEmpty(code) || code != model.checkCode)
@@ -350,7 +357,7 @@ namespace SuperManWebApi.Controllers
             {
                 var redis = new RedisCache();
                 redis.Add(key, randomCode, new TimeSpan(0, 5, 0));
-                 
+
 
                 // 更新短信通道 
                 Task.Factory.StartNew(() =>

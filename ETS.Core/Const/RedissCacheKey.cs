@@ -55,9 +55,14 @@ namespace ETS.Const
         public const string ChangePasswordCount_C = "ChangePasswordCount_C_";
 
         /// <summary>
+        /// 骑士端忘记密码
+        /// </summary>
+        public const string PostForgetPwdCount_C = "PostForgetPwdCount_C";
+
+        /// <summary>
         /// 商家端登录
         /// </summary>
-        public const string LoginCount_B= "LoginCount_B_";
+        public const string LoginCount_B = "LoginCount_B_";
 
         /// <summary>
         /// 商家端注册
