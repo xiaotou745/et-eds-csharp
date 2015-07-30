@@ -40,6 +40,7 @@ using Ets.Service.Provider.DeliveryCompany;
 using Ets.Model.DataModel.DeliveryCompany;
 using Ets.Service.IProvider.GlobalConfig;
 using Ets.Dao.GlobalConfig;
+using ETS.NoSql.RedisCache;
 
 namespace Ets.Service.Provider.Clienter
 {
@@ -204,6 +205,14 @@ namespace Ets.Service.Provider.Clienter
         {
             try
             {
+                var redis = new RedisCache();
+                string key = string.Concat(RedissCacheKey.LoginCount_C, model.phoneNo);
+                if (redis.Get<int>(key) >= 10)
+                {
+                    return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.CountError);
+                }
+                redis.Incr(key, new TimeSpan(0, 5, 0));
+
                 ClienterLoginResultModel resultModel = clienterDao.PostLogin_CSql(model);
                 if (resultModel == null)
                 {
