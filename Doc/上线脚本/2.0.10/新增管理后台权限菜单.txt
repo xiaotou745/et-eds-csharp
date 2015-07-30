@@ -1,0 +1,6 @@
+use superman
+go
+
+INSERT INTO [superman].[dbo].[AuthorityMenuClass] ([ParId], [MenuName], [BeLock], [Url], [IsButton], [JavaUrl]) VALUES ('29', '客户端App启动热力图', '0', '/Statistical/AppActiveMap', '0', NULL);
+
+go

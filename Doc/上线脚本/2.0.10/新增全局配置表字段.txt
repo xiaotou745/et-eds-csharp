@@ -1,0 +1,10 @@
+use superman
+go
+
+INSERT INTO [superman].[dbo].[GlobalConfig] ([KeyName], [Value], [LastUpdateTime], [Remark], [GroupId], [StrategyId]) VALUES (N'BusinessUploadTimeInterval', N'600', '2015-07-27 13:50:41.797', N'商家上传一次经纬度给到服务端的时间间隔(单位为秒)', '0', '-1');
+
+INSERT INTO [superman].[dbo].[GlobalConfig] ([KeyName], [Value], [LastUpdateTime], [Remark], [GroupId], [StrategyId]) VALUES (N'SearchClienterLocationTimeInterval', N'10', '2015-07-27 13:50:41.797', N'查询骑士x分钟内坐标数据', '0', '-1');
+
+
+
+go

@@ -806,7 +806,8 @@ select @@IDENTITY ";
                                         ,o.OriginalOrderNo
                                         ,oo.NeedUploadCount
                                         ,oo.HadUploadCount
-                                        ,oo.ReceiptPic                                        
+                                        ,oo.ReceiptPic
+                                        ,oo.DeductCommissionReason                                        
                                         ,o.OtherCancelReason
                                         ,o.OriginalOrderNo
                                         ,o.IsEnable
@@ -3269,7 +3270,7 @@ where   Id = @OrderId and FinishAll = 0";
         /// </summary>
         /// <param name="clienterID"></param>
         /// <returns></returns>
-        public int GetTotalOrderNumByClienterID(int clienterID)
+        public int GetTotalOrderNumByClienterID(int clienterID, DateTime actualDoneDate)
         {
             string sql = @"SELECT  ISNULL(SUM(OrderCount), 0) AS num
                             FROM    [order] (NOLOCK)
@@ -3279,8 +3280,8 @@ where   Id = @OrderId and FinishAll = 0";
                                     AND ActualDoneDate < @endDate";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("clienterId", DbType.Int32).Value = clienterID;
-            dbParameters.Add("beginDate", DbType.DateTime).Value = DateTime.Now.Date.ToString();
-            dbParameters.Add("endDate", DbType.DateTime).Value = DateTime.Now.ToString();
+            dbParameters.Add("beginDate", DbType.DateTime).Value = actualDoneDate.Date.ToString();
+            dbParameters.Add("endDate", DbType.DateTime).Value = actualDoneDate.ToString();
 
             object obj = DbHelper.ExecuteScalar(SuperMan_Read, sql, dbParameters);
             return ParseHelper.ToInt(obj, 0);

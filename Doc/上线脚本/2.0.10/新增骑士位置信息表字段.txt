@@ -1,0 +1,8 @@
+use superman
+go
+
+ALTER TABLE [dbo].[ClienterLocation] ADD [Platform] nvarchar(20) COLLATE Chinese_PRC_CI_AS NULL ;
+
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'平台信息:ios   android等' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ClienterLocation', @level2type=N'COLUMN',@level2name=N'Platform'
+GO

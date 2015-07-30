@@ -1,4 +1,6 @@
-﻿using Ets.Dao.Statistics;
+﻿using Ets.Dao.Business;
+using Ets.Dao.Clienter;
+using Ets.Dao.Statistics;
 using ETS.Data.PageData;
 using Ets.Model.Common;
 using Ets.Service.IProvider.Statistics;
@@ -15,6 +17,8 @@ namespace Ets.Service.Provider.Statistics
     public class StatisticsProvider : IStatisticsProvider
     {
         StatisticsDao statisticsDao = new StatisticsDao();
+        ClienterLocationDao clienterLocationDao = new ClienterLocationDao();
+        BusinessDao businessDao = new BusinessDao();
         /// <summary>
         /// 执行统计数据
         /// 窦海超
@@ -186,5 +190,23 @@ namespace Ets.Service.Provider.Statistics
             return statisticsDao.GetRecommendList(recommendQuery); ;
         }
 
+        /// <summary>
+        /// 获得骑士app启动热力图
+        /// </summary>
+        /// <param name="userType"></param>
+        /// <param name="cityId"></param>
+        /// <param name="deliveryCompanyInfo"></param>
+        /// <returns></returns>
+        public IList<AppActiveInfo> GetAppActiveInfos(byte userType, string cityId, string deliveryCompanyInfo)
+        {
+            if (userType == 1)
+            {
+                return businessDao.GetAppActiveInfos(cityId);
+            }
+            else
+            {
+                return clienterLocationDao.GetAppActiveInfos(cityId, deliveryCompanyInfo);
+            }
+        }
     }
 }

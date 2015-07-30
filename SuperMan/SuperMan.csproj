@@ -268,10 +268,12 @@
     <Content Include="Content\fromwangying\header.css" />
     <Content Include="Content\header.css" />
     <Content Include="Content\images\b.png" />
+    <Content Include="Content\images\businessmarker.png" />
     <Content Include="Content\images\c.png" />
     <Content Include="Content\images\carousel1.jpg" />
     <Content Include="Content\images\carousel2.jpg" />
     <Content Include="Content\images\carousel3.jpg" />
+    <Content Include="Content\images\clientermarker.png" />
     <Content Include="Content\images\glyphicons-halflings-white.png" />
     <Content Include="Content\images\glyphicons-halflings.png" />
     <Content Include="Content\images\Icon1.png" />
@@ -471,6 +473,7 @@
     <Content Include="Content\i\img-x.psd" />
     <Content Include="Content\i\sprite-icon.psd" />
     <Content Include="Nlog.config" />
+    <Content Include="Content\images\北京市公积金提取政策.pdf" />
     <None Include="Properties\PublishProfiles\admin.edaisong.com.pubxml" />
     <None Include="Properties\PublishProfiles\chuan.admin.edaisong.com.pubxml" />
     <None Include="Properties\PublishProfiles\HDLWEB.pubxml" />
@@ -682,6 +685,7 @@
     <Content Include="Views\AdminTools\APPVersionEdit.cshtml" />
     <Content Include="Views\AdminTools\APPVersionManager.cshtml" />
     <Content Include="Views\AdminTools\_APPVersionList.cshtml" />
+    <Content Include="Views\Statistical\AppActiveMap.cshtml" />
     <Content Include="Views\YeePayRunningManager\YeePayRunningManager.cshtml" />
     <Content Include="Views\YeePayRunningManager\_YeePayRunningList.cshtml" />
   </ItemGroup>

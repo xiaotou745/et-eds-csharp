@@ -4,6 +4,7 @@ using ETS.Dao;
 using ETS.Data;
 using ETS.Data.Core;
 using ETS.Data.PageData;
+using Ets.Model.DomainModel.Statistics;
 using Ets.Model.ParameterModel.Finance;
 using ETS.Util;
 using System;
@@ -2574,20 +2575,38 @@ MERGE INTO BusinessExpressRelation ber
         /// <param name="businessId"></param>
         /// <param name="longitude"></param>
         /// <param name="latitude"></param>
+        /// <param name="platform"></param>
         /// <returns></returns>
-        public long InsertLocation(int businessId, decimal longitude, decimal latitude)
+        public long InsertLocation(int businessId, decimal longitude, decimal latitude,string platform)
         {
             const string insertSql = @"
-insert into BusinessLocation(Longitude,Latitude,BusinessId)
-values(@Longitude,@Latitude,@BusinessId)
+insert into BusinessLocation(Longitude,Latitude,BusinessId,Platform)
+values(@Longitude,@Latitude,@BusinessId,@Platform)
 select @@IDENTITY
 ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Longitude", longitude);
             dbParameters.AddWithValue("Latitude", latitude);
             dbParameters.AddWithValue("BusinessId", businessId);
+            dbParameters.AddWithValue("Platform", platform);
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters);
             return ParseHelper.ToLong(result);
+        }
+
+        /// <summary>
+        /// 获得商家app启动热力图
+        /// </summary>
+        /// <param name="cityId"></param>
+        /// <returns></returns>
+        public IList<AppActiveInfo> GetAppActiveInfos(string cityId)
+        {
+            const string sql = @"
+select 1 as UserType, b.Name as TrueName,b.Longitude,b.Latitude,b.PhoneNo as Phone from business b (NOLOCK) where b.CityId=@CityId";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("CityId", cityId.Trim());
+            var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, dbParameters));
+            var list = MapRows<AppActiveInfo>(dt);
+            return list;
         }
     }
 }

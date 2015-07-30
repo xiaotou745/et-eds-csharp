@@ -102,6 +102,11 @@ namespace Ets.Model.DomainModel.GlobalConfig
         public string AllFinishedOrderUploadTimeInterval { get; set; }
 
         /// <summary>
+        /// 查询骑士坐标数据时间间隔(单位为分钟)
+        /// </summary>
+        public string SearchClienterLocationTimeInterval { get; set; }
+
+        /// <summary>
         /// 商家端上传一次经纬度给到服务端的时间间隔(单位为秒)
         /// </summary>
         public string BusinessUploadTimeInterval { get; set; }

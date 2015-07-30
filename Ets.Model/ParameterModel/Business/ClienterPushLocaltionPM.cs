@@ -31,5 +31,10 @@ namespace Ets.Model.ParameterModel.Business
         /// 版本
         /// </summary>
         public string Version { get; set; }
+
+        /// <summary>
+        /// 客户端平台   如:ios    android
+        /// </summary>
+        public string Platform { get; set; }
     }
 }
