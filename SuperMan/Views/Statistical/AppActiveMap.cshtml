@@ -42,13 +42,16 @@
                     </select>
                     <span class="">城市筛选: </span>
                     @Html.DropDownList("cityName", new SelectList(ViewBag.openCityList.Result.AreaModels, "Name", "Name"), new { style = "width:155px" })
-                    <span class="">物流公司: </span>
-                    @Html.DropDownList("deliveryCompany", new SelectList(ViewBag.deliveryCompanyList, "CompanyId", "CompanyName"), "--无--", new { style = "width:155px" })
+                    <span class="" id="deliveryCompanyInfo">
+                        骑士所属物流公司:
+                        @Html.DropDownList("deliveryCompany", new SelectList(ViewBag.deliveryCompanyList, "CompanyId", "CompanyName"), "--无--", new { style = "width:155px" })
+                    </span>
                     <input type="button" value="查询" class="searchBtn" id="btnSearch" />
                 </td>
             </tr>
             <tr>
-                <td>骑士:<img src="/Content/images/clientermarker.png" width="30px" height="30px"/>&#160;商家:<img src="/Content/images/businessmarker.png" width="30px" height="30px" />&#160;
+                <td>
+                    骑士:<img src="/Content/images/clientermarker.png" width="30px" height="30px" />&#160;商家:<img src="/Content/images/businessmarker.png" width="30px" height="30px" />&#160;
                     骑士数量:<span id="clienterCount"></span>&#160;&#160;&#160;商家数量:<span id="businessCount"></span>&#160;&#160;&#160;
                 </td>
             </tr>
@@ -67,12 +70,10 @@
                         <th>名称</th>
                         <th>注册电话</th>
                         <th>客户类型</th>
-                        <th>注册平台</th>
+                        @*<th>注册平台</th>*@
                     </tr>
                 </thead>
-                <tbody id="tbodyData">
-
-                </tbody>
+                <tbody id="tbodyData"></tbody>
             </table>
 
             <div data-ajax="true" data-ajax-dataformid="#searchForm" data-ajax-method="Post" data-ajax-update="#dataList" data-invalidpageerrmsg="页索引无效" data-maxpages="11" data-mvcpager="true" data-outrangeerrmsg="页索引超出范围" data-pageparameter="pageindex" id="pager" style="float:right"></div>
@@ -102,6 +103,7 @@
     $(function () {
         var userType = $("#userType").val();
         var cityName = $("#cityName").val();
+        setDeliveryCompanyInfoDisplay(userType);
         loadData(cityName, userType);
         setCount();
     });
@@ -134,11 +136,26 @@
         }
     });
 
+    $("#userType").change(function () {
+        setDeliveryCompanyInfoDisplay($("#userType").val());
+    });
+
+    function setDeliveryCompanyInfoDisplay(userType) {
+        if (userType == 2) {
+            $("#deliveryCompanyInfo").show();
+        } else {
+            $("#deliveryCompanyInfo").hide();
+        }
+    }
+
     function loadData(cityName, userType) {
-        var paramaters = { "cityName": cityName, "userType": userType };
+        var deliveryCompanyInfo = $("#deliveryCompany").val();
+        if (userType != 2) {
+            deliveryCompanyInfo = 0;
+        }
         currentCity = cityName;
         cityName = cityName.trim().replace("市", "");
-        
+        var paramaters = { "cityName": cityName, "userType": userType, "deliveryCompanyInfo": deliveryCompanyInfo };
         loadCityCenterPoint(cityName);
         var url = "/Statistical/AppActiveMap";
         $.ajax({
@@ -200,7 +217,7 @@
                 arrStr.push("<td>" + data[i].TrueName + "</td>");
                 arrStr.push("<td>" + data[i].Phone + "</td>");
                 arrStr.push("<td>" + (data[i].UserType == 1 ? "商家" : "骑士") + "</td>");
-                arrStr.push("<td>" + data[i].Platform + "</td>");
+                //arrStr.push("<td>" + data[i].Platform + "</td>");
                 arrStr.push("</tr>");
             }
             html = arrStr.join("");

@@ -51,7 +51,8 @@ namespace Ets.Service.IProvider.Statistics
         /// </summary>
         /// <param name="userType">用户类型   1商家   2骑士</param>
         /// <param name="cityName">城市名</param>
+        /// <param name="deliveryCompanyInfo">骑士所属物流公司,用户类型是骑士时此参数才有效</param>
         /// <returns></returns>
-        IList<AppActiveInfo> GetAppActiveInfos(byte userType, string cityName);
+        IList<AppActiveInfo> GetAppActiveInfos(byte userType, string cityName, string deliveryCompanyInfo);
     }
 }

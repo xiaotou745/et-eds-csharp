@@ -230,19 +230,20 @@ namespace SuperMan.Controllers
         /// </summary>
         /// <param name="cityName">城市名</param>
         /// <param name="userType">用户类型   0全部    1商家    2骑士</param>
+        /// <param name="deliveryCompanyInfo">骑士所属物流公司,如果用户类型是骑士此参数才有效</param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult AppActiveMap(string cityName,byte userType)
+        public ActionResult AppActiveMap(string cityName, byte userType, string deliveryCompanyInfo)
         {
             var list = new List<AppActiveInfo>();
             if (userType == 0)
             {
-                list.AddRange(statisticsProvider.GetAppActiveInfos(1, cityName));
-                list.AddRange(statisticsProvider.GetAppActiveInfos(2, cityName));
+                list.AddRange(statisticsProvider.GetAppActiveInfos(1, cityName, "0"));
+                list.AddRange(statisticsProvider.GetAppActiveInfos(2, cityName, "0"));
             }
             else
             {
-                list.AddRange(statisticsProvider.GetAppActiveInfos(userType, cityName));
+                list.AddRange(statisticsProvider.GetAppActiveInfos(userType, cityName, deliveryCompanyInfo));
             }
             return Json(list);
         }

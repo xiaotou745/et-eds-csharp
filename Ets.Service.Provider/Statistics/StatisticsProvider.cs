@@ -195,8 +195,9 @@ namespace Ets.Service.Provider.Statistics
         /// </summary>
         /// <param name="userType"></param>
         /// <param name="cityName"></param>
+        /// <param name="deliveryCompanyInfo"></param>
         /// <returns></returns>
-        public IList<AppActiveInfo> GetAppActiveInfos(byte userType, string cityName)
+        public IList<AppActiveInfo> GetAppActiveInfos(byte userType, string cityName, string deliveryCompanyInfo)
         {
             if (userType == 1)
             {
@@ -204,7 +205,7 @@ namespace Ets.Service.Provider.Statistics
             }
             else
             {
-                return clienterLocationDao.GetAppActiveInfos(cityName);
+                return clienterLocationDao.GetAppActiveInfos(cityName, deliveryCompanyInfo);
             }
         }
     }

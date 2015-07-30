@@ -48,16 +48,20 @@ select @@IDENTITY
         /// 获得骑士app启动热力图
         /// </summary>
         /// <param name="cityName">城市名</param>
+        /// <param name="deliveryCompanyInfo">物流公司</param>
         /// <returns></returns>
-        public IList<AppActiveInfo> GetAppActiveInfos(string cityName)
+        public IList<AppActiveInfo> GetAppActiveInfos(string cityName, string deliveryCompanyInfo)
         {
-            string strSql =string.Format(@"with t as(
+            string strSql = string.Format(@"with t as(
 select ClienterId,MAX(CreateTime) maxtime from ClienterLocation (Nolock) GROUP BY ClienterId HAVING MAX(CreateTime) > '{0}'
 )
 select 2 as UserType, cl.Latitude Latitude,cl.Longitude Longitude,cl.Platform Platform,c.TrueName TrueName,c.PhoneNo Phone from ClienterLocation (Nolock) cl join  t 
 on cl.CreateTime=t.maxtime
-join clienter (Nolock) c on cl.ClienterId=c.Id where c.City like '{1}%';", DateTime.Now.AddMinutes(-ParseHelper.ToInt(int.Parse(GlobalConfigDao.GlobalConfigGet(0).AllFinishedOrderUploadTimeInterval),0)), cityName);
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, strSql);
+join clienter (Nolock) c on cl.ClienterId=c.Id ", DateTime.Now.AddMinutes(-ParseHelper.ToInt(int.Parse(GlobalConfigDao.GlobalConfigGet(0).AllFinishedOrderUploadTimeInterval), 0)));
+            string where = !string.IsNullOrEmpty(deliveryCompanyInfo) && deliveryCompanyInfo != "0"
+                                    ? string.Format(" where c.DeliveryCompanyId='{0}' and c.City like '{1}%'", deliveryCompanyInfo, cityName)
+                                    : string.Format("  where c.City like '{0}%'", cityName);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, strSql+where);
             return MapRows<AppActiveInfo>(dt);
         }
 
