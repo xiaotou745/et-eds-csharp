@@ -33,7 +33,14 @@ namespace Ets.Model.DomainModel.Finance
         /// 提现人身份证号
         /// </summary>
         public string CliIDCard { get; set; }
-        
+        /// <summary>
+        /// 本系统易宝账户余额
+        /// </summary>
+        public decimal BalanceRecord { get; set; }
+        /// <summary>
+        /// 易宝系统易宝账户余额
+        /// </summary>
+        public decimal YeeBalance { get; set; }
         
     }
 }
