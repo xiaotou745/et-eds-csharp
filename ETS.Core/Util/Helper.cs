@@ -133,5 +133,24 @@ namespace ETS.Util
         }
         #endregion
 
+
+        /// <summary>
+        /// 随机出的字符串
+        /// </summary>
+        /// <param name="num"></param>
+        /// <returns></returns>
+        public static string GenCode(int num)
+        {
+            string str = "123456789abcdefghjkmnpqrstuvwxyz";
+            char[] chastr = str.ToCharArray();
+            string code = "";
+            Random rd = new Random();
+            int i;
+            for (i = 0; i < num; i++)
+            {
+                code += str.Substring(rd.Next(0, str.Length), 1);
+            }
+            return code;
+        }
     }
 }

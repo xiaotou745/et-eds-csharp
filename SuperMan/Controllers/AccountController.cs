@@ -74,7 +74,7 @@ namespace SuperMan.Controllers
             if (captcha == null || model.Captcha != captcha)
             {
                 return Json(new ResultModel(false, "验证码不正确"));
-            } 
+            }
             var loginResult = iAccountProvider.ValidateUser(model.UserName, MD5Helper.MD5(model.Password));
             switch (loginResult)
             {
@@ -88,9 +88,9 @@ namespace SuperMan.Controllers
                         GroupId = account.GroupId,
                         RoleId = account.RoleId,
                         Password = model.Password,
-                        AccountType = ParseHelper.ToInt(account.AccountType,1)
+                        AccountType = ParseHelper.ToInt(account.AccountType, 1)
                     };
-                    string json = JsonHelper.ToJson(userInfo); 
+                    string json = JsonHelper.ToJson(userInfo);
                     _authenticationService.SignIn(json);
                     //获取用户权限菜单id数组，存入cookie中
                     List<int> myMenusR = authorityProvider.GetMenuIdsByRoloId(account.RoleId);
@@ -110,7 +110,7 @@ namespace SuperMan.Controllers
                 case ETS.Enums.UserLoginResults.AccountClosed:
                     return Json(new ResultModel(false, "用户已经锁定"));
                 default:
-                    return Json(new ResultModel(false, "密码不正确"));;
+                    return Json(new ResultModel(false, "密码不正确")); ;
             }
         }
 
@@ -125,9 +125,9 @@ namespace SuperMan.Controllers
             //验证码插入Redis缓存
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             string cachekey = string.Format(RedissCacheKey.CaptchaImage, ETS.Util.Helper.Uuid());
-            redis.Add(cachekey, captcha.Captcha, DateTime.Now.AddHours(10));
+            redis.Add(cachekey, captcha.Captcha, new TimeSpan(0, 5, 0));
             //缓存key放入cookie里存储 
-            CookieHelper.WriteCookie("Cookie_Verification", cachekey, DateTime.Now.AddMinutes(10));
+            CookieHelper.WriteCookie("Cookie_Verification", cachekey, DateTime.Now.AddMinutes(5));
             return new FileContentResult(bytes, "image/jpeg"); ;
         }
 
