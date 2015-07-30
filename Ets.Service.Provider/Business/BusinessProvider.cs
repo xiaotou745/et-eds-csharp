@@ -1447,7 +1447,7 @@ namespace Ets.Service.Provider.Business
         {
             try
             {
-                long id = businessDao.InsertLocation(model.BusinessId, model.Latitude, model.Latitude);
+                long id = businessDao.InsertLocation(model.BusinessId, model.Latitude, model.Latitude,model.Platform);
                 return ResultModel<object>.Conclude(SystemState.Success,
                     new { PushTime = GlobalConfigDao.GlobalConfigGet(0).BusinessUploadTimeInterval });
             }

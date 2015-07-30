@@ -195,6 +195,16 @@ namespace Ets.Service.Provider.Business
                         return false;
                     }
                 }
+                if (globalConfigModel.SearchClienterLocationTimeInterval != "0")
+                {
+                    globalConfig.KeyName = "SearchClienterLocationTimeInterval";
+                    globalConfig.Value = globalConfigModel.SearchClienterLocationTimeInterval;
+                    reg = businessGroupDao.UpdateGlobalConfig(globalConfig);
+                    if (!reg)
+                    {
+                        return false;
+                    }
+                }
                 if (globalConfigModel.HasUnFinishedOrderUploadTimeInterval != "0")
                 {
                     globalConfig.KeyName = "HasUnFinishedOrderUploadTimeInterval";

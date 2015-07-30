@@ -1,0 +1,200 @@
+﻿@using Ets.Model.DomainModel.Statistics
+@{
+    ViewBag.Title = "客户端App启动热力图";
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+
+
+    IList<AppActiveInfo> lstAppActiveInfo = (IList<AppActiveInfo>)ViewBag.LstAppActiveInfo;
+}
+@section styles{
+    <style type="text/css">
+        #map_contain {
+            height: 600px;
+            width: 100%;
+            max-width: none;
+        }
+
+        .none {
+            display: none;
+        }
+    </style>
+}
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=dAeaG6HwIFGlkbqtyKkyFGEC"></script>
+<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script src="~/Scripts/jquery-ui-1.8.20.js"></script>
+<script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
+<link rel="stylesheet" type="text/css" href="~/Content/pagestyle/pagerstyles.css" />
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置：数据统计 > 客户端App启动热力图
+    </h2>
+    <div class="SearchMd" style="width:1000px">
+        <table border="0" cellspacing="0" cellpadding="0" style="width:1080px">
+            <tr>
+                <td>
+                    <span class="">客户类型: </span>
+                    <select name="userType" id="userType">
+                        <option value="0">全部</option>
+                        <option value="1">商家</option>
+                        <option value="2">骑士</option>
+                    </select>
+                    <span class="">城市筛选: </span>
+                    @Html.DropDownList("cityName", new SelectList(ViewBag.openCityList.Result.AreaModels, "Name", "Name"),  new { style = "width:155px" })
+                    <input type="button" value="查询" class="searchBtn" id="btnSearch" />
+                </td>
+            </tr>
+        </table>
+        <hr />
+        <!--地图-->
+        <div id="map_contain"></div>
+        <hr />
+        <h4 style="color:black;font-weight:600">地图数据列表</h4>
+        <div class="bd clearfix" id="dataList">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+                <thead>
+                    <tr class="tdbg">
+                        <th width="%5">编号</th>
+                        <th class="J_City none">用户类型</th>
+                        <th>名称</th>
+                        <th>注册电话</th>
+                        <th>客户类型</th>
+                        <th>注册平台</th>
+                    </tr>
+                </thead>
+                <tbody id="tbodyData">
+                    @*@{
+                        var count = 1;
+                        foreach (var activeInfo in lstAppActiveInfo)
+                        {
+                            var userTypeStr = activeInfo.UserType == 1 ? "商家" : "骑士";
+                            <tr>
+                                <td>@count</td>
+                                <td>@userTypeStr</td>
+                                <td>@activeInfo.TrueName</td>
+                                <td>@activeInfo.Phone</td>
+                                <td>@activeInfo.Platform</td>
+                            </tr>
+                            count++;
+                        }
+                    }*@
+                </tbody>
+            </table>
+            
+            <div data-ajax="true" data-ajax-dataformid="#searchForm" data-ajax-method="Post" data-ajax-update="#dataList" data-invalidpageerrmsg="页索引无效" data-maxpages="11" data-mvcpager="true" data-outrangeerrmsg="页索引超出范围" data-pageparameter="pageindex" data-urlformat="/Order/PostOrder?pageindex=__pageindex__" id="badoopager" style="float:right"><a disabled="disabled">首页</a>&nbsp;&nbsp;<a disabled="disabled">上一页</a>&nbsp;&nbsp;<span class="current">1</span>&nbsp;&nbsp;<a data-pageindex="2" href="/Order/PostOrder?pageindex=2">2</a>&nbsp;&nbsp;<a data-pageindex="3" href="/Order/PostOrder?pageindex=3">3</a>&nbsp;&nbsp;<a data-pageindex="4" href="/Order/PostOrder?pageindex=4">4</a>&nbsp;&nbsp;<a data-pageindex="5" href="/Order/PostOrder?pageindex=5">5</a>&nbsp;&nbsp;<a data-pageindex="6" href="/Order/PostOrder?pageindex=6">6</a>&nbsp;&nbsp;<a data-pageindex="7" href="/Order/PostOrder?pageindex=7">7</a>&nbsp;&nbsp;<a data-pageindex="8" href="/Order/PostOrder?pageindex=8">8</a>&nbsp;&nbsp;<a data-pageindex="9" href="/Order/PostOrder?pageindex=9">9</a>&nbsp;&nbsp;<a data-pageindex="10" href="/Order/PostOrder?pageindex=10">10</a>&nbsp;&nbsp;<a data-pageindex="11" href="/Order/PostOrder?pageindex=11">...</a>&nbsp;&nbsp;<a data-pageindex="2" href="/Order/PostOrder?pageindex=2">下一页</a>&nbsp;&nbsp;<a data-pageindex="11" href="/Order/PostOrder?pageindex=11">尾页</a>&nbsp;&nbsp;<input type="text" value="1" data-pageindexbox="true"><input type="button" data-submitbutton="true" value="跳转"></div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    //加载地图数据
+    // 百度地图API功能
+    var map = new BMap.Map("map_contain");    // 创建Map实例
+    map.centerAndZoom(new BMap.Point(116.404, 39.915), 11);  // 初始化地图,设置中心点坐标和地图级别
+    map.addControl(new BMap.MapTypeControl());   //添加地图类型控件
+    map.setCurrentCity("北京");          // 设置地图显示的城市 此项是必须设置的
+    map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+
+    //分页参数
+    var pageIndex = 1;//当前页码
+    var pageSize = 20;//当前页的数量
+
+    $(function () {
+        var userType = $("#userType").val();
+        var cityName = $("#cityName").val();
+        loadData(cityName, userType);
+    });
+
+    //查询数据
+    $("#btnSearch").click(function () {
+        var userType = $("#userType").val();
+        var cityName = $("#cityName").val();
+        loadData(cityName, userType);
+    });
+
+    function loadData(cityName, userType) {
+        var paramaters = { "cityName": cityName, "userType": userType };
+        cityName = cityName.trim().replace("市", "");
+        loadCityCenterPoint(cityName);
+        var url = "/Statistical/AppActiveMap";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            async:true,
+            success: function (result) {
+                loadDataToMap(result);
+                loadDataToTable(result);
+                return result;
+            }
+        });
+    }
+
+    //jsonp load指定城市地图坐标,并将中心点定位到该坐标上
+    function loadCityCenterPoint(city) {
+        $.ajax({
+            url: "http://api.map.baidu.com/geocoder/v2/?output=json&ak=dAeaG6HwIFGlkbqtyKkyFGEC&address=" + city,
+            dataType: "jsonp",
+            success: function (result) {
+                var location = result.result.location;
+                map.centerAndZoom(new BMap.Point(location.lng, location.lat), 11);
+                map.setCurrentCity(city);
+                return location; //"location":{"lng":116.39564503788,"lat":39.92998577808}
+            }
+        });
+    }
+
+    function loadDataToMap(data) {
+        map.clearOverlays();//移除所有标注
+        var opts = {
+            width: 250,     // 信息窗口宽度
+            height: 80,     // 信息窗口高度
+            title: "信息", // 信息窗口标题
+            enableMessage: true//设置允许信息窗发送短息
+        };
+        if (data != null) {
+            for (var i = 0; i < data.length; i++) {
+                var marker = new BMap.Marker(new BMap.Point(data[i].Longitude, data[i].Latitude));  // 创建标注
+                var content = "电话:" + data[i].Phone + ",名称:" + data[i].TrueName;
+                map.addOverlay(marker);               // 将标注添加到地图中
+                addClickHandler(content, marker, opts, map);
+            }
+        }
+    }
+
+    function loadDataToTable(data) {
+        var html = "<tr><td>当前没有数据</td></tr>";
+        if (data != null | data.length > 0) {
+            var arrStr = [];
+            for (var i = 0; i < data.length; i++) {
+                arrStr.push("<tr>");
+                arrStr.push("<td>" + (i+1) + "</td>");
+                arrStr.push("<td>" + data[i].TrueName + "</td>");
+                arrStr.push("<td>" + data[i].Phone + "</td>");
+                arrStr.push("<td>" + data[i].UserType + "</td>");
+                arrStr.push("<td>" + data[i].Platform + "</td>");
+                arrStr.push("</tr>");
+            }
+            html = arrStr.join("");
+        } 
+        $("#tbodyData").html(html);
+    }
+
+    function addClickHandler(content, marker, opts, map) {
+            marker.addEventListener("click", function (e) {
+                openInfo(content, e, opts, map);
+            }
+		);
+    }
+
+    function openInfo(content, e, opts, map) {
+        var p = e.target;
+        var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
+        var infoWindow = new BMap.InfoWindow(content, opts);  // 创建信息窗口对象
+        map.openInfoWindow(infoWindow, point); //开启信息窗口
+    }
+
+    //分页
+    function showPager(dataCount) {
+        
+    }
+</script>
