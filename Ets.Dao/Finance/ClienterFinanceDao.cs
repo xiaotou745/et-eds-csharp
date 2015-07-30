@@ -735,12 +735,12 @@ INSERT INTO [YeePayUserBalanceRecord]
            ,[Operator]
            ,[Remark])
      VALUES
-           (@LedgerNo,  
-           ,@WithwardId,
-           ,@Amount,
-           ,@Balance,
-           ,@RecordType, 
-           ,@Operator,
+           (@LedgerNo  
+           ,@WithwardId
+           ,@Amount
+           ,@Balance
+           ,@RecordType
+           ,@Operator
            ,@Remark);");
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@LedgerNo", model.LedgerNo);
