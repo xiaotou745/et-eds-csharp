@@ -41,7 +41,7 @@
                         <option value="2">骑士</option>
                     </select>
                     <span class="">城市筛选: </span>
-                    @Html.DropDownList("cityName", new SelectList(ViewBag.openCityList.Result.AreaModels, "Name", "Name"), new { style = "width:155px" })
+                    @Html.DropDownList("cityName", new SelectList(ViewBag.openCityList.Result.AreaModels, "Code", "Name"), new { style = "width:155px" })
                     <span class="" id="deliveryCompanyInfo">
                         骑士所属物流公司:
                         @Html.DropDownList("deliveryCompany", new SelectList(ViewBag.deliveryCompanyList, "CompanyId", "CompanyName"), "--无--", new { style = "width:155px" })
@@ -154,8 +154,8 @@
             deliveryCompanyInfo = 0;
         }
         currentCity = cityName;
-        cityName = cityName.trim().replace("市", "");
-        var paramaters = { "cityName": cityName, "userType": userType, "deliveryCompanyInfo": deliveryCompanyInfo };
+        //cityName = cityName.trim().replace("市", "");
+        var paramaters = { "cityId": cityName, "userType": userType, "deliveryCompanyInfo": deliveryCompanyInfo };
         loadCityCenterPoint(cityName);
         var url = "/Statistical/AppActiveMap";
         $.ajax({

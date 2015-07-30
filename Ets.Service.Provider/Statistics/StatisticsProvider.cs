@@ -194,18 +194,18 @@ namespace Ets.Service.Provider.Statistics
         /// 获得骑士app启动热力图
         /// </summary>
         /// <param name="userType"></param>
-        /// <param name="cityName"></param>
+        /// <param name="cityId"></param>
         /// <param name="deliveryCompanyInfo"></param>
         /// <returns></returns>
-        public IList<AppActiveInfo> GetAppActiveInfos(byte userType, string cityName, string deliveryCompanyInfo)
+        public IList<AppActiveInfo> GetAppActiveInfos(byte userType, string cityId, string deliveryCompanyInfo)
         {
             if (userType == 1)
             {
-                return businessDao.GetAppActiveInfos(cityName);
+                return businessDao.GetAppActiveInfos(cityId);
             }
             else
             {
-                return clienterLocationDao.GetAppActiveInfos(cityName, deliveryCompanyInfo);
+                return clienterLocationDao.GetAppActiveInfos(cityId, deliveryCompanyInfo);
             }
         }
     }

@@ -228,22 +228,22 @@ namespace SuperMan.Controllers
         /// <summary>
         /// 获取热力图数据
         /// </summary>
-        /// <param name="cityName">城市名</param>
+        /// <param name="cityId">城市Id</param>
         /// <param name="userType">用户类型   0全部    1商家    2骑士</param>
         /// <param name="deliveryCompanyInfo">骑士所属物流公司,如果用户类型是骑士此参数才有效</param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult AppActiveMap(string cityName, byte userType, string deliveryCompanyInfo)
+        public ActionResult AppActiveMap(string cityId, byte userType, string deliveryCompanyInfo)
         {
             var list = new List<AppActiveInfo>();
             if (userType == 0)
             {
-                list.AddRange(statisticsProvider.GetAppActiveInfos(1, cityName, "0"));
-                list.AddRange(statisticsProvider.GetAppActiveInfos(2, cityName, "0"));
+                list.AddRange(statisticsProvider.GetAppActiveInfos(1, cityId, "0"));
+                list.AddRange(statisticsProvider.GetAppActiveInfos(2, cityId, "0"));
             }
             else
             {
-                list.AddRange(statisticsProvider.GetAppActiveInfos(userType, cityName, deliveryCompanyInfo));
+                list.AddRange(statisticsProvider.GetAppActiveInfos(userType, cityId, deliveryCompanyInfo));
             }
             return Json(list);
         }
