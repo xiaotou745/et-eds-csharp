@@ -125,5 +125,7 @@ namespace ETS.Enums
         ClienterIsNotExist,
         [DisplayText("两次密码不能相同")]
         PwdIsSame,
+        [DisplayText("您当前修改密码的次数大于10，请5分钟后重试")]
+        CountError = -10
     }
 }

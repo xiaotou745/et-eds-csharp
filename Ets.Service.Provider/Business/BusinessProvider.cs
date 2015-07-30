@@ -829,7 +829,7 @@ namespace Ets.Service.Provider.Business
                 else
                 {
                     var redis = new ETS.NoSql.RedisCache.RedisCache();
-                    redis.Add(RedissCacheKey.PostRegisterInfo_B + PhoneNumber, randomCode, DateTime.Now.AddHours(1));
+                    redis.Add(RedissCacheKey.PostRegisterInfo_B + PhoneNumber, randomCode, new TimeSpan(0, 5, 0));
                     //CacheFactory.Instance.AddObject(PhoneNumber, randomCode);
                     //更新短信通道 
                     Task.Factory.StartNew(() =>

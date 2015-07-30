@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ETS.Pay.YeePay;
 
 namespace ETS.Const
 {
@@ -42,6 +43,17 @@ namespace ETS.Const
         /// 骑士端登录
         /// </summary>
         public const string LoginCount_C = "LoginCount_C_";
+
+        /// <summary>
+        /// 骑士端注册
+        /// </summary>
+        public const string RegisterCount_C = "RegisterCount_C_";
+
+        /// <summary>
+        /// 骑士端修改密码
+        /// </summary>
+        public const string ChangePasswordCount_C = "ChangePasswordCount_C_";
+
 
         /// <summary>
         /// C端注册验证码缓存key
