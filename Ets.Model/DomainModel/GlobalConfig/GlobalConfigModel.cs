@@ -164,5 +164,11 @@ namespace Ets.Model.DomainModel.GlobalConfig
         /// 提现扣除手续费数值
         /// </summary>
         public string WithdrawCommission { get; set; }
+        /// <summary>
+        /// 易宝账户活跃时间配置
+        /// </summary>
+        public string YeeAccountActiveTime { get; set; }
+
+        
     }
 }

@@ -115,9 +115,13 @@ namespace Ets.Model.Common.YeePay
 		/// </summary>
 		public string Ledgerno { get; set; }
 		/// <summary>
-		/// 易宝内账户余额
+		/// 本系统易宝账户余额
 		/// </summary>
 		public decimal BalanceRecord { get; set; }
+        /// <summary>
+        /// 易宝系统账户余额
+        /// </summary>
+        public decimal YeeBalance { get; set; }
 
 	}
 }
