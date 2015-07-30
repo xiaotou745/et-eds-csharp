@@ -349,7 +349,6 @@ namespace SuperManWebApi.Controllers
             try
             {
                 var redis = new RedisCache();
-                //redis.Add(key, randomCode,  DateTime.Now.AddHours(1));
                 redis.Add(key, randomCode, new TimeSpan(0, 5, 0));
                  
 

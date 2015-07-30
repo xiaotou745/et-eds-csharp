@@ -208,7 +208,7 @@ namespace Ets.Service.Provider.Clienter
                 var redis = new RedisCache();
                 string key = string.Concat(RedissCacheKey.LoginCount_C, model.phoneNo);
                 int excuteCount = redis.Get<int>(key);
-                if (excuteCount >= 11)
+                if (excuteCount >= 10)
                 {
                     return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.CountError);
                 }
@@ -265,7 +265,7 @@ namespace Ets.Service.Provider.Clienter
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             string key = string.Concat(RedissCacheKey.ChangePasswordCount_C, model.phoneNo);
             int excuteCount = redis.Get<int>(key);
-            if (excuteCount >= 11)
+            if (excuteCount >= 10)
             {
                 return ResultModel<ClienterModifyPwdResultModel>.Conclude(ModifyPwdStatus.CountError);
             }
@@ -322,7 +322,7 @@ namespace Ets.Service.Provider.Clienter
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             string key = string.Concat(RedissCacheKey.RegisterCount_C, model.phoneNo);
             int excuteCount = redis.Get<int>(key);
-            if (excuteCount >= 11)
+            if (excuteCount >= 10)
             {
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.CountError);
             }

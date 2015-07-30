@@ -93,6 +93,8 @@ namespace ETS.Enums
         HasExist = 116,
         [DisplayText("时间戳不能为空")]
         TimespanEmpty = 117,
+        [DisplayText("您当前注册的次数大于10，请5分钟后重试")]
+        CountError = -10
     }
 
 
