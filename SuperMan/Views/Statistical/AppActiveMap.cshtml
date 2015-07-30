@@ -42,6 +42,8 @@
                     </select>
                     <span class="">城市筛选: </span>
                     @Html.DropDownList("cityName", new SelectList(ViewBag.openCityList.Result.AreaModels, "Name", "Name"), new { style = "width:155px" })
+                    <span class="">物流公司: </span>
+                    @Html.DropDownList("deliveryCompany", new SelectList(ViewBag.deliveryCompanyList, "CompanyId", "CompanyName"), "--无--", new { style = "width:155px" })
                     <input type="button" value="查询" class="searchBtn" id="btnSearch" />
                 </td>
             </tr>
