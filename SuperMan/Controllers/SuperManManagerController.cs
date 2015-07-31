@@ -94,8 +94,9 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         [HttpPost]
         public JsonResult AuditOK(int id)
-        {
-            iDistributionProvider.UpdateAuditStatus(id, AuditStatus.Status1);
+        {　
+            ClienterUpdateModel cum = new ClienterUpdateModel() { OptUserId = UserContext.Current.Id, OptUserName = UserContext.Current.Name, Id = id, AuditStatus = AuditStatus.Status1 };
+            iDistributionProvider.UpdateAuditStatus(cum);
             return Json(new ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);
         }
 
@@ -107,7 +108,9 @@ namespace SuperMan.Controllers
         [HttpPost]
         public JsonResult AuditCel(int id)
         {
-            iDistributionProvider.UpdateAuditStatus(id, AuditStatus.Status0);
+            ClienterUpdateModel cum = new ClienterUpdateModel() { OptUserId = UserContext.Current.Id, OptUserName = UserContext.Current.Name, Id = id, AuditStatus = AuditStatus.Status0 };
+            iDistributionProvider.UpdateAuditStatus(cum);
+
             return Json(new ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);
         }
 
@@ -119,7 +122,8 @@ namespace SuperMan.Controllers
         [HttpPost]
         public JsonResult AmountClear(int id)
         {
-            bool b = iDistributionProvider.ClearSuperManAmount(id);
+            ClienterUpdateModel cum = new ClienterUpdateModel() { OptUserId = UserContext.Current.Id, OptUserName = UserContext.Current.Name, Id = id };
+            bool b = iDistributionProvider.ClearSuperManAmount(cum);
             if (b)
             {
                 return Json(new ResultModel(true, string.Empty), JsonRequestBehavior.AllowGet);
