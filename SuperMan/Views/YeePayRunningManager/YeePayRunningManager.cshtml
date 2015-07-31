@@ -96,6 +96,10 @@
             alert("请输入充值日期!");
             return;
         }
+        if (yeePayRemark.length > 200) {
+            alert("备注太长了");
+            return;
+        }
         var paramaters = { "RechargeAmount": yeePayRechargeAmount, "Remark": yeePayRemark, "RechargeTime": rechargeTime };
         var url = "/YeePayRunningManager/AddYeePayRunning";
         $.ajax({
