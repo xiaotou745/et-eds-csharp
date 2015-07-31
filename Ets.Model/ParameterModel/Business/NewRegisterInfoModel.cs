@@ -171,6 +171,8 @@ namespace Ets.Model.ParameterModel.Business
         HasExist = 116,
         [DisplayText("时间戳不能为空")]
         TimespanEmpty = 117,
+        [DisplayText("您当前注册的次数大于10，请5分钟后重试")]
+        CountError = -10
     }
     //状态:0未审核，1已通过，2未审核且未添加地址，3审核中，4审核被拒绝
     public enum BusiStatus : int

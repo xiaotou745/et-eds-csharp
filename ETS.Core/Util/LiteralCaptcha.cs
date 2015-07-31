@@ -37,7 +37,7 @@ namespace ETS.Util
                 if (string.IsNullOrEmpty(_captcha))
                 {
                     var rnd = new Random();
-                    var number = rnd.Next((int)Math.Pow(10, _charCount));
+                    var number = Helper.GenCode(_charCount); //rnd.Next((int)Math.Pow(10, _charCount));
                     _captcha = number.ToString().PadLeft(_charCount, '0');
                 }
                 return _captcha;

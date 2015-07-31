@@ -75,7 +75,22 @@ namespace ETS.Enums
         /// 身份证号为空
         /// </summary>
         [DisplayText("身份证号为空")]
-        IDCardError = -3
+        IDCardError = -3,
+        /// <summary>
+        /// 骑士信息找不到
+        /// </summary>
+        [DisplayText("找不到该骑士信息")]
+        NoClienter = -4,
+        /// <summary>
+        /// 骑士信息找不到
+        /// </summary>
+        [DisplayText("姓名不符")]
+        TrueNameNoMatch = -5,
+        /// <summary>
+        /// 骑士信息找不到
+        /// </summary>
+        [DisplayText("身份证不符")]
+        IDCardNoMatch = -6
     }
 
     /// <summary>
@@ -99,7 +114,22 @@ namespace ETS.Enums
         [DisplayText("请先注册或账户被封")]
         FisrtRegist = 101,
         [DisplayText("原银行账户存在未完成的提现单，无法修改")]
-        ForbitModify = 102
+        ForbitModify = 102,
+        /// <summary>
+        /// 骑士信息找不到
+        /// </summary>
+        [DisplayText("找不到该骑士信息")]
+        NoClienter = -4,
+        /// <summary>
+        /// 骑士信息找不到
+        /// </summary>
+        [DisplayText("姓名不符")]
+        TrueNameNoMatch = -5,
+        /// <summary>
+        /// 骑士信息找不到
+        /// </summary>
+        [DisplayText("身份证不符")]
+        IDCardNoMatch = -6
     }
     /// <summary>
     ///骑士余额流水   流水状态(1、交易成功 2、交易中）枚举 add by caoheyang 20150509

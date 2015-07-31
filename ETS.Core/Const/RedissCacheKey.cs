@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ETS.Pay.YeePay;
 
 namespace ETS.Const
 {
@@ -37,6 +38,43 @@ namespace ETS.Const
         /// 获取银行省市缓存key
         /// </summary>
         public const string Ets_Service_Provider_Common_GetPublicBankCity_New = "Ets_Service_Provider_Common_GetPublicBankCity_New";
+
+        /// <summary>
+        /// 骑士端登录
+        /// </summary>
+        public const string LoginCount_C = "LoginCount_C_";
+
+        /// <summary>
+        /// 骑士端注册
+        /// </summary>
+        public const string RegisterCount_C = "RegisterCount_C_";
+
+        /// <summary>
+        /// 骑士端修改密码
+        /// </summary>
+        public const string ChangePasswordCount_C = "ChangePasswordCount_C_";
+
+        /// <summary>
+        /// 骑士端忘记密码
+        /// </summary>
+        public const string PostForgetPwdCount_C = "PostForgetPwdCount_C";
+
+        /// <summary>
+        /// 商家端登录
+        /// </summary>
+        public const string LoginCount_B = "LoginCount_B_";
+
+        /// <summary>
+        /// 商家端注册
+        /// </summary>
+        public const string RegisterCount_B = "RegisterCount_B_";
+
+        /// <summary>
+        /// 商家端修改密码
+        /// </summary>
+        public const string ChangePasswordCount_B = "ChangePasswordCount_B_";
+
+
         /// <summary>
         /// C端注册验证码缓存key
         /// </summary>
