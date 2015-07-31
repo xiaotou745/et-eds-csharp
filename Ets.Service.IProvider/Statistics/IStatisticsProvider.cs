@@ -50,9 +50,9 @@ namespace Ets.Service.IProvider.Statistics
         /// 获得App启动热力图
         /// </summary>
         /// <param name="userType">用户类型   1商家   2骑士</param>
-        /// <param name="cityName">城市名</param>
+        /// <param name="cityId">城市Id</param>
         /// <param name="deliveryCompanyInfo">骑士所属物流公司,用户类型是骑士时此参数才有效</param>
         /// <returns></returns>
-        IList<AppActiveInfo> GetAppActiveInfos(byte userType, string cityName, string deliveryCompanyInfo);
+        IList<AppActiveInfo> GetAppActiveInfos(byte userType, string cityId, string deliveryCompanyInfo);
     }
 }

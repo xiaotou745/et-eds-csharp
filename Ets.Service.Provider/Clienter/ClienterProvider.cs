@@ -40,6 +40,7 @@ using Ets.Service.Provider.DeliveryCompany;
 using Ets.Model.DataModel.DeliveryCompany;
 using Ets.Service.IProvider.GlobalConfig;
 using Ets.Dao.GlobalConfig;
+using ETS.NoSql.RedisCache;
 
 namespace Ets.Service.Provider.Clienter
 {
@@ -204,6 +205,15 @@ namespace Ets.Service.Provider.Clienter
         {
             try
             {
+                var redis = new RedisCache();
+                string key = string.Concat(RedissCacheKey.LoginCount_C, model.phoneNo);
+                int excuteCount = redis.Get<int>(key);
+                if (excuteCount >= 10)
+                {
+                    return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.CountError);
+                }
+                redis.Set(key, excuteCount + 1, new TimeSpan(0, 5, 0));
+
                 ClienterLoginResultModel resultModel = clienterDao.PostLogin_CSql(model);
                 if (resultModel == null)
                 {
@@ -252,6 +262,15 @@ namespace Ets.Service.Provider.Clienter
         /// <returns></returns>
         public ResultModel<ClienterModifyPwdResultModel> PostForgetPwd_C(Ets.Model.DataModel.Clienter.ModifyPwdInfoModel model)
         {
+            var redis = new ETS.NoSql.RedisCache.RedisCache();
+            string key = string.Concat(RedissCacheKey.ChangePasswordCount_C, model.phoneNo);
+            int excuteCount = redis.Get<int>(key);
+            if (excuteCount >= 10)
+            {
+                return ResultModel<ClienterModifyPwdResultModel>.Conclude(ModifyPwdStatus.CountError);
+            }
+            redis.Set(key, excuteCount + 1, new TimeSpan(0, 5, 0));
+
             if (string.IsNullOrEmpty(model.newPassword))
             {
                 return ResultModel<ClienterModifyPwdResultModel>.Conclude(ModifyPwdStatus.NewPwdEmpty);
@@ -301,6 +320,14 @@ namespace Ets.Service.Provider.Clienter
         public ResultModel<ClientRegisterResultModel> PostRegisterInfo_C(ClientRegisterInfoModel model)
         {
             var redis = new ETS.NoSql.RedisCache.RedisCache();
+            string key = string.Concat(RedissCacheKey.RegisterCount_C, model.phoneNo);
+            int excuteCount = redis.Get<int>(key);
+            if (excuteCount >= 10)
+            {
+                return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.CountError);
+            }
+            redis.Set(key, excuteCount + 1, new TimeSpan(0, 5, 0));
+
 
             var code = redis.Get<string>(RedissCacheKey.PostRegisterInfo_C + model.phoneNo);
             if (string.IsNullOrEmpty(model.phoneNo))  //手机号非空验证
@@ -1408,7 +1435,7 @@ namespace Ets.Service.Provider.Clienter
             int num = orderDao.GetTotalOrderNumByClienterID(myOrderInfo.clienterId, actualDoneDate);
             var orderCountSetting = ParseHelper.ToInt(globalSetting.OrderCountSetting, 50);
             //如果骑士今天已经完成（或完成后，又取消了,不包含当前任务中的订单数量）的订单数量大于配置的值，则当前任务中的所有订单都扣除网站补贴
-            if (num - myOrderInfo.OrderCount > orderCountSetting)
+            if (num > orderCountSetting)
             {
                 reason = string.Format("完成订单量超过{0}个", orderCountSetting);
                 return true;

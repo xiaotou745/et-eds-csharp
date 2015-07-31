@@ -2,6 +2,8 @@
 using Ets.Model.DomainModel.GlobalConfig;
 using Ets.Service.Provider.Common;
 using Ets.Service.Provider.MyPush;
+using ETS.Const;
+using ETS.NoSql.RedisCache;
 using ETS.Util;
 using System;
 using System.Collections.Generic;
@@ -23,6 +25,17 @@ namespace SuperManWebApi.Controllers
             ////取到任务的接单时间、从缓存中读取完成任务时间限制，判断要用户点击完成时间>接单时间+限制时间 
             //int limitFinish = ParseHelper.ToInt(globalSetting.CompleteTimeSet, 0);
             //LogHelper.LogWriter("完成时间:" + limitFinish);
+
+
+            //var redis = new RedisCache();
+            //string key = string.Concat(RedissCacheKey.LoginCount_C, "13426401627");
+            //int excuteCount = redis.Get<int>(key);
+            //if (excuteCount >= 3)
+            //{
+            //    string s = string.Empty;
+            //    //return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.CountError);
+            //}
+            //redis.Set(key, excuteCount + 1, new TimeSpan(0, 5, 0));
             ViewBag.Title = "Home Page";
             return View();
         }

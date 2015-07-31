@@ -47,10 +47,10 @@ select @@IDENTITY
         /// <summary>
         /// 获得骑士app启动热力图
         /// </summary>
-        /// <param name="cityName">城市名</param>
+        /// <param name="cityId">城市Id</param>
         /// <param name="deliveryCompanyInfo">物流公司</param>
         /// <returns></returns>
-        public IList<AppActiveInfo> GetAppActiveInfos(string cityName, string deliveryCompanyInfo)
+        public IList<AppActiveInfo> GetAppActiveInfos(string cityId, string deliveryCompanyInfo)
         {
             string strSql = string.Format(@"with t as(
 select ClienterId,MAX(CreateTime) maxtime from ClienterLocation (Nolock) GROUP BY ClienterId HAVING MAX(CreateTime) > '{0}'
@@ -59,8 +59,8 @@ select 2 as UserType, cl.Latitude Latitude,cl.Longitude Longitude,cl.Platform Pl
 on cl.CreateTime=t.maxtime
 join clienter (Nolock) c on cl.ClienterId=c.Id ", DateTime.Now.AddMinutes(-ParseHelper.ToInt(int.Parse(GlobalConfigDao.GlobalConfigGet(0).AllFinishedOrderUploadTimeInterval), 0)));
             string where = !string.IsNullOrEmpty(deliveryCompanyInfo) && deliveryCompanyInfo != "0"
-                                    ? string.Format(" where c.DeliveryCompanyId='{0}' and c.City like '{1}%'", deliveryCompanyInfo, cityName)
-                                    : string.Format("  where c.City like '{0}%'", cityName);
+                                    ? string.Format(" where c.DeliveryCompanyId='{0}' and c.cityId='{1}'", deliveryCompanyInfo, cityId.Trim())
+                                    : string.Format("  where c.CityId='{0}'", cityId.Trim());
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, strSql+where);
             return MapRows<AppActiveInfo>(dt);
         }

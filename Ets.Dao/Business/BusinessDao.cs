@@ -2596,12 +2596,14 @@ select @@IDENTITY
         /// <summary>
         /// 获得商家app启动热力图
         /// </summary>
-        public IList<AppActiveInfo> GetAppActiveInfos(string cityName)
+        /// <param name="cityId"></param>
+        /// <returns></returns>
+        public IList<AppActiveInfo> GetAppActiveInfos(string cityId)
         {
             const string sql = @"
-select 1 as UserType, b.Name as TrueName,b.Longitude,b.Landline,b.PhoneNo as Phone from business b (NOLOCK) where b.City like @City";
+select 1 as UserType, b.Name as TrueName,b.Longitude,b.Latitude,b.PhoneNo as Phone from business b (NOLOCK) where b.CityId=@CityId";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("City", cityName+"%");
+            dbParameters.AddWithValue("CityId", cityId.Trim());
             var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, dbParameters));
             var list = MapRows<AppActiveInfo>(dt);
             return list;

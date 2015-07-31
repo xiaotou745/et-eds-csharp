@@ -214,6 +214,14 @@ namespace ETS.NoSql.RedisCache
             }
         }
 
+        public void Set(string key, object value, System.TimeSpan timeSpan)
+        {
+            using (IRedisClient Redis = RedisManager.GetClient())
+            {
+                Redis.Set<byte[]>(key, new ObjectSerializer().Serialize(value), timeSpan);
+            }
+        }
+
         /// <summary>
         /// 删除缓存
         /// </summary>
@@ -316,6 +324,27 @@ namespace ETS.NoSql.RedisCache
                 if (expiredTime != null)
                 {
                     Redis.ExpireEntryAt(key, expiredTime);
+                }
+                return tempNum;
+            }
+        }
+
+        /// <summary>
+        /// 获取自增数据
+        /// 窦海超
+        /// 2015年4月9日 09:18:02
+        /// </summary>
+        /// <param name="key">键</param>
+        /// <param name="expiredTime">生命周期</param>
+        /// <returns>自增值</returns>
+        public long Incr(string key, TimeSpan timeSpan)
+        {
+            using (IRedisClient Redis = RedisManager.GetClient())
+            {
+                long tempNum = Redis.IncrementValue(key);
+                if (timeSpan != null)
+                {
+                    Redis.ExpireEntryIn(key, timeSpan);
                 }
                 return tempNum;
             }

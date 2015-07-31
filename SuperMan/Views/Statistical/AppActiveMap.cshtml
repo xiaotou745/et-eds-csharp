@@ -41,7 +41,7 @@
                         <option value="2">骑士</option>
                     </select>
                     <span class="">城市筛选: </span>
-                    @Html.DropDownList("cityName", new SelectList(ViewBag.openCityList.Result.AreaModels, "Name", "Name"), new { style = "width:155px" })
+                    @Html.DropDownList("cityName", new SelectList(ViewBag.openCityList.Result.AreaModels, "Code", "Name"), new { style = "width:155px" })
                     <span class="" id="deliveryCompanyInfo">
                         骑士所属物流公司:
                         @Html.DropDownList("deliveryCompany", new SelectList(ViewBag.deliveryCompanyList, "CompanyId", "CompanyName"), "--无--", new { style = "width:155px" })
@@ -102,9 +102,10 @@
 
     $(function () {
         var userType = $("#userType").val();
-        var cityName = $("#cityName").val();
+        var cityId = $("#cityName").val();
+        var cityName = $("#cityName").text();
         setDeliveryCompanyInfoDisplay(userType);
-        loadData(cityName, userType);
+        loadData(cityName, userType, cityId).find("option:selected").text();
         setCount();
     });
 
@@ -127,10 +128,11 @@
     //查询数据
     $("#btnSearch").click(function () {
         var userType = $("#userType").val();
-        var cityName = $("#cityName").val();
+        var cityId = $("#cityName").val();
+        var cityName = $("#cityName").find("option:selected").text();
         pageIndex = 1;
         var tempCity = currentCity;
-        loadData(cityName, userType);
+        loadData(cityName, userType, cityId);
         if (tempCity != cityName) {
             setCount();
         }
@@ -148,14 +150,14 @@
         }
     }
 
-    function loadData(cityName, userType) {
+    function loadData(cityName, userType,cityId) {
         var deliveryCompanyInfo = $("#deliveryCompany").val();
         if (userType != 2) {
             deliveryCompanyInfo = 0;
         }
-        currentCity = cityName;
-        cityName = cityName.trim().replace("市", "");
-        var paramaters = { "cityName": cityName, "userType": userType, "deliveryCompanyInfo": deliveryCompanyInfo };
+        currentCity = cityId;
+        //cityName = cityName.trim().replace("市", "");
+        var paramaters = { "cityId": cityId, "userType": userType, "deliveryCompanyInfo": deliveryCompanyInfo };
         loadCityCenterPoint(cityName);
         var url = "/Statistical/AppActiveMap";
         $.ajax({
@@ -206,7 +208,7 @@
     }
 
     function loadDataToTable(data) {
-        var html = "<tr><td>当前没有数据</td></tr>";
+        var html = "<tr><td colspan='4' align='center'>当前没有数据</td></tr>";
         $("#pager").html("");//清空页码
         if (data != null && data.length > 0) {
             var arrStr = [];
@@ -294,6 +296,9 @@
         var p = Number($("#txtPage").val());
         var maxPageIndex = Math.ceil(allData.length / pageSize);
         p = p >= maxPageIndex ? maxPageIndex : p;
+        if (p <= 0) {
+            p = 1;
+        }
         pageIndex = p;
         loadDataToTable(allData);
     }

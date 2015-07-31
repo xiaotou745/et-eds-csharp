@@ -14,6 +14,7 @@ using Ets.Model.ParameterModel.Business;
 using System.Linq;
 using ETS.Enums;
 using Ets.Model.DataModel.Business;
+using ETS.NoSql.RedisCache;
 using ETS.Util;
 using Ets.Model.DataModel.Group;
 using ETS.Validator;
@@ -235,6 +236,15 @@ namespace Ets.Service.Provider.Business
         public ResultModel<BusiRegisterResultModel> PostRegisterInfo_B(RegisterInfoPM model)
         {
             var redis = new ETS.NoSql.RedisCache.RedisCache();
+            string key = string.Concat(RedissCacheKey.RegisterCount_B, model.phoneNo);
+            int excuteCount = redis.Get<int>(key);
+            if (excuteCount >= 10)
+            {
+                return ResultModel<BusiRegisterResultModel>.Conclude(BusinessRegisterStatus.CountError);
+            }
+            redis.Set(key, excuteCount + 1, new TimeSpan(0, 5, 0));
+
+
             var code = redis.Get<string>(RedissCacheKey.PostRegisterInfo_B + model.phoneNo);
             Enum returnEnum = null;
             if (string.IsNullOrEmpty(model.phoneNo))
@@ -401,6 +411,15 @@ namespace Ets.Service.Provider.Business
         {
             try
             {
+                var redis = new RedisCache();
+                string key = string.Concat(RedissCacheKey.LoginCount_B, model.phoneNo);
+                int excuteCount = redis.Get<int>(key);
+                if (excuteCount >= 10)
+                {
+                    return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.CountError);
+                }
+                redis.Set(key, excuteCount + 1, new TimeSpan(0, 5, 0));
+
                 BusiLoginResultModel resultMode = new BusiLoginResultModel();
                 DataTable dt = businessDao.LoginSql(model);
                 if (dt == null || dt.Rows.Count <= 0)
@@ -522,6 +541,15 @@ namespace Ets.Service.Provider.Business
         /// <returns></returns>
         public ResultModel<BusiModifyPwdResultModel> PostForgetPwd_B(BusiForgetPwdInfoModel model)
         {
+            var redis = new ETS.NoSql.RedisCache.RedisCache();
+            string key = string.Concat(RedissCacheKey.ChangePasswordCount_B, model.phoneNumber);
+            int excuteCount = redis.Get<int>(key);
+            if (excuteCount >= 10)
+            {
+                return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.CountError);
+            }
+            redis.Set(key, excuteCount + 1, new TimeSpan(0, 5, 0));
+
             if (string.IsNullOrEmpty(model.password))
             {
                 //密码非空验证
@@ -531,7 +559,7 @@ namespace Ets.Service.Provider.Business
             {
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeIsEmpty);
             }
-            var redis = new ETS.NoSql.RedisCache.RedisCache();
+            
             var code = redis.Get<string>(RedissCacheKey.CheckCodeFindPwd_B + model.phoneNumber);
             if (string.IsNullOrEmpty(code) || code != model.checkCode) //验证码正确性验证
             { return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeWrong); }
@@ -830,7 +858,7 @@ namespace Ets.Service.Provider.Business
                 else
                 {
                     var redis = new ETS.NoSql.RedisCache.RedisCache();
-                    redis.Add(RedissCacheKey.PostRegisterInfo_B + PhoneNumber, randomCode, DateTime.Now.AddHours(1));
+                    redis.Add(RedissCacheKey.PostRegisterInfo_B + PhoneNumber, randomCode, new TimeSpan(0, 5, 0));
                     //CacheFactory.Instance.AddObject(PhoneNumber, randomCode);
                     //更新短信通道 
                     Task.Factory.StartNew(() =>

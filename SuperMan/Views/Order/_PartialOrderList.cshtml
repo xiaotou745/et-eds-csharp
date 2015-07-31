@@ -34,7 +34,7 @@ width: 100%;
             <th>外送费</th>
             <th>每单补贴</th>
             <th>任务补贴</th>
-            <th>商家结算比例</th>
+            <th>商家结算</th>
             <th>订单来源</th>
             <th>订单状态</th>
             <th>已上传/共需上传</th>
@@ -44,7 +44,6 @@ width: 100%;
     </thead>
     <tbody>
         @{
-            var i = 0;
             if (Model != null && Model.Records.Count > 0)
             {
 
@@ -70,11 +69,9 @@ width: 100%;
                          grabToCompleteStr = "不重合";
                     }
                    
-                    var diffHour = (DateTime.Now - DateTime.Parse(item.PubDate != null ? item.PubDate.ToString() : DateTime.Now.ToString())).TotalHours;
-                    string val = diffHour > 10 && item.Status == 0 ? "red" : diffHour > 8 && item.Status == 0 ? "blue" : diffHour > 5 && item.Status == 0 ? "yellow" : "none";
-                    i++;
-                @*<tr id="@item.Id" style="background-color:@Html.Raw(val)" >*@
-                    <tr id="@item.Id">
+                    var diffMinutes = (DateTime.Now - DateTime.Parse(item.PubDate != null ? item.PubDate.ToString() : DateTime.Now.ToString())).TotalMinutes;
+                    string timeoutStyle = diffMinutes > 5 && item.Status == 0 ? " style=background-color:#FFCCCC" : "";
+                    <tr id="@item.Id" @timeoutStyle>
                         <td><a href="/Order/OrderDetail?OrderNo=@item.OrderNo&OrderId=@item.Id ">@item.OrderNo</a></td>
                         <td>@item.OriginalOrderNo</td>
                         <td>@item.BusinessName <br> @item.BusinessPhoneNo</td>
@@ -109,7 +106,7 @@ width: 100%;
                             @commission
                         </td>
                         <td>@item.GroupName</td>
-                        <td style="color:@Html.Raw(val)">@ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.OrderStatusCommon)item.Status).GetType(), (ETS.Enums.OrderStatusCommon)item.Status).Text</td>
+                        <td>@ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.OrderStatusCommon)item.Status).GetType(), (ETS.Enums.OrderStatusCommon)item.Status).Text</td>
                         <td>@item.HadUploadCount.ToString()/@item.OrderCount.ToString()</td>  
                         <td style="@grabToCompleteStyle">@grabToCompleteStr</td>
                         <td><a  href="javascript:showMapData('@item.Id')">查看地图</a></td>

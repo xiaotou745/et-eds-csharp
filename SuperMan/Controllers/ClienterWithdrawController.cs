@@ -3,6 +3,7 @@ using Ets.Model.DomainModel.Finance;
 using Ets.Service.IProvider.Finance;
 using Ets.Service.Provider.Finance;
 using ETS.Enums;
+using Ets.Service.Provider.Pay;
 using ETS.Util;
 using SuperMan.App_Start;
 using System;
@@ -40,6 +41,7 @@ namespace SuperMan.Controllers
             var criteria = new Ets.Model.ParameterModel.Finance.ClienterWithdrawSearchCriteria();
             TryUpdateModel(criteria);
             var pagedList = iClienterFinanceProvider.GetClienterWithdrawList(criteria);
+            new PayProvider().YeePayReconciliation("wang.xudan@etaostars.com");
             return PartialView("_ClienterWithdrawList", pagedList);
         }
         /// <summary>

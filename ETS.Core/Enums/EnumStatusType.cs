@@ -13,7 +13,9 @@ namespace ETS.Enums
     {
         Success = 1,
         [DisplayText("用户名或密码错误")]
-        InvalidCredential = 0
+        InvalidCredential = 0,
+        [DisplayText("您当前登录的次数大于10，请5分钟后重试")]
+        CountError=-10
     }  
 
     public enum ForgetPwdStatus
@@ -31,6 +33,8 @@ namespace ETS.Enums
         checkCodeWrong,
         [DisplayText("您要找回的密码正是当前密码")]
         PwdIsSave,
+        [DisplayText("您当前操作次数大于10，请5分钟后重试")]
+        CountError = -10
     }
     
     public enum UploadIconStatus

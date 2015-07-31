@@ -98,5 +98,11 @@ namespace Ets.Service.IProvider.Pay
         /// </summary>
         /// <param name="para"></param>
         TransferReturnModel TransferAccountsYee(YeeTransferParameter para);
+
+        /// <summary>
+        /// 易宝自动对账
+        /// danny-20150730
+        /// </summary>
+        void YeePayReconciliation(string receiveEmail);
     }
 }
