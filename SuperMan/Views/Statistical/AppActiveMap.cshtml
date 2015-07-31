@@ -102,9 +102,10 @@
 
     $(function () {
         var userType = $("#userType").val();
-        var cityName = $("#cityName").val();
+        var cityId = $("#cityName").val();
+        var cityName = $("#cityName").text();
         setDeliveryCompanyInfoDisplay(userType);
-        loadData(cityName, userType);
+        loadData(cityName, userType, cityId).find("option:selected").text();
         setCount();
     });
 
@@ -127,10 +128,11 @@
     //查询数据
     $("#btnSearch").click(function () {
         var userType = $("#userType").val();
-        var cityName = $("#cityName").val();
+        var cityId = $("#cityName").val();
+        var cityName = $("#cityName").find("option:selected").text();
         pageIndex = 1;
         var tempCity = currentCity;
-        loadData(cityName, userType);
+        loadData(cityName, userType, cityId);
         if (tempCity != cityName) {
             setCount();
         }
@@ -148,14 +150,14 @@
         }
     }
 
-    function loadData(cityName, userType) {
+    function loadData(cityName, userType,cityId) {
         var deliveryCompanyInfo = $("#deliveryCompany").val();
         if (userType != 2) {
             deliveryCompanyInfo = 0;
         }
-        currentCity = cityName;
+        currentCity = cityId;
         //cityName = cityName.trim().replace("市", "");
-        var paramaters = { "cityId": cityName, "userType": userType, "deliveryCompanyInfo": deliveryCompanyInfo };
+        var paramaters = { "cityId": cityId, "userType": userType, "deliveryCompanyInfo": deliveryCompanyInfo };
         loadCityCenterPoint(cityName);
         var url = "/Statistical/AppActiveMap";
         $.ajax({
@@ -206,7 +208,7 @@
     }
 
     function loadDataToTable(data) {
-        var html = "<tr><td>当前没有数据</td></tr>";
+        var html = "<tr><td colspan='4' align='center'>当前没有数据</td></tr>";
         $("#pager").html("");//清空页码
         if (data != null && data.length > 0) {
             var arrStr = [];
