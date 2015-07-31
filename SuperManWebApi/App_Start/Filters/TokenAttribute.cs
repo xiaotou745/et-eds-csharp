@@ -26,9 +26,9 @@ namespace SuperManWebApi.App_Start.Filters
         /// <param name="actionContext"></param>
         public override void OnActionExecuting(HttpActionContext actionContext)
         {
-            var token = HttpContext.Current.Request.QueryString["token"];
-            var ssid = HttpContext.Current.Request.QueryString["ssid"];
-            var appkey = HttpContext.Current.Request.QueryString["appkey"];
+            var token = HttpContext.Current.Request.Headers["token"];
+            var ssid = HttpContext.Current.Request.Headers["ssid"];
+            var appkey = HttpContext.Current.Request.Headers["appkey"];
             if (string.IsNullOrWhiteSpace(token) || string.IsNullOrWhiteSpace(ssid) || string.IsNullOrWhiteSpace(appkey))
             {
                 actionContext.Response = actionContext.ActionDescriptor.ResultConverter.Convert
