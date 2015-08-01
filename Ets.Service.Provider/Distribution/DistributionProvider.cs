@@ -49,6 +49,14 @@ namespace Ets.Service.Provider.Distribution
             redis.Delete(cacheKey);
             return dao.UpdateAuditStatus(id, enumStatusType);
         }
+
+        public bool UpdateAuditStatus(ClienterUpdateModel cum)
+        {
+            ETS.NoSql.RedisCache.RedisCache redis = new ETS.NoSql.RedisCache.RedisCache();
+            string cacheKey = string.Format(RedissCacheKey.ClienterProvider_GetUserStatus, cum.Id);
+            redis.Delete(cacheKey);
+            return dao.UpdateAuditStatus(cum);
+        }
         /// <summary>
         /// 清空帐户余额
         /// danny-20150318
@@ -58,6 +66,15 @@ namespace Ets.Service.Provider.Distribution
         public bool ClearSuperManAmount(int id)
         {
             return dao.ClearSuperManAmount(id);
+        }
+        /// <summary>
+        /// 清空帐户余额
+        /// 加日志
+        /// </summary>
+        /// <returns></returns>
+        public bool ClearSuperManAmount(ClienterUpdateModel cum)
+        {
+            return dao.ClearSuperManAmount(cum);
         }
         /// <summary>
         /// 添加骑士
