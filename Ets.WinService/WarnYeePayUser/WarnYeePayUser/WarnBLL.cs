@@ -24,9 +24,9 @@ namespace WarnYeePayUser
             threadSafe = false;
             try
             {
-                var emailSendTo = Config.ConfigKey("EmailSendTo");
+                //var emailSendTo = Config.ConfigKey("EmailSendTo");
                 var iPayProvider = new PayProvider();
-                iPayProvider.YeePayReconciliation(emailSendTo);
+                iPayProvider.YeePayReconciliation();
             }
             catch (Exception ex)
             {
