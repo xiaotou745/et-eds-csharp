@@ -135,5 +135,13 @@ namespace ETS
         /// 开户支行不能少于5个汉字的正则
         /// </summary>
         public const string OPEN_SUB_BANK_REG = "^[\u4E00-\u9FFF]{3,}$";
+
+        /// <summary>
+        /// 线下测试易宝提现单状态
+        /// 为了和线上线下唯一区别用
+        /// 2015年8月1日 22:04:48
+        /// 窦海超 
+        /// </summary>
+        public static string WithdrawType { get { return ConfigKey("WithdrawType"); } }
     }
 }
