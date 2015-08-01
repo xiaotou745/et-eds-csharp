@@ -26,6 +26,7 @@ using Ets.Dao.Business;
 using Ets.Dao.Clienter;
 using Ets.Dao.GlobalConfig;
 using Ets.Model.DomainModel.GlobalConfig;
+using ETS.Const;
 
 namespace Ets.Service.Provider.Finance
 {
@@ -304,6 +305,15 @@ namespace Ets.Service.Provider.Finance
             }
             throw new Exception("提款单对应的商户已经被取消资格，请联系客服");
         }
+
+
+        /// <summary>
+        /// 确认打款时间锁
+        /// 2015年8月1日 21:44:12
+        /// 窦海超 
+        /// </summary>
+        private static object mylock = new object();
+
         /// <summary>
         /// 商户提现申请单确认打款调用易宝接口
         /// danny-20150716
@@ -312,6 +322,26 @@ namespace Ets.Service.Provider.Finance
         /// <returns></returns>
         public DealResultInfo BusinessWithdrawPaying(BusinessWithdrawLog model)
         {
+
+            #region 时间锁
+
+            lock (mylock)
+            {
+                string key = string.Format(RedissCacheKey.Ets_Withdraw_Lock_B, model.WithwardId);
+                var redis = new ETS.NoSql.RedisCache.RedisCache();
+                if (redis.Get<int>(key) == 1)
+                {
+                    return new DealResultInfo
+                    {
+                        DealMsg = "确认打款正在执行中，请勿重新提交，请一分钟后重试",
+                        DealFlag = false
+                    };
+                }
+                redis.Set(key, 1, new TimeSpan(0, 1, 0));
+            }
+            #endregion
+
+
             var dealResultInfo = new DealResultInfo
             {
                 DealFlag = false
@@ -346,7 +376,7 @@ namespace Ets.Service.Provider.Finance
                             ? CustomertypeEnum.PERSON
                             : CustomertypeEnum.ENTERPRISE,
                     LinkMan = busiFinanceAccount.TrueName,
-                    IdCard = string.IsNullOrEmpty(busiFinanceAccount.BusiIDCard)?busiFinanceAccount.IDCard : busiFinanceAccount.BusiIDCard,
+                    IdCard = string.IsNullOrEmpty(busiFinanceAccount.BusiIDCard) ? busiFinanceAccount.IDCard : busiFinanceAccount.BusiIDCard,
                     BusinessLicence = busiFinanceAccount.IDCard,
                     LegalPerson = busiFinanceAccount.TrueName,
                     BankAccountNumber = ParseHelper.ToDecrypt(busiFinanceAccount.AccountNo),

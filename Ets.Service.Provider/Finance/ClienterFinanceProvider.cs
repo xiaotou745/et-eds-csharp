@@ -25,6 +25,7 @@ using ETS.Transaction;
 using ETS.Transaction.Common;
 using ETS.Util;
 using ETS.Data.PageData;
+using ETS.Const;
 
 namespace Ets.Service.Provider.Finance
 {
@@ -214,7 +215,7 @@ namespace Ets.Service.Provider.Finance
                 {
                     return ResultModel<object>.Conclude(FinanceCardBindC.TrueNameNoMatch);
                 }
-                if (cardBindCpm.IDCard.Trim() != c.IDCard.Trim()) 
+                if (cardBindCpm.IDCard.Trim() != c.IDCard.Trim())
                 {
                     return ResultModel<object>.Conclude(FinanceCardBindC.IDCardNoMatch);
                 }
@@ -523,6 +524,13 @@ namespace Ets.Service.Provider.Finance
             }
             return reg;
         }
+
+        /// <summary>
+        /// 确认打款时间锁
+        /// 2015年8月1日 21:44:12
+        /// 窦海超 
+        /// </summary>
+        private static object mylock = new object();
         /// <summary>
         /// 骑士提现申请单确认打款调用易宝接口
         /// danny-20150717
@@ -531,6 +539,24 @@ namespace Ets.Service.Provider.Finance
         /// <returns></returns>
         public DealResultInfo ClienterWithdrawPaying(ClienterWithdrawLog model)
         {
+            #region 时间锁
+            
+            lock (mylock)
+            {
+                string key = string.Format(RedissCacheKey.Ets_Withdraw_Lock_C,model.WithwardId);
+                var redis = new ETS.NoSql.RedisCache.RedisCache();
+                if (redis.Get<int>(key) == 1)
+                {
+                    return new DealResultInfo
+                    {
+                        DealMsg="确认打款正在执行中，请勿重新提交，请一分钟后重试",
+                        DealFlag = false
+                    };
+                }
+                redis.Set(key, 1, new TimeSpan(0, 1, 0));
+            }
+            #endregion
+
             var dealResultInfo = new DealResultInfo
             {
                 DealFlag = false
