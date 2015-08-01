@@ -691,7 +691,7 @@ SELECT cwf.[ClienterId]
 	  ,ISNULL(ypu.YeeBalance,0) YeeBalance
       ,cfa.Id
   FROM ClienterWithdrawForm cwf with(nolock)
-  JOIN dbo.clienter c WITH(NOLOCK) ON c.Id=cwf.ClienterId  and cwf.Id=@withwardId
+  JOIN dbo.clienter c WITH(NOLOCK) ON c.Id=cwf.ClienterId  and cwf.Id=@withwardId AND cwf.[Status]=2
   JOIN dbo.ClienterFinanceAccount cfa WITH(NOLOCK) ON cfa.ClienterId=cwf.ClienterId
   LEFT JOIN ( SELECT tblypu.UserId,tblypu.Ledgerno,tblypu.BankName,tblypu.BankAccountNumber,tblypu.BalanceRecord,tblypu.YeeBalance
 			  FROM(

@@ -769,7 +769,7 @@ SELECT    bwf.BusinessId
 		  ,ISNULL(ypu.YeeBalance,0) YeeBalance
           ,bfa.Id
   FROM BusinessWithdrawForm bwf with(nolock)
-  JOIN business b with(nolock) on b.id=bwf.BusinessId and bwf.Id=@withwardId 
+  JOIN business b with(nolock) on b.id=bwf.BusinessId and bwf.Id=@withwardId AND bwf.[Status]=2
   JOIN  BusinessFinanceAccount bfa with(nolock) ON bfa.BusinessId=bwf.BusinessId
   LEFT JOIN ( SELECT tblypu.UserId,tblypu.Ledgerno,tblypu.BankName,tblypu.BankAccountNumber,tblypu.BalanceRecord,tblypu.YeeBalance
 			  FROM(
