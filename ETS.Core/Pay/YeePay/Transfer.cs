@@ -74,8 +74,9 @@ namespace ETS.Pay.YeePay
         /// <returns></returns>
         public TransferReturnModel TransferAccounts(ref YeeTransferParameter para)
         {
-            string requestid = TimeHelper.GetTimeStamp(false);
-            //商户编号   
+            //string requestid = TimeHelper.GetTimeStamp(false);
+            string requestid = string.Concat(para.UserType.ToString(), "-z", para.WithdrawId, "-", Config.WithdrawType);// +"-" + TimeHelper.GetTimeStamp(false);
+            //商户编号
             string customernumber = KeyConfig.YeepayAccountId;
             //密钥   
             string hmackey = KeyConfig.YeepayHmac;
