@@ -812,6 +812,7 @@ select @@IDENTITY ";
                                         ,o.OriginalOrderNo
                                         ,o.IsEnable
                                         ,o.FinishAll
+                                        ,oo.DeductCommissionType
                                     FROM [order] o WITH ( NOLOCK )
                                     LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                     LEFT JOIN clienter c WITH (NOLOCK) ON o.clienterId=c.Id

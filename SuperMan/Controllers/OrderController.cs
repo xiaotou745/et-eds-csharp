@@ -212,7 +212,7 @@ namespace SuperMan.Controllers
             var order = iOrderProvider.GetOrderByNo(OrderNo);
             if (order == null) //查询订单是否存在
                 return Json(new ResultModel(false, "订单不存在"), JsonRequestBehavior.AllowGet);
-            if (order.Status !=OrderStatus.Status0.GetHashCode())  //查询订单是否被抢
+            if (order.Status != OrderStatus.Status0.GetHashCode())  //查询订单是否被抢
                 return Json(new ResultModel(false, "订单已被抢或者已完成"), JsonRequestBehavior.AllowGet);
             if (SuperID == -1) //未指派超人 ，触发极光推送  ，指派超人的情况下，建立订单和超人的关系
             {
@@ -308,7 +308,7 @@ namespace SuperMan.Controllers
         {
             //只有在已完成订单并且已上传完小票的情况下显示该按钮
             if (orderModel != null && /*已完成*/ orderModel.FinishAll == 1 && /*订单未分账*/ orderModel.IsJoinWithdraw == 0
-                && /*有权限*/ UserContext.Current.HasAuthority(77) && orderModel.IsEnable == 1)
+                && /*有权限*/ UserContext.Current.HasAuthority(79) && orderModel.IsEnable == 1 && orderModel.DeductCommissionType == null)
             {
                 return true;
             }
