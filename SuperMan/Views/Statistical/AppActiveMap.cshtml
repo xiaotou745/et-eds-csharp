@@ -103,9 +103,9 @@
     $(function () {
         var userType = $("#userType").val();
         var cityId = $("#cityName").val();
-        var cityName = $("#cityName").text();
+        var cityName = $("#cityName").find("option:selected").text();
         setDeliveryCompanyInfoDisplay(userType);
-        loadData(cityName, userType, cityId).find("option:selected").text();
+        loadData(cityName, userType, cityId);
         setCount();
     });
 
