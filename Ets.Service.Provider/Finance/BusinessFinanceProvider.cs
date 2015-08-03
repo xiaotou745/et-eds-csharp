@@ -490,6 +490,18 @@ namespace Ets.Service.Provider.Finance
                 dealResultInfo.DealMsg = "商户易宝自动提现失败：" + regCash.msg + "(" + regCash.code + ")";
                 return dealResultInfo;
             }
+            //因为没有表临时注释掉
+            //clienterFinanceDao.AddYeePayUserBalanceRecord(new YeePayUserBalanceRecord()
+            //{
+            //    LedgerNo = busiFinanceAccount.YeepayKey,
+            //    WithwardId = model.WithwardId,
+            //    Amount = amount,
+            //    Balance = busiFinanceAccount.BalanceRecord - amount,
+            //    RecordType = YeeRecordType.Ccash.GetHashCode(),
+            //    Operator = model.Operator,
+            //    Remark = "易宝子账户提现【" + amount + "】元"
+            //});
+            busiFinanceAccount.BalanceRecord = clienterFinanceDao.ModifyYeeBalanceRecord(busiFinanceAccount.YeepayKey, -amount);
             #endregion
 
             #region 回写数据库返回结果对象
