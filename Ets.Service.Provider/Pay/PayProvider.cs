@@ -854,12 +854,14 @@ namespace Ets.Service.Provider.Pay
         /// 易宝自动对账
         /// danny-20150730
         /// </summary>
-        public void YeePayReconciliation(string receiveEmail)
+        public void YeePayReconciliation()
         {
             #region 对象声明及实例化
             var sbEmail = new StringBuilder();
             var overTimeDateDiff = ParseHelper.ToInt(Config.ConfigKey("OverTimeDateDiff"));//易宝回调超时时间配置
             var activeDateDiff = ParseHelper.ToInt(Config.ConfigKey("ActiveDateDiff"));//易宝活跃用户时间配置
+            var emailSendTo = Config.ConfigKey("EmailSendTo");
+            var copyTo = Config.ConfigKey("CopyTo");
             var yeePayUserList = yeePayRecordDao.GetYeePayUserList(activeDateDiff);
             #endregion
 
@@ -873,7 +875,7 @@ namespace Ets.Service.Provider.Pay
                     if (reg.code != "1")
                     {
                         sbEmail.AppendLine("调用易宝余额查询接口失败：" + reg.msg + "(" + reg.code + ")");
-                        EmailHelper.SendEmailTo(sbEmail.ToString(), receiveEmail, "易宝对账结果", "", false);
+                        EmailHelper.SendEmailTo(sbEmail.ToString(), emailSendTo, "易宝对账结果", copyTo, false);
                         return ;
                     }
                     if (ParseHelper.ToDecimal(reg.ledgerbalance) != yeePayUser.YeeBalance)
@@ -966,7 +968,7 @@ namespace Ets.Service.Provider.Pay
 
             if (!string.IsNullOrEmpty(sbEmail.ToString()))
             {
-                EmailHelper.SendEmailTo(sbEmail.ToString(), receiveEmail, "易宝自动对账", "", false);
+                EmailHelper.SendEmailTo(sbEmail.ToString(), emailSendTo, "易宝自动对账", copyTo, false);
             }
             #endregion
         }
