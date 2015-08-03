@@ -86,6 +86,7 @@
     <Compile Include="DataModel\Clienter\CrossShopStatisticLogModel.cs" />
     <Compile Include="DataModel\Common\ExportSqlManage.cs" />
     <Compile Include="DataModel\DeliveryCompany\DeliveryCompanyModel.cs" />
+    <Compile Include="DataModel\Finance\ClienterAllowWithdrawRecord.cs" />
     <Compile Include="DataModel\Message\BusinessMessage.cs" />
     <Compile Include="DataModel\Message\ClienterMessage.cs" />
     <Compile Include="DataModel\Message\MessageModel.cs" />

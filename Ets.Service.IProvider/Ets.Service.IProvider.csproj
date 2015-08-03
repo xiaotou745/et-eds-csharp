@@ -58,6 +58,7 @@
     <Compile Include="Finance\IBusinessFinanceAccountProvider.cs" />
     <Compile Include="Finance\IBusinessFinanceProvider.cs" />
     <Compile Include="Finance\IBusinessBalanceRecordProvider.cs" />
+    <Compile Include="Finance\IClienterAllowWithdrawRecordProvider.cs" />
     <Compile Include="Finance\IClienterBalanceRecordProvider.cs" />
     <Compile Include="Finance\IClienterFinanceAccountProvider.cs" />
     <Compile Include="Finance\IClienterFinanceProvider.cs" />
