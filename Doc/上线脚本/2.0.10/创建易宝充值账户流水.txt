@@ -1,0 +1,63 @@
+use [superman]
+go
+
+/****** Object:  Table [dbo].[YeePayRunningAccount]    Script Date: 08/03/2015 16:55:41 ******/
+set ansi_nulls on
+go
+
+set quoted_identifier on
+go
+
+set ansi_padding on
+go
+
+create table [dbo].[YeePayRunningAccount](
+	[Id] [int] identity(1,1) not null,
+	[LedgerNo] [varchar](256) null,
+	[RechargeAmount] [decimal](18, 3) null,
+	[Operator] [nvarchar](50) null,
+	[OperateTime] [datetime] null,
+	[RechargeTime] [datetime] null,
+	[Remark] [nvarchar](400) null,
+	[IsEnable] [int] not null
+) on [PRIMARY]
+
+go
+
+set ansi_padding off
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'自增主键' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'YeePayRunningAccount', @level2type=N'COLUMN',@level2name=N'Id'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'易宝账户' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'YeePayRunningAccount', @level2type=N'COLUMN',@level2name=N'LedgerNo'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'充值金额' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'YeePayRunningAccount', @level2type=N'COLUMN',@level2name=N'RechargeAmount'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'操作人' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'YeePayRunningAccount', @level2type=N'COLUMN',@level2name=N'Operator'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'录入时间' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'YeePayRunningAccount', @level2type=N'COLUMN',@level2name=N'OperateTime'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'充值时间' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'YeePayRunningAccount', @level2type=N'COLUMN',@level2name=N'RechargeTime'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'备注' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'YeePayRunningAccount', @level2type=N'COLUMN',@level2name=N'Remark'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'数据有效性,1有效,0无效,默认1' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'YeePayRunningAccount', @level2type=N'COLUMN',@level2name=N'IsEnable'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'易宝主账户充值表' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'YeePayRunningAccount'
+go
+
+alter table [dbo].[YeePayRunningAccount] add  constraint [DF_YeePayRunningAccount_OperateTime]  default (getdate()) for [OperateTime]
+go
+
+alter table [dbo].[YeePayRunningAccount] add  constraint [DF_YeePayRunningAccount_IsEnable]  default ((1)) for [IsEnable]
+go
+
+
