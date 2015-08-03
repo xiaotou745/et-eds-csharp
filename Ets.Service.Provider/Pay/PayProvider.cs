@@ -629,10 +629,16 @@ namespace Ets.Service.Provider.Pay
             bool result = false;
             string username = "易宝提现回调";
             CashTransferCallback model = JsonHelper.JsonConvertToObject<CashTransferCallback>(ResponseYeePay.OutRes(data, true));
-            model.cashrequestid= model.cashrequestid.Replace("t", "");
-            int withwardId = ParseHelper.ToInt(model.cashrequestid.Substring(2).Substring(0, model.cashrequestid.Substring(2).IndexOf('-'))); //提现单id
-
-            new YeePayRecordDao().Insert(new YeePayRecord()
+            YeePayRecordDao yeePayRecordDao = new YeePayRecordDao();
+            YeePayRecord yeePayRecordDbModel= yeePayRecordDao.GetReocordByRequestId(model.cashrequestid);
+            if (yeePayRecordDbModel == null)
+            {
+                EmailHelper.SendEmailTo(string.Format("易宝请求号为{0}的提现单回调失败，数据库提示无该提现记录，回调的完整参数为{1}",
+                    model.cashrequestid, ResponseYeePay.OutRes(data, true)), ConfigSettings.Instance.EmailToAdress);
+                return false;
+            }
+            long  withwardId = yeePayRecordDbModel.WithdrawId; //提现单id
+            yeePayRecordDao.Insert(new YeePayRecord()
             {
                 WithdrawId = withwardId,
                 RequestId = model.cashrequestid,
@@ -643,12 +649,12 @@ namespace Ets.Service.Provider.Pay
                 Lastno = model.lastno,
                 Desc = model.desc,
                 TransferType =  TransferTypeYee.CallBack.GetHashCode(),
-                UserType = model.cashrequestid.Substring(0, 1) == "C" ? UserTypeYee.Clienter.GetHashCode() : UserTypeYee.Business.GetHashCode() 
+                UserType = yeePayRecordDbModel.UserType 
             });
       
             if (model.status == "SUCCESS") //提现成功 走 成功的逻辑
             {
-                if (model.cashrequestid.Substring(0, 1) == "B") //B端逻辑
+                if (yeePayRecordDbModel.UserType == UserTypeYee.Business.GetHashCode()) //B端逻辑
                 {
                     iBusinessFinanceProvider.BusinessWithdrawPayOk(new BusinessWithdrawLog()
                     {
@@ -659,7 +665,7 @@ namespace Ets.Service.Provider.Pay
                     });
                     result = true;
                 }
-                else if (model.cashrequestid.Substring(0, 1) == "C") //C端逻辑
+                else if (yeePayRecordDbModel.UserType == UserTypeYee.Clienter.GetHashCode()) //C端逻辑
                 {
                     iClienterFinanceProvider.ClienterWithdrawPayOk(new ClienterWithdrawLog()
                     {
@@ -673,7 +679,7 @@ namespace Ets.Service.Provider.Pay
             }
             else if (model.status == "FAIL") //提现失败 走 失败的逻辑
             {
-                if (model.cashrequestid.Substring(0, 1) == "B") //B端逻辑
+                if (yeePayRecordDbModel.UserType == UserTypeYee.Business.GetHashCode()) //B端逻辑
                 {
                     iBusinessFinanceProvider.BusinessWithdrawPayFailed(new BusinessWithdrawLogModel()
                     {
@@ -685,7 +691,7 @@ namespace Ets.Service.Provider.Pay
                     }, model); //商户提现失败
                     result = true;
                 }
-                else if (model.cashrequestid.Substring(0, 1) == "C") //C端逻辑
+                else if(yeePayRecordDbModel.UserType == UserTypeYee.Clienter.GetHashCode()) //C端逻辑
                 {
                     iClienterFinanceProvider.ClienterWithdrawPayFailed(new ClienterWithdrawLogModel()
                     {
@@ -798,7 +804,7 @@ namespace Ets.Service.Provider.Pay
 
         /// <summary> 
         /// 易宝转账 add by caoheyang 20150722
-        /// </summary>
+        /// </summary> 
         /// <param name="para"></param>
         public TransferReturnModel TransferAccountsYee(YeeTransferParameter para)
         {
