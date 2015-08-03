@@ -1,0 +1,47 @@
+﻿
+@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.YeePay.YeePayRunningAccountModel>
+
+@using Ets.Service.Provider.Common
+@using ETS.Util
+@using Webdiyer.WebControls.Mvc
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+    <thead>
+        <tr class="tdbg">
+            <th width="%5">编号</th>
+            <th>充值金额</th>
+            <th>充值日期</th>
+            <th>操作日期</th>
+            <th>操作人</th>
+            <th>备注</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            if (Model != null && Model.Records.Count > 0)
+            {
+                var i = 0;
+                foreach (var item in Model.Records)
+                {
+                    i++;
+                    <tr id="@item.Id">
+                        <td>@item.Id</td>
+                        <td>@item.RechargeAmount</td>
+                        <td>@item.RechargeTime</td>
+                        <td>@item.OperateTime</td>
+                        <td>@item.Operator</td>
+                        <td title=@item.Remark>@(item.Remark.Length > 20 ? item.Remark.Substring(0, 20) + "..." : item.Remark)</td>
+                    </tr>
+                }
+            }
+        }
+    <tbody>
+
+</table>
+@{
+    if (Model != null)
+    {
+        ViewBag.ActionName = "PostYeePayRunningManager";
+        @Html.Partial("~/views/shared/PagerControl.cshtml", Model)
+    }
+}

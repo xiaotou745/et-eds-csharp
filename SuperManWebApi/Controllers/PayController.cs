@@ -44,7 +44,7 @@ namespace SuperManWebApi.Controllers
         #region 支付宝
 
         /// <summary>
-        /// 支付宝创建订单
+        /// 支付宝创建订单  回调
         /// 窦海超
         /// 2015年5月12日 14:35:10
         /// </summary>
@@ -55,7 +55,7 @@ namespace SuperManWebApi.Controllers
         }
 
         /// <summary>
-        /// Alipay自动返回,异步处理
+        /// Alipay自动返回,异步处理   回调
         /// 窦海超
         /// 2015年5月12日 14:35:15
         /// </summary>
@@ -94,7 +94,7 @@ namespace SuperManWebApi.Controllers
         }
 
         /// <summary>
-        /// 商家充值回调方法 
+        /// 商家充值回调方法    回调
         /// 窦海超
         /// 2015年5月29日 15:17:07
         /// </summary>
@@ -108,7 +108,7 @@ namespace SuperManWebApi.Controllers
         #region 微信
 
         /// <summary>
-        /// 微信支付
+        /// 微信支付 回调
         /// 窦海超
         /// 2015年5月13日 15:02:42
         /// </summary>

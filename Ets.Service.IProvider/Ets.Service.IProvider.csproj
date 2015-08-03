@@ -58,6 +58,7 @@
     <Compile Include="Finance\IBusinessFinanceAccountProvider.cs" />
     <Compile Include="Finance\IBusinessFinanceProvider.cs" />
     <Compile Include="Finance\IBusinessBalanceRecordProvider.cs" />
+    <Compile Include="Finance\IClienterAllowWithdrawRecordProvider.cs" />
     <Compile Include="Finance\IClienterBalanceRecordProvider.cs" />
     <Compile Include="Finance\IClienterFinanceAccountProvider.cs" />
     <Compile Include="Finance\IClienterFinanceProvider.cs" />
@@ -84,6 +85,7 @@
     <Compile Include="Business\IBusinessProvider.cs" />
     <Compile Include="User\IUser.cs" />
     <Compile Include="WtihdrawRecords\IWtihdrawRecordsProvider.cs" />
+    <Compile Include="YeePay\IYeePayRunningProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ETS.Core\ETS.Core.csproj">

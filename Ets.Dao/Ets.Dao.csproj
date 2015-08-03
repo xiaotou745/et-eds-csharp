@@ -61,6 +61,7 @@
     <Compile Include="DeliveryManager\DeliveryManagerDao.cs" />
     <Compile Include="Finance\BusinessFinanceDao.cs" />
     <Compile Include="Finance\BusinessBalanceRecordDao.cs" />
+    <Compile Include="Finance\ClienterAllowWithdrawRecordDao.cs" />
     <Compile Include="Finance\ClienterBalanceRecordDao.cs" />
     <Compile Include="Finance\BusinessFinanceAccountDao.cs" />
     <Compile Include="Finance\ClienterFinanceAccountDao.cs" />
@@ -91,6 +92,7 @@
     <Compile Include="User\UserDao.cs" />
     <Compile Include="User\UserOptRecordDao.cs" />
     <Compile Include="WtihdrawRecords\WtihdrawRecordsDao.cs" />
+    <Compile Include="YeePay\YeePayRunningDao.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ETS.Core\ETS.Core.csproj">

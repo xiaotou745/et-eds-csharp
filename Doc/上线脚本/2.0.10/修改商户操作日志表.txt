@@ -1,0 +1,13 @@
+use superman
+go
+
+alter table dbo.BusinessOptionLog
+drop constraint DF__BusinessO__Remar__0EC32C7A
+
+alter table dbo.BusinessOptionLog
+alter column Remark nvarchar(4000) not null
+
+alter table dbo.BusinessOptionLog
+add constraint DF__BusinessO__Remar__0EC32C7A default '' for Remark 
+
+go

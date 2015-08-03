@@ -64,6 +64,7 @@
     <Compile Include="Common\YeePay\CashTransferCallback.cs" />
     <Compile Include="Common\YeePay\YeePayRecord.cs" />
     <Compile Include="Common\YeePay\YeePayUser.cs" />
+    <Compile Include="Common\YeePay\YeePayUserBalanceRecord.cs" />
     <Compile Include="DataModel\Authority\AccountCityRelation.cs" />
     <Compile Include="DataModel\Authority\AccountDcRelation.cs" />
     <Compile Include="DataModel\Business\BusiModifyResultModelDM.cs" />
@@ -85,6 +86,7 @@
     <Compile Include="DataModel\Clienter\CrossShopStatisticLogModel.cs" />
     <Compile Include="DataModel\Common\ExportSqlManage.cs" />
     <Compile Include="DataModel\DeliveryCompany\DeliveryCompanyModel.cs" />
+    <Compile Include="DataModel\Finance\ClienterAllowWithdrawRecord.cs" />
     <Compile Include="DataModel\Message\BusinessMessage.cs" />
     <Compile Include="DataModel\Message\ClienterMessage.cs" />
     <Compile Include="DataModel\Message\MessageModel.cs" />
@@ -109,8 +111,10 @@
     <Compile Include="DataModel\Subsidy\CrossShopModel.cs" />
     <Compile Include="DataModel\Order\OrderOther.cs" />
     <Compile Include="DataModel\Order\OrderSubsidiesLog.cs" />
+    <Compile Include="DataModel\YeePay\YeePayRunningAccountModel.cs" />
     <Compile Include="DomainModel\Authority\AccountDCRelationModel.cs" />
     <Compile Include="DomainModel\Business\BusinessExpressRelationModel.cs" />
+    <Compile Include="DomainModel\Clienter\ClienterUpdateModel.cs" />
     <Compile Include="DomainModel\Common\APPVersionModel.cs" />
     <Compile Include="DomainModel\DeliveryCompany\BatchImportClienterExcelDM.cs" />
     <Compile Include="DomainModel\Area\DMAreaCodeInfo.cs" />
@@ -150,6 +154,7 @@
     <Compile Include="DomainModel\Order\OrderChildForTicket.cs" />
     <Compile Include="DomainModel\Order\RushOrderModel.cs" />
     <Compile Include="DomainModel\Statistics\ActiveBusinessClienterInfo.cs" />
+    <Compile Include="DomainModel\Statistics\AppActiveInfo.cs" />
     <Compile Include="DomainModel\Statistics\BusinessBalanceInfo.cs" />
     <Compile Include="DomainModel\Statistics\BussinessBalanceQuery.cs" />
     <Compile Include="DomainModel\Statistics\JieDanTimeInfo.cs" />
@@ -165,6 +170,7 @@
     <Compile Include="ParameterModel\Business\BusiDistribInfoPM.cs" />
     <Compile Include="ParameterModel\Business\BusiDistribSubsidyResultModel.cs" />
     <Compile Include="ParameterModel\Business\BusinessCommissionSearchCriteria.cs" />
+    <Compile Include="ParameterModel\Business\BusinessPushLocaltionPM.cs" />
     <Compile Include="ParameterModel\Business\BusinessRechargeModel.cs" />
     <Compile Include="ParameterModel\AliPay\PayModel.cs" />
     <Compile Include="ParameterModel\Area\ParaAreaNameInfo.cs" />
@@ -330,6 +336,7 @@
     <Compile Include="ParameterModel\WtihdrawRecords\IncomeModel.cs" />
     <Compile Include="ParameterModel\WtihdrawRecords\MyIncomeSearchCriteria.cs" />
     <Compile Include="ParameterModel\WtihdrawRecords\WithdrawRecordsModel.cs" />
+    <Compile Include="ParameterModel\YeePay\YeePayRunningCriteria.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserModel.cs" />
   </ItemGroup>

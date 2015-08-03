@@ -102,6 +102,16 @@ namespace Ets.Model.DomainModel.GlobalConfig
         public string AllFinishedOrderUploadTimeInterval { get; set; }
 
         /// <summary>
+        /// 查询骑士坐标数据时间间隔(单位为分钟)
+        /// </summary>
+        public string SearchClienterLocationTimeInterval { get; set; }
+
+        /// <summary>
+        /// 商家端上传一次经纬度给到服务端的时间间隔(单位为秒)
+        /// </summary>
+        public string BusinessUploadTimeInterval { get; set; }
+
+        /// <summary>
         /// 订单推送给骑士的区域半径(单位为公里)
         /// </summary>
         public string PushRadius { get; set; }
@@ -159,5 +169,11 @@ namespace Ets.Model.DomainModel.GlobalConfig
         /// 提现扣除手续费数值
         /// </summary>
         public string WithdrawCommission { get; set; }
+        /// <summary>
+        /// 易宝账户活跃时间配置
+        /// </summary>
+        public string YeeAccountActiveTime { get; set; }
+
+        
     }
 }

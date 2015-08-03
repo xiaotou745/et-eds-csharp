@@ -80,6 +80,14 @@
     @*<script type="text/javascript" src="~/Scripts/jquery.loadmask.js"></script>*@
     <script type="text/javascript" src="~/Scripts/jquery.blockUI.js"></script>
     <script type="text/javascript">
+        //扩展string的format方法
+        String.prototype.format = function () {
+            var args = arguments;
+            return this.replace(/\{(\d+)\}/g, function (s, i) {
+                return args[i];
+            });
+        }
+
         $(function () {
             $(document).ready(function () {
                 $('#txtOrderPubStart').datepicker();
@@ -124,7 +132,6 @@
                     if (data.Data != null) {
                         for (var i = 0; i < data.Data.length; i++) {
                             var item = data.Data[i];
-
                             if (params.AsCityQuery) { //如果选择了城市，显示隐藏的三列
                                 $(".J_City").removeClass("none");
                                 appendCityRow(item);
@@ -157,7 +164,6 @@
         function appendRow(item) {
             var temp = "<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td>" +
                 "<td>{4}</td><td>{5}</td><td>{6}</td></tr>";
-
             $("#tbodyTimeSpan").append(temp.format(item.Date,
                 item.BusinessCount, item.ActiveBusinessCount, (item.ActiveBusinessRate * 100).toFixed(2) + "%",
                 item.ClienterCount, item.ActiveClienterCount, (item.ActiveClienterRate * 100).toFixed(2) + "%"));

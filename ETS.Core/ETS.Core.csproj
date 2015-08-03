@@ -143,6 +143,7 @@
     <Compile Include="Pay\YeePay\HmacMD5.cs" />
     <Compile Include="Pay\YeePay\KeyConfig.cs" />
     <Compile Include="Pay\YeePay\QueryBalance.cs" />
+    <Compile Include="Pay\YeePay\QueryBalanceReturnModel.cs" />
     <Compile Include="Pay\YeePay\RandomUtil.cs" />
     <Compile Include="Pay\YeePay\Register.cs" />
     <Compile Include="Pay\YeePay\TransferReturnModel.cs" />
@@ -150,6 +151,7 @@
     <Compile Include="Pay\YeePay\ResponseModel.cs" />
     <Compile Include="Pay\YeePay\ResponseYeePay.cs" />
     <Compile Include="Pay\YeePay\Transfer.cs" />
+    <Compile Include="Pay\YeePay\YeeQueryBalanceParameter.cs" />
     <Compile Include="Pay\YeePay\YeeTransferParameter.cs" />
     <Compile Include="Pay\YeePay\YeeCashTransferParameter.cs" />
     <Compile Include="Pay\YeePay\YeeRegisterParameter.cs" />
