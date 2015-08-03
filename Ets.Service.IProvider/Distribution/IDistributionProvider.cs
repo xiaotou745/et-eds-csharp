@@ -32,6 +32,8 @@ namespace Ets.Service.IProvider.Distribution
         /// <param name="enumStatusType"></param>
         /// <returns></returns>
         bool UpdateAuditStatus(int id, AuditStatus enumStatusType);
+        bool UpdateAuditStatus(ClienterUpdateModel　cum);
+
         /// <summary>
         ///  清空帐户余额
         /// danny-20150318
@@ -39,6 +41,8 @@ namespace Ets.Service.IProvider.Distribution
         /// <param name="id"></param>
         /// <returns></returns>
         bool ClearSuperManAmount(int id);
+
+        bool ClearSuperManAmount(ClienterUpdateModel cum);
         /// <summary>
         /// 添加骑士
         /// danny-20150318

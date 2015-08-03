@@ -202,6 +202,23 @@ namespace Ets.Service.Provider.Finance
             {
                 return ResultModel<object>.Conclude(checkbool);
             }
+            //验证绑定的银行卡用户信息 和 该骑士用户姓名、身份证 是否一致
+            clienter c = _clienterDao.GetById(cardBindCpm.ClienterId);
+            if (c == null)
+            {
+                return ResultModel<object>.Conclude(FinanceCardBindC.NoClienter);
+            }
+            else
+            {
+                if (cardBindCpm.TrueName.Trim() != c.TrueName.Trim())
+                {
+                    return ResultModel<object>.Conclude(FinanceCardBindC.TrueNameNoMatch);
+                }
+                if (cardBindCpm.IDCard.Trim() != c.IDCard.Trim()) 
+                {
+                    return ResultModel<object>.Conclude(FinanceCardBindC.IDCardNoMatch);
+                }
+            }
             #endregion
             var result = 0;
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
@@ -265,6 +282,23 @@ namespace Ets.Service.Provider.Finance
             if (checkbool != FinanceCardModifyC.Success)
             {
                 return ResultModel<object>.Conclude(checkbool);
+            }
+            //验证绑定的银行卡用户信息 和 该骑士用户姓名、身份证 是否一致
+            clienter c = _clienterDao.GetById(cardModifyCpm.ClienterId);
+            if (c == null)
+            {
+                return ResultModel<object>.Conclude(FinanceCardBindC.NoClienter);
+            }
+            else
+            {
+                if (cardModifyCpm.TrueName.Trim() != c.TrueName.Trim())
+                {
+                    return ResultModel<object>.Conclude(FinanceCardBindC.TrueNameNoMatch);
+                }
+                if (cardModifyCpm.IDCard.Trim() != c.IDCard.Trim())
+                {
+                    return ResultModel<object>.Conclude(FinanceCardBindC.IDCardNoMatch);
+                }
             }
             int withdrawCount = _clienterWithdrawFormDao.GetByClienterId(cardModifyCpm.ClienterId);
             if (withdrawCount > 0) //该骑士是否存在未完成的提现单
