@@ -141,6 +141,13 @@ namespace ETS.Enums
         [DisplayText("交易中")]
         Tradeing = 2
     }
+    public enum ClienterAllowWithdrawRecordStatus
+    {
+        [DisplayText("交易成功")]
+        Success = 1,
+        [DisplayText("交易中")]
+        Tradeing = 2
+    }
 
     /// <summary>
     ///骑士余额流水   交易类型(1：订单佣金 2：取消订单 3：提现申请 4：提现拒绝 5：打款失败 6：系统奖励 7：系统赔偿) 枚举 add by caoheyang 20150509
@@ -192,6 +199,24 @@ namespace ETS.Enums
         /// </summary>
         [DisplayText("手续费")]
         ProcedureFee = 9
+    }
+
+    public enum ClienterAllowWithdrawRecordType
+    {
+        /// <summary>
+        /// 订单佣金
+        /// </summary>
+        [DisplayText("订单佣金")] OrderCommission = 1,
+        /// <summary>
+        /// 提现申请
+        /// </summary>
+        [DisplayText("提现申请")]
+        WithdrawApply = 3,
+        /// <summary>
+        /// 余额调整
+        /// </summary>
+        [DisplayText("余额调整")]
+        BalanceAdjustment = 8,
     }
 
     /// <summary>

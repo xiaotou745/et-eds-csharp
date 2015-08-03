@@ -574,7 +574,7 @@ namespace Ets.Service.Provider.Finance
             IPayProvider payProvider = new PayProvider();
             TransferReturnModel tempmodel = payProvider.TransferAccountsYee(new YeeTransferParameter()
             {
-                UserType = 1,
+                UserType = UserTypeYee.Business.GetHashCode(),
                 WithdrawId = model.WithwardId,
                 Ledgerno = "",
                 SourceLedgerno = callback.ledgerno,

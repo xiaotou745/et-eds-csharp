@@ -40,6 +40,8 @@ namespace Ets.Service.Provider.Finance
         /// 骑士提现表
         /// </summary>
         private readonly ClienterWithdrawFormDao _clienterWithdrawFormDao = new ClienterWithdrawFormDao();
+
+        readonly ClienterAllowWithdrawRecordDao clienterAllowWithdrawRecordDao = new ClienterAllowWithdrawRecordDao();
         /// <summary>
         /// 骑士提现日志
         /// </summary>
@@ -118,6 +120,18 @@ namespace Ets.Service.Provider.Finance
                                 RelationNo = withwardNo,
                                 Remark = "骑士提现"
                             });
+
+                    clienterAllowWithdrawRecordDao.Insert(new ClienterAllowWithdrawRecord()
+                    {
+                        ClienterId = model.ClienterId,//骑士Id(Clienter表）
+                        Amount = -model.WithdrawPrice,//流水金额
+                        Status = (int)ClienterAllowWithdrawRecordStatus.Tradeing, //流水状态(1、交易成功 2、交易中）
+                        RecordType = (int)ClienterBalanceRecordRecordType.WithdrawApply,
+                        Operator = clienter.TrueName,
+                        WithwardId = withwardId,
+                        RelationNo = withwardNo,
+                        Remark = "骑士提现"
+                    });
                     #endregion
 
                     #region 骑士提现记录
@@ -770,7 +784,7 @@ namespace Ets.Service.Provider.Finance
             IPayProvider payProvider = new PayProvider();
             TransferReturnModel tempmodel = payProvider.TransferAccountsYee(new YeeTransferParameter()
             {
-                UserType = 0,
+                UserType = UserTypeYee.Clienter.GetHashCode(),
                 WithdrawId = model.WithwardId,
                 Ledgerno = "",
                 SourceLedgerno = callback.ledgerno,
@@ -936,7 +950,44 @@ namespace Ets.Service.Provider.Finance
         /// <returns></returns>
         public bool ClienterRecharge(ClienterOptionLog model)
         {
-            return clienterFinanceDao.ClienterRecharge(model);
+            //return clienterFinanceDao.ClienterRecharge(model);
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                clienterFinanceDao.ClienterRecharge(model);
+
+                //ClienterBalanceRecord cbrm = new ClienterBalanceRecord()
+                //{
+                //    ClienterId = model.ClienterId,
+                //    Amount = model.RechargeAmount,
+                //    Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
+                //    Balance = accountBalance ?? 0,
+                //    RecordType = ClienterBalanceRecordRecordType.BalanceAdjustment.GetHashCode(),
+                //    Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士:" + userId : myOrderInfo.ClienterName,
+                //    WithwardId = myOrderInfo.Id,
+                //    RelationNo = myOrderInfo.OrderNo,
+                //    Remark = "骑士完成订单"
+                //};
+                //clienterBalanceRecordDao.Insert(cbrm);
+
+                //ClienterAllowWithdrawRecord cawrm = new ClienterAllowWithdrawRecord()
+                //{
+                //    ClienterId = userId,
+                //    Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
+                //    Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(),
+                //    Balance = accountBalance ?? 0,
+                //    RecordType = ClienterAllowWithdrawRecordType.OrderCommission.GetHashCode(),
+                //    Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士:" + userId : myOrderInfo.ClienterName,
+                //    WithwardId = myOrderInfo.Id,
+                //    RelationNo = myOrderInfo.OrderNo,
+                //    Remark = "骑士完成订单"
+                //};
+                //clienterAllowWithdrawRecordDao.Insert(cawrm);
+
+                
+                tran.Complete();
+            }
+
+            return true;
         }
         /// <summary>
         /// 调用商户易宝子账号注册接口并对返回值进行处理
