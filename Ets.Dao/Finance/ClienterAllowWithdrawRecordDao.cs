@@ -30,22 +30,20 @@ namespace Ets.Dao.Finance
         public long Insert(ClienterAllowWithdrawRecord clienterAllowWithdrawRecord)
         {
             const string insertSql = @"
-insert into ClienterAllowWithdrawRecord(ClienterId,Amount,Status,Balance,RecordType,Operator,WithwardId,RelationNo,Remark)
-values(@ClienterId,@Amount,@Status,@Balance,@RecordType,@Operator,@WithwardId,@RelationNo,@Remark)
-
+insert into ClienterAllowWithdrawRecord
+(ClienterId,Amount,Status,Balance,RecordType,Operator,WithwardId,RelationNo,Remark)
+select @ClienterId,@Amount,@Status,c.AccountBalance,@RecordType,@Operator,@WithwardId,@RelationNo,@Remark 
+from dbo.clienter as c where Id=@ClienterId
 select @@IDENTITY";
-
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("ClienterId", clienterAllowWithdrawRecord.ClienterId);
-            dbParameters.AddWithValue("Amount", clienterAllowWithdrawRecord.Amount);
-            dbParameters.AddWithValue("Status", clienterAllowWithdrawRecord.Status);
-            dbParameters.AddWithValue("Balance", clienterAllowWithdrawRecord.Balance);
-            dbParameters.AddWithValue("RecordType", clienterAllowWithdrawRecord.RecordType);
-            dbParameters.AddWithValue("Operator", clienterAllowWithdrawRecord.Operator);
-            dbParameters.AddWithValue("WithwardId", clienterAllowWithdrawRecord.WithwardId);
-            dbParameters.AddWithValue("RelationNo", clienterAllowWithdrawRecord.RelationNo);
-            dbParameters.AddWithValue("Remark", clienterAllowWithdrawRecord.Remark);
-
+            dbParameters.AddWithValue("ClienterId", clienterAllowWithdrawRecord.ClienterId);//骑士id
+            dbParameters.AddWithValue("Amount", clienterAllowWithdrawRecord.Amount);//流水金额
+            dbParameters.AddWithValue("Status", clienterAllowWithdrawRecord.Status); //流水状态(1、交易成功 2、交易中）
+            dbParameters.AddWithValue("RecordType", clienterAllowWithdrawRecord.RecordType); //交易类型(1佣金 2奖励 3提现 4取消订单赔偿 5无效订单扣款)
+            dbParameters.AddWithValue("Operator", clienterAllowWithdrawRecord.Operator); //操作人 
+            dbParameters.AddWithValue("WithwardId", clienterAllowWithdrawRecord.WithwardId); //关联ID
+            dbParameters.AddWithValue("RelationNo", clienterAllowWithdrawRecord.RelationNo); //关联单号
+            dbParameters.AddWithValue("Remark", clienterAllowWithdrawRecord.Remark); //描述
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters);
             return ParseHelper.ToLong(result);
         }
