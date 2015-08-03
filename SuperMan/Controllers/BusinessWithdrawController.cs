@@ -191,6 +191,7 @@ namespace SuperMan.Controllers
                 Operator = UserContext.Current.Name,
                 Remark = "商户提款申请单确认打款",
                 Status = BusinessWithdrawFormStatus.Paying.GetHashCode(),
+                OldStatus = BusinessWithdrawFormStatus.Allow.GetHashCode(),
                 WithwardId = Convert.ToInt64(withwardId)
             };
             var reg = iBusinessFinanceProvider.BusinessWithdrawPaying(businessWithdrawLog);
@@ -232,6 +233,7 @@ namespace SuperMan.Controllers
                 Operator = UserContext.Current.Name,
                 Remark = "商户提款申请单打款失败-" + payFailedReason,
                 Status = BusinessWithdrawFormStatus.Error.GetHashCode(),
+                OldStatus = BusinessWithdrawFormStatus.Allow.GetHashCode(),
                 WithwardId = Convert.ToInt64(withwardId),
                 PayFailedReason = payFailedReason
                 

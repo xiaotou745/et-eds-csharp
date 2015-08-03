@@ -230,10 +230,11 @@ INTO BusinessWithdrawLog
   [Remark],
   [Operator],
   [OperatTime])
- WHERE  Id = @Id");
+ WHERE  Id = @Id AND [Status]=@OldStatus");
 
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Status", model.Status);
+            parm.AddWithValue("@OldStatus", model.OldStatus);
             parm.AddWithValue("@Operator", model.Operator);
             parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@Id", model.WithwardId);
@@ -265,7 +266,7 @@ INTO BusinessWithdrawLog
   [Remark],
   [Operator],
   [OperatTime])
- WHERE  Id = @Id");
+ WHERE  Id = @Id and [Status]=1");
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Status", model.Status);
             parm.AddWithValue("@Operator", model.Operator);
@@ -301,9 +302,10 @@ INTO BusinessWithdrawLog
   [Remark],
   [Operator],
   [OperatTime])
- WHERE  Id = @Id");
+ WHERE  Id = @Id AND [Status]=@OldStatus ");
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Status", model.Status);
+            parm.AddWithValue("@OldStatus", model.OldStatus);
             parm.AddWithValue("@Operator", model.Operator);
             parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@PayFailedReason", model.PayFailedReason);
@@ -746,7 +748,7 @@ where b.Id=@BusinessId;");
         public BusinessFinanceAccountModel GetBusinessFinanceAccount(string withwardId)
         {
             string sql = @"  
-SELECT    bwf.BusinessId
+SELECT     bwf.BusinessId
 		  ,bwf.TrueName
 		  ,bwf.AccountNo
 		  ,bwf.OpenBank
@@ -762,22 +764,26 @@ SELECT    bwf.BusinessId
 		  ,bwf.PhoneNo
 		  ,bwf.AccountType
 		  ,bwf.BelongType
-		  ,b.IDCard BusiIDCard
           ,bfa.YeepayStatus
 		  ,ypu.Ledgerno YeepayKey
 		  ,ISNULL(ypu.BalanceRecord,0) BalanceRecord
 		  ,ISNULL(ypu.YeeBalance,0) YeeBalance
           ,bfa.Id
   FROM BusinessWithdrawForm bwf with(nolock)
-  JOIN business b with(nolock) on b.id=bwf.BusinessId and bwf.Id=@withwardId AND bwf.[Status]=2
-  JOIN  BusinessFinanceAccount bfa with(nolock) ON bfa.BusinessId=bwf.BusinessId
+  JOIN BusinessFinanceAccount bfa with(nolock) ON bfa.BusinessId=bwf.BusinessId and bwf.Id=@withwardId 
   LEFT JOIN ( SELECT tblypu.UserId,tblypu.Ledgerno,tblypu.BankName,tblypu.BankAccountNumber,tblypu.BalanceRecord,tblypu.YeeBalance
 			  FROM(
-			  SELECT UserId,MAX(Addtime) Addtime
-			  FROM YeePayUser(NOLOCK) 
-			  GROUP BY UserId,BankName,BankAccountNumber) tbl
-			  JOIN YeePayUser tblypu (NOLOCK) ON  tblypu.Addtime=tbl.Addtime AND tblypu.UserId = tbl.UserId) ypu  
-		ON ypu.UserId=bwf.BusinessId  AND ypu.BankAccountNumber=bwf.AccountNo AND ypu.BankName=bwf.OpenBank";
+			      SELECT UserId,BankName,BankAccountNumber,MAX(Addtime) Addtime
+			      FROM YeePayUser(NOLOCK) 
+			      GROUP BY UserId,BankName,BankAccountNumber) tbl
+			  JOIN YeePayUser tblypu (NOLOCK) 
+                ON  tblypu.Addtime=tbl.Addtime 
+                AND tblypu.UserId = tbl.UserId 
+                AND tblypu.BankName=tbl.BankName 
+                AND tblypu.BankAccountNumber=tbl.BankAccountNumber) ypu  
+		 ON ypu.UserId=bwf.BusinessId  
+        AND ypu.BankAccountNumber=bwf.AccountNo 
+        AND ypu.BankName=bwf.OpenBank";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@withwardId", withwardId);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);

@@ -142,7 +142,9 @@ namespace Ets.Dao.Clienter
         {
 
             ClienterLoginResultModel model = null;
-            const string querysql = @"select  c.Id as userId ,
+            const string querysql = @"select 
+        c.WorkStatus,
+        c.Id as userId ,
         c.phoneNo ,
         c.[status] ,
         c.AccountBalance as Amount ,
@@ -578,7 +580,9 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.FromClienter, OrderConst.O
         /// <returns></returns>
         public ClienterStatusModel GetUserStatus(int userId)
         {
-            string sql = @" select  c.Id as userid ,
+            string sql = @" select 
+        c.WorkStatus,
+        c.Id as userid ,
         c.[status] ,
         c.phoneno ,
         c.AccountBalance as amount ,

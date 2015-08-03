@@ -128,8 +128,15 @@ namespace ETS.Enums
         [DisplayText("失败")]
         Fail = 0 ,
         [DisplayText("该配送公司名称已存在")]
-        HadExist = 2
+        HadExist = 2 
+    }
 
+    public enum YeePayRechargeStatus
+    {
+        [DisplayText("成功")]
+        Success = 1,
+        [DisplayText("失败")]
+        Fail = 0
     }
 
     public enum BusiAddAddressStatus : int

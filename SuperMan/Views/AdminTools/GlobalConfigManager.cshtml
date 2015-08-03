@@ -14,13 +14,13 @@
             <tr>
                 <td>
                     <span>骑士有待完成任务经纬度上传时间间隔:</span>
-                    <input type="text" name="uploadTimeInterval" value="@globalConfigModel.HasUnFinishedOrderUploadTimeInterval" id="hasUnFinishedOrderUploadTimeInterval" style="width: 100px" />秒
-                    <input type="hidden" name="oldUploadTimeInterval" value="@globalConfigModel.HasUnFinishedOrderUploadTimeInterval" id="oldHasUnFinishedOrderUploadTimeInterval" />
+                    <input type="text" name="hasUnFinishedOrderUploadTimeInterval" value="@globalConfigModel.HasUnFinishedOrderUploadTimeInterval" id="hasUnFinishedOrderUploadTimeInterval" style="width: 100px" />秒
+                    <input type="hidden" name="oldHasUnFinishedOrderUploadTimeInterval" value="@globalConfigModel.HasUnFinishedOrderUploadTimeInterval" id="oldHasUnFinishedOrderUploadTimeInterval" />
                 </td>
                 <td>
                     <span>骑士没有待完成任务经纬度上传时间间隔:</span>
-                    <input type="text" name="uploadTimeInterval" value="@globalConfigModel.AllFinishedOrderUploadTimeInterval" id="allFinishedOrderUploadTimeInterval" style="width: 100px" />秒
-                    <input type="hidden" name="oldUploadTimeInterval" value="@globalConfigModel.AllFinishedOrderUploadTimeInterval" id="oldAllFinishedOrderUploadTimeInterval" />
+                    <input type="text" name="allFinishedOrderUploadTimeInterval" value="@globalConfigModel.AllFinishedOrderUploadTimeInterval" id="allFinishedOrderUploadTimeInterval" style="width: 100px" />秒
+                    <input type="hidden" name="oldAllFinishedOrderUploadTimeInterval" value="@globalConfigModel.AllFinishedOrderUploadTimeInterval" id="oldAllFinishedOrderUploadTimeInterval" />
                 </td>
             </tr>
             <tr>
@@ -77,6 +77,23 @@
                     <input type="text" name="withdrawCommission" value="@globalConfigModel.WithdrawCommission" id="withdrawCommission" style="width: 100px" />元
                     <input type="hidden" name="oldWithdrawCommission" value="@globalConfigModel.WithdrawCommission" id="oldWithdrawCommission" />
                 </td>
+                @*<td>
+                    <span>易宝活跃账户时间配置:</span>
+                    <input type="text" name="yeeAccountActiveTime" value="@globalConfigModel.YeeAccountActiveTime" id="yeeAccountActiveTime" style="width: 100px" />天
+                    <input type="hidden" name="oldYeeAccountActiveTime" value="@globalConfigModel.YeeAccountActiveTime" id="oldYeeAccountActiveTime" />
+                </td>*@
+                <td>
+                    <span>商家经纬度上传时间间隔:</span>
+                    <input type="text" name="businessUploadTimeInterval" value="@globalConfigModel.BusinessUploadTimeInterval" id="businessUploadTimeInterval" style="width: 100px" />秒
+                    <input type="hidden" name="oldBusinessUploadTimeInterval" value="@globalConfigModel.BusinessUploadTimeInterval" id="oldBusinessUploadTimeInterval" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>查询骑士x分钟内坐标数据:</span>
+                    <input type="text" name="bearchClienterLocationTimeInterval" value="@globalConfigModel.SearchClienterLocationTimeInterval" id="searchClienterLocationTimeInterval" style="width: 100px" />分
+                    <input type="hidden" name="oldSearchClienterLocationTimeInterval" value="@globalConfigModel.SearchClienterLocationTimeInterval" id="oldSearchClienterLocationTimeInterval" />
+                </td>
                 <td>
                     <input type="button" value="提交修改" class="searchBtn" id="btnCommit" />
                 </td>
@@ -99,7 +116,9 @@
             var withdrawCommission = $("#withdrawCommission").val(); //易宝支付手续费金额
             var orderCountSetting = $("#orderCountSetting").val(); //无效订单判定时累计完成订单数量
             var grabToCompleteDistance = $("#grabToCompleteDistance").val(); //无效订单判定时抢单点和完成点的距离
-
+            var businessUploadTimeInterval = $("#businessUploadTimeInterval").val(); //商家经纬度上传时间间隔
+            var searchClienterLocationTimeInterval = $("#searchClienterLocationTimeInterval").val(); //商家经纬度上传时间间隔
+            //var yeeAccountActiveTime = $("#yeeAccountActiveTime").val(); //易宝活跃账户时间配置
             var oldHasUnFinishedOrderUploadTimeInterval = $("#oldHasUnFinishedOrderUploadTimeInterval").val(); //骑士有待完成任务经纬度上传时间间隔（之前）
             var oldAllFinishedOrderUploadTimeInterval = $("#oldAllFinishedOrderUploadTimeInterval").val(); //骑士没有待完成任务经纬度上传时间间隔（之前）
             var oldPushRadius = $("#oldPushRadius").val(); //推送半径（之前）
@@ -111,7 +130,9 @@
             var oldWithdrawCommission = $("#oldWithdrawCommission").val(); //易宝支付手续费金额（之前）
             var oldOrderCountSetting = $("#oldOrderCountSetting").val(); //无效订单判定时累计完成订单数量
             var oldGrabToCompleteDistance = $("#oldGrabToCompleteDistance").val(); //无效订单判定时抢单点和完成点的距离
-
+            var oldBusinessUploadTimeInterval = $("#oldBusinessUploadTimeInterval").val(); //商家经纬度上传时间间隔（之前）
+            var oldSearchClienterLocationTimeInterval = $("#oldSearchClienterLocationTimeInterval").val();
+            //var oldYeeAccountActiveTime = $("#oldYeeAccountActiveTime").val(); //易宝活跃账户时间配置（之前）
 
             var pageOk = true;
             $(":text").each(function (index, obj) {
@@ -154,6 +175,24 @@
                 return;
             }
             if (allFinishedOrderUploadTimeInterval < 0) {
+                alert("请输入大于零的值!");
+                return;
+            }
+
+            if (isNaN(businessUploadTimeInterval)) {
+                alert("请输入正确的数字!");
+                return;
+            }
+            if (businessUploadTimeInterval < 0) {
+                alert("请输入大于零的值!");
+                return;
+            }
+
+            if (isNaN(searchClienterLocationTimeInterval)) {
+                alert("请输入正确的数字!");
+                return;
+            }
+            if (searchClienterLocationTimeInterval < 0) {
                 alert("请输入大于零的值!");
                 return;
             }
@@ -212,6 +251,14 @@
                 alert("雇主任务时间限制不能为空!");
                 return;
             }
+            //if (yeeAccountActiveTime == "") {
+            //    alert("易宝活跃账户时间配置不能为空!");
+            //    return;
+            //}
+            //if (yeeAccountActiveTime < 0) {
+            //    alert("易宝活跃账户时间配置大于0!");
+            //    return;
+            //}
             var reg = /^\d{1,2}:\d{2}-\d{1,2}:\d{2}$/;
             if (!reg.test(employerTaskTimeSet)) {
                 alert('对不起，您输入的雇主任务时间格式不正确!');
@@ -233,7 +280,9 @@
 	            completeTimeSet == oldCompleteTimeSet &&
 	            employerTaskTimeSet == oldEmployerTaskTimeSet &&
 	            orderCountSetting == oldOrderCountSetting &&
-                grabToCompleteDistance == oldGrabToCompleteDistance) {
+                grabToCompleteDistance == oldGrabToCompleteDistance && 
+                businessUploadTimeInterval == oldBusinessUploadTimeInterval && 
+                searchClienterLocationTimeInterval == oldSearchClienterLocationTimeInterval) {
                 alert("没有需要修改的信息!");
                 return;
             }
@@ -250,7 +299,9 @@
                     "completeTimeSet": completeTimeSet,
                     "employerTaskTimeSet": employerTaskTimeSet,
                     "orderCountSetting": orderCountSetting,
-                    "grabToCompleteDistance": grabToCompleteDistance
+                    "grabToCompleteDistance": grabToCompleteDistance,
+                    "businessUploadTimeInterval": businessUploadTimeInterval,
+                    "searchClienterLocationTimeInterval": searchClienterLocationTimeInterval
                 };
                 var url = "/AdminTools/ModifyGlobalConfig";
                 $.ajax({

@@ -4,6 +4,7 @@ using ETS.Dao;
 using ETS.Data;
 using ETS.Data.Core;
 using ETS.Data.PageData;
+using Ets.Model.DomainModel.Statistics;
 using Ets.Model.ParameterModel.Finance;
 using ETS.Util;
 using System;
@@ -421,7 +422,7 @@ and a.PhoneNo=@PhoneNo";
             //{
             //    sbSqlWhere.AppendFormat(" AND b.City IN ({0}) ", criteria.AuthorityCityNameListStr.Trim());
             //}
-            if (!string.IsNullOrEmpty(criteria.AuthorityCityNameListStr)&&criteria.UserType!=0)
+            if (!string.IsNullOrEmpty(criteria.AuthorityCityNameListStr) && criteria.UserType != 0)
             {
                 sbSqlWhere.AppendFormat(" AND b.City IN ({0}) ", criteria.AuthorityCityNameListStr.Trim());
             }
@@ -556,7 +557,9 @@ order by a.id desc
                                 b.OriginalBusiId,
                                 BusinessGroup.StrategyId,
                                 b.BalancePrice,
-                                b.OneKeyPubOrder 
+                                b.OneKeyPubOrder,
+                                b.IsAllowOverdraft,
+                                b.IsEmployerTask 
                                 FROM dbo.business as b WITH(NOLOCK)
                                 left join BusinessGroup on b.BusinessGroupId=BusinessGroup.Id
                                 WHERE b.Id = @busiId";
@@ -1580,7 +1583,7 @@ where BusinessId=@BusinessId and IsEnable=1";
                 }
                 if (dataRow["OpenProvinceCode"] != null && dataRow["OpenProvinceCode"] != DBNull.Value)
                 {
-                    bf.OpenProvinceCode = ParseHelper.ToInt(dataRow["OpenProvinceCode"],0);
+                    bf.OpenProvinceCode = ParseHelper.ToInt(dataRow["OpenProvinceCode"], 0);
                 }
                 if (dataRow["OpenCityCode"] != null && dataRow["OpenCityCode"] != DBNull.Value)
                 {
@@ -1935,8 +1938,10 @@ ORDER BY btr.Id;";
         /// <returns></returns>
         public bool ModifyBusinessDetail(BusinessDetailModel model)
         {
-
-            string remark = model.OptUserName + "通过后台管理系统修改商户信息";
+            BusListResultModel brm = GetBusiness(model.Id);
+            string remark = GetRemark(brm, model); 
+            //商铺名称、联系电话、联系座机、配 送 费、城 市、地 址、经 纬 度、结算比例设置、补贴策略设置(应付)、
+            //补贴策略、餐费结算方式、一键发单、余额可以透支、使用雇主任务时间限制、第三方ID 
             string sql = @"UPDATE business 
                             SET Name=@Name,
                                 Landline=@Landline,
@@ -2011,6 +2016,95 @@ IsAllowOverdraft=@IsAllowOverdraft,
             parm.AddWithValue("@IsEmployerTask", model.IsEmployerTask);
             parm.Add("@IsAllowOverdraft", DbType.Int16).Value = model.IsAllowOverdraft;
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
+        }
+        /// <summary>
+        /// 修改商户信息，构建备注字段
+        /// </summary>
+        /// <param name="brm"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        private string GetRemark(BusListResultModel brm, BusinessDetailModel model)
+        {
+            StringBuilder remark = new StringBuilder(model.OptUserName + "通过后台管理系统修改商户信息:");
+            if (brm.Id > 0)
+            {
+                if (brm.Name != model.Name)
+                {
+                    remark.AppendFormat("商户名原值:{0},修改为{1};", brm.Name, model.Name);
+                }
+                if (brm.PhoneNo2 != model.PhoneNo2)
+                {
+                    remark.AppendFormat("联系电话原值:{0},修改为{1};", brm.PhoneNo2, model.PhoneNo2);
+                }
+                //座机
+                if (brm.Landline != model.Landline)
+                {
+                    remark.AppendFormat("联系座机原值:{0},修改为{1};", brm.Landline, model.Landline);
+                }
+                if (brm.DistribSubsidy != model.DistribSubsidy)
+                {
+                    remark.AppendFormat("配送费原值:{0},修改为{1};", brm.DistribSubsidy, model.DistribSubsidy);
+                }
+                if (brm.City != model.City)
+                {
+                    remark.AppendFormat("城市原值:{0},修改为{1};", brm.City, model.City);
+                }
+                if (brm.district != model.district)
+                {
+                    remark.AppendFormat("区域原值:{0},修改为{1};", brm.district, model.district);
+                }
+                if (brm.Longitude != model.Longitude)
+                {
+                    remark.AppendFormat("经度原值:{0},修改为{1};", brm.Longitude, model.Longitude);
+                }
+                if (brm.Latitude != model.Latitude)
+                {
+                    remark.AppendFormat("纬度原值:{0},修改为{1};", brm.Latitude, model.Latitude);
+                }
+                if (brm.CommissionType != model.CommissionType)
+                {
+                    remark.AppendFormat("结算类型原值:{0},修改为{1};", brm.CommissionType, model.CommissionType);
+                    if (model.CommissionType == 1)
+                    {
+                        remark.AppendFormat("固定比例原值:{0},修改为{1};", brm.BusinessCommission, model.BusinessCommission);
+                    }
+                    if (model.CommissionType == 2)
+                    {
+                        remark.AppendFormat("固定金额原值:{0},修改为{1};", brm.CommissionFixValue, model.CommissionFixValue);
+                    }
+                }
+                //补贴策略 BusinessGroupId
+                if (brm.BusinessGroupId != model.BusinessGroupId)
+                {
+                    remark.AppendFormat("补贴策略原值:{0},修改为{1};", brm.BusinessGroupId, model.BusinessGroupId);
+                }
+                //餐费结算方式
+                if (brm.MealsSettleMode != model.MealsSettleMode)
+                {
+                    remark.AppendFormat("餐费结算方式原值:{0},修改为{1};", brm.MealsSettleMode, model.MealsSettleMode);
+                }
+                //一键发单
+                if (brm.OneKeyPubOrder != model.OneKeyPubOrder)
+                {
+                    remark.AppendFormat("一键发单原值:{0},修改为{1};", brm.OneKeyPubOrder, model.OneKeyPubOrder);
+                }
+                //余额可以透支
+                if (brm.IsAllowOverdraft != model.IsAllowOverdraft)
+                {
+                    remark.AppendFormat("余额透支原值:{0},修改为{1};", brm.IsAllowOverdraft, model.IsAllowOverdraft);
+                }
+                //雇主任务时间限制
+                if (brm.IsEmployerTask != model.IsEmployerTask)
+                {
+                    remark.AppendFormat("余额透支原值:{0},修改为{1};", brm.IsEmployerTask, model.IsEmployerTask);
+                }
+                //第三方Id
+                if (model.OriginalBusiId != model.OriginalBusiId)
+                {
+                    remark.AppendFormat("第三方ID原值:{0},修改为{1};", brm.OriginalBusiId, model.OriginalBusiId);
+                }
+            }
+            return remark.ToString();
         }
         /// <summary>
         /// 删除商户第三方绑定关系记录
@@ -2318,7 +2412,7 @@ VALUES
             {
                 sqlwhere += string.Format(" AND B.City='{0}' ", criteria.BusinessCity);
             }
-            if (criteria.AuthorityCityNameListStr != null && !string.IsNullOrEmpty(criteria.AuthorityCityNameListStr.Trim())&&criteria.UserType!=0)
+            if (criteria.AuthorityCityNameListStr != null && !string.IsNullOrEmpty(criteria.AuthorityCityNameListStr.Trim()) && criteria.UserType != 0)
             {
                 sqlwhere += string.Format("  AND B.City IN({0}) ", criteria.AuthorityCityNameListStr);
             }
@@ -2472,6 +2566,46 @@ MERGE INTO BusinessExpressRelation ber
             var sql = @"select b.Id,b.CheckPicUrl,b.BusinessLicensePic from [business](nolock) as b where b.CheckPicUrl is not null or b.BusinessLicensePic is not null";
             var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql));
             var list = ConvertDataTableList<BusinessPicModel>(dt);
+            return list;
+        }
+
+        /// <summary>
+        /// 插入商家坐标位置    add by 彭宜    20150727
+        /// </summary>
+        /// <param name="businessId"></param>
+        /// <param name="longitude"></param>
+        /// <param name="latitude"></param>
+        /// <param name="platform"></param>
+        /// <returns></returns>
+        public long InsertLocation(int businessId, decimal longitude, decimal latitude,string platform)
+        {
+            const string insertSql = @"
+insert into BusinessLocation(Longitude,Latitude,BusinessId,Platform)
+values(@Longitude,@Latitude,@BusinessId,@Platform)
+select @@IDENTITY
+";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("Longitude", longitude);
+            dbParameters.AddWithValue("Latitude", latitude);
+            dbParameters.AddWithValue("BusinessId", businessId);
+            dbParameters.AddWithValue("Platform", platform);
+            object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters);
+            return ParseHelper.ToLong(result);
+        }
+
+        /// <summary>
+        /// 获得商家app启动热力图
+        /// </summary>
+        /// <param name="cityId"></param>
+        /// <returns></returns>
+        public IList<AppActiveInfo> GetAppActiveInfos(string cityId)
+        {
+            const string sql = @"
+select 1 as UserType, b.Name as TrueName,b.Longitude,b.Latitude,b.PhoneNo as Phone from business b (NOLOCK) where b.CityId=@CityId";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("CityId", cityId.Trim());
+            var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, dbParameters));
+            var list = MapRows<AppActiveInfo>(dt);
             return list;
         }
     }

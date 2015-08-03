@@ -45,5 +45,10 @@ namespace Ets.Model.DataModel.Clienter
         /// 是否显示 金额 0隐藏 1 显示
         /// </summary>
         public int IsDisplay { get; set; }
+
+        /// <summary>
+        /// 超人状态 0上班  1下班 默认为0
+        /// </summary>
+        public int WorkStatus { get; set; }
     }
 }

@@ -40,11 +40,6 @@ namespace ETS.Const
         public const string Ets_Service_Provider_Common_GetPublicBankCity_New = "Ets_Service_Provider_Common_GetPublicBankCity_New";
 
         /// <summary>
-        /// 骑士提现锁
-        /// </summary>
-        public const string Ets_Withdraw_Lock_C = "Ets_Withdraw_Lock_C_{0}";
-
-        /// <summary>
         /// 骑士端登录
         /// </summary>
         public const string LoginCount_C = "LoginCount_C_";
@@ -64,10 +59,6 @@ namespace ETS.Const
         /// </summary>
         public const string PostForgetPwdCount_C = "PostForgetPwdCount_C";
 
-        /// <summary>
-        /// 商家提现锁
-        /// </summary>
-        public const string Ets_Withdraw_Lock_B = "Ets_Withdraw_Lock_B_{0}";
         /// <summary>
         /// 商家端登录
         /// </summary>
@@ -143,5 +134,14 @@ namespace ETS.Const
         /// 骑士获取自己的物流公司
         /// </summary>
         public const string ClienterGetDeliveryCompany = "Clienter_GetDeliveryCompany_{0}";
+        /// <summary>
+        /// 商家提现锁
+        /// </summary>
+        public const string Ets_Withdraw_Lock_B = "Ets_Withdraw_Lock_B_{0}";
+        /// <summary>
+        /// 骑士提现锁
+        /// </summary>
+        public const string Ets_Withdraw_Lock_C = "Ets_Withdraw_Lock_C_{0}";
+
     }
 }

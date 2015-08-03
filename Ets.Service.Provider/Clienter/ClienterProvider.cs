@@ -52,6 +52,7 @@ namespace Ets.Service.Provider.Clienter
         readonly OrderChildDao orderChildDao = new OrderChildDao();
         readonly GlobalConfigDao globalConfigDao = new GlobalConfigDao();
         readonly ClienterBalanceRecordDao clienterBalanceRecordDao = new ClienterBalanceRecordDao();
+        readonly ClienterAllowWithdrawRecordDao clienterAllowWithdrawRecordDao = new ClienterAllowWithdrawRecordDao();
         readonly BusinessDao businessDao = new BusinessDao();
         readonly BusinessClienterRelationDao businessClienterDao = new BusinessClienterRelationDao();
         readonly BusinessBalanceRecordDao businessBalanceRecordDao = new BusinessBalanceRecordDao();
@@ -705,14 +706,10 @@ namespace Ets.Service.Provider.Clienter
 
                 //写入骑士完成坐标                 
                 orderOtherDao.UpdateComplete(parModel);
-                string mess = "更新坐标:" + parModel.orderId;
-                LogHelper.LogWriter(" FinishOrder", new { obj = "时间：" + DateTime.Now.ToString() + mess });
 
                 //更新骑士和商家金额
                 bool blUpdate = UpdateMoney(myOrderInfo, parModel);
-                mess = "更新骑士和商家金额订单Id:" + myOrderInfo.Id;
-                mess += "列新状态:" + blUpdate.ToString();
-                LogHelper.LogWriter(" FinishOrder", new { obj = "时间：" + DateTime.Now.ToString() + mess });
+              
                 if (!blUpdate)
                 {
                     return model;
@@ -881,10 +878,25 @@ namespace Ets.Service.Provider.Clienter
                 Balance = accountBalance ?? 0,
                 RecordType = ClienterBalanceRecordRecordType.OrderCommission.GetHashCode(),
                 Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士:" + userId : myOrderInfo.ClienterName,
+                WithwardId = myOrderInfo.Id,
                 RelationNo = myOrderInfo.OrderNo,
                 Remark = "骑士完成订单"
             };
             clienterBalanceRecordDao.Insert(cbrm);
+
+            ClienterAllowWithdrawRecord cawrm = new ClienterAllowWithdrawRecord()
+            {
+                ClienterId = userId,
+                Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
+                Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(),
+                Balance = accountBalance ?? 0,
+                RecordType = ClienterAllowWithdrawRecordType.OrderCommission.GetHashCode(),
+                Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士:" + userId : myOrderInfo.ClienterName,
+                WithwardId = myOrderInfo.Id,
+                RelationNo = myOrderInfo.OrderNo,
+                Remark = "骑士完成订单"
+            };
+            clienterAllowWithdrawRecordDao.Insert(cawrm);
         }
 
 
@@ -1011,12 +1023,6 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="orderOther"></param>
         void UpdateClienterMoney(OrderListModel myOrderInfo, UploadReceiptModel uploadReceiptModel, OrderOther orderOther)
         {
-            string mess = "付款方式:" + myOrderInfo.IsPay;
-            mess += " 订单编号:" + myOrderInfo.OrderNo;
-            mess += " HadUploadCount:" + myOrderInfo.HadUploadCount;
-            mess += " NeedUploadCount:" + myOrderInfo.NeedUploadCount;
-            LogHelper.LogWriter(" UpdateClienterMoney", new { obj = "时间：" + DateTime.Now.ToString() + mess });
-
             if ((bool)myOrderInfo.IsPay)//已付款
             {
                 //上传完小票
@@ -1068,12 +1074,6 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="orderOther"></param>
         bool UpdateMoney(OrderListModel myOrderInfo, OrderCompleteModel parModel)
         {
-            string mess = "付款方式:" + myOrderInfo.IsPay;
-            mess += " 订单编ID:" + myOrderInfo.Id;
-            mess += " HadUploadCount:" + myOrderInfo.HadUploadCount;
-            mess += " OrderCount:" + myOrderInfo.OrderCount;
-            LogHelper.LogWriter(" UpdateMoney", new { obj = "时间：" + DateTime.Now.ToString() + mess });
-
             if (ParseHelper.ToBool(myOrderInfo.IsPay, false))//已付款
             {
                 //上传完小票
@@ -1409,14 +1409,16 @@ namespace Ets.Service.Provider.Clienter
         /// </summary>
         /// <param name="myOrderInfo"></param>
         /// <returns></returns>
-        private bool CheckIsNotRealOrder(OrderListModel myOrderInfo)
+        private bool CheckIsNotRealOrder(OrderListModel myOrderInfo, out string reason)
         {
             OrderMapDetail mapDetail = orderDao.GetOrderMapDetail(myOrderInfo.Id);
             GlobalConfigModel globalSetting = GlobalConfigDao.GlobalConfigGet(0);
+            reason = "";
             if (mapDetail.GrabToCompleteDistance > -1)//如果抢单和完成两个点的坐标都有效，才进行距离判断
             {
                 if (mapDetail.GrabToCompleteDistance <= ParseHelper.ToInt(globalSetting.GrabToCompleteDistance, 0))
                 {
+                    reason = "接单完成位置重合";
                     return true;
                 }
             }
@@ -1426,13 +1428,16 @@ namespace Ets.Service.Provider.Clienter
             if (!(myOrderInfo.GrabTime.Value.AddMinutes(5) < actualDoneDate &&
                 actualDoneDate < myOrderInfo.GrabTime.Value.AddMinutes(120)))
             {
+                reason = "完成时间不在5-120分钟内";
                 return true;
             }
 
-            int num = orderDao.GetTotalOrderNumByClienterID(myOrderInfo.clienterId);
+            int num = orderDao.GetTotalOrderNumByClienterID(myOrderInfo.clienterId, actualDoneDate);
+            var orderCountSetting = ParseHelper.ToInt(globalSetting.OrderCountSetting, 50);
             //如果骑士今天已经完成（或完成后，又取消了,不包含当前任务中的订单数量）的订单数量大于配置的值，则当前任务中的所有订单都扣除网站补贴
-            if (num - myOrderInfo.OrderCount > ParseHelper.ToInt(globalSetting.OrderCountSetting, 50))
+            if (num > orderCountSetting)
             {
+                reason = string.Format("完成订单量超过{0}个", orderCountSetting);
                 return true;
             }
 
@@ -1468,10 +1473,11 @@ namespace Ets.Service.Provider.Clienter
                 }
                 return;
             }
-            bool isNotRealOrder = CheckIsNotRealOrder(myOrderInfo);
+            var deductCommissionReason = "";
+            bool isNotRealOrder = CheckIsNotRealOrder(myOrderInfo, out deductCommissionReason);
             if (isNotRealOrder)
             {
-                orderOtherDao.UpdateOrderIsReal(myOrderInfo.Id);
+                
                 realOrderCommission = realOrderCommission > myOrderInfo.SettleMoney ? myOrderInfo.SettleMoney : realOrderCommission;
             }
 
@@ -1501,6 +1507,7 @@ namespace Ets.Service.Provider.Clienter
 
                     orderDao.InsertNotRealOrderLog(myOrderInfo.Id, diffOrderCommission * (-1));
                 }
+                orderOtherDao.UpdateOrderIsReal(myOrderInfo.Id, deductCommissionReason);
             }
         }
         /// <summary>
@@ -1568,6 +1575,20 @@ namespace Ets.Service.Provider.Clienter
                 Remark = "无效订单"
             };
             clienterBalanceRecordDao.Insert(cbrm);
+
+            ClienterAllowWithdrawRecord cawrm = new ClienterAllowWithdrawRecord()
+            {
+                ClienterId = myOrderInfo.clienterId,
+                Amount = realOrderCommission,
+                Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(),
+                Balance = accountBalance ?? 0,
+                RecordType = ClienterAllowWithdrawRecordType.BalanceAdjustment.GetHashCode(),
+                Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士" : myOrderInfo.ClienterName,
+                WithwardId = myOrderInfo.Id,
+                RelationNo = myOrderInfo.OrderNo,
+                Remark = "无效订单"
+            };
+            clienterAllowWithdrawRecordDao.Insert(cawrm);
         }
         /// <summary>
         /// 修改骑士详细信息

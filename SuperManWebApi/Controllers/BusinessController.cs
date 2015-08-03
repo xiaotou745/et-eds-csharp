@@ -183,5 +183,18 @@ namespace SuperManWebApi.Controllers
             //修改商户地址信息，返回当前商户的状态
             return iBusinessProvider.UpdateBusinessInfoB(model);
         }
+
+        /// <summary>
+        /// 商家坐标上传              
+        /// </summary>
+        /// <UpdateBy>彭宜</UpdateBy>
+        /// <UpdateTime>20150727</UpdateTime>
+        /// <returns></returns>     
+        [HttpPost]
+        [ApiVersion]
+        public ResultModel<object> PushLocaltion(BusinessPushLocaltionPM model)
+        {
+            return iBusinessProvider.InsertLocaltion(model);
+        }
     }
 }
