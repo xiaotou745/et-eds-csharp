@@ -207,6 +207,12 @@
                             <input type="button" value="取消订单" class="searchBtn" id="btnCancel" />
                         }
                     </td>
+                    <td>
+                        @if (ViewBag.IsShowDeductWebSubsidyBtn)
+                        {
+                            <input type="button" value="扣除网站补贴" class="searchBtn" id="btnDeductWebSubsidy" />
+                        }
+                    </td>
                 </tr>
             </table>
         </div>
@@ -228,6 +234,24 @@
             </p>
         </div>
     </div>
+    
+    <div class="selectSupplierDish">
+        <div class="add-openbox add-form" id="deductWebSubsidyShow" style="width:500px">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="deductWebSubsidyReason">扣除网站补贴原因</label>
+                    <div class="controls">
+                        <textarea cols="45" rows="5" id="deductWebSubsidyReason"></textarea>
+                        <p class="help-block"></p>
+                    </div>
+                </div>
+            </fieldset>
+            <p class="btnbox">
+                <input value="确认" type="button" id="btnSaveDeductWebSubsidy" class="yesBtn" />
+                <input value="关闭" type="button" class="J_closebox qxBtn" />
+            </p>
+        </div>
+    </div>
 </div>
 <script>
     var adminjs = new adminglass(); //实例化后台类
@@ -241,6 +265,14 @@
         
         adminjs.openwinbox('#OrderOptionShow');
 
+    });
+    //扣除网站补贴
+    $("#btnDeductWebSubsidy").click(function () {
+        if ($("#IsEnable").val().trim() == "0") {
+            alert("已删除的订单不取扣除网站补贴！");
+            return false;
+        }
+        adminjs.openwinbox('#deductWebSubsidyShow');
     });
     $('.J_closebox').click(function () {
         adminjs.closewinbox('.add-openbox');
@@ -257,6 +289,35 @@
         if (confirm("确定要取消该订单吗？")) {
             var paramaters = { "OrderNo": orderNo, "OrderOptionLog": orderOptionLog };
             var url = "/Order/CancelOrder";
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: paramaters,
+                success: function (result) {
+                    if (result.IsSuccess) {
+                        alert(result.Message);
+                        adminjs.closewinbox('.add-openbox');
+                        window.location.href = "/Order/OrderDetail?orderNo=" + orderNo + "&orderId=" + orderId;
+                    } else {
+                        alert(result.Message);
+                    }
+                }
+            });
+        }
+        return true;
+    });
+
+    $('#btnSaveDeductWebSubsidy').bind('click', function () {
+        var orderNo = $('#OrderNo').val();
+        var orderId = $('#OrderId').val();
+        var orderOptionLog = $('#deductWebSubsidyReason').val();
+        if ($("#orderOptionLog").val().trim() == "") {
+            alert("扣除网站补贴原因不能为空！");
+            return false;
+        }
+        if (confirm("确定要扣除该订单网站补贴吗？")) {
+            var paramaters = { "OrderNo": orderNo, "OrderOptionLog": orderOptionLog };
+            var url = "/Order/DeductWebSubsidy";
             $.ajax({
                 type: 'POST',
                 url: url,

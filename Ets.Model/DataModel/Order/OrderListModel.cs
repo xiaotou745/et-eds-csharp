@@ -331,5 +331,10 @@ namespace Ets.Model.DataModel.Order
         /// 扣除补贴原因
         /// </summary>
         public string DeductCommissionReason { get; set; }
+
+        /// <summary>
+        /// 是否已完成
+        /// </summary>
+        public int FinishAll { get; set; }
     }
 }

@@ -13,7 +13,8 @@ using Ets.Service.Provider.Distribution;
 using Ets.Service.Provider.Order;
 using Ets.Service.IProvider.Common;
 using Ets.Service.Provider.Common;
-using SuperMan.App_Start;
+﻿using NPOI.SS.Formula.Functions;
+﻿using SuperMan.App_Start;
 using Ets.Model.ParameterModel.User;
 using Ets.Model.ParameterModel.Order;
 using ETS.Util;
@@ -245,6 +246,7 @@ namespace SuperMan.Controllers
             var orderModel = iOrderProvider.GetOrderByNo(orderNo, orderId);
 
             ViewBag.orderOptionLog = iOrderProvider.GetOrderOptionLog(orderId);
+            ViewBag.IsShowDeductWebSubsidyBtn = IsShowDeductWebSubsidyBtn(orderModel);//是否显示扣除网站补贴按钮
             return View(orderModel);
         }
 
@@ -278,6 +280,39 @@ namespace SuperMan.Controllers
         {
             OrderMapDetail mapDetail = iOrderProvider.GetOrderMapDetail(OrderId);
             return Json(mapDetail);
+        }
+
+        /// <summary>
+        /// 彭宜
+        /// 2015年8月3日 11:32:55
+        /// 扣除网站补贴
+        /// </summary>
+        /// <param name="OrderNo"></param>
+        /// <param name="OrderOptionLog"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult DeductWebSubsidy(string OrderNo, string OrderOptionLog)
+        {
+            OrderOptionModel orderOptionModel = new OrderOptionModel()
+            {
+                OptUserId = UserContext.Current.Id,
+                OptUserName = UserContext.Current.Name,
+                OptLog = OrderOptionLog,
+                OrderNo = OrderNo
+            };
+            var reg = iOrderProvider.CancelOrderByOrderNo(orderOptionModel);
+            return Json(new ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.AllowGet);
+        }
+
+        private bool IsShowDeductWebSubsidyBtn(OrderListModel orderModel)
+        {
+            //只有在已完成订单并且已上传完小票的情况下显示该按钮
+            if (orderModel != null && /*已完成*/ orderModel.FinishAll == 1 && /*订单未分账*/ orderModel.IsJoinWithdraw == 0
+                && /*有权限*/ UserContext.Current.HasAuthority(77) && orderModel.IsEnable == 1)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

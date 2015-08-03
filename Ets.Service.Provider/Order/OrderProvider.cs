@@ -1187,6 +1187,13 @@ namespace Ets.Service.Provider.Order
         /// </summary>
         /// <returns></returns>
         public DealResultInfo CancelOrderByOrderNo(OrderOptionModel orderOptionModel)
+
+        /// <summary>
+        /// 通过订单号扣除订单网站补贴
+        /// 彭宜-20150803
+        /// </summary>
+        /// <returns></returns>
+        public DealResultInfo DeductWebSubsidy(OrderOptionModel orderOptionModel)
         {
             var dealResultInfo = new DealResultInfo
             {
