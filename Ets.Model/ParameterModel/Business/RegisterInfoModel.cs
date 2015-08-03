@@ -38,6 +38,16 @@ namespace Ets.Model.ParameterModel.Business
         /// 时间戳
         /// </summary>
         public string timespan { get; set; }
+
+        /// <summary>
+        /// 手机唯一标识ssid
+        /// </summary>
+        public string Ssid { get; set; }
+
+        /// <summary>
+        /// appkey
+        /// </summary>
+        public string Appkey { get; set; }
     }
 
     /// <summary>

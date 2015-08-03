@@ -57,6 +57,15 @@ namespace Ets.Model.DataModel.Business
         ///第三方店铺id（暂时只有美团）
         /// </summary>
         public string OriginalBusiId { get; set; }
+        /// <summary>
+        /// 唯一健值guid
+        /// </summary>
+        public string Appkey { get; set; }
+
+        /// <summary>
+        /// Tokey值
+        /// </summary>
+        public string Token { get; set; }
         
     }
 }

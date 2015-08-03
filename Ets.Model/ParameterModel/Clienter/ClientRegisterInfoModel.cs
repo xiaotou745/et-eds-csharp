@@ -51,6 +51,11 @@ namespace Ets.Model.ParameterModel.Clienter
         /// 时间戳
         /// </summary>
         public string timespan { get; set; }
+
+        /// <summary>
+        /// 手机唯一标识ssid
+        /// </summary>
+        public string Ssid { get; set; }
     }
     public class ClientRegisterResultModel
     {
@@ -76,6 +81,15 @@ namespace Ets.Model.ParameterModel.Clienter
         /// 是否显示 金额 0隐藏 1 显示
         /// </summary>
         public int IsDisplay { get; set; }
+        /// <summary>
+        /// 唯一健值guid
+        /// </summary>
+        public string Appkey { get; set; }
+
+        /// <summary>
+        /// Tokey值
+        /// </summary>
+        public string Token { get; set; }
 
     }
     public class ClientRegisterInfoModelTranslator : TranslatorBase<clienter, ClientRegisterInfoModel>
@@ -92,6 +106,8 @@ namespace Ets.Model.ParameterModel.Clienter
         public override clienter Translate(ClientRegisterInfoModel from)
         {
             var to = new clienter();
+            string appkey = Guid.NewGuid().ToString();
+            to.Appkey = appkey;
             to.Password = from.passWord;
             to.PhoneNo = from.phoneNo;
             to.InviteCode = from.inviteCode;

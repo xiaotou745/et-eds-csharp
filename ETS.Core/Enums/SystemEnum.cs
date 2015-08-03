@@ -46,6 +46,18 @@ namespace ETS.Enums
         [DisplayText("审核通过")]
         Status1 = 1,
     }
+
+    public enum TokenStatus
+    {
+        [DisplayText("获取失败")]
+         Fail = 0,
+        [DisplayText("获取成功")]
+        Success = 1,
+        [DisplayText("缺少Ssid参数")]
+        NoSsid = 2,
+        [DisplayText("缺少Appkey参数")]
+        NoAppkey = 3,
+    }
     #endregion
 
     #region 列表相关

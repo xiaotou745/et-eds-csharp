@@ -58,6 +58,7 @@ namespace Ets.Service.Provider.Clienter
         readonly DeliveryCompanyProvider deliveryCompanyProvider = new DeliveryCompanyProvider();
         readonly IAreaProvider iAreaProvider = new AreaProvider();
         readonly IOrderOtherProvider iOrderOtherProvider = new OrderOtherProvider();
+        readonly ITokenProvider iTokenProvider = new TokenProvider();
 
         /// <summary>
         /// 骑士上下班功能 add by caoheyang 20150312
@@ -228,6 +229,13 @@ namespace Ets.Service.Provider.Clienter
                 {
                     resultModel.IsOnlyShowBussinessTask = IsOnlyShowBussinessTask(resultModel.userId);
                 }
+
+                 string token = iTokenProvider.GetToken(new TokenModel()
+                    {
+                        Ssid = model.Ssid,
+                        Appkey = resultModel.Appkey
+                    });
+                resultModel.Token = token;
                 return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.Success, resultModel);
             }
             catch (Exception ex)
@@ -383,6 +391,14 @@ namespace Ets.Service.Provider.Clienter
                 resultModel.DeliveryCompanyName = "";
                 resultModel.IsDisplay = 1;
             }
+            string appkey = clienter.Appkey;
+            string token = iTokenProvider.GetToken(new TokenModel()
+            {
+                Ssid = model.Ssid,
+                Appkey = appkey
+            });
+            resultModel.Appkey = appkey;
+            resultModel.Token = token;
             if (id > 0)
             {
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.Success, resultModel);

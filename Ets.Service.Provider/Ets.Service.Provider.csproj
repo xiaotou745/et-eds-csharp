@@ -65,6 +65,7 @@
     <Compile Include="Clienter\ClienterLocationProvider.cs" />
     <Compile Include="Clienter\CrossShopStatisticLogProvider.cs" />
     <Compile Include="Clienter\ClienterProvider.cs" />
+    <Compile Include="Common\TokenProvider.cs" />
     <Compile Include="Common\AdminToolsProvider.cs" />
     <Compile Include="Common\ApiVersionProvider.cs" />
     <Compile Include="Common\AppVersionProvider.cs" />

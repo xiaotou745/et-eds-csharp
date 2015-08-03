@@ -15,5 +15,16 @@ namespace Ets.Model.DataModel.Business
         /// 用户的Id
         /// </summary>
         public int userId { get; set; }
+
+        /// <summary>
+        /// 唯一健值guid
+        /// </summary>
+        public string Appkey { get; set; }
+
+        /// <summary>
+        /// Tokey值
+        /// </summary>
+        public string Token { get; set; }
+
     }
 }

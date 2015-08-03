@@ -43,6 +43,7 @@ namespace Ets.Service.Provider.Business
     {
         readonly IAreaProvider iAreaProvider = new AreaProvider();
         readonly BusinessDao businessDao = new BusinessDao();
+        readonly ITokenProvider iTokenProvider = new TokenProvider();
         /// <summary>
         /// app端商户获取订单   add by caoheyang 20150311
         /// </summary>
@@ -276,21 +277,25 @@ namespace Ets.Service.Provider.Business
             {
                 returnEnum = BusinessRegisterStatus.HasExist;//商户已存在
             }
-            //else if (!string.IsNullOrWhiteSpace(model.RecommendPhone) &&
-            //         !businessDao.CheckRecommendPhone(model.RecommendPhone))
-            //{
-            //    returnEnum = BusinessRegisterStatus.RecommendPhoneNoExist; //推荐人手机号不存在
-            //}
             if (returnEnum != null)
             {
                 return ResultModel<BusiRegisterResultModel>.Conclude(returnEnum);
             }
-
+            
+            string appkey = Guid.NewGuid().ToString(); 
+            model.Appkey = appkey;
+            string token = iTokenProvider.GetToken(new TokenModel()
+                        {
+                            Ssid=model.Ssid,
+                            Appkey = appkey
+                        });
             BusiRegisterResultModel resultModel = new BusiRegisterResultModel()
             {
-                userId = businessDao.Insert(model)
+                userId = businessDao.Insert(model),
+                Appkey = appkey,
+                Token = token
             };
-            return ResultModel<BusiRegisterResultModel>.Conclude(BusinessRegisterStatus.Success, resultModel);// CustomerRegisterStatusEnum.Success;//默认是成功状态
+            return ResultModel<BusiRegisterResultModel>.Conclude(BusinessRegisterStatus.Success, resultModel);
 
         }
 
@@ -451,6 +456,14 @@ namespace Ets.Service.Provider.Business
                 resultMode.phoneNo = row["PhoneNo2"] == null ? row["PhoneNo"].ToString() : row["PhoneNo2"].ToString();
                 resultMode.DistribSubsidy = row["DistribSubsidy"] == null ? 0 : ParseHelper.ToDecimal(row["DistribSubsidy"]);
                 resultMode.OriginalBusiId = row["OriginalBusiId"].ToString();
+                resultMode.Appkey = row["Appkey"].ToString();
+
+                string token = iTokenProvider.GetToken(new TokenModel()
+                {
+                    Ssid = model.Ssid,
+                    Appkey = row["Appkey"].ToString()
+                });
+                resultMode.Token = token;
                 return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.Success, resultMode);
             }
             catch (Exception ex)

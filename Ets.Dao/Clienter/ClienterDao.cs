@@ -153,7 +153,8 @@ namespace Ets.Dao.Clienter
         c.IsBind ,
         ISNULL(d.Id,0) as DeliveryCompanyId,
         isnull(d.DeliveryCompanyName,'') DeliveryCompanyName,
-        isnull(d.IsDisplay,1) IsDisplay
+        isnull(d.IsDisplay,1) IsDisplay,
+        c.Appkey
 from    dbo.clienter c(nolock)
  left join dbo.DeliveryCompany d(nolock) on c.DeliveryCompanyId = d.Id
 where   c.PhoneNo = @PhoneNo
@@ -450,9 +451,10 @@ SELECT PhoneNo AS Phone,0 AS PemType FROM clienter(NOLOCK) WHERE Status=1
                            ,[CityId]
                            ,[GroupId]
                            ,[DeliveryCompanyId]
-                           ,[Timespan])
+                           ,[Timespan]
+                           ,[Appkey])
                      VALUES
-                       (@PhoneNo,@recommendPhone,@Password,@Status,@InsertTime,@InviteCode,@City,@CityId,@GroupId,@DeliveryCompanyId,@Timespan );
+                       (@PhoneNo,@recommendPhone,@Password,@Status,@InsertTime,@InviteCode,@City,@CityId,@GroupId,@DeliveryCompanyId,@Timespan,@Appkey );
                     select SCOPE_IDENTITY() as id;";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@PhoneNo", SqlDbType.NVarChar);
@@ -467,6 +469,7 @@ SELECT PhoneNo AS Phone,0 AS PemType FROM clienter(NOLOCK) WHERE Status=1
             parm.AddWithValue("@GroupId", model.GroupId);
             parm.AddWithValue("@DeliveryCompanyId", (object)model.DeliveryCompanyId);
             parm.AddWithValue("@Timespan", timespan);
+            parm.AddWithValue("@Appkey", model.Appkey);
             object i = DbHelper.ExecuteScalar(SuperMan_Write, sql, parm);
             if (i != null)
             {
