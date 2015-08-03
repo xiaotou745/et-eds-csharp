@@ -1521,7 +1521,8 @@ select top 1
         oo.GrabTime,
         o.Amount,
         o.DeliveryCompanySettleMoney,
-        o.DeliveryCompanyID
+        o.DeliveryCompanyID,
+        o.MealsSettleMode
 from    [order] o with ( nolock )
         join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
         join dbo.business b with ( nolock ) on o.businessId = b.Id
