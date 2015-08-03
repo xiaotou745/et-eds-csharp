@@ -2329,7 +2329,7 @@ where businessId=@businessId and TimeSpan=@TimeSpan ";
         {
             string sql = @"
 select 
-o.id,o.amount, 
+o.id,o.OrderNo, o.amount, 
 o.RealOrderCommission clienterPrice, --给骑士
 o.Amount-o.SettleMoney businessPrice,--给商家
 o.clienterId, o.businessId

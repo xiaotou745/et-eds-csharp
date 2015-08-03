@@ -13,6 +13,8 @@ namespace Ets.Model.DomainModel.Order
         /// </summary>
         public int id { get; set; }
 
+        public string OrderNo { get; set; }
+
         /// <summary>
         /// 订单总金额
         /// </summary>
