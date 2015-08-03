@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Common.Logging;
+using ETS;
 using Ets.Model.DataModel.Finance;
 using ETS.Pay.YeePay;
 using Ets.Service.Provider.Pay;
@@ -25,23 +26,25 @@ namespace Ets.Provider.Tests
         [Test]
         public void Register1()
         {
-            var result1 = new PayProvider().RegisterYee(new YeeRegisterParameter()
-            {
-                BindMobile = "18553507220",
-                CustomerType=CustomertypeEnum.ENTERPRISE,
-                SignedName = "曹赫洋",
-                LinkMan = "曹赫洋",
-                IdCard = "",
-                BusinessLicence="2323232323232",
-                LegalPerson = "曹赫洋",
-                BankAccountNumber = "6226200105376660",
-                BankName = "民生银行",
-                AccountName = "曹赫洋",
-                BankProvince = "北京",
-                BankCity = "北京",
-                UserId=1,
-                UserType=UserTypeYee.Business.GetHashCode()
-            });//注册帐号
+            string requestid = string.Concat(APP.B.ToString(), "-t", "2313123", "-", Config.WithdrawType);// +"-" + TimeHelper.GetTimeStamp(false);
+
+            //var result1 = new PayProvider().RegisterYee(new YeeRegisterParameter()
+            //{
+            //    BindMobile = "18553507220",
+            //    CustomerType=CustomertypeEnum.ENTERPRISE,
+            //    SignedName = "曹赫洋",
+            //    LinkMan = "曹赫洋",
+            //    IdCard = "",
+            //    BusinessLicence="2323232323232",
+            //    LegalPerson = "曹赫洋",
+            //    BankAccountNumber = "6226200105376660",
+            //    BankName = "民生银行",
+            //    AccountName = "曹赫洋",
+            //    BankProvince = "北京",
+            //    BankCity = "北京",
+            //    UserId=1,
+            //    UserType=UserTypeYee.Business.GetHashCode()
+            //});//注册帐号
         }
 
         /// <summary>
