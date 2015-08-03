@@ -133,14 +133,14 @@
                     <td>@ParseHelper.ToDivision(homeCountAllData.OrderPrice, homeCountAllData.MisstionCount)</td>@*任务单价*@
 
                     <td>￥@ParseHelper.ToSplitByPercentile(false, ((homeCountAllData.incomeTotal).ToString("f2")))</td>@*扫码/代付总计*@
-                    <td>￥@ParseHelper.ToSplitByPercentile(false, ((homeCountAllData.rechargeTotal).ToString("f2")))</td>@*商户充值总计*@
-                    <td>￥@ParseHelper.ToSplitByPercentile(false, ((homeCountAllData.allIncomeTotal).ToString("f2")))</td>@*账户收入总计*@
+                    <td>￥@ParseHelper.ToSplitByPercentile(false, (homeCountAllData.rechargeTotal))</td>@*商户充值总计*@
+                    <td>￥@ParseHelper.ToSplitByPercentile(false, (homeCountAllData.allIncomeTotal))</td>@*账户收入总计*@
 
                     <td>￥@ParseHelper.ToSplitByPercentile(false,Math.Round(homeCountAllData.YsPrice, 2))</td>@*总商户结算金额（应收)*@
                     <td>￥@ParseHelper.ToSplitByPercentile(false,Math.Round(homeCountAllData.YfPrice, 2))</td>@*总骑士佣金总计（应付)*@
                     @*<td>￥@ParseHelper.ToSplitByPercentile(false,Math.Round(homeCountAllData.WithdrawPrice, 2))</td>@*可提现佣金总计*@
                     
-                    <td>￥@ParseHelper.ToSplitByPercentile(false, ((homeCountAllData.withdrawClienterPrice).ToString("f2")))</td>@*骑士已提现佣金（实付)*@
+                    <td>￥@ParseHelper.ToSplitByPercentile(false, (homeCountAllData.withdrawClienterPrice))</td>@*骑士已提现佣金（实付)*@
                     <td>￥@ParseHelper.ToSplitByPercentile(false, ((homeCountAllData.businessBalance).ToString("f2")))</td>@*商家余额总计（应付）*@
                     <td>￥@ParseHelper.ToSplitByPercentile(false, ((homeCountAllData.withdrawBusinessPrice).ToString("f2")))</td>@*商家已提款金额（实付）*@
 

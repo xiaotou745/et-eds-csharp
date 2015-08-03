@@ -649,16 +649,17 @@ namespace Ets.Service.Provider.Finance
                 dealResultInfo.DealMsg = "骑士易宝自动转账失败：" + regTransfer.msg + "(" + regTransfer.code + ")";
                 return dealResultInfo;
             }
-            clienterFinanceDao.AddYeePayUserBalanceRecord(new YeePayUserBalanceRecord()
-            {
-                LedgerNo = cliFinanceAccount.YeepayKey,
-                WithwardId = model.WithwardId,
-                Amount = amount,
-                Balance = cliFinanceAccount.BalanceRecord + amount,
-                RecordType = YeeRecordType.P2C.GetHashCode(),
-                Operator = model.Operator,
-                Remark = "易宝主账户向骑士子账户转账【" + amount + "】元"
-            });
+            //临时注释掉，没有表
+            //clienterFinanceDao.AddYeePayUserBalanceRecord(new YeePayUserBalanceRecord()
+            //{
+            //    LedgerNo = cliFinanceAccount.YeepayKey,
+            //    WithwardId = model.WithwardId,
+            //    Amount = amount,
+            //    Balance = cliFinanceAccount.BalanceRecord + amount,
+            //    RecordType = YeeRecordType.P2C.GetHashCode(),
+            //    Operator = model.Operator,
+            //    Remark = "易宝主账户向骑士子账户转账【" + amount + "】元"
+            //});
             cliFinanceAccount.BalanceRecord = clienterFinanceDao.ModifyYeeBalanceRecord(cliFinanceAccount.YeepayKey, amount);
             #endregion
 
@@ -716,16 +717,17 @@ namespace Ets.Service.Provider.Finance
                 dealResultInfo.DealMsg = "骑士易宝自动提现失败：" + regCash.msg + "(" + regCash.code + ")";
                 return dealResultInfo;
             }
-            clienterFinanceDao.AddYeePayUserBalanceRecord(new YeePayUserBalanceRecord()
-            {
-                LedgerNo = cliFinanceAccount.YeepayKey,
-                WithwardId = model.WithwardId,
-                Amount = amount,
-                Balance = cliFinanceAccount.BalanceRecord - amount,
-                RecordType = YeeRecordType.Ccash.GetHashCode(),
-                Operator = model.Operator,
-                Remark = "易宝子账户提现【" + amount + "】元"
-            });
+            //临时注释掉，没有表
+            //clienterFinanceDao.AddYeePayUserBalanceRecord(new YeePayUserBalanceRecord()
+            //{
+            //    LedgerNo = cliFinanceAccount.YeepayKey,
+            //    WithwardId = model.WithwardId,
+            //    Amount = amount,
+            //    Balance = cliFinanceAccount.BalanceRecord - amount,
+            //    RecordType = YeeRecordType.Ccash.GetHashCode(),
+            //    Operator = model.Operator,
+            //    Remark = "易宝子账户提现【" + amount + "】元"
+            //});
             cliFinanceAccount.BalanceRecord = clienterFinanceDao.ModifyYeeBalanceRecord(cliFinanceAccount.YeepayKey, -amount);
             #endregion
 
