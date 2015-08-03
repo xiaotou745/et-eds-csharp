@@ -13,6 +13,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
+using SuperManWebApi.App_Start.Filters;
 using SuperManWebApi.Models;
 using SuperManWebApi.Providers;
 using SuperManWebApi.Results;
@@ -33,6 +34,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
+        [Token]
         public ResultModel<BankModel[]> Get(BankCriteria bankCriteria)
         {
             List<BankModel> listBank = new List<BankModel>(); 

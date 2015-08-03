@@ -30,6 +30,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="model">查询参数实体</param>
         /// <returns></returns>
         [HttpPost]
+        [Token]
         [Validate]
         [ApiVersion]
         public ResultModel<object> Records(BussinessRecordsPM model)
@@ -45,6 +46,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="model">商户参数</param>
         /// <returns></returns>        
         [HttpPost]
+        [Token]
         public ResultModel<BusinessDM> Get(BussinessPM model)
         {
             #region 验证
@@ -84,6 +86,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="model">商户参数</param>
         /// <returns></returns>        
         [HttpPost]
+        [Token]
         public ResultModel<BusiDistribSubsidyResultModel> GetDistribSubsidy(BussinessPM model)
         {
             #region 验证
@@ -126,6 +129,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
+        [Token]
         public ResultModel<BusiModifyResultModelDM> UpdateBusinessInfoB()
         {
             BusiAddAddressInfoModel model = new BusiAddAddressInfoModel();
@@ -191,6 +195,7 @@ namespace SuperManWebApi.Controllers
         /// <UpdateTime>20150727</UpdateTime>
         /// <returns></returns>     
         [HttpPost]
+        [Token]
         [ApiVersion]
         public ResultModel<object> PushLocaltion(BusinessPushLocaltionPM model)
         {

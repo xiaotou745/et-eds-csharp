@@ -38,6 +38,7 @@ namespace SuperManWebApi.Controllers
         /// <UpdateTime>20150511</UpdateTime>
         /// <param name="model">订单参数实体</param>
         /// <returns></returns> 
+        [Token]
         [HttpPost]
         public ResultModel<BusiOrderResultModel> Push(BussinessOrderInfoPM model)
         {
@@ -110,6 +111,7 @@ namespace SuperManWebApi.Controllers
         /// wc
         /// </summary>
         /// <returns></returns>
+        [Token]
         [HttpPost]
         [ApiVersionStatistic]
         public ResultModel<UploadReceiptResultModel> TicketUpload()
@@ -185,6 +187,7 @@ namespace SuperManWebApi.Controllers
         /// 骑士抢单
         /// </summary> 
         /// <returns></returns>
+        [Token]
         [HttpPost]
         [ExecuteTimeLog]
         public ResultModel<RushOrderResultModel> Receive(OrderReceiveModel model)
@@ -216,6 +219,7 @@ namespace SuperManWebApi.Controllers
         /// </summary> 
         /// <returns></returns>
         [HttpPost]
+        [Token]
         public ResultModel<FinishOrderResultModel> Complete(OrderCompleteModel parModel)
         {
             if (parModel.userId <= 0)  //用户id非空验证 骑士Id
@@ -245,6 +249,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="childId">子订单ID</param>
         /// <returns>成功返回1，支付中未支付返回0</returns>
         [HttpPost]
+        [Token]
         public ResultModel<PayStatusModel> GetChildPayStatus(OrderChildModel model)
         {
             return iOrderChildProvider.GetPayStatus(model.orderId, model.childId);
@@ -269,6 +274,7 @@ namespace SuperManWebApi.Controllers
         /// <UpdateTime>20150520</UpdateTime>
         /// <param name="modelPM"></param>
         /// <returns></returns>
+        [Token]
         public ResultModel<string> ConfirmTake(OrderPM modelPM)
         {
             #region 验证
@@ -302,6 +308,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
+        [Token]
         [HttpPost]
         public ResultModel<string> UpdateOrderAddressAndPhone(NewAddressPM model)
         {
@@ -329,6 +336,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
+        [Token]
         [Validate]
         [ApiVersion]
         public ResultModel<object> ConsigneeAddressB([FromBody]ConsigneeAddressBPM model)
@@ -342,6 +350,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
+        [Token]
         [Validate]
         [ApiVersion]
         public ResultModel<object> RemoveAddressB([FromBody]RemoveAddressBPM model)

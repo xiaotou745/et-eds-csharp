@@ -15,6 +15,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using SuperManWebApi.App_Start.Filters;
 
 namespace SuperManWebApi.Controllers
 {
@@ -27,6 +28,7 @@ namespace SuperManWebApi.Controllers
         /// 2015年5月12日 14:35:05
         /// </summary>
         //[HttpGet]
+       [Token]
         public ResultModel<PayResultModel> CreatePay(PayModel model)//
         {
             //PayModel model = new PayModel()
@@ -88,6 +90,7 @@ namespace SuperManWebApi.Controllers
         /// 窦海超
         /// 2015年5月29日 15:09:29
         /// <param name="model"></param>
+       [Token]
         public ResultModel<BusinessRechargeResultModel> BusinessRecharge(BusinessRechargeModel model)
         {
             return payProvider.BusinessRecharge(model);
