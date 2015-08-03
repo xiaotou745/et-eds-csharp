@@ -125,8 +125,8 @@ namespace Ets.Service.Provider.Finance
                     {
                         ClienterId = model.ClienterId,//骑士Id(Clienter表）
                         Amount = -model.WithdrawPrice,//流水金额
-                        Status = (int)ClienterAllowWithdrawRecordStatus.Tradeing, //流水状态(1、交易成功 2、交易中）
-                        RecordType = (int)ClienterBalanceRecordRecordType.WithdrawApply,
+                        Status = (int)ClienterAllowWithdrawRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
+                        RecordType = (int)ClienterAllowWithdrawRecordType.WithdrawApply,
                         Operator = clienter.TrueName,
                         WithwardId = withwardId,
                         RelationNo = withwardNo,
@@ -945,38 +945,39 @@ namespace Ets.Service.Provider.Finance
         /// <returns></returns>
         public bool ClienterRecharge(ClienterOptionLog model)
         {
-            //return clienterFinanceDao.ClienterRecharge(model);
+            decimal amount =_clienterDao.GetUserStatus(model.ClienterId).amount;
+
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 clienterFinanceDao.ClienterRecharge(model);
 
-                //ClienterBalanceRecord cbrm = new ClienterBalanceRecord()
-                //{
-                //    ClienterId = model.ClienterId,
-                //    Amount = model.RechargeAmount,
-                //    Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
-                //    Balance = accountBalance ?? 0,
-                //    RecordType = ClienterBalanceRecordRecordType.BalanceAdjustment.GetHashCode(),
-                //    Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士:" + userId : myOrderInfo.ClienterName,
-                //    WithwardId = myOrderInfo.Id,
-                //    RelationNo = myOrderInfo.OrderNo,
-                //    Remark = "骑士完成订单"
-                //};
-                //clienterBalanceRecordDao.Insert(cbrm);
+                ClienterBalanceRecord cbrm = new ClienterBalanceRecord()
+                {
+                    ClienterId = model.ClienterId,
+                    Amount = model.RechargeAmount,
+                    Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
+                    Balance = amount,
+                    RecordType = ClienterBalanceRecordRecordType.BalanceAdjustment.GetHashCode(),
+                    Operator = model.OptName,
+                    WithwardId = 0,
+                    RelationNo = "",
+                    Remark = model.Remark
+                };
+                _clienterBalanceRecordDao.Insert(cbrm);
 
-                //ClienterAllowWithdrawRecord cawrm = new ClienterAllowWithdrawRecord()
-                //{
-                //    ClienterId = userId,
-                //    Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
-                //    Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(),
-                //    Balance = accountBalance ?? 0,
-                //    RecordType = ClienterAllowWithdrawRecordType.OrderCommission.GetHashCode(),
-                //    Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士:" + userId : myOrderInfo.ClienterName,
-                //    WithwardId = myOrderInfo.Id,
-                //    RelationNo = myOrderInfo.OrderNo,
-                //    Remark = "骑士完成订单"
-                //};
-                //clienterAllowWithdrawRecordDao.Insert(cawrm);
+                ClienterAllowWithdrawRecord cawrm = new ClienterAllowWithdrawRecord()
+                {
+                    ClienterId = model.ClienterId,
+                    Amount = model.RechargeAmount,
+                    Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(),
+                    Balance = amount,
+                    RecordType = ClienterAllowWithdrawRecordType.BalanceAdjustment.GetHashCode(),
+                    Operator = model.OptName,
+                    WithwardId = 0,
+                    RelationNo = "",
+                    Remark = model.Remark
+                };
+                clienterAllowWithdrawRecordDao.Insert(cawrm);
 
                 
                 tran.Complete();

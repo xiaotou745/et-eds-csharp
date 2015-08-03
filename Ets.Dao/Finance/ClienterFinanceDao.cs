@@ -585,26 +585,6 @@ WHERE cbr.ClienterId=@ClienterId ";
 update b
 set    b.AccountBalance=ISNULL(b.AccountBalance, 0)+@Amount,
        b.AllowWithdrawPrice=ISNULL(b.AllowWithdrawPrice,0)+@Amount
-OUTPUT
-  Inserted.Id,
-  @Amount,
-  @Status,
-  Inserted.AccountBalance,
-  @RecordType,
-  @Operator,
-  getdate(),
-  '',
-  @Remark
-INTO ClienterBalanceRecord
-  ( [ClienterId]
-   ,[Amount]
-   ,[Status]
-   ,[Balance]
-   ,[RecordType]
-   ,[Operator]
-   ,[OperateTime]
-   ,[WithwardId]
-   ,[Remark])
 from clienter b WITH ( ROWLOCK )
 where b.Id=@ClienterId;");
             var parm = DbHelper.CreateDbParameters();
