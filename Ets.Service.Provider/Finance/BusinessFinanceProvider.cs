@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using ETS;
+using ETS.Const;
 using Ets.Dao.Finance;
 using Ets.Dao.User;
 using ETS.Enums;
@@ -309,6 +310,13 @@ namespace Ets.Service.Provider.Finance
             throw new Exception("提款单对应的商户已经被取消资格，请联系客服");
         }
         /// <summary>
+        /// 确认打款时间锁
+        /// 2015年8月1日 21:44:12
+        /// 窦海超 
+        /// </summary>
+        private static object mylock = new object();
+
+        /// <summary>
         /// 商户提现申请单确认打款调用易宝接口
         /// danny-20150716
         /// </summary>
@@ -316,6 +324,23 @@ namespace Ets.Service.Provider.Finance
         /// <returns></returns>
         public DealResultInfo BusinessWithdrawPaying(BusinessWithdrawLog model)
         {
+            #region 时间锁
+
+            lock (mylock)
+            {
+                string key = string.Format(RedissCacheKey.Ets_Withdraw_Lock_B, model.WithwardId);
+                var redis = new ETS.NoSql.RedisCache.RedisCache();
+                if (redis.Get<int>(key) == 1)
+                {
+                    return new DealResultInfo
+                    {
+                        DealMsg = "确认打款正在执行中，请勿重新提交，请一分钟后重试",
+                        DealFlag = false
+                    };
+                }
+                redis.Set(key, 1, new TimeSpan(0, 1, 0));
+            }
+            #endregion
             #region 对象声明及初始化
             var dealResultInfo = new DealResultInfo
             {
@@ -430,37 +455,37 @@ namespace Ets.Service.Provider.Finance
                     PayFailedReason = "易宝提现失败:" + regTransfer.msg + "(" + regTransfer.code + ")",
                     WithwardId = model.WithwardId
                 });
-                //转账成功提现失败时进行一次反转
-                var regRTransfer = new PayProvider().TransferAccountsYee(new YeeTransferParameter()
-                {
-                    UserType = UserTypeYee.Business.GetHashCode(),
-                    WithdrawId = model.WithwardId,
-                    Ledgerno = "",
-                    SourceLedgerno = busiFinanceAccount.YeepayKey,
-                    Amount = amount.ToString()
-                });
-                if (regRTransfer.code != "1")
-                {
-                    businessFinanceDao.BusinessWithdrawPayFailed(new BusinessWithdrawLogModel()
-                    {
-                        Status = BusinessWithdrawFormStatus.Except.GetHashCode(),
-                        OldStatus = BusinessWithdrawFormStatus.Allow.GetHashCode(),
-                        Operator = model.Operator,
-                        Remark = "易宝子账户向主账户反转失败:" + regRTransfer.msg + "(" + regRTransfer.code + ") ",
-                        PayFailedReason = "易宝子账户向主账户反转失败:" + regTransfer.msg + "(" + regTransfer.code + ") ",
-                        WithwardId = model.WithwardId
-                    });
-                }
-                clienterFinanceDao.AddYeePayUserBalanceRecord(new YeePayUserBalanceRecord()
-                {
-                    LedgerNo = busiFinanceAccount.YeepayKey,
-                    WithwardId = model.WithwardId,
-                    Amount = amount,
-                    Balance = busiFinanceAccount.BalanceRecord - amount,
-                    RecordType = YeeRecordType.C2P.GetHashCode(),
-                    Operator = model.Operator,
-                    Remark = "易宝子账户向主账户反转【" + amount + "】元"
-                });
+                ////转账成功提现失败时进行一次反转
+                //var regRTransfer = new PayProvider().TransferAccountsYee(new YeeTransferParameter()
+                //{
+                //    UserType = UserTypeYee.Business.GetHashCode(),
+                //    WithdrawId = model.WithwardId,
+                //    Ledgerno = "",
+                //    SourceLedgerno = busiFinanceAccount.YeepayKey,
+                //    Amount = amount.ToString()
+                //});
+                //if (regRTransfer.code != "1")
+                //{
+                //    businessFinanceDao.BusinessWithdrawPayFailed(new BusinessWithdrawLogModel()
+                //    {
+                //        Status = BusinessWithdrawFormStatus.Except.GetHashCode(),
+                //        OldStatus = BusinessWithdrawFormStatus.Allow.GetHashCode(),
+                //        Operator = model.Operator,
+                //        Remark = "易宝子账户向主账户反转失败:" + regRTransfer.msg + "(" + regRTransfer.code + ") ",
+                //        PayFailedReason = "易宝子账户向主账户反转失败:" + regTransfer.msg + "(" + regTransfer.code + ") ",
+                //        WithwardId = model.WithwardId
+                //    });
+                //}
+                //clienterFinanceDao.AddYeePayUserBalanceRecord(new YeePayUserBalanceRecord()
+                //{
+                //    LedgerNo = busiFinanceAccount.YeepayKey,
+                //    WithwardId = model.WithwardId,
+                //    Amount = amount,
+                //    Balance = busiFinanceAccount.BalanceRecord - amount,
+                //    RecordType = YeeRecordType.C2P.GetHashCode(),
+                //    Operator = model.Operator,
+                //    Remark = "易宝子账户向主账户反转【" + amount + "】元"
+                //});
                 dealResultInfo.DealMsg = "商户易宝自动提现失败：" + regCash.msg + "(" + regCash.code + ")";
                 return dealResultInfo;
             }
