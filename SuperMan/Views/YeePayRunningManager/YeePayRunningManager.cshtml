@@ -32,8 +32,8 @@
                 <tr>
                     <td>
                         <span class="">操作日期: </span>
-                        <input id="OptStarteTime" name="OptStarteTime" class="Wdate" type="text" onfocus="WdatePicker({ maxDate: '#F{$dp.$D(\'OptEndTime\')||\'%y-%M-%d\'}', dateFmt: 'yyyy-MM-dd 00:00:00' }) " />
-                        <input id="OptEndTime" name="OptEndTime" class="Wdate" type="text" onfocus="WdatePicker({ minDate: '#F{$dp.$D(\'OptStarteTime\')}', dateFmt: 'yyyy-MM-dd 23:59:59' }) " />到
+                        <input id="OptStarteTime" name="OptStarteTime" class="Wdate" type="text" onfocus="WdatePicker({ maxDate: '#F{$dp.$D(\'OptEndTime\')||\'%y-%M-%d\'}', dateFmt: 'yyyy-MM-dd 00:00:00' }) " />到
+                        <input id="OptEndTime" name="OptEndTime" class="Wdate" type="text" onfocus="WdatePicker({ minDate: '#F{$dp.$D(\'OptStarteTime\')}', dateFmt: 'yyyy-MM-dd 23:59:59' }) " />
                         <input type="submit" value="查询" class="searchBtn" id="btnSearch" />&nbsp;&nbsp;
                         @if (SuperMan.App_Start.UserContext.Current.HasAuthority(77))
                         {
