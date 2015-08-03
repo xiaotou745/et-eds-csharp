@@ -664,6 +664,7 @@ namespace Ets.Service.Provider.Pay
                     {
                         Operator = username,
                         Remark = "易宝提现打款成功" + model.desc,
+                        OldStatus = BusinessWithdrawFormStatus.Paying.GetHashCode(),
                         Status = BusinessWithdrawFormStatus.Success.GetHashCode(),
                         WithwardId = withwardId
                     });
@@ -675,6 +676,7 @@ namespace Ets.Service.Provider.Pay
                         Operator = username,
                         Remark = "易宝提现打款成功" + model.desc,
                         Status = ClienterWithdrawFormStatus.Success.GetHashCode(),
+                        OldStatus = ClienterWithdrawFormStatus.Paying.GetHashCode(),
                         WithwardId = withwardId
                     });
                 }
@@ -688,6 +690,7 @@ namespace Ets.Service.Provider.Pay
                         Operator = username,
                         Remark = "易宝提现打款失败，" + model.desc,
                         Status = BusinessWithdrawFormStatus.Error.GetHashCode(),
+                        OldStatus = BusinessWithdrawFormStatus.Paying.GetHashCode(),
                         WithwardId = withwardId,
                         PayFailedReason = ""
                     }, model); //商户提现失败
@@ -699,6 +702,7 @@ namespace Ets.Service.Provider.Pay
                         Operator = username,
                         Remark = "易宝提现打款失败，" + model.desc,
                         Status = ClienterWithdrawFormStatus.Error.GetHashCode(),
+                        OldStatus = ClienterWithdrawFormStatus.Paying.GetHashCode(),
                         WithwardId = withwardId,
                         PayFailedReason = ""
                     }, model);
