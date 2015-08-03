@@ -20,5 +20,10 @@ namespace Ets.Model.ParameterModel.Business
         /// 密码
         /// </summary>
         public string passWord { get; set; }
+
+        /// <summary>
+        /// 手机唯一标识ssid
+        /// </summary>
+        public string Ssid { get; set; }
     }
 }

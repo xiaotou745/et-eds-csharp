@@ -20,5 +20,8 @@ namespace Ets.Model.ParameterModel.Clienter
         /// 密码
         /// </summary>
         public string passWord { get; set; }
+
+        //ssid
+        public string Ssid { get; set; }
     }
 }

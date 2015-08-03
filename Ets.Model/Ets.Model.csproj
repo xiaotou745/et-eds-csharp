@@ -59,6 +59,7 @@
     <Compile Include="Common\OrderCountManageList.cs" />
     <Compile Include="Common\PagedList.cs" />
     <Compile Include="Common\TestUserModel.cs" />
+    <Compile Include="Common\TokenModel.cs" />
     <Compile Include="Common\VersionCheckModel.cs" />
     <Compile Include="Common\YeePay\BusinessRegisterParameter.cs" />
     <Compile Include="Common\YeePay\CashTransferCallback.cs" />

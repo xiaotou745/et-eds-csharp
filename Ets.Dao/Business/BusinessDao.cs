@@ -442,8 +442,8 @@ and a.PhoneNo=@PhoneNo";
         public int Insert(RegisterInfoPM model)
         {
             const string insertSql = @"         
-insert into dbo.business (City,PhoneNo,PhoneNo2,Password,CityId,RecommendPhone,Timespan)
-values( @City,@PhoneNo,@PhoneNo2,@Password,@CityId ,@RecommendPhone,@Timespan)
+insert into dbo.business (City,PhoneNo,PhoneNo2,Password,CityId,RecommendPhone,Timespan,Appkey)
+values( @City,@PhoneNo,@PhoneNo2,@Password,@CityId ,@RecommendPhone,@Timespan,@Appkey)
 select @@IDENTITY";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -454,6 +454,7 @@ select @@IDENTITY";
             dbParameters.AddWithValue("@CityId", model.CityId);
             dbParameters.AddWithValue("@RecommendPhone", model.RecommendPhone);
             dbParameters.AddWithValue("@Timespan", model.timespan);
+            dbParameters.AddWithValue("@Appkey", model.Appkey);
             return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters));
         }
 
@@ -502,7 +503,8 @@ select top 1
         a.phoneNo ,
         a.PhoneNo2 ,
         a.DistribSubsidy ,
-        ISNULL(a.OriginalBusiId, 0) as OriginalBusiId
+        ISNULL(a.OriginalBusiId, 0) as OriginalBusiId,
+        a.Appkey
 from    business (nolock) a
         left join dbo.[group] (nolock) b on a.GroupId = b.Id
 where   PhoneNo = @PhoneNo
