@@ -210,6 +210,8 @@ namespace Ets.Model.DataModel.Order
         /// </summary>
         public decimal? AccountBalance { get; set; }
 
+        public decimal AllowWithdrawPrice { get; set; }
+        
 
         /// <summary>
         /// 补贴金额

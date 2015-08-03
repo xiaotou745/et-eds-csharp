@@ -1439,6 +1439,7 @@ select top 1
         o.[OrderNo] ,
         o.[Status] ,
         c.AccountBalance ,
+        c.AllowWithdrawPrice,
         c.Id clienterId ,
         o.OrderCommission ,
         o.businessId ,
@@ -1509,6 +1510,7 @@ select top 1
         o.[OrderNo] ,
         o.[Status] ,
         c.AccountBalance ,
+        c.AllowWithdrawPrice, 
         c.Id clienterId ,
         o.OrderCommission ,
         o.businessId ,
@@ -1524,7 +1526,7 @@ select top 1
         o.Amount,
         o.DeliveryCompanySettleMoney,
         o.DeliveryCompanyID,
-        o.MealsSettleMode
+        o.MealsSettleMode         
 from    [order] o with ( nolock )
         join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
         join dbo.business b with ( nolock ) on o.businessId = b.Id

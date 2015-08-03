@@ -860,6 +860,7 @@ namespace Ets.Service.Provider.Clienter
             bool b = clienterDao.UpdateAccountBalanceAndWithdraw(new WithdrawRecordsModel() { UserId = userId, Amount = myOrderInfo.OrderCommission.Value });
             //增加记录 
             decimal? accountBalance = 0;
+            decimal  allowWithdrawPrice = 0;
             //更新用户相关金额数据 
             if (myOrderInfo.AccountBalance.HasValue)
             {
@@ -869,6 +870,8 @@ namespace Ets.Service.Provider.Clienter
             {
                 accountBalance = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission);
             }
+            allowWithdrawPrice = myOrderInfo.AllowWithdrawPrice;
+            
 
             ClienterBalanceRecord cbrm = new ClienterBalanceRecord()
             {
@@ -889,7 +892,7 @@ namespace Ets.Service.Provider.Clienter
                 ClienterId = userId,
                 Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
                 Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(),
-                Balance = accountBalance ?? 0,
+                Balance = allowWithdrawPrice,
                 RecordType = ClienterAllowWithdrawRecordType.OrderCommission.GetHashCode(),
                 Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士:" + userId : myOrderInfo.ClienterName,
                 WithwardId = myOrderInfo.Id,
@@ -1552,6 +1555,7 @@ namespace Ets.Service.Provider.Clienter
             bool b = clienterDao.UpdateAccountBalanceAndWithdraw(new WithdrawRecordsModel() { UserId = myOrderInfo.clienterId, Amount = realOrderCommission });
             //增加记录 
             decimal? accountBalance = 0;
+            decimal allowWithdrawPrice= myOrderInfo.AllowWithdrawPrice;
             //更新用户相关金额数据 
             if (myOrderInfo.AccountBalance.HasValue)
             {
@@ -1581,7 +1585,7 @@ namespace Ets.Service.Provider.Clienter
                 ClienterId = myOrderInfo.clienterId,
                 Amount = realOrderCommission,
                 Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(),
-                Balance = accountBalance ?? 0,
+                Balance = allowWithdrawPrice,
                 RecordType = ClienterAllowWithdrawRecordType.BalanceAdjustment.GetHashCode(),
                 Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士" : myOrderInfo.ClienterName,
                 WithwardId = myOrderInfo.Id,
