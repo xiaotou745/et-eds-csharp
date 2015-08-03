@@ -16,5 +16,11 @@ namespace Ets.Model.DataModel.Clienter
         /// 新密码
         /// </summary>
         public string newPassword { get; set; }
+        /// <summary>
+        /// 旧密码
+        /// </summary>
+        public string oldPassword { get; set; }
+
+
     }
 }

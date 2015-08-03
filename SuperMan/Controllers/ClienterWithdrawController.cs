@@ -1,6 +1,8 @@
 ﻿using Ets.Model.DataModel.Finance;
 using Ets.Model.DomainModel.Finance;
+using Ets.Service.IProvider.Common;
 using Ets.Service.IProvider.Finance;
+using Ets.Service.Provider.Common;
 using Ets.Service.Provider.Finance;
 using ETS.Enums;
 using ETS.Util;
@@ -15,6 +17,7 @@ namespace SuperMan.Controllers
 {
     public class ClienterWithdrawController : BaseController
     {
+        readonly IAreaProvider iAreaProvider = new AreaProvider();
         IClienterFinanceProvider iClienterFinanceProvider = new ClienterFinanceProvider();
         // GET: ClienterWithdraw
         /// <summary>
@@ -24,7 +27,13 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         public ActionResult ClienterWithdraw()
         {
-            var criteria = new Ets.Model.ParameterModel.Finance.ClienterWithdrawSearchCriteria() { WithdrawStatus = 0 };
+            int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(UserType);//获取筛选城市
+            var criteria = new Ets.Model.ParameterModel.Finance.ClienterWithdrawSearchCriteria()
+            {
+                WithdrawStatus = 0, 
+                AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType)
+            };
             var pagedList = iClienterFinanceProvider.GetClienterWithdrawList(criteria);
             return View(pagedList);
         }
@@ -39,6 +48,8 @@ namespace SuperMan.Controllers
         {
             var criteria = new Ets.Model.ParameterModel.Finance.ClienterWithdrawSearchCriteria();
             TryUpdateModel(criteria);
+            int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;
+            criteria.AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType);
             var pagedList = iClienterFinanceProvider.GetClienterWithdrawList(criteria);
             return PartialView("_ClienterWithdrawList", pagedList);
         }

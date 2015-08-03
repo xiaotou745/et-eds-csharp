@@ -288,6 +288,10 @@ namespace Ets.Service.Provider.Clienter
             {
                 return ResultModel<ClienterModifyPwdResultModel>.Conclude(ModifyPwdStatus.ClienterIsNotExist);
             }
+            if (string.IsNullOrWhiteSpace(model.oldPassword) || clienter.Password != model.oldPassword)
+            {
+                return ResultModel<ClienterModifyPwdResultModel>.Conclude(ModifyPwdStatus.OldPwdError);
+            }
             bool b = clienterDao.UpdateClienterPwdSql(clienter.Id, model.newPassword);
             if (b)
             {

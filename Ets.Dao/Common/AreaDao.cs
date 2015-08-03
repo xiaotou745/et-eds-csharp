@@ -70,7 +70,8 @@ select  a.Code ,
         a.JiBie ,
         a.Parentid
 from    dbo.PublicProvinceCity a ( nolock )
-where   IsPublic = 1;
+where   IsPublic = 1
+ORDER BY a.name ASC;
 ";
             DataSet ds = DbHelper.ExecuteDataset(SuperMan_Read, sql);
             return MapRows<AreaModel>(DataTableHelper.GetTable(ds));

@@ -382,10 +382,6 @@ and a.PhoneNo=@PhoneNo";
             {
                 sbSqlWhere.AppendFormat(" AND b.RecommendPhone='{0}' ", criteria.RecommendPhone.Trim());
             }
-            if (!string.IsNullOrEmpty(criteria.businessName))
-            {
-                sbSqlWhere.AppendFormat(" AND b.Name='{0}' ", criteria.businessName.Trim());
-            }
             if (!string.IsNullOrEmpty(criteria.businessPhone))
             {
                 sbSqlWhere.AppendFormat(" AND b.PhoneNo='{0}' ", criteria.businessPhone.Trim());
@@ -417,6 +413,10 @@ and a.PhoneNo=@PhoneNo";
             if (!string.IsNullOrEmpty(criteria.businessCity))
             {
                 sbSqlWhere.AppendFormat(" AND b.City='{0}' ", criteria.businessCity.Trim());
+            }
+            if (!string.IsNullOrEmpty(criteria.businessName))
+            {
+                sbSqlWhere.AppendFormat(" AND b.Name LIKE '%{0}%' ", criteria.businessName.Trim());
             }
             //else
             //{
@@ -754,24 +754,20 @@ order by a.id desc
         public BusListResultModel GetBusinessByPhoneNo(string PhoneNo)
         {
             string sql = @"
-SELECT b.Id  FROM dbo.business(NOLOCK) b
+SELECT b.Id,b.[Password]  FROM dbo.business(NOLOCK) b
 LEFT join dbo.[group] g on b.GroupId=g.Id 
 where b.PhoneNo=@PhoneNo and isnull(g.IsModifyBind,1)=1";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("PhoneNo", DbType.String, 40).Value = PhoneNo;
+           // int tmpId = ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm), 0);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            IList<BusListResultModel> list = MapRows<BusListResultModel>(dt);
 
-            int tmpId = ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm), 0);
-            //DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
-
-            if (tmpId <= 0)
+            if (!dt.HasData())
             {
                 return null;
             }
-            BusListResultModel model = new BusListResultModel()
-            {
-                Id = tmpId
-            };
-            return model;
+            return list[0];
         }
 
         /// <summary>
