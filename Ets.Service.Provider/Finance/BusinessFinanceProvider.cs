@@ -331,6 +331,7 @@ namespace Ets.Service.Provider.Finance
             if (busiFinanceAccount.WithdrawTime < ParseHelper.ToDatetime(Config.WithdrawTime))
             {
                 model.Status = BusinessWithdrawFormStatus.Success.GetHashCode();
+                model.OldStatus = BusinessWithdrawFormStatus.Allow.GetHashCode();
                 dealResultInfo.DealFlag = BusinessWithdrawPayOk(model);
                 dealResultInfo.DealMsg = dealResultInfo.DealFlag ? "打款成功！" : "打款失败！";
                 return dealResultInfo;
@@ -387,6 +388,7 @@ namespace Ets.Service.Provider.Finance
                 businessFinanceDao.BusinessWithdrawPayFailed(new BusinessWithdrawLogModel()
                 {
                     Status =BusinessWithdrawFormStatus.Except.GetHashCode(),
+                    OldStatus = BusinessWithdrawFormStatus.Allow.GetHashCode(),
                     Operator = model.Operator,
                     Remark = "易宝转账失败:" + regTransfer.msg + "(" + regTransfer.code + ")",
                     PayFailedReason = "易宝转账失败:" + regTransfer.msg + "(" + regTransfer.code + ")",
@@ -422,6 +424,7 @@ namespace Ets.Service.Provider.Finance
                 businessFinanceDao.BusinessWithdrawPayFailed(new BusinessWithdrawLogModel()
                 {
                     Status = BusinessWithdrawFormStatus.Except.GetHashCode(),
+                    OldStatus = BusinessWithdrawFormStatus.Allow.GetHashCode(),
                     Operator = model.Operator,
                     Remark = "易宝提现失败:" + regTransfer.msg + "(" + regTransfer.code + ")",
                     PayFailedReason = "易宝提现失败:" + regTransfer.msg + "(" + regTransfer.code + ")",
@@ -441,6 +444,7 @@ namespace Ets.Service.Provider.Finance
                     businessFinanceDao.BusinessWithdrawPayFailed(new BusinessWithdrawLogModel()
                     {
                         Status = BusinessWithdrawFormStatus.Except.GetHashCode(),
+                        OldStatus = BusinessWithdrawFormStatus.Allow.GetHashCode(),
                         Operator = model.Operator,
                         Remark = "易宝子账户向主账户反转失败:" + regRTransfer.msg + "(" + regRTransfer.code + ") ",
                         PayFailedReason = "易宝子账户向主账户反转失败:" + regTransfer.msg + "(" + regTransfer.code + ") ",
@@ -562,6 +566,7 @@ namespace Ets.Service.Provider.Finance
         {
             bool reg = false;
             var withdraw = _businessWithdrawFormDao.GetById(model.WithwardId);  //提现单
+            model.OldStatus = BusinessWithdrawFormStatus.Paying.GetHashCode();//提现单之前状态
             if (withdraw == null)
             {
                 return false;

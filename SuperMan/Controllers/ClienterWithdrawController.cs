@@ -163,6 +163,7 @@ namespace SuperMan.Controllers
                 Operator = UserContext.Current.Name,
                 Remark = "骑士提款申请单确认打款",
                 Status = ClienterWithdrawFormStatus.Paying.GetHashCode(),
+                OldStatus = ClienterWithdrawFormStatus.Allow.GetHashCode(),
                 WithwardId = Convert.ToInt64(withwardId)
             };
             var reg = iClienterFinanceProvider.ClienterWithdrawPaying(clienterWithdrawLog);
@@ -204,6 +205,7 @@ namespace SuperMan.Controllers
                 Operator = UserContext.Current.Name,
                 Remark = "骑士提款申请单打款失败-" + payFailedReason,
                 Status = ClienterWithdrawFormStatus.Error.GetHashCode(),
+                OldStatus = ClienterWithdrawFormStatus.Allow.GetHashCode(),
                 WithwardId = Convert.ToInt64(withwardId),
                 PayFailedReason = payFailedReason
 
