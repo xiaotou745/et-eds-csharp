@@ -66,7 +66,7 @@
             </div>
             <div class="control-group">
                 <label>备&nbsp;&nbsp;注：</label>
-                <textarea name="yeePayRemark" id="yeePayRemark" style="width: 150px;height: 40px"></textarea>
+                <textarea name="yeePayRemark" id="yeePayRemark" style="width: 200px;height: 60px; resize: none; overflow-y: auto;max-width: 200px;max-height: 100px;"></textarea>
             </div>
             <label style="color: red">（财务人员在易宝充值总账户后，需在此录入充值金额）</label>
         </fieldset>
@@ -88,16 +88,32 @@
         var yeePayRechargeAmount = $("#yeePayRechargeAmount").val();
         var rechargeTime = $("#rechargeTime").val();
         var yeePayRemark = $("#yeePayRemark").val();
-        if (yeePayRechargeAmount == null || yeePayRechargeAmount == "" || yeePayRechargeAmount == 0) {
+        var decimalFormat = /^[0-9]*(\.[0-9]{1,3})?$/;
+        if (yeePayRechargeAmount == null || yeePayRechargeAmount.trim() == "" || yeePayRechargeAmount == 0) {
             alert("请输入充值金额!");
             return;
         }
-        if (rechargeTime == null || rechargeTime == "") {
+        if (!decimalFormat.test(yeePayRechargeAmount)) {
+            alert("请输入正确的充值金额！");
+            $("#yeePayRechargeAmount").val("");
+            return;
+        } else {
+            if (yeePayRechargeAmount < 1 || yeePayRechargeAmount > 99999999) {
+                alert("充值金额必须大于等于1元，最高金额99,999,999元！");
+                return;
+            } 
+        }
+        if (rechargeTime == null || rechargeTime.trim() == "") {
             alert("请输入充值日期!");
             return;
         }
-        if (yeePayRemark.length > 200) {
-            alert("备注太长了");
+        if (yeePayRemark == null || yeePayRemark.trim() == "") {
+            alert("请填写备注,最少1个字符，最多字符500!");
+            $("#yeePayRemark").val("");
+            return;
+        }
+        if (yeePayRemark.length > 500) {
+            alert("备注最多500字符");
             return;
         }
         var paramaters = { "RechargeAmount": yeePayRechargeAmount, "Remark": yeePayRemark, "RechargeTime": rechargeTime };

@@ -30,7 +30,7 @@
                         <td>@item.RechargeTime</td>
                         <td>@item.OperateTime</td>
                         <td>@item.Operator</td>
-                        <td>@item.Remark</td>
+                        <td title=@item.Remark>@(item.Remark.Length > 20 ? item.Remark.Substring(0, 20) + "..." : item.Remark)</td>
                     </tr>
                 }
             }
