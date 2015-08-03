@@ -1226,38 +1226,20 @@ namespace Ets.Service.Provider.Order
                     if (orderModel.Status == 1 && orderTaskPayStatus == 2 &&
                         orderModel.HadUploadCount == orderModel.NeedUploadCount) //已完成订单
                     {
-                        if (!orderDao.OrderCancelReturnClienter(orderModel))
-                        {
-                            dealResultInfo.DealMsg = "扣除骑士佣金失败！";
-                            return dealResultInfo;
-                        }
+                        //if (!orderDao.OrderCancelReturnClienter(orderModel))
+                        //{
+                        //    dealResultInfo.DealMsg = "扣除骑士佣金失败！";
+                        //    return dealResultInfo;
+                        //}
 
-
-//                        string sql = string.Format(@" 
-//update b
-//set    b.AccountBalance=ISNULL(b.AccountBalance, 0)+@Amount,
-//       b.AllowWithdrawPrice=ISNULL(b.AllowWithdrawPrice,0)+@Amount
-//from clienter b WITH ( ROWLOCK )
-//where b.Id=@ClienterId;");
-//                        var parm = DbHelper.CreateDbParameters();
-//                        parm.AddWithValue("@Amount", model.RechargeAmount);
-//                        parm.AddWithValue("@Status", ClienterBalanceRecordStatus.Success);
-//                        parm.AddWithValue("@RecordType", ClienterBalanceRecordRecordType.BalanceAdjustment);
-//                        parm.AddWithValue("@Operator", model.OptName);
-//                        parm.AddWithValue("@Remark", model.Remark);
-//                        parm.AddWithValue("@ClienterId", model.ClienterId);
-//                        return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
 
 
                         clienterFinanceDao.ClienterRecharge(new ClienterOptionLog()
                                     {
                                         RechargeAmount = -orderModel.RealOrderCommission,
+                                        ClienterId = orderModel.clienterId
                                     }
                             );
-
-
-
-
 
                         //ClienterBalanceRecord cbrm = new ClienterBalanceRecord()
                         //{

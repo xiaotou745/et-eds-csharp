@@ -365,7 +365,7 @@ select      cbr.[ClienterId]
            ,cbr.[WithwardId]
            ,cbr.[RelationNo]
            ,@Remark
- from ClienterBalanceRecord cbr (nolock)
+ from ClienterAllowWithdrawRecord cbr (nolock)
     join clienter c (nolock) on c.Id=cbr.ClienterId
  where cbr.WithwardId=@WithwardId and cbr.Status=@Status and cbr.RecordType=@RecordType;");
             IDbParameters parm = DbHelper.CreateDbParameters();
@@ -628,10 +628,6 @@ from clienter b WITH ( ROWLOCK )
 where b.Id=@ClienterId;");
             var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Amount", model.RechargeAmount);
-            parm.AddWithValue("@Status", ClienterBalanceRecordStatus.Success);
-            parm.AddWithValue("@RecordType", ClienterBalanceRecordRecordType.BalanceAdjustment);
-            parm.AddWithValue("@Operator", model.OptName);
-            parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@ClienterId", model.ClienterId);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
