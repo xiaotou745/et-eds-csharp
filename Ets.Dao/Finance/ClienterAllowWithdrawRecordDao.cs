@@ -32,7 +32,7 @@ namespace Ets.Dao.Finance
             const string insertSql = @"
 insert into ClienterAllowWithdrawRecord
 (ClienterId,Amount,Status,Balance,RecordType,Operator,WithwardId,RelationNo,Remark)
-select @ClienterId,@Amount,@Status,c.AccountBalance,@RecordType,@Operator,@WithwardId,@RelationNo,@Remark 
+select @ClienterId,@Amount,@Status,c.AllowWithdrawPrice,@RecordType,@Operator,@WithwardId,@RelationNo,@Remark 
 from dbo.clienter as c where Id=@ClienterId
 select @@IDENTITY";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
