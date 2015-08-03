@@ -1249,11 +1249,11 @@ namespace Ets.Service.Provider.Order
 //                        return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
 
 
-                        //clienterFinanceDao.ClienterRecharge(new ClienterOptionLog()
-                        //            {
-                        //                RechargeAmount=-orderModel.RealOrderCommission,
-                        //            }
-                        //    );
+                        clienterFinanceDao.ClienterRecharge(new ClienterOptionLog()
+                                    {
+                                        RechargeAmount = -orderModel.RealOrderCommission,
+                                    }
+                            );
 
 
 
