@@ -656,32 +656,30 @@ namespace Ets.Service.Provider.Pay
             {
                 if (yeePayRecordDbModel.UserType == UserTypeYee.Business.GetHashCode()) //B端逻辑
                 {
-                    iBusinessFinanceProvider.BusinessWithdrawPayOk(new BusinessWithdrawLog()
+                    result =iBusinessFinanceProvider.BusinessWithdrawPayOk(new BusinessWithdrawLog()
                     {
                         Operator = username,
                         Remark = "易宝提现打款成功" + model.desc,
                         Status = BusinessWithdrawFormStatus.Success.GetHashCode(),
                         WithwardId = withwardId
                     });
-                    result = true;
                 }
                 else if (yeePayRecordDbModel.UserType == UserTypeYee.Clienter.GetHashCode()) //C端逻辑
                 {
-                    iClienterFinanceProvider.ClienterWithdrawPayOk(new ClienterWithdrawLog()
+                    result = iClienterFinanceProvider.ClienterWithdrawPayOk(new ClienterWithdrawLog()
                     {
                         Operator = username,
                         Remark = "易宝提现打款成功" + model.desc,
                         Status = ClienterWithdrawFormStatus.Success.GetHashCode(),
                         WithwardId = withwardId
                     });
-                    result = true;
                 }
             }
             else if (model.status == "FAIL") //提现失败 走 失败的逻辑
             {
                 if (yeePayRecordDbModel.UserType == UserTypeYee.Business.GetHashCode()) //B端逻辑
                 {
-                    iBusinessFinanceProvider.BusinessWithdrawPayFailed(new BusinessWithdrawLogModel()
+                    result = iBusinessFinanceProvider.BusinessWithdrawPayFailed(new BusinessWithdrawLogModel()
                     {
                         Operator = username,
                         Remark = "易宝提现打款失败，" + model.desc,
@@ -689,11 +687,10 @@ namespace Ets.Service.Provider.Pay
                         WithwardId = withwardId,
                         PayFailedReason = ""
                     }, model); //商户提现失败
-                    result = true;
                 }
                 else if(yeePayRecordDbModel.UserType == UserTypeYee.Clienter.GetHashCode()) //C端逻辑
                 {
-                    iClienterFinanceProvider.ClienterWithdrawPayFailed(new ClienterWithdrawLogModel()
+                    result = iClienterFinanceProvider.ClienterWithdrawPayFailed(new ClienterWithdrawLogModel()
                     {
                         Operator = username,
                         Remark = "易宝提现打款失败，" + model.desc,
@@ -701,8 +698,12 @@ namespace Ets.Service.Provider.Pay
                         WithwardId = withwardId,
                         PayFailedReason = ""
                     }, model);
-                    result = true;
                 }
+            }
+            if (!result)
+            {
+                EmailHelper.SendEmailTo(string.Format("易宝请求号为{0}的提现单回调失败，提现单号为{1}，提现单数据库出现数据异常",
+                   model.cashrequestid, withwardId.ToString()), ConfigSettings.Instance.EmailToAdress);
             }
             return result;
 
