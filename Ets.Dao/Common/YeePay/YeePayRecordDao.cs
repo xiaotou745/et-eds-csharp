@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,11 +50,27 @@ select @@IDENTITY";
             dbParameters.AddWithValue("UserType", yeePayRecord.UserType);
             dbParameters.AddWithValue("Lastno", yeePayRecord.Lastno);
             dbParameters.AddWithValue("Desc", yeePayRecord.Desc);
-
-
-
             return  ParseHelper.ToLong(DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters));
-        
+        }
+
+
+        /// <summary>
+        ///  根据请求号查询易宝提现记录 对应的提现单号等数据  
+        /// </summary>
+        /// <param name="requestId"></param>
+        /// <returns></returns>
+        public YeePayRecord GetReocordByRequestId(string requestId)
+        {
+            const string querysql = @"
+SELECT Id,RequestId,UserType,WithdrawId  from YeePayRecord where TransferType=1 and RequestId=@RequestId";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("RequestId", requestId);
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
+            if (DataTableHelper.CheckDt(dt))
+            {
+                return DataTableHelper.ConvertDataTableList<YeePayRecord>(dt)[0];
+            }
+            return null;
         }
         /// <summary>
         /// 获取活跃易宝账户列表信息
