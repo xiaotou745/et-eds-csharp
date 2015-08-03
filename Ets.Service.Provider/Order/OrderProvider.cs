@@ -54,6 +54,8 @@ namespace Ets.Service.Provider.Order
         private IBusinessGroupProvider iBusinessGroupProvider = new BusinessGroupProvider();
         private readonly BusinessDao _businessDao = new BusinessDao();
         private readonly ClienterDao clienterDao = new ClienterDao();
+        ClienterBalanceRecordDao clienterBalanceRecordDao=new ClienterBalanceRecordDao();
+        ClienterAllowWithdrawRecordDao  clienterAllowWithdrawRecordDao=new ClienterAllowWithdrawRecordDao();
 
         private readonly BusinessBalanceRecordDao _businessBalanceRecordDao = new BusinessBalanceRecordDao();
         ClienterFinanceDao clienterFinanceDao = new ClienterFinanceDao();
@@ -1226,13 +1228,14 @@ namespace Ets.Service.Provider.Order
                     if (orderModel.Status == 1 && orderTaskPayStatus == 2 &&
                         orderModel.HadUploadCount == orderModel.NeedUploadCount) //已完成订单
                     {
-                        //if (!orderDao.OrderCancelReturnClienter(orderModel))
-                        //{
-                        //    dealResultInfo.DealMsg = "扣除骑士佣金失败！";
-                        //    return dealResultInfo;
-                        //}
+                        if (!orderDao.OrderCancelReturnClienter(orderModel))
+                        {
+                            dealResultInfo.DealMsg = "扣除骑士佣金失败！";
+                            return dealResultInfo;
+                        }
 
-
+                        decimal accountBalance = decimal.Parse(clienterDao.GetUserInfoByUserId(orderModel.clienterId).AccountBalance.ToString());
+                        decimal allowWithdrawPrice = clienterDao.GetUserInfoByUserId(orderModel.clienterId).AllowWithdrawPrice;
 
                         clienterFinanceDao.ClienterRecharge(new ClienterOptionLog()
                                     {
@@ -1241,33 +1244,33 @@ namespace Ets.Service.Provider.Order
                                     }
                             );
 
-                        //ClienterBalanceRecord cbrm = new ClienterBalanceRecord()
-                        //{
-                        //    ClienterId = model.ClienterId,
-                        //    Amount = model.RechargeAmount,
-                        //    Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
-                        //    Balance = amount,
-                        //    RecordType = ClienterBalanceRecordRecordType.BalanceAdjustment.GetHashCode(),
-                        //    Operator = model.OptName,
-                        //    WithwardId = 0,
-                        //    RelationNo = "",
-                        //    Remark = model.Remark
-                        //};
-                        //_clienterBalanceRecordDao.Insert(cbrm);
+                        ClienterBalanceRecord cbrm = new ClienterBalanceRecord()
+                        {
+                            ClienterId = orderModel.clienterId,
+                            Amount =  -orderModel.RealOrderCommission,
+                            Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
+                            Balance = accountBalance,
+                            RecordType = ClienterBalanceRecordRecordType.BalanceAdjustment.GetHashCode(),
+                            Operator = orderModel.OptUserName,
+                            WithwardId =  orderModel.Id,
+                            RelationNo = orderModel.OrderNo,
+                            Remark = orderModel.Remark
+                        };
+                        clienterBalanceRecordDao.Insert(cbrm);
 
-                        //ClienterAllowWithdrawRecord cawrm = new ClienterAllowWithdrawRecord()
-                        //{
-                        //    ClienterId = model.ClienterId,
-                        //    Amount = model.RechargeAmount,
-                        //    Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(),
-                        //    Balance = amount,
-                        //    RecordType = ClienterAllowWithdrawRecordType.BalanceAdjustment.GetHashCode(),
-                        //    Operator = model.OptName,
-                        //    WithwardId = 0,
-                        //    RelationNo = "",
-                        //    Remark = model.Remark
-                        //};
-                        //clienterAllowWithdrawRecordDao.Insert(cawrm);
+                        ClienterAllowWithdrawRecord cawrm = new ClienterAllowWithdrawRecord()
+                        {
+                            ClienterId = orderModel.clienterId,
+                            Amount =  -orderModel.RealOrderCommission,
+                            Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(),
+                            Balance = allowWithdrawPrice,
+                            RecordType = ClienterAllowWithdrawRecordType.BalanceAdjustment.GetHashCode(),
+                            Operator = orderModel.OptUserName,
+                            WithwardId =  orderModel.Id,
+                            RelationNo =orderModel.OrderNo,
+                            Remark = orderModel.Remark
+                        };
+                        clienterAllowWithdrawRecordDao.Insert(cawrm);
                     }
                     if (!orderDao.OrderCancelReturnBusiness(orderModel))
                     {
