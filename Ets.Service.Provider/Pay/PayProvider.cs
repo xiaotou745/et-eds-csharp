@@ -629,6 +629,7 @@ namespace Ets.Service.Provider.Pay
             bool result = false;
             string username = "易宝提现回调";
             CashTransferCallback model = JsonHelper.JsonConvertToObject<CashTransferCallback>(ResponseYeePay.OutRes(data, true));
+            model.cashrequestid= model.cashrequestid.Replace("t", "");
             int withwardId = ParseHelper.ToInt(model.cashrequestid.Substring(2).Substring(0, model.cashrequestid.Substring(2).IndexOf('-'))); //提现单id
 
             new YeePayRecordDao().Insert(new YeePayRecord()
