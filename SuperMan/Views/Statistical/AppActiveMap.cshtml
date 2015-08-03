@@ -76,7 +76,7 @@
                 <tbody id="tbodyData"></tbody>
             </table>
 
-            <div data-ajax="true" data-ajax-dataformid="#searchForm" data-ajax-method="Post" data-ajax-update="#dataList" data-invalidpageerrmsg="页索引无效" data-maxpages="11" data-mvcpager="true" data-outrangeerrmsg="页索引超出范围" data-pageparameter="pageindex" id="pager" style="float:right;width: 1000px"></div>
+            <div data-ajax="true" data-ajax-dataformid="#searchForm" data-ajax-method="Post" data-ajax-update="#dataList" data-invalidpageerrmsg="页索引无效" data-maxpages="11" data-mvcpager="true" data-outrangeerrmsg="页索引超出范围" data-pageparameter="pageindex" id="pager" style="float:right;width: 1000px;padding-left:40px"></div>
         </div>
     </div>
 </div>
@@ -259,10 +259,14 @@
             arrStr.push("<a href='javascript:void(0)' onclick='showPageData(1,2)'>上一页</a>&#160;&#160;");
             arrStr.push("<a href='javascript:void(0)' onclick='showPageData(1,1)'>1</a>&#160;&#160;");
         }
+        var printBr = Math.round(maxPageIndex / 2);
         for (var i = 2; i < maxPageIndex + 1; i++) {
             if (i == pageIndex) {
                 arrStr.push("<span class='current'>" + i + "</span>&#160;&#160;");
             } else {
+                if (i == printBr && maxPageIndex>30) {
+                    arrStr.push("<br/>");
+                }
                 arrStr.push("<a href='javascript:void(0)' onclick='showPageData(" + i + ",1)'>" + i + "</a>&#160;&#160;");
             }
         }
@@ -273,7 +277,7 @@
             arrStr.push("<a disabled=\"disabled\">下一页</a>&#160;&#160;");
             arrStr.push("<a disabled=\"disabled\">尾页</a>&#160;&#160;");
         }
-        arrStr.push("<input type=\"text\" data-pageindexbox=\"true\" id=\"txtPage\"><input type=\"button\" data-submitbutton=\"true\" value=\"跳转\" onclick='jump()'></input></input>");
+        arrStr.push("<input type=\"text\" data-pageindexbox=\"true\" id=\"txtPage\" style='width:40px'><input type=\"button\" data-submitbutton=\"true\" value=\"跳转\" onclick='jump()' ></input></input>");
         $("#pager").html(arrStr.join(""));
     }
 
