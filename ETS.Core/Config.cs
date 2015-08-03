@@ -141,7 +141,7 @@ namespace ETS
         /// 为了和线上线下唯一区别用
         /// 2015年8月1日 22:04:48
         /// 窦海超 
-        /// </summary>
+        /// </summary> 
         public static string WithdrawType { get { return ConfigKey("WithdrawType"); } }
     }
 }
