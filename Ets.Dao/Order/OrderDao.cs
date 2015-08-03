@@ -1146,7 +1146,7 @@ set @incomeTotal =convert(decimal(18,2),(select sum(TotalPrice) from dbo.OrderCh
 set @withdrawClienterPrice = convert(decimal(18,2),(select isnull( sum(isnull(Amount,0)),0) withPirce FROM dbo.ClienterWithdrawForm(nolock) cwf where Status =3)) 
 set @businessBalance=convert(decimal(18,2),(SELECT sum(BalancePrice) FROM dbo.business b(nolock) where Status=1 ))
 set @withdrawBusinessPrice=convert( decimal(18,2),(SELECT sum(Amount) as withdrawBusinessPrice FROM dbo.BusinessWithdrawForm(nolock) bwf where Status =3 ))
-set @rechargeTotal = (select sum(Amount) from BusinessBalanceRecord(nolock) where RecordType = 4 ) --商户充值总计
+set @rechargeTotal = (SELECT sum(payAmount) FROM BusinessRecharge(nolock) where PayStatus=1 ) --商户充值总计
 select  ( select    sum(AccountBalance)
           from      dbo.clienter(nolock)
           where     AccountBalance >= 1000
