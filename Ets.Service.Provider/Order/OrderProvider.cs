@@ -1228,11 +1228,11 @@ namespace Ets.Service.Provider.Order
                     if (orderModel.Status == 1 && orderTaskPayStatus == 2 &&
                         orderModel.HadUploadCount == orderModel.NeedUploadCount) //已完成订单
                     {
-                        if (!orderDao.OrderCancelReturnClienter(orderModel))
-                        {
-                            dealResultInfo.DealMsg = "扣除骑士佣金失败！";
-                            return dealResultInfo;
-                        }
+                        //if (!orderDao.OrderCancelReturnClienter(orderModel))
+                        //{
+                        //    dealResultInfo.DealMsg = "扣除骑士佣金失败！";
+                        //    return dealResultInfo;
+                        //}
 
                         decimal accountBalance = decimal.Parse(clienterDao.GetUserInfoByUserId(orderModel.clienterId).AccountBalance.ToString());
                         decimal allowWithdrawPrice = clienterDao.GetUserInfoByUserId(orderModel.clienterId).AllowWithdrawPrice;
