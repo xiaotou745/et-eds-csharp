@@ -989,6 +989,7 @@ namespace Ets.Service.Provider.Finance
         public bool ClienterRecharge(ClienterOptionLog model)
         {
             decimal amount =_clienterDao.GetUserStatus(model.ClienterId).amount;
+            decimal allowWithdrawPrice = _clienterDao.GetUserStatus(model.ClienterId).AllowWithdrawPrice;
 
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
@@ -1013,7 +1014,7 @@ namespace Ets.Service.Provider.Finance
                     ClienterId = model.ClienterId,
                     Amount = model.RechargeAmount,
                     Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(),
-                    Balance = amount,
+                    Balance = allowWithdrawPrice,
                     RecordType = ClienterAllowWithdrawRecordType.BalanceAdjustment.GetHashCode(),
                     Operator = model.OptName,
                     WithwardId = 0,

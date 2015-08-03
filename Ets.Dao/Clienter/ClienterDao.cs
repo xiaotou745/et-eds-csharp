@@ -586,6 +586,7 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.FromClienter, OrderConst.O
         c.[status] ,
         c.phoneno ,
         c.AccountBalance as amount ,
+        c.AllowWithdrawPrice as AllowWithdrawPrice ,
         c.IsBind,
         ISNULL(d.Id,0) as DeliveryCompanyId,
         isnull(d.DeliveryCompanyName,'') DeliveryCompanyName,

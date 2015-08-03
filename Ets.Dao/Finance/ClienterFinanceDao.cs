@@ -358,7 +358,7 @@ insert into ClienterAllowWithdrawRecord
 select      cbr.[ClienterId]
            ,-ISNULL(cbr.[Amount],0) Amount
            ,@NewStatus [Status]
-           ,-ISNULL(cbr.[Amount],0)+ISNULL(c.AccountBalance,0) Balance
+           ,-ISNULL(cbr.[Amount],0)+ISNULL(c.AllowWithdrawPrice,0) Balance
            ,@NewRecordType [RecordType]
            ,@Operator
            ,getdate() OperateTime
