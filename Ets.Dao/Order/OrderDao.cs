@@ -1271,7 +1271,9 @@ where   o.[Status] <> 3
                                   ,[TwoSubsidyOrderCount]
                                   ,[ThreeSubsidyOrderCount]
                                   ,[ActiveBusiness]
-                                  ,[ActiveClienter]";
+                                  ,[ActiveClienter]
+                                  ,rechargeTotal
+                                    ";
 
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrWhiteSpace(criteria.orderPubStart))
