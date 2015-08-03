@@ -49,7 +49,7 @@ namespace Ets.Service.Provider.Order
         private OrderDao orderDao = new OrderDao();
         private IBusinessProvider iBusinessProvider = new BusinessProvider();
         private ClienterProvider iClienterProvider = new ClienterProvider();
-
+        readonly OrderOtherDao orderOtherDao = new OrderOtherDao();
         private ISubsidyProvider iSubsidyProvider = new SubsidyProvider();
         private IBusinessGroupProvider iBusinessGroupProvider = new BusinessGroupProvider();
         private readonly BusinessDao _businessDao = new BusinessDao();
@@ -1187,13 +1187,6 @@ namespace Ets.Service.Provider.Order
         /// </summary>
         /// <returns></returns>
         public DealResultInfo CancelOrderByOrderNo(OrderOptionModel orderOptionModel)
-
-        /// <summary>
-        /// 通过订单号扣除订单网站补贴
-        /// 彭宜-20150803
-        /// </summary>
-        /// <returns></returns>
-        public DealResultInfo DeductWebSubsidy(OrderOptionModel orderOptionModel)
         {
             var dealResultInfo = new DealResultInfo
             {
@@ -1258,6 +1251,68 @@ namespace Ets.Service.Provider.Order
                         AsyncOrderStatus(orderModel.OrderNo);
                     }
                 });
+                return dealResultInfo;
+            }
+        }
+
+        /// <summary>
+        /// 通过订单号扣除订单网站补贴
+        /// 彭宜-20150803
+        /// </summary>
+        /// <returns></returns>
+        public DealResultInfo DeductWebSubsidy(OrderOptionModel orderOptionModel)
+        {
+            var dealResultInfo = new DealResultInfo
+            {
+                DealFlag = false
+            };
+            if (string.IsNullOrEmpty(orderOptionModel.OptLog))
+            {
+                dealResultInfo.DealMsg = "请填写扣除网站补贴原因！";
+                return dealResultInfo;
+            }
+            var orderModel = orderDao.GetOrderByNo(orderOptionModel.OrderNo);
+            if (orderModel == null)
+            {
+                dealResultInfo.DealMsg = "未查询到订单信息！";
+                return dealResultInfo;
+            }
+            orderModel.OptUserName = orderOptionModel.OptUserName;
+            orderModel.Remark = "管理后台取消订单：" + orderOptionModel.OptLog;
+            #region 订单不可扣除网站补贴
+            if (orderModel.Status == 3)//订单已为取消状态
+            {
+                dealResultInfo.DealMsg = "订单已为取消状态，不能扣除网站补贴！";
+                return dealResultInfo;
+            }
+            if (orderModel.IsJoinWithdraw == 1)//订单已分账
+            {
+                dealResultInfo.DealMsg = "订单已分账，不能扣除网站补贴！";
+                return dealResultInfo;
+            }
+            if (orderModel.FinishAll != 1)//订单未完成
+            {
+                dealResultInfo.DealMsg = "订单未完成，不能扣除网站补贴！";
+                return dealResultInfo;
+            }
+            #endregion
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                //更新扣除补贴原因,扣除补贴方式为手动扣除
+                orderOtherDao.UpdateOrderDeductCommissionReason(orderOptionModel.OrderId, orderOptionModel.OptLog, 2);
+                //如果要扣除的金额大于0， 写流水
+                if (orderModel.OrderCommission > orderModel.SettleMoney)
+                {
+                    decimal diffOrderCommission = orderModel.SettleMoney - orderModel.OrderCommission.Value;
+                    if (orderModel.MealsSettleMode == MealsSettleMode.LineOn.GetHashCode())//线上支付
+                    {
+                        iClienterProvider.UpdateNotRealOrderClienterAccountAndWithdraw(orderModel, diffOrderCommission);
+                    }
+                    else
+                    {
+                        iClienterProvider.UpdateNotRealOrderClienterAccount(orderModel, diffOrderCommission);
+                    }
+                }
                 return dealResultInfo;
             }
         }
@@ -1530,7 +1585,7 @@ namespace Ets.Service.Provider.Order
             IList<GetJobCDM> jobs = new List<GetJobCDM>();
             model.PushRadius = GlobalConfigDao.GlobalConfigGet(0).PushRadius; //距离
             model.ExclusiveOrderTime = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet(0).ExclusiveOrderTime); //商家专属骑士接单响应时间
-            
+
             if (model.ExpressId > 0)
             {
                 #region 物流公司逻辑

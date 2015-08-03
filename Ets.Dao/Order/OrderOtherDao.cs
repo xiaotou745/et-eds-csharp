@@ -88,12 +88,35 @@ update OrderOther set IsJoinWithdraw=1 where orderId=@orderId";
             const string UPDATE_SQL = @"
                                         update OrderOther 
                                         set IsNotRealOrder=1,
-                                        DeductCommissionReason=@DeductCommissionReason
+                                        DeductCommissionReason=@DeductCommissionReason,
+                                        DeductCommissionType=1
                                         where orderid=@orderId
                                         ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@orderId", orderId);
             dbParameters.AddWithValue("@DeductCommissionReason", deductCommissionReason);
+            DbHelper.ExecuteNonQuery(SuperMan_Write, UPDATE_SQL, dbParameters);
+        }
+
+        /// <summary>
+        /// 更新订单扣除补贴原因
+        /// 彭宜20150803
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <param name="deductCommissionReason">扣除订单补贴原因</param>
+        /// <param name="deductCommissionType">扣除订单补贴方式   1 自动扣除    2手动扣除</param>
+        public void UpdateOrderDeductCommissionReason(int orderId, string deductCommissionReason, int deductCommissionType)
+        {
+            const string UPDATE_SQL = @"
+                                        update OrderOther 
+                                        set DeductCommissionReason=@DeductCommissionReason,
+                                        DeductCommissionType=@DeductCommissionType
+                                        where orderid=@orderId
+                                        ";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@orderId", orderId);
+            dbParameters.AddWithValue("@DeductCommissionReason", deductCommissionReason);
+            dbParameters.AddWithValue("@DeductCommissionType", deductCommissionType);
             DbHelper.ExecuteNonQuery(SuperMan_Write, UPDATE_SQL, dbParameters);
         }
 
