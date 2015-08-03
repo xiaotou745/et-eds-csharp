@@ -75,7 +75,7 @@ namespace ETS.Pay.YeePay
 
         }
 
-      
+
         /// <summary>
         /// 易宝提现功能 
         /// </summary>
@@ -83,7 +83,8 @@ namespace ETS.Pay.YeePay
         /// <returns></returns>
         public TransferReturnModel CashTransfer(ref YeeCashTransferParameter para)
         {
-            string requestid = para.App.ToString() + "-" + para.WithdrawId + "-" + TimeHelper.GetTimeStamp(false);
+            //string requestid = para.App.ToString() + "-" + para.WithdrawId + "-"+ Config.WithdrawType;// + TimeHelper.GetTimeStamp(false);
+            string requestid = string.Concat(para.App.ToString(), "-t", para.WithdrawId, "-", Config.WithdrawType);// +"-" + TimeHelper.GetTimeStamp(false);
             //商户编号   
             string customernumber = KeyConfig.YeepayAccountId;
             //密钥   
@@ -95,7 +96,7 @@ namespace ETS.Pay.YeePay
             #region 第三方交互逻辑
             var js = new JavaScriptSerializer();
 
-            string[] stringArray = { customernumber, requestid, para.Ledgerno,Math.Round(ParseHelper.ToDecimal(para.Amount), 2).ToString(), callbackurl };
+            string[] stringArray = { customernumber, requestid, para.Ledgerno, Math.Round(ParseHelper.ToDecimal(para.Amount), 2).ToString(), callbackurl };
 
             var hmac = Digest.getHmac(stringArray, hmackey);//生成hmac签名
 
