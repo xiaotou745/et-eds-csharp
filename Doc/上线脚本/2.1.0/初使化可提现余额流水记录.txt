@@ -2,7 +2,7 @@ declare @ID as [int]
 declare @AllowWithdrawPrice as decimal(18, 3)
 declare setinTab cursor Scroll
 for
-select top 10 Id, AllowWithdrawPrice from dbo.clienter nolock
+select  Id, AllowWithdrawPrice from dbo.clienter nolock
 open setinTab
 fetch first from setinTab into @ID,@AllowWithdrawPrice
 while @@fetch_status=0
