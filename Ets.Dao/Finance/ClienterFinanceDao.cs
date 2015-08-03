@@ -341,6 +341,43 @@ select      cbr.[ClienterId]
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
 
+        public bool ClienterClienterAllowWithdrawRecordReturn(ClienterWithdrawLogModel model)
+        {
+            string sql = string.Format(@" 
+insert into ClienterAllowWithdrawRecord
+            ([ClienterId]
+           ,[Amount]
+           ,[Status]
+           ,[Balance]
+           ,[RecordType]
+           ,[Operator]
+           ,[OperateTime]
+           ,[WithwardId]
+           ,[RelationNo]
+           ,[Remark])
+select      cbr.[ClienterId]
+           ,-ISNULL(cbr.[Amount],0) Amount
+           ,@NewStatus [Status]
+           ,-ISNULL(cbr.[Amount],0)+ISNULL(c.AccountBalance,0) Balance
+           ,@NewRecordType [RecordType]
+           ,@Operator
+           ,getdate() OperateTime
+           ,cbr.[WithwardId]
+           ,cbr.[RelationNo]
+           ,@Remark
+ from ClienterBalanceRecord cbr (nolock)
+    join clienter c (nolock) on c.Id=cbr.ClienterId
+ where cbr.WithwardId=@WithwardId and cbr.Status=@Status and cbr.RecordType=@RecordType;");
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Operator", model.Operator);
+            parm.AddWithValue("@Remark", model.Remark);
+            parm.AddWithValue("@WithwardId", model.WithwardId);
+            parm.AddWithValue("@Status", ClienterAllowWithdrawRecordStatus.Success.GetHashCode());
+            parm.AddWithValue("@RecordType", ClienterAllowWithdrawRecordType.WithdrawApply.GetHashCode());
+            parm.AddWithValue("@NewStatus", ClienterAllowWithdrawRecordStatus.Success.GetHashCode());
+            parm.AddWithValue("@NewRecordType", model.Status == ClienterWithdrawFormStatus.TurnDown.GetHashCode() ? ClienterBalanceRecordRecordType.WithdrawRefuse : ClienterBalanceRecordRecordType.PayFailure);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
+        }
         /// <summary>
         /// 骑士提现失败后修改骑士表金额
         /// danny-20150513

@@ -217,6 +217,11 @@ namespace ETS.Enums
         /// </summary>
         [DisplayText("余额调整")]
         BalanceAdjustment = 8,
+        /// <summary>
+        /// 手续费
+        /// </summary>
+        [DisplayText("手续费")]
+        ProcedureFee = 9
     }
 
     /// <summary>
