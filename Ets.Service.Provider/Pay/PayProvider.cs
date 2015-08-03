@@ -31,6 +31,8 @@ using Ets.Dao.Finance;
 using Ets.Model.DataModel.Finance;
 using Ets.Model.ParameterModel.Finance;
 using Ets.Dao.Business;
+using Config = ETS.Config;
+
 namespace Ets.Service.Provider.Pay
 {
     public class PayProvider : IPayProvider
@@ -852,15 +854,15 @@ namespace Ets.Service.Provider.Pay
         /// 易宝自动对账
         /// danny-20150730
         /// </summary>
-        public DealResultInfo YeePayReconciliation()
+        public void YeePayReconciliation()
         {
             #region 对象声明及实例化
-            var dealResultInfo = new DealResultInfo()
-            {
-                DealFlag = false
-            };
             var sbEmail = new StringBuilder();
-            var yeePayUserList = yeePayRecordDao.GetYeePayUserList();
+            var overTimeDateDiff = ParseHelper.ToInt(Config.ConfigKey("OverTimeDateDiff"));//易宝回调超时时间配置
+            var activeDateDiff = ParseHelper.ToInt(Config.ConfigKey("ActiveDateDiff"));//易宝活跃用户时间配置
+            var emailSendTo = Config.ConfigKey("EmailSendTo");
+            var copyTo = Config.ConfigKey("CopyTo");
+            var yeePayUserList = yeePayRecordDao.GetYeePayUserList(activeDateDiff);
             #endregion
 
             #region 同步活跃易宝账户余额
@@ -872,8 +874,9 @@ namespace Ets.Service.Provider.Pay
 
                     if (reg.code != "1")
                     {
-                        dealResultInfo.DealMsg = "调用易宝余额查询接口失败：" + reg.msg + "(" + reg.code + ")";
-                        return dealResultInfo;
+                        sbEmail.AppendLine("调用易宝余额查询接口失败：" + reg.msg + "(" + reg.code + ")");
+                        EmailHelper.SendEmailTo(sbEmail.ToString(), emailSendTo, "易宝对账结果", copyTo, false);
+                        return ;
                     }
                     if (ParseHelper.ToDecimal(reg.ledgerbalance) != yeePayUser.YeeBalance)
                     {
@@ -890,8 +893,8 @@ namespace Ets.Service.Provider.Pay
 
             #region 获取预警数据及处理
             var exceptYeePayUser = yeePayRecordDao.GetBalanceExceptYeePayUserList();
-            var varnClienterWithdrawForm = yeePayRecordDao.GetWarnClienterWithdrawForm();
-            var varnBusinessWithdrawForm = yeePayRecordDao.GetWarnBusinessWithdrawForm();
+            var varnClienterWithdrawForm = yeePayRecordDao.GetWarnClienterWithdrawForm(overTimeDateDiff);
+            var varnBusinessWithdrawForm = yeePayRecordDao.GetWarnBusinessWithdrawForm(overTimeDateDiff);
             #region 账户余额异常
             if (exceptYeePayUser != null && exceptYeePayUser.Count > 0)
             {
@@ -901,6 +904,7 @@ namespace Ets.Service.Provider.Pay
                     sbEmail.AppendLine("易宝账户:【" + item.Ledgerno + "】,本系统账户余额：【" + item.BalanceRecord + "元】,易宝系统余额：【" +
                                        item.YeeBalance + "元】");
                 }
+                sbEmail.AppendLine();
             }
             #endregion
             #region 骑士提款单异常
@@ -917,6 +921,7 @@ namespace Ets.Service.Provider.Pay
                             ((ClienterWithdrawFormStatus)item.Status).GetType(), (ClienterWithdrawFormStatus)item.Status).Text + "】,异常描述：【" +
                                            item.PayFailedReason + "元】");
                     }
+                    sbEmail.AppendLine();
                 }
                 if (overtimeClienterWithdrawForm.Count > 0)//回调超时
                 {
@@ -927,6 +932,7 @@ namespace Ets.Service.Provider.Pay
                             ((ClienterWithdrawFormStatus)item.Status).GetType(), (ClienterWithdrawFormStatus)item.Status).Text + "】,超时时间：【" +
                                            item.DateDiff + "天】");
                     }
+                    sbEmail.AppendLine();
                 }
             }
             #endregion
@@ -944,6 +950,7 @@ namespace Ets.Service.Provider.Pay
                             ((BusinessWithdrawFormStatus)item.Status).GetType(), (BusinessWithdrawFormStatus)item.Status).Text + "】,异常描述：【" +
                                            item.PayFailedReason + "元】");
                     }
+                    sbEmail.AppendLine();
                 }
                 if (overtimeBusinessWithdrawForm.Count > 0)//回调超时
                 {
@@ -954,18 +961,17 @@ namespace Ets.Service.Provider.Pay
                             ((BusinessWithdrawFormStatus)item.Status).GetType(), (BusinessWithdrawFormStatus)item.Status).Text + "】,超时时间：【" +
                                            item.DateDiff + "天】");
                     }
+                    sbEmail.AppendLine();
                 }
             }
             #endregion
 
-            dealResultInfo.DealMsg += sbEmail.ToString();
-            dealResultInfo.DealFlag = true;
-            return dealResultInfo;
+            if (!string.IsNullOrEmpty(sbEmail.ToString()))
+            {
+                EmailHelper.SendEmailTo(sbEmail.ToString(), emailSendTo, "易宝自动对账", copyTo, false);
+            }
             #endregion
         }
-
-
-
         #endregion
     }
 }

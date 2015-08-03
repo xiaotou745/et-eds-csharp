@@ -152,9 +152,9 @@ SELECT [Id]
       ,[Hmac]
       ,[Addtime]
       ,[Ledgerno]
-      ,ISNULL([BalanceRecord],0)
+      ,ISNULL([BalanceRecord],0) BalanceRecord
       ,[UpdateTime]
-      ,ISNULL([YeeBalance],0)
+      ,ISNULL([YeeBalance],0) YeeBalance
 FROM [YeePayUser] ypu WITH(NOLOCK)
 WHERE ISNULL(BalanceRecord,0)<>ISNULL(YeeBalance,0)";
             var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql));
@@ -166,7 +166,7 @@ WHERE ISNULL(BalanceRecord,0)<>ISNULL(YeeBalance,0)";
         /// danny-20150730
         /// </summary>
         /// <returns></returns>
-        public IList<ClienterWithdrawFormModel> GetWarnClienterWithdrawForm()
+        public IList<ClienterWithdrawFormModel> GetWarnClienterWithdrawForm(int dateDiff=3)
         {
             string sql = @"
 SELECT   WithwardNo
@@ -180,7 +180,7 @@ WHERE ([Status]=@StatusPaying
             var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@StatusPaying", ClienterWithdrawFormStatus.Paying.GetHashCode());
             parm.AddWithValue("@StatusExcept", ClienterWithdrawFormStatus.Except.GetHashCode());
-            parm.AddWithValue("@DateDiff",3);
+            parm.AddWithValue("@DateDiff",dateDiff);
             var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
             var list = ConvertDataTableList<ClienterWithdrawFormModel>(dt);
             return list;
@@ -190,7 +190,7 @@ WHERE ([Status]=@StatusPaying
         /// danny-20150730
         /// </summary>
         /// <returns></returns>
-        public IList<BusinessWithdrawFormModel> GetWarnBusinessWithdrawForm()
+        public IList<BusinessWithdrawFormModel> GetWarnBusinessWithdrawForm(int dateDiff = 3)
         {
             string sql = @"
 SELECT   bwf.WithwardNo
@@ -204,7 +204,7 @@ WHERE (bwf.[Status]=@StatusPaying
             var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@StatusPaying", BusinessWithdrawFormStatus.Paying.GetHashCode());
             parm.AddWithValue("@StatusExcept", BusinessWithdrawFormStatus.Except.GetHashCode());
-            parm.AddWithValue("@DateDiff", 3);
+            parm.AddWithValue("@DateDiff", dateDiff);
             var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
             var list = ConvertDataTableList<BusinessWithdrawFormModel>(dt);
             return list;
