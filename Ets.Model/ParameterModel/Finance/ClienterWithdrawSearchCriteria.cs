@@ -36,5 +36,9 @@ namespace Ets.Model.ParameterModel.Finance
         /// 提款单号
         /// </summary>
         public string WithwardNo { get; set; }
+        /// <summary>
+        /// 商户城市
+        /// </summary>
+        public string businessCity { get; set; }
     }
 }

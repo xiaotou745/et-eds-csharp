@@ -56,10 +56,6 @@ namespace Ets.Dao.Distribution
 ";
             
             var sbSqlWhere = new StringBuilder(" 1=1 ");
-            if (!string.IsNullOrEmpty(criteria.clienterName))
-            {
-                sbSqlWhere.AppendFormat(" AND C.TrueName='{0}' ", criteria.clienterName);
-            }
             if (!string.IsNullOrEmpty(criteria.clienterPhone))
             {
                 sbSqlWhere.AppendFormat(" AND C.PhoneNo='{0}' ", criteria.clienterPhone);
@@ -87,6 +83,10 @@ namespace Ets.Dao.Distribution
             if (!string.IsNullOrEmpty(criteria.AuthorityCityNameListStr)&&criteria.UserType!=0)
             {
                 sbSqlWhere.AppendFormat(" AND C.City IN ({0}) ", criteria.AuthorityCityNameListStr.Trim());
+            }
+            if (!string.IsNullOrEmpty(criteria.clienterName))
+            {
+                sbSqlWhere.AppendFormat(" AND C.TrueName LIKE '%{0}%' ", criteria.clienterName);
             }
             //else
             //{

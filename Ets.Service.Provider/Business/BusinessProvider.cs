@@ -582,6 +582,11 @@ namespace Ets.Service.Provider.Business
             {
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.ClienterIsNotExist);
             }
+            if (string.IsNullOrWhiteSpace(model.oldpassword) || business.Password != model.oldpassword)
+            {
+                //旧密码错误
+                return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.OldPwdError);
+            }
             if (businessDao.UpdateBusinessPwdSql(business.Id, model.password))
             {
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.Success);

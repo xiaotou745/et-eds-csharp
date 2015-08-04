@@ -59,6 +59,10 @@ namespace Ets.Dao.Finance
             {
                 sbSqlWhere.AppendFormat(" AND cwf.WithwardNo='{0}' ", criteria.WithwardNo.Trim());
             }
+            if (!string.IsNullOrEmpty(criteria.businessCity))
+            {
+                sbSqlWhere.AppendFormat(" AND C.City='{0}' ", criteria.businessCity.Trim());
+            }
             if (!string.IsNullOrWhiteSpace(criteria.WithdrawDateStart))
             {
                 sbSqlWhere.AppendFormat(" AND CONVERT(CHAR(10),cwf.WithdrawTime,120)>=CONVERT(CHAR(10),'{0}',120) ", criteria.WithdrawDateStart.Trim());
@@ -66,6 +70,10 @@ namespace Ets.Dao.Finance
             if (!string.IsNullOrWhiteSpace(criteria.WithdrawDateEnd))
             {
                 sbSqlWhere.AppendFormat(" AND CONVERT(CHAR(10),cwf.WithdrawTime,120)<=CONVERT(CHAR(10),'{0}',120) ", criteria.WithdrawDateEnd.Trim());
+            }
+            if (!string.IsNullOrEmpty(criteria.AuthorityCityNameListStr) && criteria.UserType != 0)
+            {
+                sbSqlWhere.AppendFormat(" AND C.City IN ({0}) ", criteria.AuthorityCityNameListStr.Trim());
             }
             string tableList = @" ClienterWithdrawForm cwf with(nolock)
                                   join clienter c with(nolock) on cwf.ClienterId=c.Id";
