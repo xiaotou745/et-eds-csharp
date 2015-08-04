@@ -300,7 +300,7 @@ namespace SuperMan.Controllers
                 OptLog = OrderOptionLog,
                 OrderNo = OrderNo
             };
-            var reg = iOrderProvider.CancelOrderByOrderNo(orderOptionModel);
+            var reg = iOrderProvider.DeductWebSubsidy(orderOptionModel);
             return Json(new ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.AllowGet);
         }
 

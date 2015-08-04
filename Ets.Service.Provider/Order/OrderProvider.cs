@@ -1256,7 +1256,7 @@ namespace Ets.Service.Provider.Order
         }
 
         /// <summary>
-        /// 通过订单号扣除订单网站补贴
+        /// 通过订单号手动扣除订单网站补贴
         /// 彭宜-20150803
         /// </summary>
         /// <returns></returns>

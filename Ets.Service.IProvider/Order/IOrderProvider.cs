@@ -270,5 +270,12 @@ namespace Ets.Service.IProvider.Order
         /// <param name="newPhone"></param>
         /// <returns></returns>
         int UpdateOrderAddressAndPhone(string orderId, string newAddress, string newPhone);
+
+        /// <summary>
+        /// 通过订单号手动扣除订单网站补贴
+        /// </summary>
+        /// <param name="orderOptionModel"></param>
+        /// <returns></returns>
+        DealResultInfo DeductWebSubsidy(OrderOptionModel orderOptionModel);
     }
 }
