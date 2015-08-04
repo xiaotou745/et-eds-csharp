@@ -340,6 +340,6 @@ namespace Ets.Model.DataModel.Order
         /// <summary>
         /// 扣除网站补贴方式    1:自动扣除    2:手动扣除
         /// </summary>
-        public int? DeductCommissionType { get; set; }
+        public int DeductCommissionType { get; set; }
     }
 }

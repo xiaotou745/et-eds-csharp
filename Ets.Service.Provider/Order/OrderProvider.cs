@@ -1278,7 +1278,7 @@ namespace Ets.Service.Provider.Order
                 return dealResultInfo;
             }
             orderModel.OptUserName = orderOptionModel.OptUserName;
-            orderModel.Remark = "管理后台取消订单：" + orderOptionModel.OptLog;
+            orderModel.Remark = "管理后台扣除网站补贴：" + orderOptionModel.OptLog;
             #region 订单不可扣除网站补贴
             if (orderModel.Status == 3)//订单已为取消状态
             {
@@ -1299,7 +1299,7 @@ namespace Ets.Service.Provider.Order
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 //更新扣除补贴原因,扣除补贴方式为手动扣除
-                orderOtherDao.UpdateOrderDeductCommissionReason(orderOptionModel.OrderId, orderOptionModel.OptLog, 2);
+                orderOtherDao.UpdateOrderDeductCommissionReason(orderModel.Id, orderOptionModel.OptLog, 2);
                 //如果要扣除的金额大于0， 写流水
                 if (orderModel.OrderCommission > orderModel.SettleMoney)
                 {
@@ -1313,6 +1313,9 @@ namespace Ets.Service.Provider.Order
                         iClienterProvider.UpdateNotRealOrderClienterAccount(orderModel, diffOrderCommission);
                     }
                 }
+                tran.Complete();
+                dealResultInfo.DealFlag = true;
+                dealResultInfo.DealMsg = "扣取网站补贴成功！";
                 return dealResultInfo;
             }
         }

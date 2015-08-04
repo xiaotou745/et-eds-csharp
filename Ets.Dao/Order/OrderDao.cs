@@ -716,6 +716,7 @@ select @@IDENTITY ";
                                         ,ISNULL(oo.IsJoinWithdraw,0) IsJoinWithdraw
                                         ,o.BusinessReceivable
                                         ,o.SettleMoney
+                                        ,o.FinishAll
                                     FROM [order] o WITH ( NOLOCK )
                                     JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                     left JOIN clienter c WITH (NOLOCK) ON o.clienterId=c.Id
@@ -812,7 +813,8 @@ select @@IDENTITY ";
                                         ,o.OriginalOrderNo
                                         ,o.IsEnable
                                         ,o.FinishAll
-                                        ,oo.DeductCommissionType
+                                        ,ISNULL(oo.DeductCommissionType,0) DeductCommissionType
+                                        ,ISNULL(oo.IsJoinWithdraw,0) IsJoinWithdraw
                                     FROM [order] o WITH ( NOLOCK )
                                     LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                     LEFT JOIN clienter c WITH (NOLOCK) ON o.clienterId=c.Id

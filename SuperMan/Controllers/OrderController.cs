@@ -308,7 +308,7 @@ namespace SuperMan.Controllers
         {
             //只有在已完成订单并且已上传完小票的情况下显示该按钮
             if (orderModel != null && /*已完成*/ orderModel.FinishAll == 1 && /*订单未分账*/ orderModel.IsJoinWithdraw == 0
-                && /*有权限*/ UserContext.Current.HasAuthority(79) && orderModel.IsEnable == 1 && orderModel.DeductCommissionType == null)
+                && /*有权限*/ UserContext.Current.HasAuthority(79) && orderModel.IsEnable == 1 && orderModel.DeductCommissionType == 0)
             {
                 return true;
             }
