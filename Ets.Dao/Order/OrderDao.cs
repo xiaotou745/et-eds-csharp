@@ -3167,7 +3167,7 @@ where   Id = @OrderId and FinishAll = 0";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@realOrderCommission", realOrderCommission);
             dbParameters.AddWithValue("@OrderId", orderId);
-            return DbHelper.ExecuteNonQuery(SuperMan_Read, sql, dbParameters);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
         }
 
         /// <summary>
