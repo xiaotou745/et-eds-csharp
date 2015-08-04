@@ -53,11 +53,11 @@ select @@IDENTITY
         public IList<AppActiveInfo> GetAppActiveInfos(string cityId, string deliveryCompanyInfo)
         {
             string strSql = string.Format(@"with t as(
-select ClienterId,MAX(CreateTime) maxtime from ClienterLocation (Nolock) GROUP BY ClienterId HAVING MAX(CreateTime) > '{0}'
+select ClienterId,MAX(CreateTime) maxtime from ClienterLocation (Nolock) GROUP BY ClienterId HAVING MAX(CreateTime) >= '{0}'
 )
 select 2 as UserType, cl.Latitude Latitude,cl.Longitude Longitude,cl.Platform Platform,c.TrueName TrueName,c.PhoneNo Phone from ClienterLocation (Nolock) cl join  t 
 on cl.CreateTime=t.maxtime
-join clienter (Nolock) c on cl.ClienterId=c.Id ", DateTime.Now.AddMinutes(-ParseHelper.ToInt(int.Parse(GlobalConfigDao.GlobalConfigGet(0).AllFinishedOrderUploadTimeInterval), 0)));
+join clienter (Nolock) c on cl.ClienterId=c.Id ", DateTime.Now.AddMinutes(-ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet(0).SearchClienterLocationTimeInterval, 0)));
             string where = !string.IsNullOrEmpty(deliveryCompanyInfo) && deliveryCompanyInfo != "0"
                                     ? string.Format(" where c.DeliveryCompanyId='{0}' and c.cityId='{1}'", deliveryCompanyInfo, cityId.Trim())
                                     : string.Format("  where c.CityId='{0}'", cityId.Trim());

@@ -205,10 +205,11 @@ INTO ClienterWithdrawLog
   [Remark],
   [Operator],
   [OperatTime])
- WHERE  Id = @Id");
+ WHERE  Id = @Id AND [Status]=@OldStatus");
 
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Status", model.Status);
+            parm.AddWithValue("@OldStatus", model.OldStatus);
             parm.AddWithValue("@Operator", model.Operator);
             parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@Id", model.WithwardId);
@@ -240,7 +241,7 @@ INTO ClienterWithdrawLog
   [Remark],
   [Operator],
   [OperatTime])
- WHERE  Id = @Id");
+ WHERE  Id = @Id and [Status]=1");
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Status", model.Status);
             parm.AddWithValue("@Operator", model.Operator);
@@ -276,9 +277,10 @@ INTO ClienterWithdrawLog
   [Remark],
   [Operator],
   [OperatTime])
- WHERE  Id = @Id");
+ WHERE  Id = @Id AND [Status]=@OldStatus");
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Status", model.Status);
+            parm.AddWithValue("@OldStatus", model.OldStatus);
             parm.AddWithValue("@Operator", model.Operator);
             parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@PayFailedReason", model.PayFailedReason);
@@ -347,6 +349,43 @@ select      cbr.[ClienterId]
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
 
+        public bool ClienterClienterAllowWithdrawRecordReturn(ClienterWithdrawLogModel model)
+        {
+            string sql = string.Format(@" 
+insert into ClienterAllowWithdrawRecord
+            ([ClienterId]
+           ,[Amount]
+           ,[Status]
+           ,[Balance]
+           ,[RecordType]
+           ,[Operator]
+           ,[OperateTime]
+           ,[WithwardId]
+           ,[RelationNo]
+           ,[Remark])
+select      cbr.[ClienterId]
+           ,-ISNULL(cbr.[Amount],0) Amount
+           ,@NewStatus [Status]
+           ,-ISNULL(cbr.[Amount],0)+ISNULL(c.AllowWithdrawPrice,0) Balance
+           ,@NewRecordType [RecordType]
+           ,@Operator
+           ,getdate() OperateTime
+           ,cbr.[WithwardId]
+           ,cbr.[RelationNo]
+           ,@Remark
+ from ClienterAllowWithdrawRecord cbr (nolock)
+    join clienter c (nolock) on c.Id=cbr.ClienterId
+ where cbr.WithwardId=@WithwardId and cbr.Status=@Status and cbr.RecordType=@RecordType;");
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Operator", model.Operator);
+            parm.AddWithValue("@Remark", model.Remark);
+            parm.AddWithValue("@WithwardId", model.WithwardId);
+            parm.AddWithValue("@Status", ClienterAllowWithdrawRecordStatus.Success.GetHashCode());
+            parm.AddWithValue("@RecordType", ClienterAllowWithdrawRecordType.WithdrawApply.GetHashCode());
+            parm.AddWithValue("@NewStatus", ClienterAllowWithdrawRecordStatus.Success.GetHashCode());
+            parm.AddWithValue("@NewRecordType", model.Status == ClienterWithdrawFormStatus.TurnDown.GetHashCode() ? ClienterBalanceRecordRecordType.WithdrawRefuse : ClienterBalanceRecordRecordType.PayFailure);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
+        }
         /// <summary>
         /// 骑士提现失败后修改骑士表金额
         /// danny-20150513
@@ -593,34 +632,10 @@ WHERE cbr.ClienterId=@ClienterId ";
 update b
 set    b.AccountBalance=ISNULL(b.AccountBalance, 0)+@Amount,
        b.AllowWithdrawPrice=ISNULL(b.AllowWithdrawPrice,0)+@Amount
-OUTPUT
-  Inserted.Id,
-  @Amount,
-  @Status,
-  Inserted.AccountBalance,
-  @RecordType,
-  @Operator,
-  getdate(),
-  '',
-  @Remark
-INTO ClienterBalanceRecord
-  ( [ClienterId]
-   ,[Amount]
-   ,[Status]
-   ,[Balance]
-   ,[RecordType]
-   ,[Operator]
-   ,[OperateTime]
-   ,[WithwardId]
-   ,[Remark])
 from clienter b WITH ( ROWLOCK )
 where b.Id=@ClienterId;");
             var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Amount", model.RechargeAmount);
-            parm.AddWithValue("@Status", ClienterBalanceRecordStatus.Success);
-            parm.AddWithValue("@RecordType", ClienterBalanceRecordRecordType.BalanceAdjustment);
-            parm.AddWithValue("@Operator", model.OptName);
-            parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@ClienterId", model.ClienterId);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }

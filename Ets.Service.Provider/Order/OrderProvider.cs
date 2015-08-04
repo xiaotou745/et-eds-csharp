@@ -54,8 +54,11 @@ namespace Ets.Service.Provider.Order
         private IBusinessGroupProvider iBusinessGroupProvider = new BusinessGroupProvider();
         private readonly BusinessDao _businessDao = new BusinessDao();
         private readonly ClienterDao clienterDao = new ClienterDao();
+        ClienterBalanceRecordDao clienterBalanceRecordDao=new ClienterBalanceRecordDao();
+        ClienterAllowWithdrawRecordDao  clienterAllowWithdrawRecordDao=new ClienterAllowWithdrawRecordDao();
 
         private readonly BusinessBalanceRecordDao _businessBalanceRecordDao = new BusinessBalanceRecordDao();
+        ClienterFinanceDao clienterFinanceDao = new ClienterFinanceDao();
         //和区域有关的  wc
         readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
 
@@ -1225,11 +1228,49 @@ namespace Ets.Service.Provider.Order
                     if (orderModel.Status == 1 && orderTaskPayStatus == 2 &&
                         orderModel.HadUploadCount == orderModel.NeedUploadCount) //已完成订单
                     {
-                        if (!orderDao.OrderCancelReturnClienter(orderModel))
+                        //if (!orderDao.OrderCancelReturnClienter(orderModel))
+                        //{
+                        //    dealResultInfo.DealMsg = "扣除骑士佣金失败！";
+                        //    return dealResultInfo;
+                        //}
+
+                        decimal accountBalance = decimal.Parse(clienterDao.GetUserInfoByUserId(orderModel.clienterId).AccountBalance.ToString());
+                        decimal allowWithdrawPrice = clienterDao.GetUserInfoByUserId(orderModel.clienterId).AllowWithdrawPrice;
+
+                        clienterFinanceDao.ClienterRecharge(new ClienterOptionLog()
+                                    {
+                                        RechargeAmount = -orderModel.RealOrderCommission,
+                                        ClienterId = orderModel.clienterId
+                                    }
+                            );
+
+                        ClienterBalanceRecord cbrm = new ClienterBalanceRecord()
                         {
-                            dealResultInfo.DealMsg = "扣除骑士佣金失败！";
-                            return dealResultInfo;
-                        }
+                            ClienterId = orderModel.clienterId,
+                            Amount =  -orderModel.RealOrderCommission,
+                            Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
+                            Balance = accountBalance,
+                            RecordType = ClienterBalanceRecordRecordType.BalanceAdjustment.GetHashCode(),
+                            Operator = orderModel.OptUserName,
+                            WithwardId =  orderModel.Id,
+                            RelationNo = orderModel.OrderNo,
+                            Remark = orderModel.Remark
+                        };
+                        clienterBalanceRecordDao.Insert(cbrm);
+
+                        ClienterAllowWithdrawRecord cawrm = new ClienterAllowWithdrawRecord()
+                        {
+                            ClienterId = orderModel.clienterId,
+                            Amount =  -orderModel.RealOrderCommission,
+                            Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(),
+                            Balance = allowWithdrawPrice,
+                            RecordType = ClienterAllowWithdrawRecordType.BalanceAdjustment.GetHashCode(),
+                            Operator = orderModel.OptUserName,
+                            WithwardId =  orderModel.Id,
+                            RelationNo =orderModel.OrderNo,
+                            Remark = orderModel.Remark
+                        };
+                        clienterAllowWithdrawRecordDao.Insert(cawrm);
                     }
                     if (!orderDao.OrderCancelReturnBusiness(orderModel))
                     {

@@ -52,6 +52,7 @@ namespace Ets.Service.Provider.Clienter
         readonly OrderChildDao orderChildDao = new OrderChildDao();
         readonly GlobalConfigDao globalConfigDao = new GlobalConfigDao();
         readonly ClienterBalanceRecordDao clienterBalanceRecordDao = new ClienterBalanceRecordDao();
+        readonly ClienterAllowWithdrawRecordDao clienterAllowWithdrawRecordDao = new ClienterAllowWithdrawRecordDao();
         readonly BusinessDao businessDao = new BusinessDao();
         readonly BusinessClienterRelationDao businessClienterDao = new BusinessClienterRelationDao();
         readonly BusinessBalanceRecordDao businessBalanceRecordDao = new BusinessBalanceRecordDao();
@@ -725,14 +726,10 @@ namespace Ets.Service.Provider.Clienter
 
                 //写入骑士完成坐标                 
                 orderOtherDao.UpdateComplete(parModel);
-                string mess = "更新坐标:" + parModel.orderId;
-                LogHelper.LogWriter(" FinishOrder", new { obj = "时间：" + DateTime.Now.ToString() + mess });
 
                 //更新骑士和商家金额
                 bool blUpdate = UpdateMoney(myOrderInfo, parModel);
-                mess = "更新骑士和商家金额订单Id:" + myOrderInfo.Id;
-                mess += "列新状态:" + blUpdate.ToString();
-                LogHelper.LogWriter(" FinishOrder", new { obj = "时间：" + DateTime.Now.ToString() + mess });
+              
                 if (!blUpdate)
                 {
                     return model;
@@ -883,6 +880,7 @@ namespace Ets.Service.Provider.Clienter
             bool b = clienterDao.UpdateAccountBalanceAndWithdraw(new WithdrawRecordsModel() { UserId = userId, Amount = myOrderInfo.OrderCommission.Value });
             //增加记录 
             decimal? accountBalance = 0;
+            decimal  allowWithdrawPrice = 0;
             //更新用户相关金额数据 
             if (myOrderInfo.AccountBalance.HasValue)
             {
@@ -892,6 +890,8 @@ namespace Ets.Service.Provider.Clienter
             {
                 accountBalance = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission);
             }
+            allowWithdrawPrice = myOrderInfo.AllowWithdrawPrice;
+            
 
             ClienterBalanceRecord cbrm = new ClienterBalanceRecord()
             {
@@ -901,10 +901,25 @@ namespace Ets.Service.Provider.Clienter
                 Balance = accountBalance ?? 0,
                 RecordType = ClienterBalanceRecordRecordType.OrderCommission.GetHashCode(),
                 Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士:" + userId : myOrderInfo.ClienterName,
+                WithwardId = myOrderInfo.Id,
                 RelationNo = myOrderInfo.OrderNo,
                 Remark = "骑士完成订单"
             };
             clienterBalanceRecordDao.Insert(cbrm);
+
+            ClienterAllowWithdrawRecord cawrm = new ClienterAllowWithdrawRecord()
+            {
+                ClienterId = userId,
+                Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
+                Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(),
+                Balance = allowWithdrawPrice,
+                RecordType = ClienterAllowWithdrawRecordType.OrderCommission.GetHashCode(),
+                Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士:" + userId : myOrderInfo.ClienterName,
+                WithwardId = myOrderInfo.Id,
+                RelationNo = myOrderInfo.OrderNo,
+                Remark = "骑士完成订单"
+            };
+            clienterAllowWithdrawRecordDao.Insert(cawrm);
         }
 
 
@@ -1031,12 +1046,6 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="orderOther"></param>
         void UpdateClienterMoney(OrderListModel myOrderInfo, UploadReceiptModel uploadReceiptModel, OrderOther orderOther)
         {
-            string mess = "付款方式:" + myOrderInfo.IsPay;
-            mess += " 订单编号:" + myOrderInfo.OrderNo;
-            mess += " HadUploadCount:" + myOrderInfo.HadUploadCount;
-            mess += " NeedUploadCount:" + myOrderInfo.NeedUploadCount;
-            LogHelper.LogWriter(" UpdateClienterMoney", new { obj = "时间：" + DateTime.Now.ToString() + mess });
-
             if ((bool)myOrderInfo.IsPay)//已付款
             {
                 //上传完小票
@@ -1088,12 +1097,6 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="orderOther"></param>
         bool UpdateMoney(OrderListModel myOrderInfo, OrderCompleteModel parModel)
         {
-            string mess = "付款方式:" + myOrderInfo.IsPay;
-            mess += " 订单编ID:" + myOrderInfo.Id;
-            mess += " HadUploadCount:" + myOrderInfo.HadUploadCount;
-            mess += " OrderCount:" + myOrderInfo.OrderCount;
-            LogHelper.LogWriter(" UpdateMoney", new { obj = "时间：" + DateTime.Now.ToString() + mess });
-
             if (ParseHelper.ToBool(myOrderInfo.IsPay, false))//已付款
             {
                 //上传完小票
@@ -1572,6 +1575,7 @@ namespace Ets.Service.Provider.Clienter
             bool b = clienterDao.UpdateAccountBalanceAndWithdraw(new WithdrawRecordsModel() { UserId = myOrderInfo.clienterId, Amount = realOrderCommission });
             //增加记录 
             decimal? accountBalance = 0;
+            decimal allowWithdrawPrice= myOrderInfo.AllowWithdrawPrice;
             //更新用户相关金额数据 
             if (myOrderInfo.AccountBalance.HasValue)
             {
@@ -1595,6 +1599,20 @@ namespace Ets.Service.Provider.Clienter
                 Remark = "无效订单"
             };
             clienterBalanceRecordDao.Insert(cbrm);
+
+            ClienterAllowWithdrawRecord cawrm = new ClienterAllowWithdrawRecord()
+            {
+                ClienterId = myOrderInfo.clienterId,
+                Amount = realOrderCommission,
+                Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(),
+                Balance = allowWithdrawPrice,
+                RecordType = ClienterAllowWithdrawRecordType.BalanceAdjustment.GetHashCode(),
+                Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士" : myOrderInfo.ClienterName,
+                WithwardId = myOrderInfo.Id,
+                RelationNo = myOrderInfo.OrderNo,
+                Remark = "无效订单"
+            };
+            clienterAllowWithdrawRecordDao.Insert(cawrm);
         }
         /// <summary>
         /// 修改骑士详细信息

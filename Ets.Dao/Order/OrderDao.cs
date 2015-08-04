@@ -1148,7 +1148,7 @@ set @incomeTotal =convert(decimal(18,2),(select sum(TotalPrice) from dbo.OrderCh
 set @withdrawClienterPrice = convert(decimal(18,2),(select isnull( sum(isnull(Amount,0)),0) withPirce FROM dbo.ClienterWithdrawForm(nolock) cwf where Status =3)) 
 set @businessBalance=convert(decimal(18,2),(SELECT sum(BalancePrice) FROM dbo.business b(nolock) where Status=1 ))
 set @withdrawBusinessPrice=convert( decimal(18,2),(SELECT sum(Amount) as withdrawBusinessPrice FROM dbo.BusinessWithdrawForm(nolock) bwf where Status =3 ))
-set @rechargeTotal = (select sum(Amount) from BusinessBalanceRecord(nolock) where RecordType = 4 ) --商户充值总计
+set @rechargeTotal = (SELECT sum(payAmount) FROM BusinessRecharge(nolock) where PayStatus=1 ) --商户充值总计
 select  ( select    sum(AccountBalance)
           from      dbo.clienter(nolock)
           where     AccountBalance >= 1000
@@ -1273,7 +1273,9 @@ where   o.[Status] <> 3
                                   ,[TwoSubsidyOrderCount]
                                   ,[ThreeSubsidyOrderCount]
                                   ,[ActiveBusiness]
-                                  ,[ActiveClienter]";
+                                  ,[ActiveClienter]
+                                  ,rechargeTotal
+                                    ";
 
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrWhiteSpace(criteria.orderPubStart))
@@ -1439,6 +1441,7 @@ select top 1
         o.[OrderNo] ,
         o.[Status] ,
         c.AccountBalance ,
+        c.AllowWithdrawPrice,
         c.Id clienterId ,
         o.OrderCommission ,
         o.businessId ,
@@ -1509,6 +1512,7 @@ select top 1
         o.[OrderNo] ,
         o.[Status] ,
         c.AccountBalance ,
+        c.AllowWithdrawPrice, 
         c.Id clienterId ,
         o.OrderCommission ,
         o.businessId ,
@@ -1523,7 +1527,8 @@ select top 1
         oo.GrabTime,
         o.Amount,
         o.DeliveryCompanySettleMoney,
-        o.DeliveryCompanyID
+        o.DeliveryCompanyID,
+        o.MealsSettleMode         
 from    [order] o with ( nolock )
         join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
         join dbo.business b with ( nolock ) on o.businessId = b.Id
@@ -2326,7 +2331,7 @@ where businessId=@businessId and TimeSpan=@TimeSpan ";
         {
             string sql = @"
 select 
-o.id,o.amount, 
+o.id,o.OrderNo, o.amount, 
 o.RealOrderCommission clienterPrice, --给骑士
 o.Amount-o.SettleMoney businessPrice,--给商家
 o.clienterId, o.businessId
@@ -3164,7 +3169,7 @@ where   Id = @OrderId and FinishAll = 0";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@realOrderCommission", realOrderCommission);
             dbParameters.AddWithValue("@OrderId", orderId);
-            return DbHelper.ExecuteNonQuery(SuperMan_Read, sql, dbParameters);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
         }
 
         /// <summary>
