@@ -234,7 +234,7 @@ namespace Ets.Service.Provider.Clienter
                  string token = iTokenProvider.GetToken(new TokenModel()
                     {
                         Ssid = model.Ssid,
-                        Appkey = resultModel.Appkey
+                        Appkey = resultModel.Appkey.ToString()
                     });
                 resultModel.Token = token;
                 return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.Success, resultModel);

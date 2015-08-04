@@ -60,7 +60,7 @@ namespace Ets.Model.DataModel.Business
         /// <summary>
         /// 唯一健值guid
         /// </summary>
-        public string Appkey { get; set; }
+        public Guid Appkey { get; set; }
 
         /// <summary>
         /// Tokey值

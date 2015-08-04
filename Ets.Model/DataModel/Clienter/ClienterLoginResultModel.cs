@@ -51,7 +51,7 @@ namespace Ets.Model.DataModel.Clienter
         /// </summary>
         public int WorkStatus { get; set; }
 
-        public string Appkey { get; set; }
+        public Guid Appkey { get; set; }
 
         /// <summary>
         /// Token

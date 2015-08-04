@@ -232,7 +232,7 @@ namespace ETS.Extension
                             }
                             pi.SetValue(type, dataRow[j], null);
                         }
-                        catch
+                        catch(Exception err)
                         {
                             continue;
                         }

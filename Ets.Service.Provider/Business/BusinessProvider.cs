@@ -456,7 +456,7 @@ namespace Ets.Service.Provider.Business
                 resultMode.phoneNo = row["PhoneNo2"] == null ? row["PhoneNo"].ToString() : row["PhoneNo2"].ToString();
                 resultMode.DistribSubsidy = row["DistribSubsidy"] == null ? 0 : ParseHelper.ToDecimal(row["DistribSubsidy"]);
                 resultMode.OriginalBusiId = row["OriginalBusiId"].ToString();
-                resultMode.Appkey = row["Appkey"].ToString();
+                resultMode.Appkey = new Guid(row["Appkey"].ToString());
 
                 string token = iTokenProvider.GetToken(new TokenModel()
                 {
