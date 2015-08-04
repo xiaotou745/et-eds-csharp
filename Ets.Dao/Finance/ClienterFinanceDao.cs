@@ -374,7 +374,7 @@ select      cbr.[ClienterId]
             parm.AddWithValue("@WithwardId", model.WithwardId);
             parm.AddWithValue("@Status", ClienterAllowWithdrawRecordStatus.Success.GetHashCode());
             parm.AddWithValue("@RecordType", ClienterAllowWithdrawRecordType.WithdrawApply.GetHashCode());
-            parm.AddWithValue("@NewStatus", ClienterAllowWithdrawRecordStatus.Success.GetHashCode());
+            parm.AddWithValue("@NewStatus",model.Status);// ClienterAllowWithdrawRecordStatus.Success.GetHashCode());
             parm.AddWithValue("@NewRecordType", model.Status == ClienterWithdrawFormStatus.TurnDown.GetHashCode() ? ClienterBalanceRecordRecordType.WithdrawRefuse : ClienterBalanceRecordRecordType.PayFailure);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
