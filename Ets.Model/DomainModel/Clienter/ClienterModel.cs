@@ -43,6 +43,9 @@ namespace Ets.Model.DomainModel.Clienter
         /// 帐户余额
         /// </summary>
         public decimal? AccountBalance { get; set; }
+
+        public decimal AllowWithdrawPrice { get; set; }
+
         /// <summary>
         /// 状态
         /// </summary>

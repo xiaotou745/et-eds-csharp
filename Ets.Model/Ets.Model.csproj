@@ -87,6 +87,7 @@
     <Compile Include="DataModel\Clienter\CrossShopStatisticLogModel.cs" />
     <Compile Include="DataModel\Common\ExportSqlManage.cs" />
     <Compile Include="DataModel\DeliveryCompany\DeliveryCompanyModel.cs" />
+    <Compile Include="DataModel\Finance\ClienterAllowWithdrawRecord.cs" />
     <Compile Include="DataModel\Message\BusinessMessage.cs" />
     <Compile Include="DataModel\Message\ClienterMessage.cs" />
     <Compile Include="DataModel\Message\MessageModel.cs" />
@@ -114,6 +115,7 @@
     <Compile Include="DataModel\YeePay\YeePayRunningAccountModel.cs" />
     <Compile Include="DomainModel\Authority\AccountDCRelationModel.cs" />
     <Compile Include="DomainModel\Business\BusinessExpressRelationModel.cs" />
+    <Compile Include="DomainModel\Clienter\ClienterUpdateModel.cs" />
     <Compile Include="DomainModel\Common\APPVersionModel.cs" />
     <Compile Include="DomainModel\DeliveryCompany\BatchImportClienterExcelDM.cs" />
     <Compile Include="DomainModel\Area\DMAreaCodeInfo.cs" />

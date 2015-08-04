@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -14,14 +14,14 @@ using Ets.Service.Provider.Common;
 namespace SuperManWebApi.App_Start.Filters
 {
     /// <summary>
-    /// token è¿‡æ»¤å™¨ add by caoheyang  20150731
+    /// token ¹ıÂËÆ÷ add by caoheyang  20150731
     /// </summary>
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
     public class TokenAttribute : System.Web.Http.Filters.ActionFilterAttribute
     {
       
         /// <summary>
-        /// éªŒè¯   add by caoheyang  20150731
+        /// ÑéÖ¤   add by caoheyang  20150731
         /// </summary>
         /// <param name="actionContext"></param>
         public override void OnActionExecuting(HttpActionContext actionContext)

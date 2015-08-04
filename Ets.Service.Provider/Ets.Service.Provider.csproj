@@ -84,6 +84,7 @@
     <Compile Include="Finance\BusinessFinanceProvider.cs" />
     <Compile Include="Finance\ClienterBalanceRecordProvider.cs" />
     <Compile Include="Finance\BusinessFinanceAccountProvider.cs" />
+    <Compile Include="Finance\ClienterAllowWithdrawRecordProvider.cs" />
     <Compile Include="Finance\ClienterFinanceProvider.cs" />
     <Compile Include="Finance\ClienterWithdrawFormProvider.cs" />
     <Compile Include="Finance\ClienterWithdrawLogProvider.cs" />

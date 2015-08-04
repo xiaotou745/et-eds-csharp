@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,11 +50,27 @@ select @@IDENTITY";
             dbParameters.AddWithValue("UserType", yeePayRecord.UserType);
             dbParameters.AddWithValue("Lastno", yeePayRecord.Lastno);
             dbParameters.AddWithValue("Desc", yeePayRecord.Desc);
-
-
-
             return  ParseHelper.ToLong(DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters));
-        
+        }
+
+
+        /// <summary>
+        ///  根据请求号查询易宝提现记录 对应的提现单号等数据  
+        /// </summary>
+        /// <param name="requestId"></param>
+        /// <returns></returns>
+        public YeePayRecord GetReocordByRequestId(string requestId)
+        {
+            const string querysql = @"
+SELECT Id,RequestId,UserType,WithdrawId  from YeePayRecord where TransferType=1 and RequestId=@RequestId";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("RequestId", requestId);
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
+            if (DataTableHelper.CheckDt(dt))
+            {
+                return DataTableHelper.ConvertDataTableList<YeePayRecord>(dt)[0];
+            }
+            return null;
         }
         /// <summary>
         /// 获取活跃易宝账户列表信息
@@ -152,9 +169,9 @@ SELECT [Id]
       ,[Hmac]
       ,[Addtime]
       ,[Ledgerno]
-      ,ISNULL([BalanceRecord],0)
+      ,ISNULL([BalanceRecord],0) BalanceRecord
       ,[UpdateTime]
-      ,ISNULL([YeeBalance],0)
+      ,ISNULL([YeeBalance],0) YeeBalance
 FROM [YeePayUser] ypu WITH(NOLOCK)
 WHERE ISNULL(BalanceRecord,0)<>ISNULL(YeeBalance,0)";
             var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql));
@@ -166,7 +183,7 @@ WHERE ISNULL(BalanceRecord,0)<>ISNULL(YeeBalance,0)";
         /// danny-20150730
         /// </summary>
         /// <returns></returns>
-        public IList<ClienterWithdrawFormModel> GetWarnClienterWithdrawForm()
+        public IList<ClienterWithdrawFormModel> GetWarnClienterWithdrawForm(int dateDiff=3)
         {
             string sql = @"
 SELECT   WithwardNo
@@ -180,7 +197,7 @@ WHERE ([Status]=@StatusPaying
             var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@StatusPaying", ClienterWithdrawFormStatus.Paying.GetHashCode());
             parm.AddWithValue("@StatusExcept", ClienterWithdrawFormStatus.Except.GetHashCode());
-            parm.AddWithValue("@DateDiff",3);
+            parm.AddWithValue("@DateDiff",dateDiff);
             var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
             var list = ConvertDataTableList<ClienterWithdrawFormModel>(dt);
             return list;
@@ -190,7 +207,7 @@ WHERE ([Status]=@StatusPaying
         /// danny-20150730
         /// </summary>
         /// <returns></returns>
-        public IList<BusinessWithdrawFormModel> GetWarnBusinessWithdrawForm()
+        public IList<BusinessWithdrawFormModel> GetWarnBusinessWithdrawForm(int dateDiff = 3)
         {
             string sql = @"
 SELECT   bwf.WithwardNo
@@ -204,7 +221,7 @@ WHERE (bwf.[Status]=@StatusPaying
             var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@StatusPaying", BusinessWithdrawFormStatus.Paying.GetHashCode());
             parm.AddWithValue("@StatusExcept", BusinessWithdrawFormStatus.Except.GetHashCode());
-            parm.AddWithValue("@DateDiff", 3);
+            parm.AddWithValue("@DateDiff", dateDiff);
             var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
             var list = ConvertDataTableList<BusinessWithdrawFormModel>(dt);
             return list;

@@ -10,6 +10,8 @@ using ETS.Extension;
 using ETS.Util;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -54,7 +56,7 @@ namespace Ets.Dao.Distribution
                                     ,isnull(cs.ClienterId,0) as CSID  --如果非0就存在跨店
                                     ,ISNULL(DC.DeliveryCompanyName,'') AS CompanyName
 ";
-            
+
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrEmpty(criteria.clienterPhone))
             {
@@ -80,7 +82,7 @@ namespace Ets.Dao.Distribution
             {
                 sbSqlWhere.AppendFormat(" AND DC.Id={0} ", criteria.deliveryCompany);
             }
-            if (!string.IsNullOrEmpty(criteria.AuthorityCityNameListStr)&&criteria.UserType!=0)
+            if (!string.IsNullOrEmpty(criteria.AuthorityCityNameListStr) && criteria.UserType != 0)
             {
                 sbSqlWhere.AppendFormat(" AND C.City IN ({0}) ", criteria.AuthorityCityNameListStr.Trim());
             }
@@ -127,7 +129,6 @@ namespace Ets.Dao.Distribution
                 string sql = string.Empty;
                 if (enumStatusType == AuditStatus.Status1)
                 {
-
                     sql = string.Format(" update clienter set Status={0} where Id=@id ", ClienteStatus.Status1.GetHashCode());
                 }
                 else if (enumStatusType == AuditStatus.Status0)
@@ -143,6 +144,75 @@ namespace Ets.Dao.Distribution
             {
                 reslut = false;
                 LogHelper.LogWriter(ex, "更新审核状态");
+                throw;
+            }
+            return reslut;
+        }
+
+        /// <summary>
+        /// 更新审核状态 
+        /// </summary> 
+        /// <returns></returns>
+        public bool UpdateAuditStatus(ClienterUpdateModel cum)
+        {
+            bool reslut = false;
+            try
+            {
+                string sql = string.Empty;
+                int status = 0;
+                if (cum.AuditStatus == AuditStatus.Status1)
+                {
+                    status = ClienteStatus.Status1.GetHashCode();
+                }
+                else if (cum.AuditStatus == AuditStatus.Status0)
+                {
+                    status = ClienteStatus.Status0.GetHashCode();
+                }
+                sql = string.Format(@"update clienter set Status={0}  
+ output Inserted.Id,@optId,@optName,getdate(),3, '骑士状态'+convert(varchar(10),Deleted.[Status])+'修改为'+convert(varchar(10),Inserted.[Status]) 
+ into dbo.ClienterOptionLog (ClienterId,OptId,OptName,InsertTime,[Platform],Remark) 
+ where Id=@id ", status);
+                IDbParameters dbParameters = DbHelper.CreateDbParameters();
+                dbParameters.AddWithValue("id", cum.Id);
+                dbParameters.Add("optId", DbType.Int32).Value = cum.OptUserId;
+                dbParameters.Add("optName", DbType.String).Value = cum.OptUserName;
+
+                int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
+                if (i > 0) reslut = true;
+            }
+            catch (Exception ex)
+            {
+                reslut = false;
+                LogHelper.LogWriter(ex, "更新审核状态");
+                throw;
+            }
+            return reslut;
+        }
+
+
+        /// <summary>
+        /// 清空帐户余额
+        /// 加日志
+        /// </summary>
+        /// <returns></returns>
+        public bool ClearSuperManAmount(ClienterUpdateModel cum)
+        {
+            bool reslut = false;
+            try
+            {
+                string sql = @" update clienter set AccountBalance=0 
+output Inserted.Id,@optId,@optName,getdate(),3, '账户余额清零'+convert(varchar(10),Deleted.AccountBalance)+'修改为0'  
+ into dbo.ClienterOptionLog (ClienterId,OptId,OptName,InsertTime,[Platform],Remark) 
+where Id=@id ";
+                IDbParameters dbParameters = DbHelper.CreateDbParameters();
+                dbParameters.AddWithValue("id", cum.Id);
+                int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
+                if (i > 0) reslut = true;
+            }
+            catch (Exception ex)
+            {
+                reslut = false;
+                LogHelper.LogWriter(ex, "清空帐户余额");
                 throw;
             }
             return reslut;
@@ -348,7 +418,7 @@ namespace Ets.Dao.Distribution
                                     ,tbl.PhoneNo ";
 
             var sbSqlWhere = new StringBuilder(" 1=1 ");
-            
+
             if (!string.IsNullOrEmpty(criteria.clienterName))
             {
                 sbSqlWhere.AppendFormat(" AND Name='{0}' ", criteria.clienterName);
