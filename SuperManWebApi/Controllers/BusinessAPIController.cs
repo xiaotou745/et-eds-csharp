@@ -257,7 +257,6 @@ namespace SuperManWebApi.Controllers
         /// <param name="Version">版本号</param>
         /// <returns></returns>        
         [HttpGet]
-        [Token]
         [ApiVersionStatistic]
         public ResultModel<AreaModelList> GetOpenCity(string Version)
         {
