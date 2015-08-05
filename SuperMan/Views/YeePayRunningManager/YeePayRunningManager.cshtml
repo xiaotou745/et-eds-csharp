@@ -2,12 +2,12 @@
 
 @using Ets.Service.Provider.Common
 @using ETS.Util
-@using Webdiyer.WebControls.Mvc 
+@using Webdiyer.WebControls.Mvc
 @{
     ViewBag.Title = "YeePayRunningManager";
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
 }
-<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet"/> 
+<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
 <script src="~/Content/My97DatePicker/WdatePicker.js"></script>
 <script src="~/Scripts/jquery-1.8.2.js"></script>
 <script src="~/Scripts/jquery-ui-1.8.20.js"></script>
@@ -23,19 +23,21 @@
         <div class="SearchMd">
             <table border="0" cellspacing="0" cellpadding="0">
                 <tr>
-                <td>
-                    <span class="">充值日期: </span> 
-                    <input id="RechargeStarteTime" name="RechargeStarteTime" class="Wdate" type="text" onfocus="WdatePicker({ maxDate: '#F{$dp.$D(\'RechargeEndTime\')||\'%y-%M-%d\'}', dateFmt: 'yyyy-MM-dd 00:00:00' }) " />到
-                    <input id="RechargeEndTime" name="RechargeEndTime" class="Wdate" type="text" onfocus="WdatePicker({ minDate: '#F{$dp.$D(\'RechargeStarteTime\')}', dateFmt: 'yyyy-MM-dd 23:59:59' }) " />
-                </td>
+                    <td>
+                        <span class="">充值日期: </span>
+                        <input id="RechargeStarteTime" name="RechargeStarteTime" class="Wdate" type="text" onfocus=" WdatePicker({ maxDate: '#F{$dp.$D(\'RechargeEndTime\')||\'%y-%M-%d\'}', dateFmt: 'yyyy-MM-dd 00:00:00' }) " />到
+                        <input id="RechargeEndTime" name="RechargeEndTime" class="Wdate" type="text" onfocus=" WdatePicker({ minDate: '#F{$dp.$D(\'RechargeStarteTime\')}', dateFmt: 'yyyy-MM-dd 23:59:59' }) " />
+                    </td>
+                </tr>
+                <tr>
                     <td>
                         <span class="">操作日期: </span>
-                        <input id="OptStarteTime" name="OptStarteTime" class="Wdate" type="text" onfocus="WdatePicker({ maxDate: '#F{$dp.$D(\'OptEndTime\')||\'%y-%M-%d\'}', dateFmt: 'yyyy-MM-dd 00:00:00' }) " />
-                        <input id="OptEndTime" name="OptEndTime" class="Wdate" type="text" onfocus="WdatePicker({ minDate: '#F{$dp.$D(\'OptStarteTime\')}', dateFmt: 'yyyy-MM-dd 23:59:59' }) " />到
-                        <input type="submit" value="查询" class="searchBtn" id="btnSearch"/>&nbsp;&nbsp;
+                        <input id="OptStarteTime" name="OptStarteTime" class="Wdate" type="text" onfocus="WdatePicker({ maxDate: '#F{$dp.$D(\'OptEndTime\')||\'%y-%M-%d\'}', dateFmt: 'yyyy-MM-dd 00:00:00' }) " />到
+                        <input id="OptEndTime" name="OptEndTime" class="Wdate" type="text" onfocus="WdatePicker({ minDate: '#F{$dp.$D(\'OptStarteTime\')}', dateFmt: 'yyyy-MM-dd 23:59:59' }) " />
+                        <input type="submit" value="查询" class="searchBtn" id="btnSearch" />&nbsp;&nbsp;
                         @if (SuperMan.App_Start.UserContext.Current.HasAuthority(77))
                         {
-                            <input type="submit" value="充值" class="searchBtn" onclick="showYeePayRecharge() "/>
+                            <input type="submit" value="充值" class="searchBtn" onclick="showYeePayRecharge() " />
                         }
                     </td>
                 </tr>
@@ -56,7 +58,7 @@
         <fieldset>
             <div class="control-group">
                 <label>充值金额：</label>
-                <input name="yeePayRechargeAmount" id="yeePayRechargeAmount" type="text"/>
+                <input name="yeePayRechargeAmount" id="yeePayRechargeAmount" type="text" />
             </div>
             <div class="control-group">
                 <label>充值日期：</label>
@@ -64,7 +66,7 @@
             </div>
             <div class="control-group">
                 <label>备&nbsp;&nbsp;注：</label>
-                <textarea name="yeePayRemark" id="yeePayRemark" style="width: 150px;height: 40px"></textarea>
+                <textarea name="yeePayRemark" id="yeePayRemark" style="width: 200px;height: 60px; resize: none; overflow-y: auto;max-width: 200px;max-height: 100px;"></textarea>
             </div>
             <label style="color: red">（财务人员在易宝充值总账户后，需在此录入充值金额）</label>
         </fieldset>
@@ -85,15 +87,35 @@
     $("#btnAddYeePayRecharge").click(function () {
         var yeePayRechargeAmount = $("#yeePayRechargeAmount").val();
         var rechargeTime = $("#rechargeTime").val();
-        var yeePayRemark = $("#yeePayRemark").val(); 
-        if (yeePayRechargeAmount == null || yeePayRechargeAmount == "" || yeePayRechargeAmount == 0) {
+        var yeePayRemark = $("#yeePayRemark").val();
+        var decimalFormat = /^[0-9]*(\.[0-9]{1,3})?$/;
+        if (yeePayRechargeAmount == null || yeePayRechargeAmount.trim() == "" || yeePayRechargeAmount == 0) {
             alert("请输入充值金额!");
             return;
         }
-        if (rechargeTime == null || rechargeTime == "") {
+        if (!decimalFormat.test(yeePayRechargeAmount)) {
+            alert("请输入正确的充值金额！");
+            $("#yeePayRechargeAmount").val("");
+            return;
+        } else {
+            if (yeePayRechargeAmount < 1 || yeePayRechargeAmount > 99999999) {
+                alert("充值金额必须大于等于1元，最高金额99,999,999元！");
+                return;
+            } 
+        }
+        if (rechargeTime == null || rechargeTime.trim() == "") {
             alert("请输入充值日期!");
             return;
-        } 
+        }
+        if (yeePayRemark == null || yeePayRemark.trim() == "") {
+            alert("请填写备注,最少1个字符，最多字符500!");
+            $("#yeePayRemark").val("");
+            return;
+        }
+        if (yeePayRemark.length > 500) {
+            alert("备注最多500字符");
+            return;
+        }
         var paramaters = { "RechargeAmount": yeePayRechargeAmount, "Remark": yeePayRemark, "RechargeTime": rechargeTime };
         var url = "/YeePayRunningManager/AddYeePayRunning";
         $.ajax({
@@ -103,14 +125,14 @@
             success: function (result) {
                 if (result.IsSuccess) {
                     alert("添加记录成功!");
-                    window.location.href = "/YeePayRunningManager/AddYeePayRunning";
+                    window.location.href = "/YeePayRunningManager/YeePayRunningManager";
                 } else {
                     alert(result.Message);
                 }
             }
         });
     });
-     
+
     //关闭弹层
     $('.J_closebox').click(function () {
         adminjs.closewinbox('.add-openbox');

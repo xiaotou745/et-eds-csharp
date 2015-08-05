@@ -311,7 +311,7 @@
         var orderNo = $('#OrderNo').val();
         var orderId = $('#OrderId').val();
         var orderOptionLog = $('#deductWebSubsidyReason').val();
-        if ($("#orderOptionLog").val().trim() == "") {
+        if (orderOptionLog.trim() == "") {
             alert("扣除网站补贴原因不能为空！");
             return false;
         }

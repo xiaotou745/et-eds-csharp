@@ -1,0 +1,24 @@
+declare @ID as [int]
+declare @AllowWithdrawPrice as decimal(18, 3)
+declare setinTab cursor Scroll
+for
+select  Id, AllowWithdrawPrice from dbo.clienter nolock
+open setinTab
+fetch first from setinTab into @ID,@AllowWithdrawPrice
+while @@fetch_status=0
+  begin    
+     begin tran
+     insert into dbo.ClienterAllowWithdrawRecord values(@Id,@AllowWithdrawPrice,1,@AllowWithdrawPrice,1,'系统',getdate(),0,'','系统初始可提现余额',1)
+     
+     if(@@ERROR<>0)     
+		begin
+		rollback
+		return
+		end
+     commit
+     print @ID
+    fetch Next from setinTab into @ID,@AllowWithdrawPrice
+  end
+close setinTab
+deallocate setinTab
+
