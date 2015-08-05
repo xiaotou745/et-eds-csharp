@@ -54,5 +54,12 @@ namespace Ets.Service.IProvider.Statistics
         /// <param name="deliveryCompanyInfo">骑士所属物流公司,用户类型是骑士时此参数才有效</param>
         /// <returns></returns>
         IList<AppActiveInfo> GetAppActiveInfos(byte userType, string cityId, string deliveryCompanyInfo);
+
+        /// <summary>
+        /// 查询活跃用户
+        /// </summary>
+        /// <param name="queryInfo"></param>
+        /// <returns></returns>
+        PageInfo<ActiveUserInfo> QueryActiveUser(ActiveUserQuery queryInfo);
     }
 }

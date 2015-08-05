@@ -247,5 +247,32 @@ namespace SuperMan.Controllers
             }
             return Json(list);
         }
+
+        public ActionResult ActiveUserAnalyze()
+        {
+            ActiveUserQuery defaultParams = new ActiveUserQuery()
+            {
+                StartDate = DateTime.Now.AddDays(-1).Date,
+                EndDate = DateTime.Now.AddDays(-1).Date,
+                UserType = 0,
+                PageIndex = 1
+            };
+
+            PageInfo<ActiveUserInfo> resultData = statisticsProvider.QueryActiveUser(defaultParams);
+            return View(resultData);
+        }
+        /// <summary>
+        /// 活跃用户分析
+        /// </summary>
+        /// <param name="PageIndex"></param>
+        /// <returns></returns>
+        public ActionResult PostActiveUserAnalyze(int PageIndex = 1)
+        {
+            var criteria = new ActiveUserQuery();
+            TryUpdateModel(criteria);
+            criteria.PageIndex = PageIndex;
+            PageInfo<ActiveUserInfo> resultData = statisticsProvider.QueryActiveUser(criteria);
+            return PartialView("_PartialActiveUserList", resultData);
+        }
     }
 }
