@@ -1,7 +1,6 @@
 ﻿@using ETS.Util
 @model  ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Statistics.ActiveUserInfo>
-@if (Model != null)
-{
+
         <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
             <thead>
                 <tr class="tdbg">
@@ -13,7 +12,10 @@
                 </tr>
             </thead>
             <tbody>
-@for (int i = 0; i < Model.Records.Count; i++)
+        @{
+            if (Model != null && Model.Records.Count > 0)
+            { 
+for (int i = 0; i < Model.Records.Count; i++)
                 {
                     <tr>
                         <td>@(i+1)</td>
@@ -23,11 +25,14 @@
                         <td>@Model.Records[i].OrderNum</td>
                     </tr>
                 }
+        }
+        }
             </tbody>
         </table>
-
+@{
+    if (Model != null)
+    {
     ViewBag.ActionName = "PostActiveUserAnalyze";
         @Html.Partial("~/views/shared/PagerControl.cshtml", Model);
-
+    }
  }
-<script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
