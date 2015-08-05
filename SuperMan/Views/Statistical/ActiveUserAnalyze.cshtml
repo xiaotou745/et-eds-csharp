@@ -1,4 +1,6 @@
-﻿@model  ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Statistics.ActiveUserInfo>
+﻿@using Webdiyer.WebControls.Mvc;
+@using ETS.Util
+@model  ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Statistics.ActiveUserInfo>
     @{
         ViewBag.Title = "活跃用户统计";
         Layout = "~/Views/Shared/_LayoutNew.cshtml";
@@ -7,6 +9,7 @@
                                       <script src="~/Scripts/jquery-1.8.2.js"></script>
                                       <script src="~/Scripts/jquery-ui-1.8.20.js"></script>
                                       <script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
+    <script src="~/Scripts/mvcpager.js"></script>
     <div class="zpManage zpSh">
         <h2 class="crumbs">
             您所在位置：数据统计 > 活跃用户统计
@@ -42,7 +45,6 @@ new RouteValueDictionary { { "id", "searchForm" } }))
             </div>
         }
 
-        <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
         <div class="bd clearfix" id="dataList">
             @Html.Partial("_PartialActiveUserList", Model)
         </div>
@@ -73,4 +75,4 @@ new RouteValueDictionary { { "id", "searchForm" } }))
             return true;
         }
     </script>
-    <script src="~/Scripts/mvcpager.js"></script>
+
