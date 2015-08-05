@@ -5,6 +5,7 @@ using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.Order;
 using Ets.Model.DataModel.Subsidy;
 using Ets.Model.DomainModel.Order;
+using Ets.Model.DomainModel.Statistics;
 using Ets.Model.DomainModel.Subsidy;
 using Ets.Model.ParameterModel.Order;
 using Ets.Model.ParameterModel.WtihdrawRecords;
@@ -3164,7 +3165,7 @@ where   Id = @OrderId and FinishAll = 0";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@realOrderCommission", realOrderCommission);
             dbParameters.AddWithValue("@OrderId", orderId);
-            return DbHelper.ExecuteNonQuery(SuperMan_Read, sql, dbParameters);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
         }
 
         /// <summary>
@@ -3287,6 +3288,115 @@ where   Id = @OrderId and FinishAll = 0";
 
             object obj = DbHelper.ExecuteScalar(SuperMan_Read, sql, dbParameters);
             return ParseHelper.ToInt(obj, 0);
+        }
+        /// <summary>
+        /// 查询分页的活跃用户list
+        /// </summary>
+        /// <param name="recommendQuery"></param>
+        /// <returns></returns>
+        public PageInfo<ActiveUserInfo> GetActiveUserList(ActiveUserQuery recommendQuery)
+        {
+            string tableList = "";
+            string whereCondition = "1=1";
+            string orderByColumns=" TaskNum,OrderNum DESC";
+            if (recommendQuery.UserType == 0)
+            {
+                tableList = getClienterTableList(recommendQuery);
+            }
+            else
+            {
+                tableList = getBusinessTableList(recommendQuery);
+            }
+
+            string columnList = @"   UserID
+                                    ,UserName
+                                    ,PhoneNo
+                                    ,TaskNum
+                                    ,OrderNum
+                                    ";
+
+            return new PageHelper().GetPages<ActiveUserInfo>(SuperMan_Read, recommendQuery.PageIndex, whereCondition, orderByColumns, columnList, tableList, SystemConst.PageSize, true);
+        }
+        /// <summary>
+        /// 返回活跃商家的查询sql
+        /// </summary>
+        /// <param name="recommendQuery"></param>
+        /// <returns></returns>
+        private string getBusinessTableList(ActiveUserQuery recommendQuery)
+        {
+            string businessSql = @"(SELECT  b.id as UserID,
+                                        b.name as UserName,
+                                        b.PhoneNo as PhoneNo,
+                                        COUNT(a.id) AS TaskNum ,
+                                        SUM(a.ordercount) AS OrderNum
+                                FROM    dbo.[order] (NOLOCK) a
+                                        JOIN dbo.business (NOLOCK) b ON a.businessId = b.Id
+                                WHERE   a.PubDate IS NOT NULL {0}
+                                GROUP BY b.id ,
+                                        b.name ,
+                                        b.PhoneNo) mp";
+            StringBuilder sb = new StringBuilder();
+            if (recommendQuery.StartDate != DateTime.MinValue)
+            {
+                sb.Append(string.Format(" and a.PubDate>='{0}'", recommendQuery.StartDate.ToString("yyyy-MM-dd")));
+            }
+            if (recommendQuery.EndDate != DateTime.MinValue)
+            {
+                sb.Append(string.Format(" and a.PubDate<'{0}'", recommendQuery.EndDate.AddDays(1).ToString("yyyy-MM-dd")));
+            }
+            if (!string.IsNullOrEmpty(recommendQuery.UserInfo))
+            {
+                if (recommendQuery.InfoType == 0)//注册手机号
+                {
+                    sb.Append(string.Format(" and b.PhoneNo='{0}'", recommendQuery.UserInfo));
+                }
+                else
+                {
+                    sb.Append(string.Format(" and b.name='{0}'", recommendQuery.UserInfo));
+                }
+            }
+          return string.Format(businessSql, sb.ToString());
+          
+        }
+        /// <summary>
+        /// 返回活跃骑士的查询sql
+        /// </summary>
+        /// <param name="recommendQuery"></param>
+        /// <returns></returns>
+        private string getClienterTableList(ActiveUserQuery recommendQuery)
+        {
+            string clienterSql = @"(SELECT  b.id as UserID,
+                                        b.truename as UserName,
+                                        b.PhoneNo as PhoneNo,
+                                        COUNT(a.id) AS TaskNum ,
+                                        SUM(a.ordercount) AS OrderNum
+                                FROM    dbo.[order] (NOLOCK) a
+                                        JOIN dbo.clienter (NOLOCK) b ON a.clienterId = b.Id
+                                WHERE   a.ActualDoneDate IS NOT NULL {0}
+                                GROUP BY b.id ,
+                                        b.truename ,
+                                        b.PhoneNo) mp";
+            StringBuilder sb = new StringBuilder();
+            if (recommendQuery.StartDate != DateTime.MinValue)
+            {
+                sb.Append(string.Format(" and a.ActualDoneDate>='{0}'", recommendQuery.StartDate.ToString("yyyy-MM-dd")));
+            }
+            if (recommendQuery.EndDate != DateTime.MinValue)
+            {
+                sb.Append(string.Format(" and a.ActualDoneDate<'{0}'", recommendQuery.EndDate.AddDays(1).ToString("yyyy-MM-dd")));
+            }
+            if (!string.IsNullOrEmpty(recommendQuery.UserInfo))
+            {
+                if (recommendQuery.InfoType == 0)//注册手机号
+                {
+                    sb.Append(string.Format(" and b.PhoneNo='{0}'", recommendQuery.UserInfo));
+                }
+                else
+                {
+                    sb.Append(string.Format(" and b.truename='{0}'", recommendQuery.UserInfo));
+                }
+            }
+           return string.Format(clienterSql, sb.ToString());
         }
     }
 }

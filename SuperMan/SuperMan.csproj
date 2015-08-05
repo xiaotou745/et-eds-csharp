@@ -688,6 +688,8 @@
     <Content Include="Views\Statistical\AppActiveMap.cshtml" />
     <Content Include="Views\YeePayRunningManager\YeePayRunningManager.cshtml" />
     <Content Include="Views\YeePayRunningManager\_YeePayRunningList.cshtml" />
+    <Content Include="Views\Statistical\ActiveUserAnalyze.cshtml" />
+    <Content Include="Views\Statistical\_PartialActiveUserList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
