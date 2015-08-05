@@ -1,11 +1,6 @@
-<<<<<<< HEAD
-﻿@model  ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Statistics.ActiveUserInfo>
-@using Webdiyer.WebControls.Mvc;
-=======
 ﻿@using ETS.Util
 @model  ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Statistics.ActiveUserInfo>
 
->>>>>>> c74786f19867e5e2d7d0b6ac5475b57f42567514
         <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
             <thead>
                 <tr class="tdbg">
@@ -17,17 +12,10 @@
                 </tr>
             </thead>
             <tbody>
-<<<<<<< HEAD
-@{
-    if (Model != null)
-{
-                for (int i = 0; i < Model.Records.Count; i++)
-=======
         @{
             if (Model != null && Model.Records.Count > 0)
             { 
 for (int i = 0; i < Model.Records.Count; i++)
->>>>>>> c74786f19867e5e2d7d0b6ac5475b57f42567514
                 {
                     <tr>
                         <td>@(i+1)</td>
@@ -37,26 +25,14 @@ for (int i = 0; i < Model.Records.Count; i++)
                         <td>@Model.Records[i].OrderNum</td>
                     </tr>
                 }
-<<<<<<< HEAD
-}
-}
-=======
         }
         }
->>>>>>> c74786f19867e5e2d7d0b6ac5475b57f42567514
             </tbody>
         </table>
 @{
     if (Model != null)
-<<<<<<< HEAD
-{
-    ViewBag.ActionName = "PostActiveUserAnalyze";
-        @Html.Partial("~/views/shared/PagerControl.cshtml", Model);
- }
-=======
     {
     ViewBag.ActionName = "PostActiveUserAnalyze";
         @Html.Partial("~/views/shared/PagerControl.cshtml", Model);
     }
->>>>>>> c74786f19867e5e2d7d0b6ac5475b57f42567514
  }
