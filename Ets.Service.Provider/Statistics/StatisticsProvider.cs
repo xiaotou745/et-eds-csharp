@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Ets.Model.DomainModel.Statistics;
+using Ets.Dao.Order;
 
 namespace Ets.Service.Provider.Statistics
 {
@@ -19,6 +20,7 @@ namespace Ets.Service.Provider.Statistics
         StatisticsDao statisticsDao = new StatisticsDao();
         ClienterLocationDao clienterLocationDao = new ClienterLocationDao();
         BusinessDao businessDao = new BusinessDao();
+        OrderDao orderDao = new OrderDao();
         /// <summary>
         /// 执行统计数据
         /// 窦海超
@@ -207,6 +209,16 @@ namespace Ets.Service.Provider.Statistics
             {
                 return clienterLocationDao.GetAppActiveInfos(cityId, deliveryCompanyInfo);
             }
+        }
+
+        /// <summary>
+        /// 查询分页的活跃用户list
+        /// </summary>
+        /// <param name="queryInfo"></param>
+        /// <returns></returns>
+        public PageInfo<ActiveUserInfo> QueryActiveUser(ActiveUserQuery queryInfo)
+        {
+            return orderDao.GetActiveUserList(queryInfo);
         }
     }
 }

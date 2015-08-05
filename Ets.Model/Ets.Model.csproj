@@ -155,6 +155,8 @@
     <Compile Include="DomainModel\Order\OrderChildForTicket.cs" />
     <Compile Include="DomainModel\Order\RushOrderModel.cs" />
     <Compile Include="DomainModel\Statistics\ActiveBusinessClienterInfo.cs" />
+    <Compile Include="DomainModel\Statistics\ActiveUserInfo.cs" />
+    <Compile Include="DomainModel\Statistics\ActiveUserQuery.cs" />
     <Compile Include="DomainModel\Statistics\AppActiveInfo.cs" />
     <Compile Include="DomainModel\Statistics\BusinessBalanceInfo.cs" />
     <Compile Include="DomainModel\Statistics\BussinessBalanceQuery.cs" />

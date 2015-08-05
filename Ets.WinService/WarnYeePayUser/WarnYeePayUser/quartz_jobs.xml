@@ -26,7 +26,7 @@
         <group>WarnDataTriggerGroup</group>
         <job-name>WarnBLL</job-name>
         <job-group>WarnDataGroup</job-group>
-        <cron-expression>0/50 * * * * ?</cron-expression>
+        <cron-expression>* * 0 ? * ?</cron-expression>
       </cron>
     </trigger>
   
