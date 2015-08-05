@@ -114,13 +114,24 @@ namespace SuperManWebApi.Controllers
 
 
         /// <summary>
-        /// b端修改密码 edit by caoheyang 20150203 
+        /// b端忘记密码 edit by caoheyang 20150203 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>        
+        [HttpPost]
+        public ResultModel<BusiModifyPwdResultModel> PostForgetPwd_B(BusiForgetPwdInfoModel model)
+        {
+            return new BusinessProvider().PostForgetPwd_B(model);
+        }
+
+        /// <summary>
+        /// b端修改密码  与忘记密码完全一样  只是token的区别
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>        
         [HttpPost]
         [Token]
-        public ResultModel<BusiModifyPwdResultModel> PostForgetPwd_B(BusiForgetPwdInfoModel model)
+        public ResultModel<BusiModifyPwdResultModel> ModifyPwd_B(BusiForgetPwdInfoModel model)
         {
             return new BusinessProvider().PostForgetPwd_B(model);
         }
