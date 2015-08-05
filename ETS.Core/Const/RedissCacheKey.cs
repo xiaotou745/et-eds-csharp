@@ -142,6 +142,14 @@ namespace ETS.Const
         /// 骑士提现锁
         /// </summary>
         public const string Ets_Withdraw_Lock_C = "Ets_Withdraw_Lock_C_{0}";
+        /// <summary>
+        /// 商家提现单处理状态
+        /// </summary>
+        public const string Ets_Withdraw_Deal_B = "Ets_Withdraw_Deal_B_{0}";
+        /// <summary>
+        /// 骑士提现单处理状态
+        /// </summary>
+        public const string Ets_Withdraw_Deal_C = "Ets_Withdraw_Deal_C_{0}";
 
     }
 }
