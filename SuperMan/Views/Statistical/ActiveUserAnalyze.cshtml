@@ -1,10 +1,4 @@
-<<<<<<< HEAD
 ﻿@model  ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Statistics.ActiveUserInfo>
-=======
-﻿@using Webdiyer.WebControls.Mvc;
-@using ETS.Util
-@model  ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Statistics.ActiveUserInfo>
->>>>>>> c74786f19867e5e2d7d0b6ac5475b57f42567514
     @{
         ViewBag.Title = "活跃用户统计";
         Layout = "~/Views/Shared/_LayoutNew.cshtml";
@@ -13,42 +7,23 @@
                                       <script src="~/Scripts/jquery-1.8.2.js"></script>
                                       <script src="~/Scripts/jquery-ui-1.8.20.js"></script>
                                       <script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
-<<<<<<< HEAD
-=======
-    <script src="~/Scripts/mvcpager.js"></script>
->>>>>>> c74786f19867e5e2d7d0b6ac5475b57f42567514
     <div class="zpManage zpSh">
         <h2 class="crumbs">
             您所在位置：数据统计 > 活跃用户统计
         </h2>
 
-<<<<<<< HEAD
-        <h4 style="color:black;font-weight:600">活跃用户统计</h4>
-=======
-
->>>>>>> c74786f19867e5e2d7d0b6ac5475b57f42567514
         @using (Ajax.BeginForm("PostActiveUserAnalyze", new RouteValueDictionary { { "pageindex", "" } },
 new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
 new RouteValueDictionary { { "id", "searchForm" } }))
         {
             <div class="SearchMd">
-<<<<<<< HEAD
-=======
-	            <h4 style="color:black;font-weight:600">活跃用户统计</h4>
->>>>>>> c74786f19867e5e2d7d0b6ac5475b57f42567514
                 <table border="0" cellspacing="0" cellpadding="0" style="width:1080px">
                     <tr>
                         <td>
                             <span class="">日期: </span>
-<<<<<<< HEAD
                             <input id="StartDate" readonly="readonly" type="text" name="StartDate" value="@DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd")" />
                             <span class="">到: </span>
                             <input id="EndDate" readonly="readonly" type="text" name="EndDate" value="@DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd")" />
-=======
-                            <input id="StartDate" readonly="readonly" type="text" name="StartDate" value="@DateTime.Now.AddMonths(-1).ToString("yyyy-MM-dd")" />
-                            <span class="">到: </span>
-                            <input id="EndDate" readonly="readonly" type="text" name="EndDate" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
->>>>>>> c74786f19867e5e2d7d0b6ac5475b57f42567514
                             <span>用户类型: </span>
                             <select name="UserType" id="UserType">
                                 <option value="0">骑士</option>
@@ -65,22 +40,14 @@ new RouteValueDictionary { { "id", "searchForm" } }))
                 </table>
             </div>
         }
-<<<<<<< HEAD
 
         <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
-=======
-    <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
->>>>>>> c74786f19867e5e2d7d0b6ac5475b57f42567514
         <div class="bd clearfix" id="dataList">
             @Html.Partial("_PartialActiveUserList", Model)
         </div>
 
     </div>
-<<<<<<< HEAD
     <script>
-=======
-<script type="text/javascript">
->>>>>>> c74786f19867e5e2d7d0b6ac5475b57f42567514
         $(document).ready(function () {
             $('#StartDate').datepicker();
             $('#EndDate').datepicker();
@@ -105,8 +72,4 @@ new RouteValueDictionary { { "id", "searchForm" } }))
             return true;
         }
     </script>
-<<<<<<< HEAD
     <script src="~/Scripts/mvcpager.js"></script>
-=======
-
->>>>>>> c74786f19867e5e2d7d0b6ac5475b57f42567514

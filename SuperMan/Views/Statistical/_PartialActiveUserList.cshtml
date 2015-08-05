@@ -1,62 +1,37 @@
-<<<<<<< HEAD
 ﻿@model  ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Statistics.ActiveUserInfo>
-@using Webdiyer.WebControls.Mvc;
-=======
-﻿@using ETS.Util
-@model  ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Statistics.ActiveUserInfo>
-
->>>>>>> c74786f19867e5e2d7d0b6ac5475b57f42567514
-        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
-            <thead>
-                <tr class="tdbg">
-                    <th>编号</th>
-                    <th>用户名称</th>
-                    <th>注册手机号</th>
-                    <th>任务量</th>
-                    <th>订单量</th>
-                </tr>
-            </thead>
-            <tbody>
-<<<<<<< HEAD
-@{
-    if (Model != null)
-{
-                for (int i = 0; i < Model.Records.Count; i++)
-=======
-        @{
-            if (Model != null && Model.Records.Count > 0)
-            { 
-for (int i = 0; i < Model.Records.Count; i++)
->>>>>>> c74786f19867e5e2d7d0b6ac5475b57f42567514
+    @using Webdiyer.WebControls.Mvc;
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+        <thead>
+            <tr class="tdbg">
+                <th>编号</th>
+                <th>用户名称</th>
+                <th>注册手机号</th>
+                <th>任务量</th>
+                <th>订单量</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                if (Model != null)
                 {
-                    <tr>
-                        <td>@(i+1)</td>
-                        <td>@Model.Records[i].UserName</td>
-                        <td>@Model.Records[i].PhoneNo</td>
-                        <td>@Model.Records[i].TaskNum</td>
-                        <td>@Model.Records[i].OrderNum</td>
-                    </tr>
+                    for (int i = 0; i < Model.Records.Count; i++)
+                    {
+                        <tr>
+                            <td>@(i + 1)</td>
+                            <td>@Model.Records[i].UserName</td>
+                            <td>@Model.Records[i].PhoneNo</td>
+                            <td>@Model.Records[i].TaskNum</td>
+                            <td>@Model.Records[i].OrderNum</td>
+                        </tr>
+                    }
                 }
-<<<<<<< HEAD
-}
-}
-=======
+            }
+        </tbody>
+    </table>
+    @{
+        if (Model != null)
+        {
+            ViewBag.ActionName = "PostActiveUserAnalyze";
+            @Html.Partial("~/views/shared/PagerControl.cshtml", Model);
         }
-        }
->>>>>>> c74786f19867e5e2d7d0b6ac5475b57f42567514
-            </tbody>
-        </table>
-@{
-    if (Model != null)
-<<<<<<< HEAD
-{
-    ViewBag.ActionName = "PostActiveUserAnalyze";
-        @Html.Partial("~/views/shared/PagerControl.cshtml", Model);
- }
-=======
-    {
-    ViewBag.ActionName = "PostActiveUserAnalyze";
-        @Html.Partial("~/views/shared/PagerControl.cshtml", Model);
     }
->>>>>>> c74786f19867e5e2d7d0b6ac5475b57f42567514
- }
