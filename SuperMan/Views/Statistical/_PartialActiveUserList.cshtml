@@ -1,37 +1,37 @@
 ﻿@model  ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Statistics.ActiveUserInfo>
-@using Webdiyer.WebControls.Mvc;
-        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
-            <thead>
-                <tr class="tdbg">
-                    <th>编号</th>
-                    <th>用户名称</th>
-                    <th>注册手机号</th>
-                    <th>任务量</th>
-                    <th>订单量</th>
-                </tr>
-            </thead>
-            <tbody>
-@{
-    if (Model != null)
-{
-                for (int i = 0; i < Model.Records.Count; i++)
+    @using Webdiyer.WebControls.Mvc;
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+        <thead>
+            <tr class="tdbg">
+                <th>编号</th>
+                <th>用户名称</th>
+                <th>注册手机号</th>
+                <th>任务量</th>
+                <th>订单量</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                if (Model != null)
                 {
-                    <tr>
-                        <td>@(i+1)</td>
-                        <td>@Model.Records[i].UserName</td>
-                        <td>@Model.Records[i].PhoneNo</td>
-                        <td>@Model.Records[i].TaskNum</td>
-                        <td>@Model.Records[i].OrderNum</td>
-                    </tr>
+                    for (int i = 0; i < Model.Records.Count; i++)
+                    {
+                        <tr>
+                            <td>@(i + 1)</td>
+                            <td>@Model.Records[i].UserName</td>
+                            <td>@Model.Records[i].PhoneNo</td>
+                            <td>@Model.Records[i].TaskNum</td>
+                            <td>@Model.Records[i].OrderNum</td>
+                        </tr>
+                    }
                 }
-}
-}
-            </tbody>
-        </table>
-@{
-    if (Model != null)
-{
-    ViewBag.ActionName = "PostActiveUserAnalyze";
-        @Html.Partial("~/views/shared/PagerControl.cshtml", Model);
- }
- }
+            }
+        </tbody>
+    </table>
+    @{
+        if (Model != null)
+        {
+            ViewBag.ActionName = "PostActiveUserAnalyze";
+            @Html.Partial("~/views/shared/PagerControl.cshtml", Model);
+        }
+    }

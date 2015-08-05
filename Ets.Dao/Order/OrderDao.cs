@@ -3305,7 +3305,7 @@ where   Id = @OrderId and FinishAll = 0";
         {
             string tableList = "";
             string whereCondition = "1=1";
-            string orderByColumns=" TaskNum,OrderNum DESC";
+            string orderByColumns = " TaskNum DESC ,OrderNum DESC";
             if (recommendQuery.UserType == 0)
             {
                 tableList = getClienterTableList(recommendQuery);

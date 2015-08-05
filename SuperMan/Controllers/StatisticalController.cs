@@ -252,8 +252,8 @@ namespace SuperMan.Controllers
         {
             ActiveUserQuery defaultParams = new ActiveUserQuery()
             {
-                StartDate = DateTime.Now.AddDays(-1).Date,
-                EndDate = DateTime.Now.AddDays(-1).Date,
+                StartDate = DateTime.Now.AddMonths(-1).Date,
+                EndDate = DateTime.Now.Date,
                 UserType = 0,
                 PageIndex = 1
             };
