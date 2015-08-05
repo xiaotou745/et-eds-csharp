@@ -121,7 +121,7 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public ResultModel<BusiModifyPwdResultModel> PostForgetPwd_B(BusiForgetPwdInfoModel model)
         {
-            return new BusinessProvider().PostForgetPwd_B(model);
+            return new BusinessProvider().PostForgetPwd_B(model,1);
         }
 
         /// <summary>

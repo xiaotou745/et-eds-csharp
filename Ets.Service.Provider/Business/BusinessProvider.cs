@@ -551,8 +551,9 @@ namespace Ets.Service.Provider.Business
         /// 2015年3月23日 19:11:54
         /// </summary>
         /// <param name="model"></param>
+        /// <param name="type">操作类型 默认 0   0代表修改密码  1 代表忘记密码</param>
         /// <returns></returns>
-        public ResultModel<BusiModifyPwdResultModel> PostForgetPwd_B(BusiForgetPwdInfoModel model)
+        public ResultModel<BusiModifyPwdResultModel> PostForgetPwd_B(BusiForgetPwdInfoModel model,int type=0)
         {
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             string key = string.Concat(RedissCacheKey.ChangePasswordCount_B, model.phoneNumber);
@@ -582,7 +583,7 @@ namespace Ets.Service.Provider.Business
             {
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.ClienterIsNotExist);
             }
-            if (string.IsNullOrWhiteSpace(model.oldpassword) || business.Password != model.oldpassword)
+            if (type == 0 && (string.IsNullOrWhiteSpace(model.oldpassword) || business.Password != model.oldpassword))
             {
                 //旧密码错误
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.OldPwdError);
