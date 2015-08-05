@@ -64,6 +64,12 @@ new RouteValueDictionary { { "id", "searchForm" } }))
                     return true;
                 }
             });
+            $(this).keydown(function (e) {
+                var key = window.event ? e.keyCode : e.which;
+                if (key == 13) {
+                    document.getElementById("btnSearch").click();
+                }
+            })
         });
         function CheckDate() {
             var StartDate = $('#StartDate').val();
@@ -74,6 +80,6 @@ new RouteValueDictionary { { "id", "searchForm" } }))
                 return false;
             }
             return true;
-        }
+        };
     </script>
 
