@@ -995,7 +995,7 @@ namespace Ets.Service.Provider.Pay
         ///自动处理提款申请单（原确认打款逻辑）
         /// danny-20150804
         /// </summary>
-        public void YeePayAutoDeal()
+        public void AutoDealWithdrawForm()
         {
             #region 对象声明及实例化
             var emailSendTo = Config.ConfigKey("EmailSendTo");
