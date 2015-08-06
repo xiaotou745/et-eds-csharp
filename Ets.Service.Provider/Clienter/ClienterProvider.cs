@@ -861,6 +861,7 @@ namespace Ets.Service.Provider.Clienter
                 else
                 {
                     uploadReceiptModel.HadUploadCount = 1;
+                    myOrderInfo.HadUploadCount = myOrderInfo.HadUploadCount + 1;
                 }
 
 
