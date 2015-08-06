@@ -582,7 +582,7 @@ namespace Ets.Service.Provider.Finance
                 return dealResultInfo;
             }
             //历史单据走之前逻辑
-            if (cliFinanceAccount.WithdrawTime < ParseHelper.ToDatetime(Config.WithdrawTime))
+            if ((cliFinanceAccount.WithdrawTime < ParseHelper.ToDatetime(Config.WithdrawTime))||(cliFinanceAccount.WithdrawStatus==ClienterWithdrawFormStatus.Paying.GetHashCode()))
             {
                 model.Status = ClienterWithdrawFormStatus.Success.GetHashCode();
                 model.OldStatus = ClienterWithdrawFormStatus.Allow.GetHashCode();
