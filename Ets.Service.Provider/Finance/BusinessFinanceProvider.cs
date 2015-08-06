@@ -368,7 +368,7 @@ namespace Ets.Service.Provider.Finance
             if ((busiFinanceAccount.WithdrawTime < ParseHelper.ToDatetime(Config.WithdrawTime)) || (busiFinanceAccount.WithdrawStatus==BusinessWithdrawFormStatus.Paying.GetHashCode()))
             {
                 model.Status = BusinessWithdrawFormStatus.Success.GetHashCode();
-                model.OldStatus = BusinessWithdrawFormStatus.Allow.GetHashCode();
+                model.OldStatus =busiFinanceAccount.WithdrawStatus==BusinessWithdrawFormStatus.Paying.GetHashCode()?BusinessWithdrawFormStatus.Paying.GetHashCode(): BusinessWithdrawFormStatus.Allow.GetHashCode();
                 dealResultInfo.DealFlag = BusinessWithdrawPayOk(model);
                 dealResultInfo.DealMsg = dealResultInfo.DealFlag ? "打款成功！" : "打款失败！";
                 return dealResultInfo;
