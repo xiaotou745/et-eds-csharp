@@ -795,6 +795,7 @@ SELECT cwf.[ClienterId]
       ,cwf.HandCharge
       ,cwf.HandChargeOutlay
       ,cwf.WithdrawTime
+      ,cwf.Status WithdrawStatus
       ,cwf.PhoneNo
 	  ,ISNULL(ypu.BalanceRecord,0) BalanceRecord
 	  ,ISNULL(ypu.YeeBalance,0) YeeBalance

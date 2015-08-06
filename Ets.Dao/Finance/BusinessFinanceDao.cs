@@ -827,6 +827,7 @@ SELECT     bwf.BusinessId
 		  ,bwf.PhoneNo
 		  ,bwf.AccountType
 		  ,bwf.BelongType
+		  ,bwf.Status WithdrawStatus
           ,bfa.YeepayStatus
 		  ,ypu.Ledgerno YeepayKey
 		  ,ISNULL(ypu.BalanceRecord,0) BalanceRecord
