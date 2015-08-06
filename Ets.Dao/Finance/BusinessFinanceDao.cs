@@ -321,8 +321,6 @@ INTO BusinessWithdrawLog
             string sql = string.Format(@" 
 UPDATE BusinessWithdrawForm
  SET    [Status] = @Status,
-		Payer=@Operator,
-		PayTime=getdate(),
         PayFailedReason=ISNULL(PayFailedReason,'')+@PayFailedReason+' '
 OUTPUT
   Inserted.Id,
@@ -356,8 +354,7 @@ INTO BusinessWithdrawLog
         {
             string sql = string.Format(@" 
 UPDATE BusinessWithdrawForm
- SET    PayTime=getdate(),
-        PayFailedReason=ISNULL(PayFailedReason,'')+@PayFailedReason+' '
+ SET    PayFailedReason=ISNULL(PayFailedReason,'')+@PayFailedReason+' '
 OUTPUT
   Inserted.Id,
   Inserted.[Status],
@@ -370,7 +367,7 @@ INTO BusinessWithdrawLog
   [Remark],
   [Operator],
   [OperatTime])
- WHERE  Id = @Id AND [Status]=@OldStatus ");
+ WHERE  Id = @Id  ");
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Operator", model.Operator);
             parm.AddWithValue("@Remark", model.Remark);

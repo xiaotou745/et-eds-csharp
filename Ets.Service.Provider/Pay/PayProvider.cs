@@ -1005,7 +1005,7 @@ namespace Ets.Service.Provider.Pay
             #region 处理商户提现单
             Task.Factory.StartNew(() =>
             {
-                var bfaList= businessFinanceDao.GetBusinessFinanceAccountList();
+                var bfaList = businessFinanceDao.GetBusinessFinanceAccountList();
                 if (bfaList != null && bfaList.Count > 0)
                 {
                     foreach (var item in bfaList)
@@ -1016,36 +1016,32 @@ namespace Ets.Service.Provider.Pay
                             businessFinanceDao.BusinessWithdrawPayFailed(new BusinessWithdrawLogModel()
                             {
                                 Status = BusinessWithdrawFormStatus.Except.GetHashCode(),
-                                OldStatus = BusinessWithdrawFormStatus.Allow.GetHashCode(),
+                                OldStatus = BusinessWithdrawFormStatus.Paying.GetHashCode(),
                                 Operator = "自动处理提现服务",
                                 Remark = "处理次数超限",
                                 PayFailedReason = "处理次数超限",
                                 WithwardId = item.WithwardId
                             });
-                            EmailHelper.SendEmailTo("商户提现单自动处理提现次数超限，单号为【"+item.WithwardNo+"】", emailSendTo, "自动处理商户提现单异常", copyTo, false);
+                            EmailHelper.SendEmailTo("商户提现单自动处理提现次数超限，单号为【" + item.WithwardNo + "】", emailSendTo, "自动处理商户提现单异常", copyTo, false);
                             continue;
                         }
                         string key = string.Format(RedissCacheKey.Ets_Withdraw_Deal_B, item.WithwardId);
                         var redis = new ETS.NoSql.RedisCache.RedisCache();
                         var dealStatus = ParseHelper.ToInt(redis.Get<int>(key));
-                        //if (dealStatus == WithdrawDealStatus.Default.GetHashCode())
-                        //{
-                        //    redis.Set(key, WithdrawDealStatus.Default.GetHashCode());
-                        //}
                         var amount = item.HandChargeOutlay == 0 ? item.Amount : item.Amount + item.HandCharge;//转账及提现金额（计算手续费）
-                        
+
                         #endregion
 
                         #region 初始值
                         if (dealStatus == WithdrawDealStatus.Default.GetHashCode())
                         {
                             if (string.IsNullOrEmpty(item.YeepayKey) || item.YeepayStatus == 1)//无易宝账户或账户信息有更新
-	                        {
+                            {
                                 var registResult = new PayProvider().RegisterYee(new YeeRegisterParameter
                                 {
                                     BindMobile = item.PhoneNo,
                                     SignedName = item.TrueName,
-                                    CustomerType =item.BelongType == 0 ? CustomertypeEnum.PERSON : CustomertypeEnum.ENTERPRISE,
+                                    CustomerType = item.BelongType == 0 ? CustomertypeEnum.PERSON : CustomertypeEnum.ENTERPRISE,
                                     LinkMan = item.TrueName,
                                     IdCard = item.IDCard,
                                     BusinessLicence = item.IDCard,
@@ -1059,23 +1055,23 @@ namespace Ets.Service.Provider.Pay
                                     UserType = UserTypeYee.Business.GetHashCode(),
                                     AccountId = item.Id.ToString()
                                 });//注册帐号
-	                            if (registResult != null && !string.IsNullOrEmpty(registResult.code) &&registResult.code.Trim() == "1") //调用易宝注册接口成功
-	                            {
+                                if (registResult != null && !string.IsNullOrEmpty(registResult.code) && registResult.code.Trim() == "1") //调用易宝注册接口成功
+                                {
                                     dealStatus = WithdrawDealStatus.Registering.GetHashCode();
                                     redis.Set(key, dealStatus.GetHashCode());
-	                                item.YeepayKey = registResult.ledgerno;
-	                            }
+                                    item.YeepayKey = registResult.ledgerno;
+                                }
                                 else
-	                            {
+                                {
                                     DealRegisterYeeFailedB(registResult, item);
-		                            continue; //跳出此次循环
-		                        }
-	                        }
+                                    continue; //跳出此次循环
+                                }
+                            }
                             else//有易宝账户且无账户信息更新
-	                        {
+                            {
                                 dealStatus = WithdrawDealStatus.Registered.GetHashCode();
                                 redis.Set(key, dealStatus.GetHashCode());
-	                        }
+                            }
                         }
                         #endregion
 
@@ -1153,7 +1149,7 @@ namespace Ets.Service.Provider.Pay
                                 });
                                 continue;
                             }
-                            dealStatus = WithdrawDealStatus.Transfering.GetHashCode();
+                            dealStatus = WithdrawDealStatus.Cashing.GetHashCode();
                             redis.Set(key, dealStatus.GetHashCode());
                         }
                         #endregion
@@ -1188,7 +1184,7 @@ namespace Ets.Service.Provider.Pay
                             clienterFinanceDao.ClienterWithdrawPayFailed(new ClienterWithdrawLogModel()
                             {
                                 Status = ClienterWithdrawFormStatus.Except.GetHashCode(),
-                                OldStatus = ClienterWithdrawFormStatus.Allow.GetHashCode(),
+                                OldStatus = ClienterWithdrawFormStatus.Paying.GetHashCode(),
                                 Operator = "自动处理提现服务",
                                 Remark = "处理次数超限",
                                 PayFailedReason = "处理次数超限",
@@ -1200,10 +1196,6 @@ namespace Ets.Service.Provider.Pay
                         string key = string.Format(RedissCacheKey.Ets_Withdraw_Deal_C, item.WithwardId);
                         var redis = new ETS.NoSql.RedisCache.RedisCache();
                         var dealStatus = ParseHelper.ToInt(redis.Get<int>(key));
-                        //if (dealStatus == WithdrawDealStatus.Default.GetHashCode())
-                        //{
-                        //    redis.Set(key, WithdrawDealStatus.Default.GetHashCode());
-                        //}
                         var amount = item.HandChargeOutlay == 0 ? item.Amount : item.Amount + item.HandCharge;//转账及提现金额（计算手续费）
 
                         #endregion
@@ -1325,7 +1317,7 @@ namespace Ets.Service.Provider.Pay
                                 });
                                 continue;
                             }
-                            dealStatus = WithdrawDealStatus.Transfering.GetHashCode();
+                            dealStatus = WithdrawDealStatus.Cashing.GetHashCode();
                             redis.Set(key, dealStatus.GetHashCode());
                         }
                         #endregion
