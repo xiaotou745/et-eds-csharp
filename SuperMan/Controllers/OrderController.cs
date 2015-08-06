@@ -246,7 +246,7 @@ namespace SuperMan.Controllers
             var orderModel = iOrderProvider.GetOrderByNo(orderNo, orderId);
 
             ViewBag.orderOptionLog = iOrderProvider.GetOrderOptionLog(orderId);
-            ViewBag.IsShowDeductWebSubsidyBtn = IsShowDeductWebSubsidyBtn(orderModel);//是否显示扣除网站补贴按钮
+            ViewBag.IsShowAuditBtn = IsShowAuditBtn(orderModel);//是否显示审核按钮
             return View(orderModel);
         }
 
@@ -259,14 +259,14 @@ namespace SuperMan.Controllers
         /// <param name="OrderOptionLog"></param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult CancelOrder(string OrderNo, string OrderOptionLog)
+        public JsonResult CancelOrder(int orderId, string OrderOptionLog)
         {
             OrderOptionModel orderOptionModel = new OrderOptionModel()
             {
                 OptUserId = UserContext.Current.Id,
                 OptUserName = UserContext.Current.Name,
                 OptLog = OrderOptionLog,
-                OrderNo = OrderNo
+                OrderId = orderId
             };
             var reg = iOrderProvider.CancelOrderByOrderNo(orderOptionModel);
             return Json(new ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.AllowGet);
@@ -291,24 +291,37 @@ namespace SuperMan.Controllers
         /// <param name="OrderOptionLog"></param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult DeductWebSubsidy(string OrderNo, string OrderOptionLog)
+        public JsonResult AuditCancel(int orderId, string OrderOptionLog)
         {
             OrderOptionModel orderOptionModel = new OrderOptionModel()
             {
                 OptUserId = UserContext.Current.Id,
                 OptUserName = UserContext.Current.Name,
                 OptLog = OrderOptionLog,
-                OrderNo = OrderNo
+                OrderId = orderId
             };
             var reg = iOrderProvider.DeductWebSubsidy(orderOptionModel);
             return Json(new ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.AllowGet);
         }
 
-        private bool IsShowDeductWebSubsidyBtn(OrderListModel orderModel)
+        [HttpPost]
+        public JsonResult AuditOK(int orderId)
+        {
+            OrderOptionModel orderOptionModel = new OrderOptionModel()
+            {
+                OptUserId = UserContext.Current.Id,
+                OptUserName = UserContext.Current.Name,
+                OrderId = orderId
+            };
+            var reg = iOrderProvider.AuditOK(orderOptionModel);
+            return Json(new ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.AllowGet);
+        }
+
+        private bool IsShowAuditBtn(OrderListModel orderModel)
         {
             //只有在已完成订单并且已上传完小票的情况下显示该按钮
             if (orderModel != null && /*已完成*/ orderModel.FinishAll == 1 && /*订单未分账*/ orderModel.IsJoinWithdraw == 0
-                && /*有权限*/ UserContext.Current.HasAuthority(79) && orderModel.IsEnable == 1 && orderModel.DeductCommissionType == 0)
+                &&  orderModel.IsEnable == 1)
             {
                 return true;
             }

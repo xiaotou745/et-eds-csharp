@@ -277,5 +277,14 @@ namespace Ets.Service.IProvider.Order
         /// <param name="orderOptionModel"></param>
         /// <returns></returns>
         DealResultInfo DeductWebSubsidy(OrderOptionModel orderOptionModel);
+
+        /// <summary>
+        /// 胡灵波
+        /// 2015年8月5日 19:58:28
+        /// </summary>
+        /// <param name="orderOptionModel"></param>
+        /// <returns></returns>
+        DealResultInfo AuditOK(OrderOptionModel orderOptionModel);
+        
     }
 }

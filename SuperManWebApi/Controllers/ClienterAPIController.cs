@@ -350,7 +350,7 @@ namespace SuperManWebApi.Controllers
                 key = RedissCacheKey.PostRegisterInfo_C + PhoneNumber;
                 msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCode, randomCode, SystemConst.MessageClinenter);
             }
-            else //修改密码
+            else if(type=="1") //忘记密码
             {
                 if (!checkUser)
                 {
@@ -360,12 +360,20 @@ namespace SuperManWebApi.Controllers
                 key = RedissCacheKey.PostForgetPwd_C + PhoneNumber;
                 msg = string.Format(SupermanApiConfig.Instance.SmsContentFindPassword, randomCode, SystemConst.MessageClinenter);
             }
+            else if(type=="2")//修改密码
+            {
+                if (!checkUser)
+                {
+                    //如果骑士不存在 
+                    return SimpleResultModel.Conclude(SendCheckCodeStatus.NotExists);
+                }
+                key = RedissCacheKey.ChangePasswordCheckCode_C + PhoneNumber;
+                msg = string.Format(SupermanApiConfig.Instance.SmsContentFindPassword, randomCode, SystemConst.MessageClinenter);
+            }
             try
             {
                 var redis = new RedisCache();
                 redis.Add(key, randomCode, new TimeSpan(0, 5, 0));
-
-
                 // 更新短信通道 
                 Task.Factory.StartNew(() =>
                 {
