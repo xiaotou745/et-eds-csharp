@@ -27,13 +27,13 @@ namespace SuperManWebApi.Controllers
         /// 窦海超
         /// 2015年5月12日 14:35:05
         /// </summary>
-       //[Token]
-       // public ResultModel<PayResultModel> CreatePay(PayModel model)//
-       // {
-       //     return payProvider.CreatePay(model);
-       // }
+        [Token]
+        public ResultModel<PayResultModel> CreatePay(PayModel model)//
+        {
+            return payProvider.CreatePay(model);
+        }
         [HttpGet]
-       public ResultModel<PayResultModel> CreatePay()
+       public ResultModel<PayResultModel> CreatePayTest()
         {
             PayModel model = new PayModel()
             {
