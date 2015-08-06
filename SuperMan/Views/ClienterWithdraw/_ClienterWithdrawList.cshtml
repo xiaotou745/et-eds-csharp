@@ -218,7 +218,11 @@
         if (!window.confirm("确认要审核拒绝？")) {
             return;
         }
-        var auditFailedReason=$('#txtWithdrawAuditRefuse').val();
+        var auditFailedReason = $('#txtWithdrawAuditRefuse').val();
+        if (auditFailedReason.trim().length == 0) {
+            alert("拒绝原因不能为空！");
+            return;
+        }
         var withwardId=$('#hidWithwardIdAuditRefuse').val();
         var paramaters = { "withwardId": withwardId,"auditFailedReason":auditFailedReason };
         var url = "/ClienterWithdraw/WithdrawAuditRefuse";
@@ -247,6 +251,10 @@
             return;
         }
         var payFailedReason = $('#txtWithdrawPayFailed').val();
+        if (payFailedReason.trim().length == 0) {
+            alert("打款失败原因不能为空！");
+            return;
+        }
         var withwardId = $('#hidWithwardIdPayFailed').val();
         var paramaters = { "withwardId": withwardId, "payFailedReason": payFailedReason };
         var url = "/ClienterWithdraw/WithdrawPayFailed";
