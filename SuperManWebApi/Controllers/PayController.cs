@@ -123,7 +123,6 @@ namespace SuperManWebApi.Controllers
         //[HttpGet]
         public dynamic WxNotify()
         {
-            //return payProvider.WxNotify();
             return payProvider.WxNotify();
         }
         #endregion

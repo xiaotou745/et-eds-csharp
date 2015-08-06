@@ -391,20 +391,70 @@ namespace Ets.Service.Provider.Pay
             };
             //所属产品_主订单号_子订单号_支付方式
 
-            if (model.PayType == PayTypeEnum.ZhiFuBao.GetHashCode())
-            {
-                LogHelper.LogWriter("=============商家充值支付宝支付：");
-                ////支付宝支付
-                //数据库里查询订单信息
-                //if (payStatusModel.PayStatus == PayStatusEnum.WaitPay.GetHashCode())//待支付
-                //{
-                //return CreateAliPayOrder(orderNo, payStatusModel.TotalPrice, model.orderId, model.payStyle);
-                //}
-                return ResultModel<BusinessRechargeResultModel>.Conclude(AliPayStatus.success, resultModel);
-            }
-            return ResultModel<BusinessRechargeResultModel>.Conclude(AliPayStatus.fail);
+            return ResultModel<BusinessRechargeResultModel>.Conclude(AliPayStatus.success, resultModel);
         }
 
+
+        /// <summary>
+        /// 微信商家充值回调方法 
+        /// 窦海超
+        /// 2015年8月6日 23:06:02
+        /// </summary>
+        /// <returns></returns>
+        public dynamic BusinessRechargeWxNotify()
+        {
+            try
+            {
+                #region 参数绑定
+
+                //var request = System.Web.HttpContext.Current.Request;
+                //AlipayNotifyData notify = new AlipayNotifyData();
+                //notify.buyer_email = request["buyer_email"];
+                //notify.trade_status = request["trade_status"];
+                //notify.out_trade_no = request["out_trade_no"];
+                //notify.trade_no = request["trade_no"];
+                //notify.total_fee = ParseHelper.ToDecimal(request["total_fee"], 0);
+                //notify.out_biz_no = ParseHelper.ToInt(request["body"], 0);//businessid
+                WxNotifyResultModel notify = new ResultNotify().ProcessNotify();
+                string errmsg = "<xml><return_code><![CDATA[FAIL]]></return_code><return_msg><![CDATA[{0}]]></return_msg></xml>";
+                #endregion
+                //如果状态为空或状态不等于同步成功和异步成功就认为是错误
+               
+                #region 回调完成状态
+                if (notify.return_code == "SUCCESS")
+                {
+                    if (new BusinessRechargeDao().Check(notify.order_no))
+                    {
+                        //如果存在就退出，这里写的很扯，因为支付宝要的是success不带双引号.
+                        //但WEBAPI直接返回时带引号，所以现在要去库里查一次。
+                        //回头找到原因一定要改
+                        return "success";
+                    }
+
+                    string orderNo = notify.order_no;
+              
+                    Ets.Model.DataModel.Business.BusinessRechargeModel businessRechargeModel = new Ets.Model.DataModel.Business.BusinessRechargeModel()
+                    {
+                        //BusinessId = notify.out_biz_no,
+                        //OrderNo = orderNo,
+                        //OriginalOrderNo = notify.trade_no,//第三方的订单号
+                        //PayAmount = notify.total_fee,
+                        //PayBy = notify.buyer_email,
+                        PayStatus = 1,
+                        PayType = 1
+                    };
+                    BusinessRechargeSusess(businessRechargeModel);
+                }
+                #endregion
+
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(ex, "Alipay自动返回异常");
+                return "fail";
+            }
+            return "fail";
+        }
 
         /// <summary>
         /// 商家充值回调方法 
@@ -548,32 +598,13 @@ namespace Ets.Service.Provider.Pay
         {
             //支付方式-主订单ID-子订单ID
             PayResultModel resultModel = new PayResultModel();
-            //string code_url = wxCodeUrl;
-            //if (string.IsNullOrEmpty(code_url))//先查一下库是否存在二维码地址，不存在去微信生成
-            //{
-            //string wx_nonceStr = RequestHandler.getNoncestr();
-            //WXpayService wxpay = new WXpayService("127.0.0.1", orderNo, "e代送", wx_nonceStr, (Convert.ToInt32(totalPrice * 100)).ToString());//传给微信的金额
 
-            //code_url = wxpay.CreateNativeApi();
             string code_url = string.Empty;
             if (payStyle == 1)//用户扫二维码
             {
                 NativePay nativePay = new NativePay();
                 code_url = nativePay.GetPayUrl(orderNo, totalPrice, "E代送收款", Config.WXNotifyUrl);
             }
-            //if (string.IsNullOrEmpty(code_url))
-            //{
-            //    return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
-            //}
-            //int productId = ParseHelper.ToInt(orderNo.Split('_')[0]);
-            //int orderId = ParseHelper.ToInt(orderNo.Split('_')[1]);
-            //int childId = ParseHelper.ToInt(orderNo.Split('_')[2]);
-            //if (productId == ProductEnum.OrderChildPay.GetHashCode())
-            //{
-            //    //如果是子订单支付 
-            //    orderChildDao.UpdateWxCodeUrl(orderId, childId, code_url);//把获取到的支付宝地址更新到子订单下
-            //}
-            //}
 
             resultModel.aliQRCode = code_url;//微信地址
             resultModel.orderNo = orderNo;//订单号
@@ -591,40 +622,8 @@ namespace Ets.Service.Provider.Pay
         /// <returns></returns>
         public dynamic WxNotify()
         {
-          
-            #region 参数绑定
 
-            //var request = System.Web.HttpContext.Current.Request;
-            //string sign = request["sign"];
-            //string sign_type = request["sign_type"];
-            //string notify_data = request["notify_data"];
-            //AlipayNotifyData notify = new AlipayNotifyData();
-            //if (!string.IsNullOrEmpty(notify_data))
-            //{
-            //    //如果是二维码支付
-            //    XmlDocument xmlDoc = new XmlDocument();
-            //    xmlDoc.LoadXml(notify_data);
-            //    notify.buyer_email = xmlDoc.SelectSingleNode("notify/buyer_email").InnerText;
-            //    notify.trade_status = xmlDoc.SelectSingleNode("notify/trade_status").InnerText;
-            //    notify.out_trade_no = xmlDoc.SelectSingleNode("notify/out_trade_no").InnerText;
-            //    notify.trade_no = xmlDoc.SelectSingleNode("notify/trade_no").InnerText;
-            //}
-            //else
-            //{
-            //    //否则是骑士代付
-            //    notify.buyer_email = request["buyer_email"];
-            //    notify.trade_status = request["trade_status"];
-            //    notify.out_trade_no = request["out_trade_no"];
-            //    notify.trade_no = request["trade_no"];
-            //}
-            //#endregion
-            ////如果状态为空或状态不等于同步成功和异步成功就认为是错误
-            //if (string.IsNullOrEmpty(notify.trade_status))
-            //{
-            //    string fail = string.Concat("错误啦trade_status：", notify.trade_status, "。sign:", sign, "。notify_data:", notify_data);
-            //    LogHelper.LogWriter(fail);
-            //    return "fail";
-            //}
+            #region 参数绑定
             WxNotifyResultModel notify = new ResultNotify().ProcessNotify();
             string errmsg = "<xml><return_code><![CDATA[FAIL]]></return_code><return_msg><![CDATA[{0}]]></return_msg></xml>";
             #region 回调完成状态
@@ -676,48 +675,6 @@ namespace Ets.Service.Provider.Pay
             HttpContext.Current.Response.Write(errmsg);
             HttpContext.Current.Response.End();
             #endregion
-            /*
-            ResponseHandler resHandler = new ResponseHandler(System.Web.HttpContext.Current);
-            try
-            {
-                string return_code = resHandler.getParameter("return_code");
-                string return_msg = resHandler.getParameter("return_msg");
-                string out_trade_no = resHandler.getParameter("out_trade_no");
-                //微信支付订单号
-                string transaction_id = resHandler.getParameter("transaction_id");
-                string openid = resHandler.getParameter("openid");
-                if (string.IsNullOrEmpty(out_trade_no) || !out_trade_no.Contains("_"))
-                {
-                    LogHelper.LogWriter("订单号异常,微信单号为：" + transaction_id);
-                    return new { return_code = "FAIL" };
-                }
-                if (!string.IsNullOrEmpty(return_code) && return_code == "SUCCESS")
-                {
-                    int productId = ParseHelper.ToInt(out_trade_no.Split('_')[0], 0);
-                    int orderId = ParseHelper.ToInt(out_trade_no.Split('_')[1], 0);
-                    int orderChildId = ParseHelper.ToInt(out_trade_no.Split('_')[2], 0);
-                    int payStyle = ParseHelper.ToInt(out_trade_no.Split('_')[3], 0);
-                    OrderChildFinishModel model = new OrderChildFinishModel()
-                      {
-                          orderChildId = orderChildId,
-                          orderId = orderId,
-                          payBy = openid,
-                          payStyle = payStyle,
-                          payType = PayTypeEnum.WeiXin.GetHashCode(),
-                          originalOrderNo = transaction_id
-                      };
-                    if (orderChildDao.FinishPayStatus(model))
-                    {
-                        //业务处理
-                        return new { return_code = "SUCCESS" };
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                LogHelper.LogWriter(ex, "微信支付回调异常");
-            }
-            return new { return_code = "FAIL" };*/
 
             return null;
         }
@@ -1015,7 +972,7 @@ namespace Ets.Service.Provider.Pay
             if (exceptYeePayUser != null && exceptYeePayUser.Count > 0)
             {
                 var yeeBalanceDiff = exceptYeePayUser.Where(t => t.YeeBalance != t.BalanceRecord).ToList();
-                var yeeBalanceExcpt = exceptYeePayUser.Where(t => t.YeeBalance >0).ToList();
+                var yeeBalanceExcpt = exceptYeePayUser.Where(t => t.YeeBalance > 0).ToList();
                 #region 易宝账户本系统余额和易宝系统不一致
                 if (yeeBalanceDiff.Count > 0)
                 {
@@ -1028,7 +985,7 @@ namespace Ets.Service.Provider.Pay
                     sbEmail.AppendLine();
                 }
                 #endregion
-                #region 易宝子账户余额大于0 
+                #region 易宝子账户余额大于0
                 if (yeeBalanceExcpt.Count > 0)
                 {
                     sbEmail.AppendLine("易宝子账户余额大于0：");
