@@ -275,10 +275,10 @@ INTO ClienterWithdrawLog
   [Remark],
   [Operator],
   [OperatTime])
- WHERE  Id = @Id AND [Status]=@OldStatus");
+ WHERE  Id = @Id AND [Status] IN(2,20,4)");
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Status", model.Status);
-            parm.AddWithValue("@OldStatus", model.OldStatus);
+            //parm.AddWithValue("@OldStatus", model.OldStatus);
             parm.AddWithValue("@Operator", model.Operator);
             parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@PayFailedReason", model.PayFailedReason);
