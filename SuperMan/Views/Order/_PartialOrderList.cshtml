@@ -47,8 +47,6 @@ width: 100%;
         @{
             if (Model != null && Model.Records.Count > 0)
             {
-
-           
                 foreach (var item in Model.Records)
                 {
                     double distance = ETS.Util.ParseHelper.ToDouble(item.GrabToCompleteDistance);
@@ -151,6 +149,7 @@ width: 100%;
 <script type="text/javascript">
     var adminjs = new adminglass(); //实例化后台类
     $(function () {
+
     });
     $('#btnSuperConfim').bind('click', function () {
         var orderCommission = $('#OrderCommissionUnFin').val();
@@ -296,7 +295,7 @@ width: 100%;
             var centerLongitude = jsonstr.PubLongitude;
             var centerLatitude = jsonstr.PubLatitude;
             if (jsonstr.PubLongitude != 0 && jsonstr.PubLatitude!=0) {
-              //也许需要重新计算中心点
+                //也许需要重新计算中心点
             }
             map.centerAndZoom(new BMap.Point(centerLongitude, centerLatitude), 16);
             //map.centerAndZoom(new BMap.Point(116.404, 39.915), 16);

@@ -58,7 +58,7 @@ namespace Ets.Model.DomainModel.Finance
         /// <summary>
         /// 提现申请单号
         /// </summary>
-        public long WithwardNo { get; set; }
+        public string WithwardNo { get; set; }
         /// <summary>
         /// 1待审核 2 审核通过 3打款完成 20 打款中 -1审核拒绝 -2 打款失败 4 异常
         /// </summary>

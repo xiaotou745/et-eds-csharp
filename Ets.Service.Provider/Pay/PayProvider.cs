@@ -1241,8 +1241,8 @@ namespace Ets.Service.Provider.Pay
                                 businessFinanceDao.ModifyBusinessWithdrawPayFailedReason(new BusinessWithdrawLogModel()
                                 {
                                     WithwardId = item.WithwardId,
-                                    PayFailedReason = "易宝转账失败:" + regTransfer.msg + "(" + regTransfer.code + ")",
-                                    Remark = "易宝转账失败:" + regTransfer.msg + "(" + regTransfer.code + ")",
+                                    PayFailedReason = "转:" + regTransfer.msg + "(" + regTransfer.code + ")",
+                                    Remark = "转:" + regTransfer.msg + "(" + regTransfer.code + ")",
                                     Operator = "自动处理服务"
                                 });
                                 continue;
@@ -1280,8 +1280,8 @@ namespace Ets.Service.Provider.Pay
                                 businessFinanceDao.ModifyBusinessWithdrawPayFailedReason(new BusinessWithdrawLogModel()
                                 {
                                     WithwardId = item.WithwardId,
-                                    PayFailedReason = "易宝提现失败:" + regCash.msg + "(" + regCash.code + ")",
-                                    Remark = "易宝提现失败:" + regCash.msg + "(" + regCash.code + ")",
+                                    PayFailedReason = "提:" + regCash.msg + "(" + regCash.code + ")",
+                                    Remark = "提:" + regCash.msg + "(" + regCash.code + ")",
                                     Operator = "自动处理服务"
                                 });
                                 continue;
@@ -1409,8 +1409,8 @@ namespace Ets.Service.Provider.Pay
                                 clienterFinanceDao.ModifyClienterWithdrawPayFailedReason(new ClienterWithdrawLogModel()
                                 {
                                     WithwardId = item.WithwardId,
-                                    PayFailedReason = "易宝转账失败:" + regTransfer.msg + "(" + regTransfer.code + ")",
-                                    Remark = "易宝转账失败:" + regTransfer.msg + "(" + regTransfer.code + ")",
+                                    PayFailedReason = "转:" + regTransfer.msg + "(" + regTransfer.code + ")",
+                                    Remark = "转:" + regTransfer.msg + "(" + regTransfer.code + ")",
                                     Operator = "自动处理服务"
                                 });
                                 continue;
@@ -1448,8 +1448,8 @@ namespace Ets.Service.Provider.Pay
                                 clienterFinanceDao.ModifyClienterWithdrawPayFailedReason(new ClienterWithdrawLogModel()
                                 {
                                     WithwardId = item.WithwardId,
-                                    PayFailedReason = "易宝提现失败:" + regCash.msg + "(" + regCash.code + ")",
-                                    Remark = "易宝提现失败:" + regCash.msg + "(" + regCash.code + ")",
+                                    PayFailedReason = "提:" + regCash.msg + "(" + regCash.code + ")",
+                                    Remark = "提:" + regCash.msg + "(" + regCash.code + ")",
                                     Operator = "自动处理服务"
                                 });
                                 continue;
@@ -1491,7 +1491,7 @@ namespace Ets.Service.Provider.Pay
                 LogHelper.LogWriterString("商户绑定易宝支付失败",
                     string.Format("易宝错误信息:code{0},ledgerno:{1},hmac{2},msg{3}",
                         registResult.code, registResult.ledgerno, registResult.hmac, registResult.msg));
-                payFailedReason = string.Format("商户绑定易宝支付失败,易宝错误信息:code{0},ledgerno:{1},hmac{2},msg{3}", registResult.code, registResult.ledgerno, registResult.hmac, registResult.msg);
+                payFailedReason = string.Format("绑定失败:code{0},ledgerno:{1},hmac{2},msg{3}", registResult.code, registResult.ledgerno, registResult.hmac, registResult.msg);
             }
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
@@ -1526,7 +1526,7 @@ namespace Ets.Service.Provider.Pay
                 LogHelper.LogWriterString("骑士绑定易宝支付失败",
                     string.Format("易宝错误信息:code{0},ledgerno:{1},hmac{2},msg{3}",
                         registResult.code, registResult.ledgerno, registResult.hmac, registResult.msg));
-                payFailedReason = string.Format("骑士绑定易宝支付失败,易宝错误信息:code{0},ledgerno:{1},hmac{2},msg{3}", registResult.code, registResult.ledgerno, registResult.hmac, registResult.msg);
+                payFailedReason = string.Format("绑定失败:code{0},ledgerno:{1},hmac{2},msg{3}", registResult.code, registResult.ledgerno, registResult.hmac, registResult.msg);
             }
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
