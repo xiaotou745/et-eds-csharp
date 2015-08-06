@@ -455,7 +455,6 @@ namespace Ets.Service.Provider.Pay
                 }
                 #endregion
 
-<<<<<<< HEAD
             }
             catch (Exception ex)
             {
@@ -463,17 +462,6 @@ namespace Ets.Service.Provider.Pay
                 HttpContext.Current.Response.Write("<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>");
                 HttpContext.Current.Response.End();
             }
-=======
-            }
-            catch (Exception ex)
-            {
-                LogHelper.LogWriter(ex, "Alipay自动返回异常");
-                HttpContext.Current.Response.Write("<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>");
-                HttpContext.Current.Response.End();
-            }
->>>>>>> 215affcc7904049bba2ce280a16f22fc2ad348d3
-            HttpContext.Current.Response.Write("<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>");
-            HttpContext.Current.Response.End();
         }
 
         /// <summary>
