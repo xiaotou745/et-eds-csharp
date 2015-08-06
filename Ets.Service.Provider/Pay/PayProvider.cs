@@ -559,7 +559,7 @@ namespace Ets.Service.Provider.Pay
             if (payStyle == 1)//用户扫二维码
             {
                 NativePay nativePay = new NativePay();
-                code_url = nativePay.GetPayUrl(orderNo, totalPrice, "E代送收款", Config.ConfigKey("WXNotifyUrl"));
+                code_url = nativePay.GetPayUrl(orderNo, totalPrice, "E代送收款", Config.WXNotifyUrl);
             }
             //if (string.IsNullOrEmpty(code_url))
             //{
@@ -591,7 +591,7 @@ namespace Ets.Service.Provider.Pay
         /// <returns></returns>
         public dynamic WxNotify()
         {
-            WxNotifyResultModel notify = new ResultNotify(new System.Web.UI.Page()).ProcessNotify();
+          
             #region 参数绑定
 
             //var request = System.Web.HttpContext.Current.Request;
@@ -625,11 +625,12 @@ namespace Ets.Service.Provider.Pay
             //    LogHelper.LogWriter(fail);
             //    return "fail";
             //}
+            WxNotifyResultModel notify = new ResultNotify().ProcessNotify();
             string errmsg = "<xml><return_code><![CDATA[FAIL]]></return_code><return_msg><![CDATA[{0}]]></return_msg></xml>";
             #region 回调完成状态
             if (notify.return_code == "SUCCESS")
             {
-                string orderNo = notify.out_trade_no;
+                string orderNo = notify.order_no;
                 if (string.IsNullOrEmpty(orderNo) || !orderNo.Contains("_"))
                 {
                     string fail = string.Concat("错误啦orderNo：", orderNo);
@@ -656,7 +657,7 @@ namespace Ets.Service.Provider.Pay
                     payBy = notify.openid,
                     payStyle = payStyle,
                     payType = PayTypeEnum.ZhiFuBao.GetHashCode(),
-                    originalOrderNo = notify.out_trade_no,
+                    originalOrderNo = notify.transaction_id,
                 };
 
                 if (orderChildDao.FinishPayStatus(model))

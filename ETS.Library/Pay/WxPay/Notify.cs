@@ -14,11 +14,11 @@ namespace ETS.Library.Pay.WxPay
     /// </summary>
     public class Notify
     {
-        public System.Web.UI.Page page { get; set; }
-        public Notify(System.Web.UI.Page page)
-        {
-            this.page = page;
-        }
+        //public System.Web.UI.Page page { get; set; }
+        //public Notify(System.Web.UI.Page page)
+        //{
+        //    this.page = page;
+        //}
 
         /// <summary>
         /// 接收从微信支付后台发送过来的数据并验证签名
@@ -27,7 +27,7 @@ namespace ETS.Library.Pay.WxPay
         public WxPayData GetNotifyData()
         {
             //接收从微信后台POST过来的数据
-            System.IO.Stream s = page.Request.InputStream;
+            System.IO.Stream s =HttpContext.Current.Request.InputStream;
             int count = 0;
             byte[] buffer = new byte[1024];
             StringBuilder builder = new StringBuilder();
@@ -50,12 +50,14 @@ namespace ETS.Library.Pay.WxPay
             catch(WxPayException ex)
             {
                 //若签名错误，则立即返回结果给微信支付后台
-                WxPayData res = new WxPayData();
-                res.SetValue("return_code", "FAIL");
-                res.SetValue("return_msg", ex.Message);
-                Log.Error(this.GetType().ToString(), "Sign check error : " + res.ToXml());
-                page.Response.Write(res.ToXml());
-                page.Response.End();
+                //WxPayData res = new WxPayData();
+                //res.SetValue("return_code", "FAIL");
+                //res.SetValue("return_msg", ex.Message);
+                //Log.Error(this.GetType().ToString(), "Sign check error : " + res.ToXml());
+                //page.Response.Write(res.ToXml());
+                //page.Response.End();
+                data.SetValue("return_code", "FAIL");
+                data.SetValue("return_msg", ex.Message);
             }
 
             Log.Info(this.GetType().ToString(), "Check sign success");
