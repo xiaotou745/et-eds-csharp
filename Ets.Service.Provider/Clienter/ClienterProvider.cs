@@ -1483,19 +1483,19 @@ namespace Ets.Service.Provider.Clienter
         {
             decimal realOrderCommission = myOrderInfo.OrderCommission == null ? 0 : myOrderInfo.OrderCommission.Value;
 
-            if (myOrderInfo.DeliveryCompanyID != 0)//物流公司接的订单
-            {
-                orderDao.UpdateOrderRealOrderCommission(myOrderInfo.Id.ToString(), realOrderCommission);
-                if (operateType == 0)
-                {
-                    UpdateClienterAccount(myOrderInfo);
-                }
-                else
-                {
-                    UpdateAccountBalanceAndWithdraw(myOrderInfo.clienterId, myOrderInfo);
-                }
-                return;
-            }
+            //if (myOrderInfo.DeliveryCompanyID != 0)//物流公司接的订单
+            //{
+            //    orderDao.UpdateOrderRealOrderCommission(myOrderInfo.Id.ToString(), realOrderCommission);
+            //    if (operateType == 0)
+            //    {
+            //        UpdateClienterAccount(myOrderInfo);
+            //    }
+            //    else
+            //    {
+            //        UpdateAccountBalanceAndWithdraw(myOrderInfo.clienterId, myOrderInfo);
+            //    }
+            //    return;
+            //}
             var deductCommissionReason = "";
             bool isNotRealOrder = CheckIsNotRealOrder(myOrderInfo, out deductCommissionReason);
             if (isNotRealOrder)
@@ -1515,21 +1515,21 @@ namespace Ets.Service.Provider.Clienter
             }
             if (isNotRealOrder)
             {
-                //如果是无效订单，则扣除网站补贴
-                if (myOrderInfo.OrderCommission > myOrderInfo.SettleMoney)
-                {
-                    decimal diffOrderCommission = myOrderInfo.SettleMoney - myOrderInfo.OrderCommission.Value;
-                    if (operateType == 0)
-                    {
-                        UpdateNotRealOrderClienterAccount(myOrderInfo, diffOrderCommission);
-                    }
-                    else
-                    {
-                        UpdateNotRealOrderClienterAccountAndWithdraw(myOrderInfo, diffOrderCommission);
-                    }
+                ////如果是无效订单，则扣除网站补贴
+                //if (myOrderInfo.OrderCommission > myOrderInfo.SettleMoney)
+                //{
+                //    decimal diffOrderCommission = myOrderInfo.SettleMoney - myOrderInfo.OrderCommission.Value;
+                //    if (operateType == 0)
+                //    {
+                //        UpdateNotRealOrderClienterAccount(myOrderInfo, diffOrderCommission);
+                //    }
+                //    else
+                //    {
+                //        UpdateNotRealOrderClienterAccountAndWithdraw(myOrderInfo, diffOrderCommission);
+                //    }
 
-                    orderDao.InsertNotRealOrderLog(myOrderInfo.Id, diffOrderCommission * (-1));
-                }
+                //    orderDao.InsertNotRealOrderLog(myOrderInfo.Id, diffOrderCommission * (-1));
+                //}
                 orderOtherDao.UpdateOrderIsReal(myOrderInfo.Id, deductCommissionReason);
             }
         }

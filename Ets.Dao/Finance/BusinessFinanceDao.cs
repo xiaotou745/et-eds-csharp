@@ -241,6 +241,40 @@ INTO BusinessWithdrawLog
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
         /// <summary>
+        /// 商户提现申请单确认打款处理成功
+        /// danny-20150804
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool BusinessWithdrawPayDealOk(BusinessWithdrawLog model)
+        {
+            string sql = string.Format(@" 
+UPDATE BusinessWithdrawForm
+ SET    [DealStatus] = @DealStatus,
+		Payer=@Operator,
+		PayTime=getdate()
+OUTPUT
+  Inserted.Id,
+  Inserted.[Status],
+  @Remark,
+  @Operator,
+  getdate()
+INTO BusinessWithdrawLog
+  ([WithwardId],
+  [Status],
+  [Remark],
+  [Operator],
+  [OperatTime])
+ WHERE  Id = @Id ");
+
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@DealStatus", model.DealStatus);
+            parm.AddWithValue("@Operator", model.Operator);
+            parm.AddWithValue("@Remark", model.Remark);
+            parm.AddWithValue("@Id", model.WithwardId);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
+        }
+        /// <summary>
         /// 商户提现申请单审核拒绝
         /// danny-20150511
         /// </summary>
@@ -289,7 +323,7 @@ UPDATE BusinessWithdrawForm
  SET    [Status] = @Status,
 		Payer=@Operator,
 		PayTime=getdate(),
-        PayFailedReason=@PayFailedReason
+        PayFailedReason=ISNULL(PayFailedReason,'')+@PayFailedReason+' '
 OUTPUT
   Inserted.Id,
   Inserted.[Status],
@@ -306,6 +340,38 @@ INTO BusinessWithdrawLog
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Status", model.Status);
             parm.AddWithValue("@OldStatus", model.OldStatus);
+            parm.AddWithValue("@Operator", model.Operator);
+            parm.AddWithValue("@Remark", model.Remark);
+            parm.AddWithValue("@PayFailedReason", model.PayFailedReason);
+            parm.AddWithValue("@Id", model.WithwardId);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
+        }
+        /// <summary>
+        /// 修改商户提现申请单打款失败原因
+        /// danny-20150804
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool ModifyBusinessWithdrawPayFailedReason(BusinessWithdrawLogModel model)
+        {
+            string sql = string.Format(@" 
+UPDATE BusinessWithdrawForm
+ SET    PayTime=getdate(),
+        PayFailedReason=ISNULL(PayFailedReason,'')+@PayFailedReason+' '
+OUTPUT
+  Inserted.Id,
+  Inserted.[Status],
+  @Remark,
+  @Operator,
+  getdate()
+INTO BusinessWithdrawLog
+  ([WithwardId],
+  [Status],
+  [Remark],
+  [Operator],
+  [OperatTime])
+ WHERE  Id = @Id AND [Status]=@OldStatus ");
+            IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Operator", model.Operator);
             parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@PayFailedReason", model.PayFailedReason);
@@ -792,6 +858,81 @@ SELECT     bwf.BusinessId
                 return null;
             }
             return MapRows<BusinessFinanceAccountModel>(dt)[0];
+        }
+        /// <summary>
+        /// 获取状态为打款中的商户提款申请单（待自动服务处理）
+        /// danny-20150804
+        /// </summary>
+        /// <returns></returns>
+        public IList<BusinessFinanceAccountModel> GetBusinessFinanceAccountList()
+        {
+            string sql = @"  
+SELECT     bwf.BusinessId
+		  ,bwf.TrueName
+		  ,bwf.AccountNo
+		  ,bwf.OpenBank
+		  ,bwf.OpenSubBank
+		  ,bwf.IDCard 
+		  ,bwf.OpenProvince
+		  ,bwf.OpenCity
+		  ,bwf.Amount
+		  ,bwf.HandChargeThreshold
+		  ,bwf.HandCharge
+		  ,bwf.HandChargeOutlay
+		  ,bwf.WithdrawTime
+		  ,bwf.PhoneNo
+		  ,bwf.AccountType
+		  ,bwf.BelongType
+          ,bfa.YeepayStatus
+		  ,ypu.Ledgerno YeepayKey
+		  ,ISNULL(ypu.BalanceRecord,0) BalanceRecord
+		  ,ISNULL(ypu.YeeBalance,0) YeeBalance
+          ,bfa.Id
+          ,bwf.DealStatus
+          ,bwf.DealCount
+          ,bwf.Id WithwardId
+          ,bwf.WithwardNo WithwardNo
+  FROM BusinessWithdrawForm bwf with(nolock)
+  JOIN BusinessFinanceAccount bfa with(nolock) ON bfa.BusinessId=bwf.BusinessId and bwf.Status=@bwfStatus and bwf.DealStatus=@DealStatus
+  LEFT JOIN ( SELECT tblypu.UserId,tblypu.Ledgerno,tblypu.BankName,tblypu.BankAccountNumber,tblypu.BalanceRecord,tblypu.YeeBalance
+			  FROM(
+			      SELECT UserId,BankName,BankAccountNumber,MAX(Addtime) Addtime
+			      FROM YeePayUser(NOLOCK) 
+			      GROUP BY UserId,BankName,BankAccountNumber) tbl
+			  JOIN YeePayUser tblypu (NOLOCK) 
+                ON  tblypu.Addtime=tbl.Addtime 
+                AND tblypu.UserId = tbl.UserId 
+                AND tblypu.BankName=tbl.BankName 
+                AND tblypu.BankAccountNumber=tbl.BankAccountNumber) ypu  
+		 ON ypu.UserId=bwf.BusinessId  
+        AND ypu.BankAccountNumber=bwf.AccountNo 
+        AND ypu.BankName=bwf.OpenBank";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@bwfStatus", BusinessWithdrawFormStatus.Paying.GetHashCode());
+            parm.AddWithValue("@DealStatus", BusinessWithdrawFormDealStatus.Dealing.GetHashCode());
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            if (dt == null || dt.Rows.Count <= 0)
+            {
+                return null;
+            }
+            return MapRows<BusinessFinanceAccountModel>(dt);
+        }
+        /// <summary>
+        ///  修改商户提现单处理次数
+        /// danny-20150804
+        /// </summary>
+        /// <param name="withwardId"></param>
+        /// <returns></returns>
+        public int ModifyBusinessWithdrawDealCount(long withwardId)
+        {
+            string sql = string.Format(@" 
+update BusinessWithdrawForm
+set    DealCount=DealCount+1
+output Inserted.DealCount
+where Id=@WithwardId;");
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@WithwardId", withwardId);
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm));
         }
     }
        

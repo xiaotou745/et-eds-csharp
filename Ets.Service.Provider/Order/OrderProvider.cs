@@ -1195,34 +1195,35 @@ namespace Ets.Service.Provider.Order
             {
                 DealFlag = false
             };
-            var orderModel = orderDao.GetOrderByNo(orderOptionModel.OrderNo);
-            if (orderModel == null)
-            {
-                dealResultInfo.DealMsg = "未查询到订单信息！";
-                return dealResultInfo;
-            }
-            orderModel.OptUserName = orderOptionModel.OptUserName;
-            orderModel.Remark = "管理后台取消订单：" + orderOptionModel.OptLog;
-            var orderTaskPayStatus = orderDao.GetOrderTaskPayStatus(orderModel.Id);
-            #region 订单不可取消
-            if (orderModel.Status == 3)//订单已为取消状态
-            {
-                dealResultInfo.DealMsg = "订单已为取消状态，不能再次取消操作！";
-                return dealResultInfo;
-            }
-            if (orderModel.IsJoinWithdraw == 1)//订单已分账
-            {
-                dealResultInfo.DealMsg = "订单已分账，不能取消订单！";
-                return dealResultInfo;
-            }
-            if (orderModel.MealsSettleMode == 1 && orderTaskPayStatus > 0 && !orderModel.IsPay.Value)//餐费未线上支付模式并且餐费有支付
-            {
-                dealResultInfo.DealMsg = "餐费有支付，不能取消订单！";
-                return dealResultInfo;
-            }
-            #endregion
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
+                var orderModel = orderDao.GetOrderByIdWithNolock(orderOptionModel.OrderId);
+                if (orderModel == null)
+                {
+                    dealResultInfo.DealMsg = "未查询到订单信息！";
+                    return dealResultInfo;
+                }
+                orderModel.OptUserName = orderOptionModel.OptUserName;
+                orderModel.Remark = "管理后台取消订单：" + orderOptionModel.OptLog;
+                var orderTaskPayStatus = orderDao.GetOrderTaskPayStatus(orderModel.Id);
+                #region 订单不可取消
+                if (orderModel.Status == 3)//订单已为取消状态
+                {
+                    dealResultInfo.DealMsg = "订单已为取消状态，不能再次取消操作！";
+                    return dealResultInfo;
+                }
+                if (orderModel.IsJoinWithdraw == 1)//订单已分账
+                {
+                    dealResultInfo.DealMsg = "订单已分账，不能取消订单！";
+                    return dealResultInfo;
+                }
+                if (orderModel.MealsSettleMode == 1 && orderTaskPayStatus > 0 && !orderModel.IsPay.Value)//餐费未线上支付模式并且餐费有支付
+                {
+                    dealResultInfo.DealMsg = "餐费有支付，不能取消订单！";
+                    return dealResultInfo;
+                }
+                #endregion
+
                 if (orderDao.CancelOrder(orderModel, orderOptionModel))
                 {
                     if (orderModel.Status == 1 && orderTaskPayStatus == 2 &&
@@ -1312,51 +1313,78 @@ namespace Ets.Service.Provider.Order
                 dealResultInfo.DealMsg = "请填写扣除网站补贴原因！";
                 return dealResultInfo;
             }
-            var orderModel = orderDao.GetOrderByNo(orderOptionModel.OrderNo);
-            if (orderModel == null)
-            {
-                dealResultInfo.DealMsg = "未查询到订单信息！";
-                return dealResultInfo;
-            }
-            orderModel.OptUserName = orderOptionModel.OptUserName;
-            orderModel.Remark = "管理后台扣除网站补贴：" + orderOptionModel.OptLog;
-            #region 订单不可扣除网站补贴
-            if (orderModel.Status == 3)//订单已为取消状态
-            {
-                dealResultInfo.DealMsg = "订单已为取消状态，不能扣除网站补贴！";
-                return dealResultInfo;
-            }
-            if (orderModel.IsJoinWithdraw == 1)//订单已分账
-            {
-                dealResultInfo.DealMsg = "订单已分账，不能扣除网站补贴！";
-                return dealResultInfo;
-            }
-            if (orderModel.FinishAll != 1)//订单未完成
-            {
-                dealResultInfo.DealMsg = "订单未完成，不能扣除网站补贴！";
-                return dealResultInfo;
-            }
-            #endregion
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
+                var orderModel = orderDao.GetOrderByIdWithNolock(orderOptionModel.OrderId);
+
+                orderDao.UpdateJoinWithdraw(orderModel.Id);
                 //更新扣除补贴原因,扣除补贴方式为手动扣除
                 orderOtherDao.UpdateOrderDeductCommissionReason(orderModel.Id, orderOptionModel.OptLog, 2);
+
+
                 //如果要扣除的金额大于0， 写流水
                 if (orderModel.OrderCommission > orderModel.SettleMoney)
                 {
                     decimal diffOrderCommission = orderModel.SettleMoney - orderModel.OrderCommission.Value;
-                    if (orderModel.MealsSettleMode == MealsSettleMode.LineOn.GetHashCode())//线上支付
-                    {
-                        iClienterProvider.UpdateNotRealOrderClienterAccountAndWithdraw(orderModel, diffOrderCommission);
-                    }
-                    else
-                    {
-                        iClienterProvider.UpdateNotRealOrderClienterAccount(orderModel, diffOrderCommission);
-                    }
+
+                    iClienterProvider.UpdateNotRealOrderClienterAccount(orderModel, diffOrderCommission);
                 }
+                //加可提现金额
+                ClienterAllowWithdrawRecord cawrm = new ClienterAllowWithdrawRecord()
+                {
+                    ClienterId = orderModel.clienterId,
+                    Amount = Convert.ToDecimal(orderModel.RealOrderCommission),
+                    Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(),
+                    RecordType = ClienterAllowWithdrawRecordType.OrderCommission.GetHashCode(),
+                    Operator = orderOptionModel.OptUserName,
+                    WithwardId = orderModel.Id,
+                    RelationNo = orderModel.OrderNo,
+                    Remark = "管理后台审核拒绝加可提现"
+                };
+                clienterAllowWithdrawRecordDao.Insert(cawrm);
+
                 tran.Complete();
                 dealResultInfo.DealFlag = true;
                 dealResultInfo.DealMsg = "扣取网站补贴成功！";
+                return dealResultInfo;
+            }
+        }
+
+        /// <summary>
+        /// 审核通过
+        /// </summary>
+        /// <param name="orderOptionModel"></param>
+        /// <returns></returns>
+        public DealResultInfo AuditOK(OrderOptionModel orderOptionModel)
+        {
+            var dealResultInfo = new DealResultInfo
+            {
+                DealFlag = false
+            };
+          
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                var orderModel = orderDao.GetOrderByIdWithNolock(orderOptionModel.OrderId);
+
+                clienterDao.UpdateAllowWithdrawPrice(Convert.ToDecimal(orderModel.OrderCommission), orderModel.clienterId);
+                orderDao.UpdateJoinWithdraw(orderModel.Id);
+
+                ClienterAllowWithdrawRecord cawrm = new ClienterAllowWithdrawRecord()
+                {
+                    ClienterId = orderModel.clienterId,
+                    Amount =Convert.ToDecimal( orderModel.OrderCommission),
+                    Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(),
+                    RecordType = ClienterAllowWithdrawRecordType.OrderCommission.GetHashCode(),
+                    Operator = orderOptionModel.OptUserName,
+                    WithwardId = orderModel.Id,
+                    RelationNo = orderModel.OrderNo,
+                    Remark = "管理后台审核通过加可提现"
+                };
+                clienterAllowWithdrawRecordDao.Insert(cawrm);
+
+
+                tran.Complete();
+                dealResultInfo.DealFlag = true;;
                 return dealResultInfo;
             }
         }
@@ -1913,5 +1941,6 @@ namespace Ets.Service.Provider.Order
         {
             return orderDao.UpdateOrderAddressAndPhone(orderId, newAddress, newPhone);
         }
+        
     }
 }

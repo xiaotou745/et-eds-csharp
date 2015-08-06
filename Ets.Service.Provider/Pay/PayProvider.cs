@@ -1,4 +1,5 @@
-﻿using Ets.Dao.Common.YeePay;
+﻿using ETS.Const;
+using Ets.Dao.Common.YeePay;
 using Ets.Model.Common.YeePay;
 using Ets.Model.DomainModel.Finance;
 using ETS.Pay.YeePay;
@@ -43,7 +44,12 @@ namespace Ets.Service.Provider.Pay
         private IClienterFinanceProvider iClienterFinanceProvider = new ClienterFinanceProvider();
         private YeePayRecordDao yeePayRecordDao = new YeePayRecordDao();
         private QueryBalance queryBalance = new QueryBalance();
-
+        private ClienterFinanceDao clienterFinanceDao = new ClienterFinanceDao();
+        private BusinessFinanceDao businessFinanceDao = new BusinessFinanceDao();
+        private BusinessFinanceProvider businessFinanceProvider = new BusinessFinanceProvider();
+        private ClienterFinanceProvider clienterFinanceProvider = new ClienterFinanceProvider();
+        private readonly BusinessFinanceAccountDao businessFinanceAccountDao = new BusinessFinanceAccountDao();
+        private readonly ClienterFinanceAccountDao clienterFinanceAccountDao = new ClienterFinanceAccountDao();
         #region 生成支付宝、微信二维码订单
 
         /// <summary>
@@ -890,12 +896,13 @@ namespace Ets.Service.Provider.Pay
                         EmailHelper.SendEmailTo(sbEmail.ToString(), emailSendTo, "易宝对账结果", copyTo, false);
                         return ;
                     }
-                    if (ParseHelper.ToDecimal(reg.ledgerbalance) != yeePayUser.YeeBalance)
+                    var yeeBalance =ParseHelper.ToDecimal(reg.ledgerbalance.Contains(":") ? reg.ledgerbalance.Split(':')[1] : "0");
+                    if (yeeBalance != yeePayUser.YeeBalance)
                     {
                         yeePayRecordDao.ModifyYeeBalance(new YeePayUser()
                         {
                             Ledgerno = yeePayUser.Ledgerno,
-                            YeeBalance = ParseHelper.ToDecimal(reg.ledgerbalance)
+                            YeeBalance = yeeBalance
                         });
                     }
 
@@ -931,7 +938,7 @@ namespace Ets.Service.Provider.Pay
                     {
                         sbEmail.AppendLine("提现单号:【" + item.WithwardNo + "】,提现单状态：【" + ETS.Extension.EnumExtenstion.GetEnumItem(
                             ((ClienterWithdrawFormStatus)item.Status).GetType(), (ClienterWithdrawFormStatus)item.Status).Text + "】,异常描述：【" +
-                                           item.PayFailedReason + "元】");
+                                           item.PayFailedReason + "】");
                     }
                     sbEmail.AppendLine();
                 }
@@ -948,7 +955,7 @@ namespace Ets.Service.Provider.Pay
                 }
             }
             #endregion
-            #region 商户提款单
+            #region 商户提款单异常
             if (varnBusinessWithdrawForm != null && varnBusinessWithdrawForm.Count > 0)
             {
                 var exceptBusinessWithdrawForm = varnBusinessWithdrawForm.Where(t => t.Status == BusinessWithdrawFormStatus.Except.GetHashCode()).ToList();
@@ -960,7 +967,7 @@ namespace Ets.Service.Provider.Pay
                     {
                         sbEmail.AppendLine("提现单号:【" + item.WithwardNo + "】,提现单状态：【" + ETS.Extension.EnumExtenstion.GetEnumItem(
                             ((BusinessWithdrawFormStatus)item.Status).GetType(), (BusinessWithdrawFormStatus)item.Status).Text + "】,异常描述：【" +
-                                           item.PayFailedReason + "元】");
+                                           item.PayFailedReason + "】");
                     }
                     sbEmail.AppendLine();
                 }
@@ -983,6 +990,548 @@ namespace Ets.Service.Provider.Pay
                 EmailHelper.SendEmailTo(sbEmail.ToString(), emailSendTo, "易宝自动对账", copyTo, false);
             }
             #endregion
+        }
+        /// <summary>
+        ///自动处理提款申请单（原确认打款逻辑）
+        /// danny-20150804
+        /// </summary>
+        public void AutoDealWithdrawForm()
+        {
+            #region 对象声明及实例化
+            var emailSendTo = Config.ConfigKey("EmailSendTo");
+            var copyTo = Config.ConfigKey("CopyTo");
+            #endregion
+
+            #region 处理商户提现单
+            Task.Factory.StartNew(() =>
+            {
+                var bfaList= businessFinanceDao.GetBusinessFinanceAccountList();
+                if (bfaList != null && bfaList.Count > 0)
+                {
+                    foreach (var item in bfaList)
+                    {
+                        #region 对象声明及实例化
+                        if (businessFinanceDao.ModifyBusinessWithdrawDealCount(item.WithwardId) > 5)
+                        {
+                            businessFinanceDao.BusinessWithdrawPayFailed(new BusinessWithdrawLogModel()
+                            {
+                                Status = BusinessWithdrawFormStatus.Except.GetHashCode(),
+                                OldStatus = BusinessWithdrawFormStatus.Allow.GetHashCode(),
+                                Operator = "自动处理提现服务",
+                                Remark = "处理次数超限",
+                                PayFailedReason = "处理次数超限",
+                                WithwardId = item.WithwardId
+                            });
+                            EmailHelper.SendEmailTo("商户提现单自动处理提现次数超限，单号为【"+item.WithwardNo+"】", emailSendTo, "自动处理商户提现单异常", copyTo, false);
+                            continue;
+                        }
+                        string key = string.Format(RedissCacheKey.Ets_Withdraw_Deal_B, item.WithwardId);
+                        var redis = new ETS.NoSql.RedisCache.RedisCache();
+                        var dealStatus = ParseHelper.ToInt(redis.Get<int>(key));
+                        //if (dealStatus == WithdrawDealStatus.Default.GetHashCode())
+                        //{
+                        //    redis.Set(key, WithdrawDealStatus.Default.GetHashCode());
+                        //}
+                        var amount = item.HandChargeOutlay == 0 ? item.Amount : item.Amount + item.HandCharge;//转账及提现金额（计算手续费）
+                        
+                        #endregion
+
+                        #region 初始值
+                        if (dealStatus == WithdrawDealStatus.Default.GetHashCode())
+                        {
+                            if (string.IsNullOrEmpty(item.YeepayKey) || item.YeepayStatus == 1)//无易宝账户或账户信息有更新
+	                        {
+                                var registResult = new PayProvider().RegisterYee(new YeeRegisterParameter
+                                {
+                                    BindMobile = item.PhoneNo,
+                                    SignedName = item.TrueName,
+                                    CustomerType =item.BelongType == 0 ? CustomertypeEnum.PERSON : CustomertypeEnum.ENTERPRISE,
+                                    LinkMan = item.TrueName,
+                                    IdCard = item.IDCard,
+                                    BusinessLicence = item.IDCard,
+                                    LegalPerson = item.TrueName,
+                                    BankAccountNumber = ParseHelper.ToDecrypt(item.AccountNo),
+                                    BankName = item.OpenBank,
+                                    AccountName = item.TrueName,
+                                    BankProvince = item.OpenProvince,
+                                    BankCity = item.OpenCity,
+                                    UserId = item.BusinessId,
+                                    UserType = UserTypeYee.Business.GetHashCode(),
+                                    AccountId = item.Id.ToString()
+                                });//注册帐号
+	                            if (registResult != null && !string.IsNullOrEmpty(registResult.code) &&registResult.code.Trim() == "1") //调用易宝注册接口成功
+	                            {
+                                    dealStatus = WithdrawDealStatus.Registering.GetHashCode();
+                                    redis.Set(key, dealStatus.GetHashCode());
+	                                item.YeepayKey = registResult.ledgerno;
+	                            }
+                                else
+	                            {
+                                    DealRegisterYeeFailedB(registResult, item);
+		                            continue; //跳出此次循环
+		                        }
+	                        }
+                            else//有易宝账户且无账户信息更新
+	                        {
+                                dealStatus = WithdrawDealStatus.Registered.GetHashCode();
+                                redis.Set(key, dealStatus.GetHashCode());
+	                        }
+                        }
+                        #endregion
+
+                        #region 待注册
+                        if (dealStatus == WithdrawDealStatus.Registering.GetHashCode())
+                        {
+                            if (!businessFinanceAccountDao.ModifyYeepayInfoById(Convert.ToInt32(item.Id), item.YeepayKey, 0))
+                            {
+                                continue;
+                            }
+                            dealStatus = WithdrawDealStatus.Registered.GetHashCode();
+                            redis.Set(key, dealStatus.GetHashCode());
+                        }
+
+                        #endregion
+
+                        #region 已注册
+                        if (dealStatus == WithdrawDealStatus.Registered.GetHashCode())
+                        {
+                            var regTransfer = new PayProvider().TransferAccountsYee(new YeeTransferParameter()
+                            {
+                                UserType = UserTypeYee.Business.GetHashCode(),
+                                WithdrawId = item.WithwardId,
+                                Ledgerno = item.YeepayKey,
+                                SourceLedgerno = "",
+                                Amount = amount.ToString()
+                            });
+                            if (regTransfer.code != "1")
+                            {
+                                businessFinanceDao.ModifyBusinessWithdrawPayFailedReason(new BusinessWithdrawLogModel()
+                                {
+                                    WithwardId = item.WithwardId,
+                                    PayFailedReason = "易宝转账失败:" + regTransfer.msg + "(" + regTransfer.code + ")",
+                                    Remark = "易宝转账失败:" + regTransfer.msg + "(" + regTransfer.code + ")",
+                                    Operator = "自动处理服务"
+                                });
+                                continue;
+                            }
+                            dealStatus = WithdrawDealStatus.Transfering.GetHashCode();
+                            redis.Set(key, dealStatus.GetHashCode());
+                        }
+                        #endregion
+
+                        #region 待转账
+                        if (dealStatus == WithdrawDealStatus.Transfering.GetHashCode())
+                        {
+                            if (!DealTransferAccountsYeeOk(item, amount))
+                            {
+                                continue;
+                            }
+                            dealStatus = WithdrawDealStatus.Transfered.GetHashCode();
+                            redis.Set(key, dealStatus.GetHashCode());
+                        }
+                        #endregion
+
+                        #region 已转账
+                        if (dealStatus == WithdrawDealStatus.Transfered.GetHashCode())
+                        {
+                            var regCash = new PayProvider().CashTransferYee(new YeeCashTransferParameter()
+                            {
+                                UserType = UserTypeYee.Business.GetHashCode(),
+                                WithdrawId = ParseHelper.ToInt(item.WithwardId),
+                                Ledgerno = item.YeepayKey,
+                                App = APP.B,
+                                Amount = amount.ToString()
+                            });
+                            if (regCash.code != "1")
+                            {
+                                businessFinanceDao.ModifyBusinessWithdrawPayFailedReason(new BusinessWithdrawLogModel()
+                                {
+                                    WithwardId = item.WithwardId,
+                                    PayFailedReason = "易宝提现失败:" + regCash.msg + "(" + regCash.code + ")",
+                                    Remark = "易宝提现失败:" + regCash.msg + "(" + regCash.code + ")",
+                                    Operator = "自动处理服务"
+                                });
+                                continue;
+                            }
+                            dealStatus = WithdrawDealStatus.Transfering.GetHashCode();
+                            redis.Set(key, dealStatus.GetHashCode());
+                        }
+                        #endregion
+
+                        #region 待提现
+                        if (dealStatus == WithdrawDealStatus.Cashing.GetHashCode())
+                        {
+                            if (!DealCashTransferYeeOkB(item, amount))
+                            {
+                                continue;
+                            }
+                            dealStatus = WithdrawDealStatus.Cashed.GetHashCode();
+                            redis.Set(key, dealStatus.GetHashCode());
+                        }
+                        #endregion
+                    }
+                }
+            });
+            #endregion
+
+            #region 处理骑士提现单
+            Task.Factory.StartNew(() =>
+            {
+                var cfaList = clienterFinanceDao.GetClienterFinanceAccountList();
+                if (cfaList != null && cfaList.Count > 0)
+                {
+                    foreach (var item in cfaList)
+                    {
+                        #region 对象声明及实例化
+                        if (clienterFinanceDao.ModifyClienterWithdrawDealCount(item.WithwardId) > 5)
+                        {
+                            clienterFinanceDao.ClienterWithdrawPayFailed(new ClienterWithdrawLogModel()
+                            {
+                                Status = ClienterWithdrawFormStatus.Except.GetHashCode(),
+                                OldStatus = ClienterWithdrawFormStatus.Allow.GetHashCode(),
+                                Operator = "自动处理提现服务",
+                                Remark = "处理次数超限",
+                                PayFailedReason = "处理次数超限",
+                                WithwardId = item.WithwardId
+                            });
+                            EmailHelper.SendEmailTo("骑士提现单自动处理提现次数超限，单号为【" + item.WithwardNo + "】", emailSendTo, "自动处理骑士提现单异常", copyTo, false);
+                            continue;
+                        }
+                        string key = string.Format(RedissCacheKey.Ets_Withdraw_Deal_C, item.WithwardId);
+                        var redis = new ETS.NoSql.RedisCache.RedisCache();
+                        var dealStatus = ParseHelper.ToInt(redis.Get<int>(key));
+                        //if (dealStatus == WithdrawDealStatus.Default.GetHashCode())
+                        //{
+                        //    redis.Set(key, WithdrawDealStatus.Default.GetHashCode());
+                        //}
+                        var amount = item.HandChargeOutlay == 0 ? item.Amount : item.Amount + item.HandCharge;//转账及提现金额（计算手续费）
+
+                        #endregion
+
+                        #region 初始值
+                        if (dealStatus == WithdrawDealStatus.Default.GetHashCode())
+                        {
+                            if (string.IsNullOrEmpty(item.YeepayKey) || item.YeepayStatus == 1)//无易宝账户或账户信息有更新
+                            {
+                                var registResult = new PayProvider().RegisterYee(new YeeRegisterParameter
+                                {
+                                    BindMobile = item.PhoneNo,
+                                    SignedName = item.TrueName,
+                                    CustomerType = item.BelongType == 0 ? CustomertypeEnum.PERSON : CustomertypeEnum.ENTERPRISE,
+                                    LinkMan = item.TrueName,
+                                    IdCard = item.IDCard,
+                                    BusinessLicence = item.IDCard,
+                                    LegalPerson = item.TrueName,
+                                    BankAccountNumber = ParseHelper.ToDecrypt(item.AccountNo),
+                                    BankName = item.OpenBank,
+                                    AccountName = item.TrueName,
+                                    BankProvince = item.OpenProvince,
+                                    BankCity = item.OpenCity,
+                                    UserId = item.ClienterId,
+                                    UserType = UserTypeYee.Clienter.GetHashCode(),
+                                    AccountId = item.Id.ToString()
+                                });//注册帐号
+                                if (registResult != null && !string.IsNullOrEmpty(registResult.code) && registResult.code.Trim() == "1") //调用易宝注册接口成功
+                                {
+                                    dealStatus = WithdrawDealStatus.Registering.GetHashCode();
+                                    redis.Set(key, dealStatus.GetHashCode());
+                                    item.YeepayKey = registResult.ledgerno;
+                                }
+                                else
+                                {
+                                    DealRegisterYeeFailedC(registResult, item);
+                                    continue; //跳出此次循环
+                                }
+                            }
+                            else//有易宝账户且无账户信息更新
+                            {
+                                dealStatus = WithdrawDealStatus.Registered.GetHashCode();
+                                redis.Set(key, dealStatus.GetHashCode());
+                            }
+                        }
+                        #endregion
+
+                        #region 待注册
+                        if (dealStatus == WithdrawDealStatus.Registering.GetHashCode())
+                        {
+                            if (!clienterFinanceAccountDao.ModifyYeepayInfoById(Convert.ToInt32(item.Id), item.YeepayKey, 0))
+                            {
+                                continue;
+                            }
+                            dealStatus = WithdrawDealStatus.Registered.GetHashCode();
+                            redis.Set(key, dealStatus.GetHashCode());
+                        }
+
+                        #endregion
+
+                        #region 已注册
+                        if (dealStatus == WithdrawDealStatus.Registered.GetHashCode())
+                        {
+                            var regTransfer = new PayProvider().TransferAccountsYee(new YeeTransferParameter()
+                            {
+                                UserType = UserTypeYee.Clienter.GetHashCode(),
+                                WithdrawId = item.WithwardId,
+                                Ledgerno = item.YeepayKey,
+                                SourceLedgerno = "",
+                                Amount = amount.ToString()
+                            });
+                            if (regTransfer.code != "1")
+                            {
+                                clienterFinanceDao.ModifyClienterWithdrawPayFailedReason(new ClienterWithdrawLogModel()
+                                {
+                                    WithwardId = item.WithwardId,
+                                    PayFailedReason = "易宝转账失败:" + regTransfer.msg + "(" + regTransfer.code + ")",
+                                    Remark = "易宝转账失败:" + regTransfer.msg + "(" + regTransfer.code + ")",
+                                    Operator = "自动处理服务"
+                                });
+                                continue;
+                            }
+                            dealStatus = WithdrawDealStatus.Transfering.GetHashCode();
+                            redis.Set(key, dealStatus.GetHashCode());
+                        }
+                        #endregion
+
+                        #region 待转账
+                        if (dealStatus == WithdrawDealStatus.Transfering.GetHashCode())
+                        {
+                            if (!DealTransferAccountsYeeOk(item, amount))
+                            {
+                                continue;
+                            }
+                            dealStatus = WithdrawDealStatus.Transfered.GetHashCode();
+                            redis.Set(key, dealStatus.GetHashCode());
+                        }
+                        #endregion
+
+                        #region 已转账
+                        if (dealStatus == WithdrawDealStatus.Transfered.GetHashCode())
+                        {
+                            var regCash = new PayProvider().CashTransferYee(new YeeCashTransferParameter()
+                            {
+                                UserType = UserTypeYee.Clienter.GetHashCode(),
+                                WithdrawId = ParseHelper.ToInt(item.WithwardId),
+                                Ledgerno = item.YeepayKey,
+                                App = APP.C,
+                                Amount = amount.ToString()
+                            });
+                            if (regCash.code != "1")
+                            {
+                                clienterFinanceDao.ModifyClienterWithdrawPayFailedReason(new ClienterWithdrawLogModel()
+                                {
+                                    WithwardId = item.WithwardId,
+                                    PayFailedReason = "易宝提现失败:" + regCash.msg + "(" + regCash.code + ")",
+                                    Remark = "易宝提现失败:" + regCash.msg + "(" + regCash.code + ")",
+                                    Operator = "自动处理服务"
+                                });
+                                continue;
+                            }
+                            dealStatus = WithdrawDealStatus.Transfering.GetHashCode();
+                            redis.Set(key, dealStatus.GetHashCode());
+                        }
+                        #endregion
+
+                        #region 待提现
+                        if (dealStatus == WithdrawDealStatus.Cashing.GetHashCode())
+                        {
+                            if (!DealCashTransferYeeOkC(item, amount))
+                            {
+                                continue;
+                            }
+                            dealStatus = WithdrawDealStatus.Cashed.GetHashCode();
+                            redis.Set(key, dealStatus.GetHashCode());
+                        }
+                        #endregion
+                    }
+                }
+            });
+            #endregion
+        }
+        /// <summary>
+        /// 商户易宝账户注册失败
+        /// danny-20150804
+        /// </summary>
+        private void DealRegisterYeeFailedB(RegisterReturnModel registResult,BusinessFinanceAccountModel model)
+        {
+            string payFailedReason;
+            if (registResult == null)
+            {
+                payFailedReason = "商户绑定易宝支付失败,返回结果为null!";
+            }
+            else
+            {
+                LogHelper.LogWriterString("商户绑定易宝支付失败",
+                    string.Format("易宝错误信息:code{0},ledgerno:{1},hmac{2},msg{3}",
+                        registResult.code, registResult.ledgerno, registResult.hmac, registResult.msg));
+                payFailedReason = string.Format("商户绑定易宝支付失败,易宝错误信息:code{0},ledgerno:{1},hmac{2},msg{3}", registResult.code, registResult.ledgerno, registResult.hmac, registResult.msg);
+            }
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                if (businessFinanceAccountDao.ModifyYeepayInfoById(Convert.ToInt32(model.Id), "", 1))
+                {
+                    if (businessFinanceDao.ModifyBusinessWithdrawPayFailedReason(new BusinessWithdrawLogModel()
+                    {
+                        WithwardId = model.WithwardId,
+                        PayFailedReason = payFailedReason,
+                        Remark = payFailedReason,
+                        Operator = "自动处理服务"
+                    }))
+                    {
+                        tran.Complete();
+                    }
+                }
+            }
+        }
+        /// <summary>
+        /// 骑士易宝账户注册失败
+        /// danny-20150804
+        /// </summary>
+        private void DealRegisterYeeFailedC(RegisterReturnModel registResult, ClienterFinanceAccountModel model)
+        {
+            string payFailedReason;
+            if (registResult == null)
+            {
+                payFailedReason = "骑士绑定易宝支付失败,返回结果为null!";
+            }
+            else
+            {
+                LogHelper.LogWriterString("骑士绑定易宝支付失败",
+                    string.Format("易宝错误信息:code{0},ledgerno:{1},hmac{2},msg{3}",
+                        registResult.code, registResult.ledgerno, registResult.hmac, registResult.msg));
+                payFailedReason = string.Format("骑士绑定易宝支付失败,易宝错误信息:code{0},ledgerno:{1},hmac{2},msg{3}", registResult.code, registResult.ledgerno, registResult.hmac, registResult.msg);
+            }
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                if (clienterFinanceAccountDao.ModifyYeepayInfoById(Convert.ToInt32(model.Id), "", 1))
+                {
+                    if (clienterFinanceDao.ModifyClienterWithdrawPayFailedReason(new ClienterWithdrawLogModel()
+                    {
+                        WithwardId = model.WithwardId,
+                        PayFailedReason = payFailedReason,
+                        Remark = payFailedReason,
+                        Operator = "自动处理服务"
+                    }))
+                    {
+                        tran.Complete();
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 易宝转账成功
+        /// danny-20150804
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="amount"></param>
+        /// <returns></returns>
+        private bool DealTransferAccountsYeeOk(dynamic model, decimal amount)
+        {
+            bool reg = false;
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                if (clienterFinanceDao.AddYeePayUserBalanceRecord(new YeePayUserBalanceRecord()
+                {
+                    LedgerNo = model.YeepayKey,
+                    WithwardId = model.WithwardId,
+                    Amount = amount,
+                    Balance = model.BalanceRecord + amount,
+                    RecordType = YeeRecordType.P2C.GetHashCode(),
+                    Operator = "自动处理服务",
+                    Remark = "易宝主账户向商户子账户转账【" + amount + "】元"
+                }))
+                {
+                    if (clienterFinanceDao.UpdateYeeBalanceRecord(model.YeepayKey, amount) )
+                    {
+                        reg = true;
+                        tran.Complete();
+                    }
+                }
+            }
+            return reg;
+        }
+        /// <summary>
+        /// 商户易宝提现成功
+        /// danny-20150804
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="amount"></param>
+        /// <returns></returns>
+        private bool DealCashTransferYeeOkB(BusinessFinanceAccountModel model, decimal amount)
+        {
+            bool reg = false;
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                if (clienterFinanceDao.AddYeePayUserBalanceRecord(new YeePayUserBalanceRecord()
+                {
+                    LedgerNo = model.YeepayKey,
+                    WithwardId = model.WithwardId,
+                    Amount = amount,
+                    Balance = model.BalanceRecord - amount,
+                    RecordType = YeeRecordType.Ccash.GetHashCode(),
+                    Operator = "自动处理服务",
+                    Remark = "易宝子账户提现【" + amount + "】元"
+                }))
+                {
+                    if (clienterFinanceDao.UpdateYeeBalanceRecord(model.YeepayKey, -amount))
+                    {
+                        if (businessFinanceDao.BusinessWithdrawPayDealOk(new BusinessWithdrawLog()
+                        {
+                            WithwardId = model.WithwardId,
+                            DealStatus = BusinessWithdrawFormDealStatus.Dealed.GetHashCode(),
+                            Operator = "自动处理服务",
+                            Remark = "自动处理服务处理商户提款申请单"
+                        }))
+                        {
+                            reg = true;
+                            tran.Complete();
+                        }
+                        }
+                        
+                }
+            }
+            return reg;
+        }
+        /// <summary>
+        /// 骑士易宝提现成功
+        /// danny-20150805
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="amount"></param>
+        /// <returns></returns>
+        private bool DealCashTransferYeeOkC(ClienterFinanceAccountModel model, decimal amount)
+        {
+            bool reg = false;
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                if (clienterFinanceDao.AddYeePayUserBalanceRecord(new YeePayUserBalanceRecord()
+                {
+                    LedgerNo = model.YeepayKey,
+                    WithwardId = model.WithwardId,
+                    Amount = amount,
+                    Balance = model.BalanceRecord - amount,
+                    RecordType = YeeRecordType.Ccash.GetHashCode(),
+                    Operator = "自动处理服务",
+                    Remark = "易宝子账户提现【" + amount + "】元"
+                }))
+                {
+                    if (clienterFinanceDao.UpdateYeeBalanceRecord(model.YeepayKey, -amount))
+                    {
+                        if (clienterFinanceDao.ClienterWithdrawPayDealOk(new ClienterWithdrawLog()
+                        {
+                            WithwardId = model.WithwardId,
+                            DealStatus = ClienterWithdrawFormDealStatus.Dealed.GetHashCode(),
+                            Operator = "自动处理服务",
+                            Remark = "自动处理服务处理骑士提款申请单"
+                        }))
+                        {
+                            reg = true;
+                            tran.Complete();
+                        }
+                    }
+
+                }
+            }
+            return reg;
         }
         #endregion
     }
