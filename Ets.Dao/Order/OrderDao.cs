@@ -588,7 +588,7 @@ select @@IDENTITY ";
             {
                 if (criteria.AuditStatus == 0)
                 {
-                    sbSqlWhere.AppendFormat(" AND oo.AuditStatus={0}  and FinishAll=1", criteria.AuditStatus);
+                    sbSqlWhere.AppendFormat(" AND oo.AuditStatus={0}  and o.FinishAll=1", criteria.AuditStatus);
                 }
                 else
                 {
