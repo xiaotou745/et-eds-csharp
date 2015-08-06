@@ -744,6 +744,95 @@ select @@IDENTITY ";
             }
 
         }
+
+        public OrderListModel GetOrderByIdWithNolock(int id)
+        {
+            #region 查询脚本
+            string sql = @"SELECT top 1 o.[Id]
+                                        ,o.[OrderNo]
+                                        ,o.[PickUpAddress]
+                                        ,o.PubDate
+                                        ,o.[ReceviceName]
+                                        ,o.[RecevicePhoneNo]
+                                        ,o.[ReceviceAddress]
+                                        ,o.[ActualDoneDate]
+                                        ,o.[IsPay]
+                                        ,o.[Amount]
+                                        ,o.[OrderCommission]
+                                        ,o.[DistribSubsidy]
+                                        ,o.[WebsiteSubsidy]
+                                        ,o.[Remark]
+                                        ,o.[Status]
+                                        ,o.[clienterId]
+                                        ,o.[businessId]
+                                        ,o.[ReceviceCity]
+                                        ,o.[ReceviceLongitude]
+                                        ,o.[ReceviceLatitude]
+                                        ,o.[OrderFrom]
+                                        ,o.[OriginalOrderId]
+                                        ,o.[OriginalOrderNo]
+                                        ,o.[Quantity]
+                                        ,o.[Weight]
+                                        ,o.[ReceiveProvince]
+                                        ,o.[ReceiveArea]
+                                        ,o.[ReceiveProvinceCode]
+                                        ,o.[ReceiveCityCode]
+                                        ,o.[ReceiveAreaCode]
+                                        ,o.[OrderType]
+                                        ,o.[KM]
+                                        ,o.[GuoJuQty]
+                                        ,o.[LuJuQty]
+                                        ,o.[SongCanDate]
+                                        ,o.[OrderCount]
+                                        ,o.[CommissionRate] 
+                                        ,o.[RealOrderCommission] 
+                                        ,b.[City] BusinessCity
+                                        ,b.Name BusinessName
+                                        ,b.PhoneNo BusinessPhoneNo
+                                        ,b.PhoneNo2 BusinessPhoneNo2
+                                        ,b.Address BusinessAddress
+                                        ,c.PhoneNo ClienterPhoneNo
+                                        ,c.TrueName ClienterTrueName
+                                        ,c.TrueName ClienterName
+                                        ,c.AccountBalance AccountBalance
+                                        ,b.GroupId                                        
+                                        ,o.OriginalOrderNo
+                                        ,oo.NeedUploadCount
+                                        ,oo.HadUploadCount
+                                        ,oo.ReceiptPic
+                                        ,oo.IsNotRealOrder IsNotRealOrder
+                                        ,o.OtherCancelReason
+                                        ,o.OriginalOrderNo
+                                        ,ISNULL(o.MealsSettleMode,0) MealsSettleMode
+                                        ,ISNULL(oo.IsJoinWithdraw,0) IsJoinWithdraw
+                                        ,o.BusinessReceivable
+                                        ,o.SettleMoney
+                                        ,o.FinishAll
+                                    FROM [order] o 
+                                    JOIN business b   ON b.Id = o.businessId
+                                    left JOIN clienter c  ON o.clienterId=c.Id
+                                    JOIN OrderOther oo  ON oo.OrderId=o.Id                                   
+                                    WHERE 1=1 ";
+            #endregion
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            if (id>0)
+            {
+                sql += " AND o.id=@id";
+                parm.Add("@id", SqlDbType.Int);
+                parm.SetValue("@id", id);
+            }
+            var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Write, sql, parm));
+            var list = ConvertDataTableList<OrderListModel>(dt);
+            if (list != null && list.Count > 0)
+            {
+                return list[0];
+            }
+            else
+            {
+                return null;
+            }
+
+        }
         /// <summary>
         /// 根据订单号查订单信息
         /// danny-20150320

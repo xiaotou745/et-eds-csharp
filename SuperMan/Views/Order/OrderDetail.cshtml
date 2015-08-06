@@ -208,9 +208,10 @@
                         }
                     </td>
                     <td>
-                        @if (ViewBag.IsShowDeductWebSubsidyBtn)
+                        @if (SuperMan.App_Start.UserContext.Current.HasAuthority(79) && ViewBag.IsShowAuditBtn)
                         {
-                            <input type="button" value="扣除网站补贴" class="searchBtn" id="btnDeductWebSubsidy" style="margin-left: 10px;" />
+                            <input type="button" value="审核通过" class="searchBtn" id="btnAuditOk" style="margin-left: 10px;" />
+    <input type="button" value="审核拒绝" class="searchBtn" id="btnAuditCancel" style="margin-left: 10px;" />
                         }
                     </td>
                 </tr>
@@ -267,7 +268,7 @@
 
     });
     //扣除网站补贴
-    $("#btnDeductWebSubsidy").click(function () {
+    $("#btnAuditCancel").click(function () {
         if ($("#IsEnable").val().trim() == "0") {
             alert("已删除的订单不取扣除网站补贴！");
             return false;
@@ -287,7 +288,7 @@
             return false;
         }
         if (confirm("确定要取消该订单吗？")) {
-            var paramaters = { "OrderNo": orderNo, "OrderOptionLog": orderOptionLog };
+            var paramaters = { "orderId": orderId, "OrderOptionLog": orderOptionLog };
             var url = "/Order/CancelOrder";
             $.ajax({
                 type: 'POST',
@@ -316,8 +317,8 @@
             return false;
         }
         if (confirm("确定要扣除该订单网站补贴吗？")) {
-            var paramaters = { "OrderNo": orderNo, "OrderOptionLog": orderOptionLog };
-            var url = "/Order/DeductWebSubsidy";
+            var paramaters = { "orderId": orderId, "OrderOptionLog": orderOptionLog };
+            var url = "/Order/AuditCancel";
             $.ajax({
                 type: 'POST',
                 url: url,
@@ -334,6 +335,30 @@
             });
         }
         return true;
+    });
+
+    $('#btnAuditOk').bind('click', function () {
+        if (!window.confirm("是否审核通过？")) {
+            return;
+        }
+        var orderNo = $('#OrderNo').val();
+        var orderId = $('#OrderId').val();
+
+        var paramaters = { "orderId": orderId };
+        var url = "/Order/AuditOK";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function(result) {
+                if (result.IsSuccess) {
+                    alert("审核成功！");
+                    window.location.href = "/Order/OrderDetail?orderNo=" + orderNo + "&orderId=" + orderId;
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
     });
 </script>
 

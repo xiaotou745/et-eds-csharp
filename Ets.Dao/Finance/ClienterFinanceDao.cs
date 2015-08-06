@@ -264,7 +264,7 @@ UPDATE ClienterWithdrawForm
  SET    [Status] = @Status,
 		Payer=@Operator,
 		PayTime=getdate(),
-        PayFailedReason=ISNULL(PayFailedReason,'')+@PayFailedReason
+        PayFailedReason=ISNULL(PayFailedReason,'')+@PayFailedReason+' '
 OUTPUT
   Inserted.Id,
   Inserted.[Status],
@@ -288,6 +288,38 @@ INTO ClienterWithdrawLog
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
         /// <summary>
+        /// 修改骑士提现申请单打款失败原因
+        /// danny-20150804
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool ModifyClienterWithdrawPayFailedReason(ClienterWithdrawLogModel model)
+        {
+            string sql = string.Format(@" 
+UPDATE ClienterWithdrawForm
+ SET    PayTime=getdate(),
+        PayFailedReason=ISNULL(PayFailedReason,'')+@PayFailedReason+' '
+OUTPUT
+  Inserted.Id,
+  Inserted.[Status],
+  @Remark,
+  @Operator,
+  getdate()
+INTO ClienterWithdrawLog
+  ([WithwardId],
+  [Status],
+  [Remark],
+  [Operator],
+  [OperatTime])
+ WHERE  Id = @Id AND [Status]=@OldStatus");
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Operator", model.Operator);
+            parm.AddWithValue("@Remark", model.Remark);
+            parm.AddWithValue("@PayFailedReason", model.PayFailedReason);
+            parm.AddWithValue("@Id", model.WithwardId);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
+        }
+        /// <summary>
         /// 修改骑士提款流水状态
         /// danny-20150513
         /// </summary>
@@ -304,7 +336,40 @@ UPDATE ClienterBalanceRecord
             parm.AddWithValue("@Status", ETS.Enums.ClienterBalanceRecordStatus.Success.GetHashCode());
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
+        /// <summary>
+        /// 骑士提现申请单确认打款处理成功
+        /// danny-20150805
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool ClienterWithdrawPayDealOk(ClienterWithdrawLog model)
+        {
+            string sql = string.Format(@" 
+UPDATE ClienterWithdrawForm
+ SET    [DealStatus] = @DealStatus,
+		Payer=@Operator,
+		PayTime=getdate()
+OUTPUT
+  Inserted.Id,
+  Inserted.[Status],
+  @Remark,
+  @Operator,
+  getdate()
+INTO ClienterWithdrawLog
+  ([WithwardId],
+  [Status],
+  [Remark],
+  [Operator],
+  [OperatTime])
+ WHERE  Id = @Id ");
 
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@DealStatus", model.DealStatus);
+            parm.AddWithValue("@Operator", model.Operator);
+            parm.AddWithValue("@Remark", model.Remark);
+            parm.AddWithValue("@Id", model.WithwardId);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
+        }
         /// <summary>
         /// 骑士提现失败后返现
         /// danny-20150513
@@ -794,6 +859,101 @@ where Ledgerno=@YeepayKey;");
             parm.AddWithValue("@YeepayKey", yeepayKey);
             parm.AddWithValue("@Amount", amount);
             return  ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm));
+        }
+        /// <summary>
+        /// 修改本系统易宝余额
+        /// danny-20150804
+        /// </summary>
+        /// <param name="yeepayKey">易宝账号</param>
+        /// <param name="amount">交易金额</param>
+        /// <returns></returns>
+        public bool UpdateYeeBalanceRecord(string yeepayKey, decimal amount)
+        {
+            string sql = string.Format(@" 
+update YeePayUser
+set    BalanceRecord=BalanceRecord+@Amount,
+       UpdateTime=getdate()
+where Ledgerno=@YeepayKey;");
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@YeepayKey", yeepayKey);
+            parm.AddWithValue("@Amount", amount);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
+        }
+        /// <summary>
+        /// 获取状态为打款中的骑士提款申请单（待自动服务处理）
+        /// danny-20150804
+        /// </summary>
+        /// <returns></returns>
+        public IList<ClienterFinanceAccountModel> GetClienterFinanceAccountList()
+        {
+            string sql = @"  
+SELECT cwf.[ClienterId]
+      ,cwf.[TrueName]
+      ,cwf.[AccountNo]
+      ,cwf.[AccountType]
+      ,cwf.[BelongType]
+      ,cwf.[OpenBank]
+      ,cwf.[OpenSubBank]
+      ,cwf.[IDCard]
+      ,cwf.[OpenProvince]
+      ,cwf.[OpenCity]
+	  ,ypu.Ledgerno YeepayKey
+	  ,cfa.YeepayStatus
+      ,cwf.Amount
+      ,cwf.HandChargeThreshold
+      ,cwf.HandCharge
+      ,cwf.HandChargeOutlay
+      ,cwf.WithdrawTime
+      ,cwf.PhoneNo
+	  ,ISNULL(ypu.BalanceRecord,0) BalanceRecord
+	  ,ISNULL(ypu.YeeBalance,0) YeeBalance
+      ,cfa.Id
+      ,cwf.DealStatus
+      ,cwf.DealCount
+      ,cwf.Id WithwardId
+      ,cwf.WithwardNo WithwardNo
+  FROM ClienterWithdrawForm cwf with(nolock)
+  JOIN dbo.ClienterFinanceAccount cfa WITH(NOLOCK) ON cfa.ClienterId=cwf.ClienterId and cwf.Status=@cwfStatus and cwf.DealStatus=@DealStatus
+  LEFT JOIN ( SELECT tblypu.UserId,tblypu.Ledgerno,tblypu.BankName,tblypu.BankAccountNumber,tblypu.BalanceRecord,tblypu.YeeBalance
+			  FROM(
+			      SELECT UserId,BankName,BankAccountNumber,MAX(Addtime) Addtime
+			      FROM YeePayUser(NOLOCK) 
+			      GROUP BY UserId,BankName,BankAccountNumber) tbl
+			  JOIN YeePayUser tblypu (NOLOCK) 
+                ON  tblypu.Addtime=tbl.Addtime 
+                AND tblypu.UserId = tbl.UserId 
+                AND tblypu.BankName=tbl.BankName 
+                AND tblypu.BankAccountNumber=tbl.BankAccountNumber) ypu  
+	   ON  ypu.UserId=cwf.ClienterId  
+       AND ypu.BankAccountNumber=cwf.AccountNo 
+       AND ypu.BankName=cwf.OpenBank ;
+";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@cwfStatus", ClienterWithdrawFormStatus.Paying.GetHashCode());
+            parm.AddWithValue("@DealStatus", ClienterWithdrawFormDealStatus.Dealing.GetHashCode());
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            if (dt == null || dt.Rows.Count <= 0)
+            {
+                return null;
+            }
+            return MapRows<ClienterFinanceAccountModel>(dt);
+        }
+        /// <summary>
+        ///  修改骑士提现单处理次数
+        /// danny-20150805
+        /// </summary>
+        /// <param name="withwardId"></param>
+        /// <returns></returns>
+        public int ModifyClienterWithdrawDealCount(long withwardId)
+        {
+            string sql = string.Format(@" 
+update ClienterWithdrawForm
+set    DealCount=DealCount+1
+output Inserted.DealCount
+where Id=@WithwardId;");
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@WithwardId", withwardId);
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm));
         }
     }
 }

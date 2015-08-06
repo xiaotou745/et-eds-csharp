@@ -246,6 +246,18 @@ namespace ETS.Enums
     }
 
     /// <summary>
+    ///骑士提现单处理状态(0 待处理 1 已处理 )
+    /// </summary>
+    public enum ClienterWithdrawFormDealStatus
+    {
+        [DisplayText("待处理")]
+        Dealing = 0,
+        [DisplayText("已处理")]
+        Dealed = 1,
+
+    }
+
+    /// <summary>
     ///骑士金融账号 账号类型：(1网银 2支付宝 3微信 4财付通 5百度钱包）枚举 add by caoheyang 20150511
     /// </summary>
     public enum ClienterFinanceAccountType
@@ -435,7 +447,17 @@ namespace ETS.Enums
         [DisplayText("打款中")]
         Paying = 20,
     }
-
+    /// <summary>
+    ///商户提现单处理状态(0 待处理 1 已处理 )
+    /// </summary>
+    public enum BusinessWithdrawFormDealStatus
+    {
+        [DisplayText("待处理")]
+        Dealing = 0,
+        [DisplayText("已处理")]
+        Dealed = 1,
+        
+    }
     /// <summary>
     ///商户金融账号 账号类型：(1网银 2支付宝 3微信 4财付通 5百度钱包）枚举 add by caoheyang 20150511
     /// </summary>
@@ -477,7 +499,26 @@ namespace ETS.Enums
         [DisplayText("已取货")]
         PickUp = 4
     }
-
+    /// <summary>
+    ///提现单处理状态(0：初始值1：待注册 2：已注册 3：待转账 4：已转账 5：待提现 6：已提现) 
+    /// </summary>
+    public enum WithdrawDealStatus
+    {
+        [DisplayText("初始值")]
+        Default = 0,
+        [DisplayText("待注册")]
+        Registering = 1,
+        [DisplayText("已注册")]
+        Registered = 2,
+        [DisplayText("待转账")]
+        Transfering = 3,
+        [DisplayText("已转账")]
+        Transfered = 4,
+        [DisplayText("待提现")]
+        Cashing = 5,
+        [DisplayText("已提现")]
+        Cashed = 6
+    }
     #endregion
 
 

@@ -11,7 +11,7 @@
         <h2 class="crumbs">
             您所在位置：数据统计 > 活跃用户统计
         </h2>
-
+        <h4 style="color:black;font-weight:600">活跃用户统计</h4>
         @using (Ajax.BeginForm("PostActiveUserAnalyze", new RouteValueDictionary { { "pageindex", "" } },
 new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
 new RouteValueDictionary { { "id", "searchForm" } }))
@@ -21,7 +21,7 @@ new RouteValueDictionary { { "id", "searchForm" } }))
                     <tr>
                         <td>
                             <span class="">日期: </span>
-                            <input id="StartDate" readonly="readonly" type="text" name="StartDate" value="@DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd")" />
+                            <input id="StartDate" readonly="readonly" type="text" name="StartDate" value="@DateTime.Now.AddMonths(-1).ToString("yyyy-MM-dd")" />
                             <span class="">到: </span>
                             <input id="EndDate" readonly="readonly" type="text" name="EndDate" value="@DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd")" />
                             <span>用户类型: </span>
@@ -58,6 +58,12 @@ new RouteValueDictionary { { "id", "searchForm" } }))
                         return false;
                     }
                     return true;
+                }
+            });
+            $(this).keydown(function (e) {
+                var key = window.event ? e.keyCode : e.which;
+                if (key == 13) {
+                    document.getElementById("btnSearch").click();
                 }
             });
         });

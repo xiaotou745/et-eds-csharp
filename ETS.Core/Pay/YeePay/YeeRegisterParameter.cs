@@ -159,5 +159,9 @@ namespace ETS.Pay.YeePay
         /// 签名信息   不需要方法调用方传,调用方内部赋值
         /// </summary>
         public string Hmac { get; set; }
+        /// <summary>
+        /// 提现单Id
+        /// </summary>
+        public long WithdrawId { get; set; }
     }
 }

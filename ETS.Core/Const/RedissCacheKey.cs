@@ -53,6 +53,10 @@ namespace ETS.Const
         /// 骑士端修改密码
         /// </summary>
         public const string ChangePasswordCount_C = "ChangePasswordCount_C_";
+        /// <summary>
+        /// 骑士端修改密码验证码
+        /// </summary>
+        public const string ChangePasswordCheckCode_C = "ChangePasswordCheckCode_C_";
 
         /// <summary>
         /// 骑士端忘记密码
@@ -142,6 +146,14 @@ namespace ETS.Const
         /// 骑士提现锁
         /// </summary>
         public const string Ets_Withdraw_Lock_C = "Ets_Withdraw_Lock_C_{0}";
+        /// <summary>
+        /// 商家提现单处理状态
+        /// </summary>
+        public const string Ets_Withdraw_Deal_B = "Ets_Withdraw_Deal_B_{0}";
+        /// <summary>
+        /// 骑士提现单处理状态
+        /// </summary>
+        public const string Ets_Withdraw_Deal_C = "Ets_Withdraw_Deal_C_{0}";
 
     }
 }

@@ -132,7 +132,7 @@ set    YeeBalance=@YeeBalance,
 output Inserted.BalanceRecord
 where Ledgerno=@YeepayKey;");
             var parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@YeepayKey", model.YeeBalance);
+            parm.AddWithValue("@YeepayKey", model.Ledgerno);
             parm.AddWithValue("@YeeBalance", model.YeeBalance);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm)>0;
         }
