@@ -1326,6 +1326,7 @@ namespace Ets.Service.Provider.Order
                 }              
                 #endregion
 
+
                 //如果要扣除的金额大于0， 写流水
                 if (orderModel.OrderCommission > orderModel.SettleMoney)
                 {
@@ -1333,16 +1334,21 @@ namespace Ets.Service.Provider.Order
                     iClienterProvider.UpdateNotRealOrderClienterAccount(orderModel, diffOrderCommission);
                 }
 
+                //更新订单真实佣金
+                decimal realOrderCommission = orderModel.OrderCommission.Value;
+                realOrderCommission = realOrderCommission > orderModel.SettleMoney ? orderModel.SettleMoney : realOrderCommission;
+                orderDao.UpdateOrderRealOrderCommission(orderModel.Id.ToString(), realOrderCommission);
+
                 //加可提现                
-                clienterDao.UpdateAllowWithdrawPrice(Convert.ToDecimal(orderModel.RealOrderCommission), orderModel.clienterId);
+                clienterDao.UpdateAllowWithdrawPrice(realOrderCommission, orderModel.clienterId);
                 orderDao.UpdateJoinWithdraw(orderModel.Id);
-                orderDao.UpdateAuditStatus(orderModel.Id, OrderAuditStatusCommon.Refuse.GetHashCode());              
-               
+                orderDao.UpdateAuditStatus(orderModel.Id, OrderAuditStatusCommon.Refuse.GetHashCode());
+
                 //加可提现金额
                 ClienterAllowWithdrawRecord cawrm = new ClienterAllowWithdrawRecord()
                 {
                     ClienterId = orderModel.clienterId,
-                    Amount = Convert.ToDecimal(orderModel.RealOrderCommission),
+                    Amount = Convert.ToDecimal(realOrderCommission),
                     Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(),
                     RecordType = ClienterAllowWithdrawRecordType.OrderCommission.GetHashCode(),
                     Operator = orderOptionModel.OptUserName,

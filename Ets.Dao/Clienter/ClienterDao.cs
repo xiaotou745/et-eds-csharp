@@ -1411,6 +1411,7 @@ WHERE c.Id = @ClienterId  ";
             DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm);
         }
 
+
         /// <summary>
         /// 获取骑士用户名
         /// </summary>
