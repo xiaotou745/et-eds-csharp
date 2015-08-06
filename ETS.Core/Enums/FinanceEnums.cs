@@ -503,7 +503,7 @@ namespace ETS.Enums
     {
         [DisplayText("审核拒绝")]
         Refuse = 2,
-        [DisplayText("未审核")]
+        [DisplayText("待审核")]
         NotAudit = 0,
         [DisplayText("审核通过")]
         Through = 1       

@@ -1326,19 +1326,18 @@ namespace Ets.Service.Provider.Order
                 }              
                 #endregion
 
-                orderDao.UpdateJoinWithdraw(orderModel.Id);
-                orderDao.UpdateAuditStatus(orderModel.Id, OrderAuditStatusCommon.Refuse.GetHashCode());                
-                //更新扣除补贴原因,扣除补贴方式为手动扣除
-                orderOtherDao.UpdateOrderDeductCommissionReason(orderModel.Id, orderOptionModel.OptLog, 2);
-
-
                 //如果要扣除的金额大于0， 写流水
                 if (orderModel.OrderCommission > orderModel.SettleMoney)
                 {
                     decimal diffOrderCommission = orderModel.SettleMoney - orderModel.OrderCommission.Value;
-
                     iClienterProvider.UpdateNotRealOrderClienterAccount(orderModel, diffOrderCommission);
                 }
+
+                //加可提现                
+                clienterDao.UpdateAllowWithdrawPrice(Convert.ToDecimal(orderModel.RealOrderCommission), orderModel.clienterId);
+                orderDao.UpdateJoinWithdraw(orderModel.Id);
+                orderDao.UpdateAuditStatus(orderModel.Id, OrderAuditStatusCommon.Refuse.GetHashCode());              
+               
                 //加可提现金额
                 ClienterAllowWithdrawRecord cawrm = new ClienterAllowWithdrawRecord()
                 {
@@ -1353,6 +1352,9 @@ namespace Ets.Service.Provider.Order
                 };
                 clienterAllowWithdrawRecordDao.Insert(cawrm);
 
+
+                //更新扣除补贴原因,扣除补贴方式为手动扣除
+                orderOtherDao.UpdateOrderDeductCommissionReason(orderModel.Id, orderOptionModel.OptLog, 2);
                 tran.Complete();
                 dealResultInfo.DealFlag = true;
                 dealResultInfo.DealMsg = "扣取网站补贴成功！";
@@ -1377,7 +1379,7 @@ namespace Ets.Service.Provider.Order
                 var orderModel = orderDao.GetOrderByIdWithNolock(orderOptionModel.OrderId);
                 if (orderModel.IsJoinWithdraw == 1)//订单已分账
                 {
-                    dealResultInfo.DealMsg = "订单已分账，不能审核订单！";
+                    dealResultInfo.DealMsg = "订单已分账，不能审核通过！";
                     return dealResultInfo;
                 }   
 
@@ -1388,7 +1390,7 @@ namespace Ets.Service.Provider.Order
                 ClienterAllowWithdrawRecord cawrm = new ClienterAllowWithdrawRecord()
                 {
                     ClienterId = orderModel.clienterId,
-                    Amount =Convert.ToDecimal( orderModel.OrderCommission),
+                    Amount =Convert.ToDecimal(orderModel.OrderCommission),
                     Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(),
                     RecordType = ClienterAllowWithdrawRecordType.OrderCommission.GetHashCode(),
                     Operator = orderOptionModel.OptUserName,

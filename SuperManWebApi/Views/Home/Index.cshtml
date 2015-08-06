@@ -107,23 +107,24 @@
     //    error: function () { }
     //});
 
-    //$.ajax({
-    //    type: 'POST',
-    //    dataType: 'json',
-    //    url: '/Order/Complete',
-    //    data: {
-    //        "userId": 3083,
-    //        "orderNo": "1776150521172026042",
-    //        "pickupCode": "",
-    //        "version": "1.0",
-    //        "longitude":0.201,
-    //        "latitude":0.202            
-    //    },
-    //    success: function (data) {
-    //        console.log(data);
-    //    },
-    //    error: function () { }
-    //});
+    $.ajax({
+        type: 'POST',
+        dataType: 'json',
+        url: '/Order/Complete',
+        data: {
+            "userId": 3201,
+            "orderId":144651,
+            "orderNo":"2070150728171415904",
+            "pickupCode": "",
+            "version": "1.0",
+            "longitude":0.201,
+            "latitude":0.202            
+        },
+        success: function (data) {
+            console.log(data);
+        },
+        error: function () { }
+    });
 
     //$.ajax({
     //    type: 'get',

@@ -101,14 +101,14 @@ namespace SuperManWebApi.Controllers
         }
 
         /// <summary>
-        /// 商家充值回调方法    回调
+        /// 商家充值回调方法回调
         /// 窦海超
         /// 2015年5月29日 15:17:07
         /// </summary>
         /// <returns></returns>
-        public dynamic BusinessRechargeNotify()
+        public void BusinessRechargeNotify()
         {
-            return payProvider.BusinessRechargeNotify();
+            payProvider.BusinessRechargeNotify();
         }
         #endregion
 
@@ -123,7 +123,6 @@ namespace SuperManWebApi.Controllers
         //[HttpGet]
         public dynamic WxNotify()
         {
-            //return payProvider.WxNotify();
             return payProvider.WxNotify();
         }
         #endregion
