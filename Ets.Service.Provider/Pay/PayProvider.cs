@@ -462,8 +462,6 @@ namespace Ets.Service.Provider.Pay
                 HttpContext.Current.Response.Write("<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>");
                 HttpContext.Current.Response.End();
             }
-            HttpContext.Current.Response.Write("<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>");
-            HttpContext.Current.Response.End();
         }
 
         /// <summary>
@@ -950,6 +948,7 @@ namespace Ets.Service.Provider.Pay
             #region 同步活跃易宝账户余额
             if (yeePayUserList != null && yeePayUserList.Count > 0)
             {
+                LogHelper.LogWriter("活跃用户账户余额同步开始:" + DateTime.Now);
                 foreach (var yeePayUser in yeePayUserList)
                 {
                     var reg = QueryBalanceYee(new YeeQueryBalanceParameter() { Ledgerno = yeePayUser.Ledgerno });
@@ -963,14 +962,16 @@ namespace Ets.Service.Provider.Pay
                     var yeeBalance = ParseHelper.ToDecimal(reg.ledgerbalance.Contains(":") ? reg.ledgerbalance.Split(':')[1] : "0");
                     if (yeeBalance != yeePayUser.YeeBalance)
                     {
+                        LogHelper.LogWriter("易宝用户余额同步开始:" + DateTime.Now);
                         yeePayRecordDao.ModifyYeeBalance(new YeePayUser()
                         {
                             Ledgerno = yeePayUser.Ledgerno,
                             YeeBalance = yeeBalance
                         });
+                        LogHelper.LogWriter("易宝用户余额同步结束:" + DateTime.Now);
                     }
-
                 }
+                LogHelper.LogWriter("活跃用户账户余额同步结束:" + DateTime.Now);
             }
             #endregion
 
@@ -986,6 +987,7 @@ namespace Ets.Service.Provider.Pay
                 #region 易宝账户本系统余额和易宝系统不一致
                 if (yeeBalanceDiff.Count > 0)
                 {
+                    LogHelper.LogWriter("易宝账户本系统余额和易宝系统不一致数据获取开始:" + DateTime.Now);
                     sbEmail.AppendLine("易宝账户本系统余额和易宝系统不一致：");
                     foreach (var item in yeeBalanceDiff)
                     {
@@ -993,11 +995,13 @@ namespace Ets.Service.Provider.Pay
                                            item.YeeBalance + "元】");
                     }
                     sbEmail.AppendLine();
+                    LogHelper.LogWriter("易宝账户本系统余额和易宝系统不一致数据获取结束:" + DateTime.Now);
                 }
                 #endregion
                 #region 易宝子账户余额大于0
                 if (yeeBalanceExcpt.Count > 0)
                 {
+                    LogHelper.LogWriter("易宝子账户余额大于0数据获取开始:" + DateTime.Now);
                     sbEmail.AppendLine("易宝子账户余额大于0：");
                     foreach (var item in yeeBalanceExcpt)
                     {
@@ -1023,9 +1027,15 @@ namespace Ets.Service.Provider.Pay
                                 Operator = "自动服务",
                                 Remark = "易宝子账户向主账户反转【" + item.YeeBalance + "】元"
                             });
+                            yeePayRecordDao.ModifyYeeBalance(new YeePayUser()
+                            {
+                                Ledgerno = item.Ledgerno,
+                                YeeBalance = 0
+                            });
                         }
                     }
                     sbEmail.AppendLine();
+                    LogHelper.LogWriter("易宝子账户余额大于0数据获取结束:" + DateTime.Now);
                 }
                 #endregion
             }
@@ -1037,6 +1047,7 @@ namespace Ets.Service.Provider.Pay
                 var overtimeClienterWithdrawForm = varnClienterWithdrawForm.Where(t => t.Status == ClienterWithdrawFormStatus.Paying.GetHashCode()).ToList();
                 if (exceptClienterWithdrawForm.Count > 0)//单据异常
                 {
+                    LogHelper.LogWriter("异常骑士提现单获取获取开始:" + DateTime.Now);
                     sbEmail.AppendLine("骑士提现单状态异常：");
                     foreach (var item in exceptClienterWithdrawForm)
                     {
@@ -1045,9 +1056,11 @@ namespace Ets.Service.Provider.Pay
                                            item.PayFailedReason + "】");
                     }
                     sbEmail.AppendLine();
+                    LogHelper.LogWriter("异常骑士提现单获取获取结束:" + DateTime.Now);
                 }
                 if (overtimeClienterWithdrawForm.Count > 0)//回调超时
                 {
+                    LogHelper.LogWriter("回调超时骑士提现单获取获取开始:" + DateTime.Now);
                     sbEmail.AppendLine("骑士提现单超时：");
                     foreach (var item in overtimeClienterWithdrawForm)
                     {
@@ -1056,6 +1069,7 @@ namespace Ets.Service.Provider.Pay
                                            item.DateDiff + "天】");
                     }
                     sbEmail.AppendLine();
+                    LogHelper.LogWriter("回调超时骑士提现单获取获取结束:" + DateTime.Now);
                 }
             }
             #endregion
@@ -1066,6 +1080,7 @@ namespace Ets.Service.Provider.Pay
                 var overtimeBusinessWithdrawForm = varnBusinessWithdrawForm.Where(t => t.Status == BusinessWithdrawFormStatus.Paying.GetHashCode()).ToList();
                 if (exceptBusinessWithdrawForm.Count > 0)//单据异常
                 {
+                    LogHelper.LogWriter("异常商户提现单获取获取开始:" + DateTime.Now);
                     sbEmail.AppendLine("商户提现单状态异常：");
                     foreach (var item in exceptBusinessWithdrawForm)
                     {
@@ -1074,9 +1089,11 @@ namespace Ets.Service.Provider.Pay
                                            item.PayFailedReason + "】");
                     }
                     sbEmail.AppendLine();
+                    LogHelper.LogWriter("异常商户提现单获取获取结束:" + DateTime.Now);
                 }
                 if (overtimeBusinessWithdrawForm.Count > 0)//回调超时
                 {
+                    LogHelper.LogWriter("回调超时商户提现单获取获取开始:" + DateTime.Now);
                     sbEmail.AppendLine("商户提现单超时：");
                     foreach (var item in overtimeBusinessWithdrawForm)
                     {
@@ -1085,12 +1102,14 @@ namespace Ets.Service.Provider.Pay
                                            item.DateDiff + "天】");
                     }
                     sbEmail.AppendLine();
+                    LogHelper.LogWriter("回调超时商户提现单获取获取结束:" + DateTime.Now);
                 }
             }
             #endregion
 
             if (!string.IsNullOrEmpty(sbEmail.ToString()))
             {
+                LogHelper.LogWriter(sbEmail.ToString() + DateTime.Now);
                 EmailHelper.SendEmailTo(sbEmail.ToString(), emailSendTo, "易宝自动对账", copyTo, false);
             }
             #endregion

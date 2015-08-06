@@ -160,6 +160,20 @@ namespace Ets.Service.Provider.Finance
         /// <returns></returns>
         public ResultModel<object> WithdrawB(WithdrawBBackPM withdrawBBackPM)
         {
+            #region 时间锁
+
+            lock (mylock)
+            {
+                string key = string.Format(RedissCacheKey.Ets_Withdraw_Create_Lock_B, withdrawBBackPM.BusinessId);
+                var redis = new ETS.NoSql.RedisCache.RedisCache();
+                if (redis.Get<int>(key) == 1)
+                {
+                    return ResultModel<object>.Conclude(WithdrawCreateB.Warn);
+                    
+                }
+                redis.Set(key, 1, new TimeSpan(0, 1, 0));
+            }
+            #endregion
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 BusinessModel business = new BusinessModel();
@@ -169,69 +183,66 @@ namespace Ets.Service.Provider.Finance
                 {
                     return ResultModel<object>.Conclude(checkbool);
                 }
-                else
+                _businessDao.UpdateForWithdrawC(new UpdateForWithdrawPM()
                 {
-                    _businessDao.UpdateForWithdrawC(new UpdateForWithdrawPM()
-                    {
-                        Id = withdrawBBackPM.BusinessId,
-                        Money = -withdrawBBackPM.WithdrawPrice
-                    }); //更新商户表的余额，可提现余额
-                    string withwardNo = Helper.generateOrderCode(withdrawBBackPM.BusinessId);
-                    GlobalConfigModel globalConfig = GlobalConfigDao.GlobalConfigGet(0);
-                    #region 商户提现
-                    long withwardId = _businessWithdrawFormDao.Insert(new BusinessWithdrawForm()
-                    {
-                        WithwardNo = withwardNo,//单号 规则待定
-                        BusinessId = withdrawBBackPM.BusinessId,//商户Id
-                        BalancePrice = business.BalancePrice,//提现前商户余额
-                        AllowWithdrawPrice = business.AllowWithdrawPrice,//提现前商户可提现金额
-                        Status = (int)BusinessWithdrawFormStatus.WaitAllow,//待审核
-                        Amount = withdrawBBackPM.WithdrawPrice,//提现金额
-                        Balance = business.BalancePrice - withdrawBBackPM.WithdrawPrice, //提现后余额
-                        TrueName = businessFinanceAccount.TrueName,//商户收款户名
-                        AccountNo = businessFinanceAccount.AccountNo, //卡号(DES加密)
-                        AccountType = businessFinanceAccount.AccountType, //账号类型：
-                        BelongType = businessFinanceAccount.BelongType,//账号类别  0 个人账户 1 公司账户  
-                        OpenBank = businessFinanceAccount.OpenBank,//开户行
-                        OpenSubBank = businessFinanceAccount.OpenSubBank, //开户支行 
-                        IDCard = withdrawBBackPM.IDCard,//申请提款身份证号或营业执照
-                        OpenCity = withdrawBBackPM.OpenCity,//城市
-                        OpenCityCode = withdrawBBackPM.OpenCityCode,//城市代码
-                        OpenProvince = withdrawBBackPM.OpenProvince,//省份
-                        OpenProvinceCode = withdrawBBackPM.OpenProvinceCode,//省份代码
-                        HandCharge = Convert.ToInt32(globalConfig.WithdrawCommission),//手续费
-                        HandChargeOutlay = withdrawBBackPM.WithdrawPrice > Convert.ToInt32(globalConfig.ClienterWithdrawCommissionAccordingMoney) ? HandChargeOutlay.EDaiSong : HandChargeOutlay.Private,//手续费支出方
-                        PhoneNo = businessFinanceAccount.PhoneNo,
-                        HandChargeThreshold = Convert.ToInt32(globalConfig.ClienterWithdrawCommissionAccordingMoney)//手续费阈值 
-                    });
-                    #endregion
+                    Id = withdrawBBackPM.BusinessId,
+                    Money = -withdrawBBackPM.WithdrawPrice
+                }); //更新商户表的余额，可提现余额
+                string withwardNo = Helper.generateOrderCode(withdrawBBackPM.BusinessId);
+                GlobalConfigModel globalConfig = GlobalConfigDao.GlobalConfigGet(0);
+                #region 商户提现
+                long withwardId = _businessWithdrawFormDao.Insert(new BusinessWithdrawForm()
+                {
+                    WithwardNo = withwardNo,//单号 规则待定
+                    BusinessId = withdrawBBackPM.BusinessId,//商户Id
+                    BalancePrice = business.BalancePrice,//提现前商户余额
+                    AllowWithdrawPrice = business.AllowWithdrawPrice,//提现前商户可提现金额
+                    Status = (int)BusinessWithdrawFormStatus.WaitAllow,//待审核
+                    Amount = withdrawBBackPM.WithdrawPrice,//提现金额
+                    Balance = business.BalancePrice - withdrawBBackPM.WithdrawPrice, //提现后余额
+                    TrueName = businessFinanceAccount.TrueName,//商户收款户名
+                    AccountNo = businessFinanceAccount.AccountNo, //卡号(DES加密)
+                    AccountType = businessFinanceAccount.AccountType, //账号类型：
+                    BelongType = businessFinanceAccount.BelongType,//账号类别  0 个人账户 1 公司账户  
+                    OpenBank = businessFinanceAccount.OpenBank,//开户行
+                    OpenSubBank = businessFinanceAccount.OpenSubBank, //开户支行 
+                    IDCard = withdrawBBackPM.IDCard,//申请提款身份证号或营业执照
+                    OpenCity = withdrawBBackPM.OpenCity,//城市
+                    OpenCityCode = withdrawBBackPM.OpenCityCode,//城市代码
+                    OpenProvince = withdrawBBackPM.OpenProvince,//省份
+                    OpenProvinceCode = withdrawBBackPM.OpenProvinceCode,//省份代码
+                    HandCharge = Convert.ToInt32(globalConfig.WithdrawCommission),//手续费
+                    HandChargeOutlay = withdrawBBackPM.WithdrawPrice > Convert.ToInt32(globalConfig.ClienterWithdrawCommissionAccordingMoney) ? HandChargeOutlay.EDaiSong : HandChargeOutlay.Private,//手续费支出方
+                    PhoneNo = businessFinanceAccount.PhoneNo,
+                    HandChargeThreshold = Convert.ToInt32(globalConfig.ClienterWithdrawCommissionAccordingMoney)//手续费阈值 
+                });
+                #endregion
 
-                    #region 商户余额流水操作 更新骑士表的余额，可提现余额
-                    _businessBalanceRecordDao.Insert(new BusinessBalanceRecord()
-                    {
-                        BusinessId = withdrawBBackPM.BusinessId,//商户Id
-                        Amount = -withdrawBBackPM.WithdrawPrice,//流水金额
-                        Status = (int)BusinessBalanceRecordStatus.Tradeing, //流水状态(1、交易成功 2、交易中）
-                        RecordType = (int)BusinessBalanceRecordRecordType.WithdrawApply,
-                        Operator = business.Name,
-                        WithwardId = withwardId,
-                        RelationNo = withwardNo,
-                        Remark = "商户提现"
-                    });
-                    #endregion
+                #region 商户余额流水操作 更新骑士表的余额，可提现余额
+                _businessBalanceRecordDao.Insert(new BusinessBalanceRecord()
+                {
+                    BusinessId = withdrawBBackPM.BusinessId,//商户Id
+                    Amount = -withdrawBBackPM.WithdrawPrice,//流水金额
+                    Status = (int)BusinessBalanceRecordStatus.Tradeing, //流水状态(1、交易成功 2、交易中）
+                    RecordType = (int)BusinessBalanceRecordRecordType.WithdrawApply,
+                    Operator = business.Name,
+                    WithwardId = withwardId,
+                    RelationNo = withwardNo,
+                    Remark = "商户提现"
+                });
+                #endregion
 
-                    #region 商户提现记录
+                #region 商户提现记录
 
-                    _businessWithdrawLogDao.Insert(new BusinessWithdrawLog()
-                    {
-                        WithwardId = withwardId,
-                        Status = (int)BusinessWithdrawFormStatus.WaitAllow,//待审核
-                        Remark = withdrawBBackPM.Remarks,
-                        Operator = business.Name,
-                    }); //更新商户表的余额，可提现余额 
-                    #endregion
-                    tran.Complete();
-                }
+                _businessWithdrawLogDao.Insert(new BusinessWithdrawLog()
+                {
+                    WithwardId = withwardId,
+                    Status = (int)BusinessWithdrawFormStatus.WaitAllow,//待审核
+                    Remark = withdrawBBackPM.Remarks,
+                    Operator = business.Name,
+                }); //更新商户表的余额，可提现余额 
+                #endregion
+                tran.Complete();
                 return ResultModel<object>.Conclude(FinanceWithdrawB.Success); ;
             }
         }
