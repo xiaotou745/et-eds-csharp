@@ -53,6 +53,10 @@ namespace ETS.Const
         /// 骑士端修改密码
         /// </summary>
         public const string ChangePasswordCount_C = "ChangePasswordCount_C_";
+        /// <summary>
+        /// 骑士端修改密码验证码
+        /// </summary>
+        public const string ChangePasswordCheckCode_C = "ChangePasswordCheckCode_C_";
 
         /// <summary>
         /// 骑士端忘记密码

@@ -20,6 +20,10 @@ namespace Ets.Model.DataModel.Clienter
         /// 旧密码
         /// </summary>
         public string oldPassword { get; set; }
+        /// <summary>
+        /// 验证码
+        /// </summary>
+        public string checkCode{ get; set; }
 
 
     }
