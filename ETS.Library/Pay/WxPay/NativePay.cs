@@ -44,7 +44,7 @@ namespace ETS.Library.Pay.WxPay
 
             WxPayData data = new WxPayData();
             data.SetValue("body", body);//商品描述
-            data.SetValue("attach", "test");//附加数据
+            data.SetValue("attach", productId);//附加数据
             data.SetValue("out_trade_no", WxPayApi.GenerateOutTradeNo());//随机字符串
             string total = (total_fee * 100).ToString();
             total = total.Contains(".") ? total.Split('.')[0] : total;
