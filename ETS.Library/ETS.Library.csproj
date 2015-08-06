@@ -63,7 +63,7 @@
     <Compile Include="Pay\WxPay\Log.cs" />
     <Compile Include="Pay\WxPay\NativePay.cs" />
     <Compile Include="Pay\WxPay\Notify.cs" />
-    <Compile Include="Pay\WxPay\NotifyResultModel.cs" />
+    <Compile Include="Pay\WxPay\WxNotifyResultModel.cs" />
     <Compile Include="Pay\WxPay\ResultNotify.cs" />
     <Compile Include="Pay\WxPay\WxPayApi.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

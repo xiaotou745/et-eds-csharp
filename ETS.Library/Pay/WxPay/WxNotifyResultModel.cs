@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ETS.Library.Pay.WxPay
 {
-    public class NotifyResultModel
+    public class WxNotifyResultModel
     {
         public string return_msg { get; set; }
         public string return_code { get; set; }
@@ -34,7 +34,7 @@ namespace ETS.Library.Pay.WxPay
         /// <summary>
         /// 总金额
         /// </summary>
-        public int total_fee { get; set; }
+        public string total_fee { get; set; }
 
         /// <summary>
         /// 设备号
