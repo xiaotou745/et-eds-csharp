@@ -1332,11 +1332,11 @@ namespace Ets.Service.Provider.Order
                 orderDao.UpdateAuditStatus(orderModel.Id, OrderAuditStatusCommon.Refuse.GetHashCode());               
             
                 ////如果要扣除的金额大于0， 写流水
-                //if (orderModel.OrderCommission > orderModel.SettleMoney)
-                //{
-                //    decimal diffOrderCommission = orderModel.SettleMoney - orderModel.OrderCommission.Value;
-                //    iClienterProvider.UpdateNotRealOrderClienterAccount(orderModel, diffOrderCommission);
-                //}
+                if (orderModel.OrderCommission > orderModel.SettleMoney)
+                {
+                    decimal diffOrderCommission = orderModel.SettleMoney - orderModel.OrderCommission.Value;
+                    iClienterProvider.UpdateNotRealOrderClienterAccount(orderModel, diffOrderCommission);
+                }
                 //加可提现金额
                 ClienterAllowWithdrawRecord cawrm = new ClienterAllowWithdrawRecord()
                 {
