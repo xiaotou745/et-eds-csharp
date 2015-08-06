@@ -84,12 +84,12 @@ namespace ETS.Enums
         /// <summary>
         /// 骑士信息找不到
         /// </summary>
-        [DisplayText("姓名不符")]
+        [DisplayText("账户名与账号注册姓名不符")]
         TrueNameNoMatch = -5,
         /// <summary>
         /// 骑士信息找不到
         /// </summary>
-        [DisplayText("身份证不符")]
+        [DisplayText("身份证与账号注册身份证不符")]
         IDCardNoMatch = -6
     }
 
@@ -123,12 +123,12 @@ namespace ETS.Enums
         /// <summary>
         /// 骑士信息找不到
         /// </summary>
-        [DisplayText("姓名不符")]
+        [DisplayText("账户名与账号注册姓名不符")]
         TrueNameNoMatch = -5,
         /// <summary>
         /// 骑士信息找不到
         /// </summary>
-        [DisplayText("身份证不符")]
+        [DisplayText("身份证与账号注册身份证不符")]
         IDCardNoMatch = -6
     }
     /// <summary>

@@ -37,12 +37,16 @@ namespace SuperManWebApi.App_Start.Filters
             else
             {
                 var redis = new ETS.NoSql.RedisCache.RedisCache();
-                var model = redis.Get<string>(ssid + "_" + appkey) ?? redis.Get<string>(ssid + "_" + appkey+"_old");
-                if (model == null || model != token)
+                var model = redis.Get<string>(ssid + "_" + appkey);
+                var oldemodel=redis.Get<string>(ssid + "_" + appkey+"_old");
+
+                if ((string.IsNullOrWhiteSpace(model) && string.IsNullOrWhiteSpace(oldemodel))
+                    ||(token != model && oldemodel != token))
                 {
                     actionContext.Response = actionContext.ActionDescriptor.ResultConverter.Convert
-                    (actionContext.ControllerContext, null);
+                        (actionContext.ControllerContext, null);
                 }
+             
             }
 
         }
