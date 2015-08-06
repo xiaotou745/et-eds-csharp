@@ -72,7 +72,7 @@ namespace Ets.Service.IProvider.Pay
         /// 2015年5月13日 15:03:45
         /// </summary>
         /// <returns></returns>
-        dynamic ReturnWxpay();
+        dynamic WxNotify();
 
         /// <summary>
         /// 易宝转账回调接口

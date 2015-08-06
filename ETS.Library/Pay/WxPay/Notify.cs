@@ -63,9 +63,9 @@ namespace ETS.Library.Pay.WxPay
         }
 
         //派生类需要重写这个方法，进行不同的回调处理
-        public virtual void ProcessNotify()
+        public virtual NotifyResultModel ProcessNotify()
         {
-
+            return null;
         }
     }
 }

@@ -184,7 +184,7 @@ namespace Ets.Service.Provider.Pay
             string businessName = string.Empty;
             if (businessModel == null || string.IsNullOrEmpty(businessModel.Name))
             {
-                businessName = "e代送收款";
+                businessName = "E代送收款";
             }
             else
             {
@@ -554,8 +554,12 @@ namespace Ets.Service.Provider.Pay
             //WXpayService wxpay = new WXpayService("127.0.0.1", orderNo, "e代送", wx_nonceStr, (Convert.ToInt32(totalPrice * 100)).ToString());//传给微信的金额
 
             //code_url = wxpay.CreateNativeApi();
-            NativePay nativePay = new NativePay();
-            string code_url = nativePay.GetPayUrl(orderNo);
+            string code_url = string.Empty;
+            if (payStyle == 1)//用户扫二维码
+            {
+                NativePay nativePay = new NativePay();
+                code_url = nativePay.GetPayUrl(orderNo, totalPrice, "E代送收款", Config.ConfigKey("WXNotifyUrl"));
+            }
             //if (string.IsNullOrEmpty(code_url))
             //{
             //    return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
@@ -584,7 +588,7 @@ namespace Ets.Service.Provider.Pay
         /// 2015年5月13日 15:03:45
         /// </summary>
         /// <returns></returns>
-        public dynamic ReturnWxpay()
+        public dynamic WxNotify()
         {
             /*
             ResponseHandler resHandler = new ResponseHandler(System.Web.HttpContext.Current);
@@ -628,6 +632,7 @@ namespace Ets.Service.Provider.Pay
                 LogHelper.LogWriter(ex, "微信支付回调异常");
             }
             return new { return_code = "FAIL" };*/
+
             return null;
         }
 
@@ -902,7 +907,7 @@ namespace Ets.Service.Provider.Pay
                         EmailHelper.SendEmailTo(sbEmail.ToString(), emailSendTo, "易宝对账结果", copyTo, false);
                         return;
                     }
-                    var yeeBalance =ParseHelper.ToDecimal(reg.ledgerbalance.Contains(":") ? reg.ledgerbalance.Split(':')[1] : "0");
+                    var yeeBalance = ParseHelper.ToDecimal(reg.ledgerbalance.Contains(":") ? reg.ledgerbalance.Split(':')[1] : "0");
                     if (yeeBalance != yeePayUser.YeeBalance)
                     {
                         yeePayRecordDao.ModifyYeeBalance(new YeePayUser()
@@ -1011,7 +1016,7 @@ namespace Ets.Service.Provider.Pay
             #region 处理商户提现单
             Task.Factory.StartNew(() =>
             {
-                var bfaList= businessFinanceDao.GetBusinessFinanceAccountList();
+                var bfaList = businessFinanceDao.GetBusinessFinanceAccountList();
                 if (bfaList != null && bfaList.Count > 0)
                 {
                     foreach (var item in bfaList)
@@ -1028,7 +1033,7 @@ namespace Ets.Service.Provider.Pay
                                 PayFailedReason = "处理次数超限",
                                 WithwardId = item.WithwardId
                             });
-                            EmailHelper.SendEmailTo("商户提现单自动处理提现次数超限，单号为【"+item.WithwardNo+"】", emailSendTo, "自动处理商户提现单异常", copyTo, false);
+                            EmailHelper.SendEmailTo("商户提现单自动处理提现次数超限，单号为【" + item.WithwardNo + "】", emailSendTo, "自动处理商户提现单异常", copyTo, false);
                             continue;
                         }
                         string key = string.Format(RedissCacheKey.Ets_Withdraw_Deal_B, item.WithwardId);
@@ -1039,19 +1044,19 @@ namespace Ets.Service.Provider.Pay
                         //    redis.Set(key, WithdrawDealStatus.Default.GetHashCode());
                         //}
                         var amount = item.HandChargeOutlay == 0 ? item.Amount : item.Amount + item.HandCharge;//转账及提现金额（计算手续费）
-                        
+
                         #endregion
 
                         #region 初始值
                         if (dealStatus == WithdrawDealStatus.Default.GetHashCode())
                         {
                             if (string.IsNullOrEmpty(item.YeepayKey) || item.YeepayStatus == 1)//无易宝账户或账户信息有更新
-	                        {
+                            {
                                 var registResult = new PayProvider().RegisterYee(new YeeRegisterParameter
                                 {
                                     BindMobile = item.PhoneNo,
                                     SignedName = item.TrueName,
-                                    CustomerType =item.BelongType == 0 ? CustomertypeEnum.PERSON : CustomertypeEnum.ENTERPRISE,
+                                    CustomerType = item.BelongType == 0 ? CustomertypeEnum.PERSON : CustomertypeEnum.ENTERPRISE,
                                     LinkMan = item.TrueName,
                                     IdCard = item.IDCard,
                                     BusinessLicence = item.IDCard,
@@ -1065,23 +1070,23 @@ namespace Ets.Service.Provider.Pay
                                     UserType = UserTypeYee.Business.GetHashCode(),
                                     AccountId = item.Id.ToString()
                                 });//注册帐号
-	                            if (registResult != null && !string.IsNullOrEmpty(registResult.code) &&registResult.code.Trim() == "1") //调用易宝注册接口成功
-	                            {
+                                if (registResult != null && !string.IsNullOrEmpty(registResult.code) && registResult.code.Trim() == "1") //调用易宝注册接口成功
+                                {
                                     dealStatus = WithdrawDealStatus.Registering.GetHashCode();
                                     redis.Set(key, dealStatus.GetHashCode());
-	                                item.YeepayKey = registResult.ledgerno;
-	                            }
+                                    item.YeepayKey = registResult.ledgerno;
+                                }
                                 else
-	                            {
+                                {
                                     DealRegisterYeeFailedB(registResult, item);
-		                            continue; //跳出此次循环
-		                        }
-	                        }
+                                    continue; //跳出此次循环
+                                }
+                            }
                             else//有易宝账户且无账户信息更新
-	                        {
+                            {
                                 dealStatus = WithdrawDealStatus.Registered.GetHashCode();
                                 redis.Set(key, dealStatus.GetHashCode());
-	                        }
+                            }
                         }
                         #endregion
 
@@ -1356,7 +1361,7 @@ namespace Ets.Service.Provider.Pay
         /// 商户易宝账户注册失败
         /// danny-20150804
         /// </summary>
-        private void DealRegisterYeeFailedB(RegisterReturnModel registResult,BusinessFinanceAccountModel model)
+        private void DealRegisterYeeFailedB(RegisterReturnModel registResult, BusinessFinanceAccountModel model)
         {
             string payFailedReason;
             if (registResult == null)
@@ -1446,7 +1451,7 @@ namespace Ets.Service.Provider.Pay
                     Remark = "易宝主账户向商户子账户转账【" + amount + "】元"
                 }))
                 {
-                    if (clienterFinanceDao.UpdateYeeBalanceRecord(model.YeepayKey, amount) )
+                    if (clienterFinanceDao.UpdateYeeBalanceRecord(model.YeepayKey, amount))
                     {
                         reg = true;
                         tran.Complete();
@@ -1491,8 +1496,8 @@ namespace Ets.Service.Provider.Pay
                             reg = true;
                             tran.Complete();
                         }
-                        }
-                        
+                    }
+
                 }
             }
             return reg;

@@ -18,7 +18,7 @@ namespace ETS.Library.Pay.WxPay
 
         }
 
-        public override void ProcessNotify()
+        public override NotifyResultModel ProcessNotify()
         {
             WxPayData notifyData = GetNotifyData();
 
