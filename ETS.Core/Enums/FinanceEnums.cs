@@ -620,4 +620,12 @@ namespace ETS.Enums
         EDaiSong = 1//E代送
 
     }
+    /// <summary>
+    /// 商户提现涉及到的各种返回状态枚举 add by caoheyang 20150511
+    /// </summary>
+    public enum WithdrawCreateB
+    {
+        [DisplayText("请等待一分钟后创建提现申请单")]
+        Warn = 1
+    }
 }
