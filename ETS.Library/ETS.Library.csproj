@@ -30,15 +30,42 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LitJson">
+      <HintPath>..\lib\wxpay\LitJson.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickMark">
+      <HintPath>..\lib\wxpay\QuickMark.dll</HintPath>
+    </Reference>
+    <Reference Include="RestSharp">
+      <HintPath>..\lib\wxpay\RestSharp.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="ThoughtWorks.QRCode">
+      <HintPath>..\lib\wxpay\ThoughtWorks.QRCode.dll</HintPath>
+    </Reference>
+    <Reference Include="WxPayAPI">
+      <HintPath>..\lib\wxpay\WxPayAPI.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Pay\WxPay\Config.cs" />
+    <Compile Include="Pay\WxPay\Data.cs" />
+    <Compile Include="Pay\WxPay\Exception.cs" />
+    <Compile Include="Pay\WxPay\HttpService.cs" />
+    <Compile Include="Pay\WxPay\Log.cs" />
+    <Compile Include="Pay\WxPay\NativePay.cs" />
+    <Compile Include="Pay\WxPay\Notify.cs" />
+    <Compile Include="Pay\WxPay\NotifyResultModel.cs" />
+    <Compile Include="Pay\WxPay\ResultNotify.cs" />
+    <Compile Include="Pay\WxPay\WxPayApi.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

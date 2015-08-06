@@ -61,7 +61,7 @@ namespace ETS.Util
                 var from = new MailAddress(ConfigSettings.Instance.EmailFromAdress, displayName);
                 var client = new SmtpClient
                 {
-                    Host = "smtp.exmail.qq.com",
+                    Host = "smtp.263.net",
                     Credentials = new NetworkCredential(ConfigSettings.Instance.EmailFromAdress, EncodeAndDecode.DecodeBase64(Encoding.UTF8, ConfigSettings.Instance.EmailPwd)),
                     Port = 25
                 };
