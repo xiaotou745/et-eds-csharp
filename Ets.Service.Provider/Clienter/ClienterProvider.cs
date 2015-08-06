@@ -1244,29 +1244,45 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="uploadReceiptModel"></param>
         /// <param name="orderOther"></param>
         bool UpdateClienterMoney(OrderListModel myOrderInfo)
-        {
-            //没有上传完小票
-            if (myOrderInfo.HadUploadCount < myOrderInfo.OrderCount) 
-                return false;
+        {       
+            if (myOrderInfo.HadUploadCount >= myOrderInfo.OrderCount)
+            {
+                if (CheckOrderPay(myOrderInfo.Id))
+                {
+                    UpdateClienterAccount(myOrderInfo);
+                }
+             }
 
-            //更新订单支付
-            bool blpay = CheckOrderPay(myOrderInfo.Id);
-            if (!blpay) return false;
+            return true;        
 
-            if ((bool)myOrderInfo.IsPay)
-            {
-                UpdateClienterAccount(myOrderInfo);
-            }
-            else if (!(bool)myOrderInfo.IsPay && myOrderInfo.MealsSettleMode == MealsSettleMode.LineOff.GetHashCode())
-            {
-               UpdateClienterAccount(myOrderInfo);
-            }
-            else if (!(bool)myOrderInfo.IsPay && myOrderInfo.MealsSettleMode == MealsSettleMode.LineOn.GetHashCode())//未付款,线上结算,扫码支付
-            {
-                UpdateAccountBalanceAndWithdraw(myOrderInfo);
-                iOrderOtherProvider.UpdateIsJoinWithdraw(myOrderInfo.Id);
-                orderDao.UpdateAuditStatus(myOrderInfo.Id, OrderAuditStatusCommon.Through.GetHashCode());   
-            }
+        
+
+            #region
+            ////没有上传完小票
+            //if (myOrderInfo.HadUploadCount < myOrderInfo.OrderCount) 
+            //    return false;
+
+            ////更新订单支付
+            //bool blpay = CheckOrderPay(myOrderInfo.Id);
+            //if (!blpay) return false;
+
+            //UpdateClienterAccount(myOrderInfo);
+
+            //if ((bool)myOrderInfo.IsPay)
+            //{
+            //    UpdateClienterAccount(myOrderInfo);
+            //}
+            //else if (!(bool)myOrderInfo.IsPay && myOrderInfo.MealsSettleMode == MealsSettleMode.LineOff.GetHashCode())
+            //{
+            //   UpdateClienterAccount(myOrderInfo);
+            //}
+            //else if (!(bool)myOrderInfo.IsPay && myOrderInfo.MealsSettleMode == MealsSettleMode.LineOn.GetHashCode())//未付款,线上结算,扫码支付
+            //{
+            //    UpdateAccountBalanceAndWithdraw(myOrderInfo);
+            //    iOrderOtherProvider.UpdateIsJoinWithdraw(myOrderInfo.Id);
+            //    orderDao.UpdateAuditStatus(myOrderInfo.Id, OrderAuditStatusCommon.Through.GetHashCode());   
+            //}
+            #endregion
 
             #region 临时
             //if ((bool)myOrderInfo.IsPay)//已付款

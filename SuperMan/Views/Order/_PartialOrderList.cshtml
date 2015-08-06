@@ -78,7 +78,7 @@ width: 100%;
                     }
                     else
                     {
-                        AuditStatus = "未审核";
+                        AuditStatus = "待审核";
                     }
                    
                     var diffMinutes = (DateTime.Now - DateTime.Parse(item.PubDate != null ? item.PubDate.ToString() : DateTime.Now.ToString())).TotalMinutes;
