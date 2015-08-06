@@ -97,20 +97,25 @@ width: 100%;
                         <td>@item.OrderCommission</td>
                         @{
                             decimal butie = 0.00M;
-                            if (1 == item.IsNotRealOrder)
-                            {
-                                butie = item.OrderCommission.Value - item.RealOrderCommission;
-                            }
-                            
-                            if (butie > 0)
-                            {
-                                <td style="color:red;font-weight:600">@butie</td>
+
+                            if (@item.AuditStatus!=2)
+                            {                                
+                                 <td>0.00</td>                               
                             }
                             else
-                            {
-                                <td>@butie</td>
+                            {                              
+                                butie = item.OrderCommission.Value - item.RealOrderCommission;                          
+
+                                if (butie > 0)
+                                {
+                                    <td style="color:red;font-weight:600">@butie</td>
+                                }
+                                else
+                                {
+                                    <td>@butie</td>
+                                }
                             }
-                        }
+}
                         <td>@item.DistribSubsidy</td>
                         <td>@item.WebsiteSubsidy</td>
                         <td>@item.Adjustment</td>
