@@ -205,12 +205,6 @@
     <Compile Include="Util\XmlHelper.cs" />
     <Compile Include="Util\XmlParser.cs" />
     <Compile Include="Validator\CommonValidator.cs" />
-    <Compile Include="Pay\WxPay\Config.cs" />
-    <Compile Include="Pay\WxPay\RequestHandler.cs" />
-    <Compile Include="Pay\WxPay\ResponseHandler.cs" />
-    <Compile Include="Pay\WxPay\ReturnValue.cs" />
-    <Compile Include="Pay\WxPay\StreamReaderUtils.cs" />
-    <Compile Include="Pay\WxPay\WXpayService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="MyPush\" />

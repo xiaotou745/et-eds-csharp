@@ -27,21 +27,25 @@ namespace SuperManWebApi.Controllers
         /// 窦海超
         /// 2015年5月12日 14:35:05
         /// </summary>
-        //[HttpGet]
-       [Token]
-        public ResultModel<PayResultModel> CreatePay(PayModel model)//
+       //[Token]
+       // public ResultModel<PayResultModel> CreatePay(PayModel model)//
+       // {
+       //     return payProvider.CreatePay(model);
+       // }
+        [HttpGet]
+       public ResultModel<PayResultModel> CreatePay()
         {
-            //PayModel model = new PayModel()
-            //{
-            //    productId = 1,
-            //    orderId = 1358,
-            //    childId = 11,
-            //    payType = 1,
-            //    version = "1.0",
-            //    payStyle = 1
-            //};
-            return payProvider.CreatePay(model);
-        }
+            PayModel model = new PayModel()
+            {
+                productId = 1,
+                orderId = 144818,
+                childId = 1,
+                payType = 2,
+                version = "1.0",
+                payStyle = 1
+            };
+           return payProvider.CreatePay(model);
+       }
 
         #region 支付宝
 
