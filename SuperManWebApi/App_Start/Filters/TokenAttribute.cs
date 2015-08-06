@@ -41,7 +41,7 @@ namespace SuperManWebApi.App_Start.Filters
                 var oldemodel=redis.Get<string>(ssid + "_" + appkey+"_old");
 
                 if ((string.IsNullOrWhiteSpace(model) && string.IsNullOrWhiteSpace(oldemodel))
-                    ||(token != model && oldemodel != model))
+                    ||(token != model && oldemodel != token))
                 {
                     actionContext.Response = actionContext.ActionDescriptor.ResultConverter.Convert
                         (actionContext.ControllerContext, null);
