@@ -285,7 +285,7 @@ namespace Ets.Service.Provider.Clienter
                 return ResultModel<ClienterModifyPwdResultModel>.Conclude(ModifyPwdStatus.NewPwdEmpty);
             }
             //获取验证码
-            var codekey = string.Concat(RedissCacheKey.PostForgetPwd_C, model.phoneNo);
+            var codekey = string.Concat(RedissCacheKey.ChangePasswordCheckCode_C, model.phoneNo);
             var codevalue = redis.Get<string>(codekey);
             if (string.IsNullOrWhiteSpace(model.checkCode) || codevalue == null || model.checkCode != codevalue)
             {

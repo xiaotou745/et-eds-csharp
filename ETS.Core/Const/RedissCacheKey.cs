@@ -50,7 +50,7 @@ namespace ETS.Const
         public const string RegisterCount_C = "RegisterCount_C_";
 
         /// <summary>
-        /// 骑士端修改密码
+        /// 骑士端修改密码请求次数
         /// </summary>
         public const string ChangePasswordCount_C = "ChangePasswordCount_C_";
         /// <summary>
