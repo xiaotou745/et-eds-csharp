@@ -22,7 +22,7 @@ using ETS.Pay.AliPay;
 using System.Xml;
 using Ets.Dao.Order;
 using Ets.Model.DataModel.Order;
-using ETS.Pay.WxPay;
+//using ETS.Pay.WxPay;
 using Ets.Model.DomainModel.Business;
 using Ets.Model.ParameterModel.Business;
 using Ets.Dao.User;
@@ -33,6 +33,7 @@ using Ets.Model.DataModel.Finance;
 using Ets.Model.ParameterModel.Finance;
 using Ets.Dao.Business;
 using Config = ETS.Config;
+using ETS.Library.Pay.WxPay;
 
 namespace Ets.Service.Provider.Pay
 {
@@ -84,7 +85,8 @@ namespace Ets.Service.Provider.Pay
             {
                 //微信支付
                 LogHelper.LogWriter("=============微信支付：");
-                return CreateWxPayOrder(orderNo, payStatusModel.TotalPrice, payStatusModel.WxCodeUrl);
+                return CreateWxPayOrder(orderNo, payStatusModel.TotalPrice, model.orderId, model.payStyle);
+
             }
             return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
         }
@@ -140,18 +142,18 @@ namespace Ets.Service.Provider.Pay
                 }
                 string orderNo = string.Concat(model.productId, "_", model.orderId, "_", model.childId + "_", model.payStyle);
                 //支付宝
-                if (model.payType == PayTypeEnum.ZhiFuBao.GetHashCode())
-                {
-                    int unfinish = new OrderChildDao().CheckOrderChildPayStatus(model.orderId);
-                    //return alipayIntegrate.GetOrder(orderNo, model.orderId, model.childId, unfinish);
-                    return null;
-                }
+                //if (model.payType == PayTypeEnum.ZhiFuBao.GetHashCode())
+                //{
+                return new OrderChildDao().CheckOrderChildPayStatus(model.orderId);
+                //return alipayIntegrate.GetOrder(orderNo, model.orderId, model.childId, unfinish);
+                //return null;
+                //}
                 //微信
-                if (model.payType == PayTypeEnum.WeiXin.GetHashCode())
-                {
-                    WXpayService wxpay = new WXpayService();
-                    return wxpay.GetOrder(orderNo);
-                }
+                //if (model.payType == PayTypeEnum.WeiXin.GetHashCode())
+                //{
+                //    WXpayService wxpay = new WXpayService();
+                //    return wxpay.GetOrder(orderNo);
+                //}
             }
             catch (Exception ex)
             {
@@ -182,7 +184,7 @@ namespace Ets.Service.Provider.Pay
             string businessName = string.Empty;
             if (businessModel == null || string.IsNullOrEmpty(businessModel.Name))
             {
-                businessName = "e代送收款";
+                businessName = "E代送收款";
             }
             else
             {
@@ -541,29 +543,36 @@ namespace Ets.Service.Provider.Pay
         /// <param name="WxCodeUrl">微信地址</param>
         /// <param name="TotalPrice">总金额，注意:微信要乘以100=最后支付的金额，这里传值前不要乘以100</param>
         /// <returns></returns>
-        public ResultModel<PayResultModel> CreateWxPayOrder(string orderNo, decimal totalPrice, string wxCodeUrl)
+        public ResultModel<PayResultModel> CreateWxPayOrder(string orderNo, decimal totalPrice, int orderId, int payStyle)
         {
             //支付方式-主订单ID-子订单ID
             PayResultModel resultModel = new PayResultModel();
-            string code_url = wxCodeUrl;
-            if (string.IsNullOrEmpty(code_url))//先查一下库是否存在二维码地址，不存在去微信生成
+            //string code_url = wxCodeUrl;
+            //if (string.IsNullOrEmpty(code_url))//先查一下库是否存在二维码地址，不存在去微信生成
+            //{
+            //string wx_nonceStr = RequestHandler.getNoncestr();
+            //WXpayService wxpay = new WXpayService("127.0.0.1", orderNo, "e代送", wx_nonceStr, (Convert.ToInt32(totalPrice * 100)).ToString());//传给微信的金额
+
+            //code_url = wxpay.CreateNativeApi();
+            string code_url = string.Empty;
+            if (payStyle == 1)//用户扫二维码
             {
-                string wx_nonceStr = RequestHandler.getNoncestr();
-                WXpayService wxpay = new WXpayService("127.0.0.1", orderNo, "e代送", wx_nonceStr, (Convert.ToInt32(totalPrice * 100)).ToString());//传给微信的金额
-                code_url = wxpay.CreateNativeApi();
-                if (string.IsNullOrEmpty(code_url))
-                {
-                    return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
-                }
-                int productId = ParseHelper.ToInt(orderNo.Split('_')[0]);
-                int orderId = ParseHelper.ToInt(orderNo.Split('_')[1]);
-                int childId = ParseHelper.ToInt(orderNo.Split('_')[2]);
-                if (productId == ProductEnum.OrderChildPay.GetHashCode())
-                {
-                    //如果是子订单支付 
-                    orderChildDao.UpdateWxCodeUrl(orderId, childId, code_url);//把获取到的支付宝地址更新到子订单下
-                }
+                NativePay nativePay = new NativePay();
+                code_url = nativePay.GetPayUrl(orderNo, totalPrice, "E代送收款", Config.ConfigKey("WXNotifyUrl"));
             }
+            //if (string.IsNullOrEmpty(code_url))
+            //{
+            //    return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
+            //}
+            //int productId = ParseHelper.ToInt(orderNo.Split('_')[0]);
+            //int orderId = ParseHelper.ToInt(orderNo.Split('_')[1]);
+            //int childId = ParseHelper.ToInt(orderNo.Split('_')[2]);
+            //if (productId == ProductEnum.OrderChildPay.GetHashCode())
+            //{
+            //    //如果是子订单支付 
+            //    orderChildDao.UpdateWxCodeUrl(orderId, childId, code_url);//把获取到的支付宝地址更新到子订单下
+            //}
+            //}
 
             resultModel.aliQRCode = code_url;//微信地址
             resultModel.orderNo = orderNo;//订单号
@@ -579,9 +588,9 @@ namespace Ets.Service.Provider.Pay
         /// 2015年5月13日 15:03:45
         /// </summary>
         /// <returns></returns>
-        public dynamic ReturnWxpay()
+        public dynamic WxNotify()
         {
-
+            /*
             ResponseHandler resHandler = new ResponseHandler(System.Web.HttpContext.Current);
             try
             {
@@ -622,7 +631,9 @@ namespace Ets.Service.Provider.Pay
             {
                 LogHelper.LogWriter(ex, "微信支付回调异常");
             }
-            return new { return_code = "FAIL" };
+            return new { return_code = "FAIL" };*/
+
+            return null;
         }
 
         #endregion
@@ -640,14 +651,14 @@ namespace Ets.Service.Provider.Pay
             string username = "易宝提现回调";
             CashTransferCallback model = JsonHelper.JsonConvertToObject<CashTransferCallback>(ResponseYeePay.OutRes(data, true));
             YeePayRecordDao yeePayRecordDao = new YeePayRecordDao();
-            YeePayRecord yeePayRecordDbModel= yeePayRecordDao.GetReocordByRequestId(model.cashrequestid);
+            YeePayRecord yeePayRecordDbModel = yeePayRecordDao.GetReocordByRequestId(model.cashrequestid);
             if (yeePayRecordDbModel == null)
             {
                 EmailHelper.SendEmailTo(string.Format("易宝请求号为{0}的提现单回调失败，数据库提示无该提现记录，回调的完整参数为{1}",
                     model.cashrequestid, ResponseYeePay.OutRes(data, true)), ConfigSettings.Instance.EmailToAdress);
                 return false;
             }
-            long  withwardId = yeePayRecordDbModel.WithdrawId; //提现单id
+            long withwardId = yeePayRecordDbModel.WithdrawId; //提现单id
             yeePayRecordDao.Insert(new YeePayRecord()
             {
                 WithdrawId = withwardId,
@@ -658,15 +669,15 @@ namespace Ets.Service.Provider.Pay
                 Status = model.status,
                 Lastno = model.lastno,
                 Desc = model.desc,
-                TransferType =  TransferTypeYee.CallBack.GetHashCode(),
-                UserType = yeePayRecordDbModel.UserType 
+                TransferType = TransferTypeYee.CallBack.GetHashCode(),
+                UserType = yeePayRecordDbModel.UserType
             });
 
             if (model.status == "SUCCESS") //提现成功 走 成功的逻辑
             {
                 if (yeePayRecordDbModel.UserType == UserTypeYee.Business.GetHashCode()) //B端逻辑
                 {
-                    result =iBusinessFinanceProvider.BusinessWithdrawPayOk(new BusinessWithdrawLog()
+                    result = iBusinessFinanceProvider.BusinessWithdrawPayOk(new BusinessWithdrawLog()
                     {
                         Operator = username,
                         Remark = "易宝提现打款成功" + model.desc,
@@ -701,7 +712,7 @@ namespace Ets.Service.Provider.Pay
                         PayFailedReason = ""
                     }, model); //商户提现失败
                 }
-                else if(yeePayRecordDbModel.UserType == UserTypeYee.Clienter.GetHashCode()) //C端逻辑
+                else if (yeePayRecordDbModel.UserType == UserTypeYee.Clienter.GetHashCode()) //C端逻辑
                 {
                     result = iClienterFinanceProvider.ClienterWithdrawPayFailed(new ClienterWithdrawLogModel()
                     {
@@ -894,9 +905,9 @@ namespace Ets.Service.Provider.Pay
                     {
                         sbEmail.AppendLine("调用易宝余额查询接口失败：" + reg.msg + "(" + reg.code + ")");
                         EmailHelper.SendEmailTo(sbEmail.ToString(), emailSendTo, "易宝对账结果", copyTo, false);
-                        return ;
+                        return;
                     }
-                    var yeeBalance =ParseHelper.ToDecimal(reg.ledgerbalance.Contains(":") ? reg.ledgerbalance.Split(':')[1] : "0");
+                    var yeeBalance = ParseHelper.ToDecimal(reg.ledgerbalance.Contains(":") ? reg.ledgerbalance.Split(':')[1] : "0");
                     if (yeeBalance != yeePayUser.YeeBalance)
                     {
                         yeePayRecordDao.ModifyYeeBalance(new YeePayUser()
@@ -1342,7 +1353,7 @@ namespace Ets.Service.Provider.Pay
         /// 商户易宝账户注册失败
         /// danny-20150804
         /// </summary>
-        private void DealRegisterYeeFailedB(RegisterReturnModel registResult,BusinessFinanceAccountModel model)
+        private void DealRegisterYeeFailedB(RegisterReturnModel registResult, BusinessFinanceAccountModel model)
         {
             string payFailedReason;
             if (registResult == null)
@@ -1432,7 +1443,7 @@ namespace Ets.Service.Provider.Pay
                     Remark = "易宝主账户向商户子账户转账【" + amount + "】元"
                 }))
                 {
-                    if (clienterFinanceDao.UpdateYeeBalanceRecord(model.YeepayKey, amount) )
+                    if (clienterFinanceDao.UpdateYeeBalanceRecord(model.YeepayKey, amount))
                     {
                         reg = true;
                         tran.Complete();
@@ -1477,8 +1488,8 @@ namespace Ets.Service.Provider.Pay
                             reg = true;
                             tran.Complete();
                         }
-                        }
-                        
+                    }
+
                 }
             }
             return reg;

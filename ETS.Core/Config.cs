@@ -91,7 +91,7 @@ namespace ETS
         /// <summary>
         /// 微信回调地址
         /// </summary>
-        public static string WXNotifyUrl { get { return ConfigKey("WXNotifyUrl"); } }
+        public static string WXNotifyUrl { get { return string.Concat(ConfigKey("YeePayNotifyUrl").TrimEnd('/'), "/Pay/WxNotify"); } }
         #region 取Web.Config值
 
         /// <summary>
