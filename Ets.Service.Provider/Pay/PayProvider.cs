@@ -928,13 +928,53 @@ namespace Ets.Service.Provider.Pay
             #region 账户余额异常
             if (exceptYeePayUser != null && exceptYeePayUser.Count > 0)
             {
-                sbEmail.AppendLine("易宝账户本系统余额和易宝系统不一致：");
-                foreach (var item in exceptYeePayUser)
+                var yeeBalanceDiff = exceptYeePayUser.Where(t => t.YeeBalance != t.BalanceRecord).ToList();
+                var yeeBalanceExcpt = exceptYeePayUser.Where(t => t.YeeBalance >0).ToList();
+                #region 易宝账户本系统余额和易宝系统不一致
+                if (yeeBalanceDiff.Count > 0)
                 {
-                    sbEmail.AppendLine("易宝账户:【" + item.Ledgerno + "】,本系统账户余额：【" + item.BalanceRecord + "元】,易宝系统余额：【" +
-                                       item.YeeBalance + "元】");
+                    sbEmail.AppendLine("易宝账户本系统余额和易宝系统不一致：");
+                    foreach (var item in yeeBalanceDiff)
+                    {
+                        sbEmail.AppendLine("易宝账户:【" + item.Ledgerno + "】,本系统账户余额：【" + item.BalanceRecord + "元】,易宝系统余额：【" +
+                                           item.YeeBalance + "元】");
+                    }
+                    sbEmail.AppendLine();
                 }
-                sbEmail.AppendLine();
+                #endregion
+                #region 易宝子账户余额大于0 
+                if (yeeBalanceExcpt.Count > 0)
+                {
+                    sbEmail.AppendLine("易宝子账户余额大于0：");
+                    foreach (var item in yeeBalanceExcpt)
+                    {
+                        sbEmail.AppendLine("易宝账户:【" + item.Ledgerno + "】,易宝系统余额：【" + item.YeeBalance + "元】");
+                        //反转账
+                        var regRTransfer = new PayProvider().TransferAccountsYee(new YeeTransferParameter()
+                        {
+                            UserType = item.UserType,
+                            WithdrawId = ParseHelper.ToLong(item.UserType + TimeHelper.GetTimeStamp(false) + item.UserId),
+                            Ledgerno = "",
+                            SourceLedgerno = item.Ledgerno,
+                            Amount = item.YeeBalance.ToString()
+                        });
+                        if (regRTransfer != null && !string.IsNullOrEmpty(regRTransfer.code) && regRTransfer.code.Trim() == "1")
+                        {
+                            clienterFinanceDao.AddYeePayUserBalanceRecord(new YeePayUserBalanceRecord()
+                            {
+                                LedgerNo = item.Ledgerno,
+                                WithwardId = ParseHelper.ToLong(item.UserType + TimeHelper.GetTimeStamp(false) + item.UserId),
+                                Amount = item.YeeBalance,
+                                Balance = 0,
+                                RecordType = YeeRecordType.C2P.GetHashCode(),
+                                Operator = "自动服务",
+                                Remark = "易宝子账户向主账户反转【" + item.YeeBalance + "】元"
+                            });
+                        }
+                    }
+                    sbEmail.AppendLine();
+                }
+                #endregion
             }
             #endregion
             #region 骑士提款单异常
