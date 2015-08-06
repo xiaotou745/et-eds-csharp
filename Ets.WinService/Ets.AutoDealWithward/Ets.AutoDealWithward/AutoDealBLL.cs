@@ -17,30 +17,31 @@ namespace Ets.AutoDealWithward
         private static bool threadSafe = true;//线程安全
 
         public void Execute(Quartz.IJobExecutionContext context)
-        { 
-            
-                LogHelper.LogWriter("执行啦:" + DateTime.Now);
-                if (!threadSafe)
-                {
-                    return;
-                }
-                threadSafe = false;
-                try
-                {
-                    var iPayProvider = new PayProvider();
-                    iPayProvider.AutoDealWithdrawForm();
-                }
-                catch (Exception ex)
-                {
-                    LogHelper.LogWriter(ex);
-                }
-                finally
-                {
-                     
-                    threadSafe = true;
-                }
+        {
 
-            
+            LogHelper.LogWriter("执行啦:" + DateTime.Now);
+            if (!threadSafe)
+            {
+                return;
+            }
+            threadSafe = false;
+            Thread.Sleep(10000);
+            try
+            {
+                var iPayProvider = new PayProvider();
+                iPayProvider.AutoDealWithdrawForm();
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(ex);
+            }
+            finally
+            {
+
+                threadSafe = true;
+            }
+
+
         }
     }
 }

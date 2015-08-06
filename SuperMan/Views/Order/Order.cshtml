@@ -90,12 +90,12 @@
         var txtOrderPubEnd = $("#txtOrderPubEnd").val(); 
         var businessCity = $("#businessCity").find("option:selected").text();
         var orderStatus = $("#StatusSelect").find("option:selected").text();
-
+        var groupId = $("#GroupId").val(); 
         if (txtOrderPubStart == "" || txtOrderPubEnd == "") {
             alert("请输入时间范围!");
             return;
         }
-        var url = "/Order/PostDaoChuOrder?superManPhone=" + superManPhone + "&superManName=" + txtSuperManName + "&businessPhone=" + txtBusinessPhone + "&businessName=" + txtBusinessName + "&orderStatus=" + orderStatus + "&businessCity=" + businessCity + "&OrderPubStart=" + txtOrderPubStart + "&OrderPubEnd=" + txtOrderPubEnd;
+        var url = "/Order/PostDaoChuOrder?superManPhone=" + superManPhone + "&superManName=" + txtSuperManName + "&businessPhone=" + txtBusinessPhone + "&businessName=" + txtBusinessName + "&orderStatus=" + orderStatus + "&businessCity=" + businessCity + "&OrderPubStart=" + txtOrderPubStart + "&OrderPubEnd=" + txtOrderPubEnd + "&GroupId=" + groupId;
         window.location.href = url;
         return true;
     }

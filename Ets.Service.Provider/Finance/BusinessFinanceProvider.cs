@@ -354,7 +354,7 @@ namespace Ets.Service.Provider.Finance
                 return dealResultInfo;
             }
             //历史单据走之前逻辑
-            if (busiFinanceAccount.WithdrawTime < ParseHelper.ToDatetime(Config.WithdrawTime))
+            if ((busiFinanceAccount.WithdrawTime < ParseHelper.ToDatetime(Config.WithdrawTime)) || (busiFinanceAccount.WithdrawStatus==BusinessWithdrawFormStatus.Paying.GetHashCode()))
             {
                 model.Status = BusinessWithdrawFormStatus.Success.GetHashCode();
                 model.OldStatus = BusinessWithdrawFormStatus.Allow.GetHashCode();

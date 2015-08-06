@@ -84,12 +84,12 @@ namespace ETS.Enums
         /// <summary>
         /// 骑士信息找不到
         /// </summary>
-        [DisplayText("姓名不符")]
+        [DisplayText("账户名与账号注册姓名不符")]
         TrueNameNoMatch = -5,
         /// <summary>
         /// 骑士信息找不到
         /// </summary>
-        [DisplayText("身份证不符")]
+        [DisplayText("身份证与账号注册身份证不符")]
         IDCardNoMatch = -6
     }
 
@@ -123,12 +123,12 @@ namespace ETS.Enums
         /// <summary>
         /// 骑士信息找不到
         /// </summary>
-        [DisplayText("姓名不符")]
+        [DisplayText("账户名与账号注册姓名不符")]
         TrueNameNoMatch = -5,
         /// <summary>
         /// 骑士信息找不到
         /// </summary>
-        [DisplayText("身份证不符")]
+        [DisplayText("身份证与账号注册身份证不符")]
         IDCardNoMatch = -6
     }
     /// <summary>
@@ -428,7 +428,7 @@ namespace ETS.Enums
     }
 
     /// <summary>
-    ///商户提现 提现状态(1待审核 2 审核通过 3打款完成 20打款中 -1审核拒绝 -2 打款失败) 枚举 add by caoheyang 20150509
+    ///商户提现 提现状态(1待审核 2 审核通过 3打款完成 20打款中 -1审核拒绝 -2 打款失败 4 打款异常) 枚举 add by caoheyang 20150509
     /// </summary>
     public enum BusinessWithdrawFormStatus
     {

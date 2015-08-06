@@ -321,8 +321,6 @@ INTO BusinessWithdrawLog
             string sql = string.Format(@" 
 UPDATE BusinessWithdrawForm
  SET    [Status] = @Status,
-		Payer=@Operator,
-		PayTime=getdate(),
         PayFailedReason=ISNULL(PayFailedReason,'')+@PayFailedReason+' '
 OUTPUT
   Inserted.Id,
@@ -336,10 +334,10 @@ INTO BusinessWithdrawLog
   [Remark],
   [Operator],
   [OperatTime])
- WHERE  Id = @Id AND [Status]=@OldStatus ");
+ WHERE  Id = @Id AND [Status] IN(2,20,4) ");
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Status", model.Status);
-            parm.AddWithValue("@OldStatus", model.OldStatus);
+            //parm.AddWithValue("@OldStatus", model.OldStatus);
             parm.AddWithValue("@Operator", model.Operator);
             parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@PayFailedReason", model.PayFailedReason);
@@ -356,8 +354,7 @@ INTO BusinessWithdrawLog
         {
             string sql = string.Format(@" 
 UPDATE BusinessWithdrawForm
- SET    PayTime=getdate(),
-        PayFailedReason=ISNULL(PayFailedReason,'')+@PayFailedReason+' '
+ SET    PayFailedReason=ISNULL(PayFailedReason,'')+@PayFailedReason+' '
 OUTPUT
   Inserted.Id,
   Inserted.[Status],
@@ -370,7 +367,7 @@ INTO BusinessWithdrawLog
   [Remark],
   [Operator],
   [OperatTime])
- WHERE  Id = @Id AND [Status]=@OldStatus ");
+ WHERE  Id = @Id  ");
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Operator", model.Operator);
             parm.AddWithValue("@Remark", model.Remark);
@@ -830,6 +827,7 @@ SELECT     bwf.BusinessId
 		  ,bwf.PhoneNo
 		  ,bwf.AccountType
 		  ,bwf.BelongType
+		  ,bwf.Status WithdrawStatus
           ,bfa.YeepayStatus
 		  ,ypu.Ledgerno YeepayKey
 		  ,ISNULL(ypu.BalanceRecord,0) BalanceRecord

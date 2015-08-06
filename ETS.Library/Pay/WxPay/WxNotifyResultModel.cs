@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ETS.Library.Pay.WxPay
 {
-    public class NotifyResultModel
+    public class WxNotifyResultModel
     {
         public string return_msg { get; set; }
         public string return_code { get; set; }
@@ -22,9 +22,9 @@ namespace ETS.Library.Pay.WxPay
         public string product_id { get; set; }
 
         /// <summary>
-        /// 商户订单号
+        /// 易代送订单号
         /// </summary>
-        public string out_trade_no { get; set; }
+        public string order_no { get; set; }
 
         /// <summary>
         /// 微信支付订单号
@@ -34,7 +34,7 @@ namespace ETS.Library.Pay.WxPay
         /// <summary>
         /// 总金额
         /// </summary>
-        public int total_fee { get; set; }
+        public string total_fee { get; set; }
 
         /// <summary>
         /// 设备号

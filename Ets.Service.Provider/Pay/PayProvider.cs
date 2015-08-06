@@ -34,6 +34,7 @@ using Ets.Model.ParameterModel.Finance;
 using Ets.Dao.Business;
 using Config = ETS.Config;
 using ETS.Library.Pay.WxPay;
+using System.Web;
 
 namespace Ets.Service.Provider.Pay
 {
@@ -558,7 +559,7 @@ namespace Ets.Service.Provider.Pay
             if (payStyle == 1)//用户扫二维码
             {
                 NativePay nativePay = new NativePay();
-                code_url = nativePay.GetPayUrl(orderNo, totalPrice, "E代送收款", Config.ConfigKey("WXNotifyUrl"));
+                code_url = nativePay.GetPayUrl(orderNo, totalPrice, "E代送收款", Config.WXNotifyUrl);
             }
             //if (string.IsNullOrEmpty(code_url))
             //{
@@ -590,6 +591,91 @@ namespace Ets.Service.Provider.Pay
         /// <returns></returns>
         public dynamic WxNotify()
         {
+          
+            #region 参数绑定
+
+            //var request = System.Web.HttpContext.Current.Request;
+            //string sign = request["sign"];
+            //string sign_type = request["sign_type"];
+            //string notify_data = request["notify_data"];
+            //AlipayNotifyData notify = new AlipayNotifyData();
+            //if (!string.IsNullOrEmpty(notify_data))
+            //{
+            //    //如果是二维码支付
+            //    XmlDocument xmlDoc = new XmlDocument();
+            //    xmlDoc.LoadXml(notify_data);
+            //    notify.buyer_email = xmlDoc.SelectSingleNode("notify/buyer_email").InnerText;
+            //    notify.trade_status = xmlDoc.SelectSingleNode("notify/trade_status").InnerText;
+            //    notify.out_trade_no = xmlDoc.SelectSingleNode("notify/out_trade_no").InnerText;
+            //    notify.trade_no = xmlDoc.SelectSingleNode("notify/trade_no").InnerText;
+            //}
+            //else
+            //{
+            //    //否则是骑士代付
+            //    notify.buyer_email = request["buyer_email"];
+            //    notify.trade_status = request["trade_status"];
+            //    notify.out_trade_no = request["out_trade_no"];
+            //    notify.trade_no = request["trade_no"];
+            //}
+            //#endregion
+            ////如果状态为空或状态不等于同步成功和异步成功就认为是错误
+            //if (string.IsNullOrEmpty(notify.trade_status))
+            //{
+            //    string fail = string.Concat("错误啦trade_status：", notify.trade_status, "。sign:", sign, "。notify_data:", notify_data);
+            //    LogHelper.LogWriter(fail);
+            //    return "fail";
+            //}
+            WxNotifyResultModel notify = new ResultNotify().ProcessNotify();
+            string errmsg = "<xml><return_code><![CDATA[FAIL]]></return_code><return_msg><![CDATA[{0}]]></return_msg></xml>";
+            #region 回调完成状态
+            if (notify.return_code == "SUCCESS")
+            {
+                string orderNo = notify.order_no;
+                if (string.IsNullOrEmpty(orderNo) || !orderNo.Contains("_"))
+                {
+                    string fail = string.Concat("错误啦orderNo：", orderNo);
+                    LogHelper.LogWriter(fail);
+                    HttpContext.Current.Response.Write(string.Format(errmsg, fail));
+                    HttpContext.Current.Response.End();
+                }
+                int productId = ParseHelper.ToInt(orderNo.Split('_')[0]);//产品编号
+                int orderId = ParseHelper.ToInt(orderNo.Split('_')[1]);//主订单号
+                int orderChildId = ParseHelper.ToInt(orderNo.Split('_')[2]);//子订单号
+                int payStyle = ParseHelper.ToInt(orderNo.Split('_')[3]);//支付方式(1 用户支付 2 骑士代付)
+                if (orderId <= 0 || orderChildId <= 0)
+                {
+                    string fail = string.Concat("错误啦orderId：", orderId, ",orderChildId:", orderChildId);
+                    LogHelper.LogWriter(fail);
+                    HttpContext.Current.Response.Write(string.Format(errmsg, fail));
+                    HttpContext.Current.Response.End();
+                }
+
+                OrderChildFinishModel model = new OrderChildFinishModel()
+                {
+                    orderChildId = orderChildId,
+                    orderId = orderId,
+                    payBy = notify.openid,
+                    payStyle = payStyle,
+                    payType = PayTypeEnum.ZhiFuBao.GetHashCode(),
+                    originalOrderNo = notify.transaction_id,
+                };
+
+                if (orderChildDao.FinishPayStatus(model))
+                {
+                    //jpush
+                    //Ets.Service.Provider.MyPush.Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", myorder.businessId.ToString(), string.Empty);
+                    FinishOrderPushMessage(model);//完成后发送jpush消息
+                    string success = string.Concat("成功，当前订单OrderId:", orderId, ",OrderChild:", orderChildId);
+                    LogHelper.LogWriter(success);
+                    HttpContext.Current.Response.Write("<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>");
+                    HttpContext.Current.Response.End();
+                }
+            }
+            #endregion
+            LogHelper.LogWriter("支付回调异常", notify);
+            HttpContext.Current.Response.Write(errmsg);
+            HttpContext.Current.Response.End();
+            #endregion
             /*
             ResponseHandler resHandler = new ResponseHandler(System.Web.HttpContext.Current);
             try
@@ -928,13 +1014,53 @@ namespace Ets.Service.Provider.Pay
             #region 账户余额异常
             if (exceptYeePayUser != null && exceptYeePayUser.Count > 0)
             {
-                sbEmail.AppendLine("易宝账户本系统余额和易宝系统不一致：");
-                foreach (var item in exceptYeePayUser)
+                var yeeBalanceDiff = exceptYeePayUser.Where(t => t.YeeBalance != t.BalanceRecord).ToList();
+                var yeeBalanceExcpt = exceptYeePayUser.Where(t => t.YeeBalance >0).ToList();
+                #region 易宝账户本系统余额和易宝系统不一致
+                if (yeeBalanceDiff.Count > 0)
                 {
-                    sbEmail.AppendLine("易宝账户:【" + item.Ledgerno + "】,本系统账户余额：【" + item.BalanceRecord + "元】,易宝系统余额：【" +
-                                       item.YeeBalance + "元】");
+                    sbEmail.AppendLine("易宝账户本系统余额和易宝系统不一致：");
+                    foreach (var item in yeeBalanceDiff)
+                    {
+                        sbEmail.AppendLine("易宝账户:【" + item.Ledgerno + "】,本系统账户余额：【" + item.BalanceRecord + "元】,易宝系统余额：【" +
+                                           item.YeeBalance + "元】");
+                    }
+                    sbEmail.AppendLine();
                 }
-                sbEmail.AppendLine();
+                #endregion
+                #region 易宝子账户余额大于0 
+                if (yeeBalanceExcpt.Count > 0)
+                {
+                    sbEmail.AppendLine("易宝子账户余额大于0：");
+                    foreach (var item in yeeBalanceExcpt)
+                    {
+                        sbEmail.AppendLine("易宝账户:【" + item.Ledgerno + "】,易宝系统余额：【" + item.YeeBalance + "元】");
+                        //反转账
+                        var regRTransfer = new PayProvider().TransferAccountsYee(new YeeTransferParameter()
+                        {
+                            UserType = item.UserType,
+                            WithdrawId = ParseHelper.ToLong(item.UserType + TimeHelper.GetTimeStamp(false) + item.UserId),
+                            Ledgerno = "",
+                            SourceLedgerno = item.Ledgerno,
+                            Amount = item.YeeBalance.ToString()
+                        });
+                        if (regRTransfer != null && !string.IsNullOrEmpty(regRTransfer.code) && regRTransfer.code.Trim() == "1")
+                        {
+                            clienterFinanceDao.AddYeePayUserBalanceRecord(new YeePayUserBalanceRecord()
+                            {
+                                LedgerNo = item.Ledgerno,
+                                WithwardId = ParseHelper.ToLong(item.UserType + TimeHelper.GetTimeStamp(false) + item.UserId),
+                                Amount = item.YeeBalance,
+                                Balance = 0,
+                                RecordType = YeeRecordType.C2P.GetHashCode(),
+                                Operator = "自动服务",
+                                Remark = "易宝子账户向主账户反转【" + item.YeeBalance + "】元"
+                            });
+                        }
+                    }
+                    sbEmail.AppendLine();
+                }
+                #endregion
             }
             #endregion
             #region 骑士提款单异常
@@ -1027,7 +1153,7 @@ namespace Ets.Service.Provider.Pay
                             businessFinanceDao.BusinessWithdrawPayFailed(new BusinessWithdrawLogModel()
                             {
                                 Status = BusinessWithdrawFormStatus.Except.GetHashCode(),
-                                OldStatus = BusinessWithdrawFormStatus.Allow.GetHashCode(),
+                                OldStatus = BusinessWithdrawFormStatus.Paying.GetHashCode(),
                                 Operator = "自动处理提现服务",
                                 Remark = "处理次数超限",
                                 PayFailedReason = "处理次数超限",
@@ -1039,10 +1165,6 @@ namespace Ets.Service.Provider.Pay
                         string key = string.Format(RedissCacheKey.Ets_Withdraw_Deal_B, item.WithwardId);
                         var redis = new ETS.NoSql.RedisCache.RedisCache();
                         var dealStatus = ParseHelper.ToInt(redis.Get<int>(key));
-                        //if (dealStatus == WithdrawDealStatus.Default.GetHashCode())
-                        //{
-                        //    redis.Set(key, WithdrawDealStatus.Default.GetHashCode());
-                        //}
                         var amount = item.HandChargeOutlay == 0 ? item.Amount : item.Amount + item.HandCharge;//转账及提现金额（计算手续费）
 
                         #endregion
@@ -1164,7 +1286,7 @@ namespace Ets.Service.Provider.Pay
                                 });
                                 continue;
                             }
-                            dealStatus = WithdrawDealStatus.Transfering.GetHashCode();
+                            dealStatus = WithdrawDealStatus.Cashing.GetHashCode();
                             redis.Set(key, dealStatus.GetHashCode());
                         }
                         #endregion
@@ -1199,7 +1321,7 @@ namespace Ets.Service.Provider.Pay
                             clienterFinanceDao.ClienterWithdrawPayFailed(new ClienterWithdrawLogModel()
                             {
                                 Status = ClienterWithdrawFormStatus.Except.GetHashCode(),
-                                OldStatus = ClienterWithdrawFormStatus.Allow.GetHashCode(),
+                                OldStatus = ClienterWithdrawFormStatus.Paying.GetHashCode(),
                                 Operator = "自动处理提现服务",
                                 Remark = "处理次数超限",
                                 PayFailedReason = "处理次数超限",
@@ -1211,10 +1333,6 @@ namespace Ets.Service.Provider.Pay
                         string key = string.Format(RedissCacheKey.Ets_Withdraw_Deal_C, item.WithwardId);
                         var redis = new ETS.NoSql.RedisCache.RedisCache();
                         var dealStatus = ParseHelper.ToInt(redis.Get<int>(key));
-                        //if (dealStatus == WithdrawDealStatus.Default.GetHashCode())
-                        //{
-                        //    redis.Set(key, WithdrawDealStatus.Default.GetHashCode());
-                        //}
                         var amount = item.HandChargeOutlay == 0 ? item.Amount : item.Amount + item.HandCharge;//转账及提现金额（计算手续费）
 
                         #endregion
@@ -1336,7 +1454,7 @@ namespace Ets.Service.Provider.Pay
                                 });
                                 continue;
                             }
-                            dealStatus = WithdrawDealStatus.Transfering.GetHashCode();
+                            dealStatus = WithdrawDealStatus.Cashing.GetHashCode();
                             redis.Set(key, dealStatus.GetHashCode());
                         }
                         #endregion
