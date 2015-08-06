@@ -401,7 +401,7 @@ namespace Ets.Service.Provider.Pay
         /// 2015年8月6日 23:06:02
         /// </summary>
         /// <returns></returns>
-        public dynamic BusinessRechargeWxNotify()
+        public void BusinessRechargeWxNotify()
         {
             try
             {
@@ -419,29 +419,37 @@ namespace Ets.Service.Provider.Pay
                 string errmsg = "<xml><return_code><![CDATA[FAIL]]></return_code><return_msg><![CDATA[{0}]]></return_msg></xml>";
                 #endregion
                 //如果状态为空或状态不等于同步成功和异步成功就认为是错误
-               
+
                 #region 回调完成状态
                 if (notify.return_code == "SUCCESS")
                 {
+                    string ordermsg = notify.order_no;//商家ID_充值单ID
+                    if (ordermsg.Contains("_"))
+                    {
+
+                        HttpContext.Current.Response.Write(string.Format(errmsg, "回调的数据有问题，不存在下划线"));
+                        HttpContext.Current.Response.End();
+                    }
                     if (new BusinessRechargeDao().Check(notify.order_no))
                     {
                         //如果存在就退出，这里写的很扯，因为支付宝要的是success不带双引号.
                         //但WEBAPI直接返回时带引号，所以现在要去库里查一次。
                         //回头找到原因一定要改
-                        return "success";
+                        HttpContext.Current.Response.Write("<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>");
+                        HttpContext.Current.Response.End();
                     }
 
-                    string orderNo = notify.order_no;
-              
+                    int businessid = ParseHelper.ToInt(ordermsg.Split('_')[0]);
+                    string orderno = ordermsg.Split('_')[1];
                     Ets.Model.DataModel.Business.BusinessRechargeModel businessRechargeModel = new Ets.Model.DataModel.Business.BusinessRechargeModel()
                     {
-                        //BusinessId = notify.out_biz_no,
-                        //OrderNo = orderNo,
-                        //OriginalOrderNo = notify.trade_no,//第三方的订单号
-                        //PayAmount = notify.total_fee,
-                        //PayBy = notify.buyer_email,
+                        BusinessId = businessid,
+                        OrderNo = orderno,
+                        OriginalOrderNo = notify.order_no,//第三方的订单号
+                        PayAmount = ParseHelper.ToDecimal(ParseHelper.ToInt(notify.total_fee) / 100),
+                        PayBy = notify.openid,
                         PayStatus = 1,
-                        PayType = 1
+                        PayType = PayTypeEnum.WeiXin.GetHashCode()
                     };
                     BusinessRechargeSusess(businessRechargeModel);
                 }
@@ -451,9 +459,11 @@ namespace Ets.Service.Provider.Pay
             catch (Exception ex)
             {
                 LogHelper.LogWriter(ex, "Alipay自动返回异常");
-                return "fail";
+                HttpContext.Current.Response.Write("<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>");
+                HttpContext.Current.Response.End();
             }
-            return "fail";
+            HttpContext.Current.Response.Write("<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>");
+            HttpContext.Current.Response.End();
         }
 
         /// <summary>

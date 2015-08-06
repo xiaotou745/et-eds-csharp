@@ -80,7 +80,7 @@ namespace Ets.Service.IProvider.Pay
         /// 2015年8月6日 23:06:02
         /// </summary>
         /// <returns></returns>
-        dynamic BusinessRechargeWxNotify();
+        void BusinessRechargeWxNotify();
 
         /// <summary>
         /// 易宝转账回调接口
