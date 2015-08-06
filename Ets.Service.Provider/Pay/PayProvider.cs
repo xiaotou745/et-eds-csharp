@@ -1112,7 +1112,7 @@ namespace Ets.Service.Provider.Pay
                             businessFinanceDao.BusinessWithdrawPayFailed(new BusinessWithdrawLogModel()
                             {
                                 Status = BusinessWithdrawFormStatus.Except.GetHashCode(),
-                                OldStatus = BusinessWithdrawFormStatus.Allow.GetHashCode(),
+                                OldStatus = BusinessWithdrawFormStatus.Paying.GetHashCode(),
                                 Operator = "自动处理提现服务",
                                 Remark = "处理次数超限",
                                 PayFailedReason = "处理次数超限",
@@ -1124,10 +1124,6 @@ namespace Ets.Service.Provider.Pay
                         string key = string.Format(RedissCacheKey.Ets_Withdraw_Deal_B, item.WithwardId);
                         var redis = new ETS.NoSql.RedisCache.RedisCache();
                         var dealStatus = ParseHelper.ToInt(redis.Get<int>(key));
-                        //if (dealStatus == WithdrawDealStatus.Default.GetHashCode())
-                        //{
-                        //    redis.Set(key, WithdrawDealStatus.Default.GetHashCode());
-                        //}
                         var amount = item.HandChargeOutlay == 0 ? item.Amount : item.Amount + item.HandCharge;//转账及提现金额（计算手续费）
 
                         #endregion
@@ -1249,7 +1245,7 @@ namespace Ets.Service.Provider.Pay
                                 });
                                 continue;
                             }
-                            dealStatus = WithdrawDealStatus.Transfering.GetHashCode();
+                            dealStatus = WithdrawDealStatus.Cashing.GetHashCode();
                             redis.Set(key, dealStatus.GetHashCode());
                         }
                         #endregion
@@ -1284,7 +1280,7 @@ namespace Ets.Service.Provider.Pay
                             clienterFinanceDao.ClienterWithdrawPayFailed(new ClienterWithdrawLogModel()
                             {
                                 Status = ClienterWithdrawFormStatus.Except.GetHashCode(),
-                                OldStatus = ClienterWithdrawFormStatus.Allow.GetHashCode(),
+                                OldStatus = ClienterWithdrawFormStatus.Paying.GetHashCode(),
                                 Operator = "自动处理提现服务",
                                 Remark = "处理次数超限",
                                 PayFailedReason = "处理次数超限",
@@ -1296,10 +1292,6 @@ namespace Ets.Service.Provider.Pay
                         string key = string.Format(RedissCacheKey.Ets_Withdraw_Deal_C, item.WithwardId);
                         var redis = new ETS.NoSql.RedisCache.RedisCache();
                         var dealStatus = ParseHelper.ToInt(redis.Get<int>(key));
-                        //if (dealStatus == WithdrawDealStatus.Default.GetHashCode())
-                        //{
-                        //    redis.Set(key, WithdrawDealStatus.Default.GetHashCode());
-                        //}
                         var amount = item.HandChargeOutlay == 0 ? item.Amount : item.Amount + item.HandCharge;//转账及提现金额（计算手续费）
 
                         #endregion
@@ -1421,7 +1413,7 @@ namespace Ets.Service.Provider.Pay
                                 });
                                 continue;
                             }
-                            dealStatus = WithdrawDealStatus.Transfering.GetHashCode();
+                            dealStatus = WithdrawDealStatus.Cashing.GetHashCode();
                             redis.Set(key, dealStatus.GetHashCode());
                         }
                         #endregion

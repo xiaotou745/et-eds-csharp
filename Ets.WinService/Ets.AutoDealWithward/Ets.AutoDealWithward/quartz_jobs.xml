@@ -26,7 +26,7 @@
         <group>AutoDealTriggerGroup</group>
         <job-name>AutoDealBLL</job-name>
         <job-group>AutoDealGroup</job-group>
-        <cron-expression>0/3 * * * * ?</cron-expression>
+        <cron-expression>* 1/3 * * * ?</cron-expression>
       </cron>
     </trigger>
   

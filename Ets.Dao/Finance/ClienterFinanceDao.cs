@@ -262,8 +262,6 @@ INTO ClienterWithdrawLog
             string sql = string.Format(@" 
 UPDATE ClienterWithdrawForm
  SET    [Status] = @Status,
-		Payer=@Operator,
-		PayTime=getdate(),
         PayFailedReason=ISNULL(PayFailedReason,'')+@PayFailedReason+' '
 OUTPUT
   Inserted.Id,
@@ -297,8 +295,7 @@ INTO ClienterWithdrawLog
         {
             string sql = string.Format(@" 
 UPDATE ClienterWithdrawForm
- SET    PayTime=getdate(),
-        PayFailedReason=ISNULL(PayFailedReason,'')+@PayFailedReason+' '
+ SET    PayFailedReason=ISNULL(PayFailedReason,'')+@PayFailedReason+' '
 OUTPUT
   Inserted.Id,
   Inserted.[Status],
@@ -311,7 +308,7 @@ INTO ClienterWithdrawLog
   [Remark],
   [Operator],
   [OperatTime])
- WHERE  Id = @Id AND [Status]=@OldStatus");
+ WHERE  Id = @Id ");
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Operator", model.Operator);
             parm.AddWithValue("@Remark", model.Remark);
