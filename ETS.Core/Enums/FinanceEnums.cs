@@ -499,6 +499,15 @@ namespace ETS.Enums
         [DisplayText("已取货")]
         PickUp = 4
     }
+    public enum OrderAuditStatusCommon
+    {
+        [DisplayText("审核拒绝")]
+        Refuse = 2,
+        [DisplayText("未审核")]
+        NotAudit = 0,
+        [DisplayText("审核通过")]
+        Through = 1       
+    }
     /// <summary>
     ///提现单处理状态(0：初始值1：待注册 2：已注册 3：待转账 4：已转账 5：待提现 6：已提现) 
     /// </summary>

@@ -1317,7 +1317,17 @@ namespace Ets.Service.Provider.Order
             {
                 var orderModel = orderDao.GetOrderByIdWithNolock(orderOptionModel.OrderId);
 
+                #region 点击浏览器后退按钮 
+        
+                if (orderModel.IsJoinWithdraw == 1)//订单已分账
+                {
+                    dealResultInfo.DealMsg = "订单已分账，不能审核拒绝！";
+                    return dealResultInfo;
+                }              
+                #endregion
+
                 orderDao.UpdateJoinWithdraw(orderModel.Id);
+                orderDao.UpdateAuditStatus(orderModel.Id, OrderAuditStatusCommon.Refuse.GetHashCode());                
                 //更新扣除补贴原因,扣除补贴方式为手动扣除
                 orderOtherDao.UpdateOrderDeductCommissionReason(orderModel.Id, orderOptionModel.OptLog, 2);
 
@@ -1361,13 +1371,19 @@ namespace Ets.Service.Provider.Order
             {
                 DealFlag = false
             };
-          
+            
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 var orderModel = orderDao.GetOrderByIdWithNolock(orderOptionModel.OrderId);
+                if (orderModel.IsJoinWithdraw == 1)//订单已分账
+                {
+                    dealResultInfo.DealMsg = "订单已分账，不能审核订单！";
+                    return dealResultInfo;
+                }   
 
                 clienterDao.UpdateAllowWithdrawPrice(Convert.ToDecimal(orderModel.OrderCommission), orderModel.clienterId);
                 orderDao.UpdateJoinWithdraw(orderModel.Id);
+                orderDao.UpdateAuditStatus(orderModel.Id, OrderAuditStatusCommon.Through.GetHashCode());   
 
                 ClienterAllowWithdrawRecord cawrm = new ClienterAllowWithdrawRecord()
                 {
