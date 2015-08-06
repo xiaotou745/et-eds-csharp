@@ -13,7 +13,7 @@ namespace Ets.Model.ParameterModel.Sms
         /// </summary>
         public string PhoneNumber { get; set; }
         /// <summary>
-        /// 操作类型： 0 注册 1修改密码
+        /// 操作类型： 0 注册 1忘记密码  2 修改密码
         /// </summary>
         public string Stype { get; set; }
 
