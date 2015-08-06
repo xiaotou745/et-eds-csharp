@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,7 +26,10 @@ namespace Ets.Dao.Common
         {
             string sql = @"SELECT COUNT(1) FROM  clienter AS c (NOLOCK) WHERE c.Appkey=@AppKey";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("@AppKey", appkey);
+            //dbParameters.AddWithValue("@AppKey", appkey);
+            Guid id = new Guid(appkey);
+            dbParameters.Add("@AppKey", DbType.Guid);
+            dbParameters.SetValue("@AppKey", id);
             object i = DbHelper.ExecuteScalar(Config.SuperMan_Read, sql, dbParameters);
             if (i != null)
             {
@@ -42,7 +46,10 @@ namespace Ets.Dao.Common
         {
             string sql = @"SELECT COUNT(1) FROM  business AS b (NOLOCK) WHERE b.Appkey=@AppKey";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("@AppKey", appkey);
+            Guid id=new Guid(appkey);
+            //dbParameters.AddWithValue("@AppKey", appkey);
+            dbParameters.Add("@AppKey",DbType.Guid);
+            dbParameters.SetValue("@AppKey",id);
             object i = DbHelper.ExecuteScalar(Config.SuperMan_Read, sql, dbParameters);
             if (i != null)
             {
