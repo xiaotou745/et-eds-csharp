@@ -33,12 +33,12 @@ namespace SuperManWebApi.Controllers
             return payProvider.CreatePay(model);
         }
         [HttpGet]
-       public ResultModel<PayResultModel> CreatePayTest()
+       public ResultModel<PayResultModel> CreatePayTest(int orderId)
         {
             PayModel model = new PayModel()
             {
                 productId = 1,
-                orderId = 144818,
+                orderId = orderId,
                 childId = 1,
                 payType = 2,
                 version = "1.0",

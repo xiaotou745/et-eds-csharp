@@ -334,10 +334,10 @@ INTO BusinessWithdrawLog
   [Remark],
   [Operator],
   [OperatTime])
- WHERE  Id = @Id AND [Status]=@OldStatus ");
+ WHERE  Id = @Id AND [Status] IN(2,20,4) ");
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Status", model.Status);
-            parm.AddWithValue("@OldStatus", model.OldStatus);
+            //parm.AddWithValue("@OldStatus", model.OldStatus);
             parm.AddWithValue("@Operator", model.Operator);
             parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@PayFailedReason", model.PayFailedReason);
@@ -827,6 +827,7 @@ SELECT     bwf.BusinessId
 		  ,bwf.PhoneNo
 		  ,bwf.AccountType
 		  ,bwf.BelongType
+		  ,bwf.Status WithdrawStatus
           ,bfa.YeepayStatus
 		  ,ypu.Ledgerno YeepayKey
 		  ,ISNULL(ypu.BalanceRecord,0) BalanceRecord

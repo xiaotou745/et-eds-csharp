@@ -12,10 +12,10 @@ namespace ETS.Library.Pay.WxPay
     /// </summary>
     public class ResultNotify : Notify
     {
-        public ResultNotify(Page page)
-            : base(page)
-        {
-        }
+        //public ResultNotify(Page page)
+        //    : base(page)
+        //{
+        //}
 
         public WxNotifyResultModel ProcessNotify()
         {
@@ -70,12 +70,9 @@ namespace ETS.Library.Pay.WxPay
             model.return_code = "SUCCESS";
             model.return_msg = "OK";
             model.openid = notifyData.GetValue("openid").ToString();//支付人
-            model.product_id = notifyData.GetValue("product_id").ToString();//商品ID 微信订单号
-            model.out_trade_no = notifyData.GetValue("out_trade_no").ToString();//商户订单号
-            model.device_info = notifyData.GetValue("device_info").ToString();//设备号
             model.total_fee = notifyData.GetValue("total_fee").ToString();//总金额
             model.transaction_id = notifyData.GetValue("transaction_id").ToString();//微信支付订单号
-
+            model.order_no = notifyData.GetValue("attach").ToString();
             return model;
             //}
         }

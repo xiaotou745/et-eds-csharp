@@ -57,6 +57,9 @@
                     <input id="txtOriginalOrderNo" type="text" name="OriginalOrderNo" /> 
                     <span class="">订单号: </span>
                     <input id="txtOrderNo" type="text" name="orderId" />
+                    <span class="">审核状态: </span>
+                    @Html.DropDownList("auditStatus", new SelectList(EnumExtenstion.GetEnumItems(typeof(OrderAuditStatusCommon)), "Value", "Text"), "全部", new { @class = "selectw", style = "width:157px" })
+                    
                     <input type="submit" value="查询"  class="searchBtn" id="btnSearch" />
                     <input type="button" value="订单数据导出" onclick="return DaoCHu()" class="searchBtn" id="btncDaochu" />
                 </td>

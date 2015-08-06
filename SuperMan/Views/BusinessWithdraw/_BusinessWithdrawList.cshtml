@@ -71,6 +71,14 @@
                                 <a href="javascript:void(0)" style="color:gray">确认打款</a>
                                 <a href="javascript:funWithdrawPayFailed(@item.Id)">打款失败</a>
                             }
+                            else if (item.Status == BusinessWithdrawFormStatus.Paying.GetHashCode() && (SuperMan.App_Start.UserContext.Current.Name == "admin" || SuperMan.App_Start.UserContext.Current.Name == "douhaichao"))
+                            {
+                                <a href="javascript:void(0)" style="color:gray">审核通过</a>
+                                <a href="javascript:void(0)" style="color:gray">拒绝</a>
+                                <a href="javascript:void(0)" style="color:gray">确认打款</a>
+                                <a href="javascript:void(0)" style="color:gray">打款失败</a>
+                                <a href="javascript:funPayOk(@item.Id,@item.Amount)">线下打款</a>
+                            }
                             else
                             {
                                 <a href="javascript:void(0)" style="color:gray">审核通过</a>

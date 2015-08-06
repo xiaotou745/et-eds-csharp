@@ -24,7 +24,7 @@ width: 100%;
             <th>商户信息</th>
             <th>超人信息</th>
             <th>发布时间</th>
-            <th width="%5">取货地址</th>
+            @*<th width="%5">取货地址</th>*@
             <th width="%5">送货地址</th>
             <th>实际完成时间</th>
             <th>订单数量</th>
@@ -39,6 +39,7 @@ width: 100%;
             <th>订单状态</th>
             <th>已上传/共需上传</th>
             <th>抢单-完成</th>
+            <th>审核状态</th>
             <th>操作</th>
         </tr>
     </thead>
@@ -66,6 +67,19 @@ width: 100%;
                          grabToCompleteStyle = "color:green";
                          grabToCompleteStr = "不重合";
                     }
+                    string AuditStatus = "";
+                    if (item.AuditStatus == 2)
+                    {
+                        AuditStatus = "审核拒绝";
+                    }
+                    else if (item.AuditStatus == 1)
+                    {
+                        AuditStatus="审核通过";
+                    }
+                    else
+                    {
+                        AuditStatus = "未审核";
+                    }
                    
                     var diffMinutes = (DateTime.Now - DateTime.Parse(item.PubDate != null ? item.PubDate.ToString() : DateTime.Now.ToString())).TotalMinutes;
                     string timeoutStyle = diffMinutes > 5 && item.Status == 0 ? " style=background-color:#FFCCCC" : "";
@@ -75,7 +89,7 @@ width: 100%;
                         <td>@item.BusinessName <br> @item.BusinessPhoneNo</td>
                         <td>@item.ClienterName <br> @item.ClienterPhoneNo</td>
                         <td>@item.PubDate</td>
-                        <td>@item.PickUpAddress</td>
+                        @*<td>@item.PickUpAddress</td>*@
                         <td>@item.ReceviceAddress</td>
                         <td>@item.ActualDoneDate</td>
                         <td>@item.OrderCount</td>
@@ -107,6 +121,9 @@ width: 100%;
                         <td>@ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.OrderStatusCommon)item.Status).GetType(), (ETS.Enums.OrderStatusCommon)item.Status).Text</td>
                         <td>@item.HadUploadCount.ToString()/@item.OrderCount.ToString()</td>  
                         <td style="@grabToCompleteStyle">@grabToCompleteStr</td>
+                        <td>
+                            @AuditStatus
+                        </td>
                         <td><a  href="javascript:showMapData('@item.Id')">查看地图</a></td>
                     </tr>
                 }

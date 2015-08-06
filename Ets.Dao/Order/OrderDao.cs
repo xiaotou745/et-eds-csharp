@@ -561,6 +561,7 @@ select @@IDENTITY ";
                                     ,o.CommissionFixValue --商家结算固定金额
                                     ,o.CommissionType --结算类型
                                     ,oo.IsNotRealOrder
+                                    ,oo.AuditStatus
                                     ";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrWhiteSpace(criteria.businessName))
@@ -582,6 +583,17 @@ select @@IDENTITY ";
             if (criteria.orderStatus != -1)
             {
                 sbSqlWhere.AppendFormat(" AND o.Status={0} ", criteria.orderStatus);
+            }
+            if (criteria.AuditStatus != -1)
+            {
+                if (criteria.AuditStatus == 0)
+                {
+                    sbSqlWhere.AppendFormat(" AND oo.AuditStatus={0}  and FinishAll=1", criteria.AuditStatus);
+                }
+                else
+                {
+                    sbSqlWhere.AppendFormat(" AND oo.AuditStatus={0} ", criteria.AuditStatus);
+                }
             }
             if (!string.IsNullOrWhiteSpace(criteria.superManName))
             {
@@ -2453,6 +2465,14 @@ where   oo.IsJoinWithdraw = 0
         {
             string sql = @"update dbo.OrderOther set IsJoinWithdraw = 1 where OrderId=@orderId";
             IDbParameters parm = DbHelper.CreateDbParameters("orderId", DbType.Int32, 4, orderId);
+            DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm);
+        }
+
+        public void UpdateAuditStatus( int orderId,int auditstatus)
+        {
+            string sql = @"update dbo.OrderOther set auditstatus = @auditstatus where OrderId=@orderId";
+            IDbParameters parm = DbHelper.CreateDbParameters("orderId", DbType.Int32, 4, orderId);
+            parm.AddWithValue("@auditstatus", auditstatus);
             DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm);
         }
 
