@@ -348,5 +348,11 @@ namespace Ets.Model.DataModel.Order
         /// 审核状态
         /// </summary>
         public int AuditStatus { get; set; }
+
+        /// <summary>
+        /// 订单商家的佣金结算策略id
+        /// </summary>
+        public int CommissionFormulaMode { get; set; }
+        
     }
 }

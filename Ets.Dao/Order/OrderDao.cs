@@ -560,8 +560,11 @@ select @@IDENTITY ";
                                     ,o.BusinessCommission --商家结算比例
                                     ,o.CommissionFixValue --商家结算固定金额
                                     ,o.CommissionType --结算类型
+                                    ,o.SettleMoney
+                                    ,o.CommissionFormulaMode
                                     ,oo.IsNotRealOrder
                                     ,oo.AuditStatus
+                                    ,oo.DeductCommissionReason
                                     ";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrWhiteSpace(criteria.businessName))
@@ -583,6 +586,10 @@ select @@IDENTITY ";
             if (criteria.orderStatus != -1)
             {
                 sbSqlWhere.AppendFormat(" AND o.Status={0} ", criteria.orderStatus);
+            }
+            if (criteria.IsNotRealOrder != -1)
+            {
+                sbSqlWhere.AppendFormat(" AND oo.IsNotRealOrder={0} ", criteria.IsNotRealOrder);
             }
             if (criteria.AuditStatus != -1)
             {
