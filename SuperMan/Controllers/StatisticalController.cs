@@ -202,9 +202,11 @@ namespace SuperMan.Controllers
         /// </summary>
         /// <param name="recommendQuery"></param>
         /// <returns></returns>
-        public ActionResult PostRecommendStatistical(RecommendQuery recommendQuery)
+        public ActionResult PostRecommendStatistical(int PageIndex = 1)
         {
-            //var criteria=new
+            RecommendQuery recommendQuery=new RecommendQuery();
+            TryUpdateModel(recommendQuery);
+            recommendQuery.PageIndex = PageIndex;
             StatisticsProvider statisticsProvider  = new StatisticsProvider();
             var pagelist= statisticsProvider.GetRecommendList(recommendQuery);
             return PartialView("PostRecommendStatistical", pagelist);
