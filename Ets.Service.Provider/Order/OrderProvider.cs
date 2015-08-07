@@ -41,6 +41,7 @@ using Ets.Dao.Clienter;
 using Ets.Service.IProvider.Business;
 using Ets.Service.Provider.Business;
 using Ets.Dao.Business;
+using Ets.Model.ParameterModel.WtihdrawRecords;
 #endregion
 namespace Ets.Service.Provider.Order
 {
@@ -1330,8 +1331,12 @@ namespace Ets.Service.Provider.Order
                 //如果要扣除的金额大于0， 写流水
                 if (orderModel.OrderCommission > orderModel.SettleMoney)
                 {
-                    decimal diffOrderCommission = orderModel.SettleMoney - orderModel.OrderCommission.Value;
-                    iClienterProvider.UpdateNotRealOrderClienterAccount(orderModel, diffOrderCommission);
+                     ClienterBalanceRecord currModel = clienterBalanceRecordDao.GetByOrderId(orderModel.Id);
+                     if (currModel == null)
+                     {
+                         decimal diffOrderCommission = orderModel.SettleMoney - orderModel.OrderCommission.Value;
+                         iClienterProvider.UpdateNotRealOrderClienterAccount(orderModel, diffOrderCommission);
+                     }                   
                 }
 
                 //更新订单真实佣金
@@ -1388,6 +1393,29 @@ namespace Ets.Service.Provider.Order
                     dealResultInfo.DealMsg = "订单已分账，不能审核通过！";
                     return dealResultInfo;
                 }   
+
+                
+               #region 调用老接口
+                //无效订单
+                if (orderModel.OrderCommission > orderModel.SettleMoney)
+                {                    
+                    //查询余额流水表中，是否扣除补贴，如果扣除，
+                    ClienterBalanceRecord currModel = clienterBalanceRecordDao.GetByOrderId(orderModel.Id);
+                    if (currModel != null)
+                    {
+                        if (orderModel.IsPay.Value || (!orderModel.IsPay.Value && orderModel.MealsSettleMode == MealsSettleMode.LineOff.GetHashCode()))
+                        {
+                            //加余额，加余额流水
+                            UpdateClienterAccount(orderModel,-currModel.Amount);
+                        }
+                        else
+                        {
+                            //加余额、可提现、余额流水
+                            UpdateAccountBalanceAndWithdraw(orderModel, -currModel.Amount);
+                        }                 
+                    }
+                }
+                #endregion
 
                 clienterDao.UpdateAllowWithdrawPrice(Convert.ToDecimal(orderModel.OrderCommission), orderModel.clienterId);
                 orderDao.UpdateJoinWithdraw(orderModel.Id);
@@ -1965,6 +1993,68 @@ namespace Ets.Service.Provider.Order
         {
             return orderDao.UpdateOrderAddressAndPhone(orderId, newAddress, newPhone);
         }
-        
+
+
+        #region 用户自定义方法
+        /// <summary>
+        /// 更新用户金额
+        /// wc 完成订单时候调用
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="myOrderInfo"></param>
+        public void UpdateClienterAccount(OrderListModel myOrderInfo,decimal money)
+        {
+            //更新骑士 金额  
+            bool b = clienterDao.UpdateClienterAccountBalanceForFinish(new WithdrawRecordsModel() { UserId = myOrderInfo.clienterId, Amount = money });
+            //增加记录 
+            decimal? accountBalance = myOrderInfo.AccountBalance.Value + money;           
+
+            ///TODO 骑士余额流水表，不是这个吧？
+            ClienterBalanceRecord cbrm = new ClienterBalanceRecord()
+            {
+                ClienterId = myOrderInfo.clienterId,
+                Amount = money,
+                Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
+                Balance = accountBalance ?? 0,
+                RecordType = ClienterBalanceRecordRecordType.BalanceAdjustment.GetHashCode(),
+                Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士" : myOrderInfo.ClienterName,
+                WithwardId = myOrderInfo.Id,
+                RelationNo = myOrderInfo.OrderNo,
+                Remark = ""
+            };
+            clienterBalanceRecordDao.Insert(cbrm);
+        }
+
+        /// <summary>
+        /// 更新用户金额      
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="myOrderInfo"></param>
+        public void UpdateAccountBalanceAndWithdraw(OrderListModel myOrderInfo, decimal money)
+        {
+            int userId = myOrderInfo.clienterId;
+            //更新骑士 金额  
+            bool b = clienterDao.UpdateAccountBalanceAndWithdraw(new WithdrawRecordsModel() { UserId = userId, Amount = money });
+            //增加记录 
+            decimal? accountBalance = myOrderInfo.AccountBalance.Value + money;            
+
+            ClienterBalanceRecord cbrm = new ClienterBalanceRecord()
+            {
+                ClienterId = userId,
+                Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
+                Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
+                Balance = accountBalance ?? 0,
+                RecordType = ClienterBalanceRecordRecordType.BalanceAdjustment.GetHashCode(),
+                Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士:" + userId : myOrderInfo.ClienterName,
+                WithwardId = myOrderInfo.Id,
+                RelationNo = myOrderInfo.OrderNo,
+                Remark = ""
+            };
+            clienterBalanceRecordDao.Insert(cbrm);
+          
+        }
+
+        #endregion
+
     }
 }

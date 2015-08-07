@@ -159,6 +159,32 @@ where  Id=@Id ";
             }
             return model;
         }
+        /// <summary>
+        /// 根据订单获取对象
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ClienterBalanceRecord GetByOrderId(long id)
+        {
+            ClienterBalanceRecord model = new ClienterBalanceRecord();
+            const string querysql = @"
+select top 1  Id,ClienterId,Amount,Status,Balance,RecordType,Operator,OperateTime,RelationNo,Remark
+from  ClienterBalanceRecord (nolock)
+where  WithwardId=@Id and Remark='无效订单'";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("Id", id);
+
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
+            if (DataTableHelper.CheckDt(dt))
+            {
+                model = DataTableHelper.ConvertDataTableList<ClienterBalanceRecord>(dt)[0];
+            }
+            else
+            {
+                return null;
+            }
+            return model;
+        }
 
         #endregion
 
