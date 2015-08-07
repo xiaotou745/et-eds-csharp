@@ -3488,18 +3488,18 @@ where   Id = @OrderId and FinishAll = 0";
                                         SUM(a.ordercount) AS OrderNum
                                 FROM    dbo.[order] (NOLOCK) a
                                         JOIN dbo.clienter (NOLOCK) b ON a.clienterId = b.Id
-                                WHERE   a.ActualDoneDate IS NOT NULL {0}
+                                WHERE   a.PubDate IS NOT NULL {0}
                                 GROUP BY b.id ,
                                         b.truename ,
                                         b.PhoneNo) mp";
             StringBuilder sb = new StringBuilder();
             if (recommendQuery.StartDate != DateTime.MinValue)
             {
-                sb.Append(string.Format(" and a.ActualDoneDate>='{0}'", recommendQuery.StartDate.ToString("yyyy-MM-dd")));
+                sb.Append(string.Format(" and a.PubDate>='{0}'", recommendQuery.StartDate.ToString("yyyy-MM-dd")));
             }
             if (recommendQuery.EndDate != DateTime.MinValue)
             {
-                sb.Append(string.Format(" and a.ActualDoneDate<'{0}'", recommendQuery.EndDate.AddDays(1).ToString("yyyy-MM-dd")));
+                sb.Append(string.Format(" and a.PubDate<'{0}'", recommendQuery.EndDate.AddDays(1).ToString("yyyy-MM-dd")));
             }
             if (!string.IsNullOrEmpty(recommendQuery.UserInfo))
             {

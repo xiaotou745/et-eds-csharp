@@ -51,17 +51,24 @@ namespace SuperMan.Controllers
             };
             if (!string.IsNullOrEmpty(Request.QueryString["phoneNo"]))
             {
+                criteria.orderPubStart = Request.QueryString["startDate"];
+                criteria.orderPubEnd = Request.QueryString["endDate"];
+
+                ViewBag.orderPubStart = Request.QueryString["startDate"];
+                ViewBag.orderPubEnd = Request.QueryString["endDate"];
                 if (Request.QueryString["userType"] == "0")
                 {
                     criteria.superManPhone = Request.QueryString["phoneNo"];
                     criteria.superManName = Request.QueryString["userName"];
+                    ViewBag.superManPhone = Request.QueryString["phoneNo"];
+                    ViewBag.superManName = Request.QueryString["userName"];
                 }
                 else
                 {
                     criteria.businessPhone = Request.QueryString["phoneNo"];
                     criteria.businessName = Request.QueryString["userName"];
-                    criteria.orderPubStart = Request.QueryString["startDate"];
-                    criteria.orderPubEnd = Request.QueryString["endDate"];
+                    ViewBag.businessPhone = Request.QueryString["phoneNo"];
+                    ViewBag.businessName = Request.QueryString["userName"];
                 }  
             }
 
