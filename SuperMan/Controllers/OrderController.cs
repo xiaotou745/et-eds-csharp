@@ -50,6 +50,22 @@ namespace SuperMan.Controllers
                 //GroupId = UserContext.Current.GroupId,
                 AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType)
             };
+            if (!string.IsNullOrEmpty(Request.QueryString["phoneNo"]))
+            {
+                if (Request.QueryString["userType"] == "0")
+                {
+                    criteria.superManPhone = Request.QueryString["phoneNo"];
+                    criteria.superManName = Request.QueryString["userName"];
+                }
+                else
+                {
+                    criteria.businessPhone = Request.QueryString["phoneNo"];
+                    criteria.businessName = Request.QueryString["userName"];
+                    criteria.orderPubStart = Request.QueryString["startDate"];
+                    criteria.orderPubEnd = Request.QueryString["endDate"];
+                }  
+            }
+
             if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
             {
                 return View();

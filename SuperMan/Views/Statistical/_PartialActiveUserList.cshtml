@@ -19,7 +19,9 @@
                         <tr>
                             <td>@(i + 1)</td>
                             <td>@Model.Records[i].UserName</td>
-                            <td>@Model.Records[i].PhoneNo</td>
+                            <td>
+                                <a href="javascript:void(0)" onclick="showDetail('@Model.Records[i].PhoneNo', '@Model.Records[i].UserName')">@Model.Records[i].PhoneNo</a>
+                            </td>
                             <td>@Model.Records[i].TaskNum</td>
                             <td>@Model.Records[i].OrderNum</td>
                         </tr>
@@ -35,3 +37,11 @@
             @Html.Partial("~/views/shared/PagerControl.cshtml", Model);
         }
     }
+    <script type="text/javascript">
+        function showDetail(phoneNo, userName) {
+            var startDate = $('#StartDate').val(); 
+            var endDate = $('#EndDate').val();
+            var userType = $('#UserType').val();
+            window.location.href = "/Order/Order?phoneNo=" + phoneNo + "&userName=" + userName + "&startDate=" + startDate + "&endDate=" + endDate + "&userType=" + userType;
+        }
+    </script>
