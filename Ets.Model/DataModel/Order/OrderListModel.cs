@@ -348,5 +348,9 @@ namespace Ets.Model.DataModel.Order
         /// 审核状态
         /// </summary>
         public int AuditStatus { get; set; }
+        /// <summary>
+        /// 订单是否需要审核
+        /// </summary>
+        public int IsOrderChecked { get; set; }
     }
 }

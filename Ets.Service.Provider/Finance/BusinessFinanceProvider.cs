@@ -782,7 +782,62 @@ namespace Ets.Service.Provider.Finance
         /// <returns></returns>
         public bool BusinessRecharge(BusinessOptionLog model)
         {
-            return businessFinanceDao.BusinessRecharge(model);
+            bool reslult = false;
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                #region===判断充值或赠送
+                if (model.RechargeType == 1)
+                {
+                    //充值
+                  reslult=businessFinanceDao.BusinessRecharge(new BusinessRechargeLog()
+                    {
+                        BusinessId = model.BusinessId,
+                        OptName = model.OptName,
+                        RechargeAmount = model.RechargeAmount,
+                        RechargeType = model.RechargeType,
+                        Remark = model.Remark
+                    });
+                }
+                if (model.RechargeType == 2)
+                {
+                    //赠送
+                    reslult = businessFinanceDao.BusinessRecharge(new BusinessRechargeLog()
+                    {
+                        BusinessId = model.BusinessId,
+                        OptName = model.OptName,
+                        RechargeAmount = model.RechargeAmountFree,
+                        RechargeType = model.RechargeType,
+                        Remark = model.Remark + "(赠送)"
+                    });
+                }
+                if (model.RechargeType == 3)
+                {
+                    //充值加赠送
+                   bool temp1= businessFinanceDao.BusinessRecharge(new BusinessRechargeLog()
+                    {
+                        BusinessId = model.BusinessId,
+                        OptName = model.OptName,
+                        RechargeAmount = model.RechargeAmount,
+                        RechargeType = 1,
+                        Remark = model.Remark
+                    });
+                     bool temp2=businessFinanceDao.BusinessRecharge(new BusinessRechargeLog()
+                    {
+                        BusinessId = model.BusinessId,
+                        OptName = model.OptName,
+                        RechargeAmount = model.RechargeAmountFree,
+                        RechargeType = 2,
+                        Remark = model.Remark + "(赠送)"
+                    });
+                    reslult = temp1 && temp2;
+                }
+                #endregion
+                if (reslult)
+                {
+                    tran.Complete();
+                }
+            }
+            return reslult;
         }
         /// <summary>
         /// 获取商户提款收支记录列表分页版

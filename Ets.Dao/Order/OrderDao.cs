@@ -1563,7 +1563,8 @@ select top 1
         oo.GrabTime,
         o.Amount,
         o.DeliveryCompanySettleMoney,
-        o.DeliveryCompanyID
+        o.DeliveryCompanyID,
+        ISNULL(oo.IsOrderChecked,1) as IsOrderChecked
 from    [order] o with ( nolock )
         join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
         join dbo.business b with ( nolock ) on o.businessId = b.Id
@@ -2221,15 +2222,22 @@ select @@identity";
             #endregion
 
             #region 写子OrderOther表
+            //查询商户是否需要订单审核
+            const string queryCheckOrder = @"SELECT b.IsOrderChecked FROM dbo.business AS b (NOLOCK) WHERE b.Id=@Businessid";
+            IDbParameters CheckOrdeParameters = DbHelper.CreateDbParameters();
+            CheckOrdeParameters.AddWithValue("@Businessid", order.businessId); //商户ID
+            var IsOrderChecked = ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, queryCheckOrder, CheckOrdeParameters),1);
+            
             const string insertOtherSql = @"
-insert into OrderOther(OrderId,NeedUploadCount,HadUploadCount,PubLongitude,PubLatitude,OneKeyPubOrder)
-values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude,@OneKeyPubOrder)";
+insert into OrderOther(OrderId,NeedUploadCount,HadUploadCount,PubLongitude,PubLatitude,OneKeyPubOrder,IsOrderChecked)
+values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude,@OneKeyPubOrder,@IsOrderChecked)";
             IDbParameters dbOtherParameters = DbHelper.CreateDbParameters();
             dbOtherParameters.AddWithValue("@OrderId", orderId); //商户ID
             dbOtherParameters.AddWithValue("@NeedUploadCount", order.OrderCount); //需上传数量
             dbOtherParameters.AddWithValue("@PubLongitude", order.PubLongitude);
             dbOtherParameters.AddWithValue("@PubLatitude", order.PubLatitude);
             dbOtherParameters.AddWithValue("@OneKeyPubOrder", order.OneKeyPubOrder);
+            dbOtherParameters.Add("@OneKeyPubOrder",DbType.Int32).Value=IsOrderChecked;
             DbHelper.ExecuteScalar(SuperMan_Write, insertOtherSql, dbOtherParameters);
             #endregion
 
