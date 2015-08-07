@@ -33,15 +33,15 @@
             // 
             // serviceProcessInstaller1
             // 
-            this.serviceProcessInstaller1.Account = System.ServiceProcess.ServiceAccount.LocalService;
+            this.serviceProcessInstaller1.Account = System.ServiceProcess.ServiceAccount.LocalSystem;
             this.serviceProcessInstaller1.Password = null;
             this.serviceProcessInstaller1.Username = null;
             // 
             // serviceInstaller1
             // 
             this.serviceInstaller1.Description = "自动处理提现单";
-            this.serviceInstaller1.DisplayName = "AutoDeal";
-            this.serviceInstaller1.ServiceName = "AutoDealService";
+            this.serviceInstaller1.DisplayName = "Ets.AutoDealWithward";
+            this.serviceInstaller1.ServiceName = "Ets.AutoDealWithward";
             // 
             // ProjectInstaller
             // 

@@ -50,19 +50,34 @@
                         <td>@item.HandCharge</td>
                         <td>@item.WithdrawTime</td>
                         <td>
-                            @if (item.Status == 1)
+                            @if (item.Status == BusinessWithdrawFormStatus.WaitAllow.GetHashCode())
 {
                                 <a href="javascript:funWithdrawAuditOk('@item.Id','@item.WithwardNo')">审核通过</a>
                                 <a href="javascript:funWithdrawAuditRefuse(@item.Id,@item.Amount)">拒绝</a>
                                 <a href="javascript:void(0)" style="color:gray">确认打款</a>
                                 <a href="javascript:void(0)" style="color:gray">打款失败</a>
                             }
-                            else if(item.Status == 2)
+                            else if(item.Status == BusinessWithdrawFormStatus.Allow.GetHashCode())
                             {
                                 <a href="javascript:void(0)" style="color:gray">审核通过</a>
                                 <a href="javascript:void(0)" style="color:gray">拒绝</a>
                                 <a href="javascript:funPayOk(@item.Id,@item.Amount)">确认打款</a>
                                 <a href="javascript:funWithdrawPayFailed(@item.Id)">打款失败</a>
+                            }
+                            else if(item.Status == BusinessWithdrawFormStatus.Except.GetHashCode())
+                            {
+                                <a href="javascript:void(0)" style="color:gray">审核通过</a>
+                                <a href="javascript:void(0)" style="color:gray">拒绝</a>
+                                <a href="javascript:void(0)" style="color:gray">确认打款</a>
+                                <a href="javascript:funWithdrawPayFailed(@item.Id)">打款失败</a>
+                            }
+                            else if (item.Status == BusinessWithdrawFormStatus.Paying.GetHashCode() && (SuperMan.App_Start.UserContext.Current.Name == "admin" || SuperMan.App_Start.UserContext.Current.Name == "douhaichao"))
+                            {
+                                <a href="javascript:void(0)" style="color:gray">审核通过</a>
+                                <a href="javascript:void(0)" style="color:gray">拒绝</a>
+                                <a href="javascript:void(0)" style="color:gray">确认打款</a>
+                                <a href="javascript:void(0)" style="color:gray">打款失败</a>
+                                <a href="javascript:funPayOk(@item.Id,@item.Amount)">线下打款</a>
                             }
                             else
                             {
@@ -201,7 +216,11 @@
         if (!window.confirm("确认要审核拒绝？")) {
             return;
         }
-        var auditFailedReason=$('#txtWithdrawAuditRefuse').val();
+        var auditFailedReason = $('#txtWithdrawAuditRefuse').val();
+        if (auditFailedReason.trim().length == 0) {
+            alert("拒绝原因不能为空！");
+            return;
+        }
         var withwardId=$('#hidWithwardIdAuditRefuse').val();
         var paramaters = { "withwardId": withwardId,"auditFailedReason":auditFailedReason };
         var url = "/BusinessWithdraw/WithdrawAuditRefuse";
@@ -230,6 +249,10 @@
             return;
         }
         var payFailedReason = $('#txtWithdrawPayFailed').val();
+        if (payFailedReason.trim().length == 0) {
+            alert("打款失败原因不能为空！");
+            return;
+        }
         var withwardId = $('#hidWithwardIdPayFailed').val();
         var paramaters = { "withwardId": withwardId, "payFailedReason": payFailedReason };
         var url = "/BusinessWithdraw/WithdrawPayFailed";

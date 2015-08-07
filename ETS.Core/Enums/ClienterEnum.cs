@@ -128,6 +128,8 @@ namespace ETS.Enums
         [DisplayText("您当前的操作次数大于10，请5分钟后重试")]
         CountError = -10,
         [DisplayText("旧密码错误")]
-        OldPwdError
+        OldPwdError,
+        [DisplayText("验证码错误")]
+        CheckCodeError
     }
 }

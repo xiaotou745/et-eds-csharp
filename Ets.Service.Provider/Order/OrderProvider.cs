@@ -1317,23 +1317,38 @@ namespace Ets.Service.Provider.Order
             {
                 var orderModel = orderDao.GetOrderByIdWithNolock(orderOptionModel.OrderId);
 
-                orderDao.UpdateJoinWithdraw(orderModel.Id);
-                //更新扣除补贴原因,扣除补贴方式为手动扣除
-                orderOtherDao.UpdateOrderDeductCommissionReason(orderModel.Id, orderOptionModel.OptLog, 2);
+                #region 点击浏览器后退按钮 
+        
+                if (orderModel.IsJoinWithdraw == 1)//订单已分账
+                {
+                    dealResultInfo.DealMsg = "订单已分账，不能审核拒绝！";
+                    return dealResultInfo;
+                }              
+                #endregion
 
 
                 //如果要扣除的金额大于0， 写流水
                 if (orderModel.OrderCommission > orderModel.SettleMoney)
                 {
                     decimal diffOrderCommission = orderModel.SettleMoney - orderModel.OrderCommission.Value;
-
                     iClienterProvider.UpdateNotRealOrderClienterAccount(orderModel, diffOrderCommission);
                 }
+
+                //更新订单真实佣金
+                decimal realOrderCommission = orderModel.OrderCommission.Value;
+                realOrderCommission = realOrderCommission > orderModel.SettleMoney ? orderModel.SettleMoney : realOrderCommission;
+                orderDao.UpdateOrderRealOrderCommission(orderModel.Id.ToString(), realOrderCommission);
+
+                //加可提现                
+                clienterDao.UpdateAllowWithdrawPrice(realOrderCommission, orderModel.clienterId);
+                orderDao.UpdateJoinWithdraw(orderModel.Id);
+                orderDao.UpdateAuditStatus(orderModel.Id, OrderAuditStatusCommon.Refuse.GetHashCode());
+
                 //加可提现金额
                 ClienterAllowWithdrawRecord cawrm = new ClienterAllowWithdrawRecord()
                 {
                     ClienterId = orderModel.clienterId,
-                    Amount = Convert.ToDecimal(orderModel.RealOrderCommission),
+                    Amount = Convert.ToDecimal(realOrderCommission),
                     Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(),
                     RecordType = ClienterAllowWithdrawRecordType.OrderCommission.GetHashCode(),
                     Operator = orderOptionModel.OptUserName,
@@ -1343,6 +1358,9 @@ namespace Ets.Service.Provider.Order
                 };
                 clienterAllowWithdrawRecordDao.Insert(cawrm);
 
+
+                //更新扣除补贴原因,扣除补贴方式为手动扣除
+                orderOtherDao.UpdateOrderDeductCommissionReason(orderModel.Id, orderOptionModel.OptLog, 2);
                 tran.Complete();
                 dealResultInfo.DealFlag = true;
                 dealResultInfo.DealMsg = "扣取网站补贴成功！";
@@ -1361,18 +1379,24 @@ namespace Ets.Service.Provider.Order
             {
                 DealFlag = false
             };
-          
+            
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 var orderModel = orderDao.GetOrderByIdWithNolock(orderOptionModel.OrderId);
+                if (orderModel.IsJoinWithdraw == 1)//订单已分账
+                {
+                    dealResultInfo.DealMsg = "订单已分账，不能审核通过！";
+                    return dealResultInfo;
+                }   
 
                 clienterDao.UpdateAllowWithdrawPrice(Convert.ToDecimal(orderModel.OrderCommission), orderModel.clienterId);
                 orderDao.UpdateJoinWithdraw(orderModel.Id);
+                orderDao.UpdateAuditStatus(orderModel.Id, OrderAuditStatusCommon.Through.GetHashCode());   
 
                 ClienterAllowWithdrawRecord cawrm = new ClienterAllowWithdrawRecord()
                 {
                     ClienterId = orderModel.clienterId,
-                    Amount =Convert.ToDecimal( orderModel.OrderCommission),
+                    Amount =Convert.ToDecimal(orderModel.OrderCommission),
                     Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(),
                     RecordType = ClienterAllowWithdrawRecordType.OrderCommission.GetHashCode(),
                     Operator = orderOptionModel.OptUserName,

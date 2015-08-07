@@ -27,21 +27,25 @@ namespace SuperManWebApi.Controllers
         /// 窦海超
         /// 2015年5月12日 14:35:05
         /// </summary>
-        //[HttpGet]
-       [Token]
+        [Token]
         public ResultModel<PayResultModel> CreatePay(PayModel model)//
         {
-            //PayModel model = new PayModel()
-            //{
-            //    productId = 1,
-            //    orderId = 1358,
-            //    childId = 11,
-            //    payType = 1,
-            //    version = "1.0",
-            //    payStyle = 1
-            //};
             return payProvider.CreatePay(model);
         }
+        [HttpGet]
+       public ResultModel<PayResultModel> CreatePayTest(int orderId)
+        {
+            PayModel model = new PayModel()
+            {
+                productId = 1,
+                orderId = orderId,
+                childId = 1,
+                payType = 2,
+                version = "1.0",
+                payStyle = 1
+            };
+           return payProvider.CreatePay(model);
+       }
 
         #region 支付宝
 
@@ -97,14 +101,14 @@ namespace SuperManWebApi.Controllers
         }
 
         /// <summary>
-        /// 商家充值回调方法    回调
+        /// 商家充值回调方法回调
         /// 窦海超
         /// 2015年5月29日 15:17:07
         /// </summary>
         /// <returns></returns>
-        public dynamic BusinessRechargeNotify()
+        public void BusinessRechargeNotify()
         {
-            return payProvider.BusinessRechargeNotify();
+            payProvider.BusinessRechargeNotify();
         }
         #endregion
 
@@ -117,9 +121,9 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <returns></returns>
         //[HttpGet]
-        public dynamic ReturnWxpay()
+        public dynamic WxNotify()
         {
-            return payProvider.ReturnWxpay();
+            return payProvider.WxNotify();
         }
         #endregion
 

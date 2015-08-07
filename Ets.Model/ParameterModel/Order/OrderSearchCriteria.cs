@@ -13,6 +13,7 @@ namespace Ets.Model.ParameterModel.Order
     public class OrderSearchCriteria : ListParaBase
     {
         private int status = -1; //默认查询所有状态
+        private int auditStatus = -1; //默认查询所有状态
         public NewPagingResult PagingRequest { get; set; }
         public IList<OrderByItem<order>> OrderByItems { get; set; }
 
@@ -27,6 +28,11 @@ namespace Ets.Model.ParameterModel.Order
         {
             get { return status; }
             set { status = value; }
+        }
+        public int AuditStatus  //订单状态
+        {
+            get { return auditStatus; }
+            set { auditStatus = value; }
         }   
         public string orderPubStart { get; set; }
         public string orderPubEnd { get; set; }

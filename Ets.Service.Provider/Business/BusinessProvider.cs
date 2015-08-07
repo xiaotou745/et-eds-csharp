@@ -284,6 +284,8 @@ namespace Ets.Service.Provider.Business
             
             string appkey = Guid.NewGuid().ToString(); 
             model.Appkey = appkey;
+            int userid = businessDao.Insert(model);
+
             string token = iTokenProvider.GetToken(new TokenModel()
                         {
                             Ssid=model.Ssid,
@@ -291,7 +293,7 @@ namespace Ets.Service.Provider.Business
                         });
             BusiRegisterResultModel resultModel = new BusiRegisterResultModel()
             {
-                userId = businessDao.Insert(model),
+                userId = userid,
                 Appkey = appkey,
                 Token = token
             };

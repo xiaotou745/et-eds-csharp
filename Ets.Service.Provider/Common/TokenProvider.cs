@@ -22,6 +22,12 @@ namespace Ets.Service.Provider.Common
         /// <returns></returns>
         public string GetToken(TokenModel model)
         {
+            //当appkey在两个表都不存在的时候 返回空字符串
+            TokenDao tokenDao=new TokenDao();
+            if (!tokenDao.CheckAppkey_B(model.Appkey)&&!tokenDao.CheckAppkey_C(model.Appkey))
+            {
+                return "";
+            }
             string cacheKey = model.Ssid + "_" + model.Appkey;
             string cacheKeyOld = model.Ssid + "_" + model.Appkey + "_old";
             string cacheValue, cacheValueOld;

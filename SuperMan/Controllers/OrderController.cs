@@ -13,7 +13,6 @@ using Ets.Service.Provider.Distribution;
 using Ets.Service.Provider.Order;
 using Ets.Service.IProvider.Common;
 using Ets.Service.Provider.Common;
-﻿using NPOI.SS.Formula.Functions;
 ﻿using SuperMan.App_Start;
 using Ets.Model.ParameterModel.User;
 using Ets.Model.ParameterModel.Order;
@@ -105,7 +104,7 @@ namespace SuperMan.Controllers
         /// <param name="pageindex"></param>
         /// <returns></returns>
         [HttpGet]
-        public ActionResult PostDaoChuOrder(int pageindex = 1)
+        public FileContentResult PostDaoChuOrder(int pageindex = 1)
         {
             Ets.Model.ParameterModel.Order.OrderSearchCriteria criteria = new Ets.Model.ParameterModel.Order.OrderSearchCriteria();
             TryUpdateModel(criteria);
@@ -145,7 +144,9 @@ namespace SuperMan.Controllers
                 }
 
             }
-            return PartialView("_PartialOrderList", pagedList);
+            
+            //return PartialView("_PartialOrderList", pagedList);
+            return File(new byte[0]{}, "application/ms-excel", "无数据.xls");
         }
 
 

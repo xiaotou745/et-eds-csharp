@@ -84,12 +84,12 @@ namespace ETS.Enums
         /// <summary>
         /// 骑士信息找不到
         /// </summary>
-        [DisplayText("姓名不符")]
+        [DisplayText("账户名与账号注册姓名不符")]
         TrueNameNoMatch = -5,
         /// <summary>
         /// 骑士信息找不到
         /// </summary>
-        [DisplayText("身份证不符")]
+        [DisplayText("身份证与账号注册身份证不符")]
         IDCardNoMatch = -6
     }
 
@@ -123,12 +123,12 @@ namespace ETS.Enums
         /// <summary>
         /// 骑士信息找不到
         /// </summary>
-        [DisplayText("姓名不符")]
+        [DisplayText("账户名与账号注册姓名不符")]
         TrueNameNoMatch = -5,
         /// <summary>
         /// 骑士信息找不到
         /// </summary>
-        [DisplayText("身份证不符")]
+        [DisplayText("身份证与账号注册身份证不符")]
         IDCardNoMatch = -6
     }
     /// <summary>
@@ -428,7 +428,7 @@ namespace ETS.Enums
     }
 
     /// <summary>
-    ///商户提现 提现状态(1待审核 2 审核通过 3打款完成 20打款中 -1审核拒绝 -2 打款失败) 枚举 add by caoheyang 20150509
+    ///商户提现 提现状态(1待审核 2 审核通过 3打款完成 20打款中 -1审核拒绝 -2 打款失败 4 打款异常) 枚举 add by caoheyang 20150509
     /// </summary>
     public enum BusinessWithdrawFormStatus
     {
@@ -498,6 +498,15 @@ namespace ETS.Enums
         Cancel = 3,
         [DisplayText("已取货")]
         PickUp = 4
+    }
+    public enum OrderAuditStatusCommon
+    {
+        [DisplayText("审核拒绝")]
+        Refuse = 2,
+        [DisplayText("待审核")]
+        NotAudit = 0,
+        [DisplayText("审核通过")]
+        Through = 1       
     }
     /// <summary>
     ///提现单处理状态(0：初始值1：待注册 2：已注册 3：待转账 4：已转账 5：待提现 6：已提现) 
@@ -610,5 +619,13 @@ namespace ETS.Enums
         Private = 0,//个人出手续费
         EDaiSong = 1//E代送
 
+    }
+    /// <summary>
+    /// 商户提现涉及到的各种返回状态枚举 add by caoheyang 20150511
+    /// </summary>
+    public enum WithdrawCreateB
+    {
+        [DisplayText("请等待一分钟后创建提现申请单")]
+        Warn = 1
     }
 }

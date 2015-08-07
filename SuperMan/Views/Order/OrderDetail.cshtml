@@ -59,7 +59,8 @@
         <tr>
             <td>备注：@Model.Remark</td>
             <td>订单数：@Model.OrderCount</td>
-            <td>扣除补贴原因：@Model.DeductCommissionReason</td>
+            <td>审核推荐处理：@Model.DeductCommissionReason</td>
+
         </tr>
     </table>
     <hr />
@@ -146,6 +147,7 @@
     <input type="hidden" value="@Model.OrderNo" id="OrderNo" />
     <input type="hidden" value="@Model.Id" id="OrderId" />
     <input type="hidden" value="@Model.IsEnable" id="IsEnable" />
+    <input type="hidden" value="@Model.DeductCommissionReason" id="hidDeductCommissionReason" />
     <hr />
     <div style="float:left;width:1000px;padding-top:30px">
         <lable style="font-size:13px;font-weight:bold;">订单流转记录：</lable>
@@ -208,7 +210,7 @@
                         }
                     </td>
                     <td>
-                        @if (SuperMan.App_Start.UserContext.Current.HasAuthority(79) && ViewBag.IsShowAuditBtn)
+                        @if (SuperMan.App_Start.UserContext.Current.HasAuthority(80) && ViewBag.IsShowAuditBtn)
                         {
                             <input type="button" value="审核通过" class="searchBtn" id="btnAuditOk" style="margin-left: 10px;" />
     <input type="button" value="审核拒绝" class="searchBtn" id="btnAuditCancel" style="margin-left: 10px;" />
@@ -256,14 +258,14 @@
 </div>
 <script>
     var adminjs = new adminglass(); //实例化后台类
-    
+
     $("#btnCancel").click(function () {
         var orderOptionLog = $('#orderOptionLog').val();
         if ($("#IsEnable").val().trim() == "0") {
             alert("已删除的订单不能取消！");
             return false;
         }
-        
+
         adminjs.openwinbox('#OrderOptionShow');
 
     });
@@ -272,7 +274,10 @@
         if ($("#IsEnable").val().trim() == "0") {
             alert("已删除的订单不取扣除网站补贴！");
             return false;
-        }
+        }        
+        
+        $("#deductWebSubsidyReason").text($("#hidDeductCommissionReason").val());
+        //$("#deductWebSubsidyReason").text(hidDeductCommissionReason.val());
         adminjs.openwinbox('#deductWebSubsidyShow');
     });
     $('.J_closebox').click(function () {

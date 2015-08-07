@@ -173,7 +173,7 @@ SELECT [Id]
       ,[UpdateTime]
       ,ISNULL([YeeBalance],0) YeeBalance
 FROM [YeePayUser] ypu WITH(NOLOCK)
-WHERE ISNULL(BalanceRecord,0)<>ISNULL(YeeBalance,0)";
+WHERE ISNULL(BalanceRecord,0)<>ISNULL(YeeBalance,0) OR ISNULL(YeeBalance,0)>0;";
             var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql));
             var list = ConvertDataTableList<YeePayUser>(dt);
             return list;

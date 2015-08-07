@@ -1,0 +1,1 @@
+alter table dbo.[orderother] add AuditStatus tinyint not null default 0 ;--¶©µ¥¼ÓÉóºË×´Ì¬

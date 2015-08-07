@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ETS.Util;
 using Quartz.Impl;
+using System.Threading;
 
 namespace Ets.AutoDealWithward
 {

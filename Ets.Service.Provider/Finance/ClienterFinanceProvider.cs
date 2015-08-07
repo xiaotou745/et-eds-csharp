@@ -582,10 +582,10 @@ namespace Ets.Service.Provider.Finance
                 return dealResultInfo;
             }
             //历史单据走之前逻辑
-            if (cliFinanceAccount.WithdrawTime < ParseHelper.ToDatetime(Config.WithdrawTime))
+            if ((cliFinanceAccount.WithdrawTime < ParseHelper.ToDatetime(Config.WithdrawTime))||(cliFinanceAccount.WithdrawStatus==ClienterWithdrawFormStatus.Paying.GetHashCode()))
             {
                 model.Status = ClienterWithdrawFormStatus.Success.GetHashCode();
-                model.OldStatus = ClienterWithdrawFormStatus.Allow.GetHashCode();
+                model.OldStatus =cliFinanceAccount.WithdrawStatus==ClienterWithdrawFormStatus.Paying.GetHashCode()?ClienterWithdrawFormStatus.Paying.GetHashCode():ClienterWithdrawFormStatus.Allow.GetHashCode();
                 dealResultInfo.DealFlag = ClienterWithdrawPayOk(model);
                 dealResultInfo.DealMsg = dealResultInfo.DealFlag ? "打款成功！" : "打款失败！";
                 return dealResultInfo;

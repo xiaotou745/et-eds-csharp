@@ -17,6 +17,7 @@ namespace SuperManWebApi.Controllers
 {
     public class HomeController : Controller
     {
+        
         public ActionResult Index()
         {
             //Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", 1761.ToString(), string.Empty);
@@ -36,6 +37,11 @@ namespace SuperManWebApi.Controllers
             //    //return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.CountError);
             //}
             //redis.Set(key, excuteCount + 1, new TimeSpan(0, 5, 0));
+            //string s = EncodeAndDecode.EncodeBase64(Encoding.UTF8, "eds1234");
+
+            //string s1 = "123123123123123123123123123123";
+            //int s2 = Convert.ToInt32(s1);
+            //string ss = EncodeAndDecode.DecodeBase64(Encoding.UTF8, s);
             ViewBag.Title = "Home Page";
             return View();
         }

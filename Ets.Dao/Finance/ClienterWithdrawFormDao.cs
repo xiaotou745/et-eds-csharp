@@ -144,7 +144,7 @@ where  Id=@Id ";
         public int GetByClienterId(int clienterId)
         {
             const string querysql = @" select count(1) FROM dbo.ClienterWithdrawForm(nolock) a
- where a.[Status] in(1,2) and a.ClienterId=@clienterId";
+ where a.[Status] in(1,2,20) and a.ClienterId=@clienterId";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("@clienterId", DbType.Int32).Value = clienterId;
             var count = DbHelper.ExecuteScalar(SuperMan_Read, querysql, dbParameters); 
