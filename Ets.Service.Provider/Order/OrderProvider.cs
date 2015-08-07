@@ -2020,7 +2020,7 @@ namespace Ets.Service.Provider.Order
                 Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士" : myOrderInfo.ClienterName,
                 WithwardId = myOrderInfo.Id,
                 RelationNo = myOrderInfo.OrderNo,
-                Remark = ""
+                Remark = "余额调整"
             };
             clienterBalanceRecordDao.Insert(cbrm);
         }
@@ -2048,7 +2048,7 @@ namespace Ets.Service.Provider.Order
                 Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士:" + userId : myOrderInfo.ClienterName,
                 WithwardId = myOrderInfo.Id,
                 RelationNo = myOrderInfo.OrderNo,
-                Remark = ""
+                Remark = "余额调整"
             };
             clienterBalanceRecordDao.Insert(cbrm);
           
