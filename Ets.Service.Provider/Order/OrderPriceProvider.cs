@@ -35,6 +35,13 @@ namespace Ets.Service.Provider.Order
         public abstract decimal GetCommissionRate(OrderCommission model);
 
         /// <summary>
+        /// 获取订单基本佣金 add by 彭宜 20150807
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public abstract decimal GetBaseCommission(OrderCommission model);
+
+        /// <summary>
         /// 获取订单的额外补贴金额 add by caoheyang 20150409
         /// </summary>
         /// <param name="model">订单</param>
