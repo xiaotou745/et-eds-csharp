@@ -1958,7 +1958,8 @@ ORDER BY btr.Id;";
                                 OriginalBusiId=@OriginalBusiId,
                                 OneKeyPubOrder=@OneKeyPubOrder,
                                 IsEmployerTask=@IsEmployerTask,
-IsAllowOverdraft=@IsAllowOverdraft,
+                                IsAllowOverdraft=@IsAllowOverdraft,
+                                RecommendPhone=@RecommendPhone 
                                            ";
             if (model.GroupId > 0)
             {
@@ -2013,6 +2014,7 @@ IsAllowOverdraft=@IsAllowOverdraft,
             parm.AddWithValue("@OneKeyPubOrder", model.OneKeyPubOrder);
             parm.AddWithValue("@IsEmployerTask", model.IsEmployerTask);
             parm.Add("@IsAllowOverdraft", DbType.Int16).Value = model.IsAllowOverdraft;
+            parm.Add("@RecommendPhone", DbType.String).Value = model.RecommendPhone; //推荐人手机号 
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
         /// <summary>
@@ -2097,9 +2099,16 @@ IsAllowOverdraft=@IsAllowOverdraft,
                     remark.AppendFormat("余额透支原值:{0},修改为{1};", brm.IsEmployerTask, model.IsEmployerTask);
                 }
                 //第三方Id
-                if (model.OriginalBusiId != model.OriginalBusiId)
+                if (brm.OriginalBusiId.HasValue)
                 {
-                    remark.AppendFormat("第三方ID原值:{0},修改为{1};", brm.OriginalBusiId, model.OriginalBusiId);
+                    if (brm.OriginalBusiId.Value != model.OriginalBusiId)
+                    {
+                        remark.AppendFormat("第三方ID原值:{0},修改为{1};", brm.OriginalBusiId, model.OriginalBusiId);
+                    }
+                } 
+                if (brm.RecommendPhone != model.RecommendPhone)
+                {
+                    remark.AppendFormat("推荐人手机号原值:{0},修改为{1};", brm.RecommendPhone, model.RecommendPhone);
                 }
             }
             return remark.ToString();

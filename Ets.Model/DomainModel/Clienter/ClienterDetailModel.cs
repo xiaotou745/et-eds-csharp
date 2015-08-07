@@ -37,6 +37,6 @@ namespace Ets.Model.DomainModel.Clienter
         /// <summary>
         /// 操作人名称
         /// </summary>
-        public string OptUserName { get; set; }
+        public string OptUserName { get; set; } 
     }
 }

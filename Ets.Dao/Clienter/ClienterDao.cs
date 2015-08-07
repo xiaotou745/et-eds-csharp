@@ -221,7 +221,7 @@ where   c.PhoneNo = @PhoneNo
         /// <returns></returns>
         public ClienterModel GetUserInfoByUserPhoneNo(string phoneNo)
         {
-            string sql = "SELECT Id,TrueName,PhoneNo,AccountBalance,IDCard,[Password] FROM dbo.clienter(NOLOCK) WHERE PhoneNo=@PhoneNo";
+            string sql = "SELECT Id,TrueName,PhoneNo,AccountBalance,IDCard,[Password],DeliveryCompanyId FROM dbo.clienter(NOLOCK) WHERE PhoneNo=@PhoneNo";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@PhoneNo", SqlDbType.NVarChar);
             parm.SetValue("@PhoneNo", phoneNo);
@@ -906,54 +906,7 @@ where  OrderId=@OrderId ";
                 return null;
             }
             var ooList = MapRows<OrderOther>(dt);
-            return ooList[0];
-
-
-            #region 王超
-
-            //            OrderOther oo = new OrderOther();
-            //            //ReceiptPic + '|' + @ReceiptPic
-            //            StringBuilder sql = new StringBuilder(@"
-            // update dbo.OrderOther
-            // set    ReceiptPic = '' ,
-            //        HadUploadCount = HadUploadCount + @HadUploadCount,
-            //        NeedUploadCount = @NeedUploadCount
-            // output Inserted.Id ,
-            //        Inserted.OrderId ,
-            //        Inserted.NeedUploadCount ,
-            //        Inserted.ReceiptPic ,
-            //        Inserted.HadUploadCount
-            // where  OrderId = @OrderId;");
-            //            sql.Append(@"
-            //update  dbo.OrderChild
-            //set     HasUploadTicket = 1,
-            //        TicketUrl = @ReceiptPic
-            //where   OrderId = @OrderId
-            //        and ChildId = @OrderChildId;
-            //");
-            //            IDbParameters parm = DbHelper.CreateDbParameters();
-            //            parm.Add("@OrderId", SqlDbType.Int).Value = uploadReceiptModel.OrderId;
-            //            parm.Add("@NeedUploadCount", SqlDbType.Int).Value = uploadReceiptModel.NeedUploadCount;
-            //            parm.Add("@HadUploadCount", SqlDbType.Int).Value = uploadReceiptModel.HadUploadCount;
-            //            parm.Add("@ReceiptPic", SqlDbType.VarChar).Value = uploadReceiptModel.ReceiptPic;
-            //            parm.Add("@OrderChildId", SqlDbType.Int).Value = uploadReceiptModel.OrderChildId;
-            //            try
-            //            {
-            //                DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql.ToString(), parm);
-            //                var ooList = MapRows<OrderOther>(dt);
-            //                if (ooList != null && ooList.Count == 1)
-            //                {
-            //                    return ooList[0];
-            //                }
-            //            }
-            //            catch (Exception ex)
-            //            {
-            //                //LogHelper.LogWriter("更新orderOther表异常：", new { ex = ex });
-            //                throw ex;
-            //            }
-            //            return oo;
-
-            #endregion
+            return ooList[0]; 
         }
         /// <summary>
         /// 删除小票信息OrderChild表
@@ -1681,20 +1634,22 @@ SELECT IDENT_CURRENT('clienter')"
         /// <param name="model"></param>
         /// <returns></returns>
         public bool ModifyClienterDetail(ClienterDetailModel model)
-        {
-
-            string remark = model.OptUserName + "通过后台管理系统修改骑士信息";
+        { 
+            //string remark = model.OptUserName + "通过后台管理系统修改骑士信息";
             string sql = @"UPDATE clienter 
                             SET IDCard=@IDCard,
                                 TrueName=@TrueName,
-                                DeliveryCompanyId=@DeliveryCompanyId ";
+                                DeliveryCompanyId=@DeliveryCompanyId,recommendPhone=@recommendPhone ";
             sql += @" OUTPUT
                         Inserted.Id,
                         @OptId,
                         @OptName,
                         GETDATE(),
                         @Platform,
-                        @Remark
+                        '身份证号' + isnull(Deleted.IDCard, '') + '修改为' + isnull(Inserted.IDCard,'') 
+                        + ';姓名'  + isnull(Deleted.TrueName, '') + '修改为' + isnull(Inserted.TrueName, '')
+                        + ';物流公司' + isnull(convert(nvarchar(10), Deleted.DeliveryCompanyId),'') + '修改为' + convert(nvarchar(100), Inserted.DeliveryCompanyId) 
+                        + ';推荐人手机号' + isnull(convert(nvarchar(11), Deleted.recommendPhone), '') + '修改为' + isnull(Inserted.recommendPhone, '') 
                     INTO ClienterOptionLog
                         (ClienterId,
                         OptId,
@@ -1711,7 +1666,7 @@ SELECT IDENT_CURRENT('clienter')"
             parm.AddWithValue("@OptId", model.OptUserId);
             parm.AddWithValue("@OptName", model.OptUserName);
             parm.AddWithValue("@Platform", 3);
-            parm.AddWithValue("@Remark", remark);
+            //parm.AddWithValue("@Remark", model.Remark);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
 

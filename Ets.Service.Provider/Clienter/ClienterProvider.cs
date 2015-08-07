@@ -1225,6 +1225,15 @@ namespace Ets.Service.Provider.Clienter
             {
                 DealFlag = false
             };
+            if (!string.IsNullOrWhiteSpace(model.recommendPhone))
+            {
+                ClienterModel cm = clienterDao.GetUserInfoByUserPhoneNo(model.recommendPhone);
+                if (cm == null)
+                {
+                    dealResultInfo.DealMsg = "推荐人不存在！";
+                    return dealResultInfo;
+                } 
+            } 
             if (!clienterDao.ModifyClienterDetail(model))
             {
                 dealResultInfo.DealMsg = "修改骑士信息失败！";
@@ -1233,7 +1242,7 @@ namespace Ets.Service.Provider.Clienter
             dealResultInfo.DealMsg = "修改骑士信息成功！";
             dealResultInfo.DealFlag = true;
             return dealResultInfo;
-        }
+        } 
 
         #region  用户自定义方法 金额
         /// <summary>
