@@ -1742,7 +1742,7 @@ DateDiff(MINUTE,PubDate, GetDate()) in ({0})", IntervalMinute);
         /// <param name="config"></param>
         /// <param name="Id"></param>
         /// <returns></returns>
-        public bool addOrderSubsidiesLog(decimal AdjustAmount, int OrderId, string Remark)
+        public bool addOrderSubsidiesLog(decimal AdjustAmount, int OrderId, string Remark, string OptName = "发布订单",int OrderStatus=0)
         {
             string sql =
                 @"INSERT INTO OrderSubsidiesLog
@@ -1750,17 +1750,21 @@ DateDiff(MINUTE,PubDate, GetDate()) in ({0})", IntervalMinute);
                                 ,OrderId
                                 ,InsertTime
                                 ,OptName
+                                ,OrderStatus
                                 ,Remark)
                      VALUES
                                 (@Price
                                 ,@OrderId
                                 ,Getdate()
-                                ,'发布订单'
+                                ,@OptName
+                                ,@OrderStatus
                                 ,@Remark);";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Price", AdjustAmount);
             parm.AddWithValue("@OrderId", OrderId);
             parm.AddWithValue("@Remark", Remark);
+            parm.AddWithValue("@OptName", OptName);
+            parm.AddWithValue("@OrderStatus", OrderStatus);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
 
         }

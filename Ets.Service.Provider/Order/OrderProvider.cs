@@ -1412,7 +1412,8 @@ namespace Ets.Service.Provider.Order
                         {
                             //加余额、可提现、余额流水
                             UpdateAccountBalanceAndWithdraw(orderModel, -currModel.Amount);
-                        }                 
+                        }
+                        orderDao.addOrderSubsidiesLog(currModel.Amount, orderModel.Id, "返还网站补贴" + (-currModel.Amount) + "元", "完成订单", 1);
                     }
                 }
                 #endregion
