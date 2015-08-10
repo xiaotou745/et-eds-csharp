@@ -33,7 +33,7 @@ namespace SuperManWebApi.Controllers
             return payProvider.CreatePay(model);
         }
         [HttpGet]
-       public ResultModel<PayResultModel> CreatePayTest(int orderId)
+        public ResultModel<PayResultModel> CreatePayTest(int orderId)
         {
             PayModel model = new PayModel()
             {
@@ -44,8 +44,8 @@ namespace SuperManWebApi.Controllers
                 version = "1.0",
                 payStyle = 1
             };
-           return payProvider.CreatePay(model);
-       }
+            return payProvider.CreatePay(model);
+        }
 
         #region 支付宝
 
@@ -88,16 +88,28 @@ namespace SuperManWebApi.Controllers
             //};
             return payProvider.GetOrderPayStatus(model);
         }
-
         /// <summary>
         /// 商家充值
         /// 窦海超
         /// 2015年5月29日 15:09:29
+        /// </summary>
         /// <param name="model"></param>
-       [Token]
+        /// <returns></returns>
+        [Token]
         public ResultModel<BusinessRechargeResultModel> BusinessRecharge(BusinessRechargeModel model)
         {
             return payProvider.BusinessRecharge(model);
+        }
+
+         /// <summary>
+        /// 商家充值微信回调方法回调
+        /// 窦海超
+        /// 2015年5月29日 15:09:29
+        /// </summary>
+        /// <returns></returns>
+        public void BusinessRechargeWxNotify()
+        {
+            payProvider.BusinessRechargeWxNotify();
         }
 
         /// <summary>
@@ -127,7 +139,7 @@ namespace SuperManWebApi.Controllers
         }
         #endregion
 
-       
+
         /// <summary>
         /// 易宝转账回调接口  add by caoheyang  20150715
         /// </summary>
