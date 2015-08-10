@@ -91,7 +91,7 @@ namespace Ets.Model.DomainModel.Statistics
         /// <summary>
         /// 推荐人手机号
         /// </summary>
-        public int TaskCount { get; set; }
+        public int RecommendPhone { get; set; }
         /// <summary>
         /// 推荐商家数量
         /// </summary>
