@@ -1961,8 +1961,7 @@ ORDER BY btr.Id;";
                                 OneKeyPubOrder=@OneKeyPubOrder,
                                 IsEmployerTask=@IsEmployerTask,
                                 IsAllowOverdraft=@IsAllowOverdraft,
-                                RecommendPhone=@RecommendPhone,
-                                IsOrderChecked=@IsOrderChecked 
+                                IsOrderChecked=@IsOrderChecked
                                            ";
             if (model.GroupId > 0)
             {

@@ -589,16 +589,11 @@
         //    return false ;
         //}
         var paramaters = {
-<<<<<<< HEAD
-            "Id": id, "Name": name, "Landline": landline, "PhoneNo2": phoneNo2, "DistribSubsidy": customerDeliveryMoney, "CityId": cityId, "districtId": districtId, "City": cityName,
-            "district": districtName, "Address": adress, "Latitude": latitude, "Longitude": longitude, "CommissionType": commissionType, "BusinessCommission": bussinessDeliveryRatio,
-            "CommissionFixValue": bussinessFixValue, "BusinessGroupId": businessGroupId, "MealsSettleMode": mealsSettleMode, "groupId": groupId, "originalBusiId": originalBusiId, "oneKeyPubOrder": oneKeyPubOrder, "IsEmployerTask": IsEmployerTask, "isAllowOverdraft": isAllowOverdraft, "RecommendPhone": recomPhone
-=======
             "Id": id,
             "Name": name,
             "Landline": landline,
             "PhoneNo2": phoneNo2,
-            "DistribSubsidy": distribSubsidy,
+            "DistribSubsidy": customerDeliveryMoney,
             "CityId": cityId,
             "districtId": districtId,
             "City": cityName,
@@ -607,8 +602,8 @@
             "Latitude": latitude,
             "Longitude": longitude,
             "CommissionType": commissionType,
-            "BusinessCommission": commissionText,
-            "CommissionFixValue": commissionFixValue,
+            "BusinessCommission": bussinessDeliveryRatio,
+            "CommissionFixValue": bussinessFixValue,
             "BusinessGroupId": businessGroupId,
             "MealsSettleMode": mealsSettleMode,
             "groupId": groupId,
@@ -617,7 +612,6 @@
             "IsEmployerTask": IsEmployerTask,
             "isAllowOverdraft": isAllowOverdraft,
             "IsOrderChecked":$('#OrderChecked input[name="IsCheckOrder"]:checked ').val()
->>>>>>> 99ccbb55ff59c44990548cc4b57e756e9c84b51b
         };
         var url = "/BusinessManager/ModifyBusinessDetail";
         $.ajax({

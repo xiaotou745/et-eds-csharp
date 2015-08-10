@@ -19,5 +19,9 @@ namespace Ets.Model.DomainModel.Statistics
        /// </summary>
         public int DataType { get; set; }
         public int PageIndex { get; set; }
+        /// <summary>
+        /// 查询手机号
+        /// </summary>
+        public string QueryPhone { get; set; }
     }
 }
