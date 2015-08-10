@@ -424,7 +424,12 @@ namespace ETS.Enums
         /// 手续费
         /// </summary>
         [DisplayText("手续费")]
-        ProcedureFee = 11
+        ProcedureFee = 11,
+        /// <summary>
+        /// 充值赠送
+        /// </summary>
+        [DisplayText("充值赠送")]
+        Present = 12
     }
 
     /// <summary>

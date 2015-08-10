@@ -1564,7 +1564,8 @@ select top 1
         oo.GrabTime,
         o.Amount,
         o.DeliveryCompanySettleMoney,
-        o.DeliveryCompanyID
+        o.DeliveryCompanyID,
+        ISNULL(oo.IsOrderChecked,1) as IsOrderChecked
 from    [order] o with ( nolock )
         join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
         join dbo.business b with ( nolock ) on o.businessId = b.Id
@@ -1743,7 +1744,7 @@ DateDiff(MINUTE,PubDate, GetDate()) in ({0})", IntervalMinute);
         /// <param name="config"></param>
         /// <param name="Id"></param>
         /// <returns></returns>
-        public bool addOrderSubsidiesLog(decimal AdjustAmount, int OrderId, string Remark)
+        public bool addOrderSubsidiesLog(decimal AdjustAmount, int OrderId, string Remark, string OptName = "发布订单",int OrderStatus=0)
         {
             string sql =
                 @"INSERT INTO OrderSubsidiesLog
@@ -1751,17 +1752,21 @@ DateDiff(MINUTE,PubDate, GetDate()) in ({0})", IntervalMinute);
                                 ,OrderId
                                 ,InsertTime
                                 ,OptName
+                                ,OrderStatus
                                 ,Remark)
                      VALUES
                                 (@Price
                                 ,@OrderId
                                 ,Getdate()
-                                ,'发布订单'
+                                ,@OptName
+                                ,@OrderStatus
                                 ,@Remark);";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Price", AdjustAmount);
             parm.AddWithValue("@OrderId", OrderId);
             parm.AddWithValue("@Remark", Remark);
+            parm.AddWithValue("@OptName", OptName);
+            parm.AddWithValue("@OrderStatus", OrderStatus);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
 
         }
@@ -2224,15 +2229,22 @@ select @@identity";
             #endregion
 
             #region 写子OrderOther表
+            //查询商户是否需要订单审核
+            const string queryCheckOrder = @"SELECT b.IsOrderChecked FROM dbo.business AS b (NOLOCK) WHERE b.Id=@Businessid";
+            IDbParameters CheckOrdeParameters = DbHelper.CreateDbParameters();
+            CheckOrdeParameters.AddWithValue("@Businessid", order.businessId); //商户ID
+            var IsOrderChecked = ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, queryCheckOrder, CheckOrdeParameters),1);
+            
             const string insertOtherSql = @"
-insert into OrderOther(OrderId,NeedUploadCount,HadUploadCount,PubLongitude,PubLatitude,OneKeyPubOrder)
-values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude,@OneKeyPubOrder)";
+insert into OrderOther(OrderId,NeedUploadCount,HadUploadCount,PubLongitude,PubLatitude,OneKeyPubOrder,IsOrderChecked)
+values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude,@OneKeyPubOrder,@IsOrderChecked)";
             IDbParameters dbOtherParameters = DbHelper.CreateDbParameters();
             dbOtherParameters.AddWithValue("@OrderId", orderId); //商户ID
             dbOtherParameters.AddWithValue("@NeedUploadCount", order.OrderCount); //需上传数量
             dbOtherParameters.AddWithValue("@PubLongitude", order.PubLongitude);
             dbOtherParameters.AddWithValue("@PubLatitude", order.PubLatitude);
             dbOtherParameters.AddWithValue("@OneKeyPubOrder", order.OneKeyPubOrder);
+            dbOtherParameters.Add("@OneKeyPubOrder",DbType.Int32).Value=IsOrderChecked;
             DbHelper.ExecuteScalar(SuperMan_Write, insertOtherSql, dbOtherParameters);
             #endregion
 
@@ -3491,18 +3503,18 @@ where   Id = @OrderId and FinishAll = 0";
                                         SUM(a.ordercount) AS OrderNum
                                 FROM    dbo.[order] (NOLOCK) a
                                         JOIN dbo.clienter (NOLOCK) b ON a.clienterId = b.Id
-                                WHERE   a.ActualDoneDate IS NOT NULL {0}
+                                WHERE   a.PubDate IS NOT NULL {0}
                                 GROUP BY b.id ,
                                         b.truename ,
                                         b.PhoneNo) mp";
             StringBuilder sb = new StringBuilder();
             if (recommendQuery.StartDate != DateTime.MinValue)
             {
-                sb.Append(string.Format(" and a.ActualDoneDate>='{0}'", recommendQuery.StartDate.ToString("yyyy-MM-dd")));
+                sb.Append(string.Format(" and a.PubDate>='{0}'", recommendQuery.StartDate.ToString("yyyy-MM-dd")));
             }
             if (recommendQuery.EndDate != DateTime.MinValue)
             {
-                sb.Append(string.Format(" and a.ActualDoneDate<'{0}'", recommendQuery.EndDate.AddDays(1).ToString("yyyy-MM-dd")));
+                sb.Append(string.Format(" and a.PubDate<'{0}'", recommendQuery.EndDate.AddDays(1).ToString("yyyy-MM-dd")));
             }
             if (!string.IsNullOrEmpty(recommendQuery.UserInfo))
             {
