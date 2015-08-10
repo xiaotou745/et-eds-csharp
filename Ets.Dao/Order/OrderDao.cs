@@ -239,7 +239,7 @@ namespace Ets.Dao.Order
                 @Remark,@Weight,@DistribSubsidy,@OrderCount,@ReceviceName,
                 @RecevicePhoneNo,@ReceiveProvinceCode,@ReceiveCityCode,@ReceiveAreaCode,@ReceviceAddress,
                 @ReceviceLongitude,@ReceviceLatitude,@BusinessId,@PickUpAddress,@Payment,@OrderCommission,
-                @WebsiteSubsidy,@CommissionRate,@CommissionFormulaMode,@ReceiveProvince,@ReceviceCity,@ReceiveArea,
+                @WebsiteSubsidy,@CommissionRate,@BaseCommission,@CommissionFormulaMode,@ReceiveProvince,@ReceviceCity,@ReceiveArea,
                 @PickupCode,@BusinessCommission,@SettleMoney,@Adjustment,@OrderFrom,@Status,@CommissionType,@CommissionFixValue,@BusinessGroupId,@Invoice,
                 @MealsSettleMode,@BusinessReceivable);
                select  IDENT_CURRENT('order') ";
@@ -273,6 +273,7 @@ namespace Ets.Dao.Order
             dbParameters.AddWithValue("@OrderCommission", paramodel.ordercommission);    //订单骑士佣金
             dbParameters.AddWithValue("@WebsiteSubsidy", paramodel.websitesubsidy);    //网站补贴
             dbParameters.AddWithValue("@CommissionRate", paramodel.commissionrate);    //订单佣金比例
+            dbParameters.AddWithValue("@BaseCommission", paramodel.basecommission);    //订单基本佣金
             dbParameters.AddWithValue("@CommissionFormulaMode", paramodel.CommissionFormulaMode); //订单佣金计算方式
             dbParameters.AddWithValue("@ReceiveProvince", paramodel.address.province);    //用户省
             dbParameters.AddWithValue("@ReceviceCity", paramodel.address.city); //用户市
@@ -1570,7 +1571,8 @@ select top 1
         oo.GrabTime,
         o.Amount,
         o.DeliveryCompanySettleMoney,
-        o.DeliveryCompanyID
+        o.DeliveryCompanyID,
+        ISNULL(oo.IsOrderChecked,1) as IsOrderChecked
 from    [order] o with ( nolock )
         join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
         join dbo.business b with ( nolock ) on o.businessId = b.Id
@@ -1749,7 +1751,7 @@ DateDiff(MINUTE,PubDate, GetDate()) in ({0})", IntervalMinute);
         /// <param name="config"></param>
         /// <param name="Id"></param>
         /// <returns></returns>
-        public bool addOrderSubsidiesLog(decimal AdjustAmount, int OrderId, string Remark)
+        public bool addOrderSubsidiesLog(decimal AdjustAmount, int OrderId, string Remark, string OptName = "发布订单",int OrderStatus=0)
         {
             string sql =
                 @"INSERT INTO OrderSubsidiesLog
@@ -1757,17 +1759,21 @@ DateDiff(MINUTE,PubDate, GetDate()) in ({0})", IntervalMinute);
                                 ,OrderId
                                 ,InsertTime
                                 ,OptName
+                                ,OrderStatus
                                 ,Remark)
                      VALUES
                                 (@Price
                                 ,@OrderId
                                 ,Getdate()
-                                ,'发布订单'
+                                ,@OptName
+                                ,@OrderStatus
                                 ,@Remark);";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Price", AdjustAmount);
             parm.AddWithValue("@OrderId", OrderId);
             parm.AddWithValue("@Remark", Remark);
+            parm.AddWithValue("@OptName", OptName);
+            parm.AddWithValue("@OrderStatus", OrderStatus);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
 
         }
@@ -2102,6 +2108,7 @@ insert  into dbo.[order]
           ReceviceLatitude ,
           OrderCount ,
           CommissionRate ,
+          BaseCommission ,
           CommissionFormulaMode ,
           SongCanDate ,
           [Weight] ,
@@ -2142,6 +2149,7 @@ values  ( @OrderNo ,
           @ReceviceLatitude ,
           @OrderCount ,
           @CommissionRate ,
+          @BaseCommission,
           @CommissionFormulaMode ,
           @SongCanDate ,
           @Weight1 ,
@@ -2184,6 +2192,7 @@ select @@identity";
             dbParameters.AddWithValue("@ReceviceLatitude", order.ReceviceLatitude);
             dbParameters.AddWithValue("@OrderCount", order.OrderCount);
             dbParameters.AddWithValue("@CommissionRate", order.CommissionRate);
+            dbParameters.AddWithValue("@BaseCommission", order.BaseCommission);
             dbParameters.AddWithValue("@CommissionFormulaMode", order.CommissionFormulaMode);
             dbParameters.AddWithValue("@SongCanDate", order.SongCanDate);
             dbParameters.AddWithValue("@Weight1", order.Weight);
@@ -2228,15 +2237,22 @@ select @@identity";
             #endregion
 
             #region 写子OrderOther表
+            //查询商户是否需要订单审核
+            const string queryCheckOrder = @"SELECT b.IsOrderChecked FROM dbo.business AS b (NOLOCK) WHERE b.Id=@Businessid";
+            IDbParameters CheckOrdeParameters = DbHelper.CreateDbParameters();
+            CheckOrdeParameters.AddWithValue("@Businessid", order.businessId); //商户ID
+            var IsOrderChecked = ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, queryCheckOrder, CheckOrdeParameters),1);
+            
             const string insertOtherSql = @"
-insert into OrderOther(OrderId,NeedUploadCount,HadUploadCount,PubLongitude,PubLatitude,OneKeyPubOrder)
-values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude,@OneKeyPubOrder)";
+insert into OrderOther(OrderId,NeedUploadCount,HadUploadCount,PubLongitude,PubLatitude,OneKeyPubOrder,IsOrderChecked)
+values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude,@OneKeyPubOrder,@IsOrderChecked)";
             IDbParameters dbOtherParameters = DbHelper.CreateDbParameters();
             dbOtherParameters.AddWithValue("@OrderId", orderId); //商户ID
             dbOtherParameters.AddWithValue("@NeedUploadCount", order.OrderCount); //需上传数量
             dbOtherParameters.AddWithValue("@PubLongitude", order.PubLongitude);
             dbOtherParameters.AddWithValue("@PubLatitude", order.PubLatitude);
             dbOtherParameters.AddWithValue("@OneKeyPubOrder", order.OneKeyPubOrder);
+            dbOtherParameters.Add("@IsOrderChecked", DbType.Int32).Value = IsOrderChecked;
             DbHelper.ExecuteScalar(SuperMan_Write, insertOtherSql, dbOtherParameters);
             #endregion
 

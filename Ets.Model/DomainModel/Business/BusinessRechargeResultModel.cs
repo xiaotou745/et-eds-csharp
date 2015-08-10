@@ -28,6 +28,5 @@ namespace Ets.Model.DomainModel.Business
         /// </summary>
         public string notifyUrl { get; set; }
 
-
     }
 }

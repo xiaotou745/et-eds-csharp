@@ -350,6 +350,11 @@ namespace Ets.Model.DataModel.Order
         public int AuditStatus { get; set; }
 
         /// <summary>
+        /// 订单是否需要审核
+        /// </summary>
+        public int IsOrderChecked { get; set; }
+
+        /// <summary>
         /// 订单商家的佣金结算策略id
         /// </summary>
         public int CommissionFormulaMode { get; set; }

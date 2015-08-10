@@ -85,5 +85,10 @@ namespace Ets.Service.Provider.Order
             }
             return adjustment;
         }
+
+        public override decimal GetBaseCommission(OrderCommission model)
+        {
+            return 0;
+        }
     }
 }
