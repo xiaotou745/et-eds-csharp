@@ -1963,15 +1963,15 @@ ORDER BY btr.Id;";
                                            ";
             if (model.GroupId > 0)
             {
-                sql += " GroupId=@GroupId, ";
+                sql += " ,GroupId=@GroupId, ";
             }
             if (model.CommissionType == 1)
             {
-                sql += " BusinessCommission=@BusinessCommission ";
+                sql += " ,BusinessCommission=@BusinessCommission,CommissionFixValue=0 ";
             }
             else
             {
-                sql += " CommissionFixValue=@CommissionFixValue ";
+                sql += " ,CommissionFixValue=@CommissionFixValue,BusinessCommission=0 ";
             }
             sql += @" OUTPUT
                         Inserted.Id,

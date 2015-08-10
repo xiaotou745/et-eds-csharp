@@ -191,8 +191,9 @@ namespace ETS.Enums
         SystemCompensation = 7,
         /// <summary>
         /// 余额调整
+        /// 修改为异常订单
         /// </summary>
-        [DisplayText("余额调整")]
+        [DisplayText("异常订单")]
         BalanceAdjustment = 8,
         /// <summary>
         /// 手续费
