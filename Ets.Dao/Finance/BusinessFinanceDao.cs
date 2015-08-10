@@ -645,7 +645,7 @@ WHERE bbr.BusinessId=@BusinessId ";
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public bool BusinessRecharge(BusinessOptionLog model)
+        public bool BusinessRecharge(BusinessRechargeLog model)
         {
             string sql = string.Format(@" 
 update b
@@ -674,7 +674,7 @@ where b.Id=@BusinessId;");
             var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Amount", model.RechargeAmount);
             parm.AddWithValue("@Status", BusinessBalanceRecordStatus.Success);
-            parm.AddWithValue("@RecordType", BusinessBalanceRecordRecordType.Recharge);
+            parm.AddWithValue("@RecordType", model.RechargeType == 1 ? BusinessBalanceRecordRecordType.Recharge : BusinessBalanceRecordRecordType.Present);
             parm.AddWithValue("@Operator", model.OptName);
             parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@BusinessId", model.BusinessId);
