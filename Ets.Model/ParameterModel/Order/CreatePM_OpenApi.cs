@@ -107,6 +107,11 @@ namespace Ets.Model.ParameterModel.Order
         public decimal commissionrate { get; set; }
 
         /// <summary>
+        /// 订单基本佣金  目前由业务逻辑层计算查询所得
+        /// </summary>
+        public decimal basecommission { get; set; }
+
+        /// <summary>
         /// 订单佣金计算方法 0：默认 1：根据时间段设置不同补贴
         /// </summary>
         public int CommissionFormulaMode { get; set; }

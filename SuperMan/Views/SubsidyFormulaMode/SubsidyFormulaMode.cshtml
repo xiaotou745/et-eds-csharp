@@ -87,6 +87,15 @@
                       }
                     <input id="rCommissionFormulaMode3" @d name="rCommissionFormulaMode" onclick="changeDiv(3);" type="radio" value="3">
                     <label for="rCommissionFormulaMode3" onclick="changeDiv(3);"  style="color: red">满金额补贴</label>
+                    @{
+                        var e = "";
+                        if (!IsAdd)
+                        {
+                            e = StrategyId == "4" ? "checked =checked" : "";
+                        }
+                    }
+                    <input id="rCommissionFormulaMode4" @e name="rCommissionFormulaMode" onclick="changeDiv(4);" type="radio" value="4">
+                    <label for="rCommissionFormulaMode4" onclick="changeDiv(4);" style="color: red">基本佣金+平台补贴</label>
                     @*<input type="submit" value="确认" class="searchBtn" id="btnCommissionFormulaMode" />*@ 
                 </td>
             </tr>
@@ -199,7 +208,24 @@
             </table>
         </div>
     </div>
-    </div>  
+    <div id="baseDiv">
+        <div class="SearchMd">
+            <table border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td>
+                        <label style="color: red">基本佣金+平台补贴设置</label>
+                        <br /><p>
+                            佣金公式： ( 基本佣金 (可配置) + 代收客配或 网站补贴)*订单数量
+                        </p>
+                        佣金参数 基本佣金:<input name="txtBaseCommission" value="@(IsAdd == true ? 0 : ViewBag.GloglConfig.BaseCommission)" id="txtBaseCommission" type="text">
+                        网站补贴:<input name="txtBaseSiteSubsidies" value="@(IsAdd == true ? 0 : ViewBag.GloglConfig.BaseSiteSubsidies)" id="txtBaseSiteSubsidies" type="text">
+                        @*<input type="submit" value="确定" class="searchBtn" onclick="setCommonCommissionRatio();" />*@
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>  
 <div>
     <div class="add-openbox add-form" id="addDivPrice" style="width:500px">
         <h2>
@@ -253,6 +279,7 @@
         $("#timeDiv").hide();
         $("#PriceDiv").hide();
         $("#baoBenDiv").hide();
+        $("#baseDiv").hide();
         if (div == 0)
         {
             $("#putongDiv").show();
@@ -265,6 +292,9 @@
         }
         if (div == 3) {
             $("#PriceDiv").show();
+        }
+        if (div == 4) {
+            $("#baseDiv").show();
         }
     }
     function showUpdatePrice(id, v1, v2) {
@@ -568,6 +598,9 @@
         var PriceCommissionRatio = 0;//满金额补贴
         var PriceSiteSubsidies = 0;
 
+        var BaseCommission = 0;//基本佣金
+        var BaseSiteSubsidies = 0;
+
         if (StrategyId == 0)
         {
             CommonCommissionRatio = $("#txtptCommonCommissionRatio").val();
@@ -622,7 +655,25 @@
                 return;
             }
         }
-        var pars = { "IsStarTimeSubsidies": IsStarTimeSubsidies, "IsStartOverStoreSubsidies": IsStartOverStoreSubsidies, "CommonCommissionRatio": CommonCommissionRatio, "CommonSiteSubsidies": CommonSiteSubsidies, "TimeSpanCommissionRatio": TimeSpanCommissionRatio, "TimeSpanInPrice": TimeSpanInPrice, "TimeSpanOutPrice": TimeSpanOutPrice, "CommissionRatio": CommissionRatio, "SiteSubsidies": SiteSubsidies, "PriceCommissionRatio": PriceCommissionRatio, "PriceSiteSubsidies": PriceSiteSubsidies, "StrategyId": StrategyId, "GroupId": groupid, "GroupName": groupname };
+        if (StrategyId == 4) {
+            BaseCommission = $("#txtBaseCommission").val();
+            BaseSiteSubsidies = $("#txtBaseSiteSubsidies").val();
+            if (BaseCommission < 0) {
+                alert("配置数据不能小于0！");
+                return;
+            }
+            if (BaseSiteSubsidies < 0) {
+                alert("配置数据不能小于0！");
+                return;
+            }
+        }
+        var pars = { "IsStarTimeSubsidies": IsStarTimeSubsidies, "IsStartOverStoreSubsidies": IsStartOverStoreSubsidies, 
+            "CommonCommissionRatio": CommonCommissionRatio, "CommonSiteSubsidies": CommonSiteSubsidies, 
+            "TimeSpanCommissionRatio": TimeSpanCommissionRatio, "TimeSpanInPrice": TimeSpanInPrice, "TimeSpanOutPrice": TimeSpanOutPrice, 
+            "CommissionRatio": CommissionRatio, "SiteSubsidies": SiteSubsidies,
+            "PriceCommissionRatio": PriceCommissionRatio, "PriceSiteSubsidies": PriceSiteSubsidies, 
+            "BaseCommission": BaseCommission, "BaseSiteSubsidies": BaseSiteSubsidies,
+            "StrategyId": StrategyId, "GroupId": groupid, "GroupName": groupname };
         var url = "/SubsidyFormulaMode/ModifySubsidyFormulaMode";
         $.ajax({
             type: 'POST',

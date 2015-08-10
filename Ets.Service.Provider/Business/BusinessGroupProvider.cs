@@ -134,6 +134,14 @@ namespace Ets.Service.Provider.Business
                         globalConfig.Value = globalConfigModel.PriceSiteSubsidies;
                         businessGroupDao.UpdateGlobalConfig(globalConfig);
                         break;
+                    case 4: //基本佣金补贴
+                        globalConfig.KeyName = "BaseCommission";
+                        globalConfig.Value = globalConfigModel.BaseCommission;
+                        businessGroupDao.UpdateGlobalConfig(globalConfig);
+                        globalConfig.KeyName = "BaseSiteSubsidies";
+                        globalConfig.Value = globalConfigModel.BaseSiteSubsidies;
+                        businessGroupDao.UpdateGlobalConfig(globalConfig);
+                        break;
                 }
 
                 #endregion

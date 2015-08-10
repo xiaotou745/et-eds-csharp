@@ -72,6 +72,11 @@
                 <input name="busiLatitude" id="busiLatitude" style="width: 120px;" type="text" value="@Model.Latitude" disabled="disabled">
                 <a id="postion" style="margin-left: 15px"><b>地图定位</b></a>
             </div>
+            <div class="control-group" style="margin-bottom: 10px" id="OrderChecked">
+                <label style="margin-left: 5px">订单是否需要审核：</label>
+                <label><input name="IsCheckOrder" type="radio" value="1" @(Model.IsOrderChecked == 1 ? "checked" : "") />是 </label>
+                <label><input name="IsCheckOrder" type="radio" value="0" @(Model.IsOrderChecked == 0 ? "checked" : "") />否 </label> 
+            </div>
         </div>
         <div style="width:750px;height: auto;border-bottom:solid 0px #dcdcdc;padding-left:10px;">
             <div class="control-group" style="margin-top: 10px">
@@ -584,9 +589,35 @@
         //    return false ;
         //}
         var paramaters = {
+<<<<<<< HEAD
             "Id": id, "Name": name, "Landline": landline, "PhoneNo2": phoneNo2, "DistribSubsidy": customerDeliveryMoney, "CityId": cityId, "districtId": districtId, "City": cityName,
             "district": districtName, "Address": adress, "Latitude": latitude, "Longitude": longitude, "CommissionType": commissionType, "BusinessCommission": bussinessDeliveryRatio,
             "CommissionFixValue": bussinessFixValue, "BusinessGroupId": businessGroupId, "MealsSettleMode": mealsSettleMode, "groupId": groupId, "originalBusiId": originalBusiId, "oneKeyPubOrder": oneKeyPubOrder, "IsEmployerTask": IsEmployerTask, "isAllowOverdraft": isAllowOverdraft, "RecommendPhone": recomPhone
+=======
+            "Id": id,
+            "Name": name,
+            "Landline": landline,
+            "PhoneNo2": phoneNo2,
+            "DistribSubsidy": distribSubsidy,
+            "CityId": cityId,
+            "districtId": districtId,
+            "City": cityName,
+            "district": districtName,
+            "Address": adress,
+            "Latitude": latitude,
+            "Longitude": longitude,
+            "CommissionType": commissionType,
+            "BusinessCommission": commissionText,
+            "CommissionFixValue": commissionFixValue,
+            "BusinessGroupId": businessGroupId,
+            "MealsSettleMode": mealsSettleMode,
+            "groupId": groupId,
+            "originalBusiId": originalBusiId,
+            "oneKeyPubOrder": oneKeyPubOrder,
+            "IsEmployerTask": IsEmployerTask,
+            "isAllowOverdraft": isAllowOverdraft,
+            "IsOrderChecked":$('#OrderChecked input[name="IsCheckOrder"]:checked ').val()
+>>>>>>> 99ccbb55ff59c44990548cc4b57e756e9c84b51b
         };
         var url = "/BusinessManager/ModifyBusinessDetail";
         $.ajax({

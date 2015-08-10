@@ -561,7 +561,8 @@ order by a.id desc
                                 b.BalancePrice,
                                 b.OneKeyPubOrder,
                                 b.IsAllowOverdraft,
-                                b.IsEmployerTask 
+                                b.IsEmployerTask,
+                                b.IsOrderChecked 
                                 FROM dbo.business as b WITH(NOLOCK)
                                 left join BusinessGroup on b.BusinessGroupId=BusinessGroup.Id
                                 WHERE b.Id = @busiId";
@@ -1839,7 +1840,8 @@ SELECT   b.Id ,
          ISNULL(b.OneKeyPubOrder,0) OneKeyPubOrder,
          b.IsAllowOverdraft,
          b.IsEmployerTask,
-         ISNULL(b.RecommendPhone,'') AS RecommendPhone
+         ISNULL(b.RecommendPhone,'') AS RecommendPhone,
+         IsOrderChecked
 FROM business b WITH(NOLOCK) 
 	Left join BusinessFinanceAccount bfa WITH(NOLOCK) ON b.Id=bfa.BusinessId AND bfa.IsEnable=1
     Left join [group] g WITH(NOLOCK) on g.Id=b.GroupId 
@@ -1959,7 +1961,8 @@ ORDER BY btr.Id;";
                                 OneKeyPubOrder=@OneKeyPubOrder,
                                 IsEmployerTask=@IsEmployerTask,
                                 IsAllowOverdraft=@IsAllowOverdraft,
-                                RecommendPhone=@RecommendPhone 
+                                RecommendPhone=@RecommendPhone,
+                                IsOrderChecked=@IsOrderChecked 
                                            ";
             if (model.GroupId > 0)
             {
@@ -2014,7 +2017,11 @@ ORDER BY btr.Id;";
             parm.AddWithValue("@OneKeyPubOrder", model.OneKeyPubOrder);
             parm.AddWithValue("@IsEmployerTask", model.IsEmployerTask);
             parm.Add("@IsAllowOverdraft", DbType.Int16).Value = model.IsAllowOverdraft;
+ 
             parm.Add("@RecommendPhone", DbType.String).Value = model.RecommendPhone; //推荐人手机号 
+ 
+            parm.Add("@IsOrderChecked", DbType.Int32).Value = model.IsOrderChecked;
+ 
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
         /// <summary>

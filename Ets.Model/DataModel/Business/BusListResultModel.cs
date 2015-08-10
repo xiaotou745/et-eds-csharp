@@ -87,5 +87,9 @@ namespace Ets.Model.DataModel.Business
         ///  是否雇主任务
         /// </summary>
         public int IsEmployerTask { get; set; }
+        /// <summary>
+        /// 是否需要审核
+        /// </summary>
+        public int IsOrderChecked { get; set; }
     }
 }
