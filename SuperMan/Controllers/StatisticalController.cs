@@ -214,7 +214,41 @@ namespace SuperMan.Controllers
             var pagelist= statisticsProvider.GetRecommendList(recommendQuery);
             return PartialView("PostRecommendStatistical", pagelist);
         }
-
+        /// <summary>
+        /// 推荐统计详情
+        /// 茹化肖
+        /// 2015年8月10日16:34:42
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult RecommendDetail(string phoneNum,string dataType)
+        {
+            ViewBag.DataType = string.IsNullOrWhiteSpace(dataType) ? 1 : Convert.ToInt32(dataType);
+            ViewBag.PhoneNum = string.IsNullOrWhiteSpace(phoneNum) ? "" : phoneNum;
+            ViewBag.TrueName = dataType == "2" ? "真实姓名" : "";
+            RecommendQuery recommendQuery = new RecommendQuery();
+            recommendQuery.DataType = Convert.ToInt32(dataType);
+            recommendQuery.PageIndex = 1;
+            recommendQuery.StartDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).ToString();
+            recommendQuery.RecommendPhone = phoneNum;
+            var pagelist = statisticsProvider.GetRecommendDetailList(recommendQuery);
+            return View(pagelist);
+        }
+        /// <summary>
+        /// 推荐统计详情分页
+        /// </summary>
+        /// <param name="PageIndex"></param>
+        /// <returns></returns>
+        public ActionResult PsotRecommendList(int PageIndex = 1)
+        {
+            RecommendQuery recommendQuery = new RecommendQuery();
+            TryUpdateModel(recommendQuery);
+            recommendQuery.PageIndex = PageIndex;
+            ViewBag.DataType = recommendQuery.DataType;//设置显示商户列表
+            recommendQuery.StartDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).ToString();
+            var statisticsProvider = new StatisticsProvider();
+            var pagelist = statisticsProvider.GetRecommendDetailList(recommendQuery);
+            return View("_PsotRecommendList", pagelist);
+        }
         #endregion
 
         /// <summary>
