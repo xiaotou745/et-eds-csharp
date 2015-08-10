@@ -189,7 +189,12 @@ namespace Ets.Service.Provider.Statistics
                 recommendQuery.RecommendPhone = "";
             if (recommendQuery.PageIndex < 1)
                 recommendQuery.PageIndex = 1;
-            return statisticsDao.GetRecommendList(recommendQuery); ;
+            if (recommendQuery.DataType == 1)
+            {
+                //查询商户分页信息
+                return statisticsDao.GetRecommendListB(recommendQuery); 
+            }
+            return statisticsDao.GetRecommendListC(recommendQuery);
         }
 
         /// <summary>

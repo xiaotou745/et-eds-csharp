@@ -2228,13 +2228,7 @@ select @@identity";
             DbHelper.ExecuteNonQuery(SuperMan_Write, sqlOrderLog, orderLogParameters);
             #endregion
 
-            #region 写子OrderOther表
-            //查询商户是否需要订单审核
-            const string queryCheckOrder = @"SELECT b.IsOrderChecked FROM dbo.business AS b (NOLOCK) WHERE b.Id=@Businessid";
-            IDbParameters CheckOrdeParameters = DbHelper.CreateDbParameters();
-            CheckOrdeParameters.AddWithValue("@Businessid", order.businessId); //商户ID
-            var IsOrderChecked = ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, queryCheckOrder, CheckOrdeParameters),1);
-            
+            #region 写子OrderOther表        
             const string insertOtherSql = @"
 insert into OrderOther(OrderId,NeedUploadCount,HadUploadCount,PubLongitude,PubLatitude,OneKeyPubOrder,IsOrderChecked)
 values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude,@OneKeyPubOrder,@IsOrderChecked)";
@@ -2244,7 +2238,7 @@ values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude,@OneKeyPubOrder,@I
             dbOtherParameters.AddWithValue("@PubLongitude", order.PubLongitude);
             dbOtherParameters.AddWithValue("@PubLatitude", order.PubLatitude);
             dbOtherParameters.AddWithValue("@OneKeyPubOrder", order.OneKeyPubOrder);
-            dbOtherParameters.Add("@IsOrderChecked", DbType.Int32).Value = IsOrderChecked;
+            dbOtherParameters.Add("@IsOrderChecked", DbType.Int32).Value = order.IsOrderChecked;
             DbHelper.ExecuteScalar(SuperMan_Write, insertOtherSql, dbOtherParameters);
             #endregion
 
