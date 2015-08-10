@@ -16,7 +16,7 @@ SELECT  ord.OrderId,ISNULL(GrabTime, '') AS GrabTime,ISNULL(ab.ActualDoneDate, '
                                     JOIN business (NOLOCK) c ON c.id = ab.businessId WHERE ord.IsNotRealOrder=1)
 UPDATE OrderOther set DeductCommissionReason=temp.reason  from  (select o.OrderId, case WHEN o.GrabToCompleteDistance > -1 and o.GrabToCompleteDistance<=0 THEN '接单-完成位置重合' 
 
-	 WHEN dateadd(MINUTE ,5,o.GrabTime) < o.ActualDoneDate and o.ActualDoneDate < dateadd(MINUTE ,120,o.GrabTime) THEN '完成时间不在5-120分钟内'
+	 WHEN  o.ActualDoneDate < dateadd(MINUTE ,5,o.GrabTime) or o.ActualDoneDate > dateadd(MINUTE ,120,o.GrabTime) THEN '完成时间不在5-120分钟内'
 
 	
  ELSE '完成订单量超过50个' END AS reason from o) temp,OrderOther oo where oo.OrderId=temp.OrderId;
