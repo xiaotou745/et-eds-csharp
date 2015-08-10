@@ -11,5 +11,6 @@ namespace Ets.Model.DataModel.Business
         public string phoneNumber { get; set; }
         public string password { get; set; }
         public string checkCode { get; set; }
+        public string oldpassword { get; set; }
     }
 }

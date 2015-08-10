@@ -40,11 +40,6 @@ namespace ETS.Const
         public const string Ets_Service_Provider_Common_GetPublicBankCity_New = "Ets_Service_Provider_Common_GetPublicBankCity_New";
 
         /// <summary>
-        /// 骑士提现锁
-        /// </summary>
-        public const string Ets_Withdraw_Lock_C = "Ets_Withdraw_Lock_C_{0}";
-
-        /// <summary>
         /// 骑士端登录
         /// </summary>
         public const string LoginCount_C = "LoginCount_C_";
@@ -55,19 +50,19 @@ namespace ETS.Const
         public const string RegisterCount_C = "RegisterCount_C_";
 
         /// <summary>
-        /// 骑士端修改密码
+        /// 骑士端修改密码请求次数
         /// </summary>
         public const string ChangePasswordCount_C = "ChangePasswordCount_C_";
+        /// <summary>
+        /// 骑士端修改密码验证码
+        /// </summary>
+        public const string ChangePasswordCheckCode_C = "ChangePasswordCheckCode_C_";
 
         /// <summary>
         /// 骑士端忘记密码
         /// </summary>
         public const string PostForgetPwdCount_C = "PostForgetPwdCount_C";
 
-        /// <summary>
-        /// 商家提现锁
-        /// </summary>
-        public const string Ets_Withdraw_Lock_B = "Ets_Withdraw_Lock_B_{0}";
         /// <summary>
         /// 商家端登录
         /// </summary>
@@ -143,5 +138,26 @@ namespace ETS.Const
         /// 骑士获取自己的物流公司
         /// </summary>
         public const string ClienterGetDeliveryCompany = "Clienter_GetDeliveryCompany_{0}";
+        /// <summary>
+        /// 商家提现锁
+        /// </summary>
+        public const string Ets_Withdraw_Lock_B = "Ets_Withdraw_Lock_B_{0}";
+        /// <summary>
+        /// 骑士提现锁
+        /// </summary>
+        public const string Ets_Withdraw_Lock_C = "Ets_Withdraw_Lock_C_{0}";
+        /// <summary>
+        /// 商家提现单处理状态
+        /// </summary>
+        public const string Ets_Withdraw_Deal_B = "Ets_Withdraw_Deal_B_{0}";
+        /// <summary>
+        /// 骑士提现单处理状态
+        /// </summary>
+        public const string Ets_Withdraw_Deal_C = "Ets_Withdraw_Deal_C_{0}";
+        /// <summary>
+        /// 商家提现单创建锁
+        /// </summary>
+        public const string Ets_Withdraw_Create_Lock_B = "Ets_Withdraw_Create_Lock_B_{0}";
+
     }
 }

@@ -142,7 +142,9 @@ namespace Ets.Dao.Clienter
         {
 
             ClienterLoginResultModel model = null;
-            const string querysql = @"select  c.Id as userId ,
+            const string querysql = @"select 
+        c.WorkStatus,
+        c.Id as userId ,
         c.phoneNo ,
         c.[status] ,
         c.AccountBalance as Amount ,
@@ -151,7 +153,8 @@ namespace Ets.Dao.Clienter
         c.IsBind ,
         ISNULL(d.Id,0) as DeliveryCompanyId,
         isnull(d.DeliveryCompanyName,'') DeliveryCompanyName,
-        isnull(d.IsDisplay,1) IsDisplay
+        isnull(d.IsDisplay,1) IsDisplay,
+        c.Appkey
 from    dbo.clienter c(nolock)
  left join dbo.DeliveryCompany d(nolock) on c.DeliveryCompanyId = d.Id
 where   c.PhoneNo = @PhoneNo
@@ -199,7 +202,7 @@ where   c.PhoneNo = @PhoneNo
         /// <returns></returns>
         public ClienterModel GetUserInfoByUserId(int UserId)
         {
-            string sql = "SELECT TrueName,PhoneNo,AccountBalance,Status FROM dbo.clienter(NOLOCK) WHERE Id=" + UserId;
+            string sql = "SELECT TrueName,PhoneNo,AccountBalance,AllowWithdrawPrice,Status FROM dbo.clienter(NOLOCK) WHERE Id=" + UserId;
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql);
             IList<ClienterModel> list = MapRows<ClienterModel>(dt);
             if (list == null || list.Count <= 0)
@@ -218,7 +221,7 @@ where   c.PhoneNo = @PhoneNo
         /// <returns></returns>
         public ClienterModel GetUserInfoByUserPhoneNo(string phoneNo)
         {
-            string sql = "SELECT Id,TrueName,PhoneNo,AccountBalance,IDCard FROM dbo.clienter(NOLOCK) WHERE PhoneNo=@PhoneNo";
+            string sql = "SELECT Id,TrueName,PhoneNo,AccountBalance,IDCard,[Password] FROM dbo.clienter(NOLOCK) WHERE PhoneNo=@PhoneNo";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@PhoneNo", SqlDbType.NVarChar);
             parm.SetValue("@PhoneNo", phoneNo);
@@ -448,9 +451,10 @@ SELECT PhoneNo AS Phone,0 AS PemType FROM clienter(NOLOCK) WHERE Status=1
                            ,[CityId]
                            ,[GroupId]
                            ,[DeliveryCompanyId]
-                           ,[Timespan])
+                           ,[Timespan]
+                           ,[Appkey])
                      VALUES
-                       (@PhoneNo,@recommendPhone,@Password,@Status,@InsertTime,@InviteCode,@City,@CityId,@GroupId,@DeliveryCompanyId,@Timespan );
+                       (@PhoneNo,@recommendPhone,@Password,@Status,@InsertTime,@InviteCode,@City,@CityId,@GroupId,@DeliveryCompanyId,@Timespan,@Appkey );
                     select SCOPE_IDENTITY() as id;";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@PhoneNo", SqlDbType.NVarChar);
@@ -465,6 +469,7 @@ SELECT PhoneNo AS Phone,0 AS PemType FROM clienter(NOLOCK) WHERE Status=1
             parm.AddWithValue("@GroupId", model.GroupId);
             parm.AddWithValue("@DeliveryCompanyId", (object)model.DeliveryCompanyId);
             parm.AddWithValue("@Timespan", timespan);
+            parm.AddWithValue("@Appkey", model.Appkey);
             object i = DbHelper.ExecuteScalar(SuperMan_Write, sql, parm);
             if (i != null)
             {
@@ -578,10 +583,13 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.FromClienter, OrderConst.O
         /// <returns></returns>
         public ClienterStatusModel GetUserStatus(int userId)
         {
-            string sql = @" select  c.Id as userid ,
+            string sql = @" select 
+        c.WorkStatus,
+        c.Id as userid ,
         c.[status] ,
         c.phoneno ,
         c.AccountBalance as amount ,
+        c.AllowWithdrawPrice as AllowWithdrawPrice ,
         c.IsBind,
         ISNULL(d.Id,0) as DeliveryCompanyId,
         isnull(d.DeliveryCompanyName,'') DeliveryCompanyName,
@@ -1402,6 +1410,7 @@ WHERE c.Id = @ClienterId  ";
             parm.Add("price", DbType.Decimal, 18).Value = price;
             DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm);
         }
+
 
         /// <summary>
         /// 获取骑士用户名

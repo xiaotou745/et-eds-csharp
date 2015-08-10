@@ -17,6 +17,7 @@ namespace SuperManWebApi.Controllers
     /// 消息中心模块接口
     /// </summary>
     [ExecuteTimeLog]
+    [Token]
     [Validate]
     [ApiVersion]
     public class MessageController : ApiController

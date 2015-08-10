@@ -24,7 +24,7 @@ width: 100%;
             <th>商户信息</th>
             <th>超人信息</th>
             <th>发布时间</th>
-            <th width="%5">取货地址</th>
+            @*<th width="%5">取货地址</th>*@
             <th width="%5">送货地址</th>
             <th>实际完成时间</th>
             <th>订单数量</th>
@@ -34,21 +34,19 @@ width: 100%;
             <th>外送费</th>
             <th>每单补贴</th>
             <th>任务补贴</th>
-            <th>商家结算比例</th>
+            <th>商家结算</th>
             <th>订单来源</th>
             <th>订单状态</th>
             <th>已上传/共需上传</th>
             <th>抢单-完成</th>
+            <th>审核状态</th>
             <th>操作</th>
         </tr>
     </thead>
     <tbody>
         @{
-            var i = 0;
             if (Model != null && Model.Records.Count > 0)
             {
-
-           
                 foreach (var item in Model.Records)
                 {
                     double distance = ETS.Util.ParseHelper.ToDouble(item.GrabToCompleteDistance);
@@ -69,18 +67,29 @@ width: 100%;
                          grabToCompleteStyle = "color:green";
                          grabToCompleteStr = "不重合";
                     }
+                    string AuditStatus = "";
+                    if (item.AuditStatus == 2)
+                    {
+                        AuditStatus = "审核拒绝";
+                    }
+                    else if (item.AuditStatus == 1)
+                    {
+                        AuditStatus="审核通过";
+                    }
+                    else
+                    {
+                        AuditStatus = "待审核";
+                    }
                    
-                    var diffHour = (DateTime.Now - DateTime.Parse(item.PubDate != null ? item.PubDate.ToString() : DateTime.Now.ToString())).TotalHours;
-                    string val = diffHour > 10 && item.Status == 0 ? "red" : diffHour > 8 && item.Status == 0 ? "blue" : diffHour > 5 && item.Status == 0 ? "yellow" : "none";
-                    i++;
-                @*<tr id="@item.Id" style="background-color:@Html.Raw(val)" >*@
-                    <tr id="@item.Id">
+                    var diffMinutes = (DateTime.Now - DateTime.Parse(item.PubDate != null ? item.PubDate.ToString() : DateTime.Now.ToString())).TotalMinutes;
+                    string timeoutStyle = diffMinutes > 5 && item.Status == 0 ? " style=background-color:#FFCCCC" : "";
+                    <tr id="@item.Id" @timeoutStyle>
                         <td><a href="/Order/OrderDetail?OrderNo=@item.OrderNo&OrderId=@item.Id ">@item.OrderNo</a></td>
                         <td>@item.OriginalOrderNo</td>
                         <td>@item.BusinessName <br> @item.BusinessPhoneNo</td>
                         <td>@item.ClienterName <br> @item.ClienterPhoneNo</td>
                         <td>@item.PubDate</td>
-                        <td>@item.PickUpAddress</td>
+                        @*<td>@item.PickUpAddress</td>*@
                         <td>@item.ReceviceAddress</td>
                         <td>@item.ActualDoneDate</td>
                         <td>@item.OrderCount</td>
@@ -88,28 +97,38 @@ width: 100%;
                         <td>@item.OrderCommission</td>
                         @{
                             decimal butie = 0.00M;
-                            if (1 == item.IsNotRealOrder)
-                            {
-                                butie = item.OrderCommission.Value - item.RealOrderCommission;
-                            }
-                            
-                            if (butie > 0)
-                            {
-                                <td style="color:red;font-weight:600">@butie</td>
+
+                            if (@item.AuditStatus!=2)
+                            {                                
+                                 <td>0.00</td>                               
                             }
                             else
-                            {
-                                <td>@butie</td>
+                            {                              
+                                butie = item.OrderCommission.Value - item.RealOrderCommission;                          
+
+                                if (butie > 0)
+                                {
+                                    <td style="color:red;font-weight:600">@butie</td>
+                                }
+                                else
+                                {
+                                    <td>@butie</td>
+                                }
                             }
-                        }
+}
                         <td>@item.DistribSubsidy</td>
                         <td>@item.WebsiteSubsidy</td>
                         <td>@item.Adjustment</td>
-                        <td>@item.BusinessCommission</td>
+                        <td>@{ var commission = item.CommissionType == 1 ? item.BusinessCommission + "%" : item.CommissionFixValue.ToString();}
+                            @commission
+                        </td>
                         <td>@item.GroupName</td>
-                        <td style="color:@Html.Raw(val)">@ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.OrderStatusCommon)item.Status).GetType(), (ETS.Enums.OrderStatusCommon)item.Status).Text</td>
+                        <td>@ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.OrderStatusCommon)item.Status).GetType(), (ETS.Enums.OrderStatusCommon)item.Status).Text</td>
                         <td>@item.HadUploadCount.ToString()/@item.OrderCount.ToString()</td>  
                         <td style="@grabToCompleteStyle">@grabToCompleteStr</td>
+                        <td>
+                            @AuditStatus
+                        </td>
                         <td><a  href="javascript:showMapData('@item.Id')">查看地图</a></td>
                     </tr>
                 }
@@ -135,6 +154,7 @@ width: 100%;
 <script type="text/javascript">
     var adminjs = new adminglass(); //实例化后台类
     $(function () {
+
     });
     $('#btnSuperConfim').bind('click', function () {
         var orderCommission = $('#OrderCommissionUnFin').val();
@@ -280,7 +300,7 @@ width: 100%;
             var centerLongitude = jsonstr.PubLongitude;
             var centerLatitude = jsonstr.PubLatitude;
             if (jsonstr.PubLongitude != 0 && jsonstr.PubLatitude!=0) {
-              //也许需要重新计算中心点
+                //也许需要重新计算中心点
             }
             map.centerAndZoom(new BMap.Point(centerLongitude, centerLatitude), 16);
             //map.centerAndZoom(new BMap.Point(116.404, 39.915), 16);

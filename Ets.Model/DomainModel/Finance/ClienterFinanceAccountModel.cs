@@ -41,6 +41,27 @@ namespace Ets.Model.DomainModel.Finance
         /// 易宝系统易宝账户余额
         /// </summary>
         public decimal YeeBalance { get; set; }
+        /// <summary>
+        /// 打款处理状态（0：待处理 1：已处理）
+        /// </summary>
+        public int DealStatus { get; set; }
+        /// <summary>
+        /// 打款处理次数
+        /// </summary>
+        public int DealCount { get; set; }
+        /// <summary>
+        /// 提现申请单Id
+        /// </summary>
+        public long WithwardId { get; set; }
+        /// <summary>
+        /// 提现申请单号
+        /// </summary>
+        public string WithwardNo { get; set; }
+        /// <summary>
+        /// 提现单状态（1待审核 2 审核通过 3打款完成 20打款中 -1审核拒绝 -2 打款失败 4 打款异常）
+        /// </summary>
+        public int WithdrawStatus { get; set; }
+        
         
     }
 }

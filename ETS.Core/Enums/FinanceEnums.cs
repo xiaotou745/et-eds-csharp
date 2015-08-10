@@ -84,12 +84,12 @@ namespace ETS.Enums
         /// <summary>
         /// 骑士信息找不到
         /// </summary>
-        [DisplayText("姓名不符")]
+        [DisplayText("账户名与账号注册姓名不符")]
         TrueNameNoMatch = -5,
         /// <summary>
         /// 骑士信息找不到
         /// </summary>
-        [DisplayText("身份证不符")]
+        [DisplayText("身份证与账号注册身份证不符")]
         IDCardNoMatch = -6
     }
 
@@ -123,18 +123,25 @@ namespace ETS.Enums
         /// <summary>
         /// 骑士信息找不到
         /// </summary>
-        [DisplayText("姓名不符")]
+        [DisplayText("账户名与账号注册姓名不符")]
         TrueNameNoMatch = -5,
         /// <summary>
         /// 骑士信息找不到
         /// </summary>
-        [DisplayText("身份证不符")]
+        [DisplayText("身份证与账号注册身份证不符")]
         IDCardNoMatch = -6
     }
     /// <summary>
     ///骑士余额流水   流水状态(1、交易成功 2、交易中）枚举 add by caoheyang 20150509
     /// </summary>
     public enum ClienterBalanceRecordStatus
+    {
+        [DisplayText("交易成功")]
+        Success = 1,
+        [DisplayText("交易中")]
+        Tradeing = 2
+    }
+    public enum ClienterAllowWithdrawRecordStatus
     {
         [DisplayText("交易成功")]
         Success = 1,
@@ -194,6 +201,29 @@ namespace ETS.Enums
         ProcedureFee = 9
     }
 
+    public enum ClienterAllowWithdrawRecordType
+    {
+        /// <summary>
+        /// 订单佣金
+        /// </summary>
+        [DisplayText("订单佣金")] OrderCommission = 1,
+        /// <summary>
+        /// 提现申请
+        /// </summary>
+        [DisplayText("提现申请")]
+        WithdrawApply = 3,
+        /// <summary>
+        /// 余额调整
+        /// </summary>
+        [DisplayText("余额调整")]
+        BalanceAdjustment = 8,
+        /// <summary>
+        /// 手续费
+        /// </summary>
+        [DisplayText("手续费")]
+        ProcedureFee = 9
+    }
+
     /// <summary>
     ///骑士提现 提现状态(1待审核 2 审核通过 3打款完成 20 打款中 -1审核拒绝 -2 打款失败) 枚举 add by caoheyang 20150509
     /// </summary>
@@ -205,12 +235,26 @@ namespace ETS.Enums
         Allow = 2,
         [DisplayText("打款完成")]
         Success = 3,
+        [DisplayText("打款异常")]
+        Except = 4,
         [DisplayText("审核拒绝")]
         TurnDown = -1,
         [DisplayText("打款失败")]
         Error = -2,
         [DisplayText("打款中")]
         Paying = 20
+    }
+
+    /// <summary>
+    ///骑士提现单处理状态(0 待处理 1 已处理 )
+    /// </summary>
+    public enum ClienterWithdrawFormDealStatus
+    {
+        [DisplayText("待处理")]
+        Dealing = 0,
+        [DisplayText("已处理")]
+        Dealed = 1,
+
     }
 
     /// <summary>
@@ -384,7 +428,7 @@ namespace ETS.Enums
     }
 
     /// <summary>
-    ///商户提现 提现状态(1待审核 2 审核通过 3打款完成 20打款中 -1审核拒绝 -2 打款失败) 枚举 add by caoheyang 20150509
+    ///商户提现 提现状态(1待审核 2 审核通过 3打款完成 20打款中 -1审核拒绝 -2 打款失败 4 打款异常) 枚举 add by caoheyang 20150509
     /// </summary>
     public enum BusinessWithdrawFormStatus
     {
@@ -394,6 +438,8 @@ namespace ETS.Enums
         Allow = 2,
         [DisplayText("打款完成")]
         Success = 3,
+        [DisplayText("打款异常")]
+        Except = 4,
         [DisplayText("审核拒绝")]
         TurnDown = -1,
         [DisplayText("打款失败")]
@@ -401,7 +447,17 @@ namespace ETS.Enums
         [DisplayText("打款中")]
         Paying = 20,
     }
-
+    /// <summary>
+    ///商户提现单处理状态(0 待处理 1 已处理 )
+    /// </summary>
+    public enum BusinessWithdrawFormDealStatus
+    {
+        [DisplayText("待处理")]
+        Dealing = 0,
+        [DisplayText("已处理")]
+        Dealed = 1,
+        
+    }
     /// <summary>
     ///商户金融账号 账号类型：(1网银 2支付宝 3微信 4财付通 5百度钱包）枚举 add by caoheyang 20150511
     /// </summary>
@@ -443,7 +499,35 @@ namespace ETS.Enums
         [DisplayText("已取货")]
         PickUp = 4
     }
-
+    public enum OrderAuditStatusCommon
+    {
+        [DisplayText("审核拒绝")]
+        Refuse = 2,
+        [DisplayText("待审核")]
+        NotAudit = 0,
+        [DisplayText("审核通过")]
+        Through = 1       
+    }
+    /// <summary>
+    ///提现单处理状态(0：初始值1：待注册 2：已注册 3：待转账 4：已转账 5：待提现 6：已提现) 
+    /// </summary>
+    public enum WithdrawDealStatus
+    {
+        [DisplayText("初始值")]
+        Default = 0,
+        [DisplayText("待注册")]
+        Registering = 1,
+        [DisplayText("已注册")]
+        Registered = 2,
+        [DisplayText("待转账")]
+        Transfering = 3,
+        [DisplayText("已转账")]
+        Transfered = 4,
+        [DisplayText("待提现")]
+        Cashing = 5,
+        [DisplayText("已提现")]
+        Cashed = 6
+    }
     #endregion
 
 
@@ -535,5 +619,13 @@ namespace ETS.Enums
         Private = 0,//个人出手续费
         EDaiSong = 1//E代送
 
+    }
+    /// <summary>
+    /// 商户提现涉及到的各种返回状态枚举 add by caoheyang 20150511
+    /// </summary>
+    public enum WithdrawCreateB
+    {
+        [DisplayText("请等待一分钟后创建提现申请单")]
+        Warn = 1
     }
 }

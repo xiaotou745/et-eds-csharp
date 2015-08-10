@@ -12,6 +12,7 @@ using Ets.Service.Provider.Common;
 using Ets.Service.IProvider.Common;
 using Ets.Service.IProvider.Business;
 using Ets.Service.Provider.Business;
+using SuperMan.App_Start;
 
 namespace SuperMan.Controllers
 {
@@ -67,7 +68,7 @@ namespace SuperMan.Controllers
 
         public ActionResult Active()
         {
-            DateTime startDate = DateTime.Now.AddDays(-7).Date;
+            DateTime startDate = DateTime.Now.AddDays(-60).Date;
             DateTime endDate = DateTime.Now.AddDays(-1).Date;
 
             ViewBag.StartDate = startDate;
@@ -211,5 +212,67 @@ namespace SuperMan.Controllers
         }
 
         #endregion
+
+        /// <summary>
+        /// 客户端APP启动热力图
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult AppActiveMap()
+        {
+            int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
+            ViewBag.openCityList = areaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(UserType));
+            ViewBag.deliveryCompanyList = new CompanyProvider().GetCompanyList();//获取物流公司
+            return View();
+        }
+
+        /// <summary>
+        /// 获取热力图数据
+        /// </summary>
+        /// <param name="cityId">城市Id</param>
+        /// <param name="userType">用户类型   0全部    1商家    2骑士</param>
+        /// <param name="deliveryCompanyInfo">骑士所属物流公司,如果用户类型是骑士此参数才有效</param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult AppActiveMap(string cityId, byte userType, string deliveryCompanyInfo)
+        {
+            var list = new List<AppActiveInfo>();
+            if (userType == 0)
+            {
+                list.AddRange(statisticsProvider.GetAppActiveInfos(1, cityId, "0"));
+                list.AddRange(statisticsProvider.GetAppActiveInfos(2, cityId, "0"));
+            }
+            else
+            {
+                list.AddRange(statisticsProvider.GetAppActiveInfos(userType, cityId, deliveryCompanyInfo));
+            }
+            return Json(list);
+        }
+
+        public ActionResult ActiveUserAnalyze()
+        {
+            ActiveUserQuery defaultParams = new ActiveUserQuery()
+            {
+                StartDate = DateTime.Now.AddMonths(-1).Date,
+                EndDate = DateTime.Now.Date,
+                UserType = 0,
+                PageIndex = 1
+            };
+
+            PageInfo<ActiveUserInfo> resultData = statisticsProvider.QueryActiveUser(defaultParams);
+            return View(resultData);
+        }
+        /// <summary>
+        /// 活跃用户分析
+        /// </summary>
+        /// <param name="PageIndex"></param>
+        /// <returns></returns>
+        public ActionResult PostActiveUserAnalyze(int PageIndex = 1)
+        {
+            var criteria = new ActiveUserQuery();
+            TryUpdateModel(criteria);
+            criteria.PageIndex = PageIndex;
+            PageInfo<ActiveUserInfo> resultData = statisticsProvider.QueryActiveUser(criteria);
+            return PartialView("_PartialActiveUserList", resultData);
+        }
     }
 }

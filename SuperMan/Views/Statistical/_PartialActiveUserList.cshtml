@@ -1,0 +1,47 @@
+﻿@model  ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Statistics.ActiveUserInfo>
+    @using Webdiyer.WebControls.Mvc;
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+        <thead>
+            <tr class="tdbg">
+                <th>编号</th>
+                <th>用户名称</th>
+                <th>注册手机号</th>
+                <th>任务量</th>
+                <th>订单量</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                if (Model != null)
+                {
+                    for (int i = 0; i < Model.Records.Count; i++)
+                    {
+                        <tr>
+                            <td>@(i + 1)</td>
+                            <td>@Model.Records[i].UserName</td>
+                            <td>
+                                <a href="javascript:void(0)" onclick="showDetail('@Model.Records[i].PhoneNo', '@Model.Records[i].UserName')">@Model.Records[i].PhoneNo</a>
+                            </td>
+                            <td>@Model.Records[i].TaskNum</td>
+                            <td>@Model.Records[i].OrderNum</td>
+                        </tr>
+                    }
+                }
+            }
+        </tbody>
+    </table>
+    @{
+        if (Model != null)
+        {
+            ViewBag.ActionName = "PostActiveUserAnalyze";
+            @Html.Partial("~/views/shared/PagerControl.cshtml", Model);
+        }
+    }
+    <script type="text/javascript">
+        function showDetail(phoneNo, userName) {
+            var startDate = $('#StartDate').val(); 
+            var endDate = $('#EndDate').val();
+            var userType = $('#UserType').val();
+            window.location.href = "/Order/Order?phoneNo=" + phoneNo + "&userName=" + userName + "&startDate=" + startDate + "&endDate=" + endDate + "&userType=" + userType;
+        }
+    </script>

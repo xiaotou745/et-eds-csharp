@@ -1,0 +1,309 @@
+﻿@using Ets.Model.DomainModel.Statistics
+@{
+    ViewBag.Title = "客户端App启动热力图";
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+
+
+    IList<AppActiveInfo> lstAppActiveInfo = (IList<AppActiveInfo>)ViewBag.LstAppActiveInfo;
+}
+@section styles{
+    <style type="text/css">
+        #map_contain {
+            height: 600px;
+            width: 100%;
+            max-width: none;
+        }
+
+        .none {
+            display: none;
+        }
+    </style>
+}
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=dAeaG6HwIFGlkbqtyKkyFGEC"></script>
+<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script src="~/Scripts/jquery-ui-1.8.20.js"></script>
+<script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
+<link rel="stylesheet" type="text/css" href="~/Content/pagestyle/pagerstyles.css" />
+
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置：数据统计 > 客户端App启动热力图
+    </h2>
+    <div class="SearchMd" style="width:1000px">
+        <table border="0" cellspacing="0" cellpadding="0" style="width:1080px">
+            <tr>
+                <td>
+                    <span class="">客户类型: </span>
+                    <select name="userType" id="userType">
+                        <option value="0">全部</option>
+                        <option value="1">商家</option>
+                        <option value="2">骑士</option>
+                    </select>
+                    <span class="">城市筛选: </span>
+                    @Html.DropDownList("cityName", new SelectList(ViewBag.openCityList.Result.AreaModels, "Code", "Name"), new { style = "width:155px" })
+                    <span class="" id="deliveryCompanyInfo">
+                        骑士所属物流公司:
+                        @Html.DropDownList("deliveryCompany", new SelectList(ViewBag.deliveryCompanyList, "CompanyId", "CompanyName"), "--无--", new { style = "width:155px" })
+                    </span>
+                    <input type="button" value="查询" class="searchBtn" id="btnSearch" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    骑士:<img src="/Content/images/clientermarker.png" width="30px" height="30px" />&#160;商家:<img src="/Content/images/businessmarker.png" width="30px" height="30px" />&#160;
+                    骑士数量:<span id="clienterCount"></span>&#160;&#160;&#160;商家数量:<span id="businessCount"></span>&#160;&#160;&#160;
+                </td>
+            </tr>
+        </table>
+        <hr />
+        <!--地图-->
+        <div id="map_contain"></div>
+        <hr />
+        <h4 style="color:black;font-weight:600">地图数据列表</h4>
+        <div class="bd clearfix" id="dataList">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+                <thead>
+                    <tr class="tdbg">
+                        <th width="%5">编号</th>
+                        <th class="J_City none">用户类型</th>
+                        <th>名称</th>
+                        <th>注册电话</th>
+                        <th>客户类型</th>
+                        @*<th>注册平台</th>*@
+                    </tr>
+                </thead>
+                <tbody id="tbodyData"></tbody>
+            </table>
+
+            <div data-ajax="true" data-ajax-dataformid="#searchForm" data-ajax-method="Post" data-ajax-update="#dataList" data-invalidpageerrmsg="页索引无效" data-maxpages="11" data-mvcpager="true" data-outrangeerrmsg="页索引超出范围" data-pageparameter="pageindex" id="pager" style="float:right;width: 1000px;padding-left:40px"></div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    //加载地图数据
+    // 百度地图API功能
+    var map = new BMap.Map("map_contain");    // 创建Map实例
+    map.centerAndZoom(new BMap.Point(116.404, 39.915), 11);  // 初始化地图,设置中心点坐标和地图级别
+    map.addControl(new BMap.MapTypeControl());   //添加地图类型控件
+    map.setCurrentCity("北京");          // 设置地图显示的城市 此项是必须设置的
+    map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+
+    //分页参数
+    var pageIndex = 1;//当前页码
+    var pageSize = 20;//当前页的数量
+
+    var allData = null;
+
+    var businessIcon = new BMap.Icon("/Content/images/businessmarker.png", new BMap.Size(40, 40), {});
+    var clienterIcon = new BMap.Icon("/Content/images/clientermarker.png", new BMap.Size(40, 40), {});
+
+    var currentCity = null;
+
+    $(function () {
+        var userType = $("#userType").val();
+        var cityId = $("#cityName").val();
+        var cityName = $("#cityName").find("option:selected").text();
+        setDeliveryCompanyInfoDisplay(userType);
+        loadData(cityName, userType, cityId);
+        setCount();
+    });
+
+    function setCount() {
+        var clientCount = 0;
+        var businessCount = 0;
+        if (allData != null) {
+            for (var i = 0; i < allData.length; i++) {
+                if (allData[i].UserType == 2) {
+                    clientCount++;
+                } else if (allData[i].UserType == 1) {
+                    businessCount++;
+                }
+            }
+        }
+        $("#clienterCount").html(clientCount);
+        $("#businessCount").html(businessCount);
+    }
+
+    //查询数据
+    $("#btnSearch").click(function () {
+        var userType = $("#userType").val();
+        var cityId = $("#cityName").val();
+        var cityName = $("#cityName").find("option:selected").text();
+        pageIndex = 1;
+        var tempCity = currentCity;
+        loadData(cityName, userType, cityId);
+        if (tempCity != cityName) {
+            setCount();
+        }
+    });
+
+    $("#userType").change(function () {
+        setDeliveryCompanyInfoDisplay($("#userType").val());
+    });
+
+    function setDeliveryCompanyInfoDisplay(userType) {
+        if (userType == 2) {
+            $("#deliveryCompanyInfo").show();
+        } else {
+            $("#deliveryCompanyInfo").hide();
+        }
+    }
+
+    function loadData(cityName, userType,cityId) {
+        var deliveryCompanyInfo = $("#deliveryCompany").val();
+        if (userType != 2) {
+            deliveryCompanyInfo = 0;
+        }
+        currentCity = cityId;
+        //cityName = cityName.trim().replace("市", "");
+        var paramaters = { "cityId": cityId, "userType": userType, "deliveryCompanyInfo": deliveryCompanyInfo };
+        loadCityCenterPoint(cityName);
+        var url = "/Statistical/AppActiveMap";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            async: false,
+            success: function (result) {
+                allData = result;
+                loadDataToMap(result);
+                loadDataToTable(result);
+                return result;
+            }
+        });
+    }
+
+    //jsonp load指定城市地图坐标,并将中心点定位到该坐标上
+    function loadCityCenterPoint(city) {
+        $.ajax({
+            url: "http://api.map.baidu.com/geocoder/v2/?output=json&ak=dAeaG6HwIFGlkbqtyKkyFGEC&address=" + city,
+            dataType: "jsonp",
+            success: function (result) {
+                var location = result.result.location;
+                map.centerAndZoom(new BMap.Point(location.lng, location.lat), 11);
+                map.setCurrentCity(city);
+                return location; //"location":{"lng":116.39564503788,"lat":39.92998577808}
+            }
+        });
+    }
+
+    function loadDataToMap(data) {
+        map.clearOverlays();//移除所有标注
+        var opts = {
+            width: 60,     // 信息窗口宽度
+            height: 20,     // 信息窗口高度
+            //title: "信息", // 信息窗口标题
+            enableMessage: true//设置允许信息窗发送短息
+        };
+        if (data != null) {
+            for (var i = 0; i < data.length; i++) {
+                var myIcon = data[i].UserType == 1 ? businessIcon : clienterIcon;
+                var marker = new BMap.Marker(new BMap.Point(data[i].Longitude, data[i].Latitude), { icon: myIcon });  // 创建标注
+                var content = "电话:" + data[i].Phone + "<br/>名称:" + data[i].TrueName;
+                map.addOverlay(marker);               // 将标注添加到地图中
+                addClickHandler(content, marker, opts, map);
+            }
+        }
+    }
+
+    function loadDataToTable(data) {
+        var html = "<tr><td colspan='4' align='center'>当前没有数据</td></tr>";
+        $("#pager").html("");//清空页码
+        if (data != null && data.length > 0) {
+            var arrStr = [];
+            var max = pageIndex * pageSize > data.length ? data.length : pageIndex * pageSize;
+            for (var i = (pageIndex - 1) * pageSize; i < max; i++) {
+                arrStr.push("<tr>");
+                arrStr.push("<td>" + (i + 1) + "</td>");
+                arrStr.push("<td>" + data[i].TrueName + "</td>");
+                arrStr.push("<td>" + data[i].Phone + "</td>");
+                arrStr.push("<td>" + (data[i].UserType == 1 ? "商家" : "骑士") + "</td>");
+                //arrStr.push("<td>" + data[i].Platform + "</td>");
+                arrStr.push("</tr>");
+            }
+            html = arrStr.join("");
+            showPager(data.length);
+        }
+        $("#tbodyData").html(html);
+    }
+
+    function addClickHandler(content, marker, opts, map) {
+        marker.addEventListener("click", function (e) {
+            openInfo(content, e, opts, map);
+        }
+    );
+    }
+
+    function openInfo(content, e, opts, map) {
+        var p = e.target;
+        var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
+        var infoWindow = new BMap.InfoWindow(content, opts);  // 创建信息窗口对象
+        map.openInfoWindow(infoWindow, point); //开启信息窗口
+    }
+
+    //分页
+    function showPager(dataCount) {
+        if (dataCount <= 0) {
+            return;
+        }
+        var maxPageIndex = Math.ceil(dataCount / pageSize);//最大页码
+        //先显示前面1到10个页码
+        var arrStr = [];
+        if (pageIndex <= 1) {
+            arrStr.push("<a disabled=\"disabled\">首页</a>&#160;&#160;");
+            arrStr.push("<a disabled=\"disabled\">上一页</a>&#160;&#160;");
+            arrStr.push("<span class=\"current\">1</span>&#160;&#160;");
+        } else {
+            arrStr.push("<a href='javascript:void(0)' onclick='showPageData(1,1)'>首页</a>&#160;&#160;");
+            arrStr.push("<a href='javascript:void(0)' onclick='showPageData(1,2)'>上一页</a>&#160;&#160;");
+            arrStr.push("<a href='javascript:void(0)' onclick='showPageData(1,1)'>1</a>&#160;&#160;");
+        }
+        var printBr = Math.round(maxPageIndex / 2);
+        for (var i = 2; i < maxPageIndex + 1; i++) {
+            if (i == pageIndex) {
+                arrStr.push("<span class='current'>" + i + "</span>&#160;&#160;");
+            } else {
+                if (i == printBr && maxPageIndex>30) {
+                    arrStr.push("<br/>");
+                }
+                arrStr.push("<a href='javascript:void(0)' onclick='showPageData(" + i + ",1)'>" + i + "</a>&#160;&#160;");
+            }
+        }
+        if (maxPageIndex != pageIndex) {
+            arrStr.push("<a href='javascript:void(0)' onclick='showPageData(0,3)'>下一页</a>&#160;&#160;");
+            arrStr.push("<a href='javascript:void(0)' onclick='showPageData(0,4)'>尾页</a>&#160;&#160;");
+        } else {
+            arrStr.push("<a disabled=\"disabled\">下一页</a>&#160;&#160;");
+            arrStr.push("<a disabled=\"disabled\">尾页</a>&#160;&#160;");
+        }
+        arrStr.push("<input type=\"text\" data-pageindexbox=\"true\" id=\"txtPage\" style='width:40px'><input type=\"button\" data-submitbutton=\"true\" value=\"跳转\" onclick='jump()' ></input></input>");
+        $("#pager").html(arrStr.join(""));
+    }
+
+    //显示页面数据   i:要显示的页码    pageType:页码类型    1正常类型    2上一页     3下一页    4尾页
+    function showPageData(i, pageType) {
+        if (pageType == 2) {
+            pageIndex = pageIndex - 1;
+        } else if (pageType == 3) {
+            pageIndex = pageIndex + 1;
+        } else if (pageType == 4) {
+            var maxPageIndex = Math.ceil(allData.length / pageSize);
+            pageIndex = maxPageIndex;
+        } else {
+            pageIndex = i;
+        }
+        loadDataToTable(allData);
+    }
+
+    function jump() {
+        var p = Number($("#txtPage").val());
+        var maxPageIndex = Math.ceil(allData.length / pageSize);
+        p = p >= maxPageIndex ? maxPageIndex : p;
+        if (p <= 0) {
+            p = 1;
+        }
+        pageIndex = p;
+        loadDataToTable(allData);
+    }
+</script>

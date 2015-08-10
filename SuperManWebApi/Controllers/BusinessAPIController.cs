@@ -14,6 +14,7 @@ using Ets.Service.IProvider.Order;
 using Ets.Service.Provider.Order;
 using Ets.Service.Provider.Common;
 using ETS.Const;
+using SuperManWebApi.App_Start.Filters;
 using SuperManWebApi.Providers;
 using Ets.Service.IProvider.Common;
 using Ets.Model.DataModel.Business;
@@ -62,6 +63,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
+        [Token]
         public ResultModel<UploadIconModel> PostAudit_B()
         {
 
@@ -112,12 +114,24 @@ namespace SuperManWebApi.Controllers
 
 
         /// <summary>
-        /// b端修改密码 edit by caoheyang 20150203 
+        /// b端忘记密码 edit by caoheyang 20150203 
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>        
         [HttpPost]
         public ResultModel<BusiModifyPwdResultModel> PostForgetPwd_B(BusiForgetPwdInfoModel model)
+        {
+            return new BusinessProvider().PostForgetPwd_B(model,1);
+        }
+
+        /// <summary>
+        /// b端修改密码  与忘记密码完全一样  只是token的区别
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>        
+        [HttpPost]
+        [Token]
+        public ResultModel<BusiModifyPwdResultModel> ModifyPwd_B(BusiForgetPwdInfoModel model)
         {
             return new BusinessProvider().PostForgetPwd_B(model);
         }
@@ -166,6 +180,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <returns></returns>        
         [HttpGet]
+        [Token]
         public ResultModel<BusiGetOrderModel[]> GetOrderList_B(int userId, int? pagedSize, int? pagedIndex, sbyte? Status, int? orderfrom,int isCheckStatus=0)
         {
             if (isCheckStatus==1)
@@ -199,6 +214,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="paramodel"></param>
         /// <returns></returns>
         [HttpPost]
+        [Token]
         public ResultModel<bool> CancelOrder_B(CancelOrderBPM paramodel)
         {
             return iOrderProvider.CancelOrderB(paramodel);
@@ -226,6 +242,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <returns></returns>        
         [HttpPost]
+        [Token]
         public ResultModel<BussinessStatusModel> GetUserStatus(UserStatusModel parModel)
         {
             var model = iBusinessProvider.GetUserStatus(parModel.userId);
@@ -393,6 +410,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="model"></param>
         /// <returns></returns>        
         [HttpPost]
+        [Token]
         public ResultModel<BusiAddAddressResultModel> PostManagerAddress_B(BusiAddAddressInfoModel model)
         {
             if (string.IsNullOrWhiteSpace(model.phoneNo))
@@ -432,6 +450,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <returns></returns>        
         [HttpGet]
+        [Token]
         public ResultModel<BusiOrderCountResultModel> OrderCount_B(int userId)
         {
             if (ParseHelper.ToInt(userId, 0) <= 0)
@@ -454,6 +473,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <returns></returns>        
         [HttpPost]
+        [Token]
         public SimpleResultModel PostDistribSubsidy_B(BusiDistribInfoPM mod)
         {
             if (mod.userId <= 0 || mod.price < 0) //判断传入参数是否正常

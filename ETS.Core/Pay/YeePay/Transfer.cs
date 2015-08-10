@@ -26,8 +26,8 @@ namespace ETS.Pay.YeePay
         {
             string tit = para.UserType == UserTypeYee.Clienter.GetHashCode() ? "C" : "B";  //区分B C 端
 
-            //string requestid = TimeHelper.GetTimeStamp(false);
-            string requestid = string.Concat(tit, "-z", para.WithdrawId, "-", Config.WithdrawType);// +"-" + TimeHelper.GetTimeStamp(false);
+            string requestid = string.Concat(tit, "-z", para.WithdrawId, "-",
+                string.IsNullOrWhiteSpace(para.Ledgerno) ? "zi" : "zhu", "-", Config.WithdrawType);// +"-" + TimeHelper.GetTimeStamp(false);
             //商户编号
             string customernumber = KeyConfig.YeepayAccountId;
             //密钥   
@@ -83,6 +83,7 @@ namespace ETS.Pay.YeePay
         /// <returns></returns>
         public TransferReturnModel CashTransfer(ref YeeCashTransferParameter para)
         {
+            //string requestid = para.App.ToString() + "-" + para.WithdrawId + "-"+ Config.WithdrawType;// + TimeHelper.GetTimeStamp(false);
             string requestid = string.Concat(para.App.ToString(), "-t", para.WithdrawId, "-", Config.WithdrawType);// +"-" + TimeHelper.GetTimeStamp(false);
             //商户编号   
             string customernumber = KeyConfig.YeepayAccountId;

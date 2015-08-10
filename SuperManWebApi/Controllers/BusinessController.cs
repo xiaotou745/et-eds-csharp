@@ -30,6 +30,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="model">查询参数实体</param>
         /// <returns></returns>
         [HttpPost]
+        [Token]
         [Validate]
         [ApiVersion]
         public ResultModel<object> Records(BussinessRecordsPM model)
@@ -45,6 +46,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="model">商户参数</param>
         /// <returns></returns>        
         [HttpPost]
+        [Token]
         public ResultModel<BusinessDM> Get(BussinessPM model)
         {
             #region 验证
@@ -84,6 +86,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="model">商户参数</param>
         /// <returns></returns>        
         [HttpPost]
+        [Token]
         public ResultModel<BusiDistribSubsidyResultModel> GetDistribSubsidy(BussinessPM model)
         {
             #region 验证
@@ -126,6 +129,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
+        [Token]
         public ResultModel<BusiModifyResultModelDM> UpdateBusinessInfoB()
         {
             BusiAddAddressInfoModel model = new BusiAddAddressInfoModel();
@@ -182,6 +186,20 @@ namespace SuperManWebApi.Controllers
 
             //修改商户地址信息，返回当前商户的状态
             return iBusinessProvider.UpdateBusinessInfoB(model);
+        }
+
+        /// <summary>
+        /// 商家坐标上传              
+        /// </summary>
+        /// <UpdateBy>彭宜</UpdateBy>
+        /// <UpdateTime>20150727</UpdateTime>
+        /// <returns></returns>     
+        [HttpPost]
+        [Token]
+        [ApiVersion]
+        public ResultModel<object> PushLocaltion(BusinessPushLocaltionPM model)
+        {
+            return iBusinessProvider.InsertLocaltion(model);
         }
     }
 }

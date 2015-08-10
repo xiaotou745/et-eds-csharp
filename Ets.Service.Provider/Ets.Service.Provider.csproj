@@ -65,6 +65,7 @@
     <Compile Include="Clienter\ClienterLocationProvider.cs" />
     <Compile Include="Clienter\CrossShopStatisticLogProvider.cs" />
     <Compile Include="Clienter\ClienterProvider.cs" />
+    <Compile Include="Common\TokenProvider.cs" />
     <Compile Include="Common\AdminToolsProvider.cs" />
     <Compile Include="Common\ApiVersionProvider.cs" />
     <Compile Include="Common\AppVersionProvider.cs" />
@@ -83,6 +84,7 @@
     <Compile Include="Finance\BusinessFinanceProvider.cs" />
     <Compile Include="Finance\ClienterBalanceRecordProvider.cs" />
     <Compile Include="Finance\BusinessFinanceAccountProvider.cs" />
+    <Compile Include="Finance\ClienterAllowWithdrawRecordProvider.cs" />
     <Compile Include="Finance\ClienterFinanceProvider.cs" />
     <Compile Include="Finance\ClienterWithdrawFormProvider.cs" />
     <Compile Include="Finance\ClienterWithdrawLogProvider.cs" />
@@ -121,6 +123,7 @@
     <Compile Include="Business\BusinessProvider.cs" />
     <Compile Include="User\UserProvider.cs" />
     <Compile Include="WtihdrawRecords\WtihdrawRecordsProvider.cs" />
+    <Compile Include="YeePay\YeePayRunningProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ETS.Core\ETS.Core.csproj">

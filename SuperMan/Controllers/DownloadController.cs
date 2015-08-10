@@ -34,7 +34,15 @@ namespace SuperMan.Controllers
                 }
                 else
                 {
-                    Response.Redirect("/Content/app/eds_B.apk?v=" + ETS.Util.TimeHelper.GetTimeStamp());
+                    AppVersionProvider appVersionProvider = new AppVersionProvider();
+                    VersionCheckModel model = new VersionCheckModel()
+                    {
+                        PlatForm = 1,
+                        UserType = 2
+                    };
+                    var result = appVersionProvider.VersionCheck(model);
+                    //Response.Redirect("/Content/app/eds_B.apk?v=" + ETS.Util.TimeHelper.GetTimeStamp());
+                    Response.Redirect(result.UpdateUrl + "?v=" + ETS.Util.TimeHelper.GetTimeStamp());
                 }
                 return null;
             }
@@ -72,11 +80,19 @@ namespace SuperMan.Controllers
                         PlatForm = 2,
                         UserType = 1
                     };
-                    Download(model); 
+                    Download(model);
                 }
                 else
                 {
-                    Response.Redirect("/Content/app/eds_C.apk?v=" + ETS.Util.TimeHelper.GetTimeStamp());
+                    AppVersionProvider appVersionProvider = new AppVersionProvider();
+                    VersionCheckModel model = new VersionCheckModel()
+                    {
+                        PlatForm = 1,
+                        UserType = 1
+                    };
+                    var result = appVersionProvider.VersionCheck(model);
+                    Response.Redirect(result.UpdateUrl + "?v=" + ETS.Util.TimeHelper.GetTimeStamp());
+                    //Response.Redirect("/Content/app/eds_C.apk?v=" + ETS.Util.TimeHelper.GetTimeStamp());
                 }
                 return null;
             }

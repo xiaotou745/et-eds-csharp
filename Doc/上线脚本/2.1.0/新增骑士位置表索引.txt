@@ -1,0 +1,6 @@
+use superman
+GO
+
+CREATE INDEX [IX_ClienterLocation_ClienterId] ON [dbo].[ClienterLocation]
+([ClienterId] ASC) 
+GO

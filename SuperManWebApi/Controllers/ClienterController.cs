@@ -37,6 +37,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="model">查询参数实体</param>
         /// <returns></returns>
         [HttpPost]
+        [Token]
         [Validate]
         [ApiVersion]
         public ResultModel<object> Records(ClienterRecordsPM model)
@@ -52,6 +53,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="model">骑士参数</param>
         /// <returns></returns>        
         [HttpPost]
+        [Token]
         public ResultModel<ClienterDM> Get(ClienterPM model)
         {
             #region 验证
@@ -89,6 +91,7 @@ namespace SuperManWebApi.Controllers
         /// <UpdateTime>20150519</UpdateTime>
         /// <returns></returns>     
         [HttpPost]
+        [Token]
         [ApiVersion]
         public ResultModel<object> PushLocaltion(ClienterPushLocaltionPM model)
         {

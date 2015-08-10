@@ -13,7 +13,7 @@ using Ets.Service.Provider.Distribution;
 using Ets.Service.Provider.Order;
 using Ets.Service.IProvider.Common;
 using Ets.Service.Provider.Common;
-using SuperMan.App_Start;
+﻿using SuperMan.App_Start;
 using Ets.Model.ParameterModel.User;
 using Ets.Model.ParameterModel.Order;
 using ETS.Util;
@@ -49,6 +49,22 @@ namespace SuperMan.Controllers
                 //GroupId = UserContext.Current.GroupId,
                 AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType)
             };
+            if (!string.IsNullOrEmpty(Request.QueryString["phoneNo"]))
+            {
+                if (Request.QueryString["userType"] == "0")
+                {
+                    criteria.superManPhone = Request.QueryString["phoneNo"];
+                    criteria.superManName = Request.QueryString["userName"];
+                }
+                else
+                {
+                    criteria.businessPhone = Request.QueryString["phoneNo"];
+                    criteria.businessName = Request.QueryString["userName"];
+                    criteria.orderPubStart = Request.QueryString["startDate"];
+                    criteria.orderPubEnd = Request.QueryString["endDate"];
+                }  
+            }
+
             if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
             {
                 return View();
@@ -88,7 +104,7 @@ namespace SuperMan.Controllers
         /// <param name="pageindex"></param>
         /// <returns></returns>
         [HttpGet]
-        public ActionResult PostDaoChuOrder(int pageindex = 1)
+        public FileContentResult PostDaoChuOrder(int pageindex = 1)
         {
             Ets.Model.ParameterModel.Order.OrderSearchCriteria criteria = new Ets.Model.ParameterModel.Order.OrderSearchCriteria();
             TryUpdateModel(criteria);
@@ -128,7 +144,9 @@ namespace SuperMan.Controllers
                 }
 
             }
-            return PartialView("_PartialOrderList", pagedList);
+            
+            //return PartialView("_PartialOrderList", pagedList);
+            return File(new byte[0]{}, "application/ms-excel", "无数据.xls");
         }
 
 
@@ -155,7 +173,7 @@ namespace SuperMan.Controllers
             strBuilder.AppendLine("<td>外送费用</td>");
             strBuilder.AppendLine("<td>每单补贴</td>");
             strBuilder.AppendLine("<td>任务补贴</td>");
-            strBuilder.AppendLine("<td>商家结算比例(%)</td>");
+            strBuilder.AppendLine("<td>商家结算</td>");
             strBuilder.AppendLine("</tr>");
             //输出数据.
             foreach (var oOrderListModel in paraModel.Records)
@@ -181,7 +199,7 @@ namespace SuperMan.Controllers
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.DistribSubsidy));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.WebsiteSubsidy));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.Adjustment));
-                strBuilder.AppendLine(string.Format("<td>{0}</td></tr>", oOrderListModel.BusinessCommission));
+                strBuilder.AppendLine(string.Format("<td>{0}</td></tr>", oOrderListModel.CommissionType == 1 ? oOrderListModel.BusinessCommission + "%" : oOrderListModel.CommissionFixValue.ToString()));
             }
             strBuilder.AppendLine("</table>");
             return strBuilder.ToString();
@@ -211,7 +229,7 @@ namespace SuperMan.Controllers
             var order = iOrderProvider.GetOrderByNo(OrderNo);
             if (order == null) //查询订单是否存在
                 return Json(new ResultModel(false, "订单不存在"), JsonRequestBehavior.AllowGet);
-            if (order.Status !=OrderStatus.Status0.GetHashCode())  //查询订单是否被抢
+            if (order.Status != OrderStatus.Status0.GetHashCode())  //查询订单是否被抢
                 return Json(new ResultModel(false, "订单已被抢或者已完成"), JsonRequestBehavior.AllowGet);
             if (SuperID == -1) //未指派超人 ，触发极光推送  ，指派超人的情况下，建立订单和超人的关系
             {
@@ -245,6 +263,7 @@ namespace SuperMan.Controllers
             var orderModel = iOrderProvider.GetOrderByNo(orderNo, orderId);
 
             ViewBag.orderOptionLog = iOrderProvider.GetOrderOptionLog(orderId);
+            ViewBag.IsShowAuditBtn = IsShowAuditBtn(orderModel);//是否显示审核按钮
             return View(orderModel);
         }
 
@@ -257,14 +276,14 @@ namespace SuperMan.Controllers
         /// <param name="OrderOptionLog"></param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult CancelOrder(string OrderNo, string OrderOptionLog)
+        public JsonResult CancelOrder(int orderId, string OrderOptionLog)
         {
             OrderOptionModel orderOptionModel = new OrderOptionModel()
             {
                 OptUserId = UserContext.Current.Id,
                 OptUserName = UserContext.Current.Name,
                 OptLog = OrderOptionLog,
-                OrderNo = OrderNo
+                OrderId = orderId
             };
             var reg = iOrderProvider.CancelOrderByOrderNo(orderOptionModel);
             return Json(new ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.AllowGet);
@@ -278,6 +297,52 @@ namespace SuperMan.Controllers
         {
             OrderMapDetail mapDetail = iOrderProvider.GetOrderMapDetail(OrderId);
             return Json(mapDetail);
+        }
+
+        /// <summary>
+        /// 彭宜
+        /// 2015年8月3日 11:32:55
+        /// 扣除网站补贴
+        /// </summary>
+        /// <param name="OrderNo"></param>
+        /// <param name="OrderOptionLog"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult AuditCancel(int orderId, string OrderOptionLog)
+        {
+            OrderOptionModel orderOptionModel = new OrderOptionModel()
+            {
+                OptUserId = UserContext.Current.Id,
+                OptUserName = UserContext.Current.Name,
+                OptLog = OrderOptionLog,
+                OrderId = orderId
+            };
+            var reg = iOrderProvider.DeductWebSubsidy(orderOptionModel);
+            return Json(new ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult AuditOK(int orderId)
+        {
+            OrderOptionModel orderOptionModel = new OrderOptionModel()
+            {
+                OptUserId = UserContext.Current.Id,
+                OptUserName = UserContext.Current.Name,
+                OrderId = orderId
+            };
+            var reg = iOrderProvider.AuditOK(orderOptionModel);
+            return Json(new ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.AllowGet);
+        }
+
+        private bool IsShowAuditBtn(OrderListModel orderModel)
+        {
+            //只有在已完成订单并且已上传完小票的情况下显示该按钮
+            if (orderModel != null && /*已完成*/ orderModel.FinishAll == 1 && /*订单未分账*/ orderModel.IsJoinWithdraw == 0
+                &&  orderModel.IsEnable == 1)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

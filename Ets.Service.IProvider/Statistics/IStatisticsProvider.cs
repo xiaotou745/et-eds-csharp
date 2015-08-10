@@ -45,5 +45,21 @@ namespace Ets.Service.IProvider.Statistics
         /// <param name="queryInfo"></param>
         /// <returns></returns>
         long QueryBusinessNum(BussinessBalanceQuery queryInfo);
+
+        /// <summary>
+        /// 获得App启动热力图
+        /// </summary>
+        /// <param name="userType">用户类型   1商家   2骑士</param>
+        /// <param name="cityId">城市Id</param>
+        /// <param name="deliveryCompanyInfo">骑士所属物流公司,用户类型是骑士时此参数才有效</param>
+        /// <returns></returns>
+        IList<AppActiveInfo> GetAppActiveInfos(byte userType, string cityId, string deliveryCompanyInfo);
+
+        /// <summary>
+        /// 查询活跃用户
+        /// </summary>
+        /// <param name="queryInfo"></param>
+        /// <returns></returns>
+        PageInfo<ActiveUserInfo> QueryActiveUser(ActiveUserQuery queryInfo);
     }
 }

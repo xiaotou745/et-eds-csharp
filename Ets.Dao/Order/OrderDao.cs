@@ -5,6 +5,7 @@ using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.Order;
 using Ets.Model.DataModel.Subsidy;
 using Ets.Model.DomainModel.Order;
+using Ets.Model.DomainModel.Statistics;
 using Ets.Model.DomainModel.Subsidy;
 using Ets.Model.ParameterModel.Order;
 using Ets.Model.ParameterModel.WtihdrawRecords;
@@ -557,7 +558,10 @@ select @@IDENTITY ";
                                                END
                                         END AS GrabToCompleteDistance
                                     ,o.BusinessCommission --商家结算比例
+                                    ,o.CommissionFixValue --商家结算固定金额
+                                    ,o.CommissionType --结算类型
                                     ,oo.IsNotRealOrder
+                                    ,oo.AuditStatus
                                     ";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrWhiteSpace(criteria.businessName))
@@ -579,6 +583,17 @@ select @@IDENTITY ";
             if (criteria.orderStatus != -1)
             {
                 sbSqlWhere.AppendFormat(" AND o.Status={0} ", criteria.orderStatus);
+            }
+            if (criteria.AuditStatus != -1)
+            {
+                if (criteria.AuditStatus == 0)
+                {
+                    sbSqlWhere.AppendFormat(" AND oo.AuditStatus={0}  and o.FinishAll=1", criteria.AuditStatus);
+                }
+                else
+                {
+                    sbSqlWhere.AppendFormat(" AND oo.AuditStatus={0} ", criteria.AuditStatus);
+                }
             }
             if (!string.IsNullOrWhiteSpace(criteria.superManName))
             {
@@ -714,6 +729,7 @@ select @@IDENTITY ";
                                         ,ISNULL(oo.IsJoinWithdraw,0) IsJoinWithdraw
                                         ,o.BusinessReceivable
                                         ,o.SettleMoney
+                                        ,o.FinishAll
                                     FROM [order] o WITH ( NOLOCK )
                                     JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                     left JOIN clienter c WITH (NOLOCK) ON o.clienterId=c.Id
@@ -729,6 +745,95 @@ select @@IDENTITY ";
                 parm.SetValue("@OrderNo", orderNo);
             }
             var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
+            var list = ConvertDataTableList<OrderListModel>(dt);
+            if (list != null && list.Count > 0)
+            {
+                return list[0];
+            }
+            else
+            {
+                return null;
+            }
+
+        }
+
+        public OrderListModel GetOrderByIdWithNolock(int id)
+        {
+            #region 查询脚本
+            string sql = @"SELECT top 1 o.[Id]
+                                        ,o.[OrderNo]
+                                        ,o.[PickUpAddress]
+                                        ,o.PubDate
+                                        ,o.[ReceviceName]
+                                        ,o.[RecevicePhoneNo]
+                                        ,o.[ReceviceAddress]
+                                        ,o.[ActualDoneDate]
+                                        ,o.[IsPay]
+                                        ,o.[Amount]
+                                        ,o.[OrderCommission]
+                                        ,o.[DistribSubsidy]
+                                        ,o.[WebsiteSubsidy]
+                                        ,o.[Remark]
+                                        ,o.[Status]
+                                        ,o.[clienterId]
+                                        ,o.[businessId]
+                                        ,o.[ReceviceCity]
+                                        ,o.[ReceviceLongitude]
+                                        ,o.[ReceviceLatitude]
+                                        ,o.[OrderFrom]
+                                        ,o.[OriginalOrderId]
+                                        ,o.[OriginalOrderNo]
+                                        ,o.[Quantity]
+                                        ,o.[Weight]
+                                        ,o.[ReceiveProvince]
+                                        ,o.[ReceiveArea]
+                                        ,o.[ReceiveProvinceCode]
+                                        ,o.[ReceiveCityCode]
+                                        ,o.[ReceiveAreaCode]
+                                        ,o.[OrderType]
+                                        ,o.[KM]
+                                        ,o.[GuoJuQty]
+                                        ,o.[LuJuQty]
+                                        ,o.[SongCanDate]
+                                        ,o.[OrderCount]
+                                        ,o.[CommissionRate] 
+                                        ,o.[RealOrderCommission] 
+                                        ,b.[City] BusinessCity
+                                        ,b.Name BusinessName
+                                        ,b.PhoneNo BusinessPhoneNo
+                                        ,b.PhoneNo2 BusinessPhoneNo2
+                                        ,b.Address BusinessAddress
+                                        ,c.PhoneNo ClienterPhoneNo
+                                        ,c.TrueName ClienterTrueName
+                                        ,c.TrueName ClienterName
+                                        ,c.AccountBalance AccountBalance
+                                        ,b.GroupId                                        
+                                        ,o.OriginalOrderNo
+                                        ,oo.NeedUploadCount
+                                        ,oo.HadUploadCount
+                                        ,oo.ReceiptPic
+                                        ,oo.IsNotRealOrder IsNotRealOrder
+                                        ,o.OtherCancelReason
+                                        ,o.OriginalOrderNo
+                                        ,ISNULL(o.MealsSettleMode,0) MealsSettleMode
+                                        ,ISNULL(oo.IsJoinWithdraw,0) IsJoinWithdraw
+                                        ,o.BusinessReceivable
+                                        ,o.SettleMoney
+                                        ,o.FinishAll
+                                    FROM [order] o 
+                                    JOIN business b   ON b.Id = o.businessId
+                                    left JOIN clienter c  ON o.clienterId=c.Id
+                                    JOIN OrderOther oo  ON oo.OrderId=o.Id                                   
+                                    WHERE 1=1 ";
+            #endregion
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            if (id>0)
+            {
+                sql += " AND o.id=@id";
+                parm.Add("@id", SqlDbType.Int);
+                parm.SetValue("@id", id);
+            }
+            var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Write, sql, parm));
             var list = ConvertDataTableList<OrderListModel>(dt);
             if (list != null && list.Count > 0)
             {
@@ -804,10 +909,14 @@ select @@IDENTITY ";
                                         ,o.OriginalOrderNo
                                         ,oo.NeedUploadCount
                                         ,oo.HadUploadCount
-                                        ,oo.ReceiptPic                                        
+                                        ,oo.ReceiptPic
+                                        ,oo.DeductCommissionReason                                        
                                         ,o.OtherCancelReason
                                         ,o.OriginalOrderNo
                                         ,o.IsEnable
+                                        ,o.FinishAll
+                                        ,ISNULL(oo.DeductCommissionType,0) DeductCommissionType
+                                        ,ISNULL(oo.IsJoinWithdraw,0) IsJoinWithdraw
                                     FROM [order] o WITH ( NOLOCK )
                                     LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                     LEFT JOIN clienter c WITH (NOLOCK) ON o.clienterId=c.Id
@@ -1143,7 +1252,7 @@ set @incomeTotal =convert(decimal(18,2),(select sum(TotalPrice) from dbo.OrderCh
 set @withdrawClienterPrice = convert(decimal(18,2),(select isnull( sum(isnull(Amount,0)),0) withPirce FROM dbo.ClienterWithdrawForm(nolock) cwf where Status =3)) 
 set @businessBalance=convert(decimal(18,2),(SELECT sum(BalancePrice) FROM dbo.business b(nolock) where Status=1 ))
 set @withdrawBusinessPrice=convert( decimal(18,2),(SELECT sum(Amount) as withdrawBusinessPrice FROM dbo.BusinessWithdrawForm(nolock) bwf where Status =3 ))
-set @rechargeTotal = (select sum(Amount) from BusinessBalanceRecord(nolock) where RecordType = 4 ) --商户充值总计
+set @rechargeTotal = (SELECT sum(payAmount) FROM BusinessRecharge(nolock) where PayStatus=1 ) --商户充值总计
 select  ( select    sum(AccountBalance)
           from      dbo.clienter(nolock)
           where     AccountBalance >= 1000
@@ -1268,7 +1377,9 @@ where   o.[Status] <> 3
                                   ,[TwoSubsidyOrderCount]
                                   ,[ThreeSubsidyOrderCount]
                                   ,[ActiveBusiness]
-                                  ,[ActiveClienter]";
+                                  ,[ActiveClienter]
+                                  ,rechargeTotal
+                                    ";
 
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrWhiteSpace(criteria.orderPubStart))
@@ -1434,6 +1545,7 @@ select top 1
         o.[OrderNo] ,
         o.[Status] ,
         c.AccountBalance ,
+        c.AllowWithdrawPrice,
         c.Id clienterId ,
         o.OrderCommission ,
         o.businessId ,
@@ -1504,6 +1616,7 @@ select top 1
         o.[OrderNo] ,
         o.[Status] ,
         c.AccountBalance ,
+        c.AllowWithdrawPrice, 
         c.Id clienterId ,
         o.OrderCommission ,
         o.businessId ,
@@ -1518,7 +1631,8 @@ select top 1
         oo.GrabTime,
         o.Amount,
         o.DeliveryCompanySettleMoney,
-        o.DeliveryCompanyID
+        o.DeliveryCompanyID,
+        o.MealsSettleMode         
 from    [order] o with ( nolock )
         join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
         join dbo.business b with ( nolock ) on o.businessId = b.Id
@@ -1628,7 +1742,7 @@ DateDiff(MINUTE,PubDate, GetDate()) in ({0})", IntervalMinute);
         /// <param name="config"></param>
         /// <param name="Id"></param>
         /// <returns></returns>
-        public bool addOrderSubsidiesLog(decimal AdjustAmount, int OrderId, string Remark)
+        public bool addOrderSubsidiesLog(decimal AdjustAmount, int OrderId, string Remark, string OptName = "发布订单",int OrderStatus=0)
         {
             string sql =
                 @"INSERT INTO OrderSubsidiesLog
@@ -1636,17 +1750,21 @@ DateDiff(MINUTE,PubDate, GetDate()) in ({0})", IntervalMinute);
                                 ,OrderId
                                 ,InsertTime
                                 ,OptName
+                                ,OrderStatus
                                 ,Remark)
                      VALUES
                                 (@Price
                                 ,@OrderId
                                 ,Getdate()
-                                ,'发布订单'
+                                ,@OptName
+                                ,@OrderStatus
                                 ,@Remark);";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Price", AdjustAmount);
             parm.AddWithValue("@OrderId", OrderId);
             parm.AddWithValue("@Remark", Remark);
+            parm.AddWithValue("@OptName", OptName);
+            parm.AddWithValue("@OrderStatus", OrderStatus);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
 
         }
@@ -2321,7 +2439,7 @@ where businessId=@businessId and TimeSpan=@TimeSpan ";
         {
             string sql = @"
 select 
-o.id,o.amount, 
+o.id,o.OrderNo, o.amount, 
 o.RealOrderCommission clienterPrice, --给骑士
 o.Amount-o.SettleMoney businessPrice,--给商家
 o.clienterId, o.businessId
@@ -2351,6 +2469,14 @@ where   oo.IsJoinWithdraw = 0
         {
             string sql = @"update dbo.OrderOther set IsJoinWithdraw = 1 where OrderId=@orderId";
             IDbParameters parm = DbHelper.CreateDbParameters("orderId", DbType.Int32, 4, orderId);
+            DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm);
+        }
+
+        public void UpdateAuditStatus( int orderId,int auditstatus)
+        {
+            string sql = @"update dbo.OrderOther set auditstatus = @auditstatus where OrderId=@orderId";
+            IDbParameters parm = DbHelper.CreateDbParameters("orderId", DbType.Int32, 4, orderId);
+            parm.AddWithValue("@auditstatus", auditstatus);
             DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm);
         }
 
@@ -3159,7 +3285,7 @@ where   Id = @OrderId and FinishAll = 0";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@realOrderCommission", realOrderCommission);
             dbParameters.AddWithValue("@OrderId", orderId);
-            return DbHelper.ExecuteNonQuery(SuperMan_Read, sql, dbParameters);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
         }
 
         /// <summary>
@@ -3267,7 +3393,7 @@ where   Id = @OrderId and FinishAll = 0";
         /// </summary>
         /// <param name="clienterID"></param>
         /// <returns></returns>
-        public int GetTotalOrderNumByClienterID(int clienterID)
+        public int GetTotalOrderNumByClienterID(int clienterID, DateTime actualDoneDate)
         {
             string sql = @"SELECT  ISNULL(SUM(OrderCount), 0) AS num
                             FROM    [order] (NOLOCK)
@@ -3277,11 +3403,120 @@ where   Id = @OrderId and FinishAll = 0";
                                     AND ActualDoneDate < @endDate";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("clienterId", DbType.Int32).Value = clienterID;
-            dbParameters.Add("beginDate", DbType.DateTime).Value = DateTime.Now.Date.ToString();
-            dbParameters.Add("endDate", DbType.DateTime).Value = DateTime.Now.ToString();
+            dbParameters.Add("beginDate", DbType.DateTime).Value = actualDoneDate.Date.ToString();
+            dbParameters.Add("endDate", DbType.DateTime).Value = actualDoneDate.ToString();
 
             object obj = DbHelper.ExecuteScalar(SuperMan_Read, sql, dbParameters);
             return ParseHelper.ToInt(obj, 0);
+        }
+        /// <summary>
+        /// 查询分页的活跃用户list
+        /// </summary>
+        /// <param name="recommendQuery"></param>
+        /// <returns></returns>
+        public PageInfo<ActiveUserInfo> GetActiveUserList(ActiveUserQuery recommendQuery)
+        {
+            string tableList = "";
+            string whereCondition = "1=1";
+            string orderByColumns = " TaskNum DESC ,OrderNum DESC";
+            if (recommendQuery.UserType == 0)
+            {
+                tableList = getClienterTableList(recommendQuery);
+            }
+            else
+            {
+                tableList = getBusinessTableList(recommendQuery);
+            }
+
+            string columnList = @"   UserID
+                                    ,UserName
+                                    ,PhoneNo
+                                    ,TaskNum
+                                    ,OrderNum
+                                    ";
+
+            return new PageHelper().GetPages<ActiveUserInfo>(SuperMan_Read, recommendQuery.PageIndex, whereCondition, orderByColumns, columnList, tableList, SystemConst.PageSize, true);
+        }
+        /// <summary>
+        /// 返回活跃商家的查询sql
+        /// </summary>
+        /// <param name="recommendQuery"></param>
+        /// <returns></returns>
+        private string getBusinessTableList(ActiveUserQuery recommendQuery)
+        {
+            string businessSql = @"(SELECT  b.id as UserID,
+                                        b.name as UserName,
+                                        b.PhoneNo as PhoneNo,
+                                        COUNT(a.id) AS TaskNum ,
+                                        SUM(a.ordercount) AS OrderNum
+                                FROM    dbo.[order] (NOLOCK) a
+                                        JOIN dbo.business (NOLOCK) b ON a.businessId = b.Id
+                                WHERE   a.PubDate IS NOT NULL {0}
+                                GROUP BY b.id ,
+                                        b.name ,
+                                        b.PhoneNo) mp";
+            StringBuilder sb = new StringBuilder();
+            if (recommendQuery.StartDate != DateTime.MinValue)
+            {
+                sb.Append(string.Format(" and a.PubDate>='{0}'", recommendQuery.StartDate.ToString("yyyy-MM-dd")));
+            }
+            if (recommendQuery.EndDate != DateTime.MinValue)
+            {
+                sb.Append(string.Format(" and a.PubDate<'{0}'", recommendQuery.EndDate.AddDays(1).ToString("yyyy-MM-dd")));
+            }
+            if (!string.IsNullOrEmpty(recommendQuery.UserInfo))
+            {
+                if (recommendQuery.InfoType == 0)//注册手机号
+                {
+                    sb.Append(string.Format(" and b.PhoneNo='{0}'", recommendQuery.UserInfo));
+                }
+                else
+                {
+                    sb.Append(string.Format(" and b.name='{0}'", recommendQuery.UserInfo));
+                }
+            }
+          return string.Format(businessSql, sb.ToString());
+          
+        }
+        /// <summary>
+        /// 返回活跃骑士的查询sql
+        /// </summary>
+        /// <param name="recommendQuery"></param>
+        /// <returns></returns>
+        private string getClienterTableList(ActiveUserQuery recommendQuery)
+        {
+            string clienterSql = @"(SELECT  b.id as UserID,
+                                        b.truename as UserName,
+                                        b.PhoneNo as PhoneNo,
+                                        COUNT(a.id) AS TaskNum ,
+                                        SUM(a.ordercount) AS OrderNum
+                                FROM    dbo.[order] (NOLOCK) a
+                                        JOIN dbo.clienter (NOLOCK) b ON a.clienterId = b.Id
+                                WHERE   a.ActualDoneDate IS NOT NULL {0}
+                                GROUP BY b.id ,
+                                        b.truename ,
+                                        b.PhoneNo) mp";
+            StringBuilder sb = new StringBuilder();
+            if (recommendQuery.StartDate != DateTime.MinValue)
+            {
+                sb.Append(string.Format(" and a.ActualDoneDate>='{0}'", recommendQuery.StartDate.ToString("yyyy-MM-dd")));
+            }
+            if (recommendQuery.EndDate != DateTime.MinValue)
+            {
+                sb.Append(string.Format(" and a.ActualDoneDate<'{0}'", recommendQuery.EndDate.AddDays(1).ToString("yyyy-MM-dd")));
+            }
+            if (!string.IsNullOrEmpty(recommendQuery.UserInfo))
+            {
+                if (recommendQuery.InfoType == 0)//注册手机号
+                {
+                    sb.Append(string.Format(" and b.PhoneNo='{0}'", recommendQuery.UserInfo));
+                }
+                else
+                {
+                    sb.Append(string.Format(" and b.truename='{0}'", recommendQuery.UserInfo));
+                }
+            }
+           return string.Format(clienterSql, sb.ToString());
         }
     }
 }

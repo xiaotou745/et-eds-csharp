@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Text;
 using ETS.Const;
+using Ets.Dao.GlobalConfig;
 using Ets.Dao.Message;
 using Ets.Dao.User;
 using Ets.Model.Common;
@@ -42,6 +43,7 @@ namespace Ets.Service.Provider.Business
     {
         readonly IAreaProvider iAreaProvider = new AreaProvider();
         readonly BusinessDao businessDao = new BusinessDao();
+        readonly ITokenProvider iTokenProvider = new TokenProvider();
         /// <summary>
         /// app端商户获取订单   add by caoheyang 20150311
         /// </summary>
@@ -275,21 +277,27 @@ namespace Ets.Service.Provider.Business
             {
                 returnEnum = BusinessRegisterStatus.HasExist;//商户已存在
             }
-            //else if (!string.IsNullOrWhiteSpace(model.RecommendPhone) &&
-            //         !businessDao.CheckRecommendPhone(model.RecommendPhone))
-            //{
-            //    returnEnum = BusinessRegisterStatus.RecommendPhoneNoExist; //推荐人手机号不存在
-            //}
             if (returnEnum != null)
             {
                 return ResultModel<BusiRegisterResultModel>.Conclude(returnEnum);
             }
+            
+            string appkey = Guid.NewGuid().ToString(); 
+            model.Appkey = appkey;
+            int userid = businessDao.Insert(model);
 
+            string token = iTokenProvider.GetToken(new TokenModel()
+                        {
+                            Ssid=model.Ssid,
+                            Appkey = appkey
+                        });
             BusiRegisterResultModel resultModel = new BusiRegisterResultModel()
             {
-                userId = businessDao.Insert(model)
+                userId = userid,
+                Appkey = appkey,
+                Token = token
             };
-            return ResultModel<BusiRegisterResultModel>.Conclude(BusinessRegisterStatus.Success, resultModel);// CustomerRegisterStatusEnum.Success;//默认是成功状态
+            return ResultModel<BusiRegisterResultModel>.Conclude(BusinessRegisterStatus.Success, resultModel);
 
         }
 
@@ -450,6 +458,14 @@ namespace Ets.Service.Provider.Business
                 resultMode.phoneNo = row["PhoneNo2"] == null ? row["PhoneNo"].ToString() : row["PhoneNo2"].ToString();
                 resultMode.DistribSubsidy = row["DistribSubsidy"] == null ? 0 : ParseHelper.ToDecimal(row["DistribSubsidy"]);
                 resultMode.OriginalBusiId = row["OriginalBusiId"].ToString();
+                resultMode.Appkey = new Guid(row["Appkey"].ToString());
+
+                string token = iTokenProvider.GetToken(new TokenModel()
+                {
+                    Ssid = model.Ssid,
+                    Appkey = row["Appkey"].ToString()
+                });
+                resultMode.Token = token;
                 return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.Success, resultMode);
             }
             catch (Exception ex)
@@ -537,8 +553,9 @@ namespace Ets.Service.Provider.Business
         /// 2015年3月23日 19:11:54
         /// </summary>
         /// <param name="model"></param>
+        /// <param name="type">操作类型 默认 0   0代表修改密码  1 代表忘记密码</param>
         /// <returns></returns>
-        public ResultModel<BusiModifyPwdResultModel> PostForgetPwd_B(BusiForgetPwdInfoModel model)
+        public ResultModel<BusiModifyPwdResultModel> PostForgetPwd_B(BusiForgetPwdInfoModel model,int type=0)
         {
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             string key = string.Concat(RedissCacheKey.ChangePasswordCount_B, model.phoneNumber);
@@ -567,6 +584,11 @@ namespace Ets.Service.Provider.Business
             if (business == null) //用户是否存在
             {
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.ClienterIsNotExist);
+            }
+            if (type == 0 && (string.IsNullOrWhiteSpace(model.oldpassword) || business.Password != model.oldpassword))
+            {
+                //旧密码错误
+                return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.OldPwdError);
             }
             if (businessDao.UpdateBusinessPwdSql(business.Id, model.password))
             {
@@ -1461,6 +1483,29 @@ namespace Ets.Service.Provider.Business
         public IList<BusinessExpressRelation> GetBusinessExpressRelationList(int businessId)
         {
             return businessDao.GetBusinessExpressRelationList(businessId);
+        }
+
+        /// <summary>
+        /// 插入骑士运行轨迹
+        /// </summary>
+        /// <UpdateBy>caoheyang</UpdateBy>
+        /// <UpdateTime>20150519</UpdateTime>
+        /// <param name="model">参数实体</param>
+        /// <returns></returns>
+        public ResultModel<object> InsertLocaltion(BusinessPushLocaltionPM model)
+        {
+            try
+            {
+                long id = businessDao.InsertLocation(model.BusinessId, model.Latitude, model.Latitude,model.Platform);
+                return ResultModel<object>.Conclude(SystemState.Success,
+                    new { PushTime = GlobalConfigDao.GlobalConfigGet(0).BusinessUploadTimeInterval });
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriterFromFilter(ex);
+                return ResultModel<object>.Conclude(SystemState.SystemError,
+                      new { PushTime = 0 });
+            }
         }
     }
 }

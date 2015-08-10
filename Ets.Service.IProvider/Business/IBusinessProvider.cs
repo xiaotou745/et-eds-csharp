@@ -121,8 +121,9 @@ namespace Ets.Service.IProvider.Business
         /// 2015年3月23日 19:11:54
         /// </summary>
         /// <param name="model"></param>
+        /// <param name="type">操作类型 默认 0   0代表修改密码  1 代表忘记密码</param>
         /// <returns></returns>
-        ResultModel<BusiModifyPwdResultModel> PostForgetPwd_B(BusiForgetPwdInfoModel model);
+        ResultModel<BusiModifyPwdResultModel> PostForgetPwd_B(BusiForgetPwdInfoModel model, int type = 0);
 
         /// <summary>
         /// 获取商户端的统计数量
@@ -396,6 +397,13 @@ namespace Ets.Service.IProvider.Business
         /// /// <param name="optName">操作人</param>
         /// <returns></returns>
         DealResultInfo ModifyBusinessExpress(int busiId, string deliveryCompanyList, string optName);
+
+        /// <summary>
+        /// 商家坐标上传
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        ResultModel<object> InsertLocaltion(BusinessPushLocaltionPM model);
     }
 }
 

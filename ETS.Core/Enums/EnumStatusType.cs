@@ -34,7 +34,9 @@ namespace ETS.Enums
         [DisplayText("您要找回的密码正是当前密码")]
         PwdIsSave,
         [DisplayText("您当前操作次数大于10，请5分钟后重试")]
-        CountError = -10
+        CountError = -10,
+        [DisplayText("旧密码错误")]
+        OldPwdError 
     }
     
     public enum UploadIconStatus

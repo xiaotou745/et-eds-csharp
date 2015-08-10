@@ -126,6 +126,10 @@ namespace ETS.Enums
         [DisplayText("两次密码不能相同")]
         PwdIsSame,
         [DisplayText("您当前的操作次数大于10，请5分钟后重试")]
-        CountError = -10
+        CountError = -10,
+        [DisplayText("旧密码错误")]
+        OldPwdError,
+        [DisplayText("验证码错误")]
+        CheckCodeError
     }
 }

@@ -36,6 +36,16 @@ namespace Ets.Model.DataModel.Finance
         /// 操作时间
         /// </summary>
         public DateTime OperatTime { get; set; }
+        /// <summary>
+        /// 之前状态
+        /// </summary>
+        public int OldStatus { get; set; }
+        /// <summary>
+        /// 处理状态（0：待处理 1：已处理）
+        /// </summary>
+        public int DealStatus { get; set; }
+
+        
 
 
     }

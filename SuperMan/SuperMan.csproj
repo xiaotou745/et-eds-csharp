@@ -24,7 +24,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
     <OutputPath>bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -236,6 +236,7 @@
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\TestUserManagerController.cs" />
     <Compile Include="Controllers\UploadTestController.cs" />
+    <Compile Include="Controllers\YeePayRunningManagerController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -267,10 +268,12 @@
     <Content Include="Content\fromwangying\header.css" />
     <Content Include="Content\header.css" />
     <Content Include="Content\images\b.png" />
+    <Content Include="Content\images\businessmarker.png" />
     <Content Include="Content\images\c.png" />
     <Content Include="Content\images\carousel1.jpg" />
     <Content Include="Content\images\carousel2.jpg" />
     <Content Include="Content\images\carousel3.jpg" />
+    <Content Include="Content\images\clientermarker.png" />
     <Content Include="Content\images\glyphicons-halflings-white.png" />
     <Content Include="Content\images\glyphicons-halflings.png" />
     <Content Include="Content\images\Icon1.png" />
@@ -470,6 +473,7 @@
     <Content Include="Content\i\img-x.psd" />
     <Content Include="Content\i\sprite-icon.psd" />
     <Content Include="Nlog.config" />
+    <Content Include="Content\images\北京市公积金提取政策.pdf" />
     <None Include="Properties\PublishProfiles\admin.edaisong.com.pubxml" />
     <None Include="Properties\PublishProfiles\chuan.admin.edaisong.com.pubxml" />
     <None Include="Properties\PublishProfiles\HDLWEB.pubxml" />
@@ -612,7 +616,6 @@
     <Content Include="Views\Order\OrderDetail.cshtml" />
     <Content Include="Views\OpenCityManager\OpenCityManager.cshtml" />
     <Content Include="Views\OpenCityManager\_OpenCityManagerList.cshtml" />
-    <Content Include="Views\AdminTools\RedisTools.cshtml" />
     <Content Include="Views\SubsidyFormulaMode\OverStoreSubsidies.cshtml" />
     <Content Include="Views\AdminTools\PostRedisTools.cshtml" />
     <Content Include="Views\SuperManManager\CrossShopLog.cshtml" />
@@ -681,6 +684,11 @@
     <Content Include="Views\AdminTools\APPVersionEdit.cshtml" />
     <Content Include="Views\AdminTools\APPVersionManager.cshtml" />
     <Content Include="Views\AdminTools\_APPVersionList.cshtml" />
+    <Content Include="Views\Statistical\AppActiveMap.cshtml" />
+    <Content Include="Views\YeePayRunningManager\YeePayRunningManager.cshtml" />
+    <Content Include="Views\YeePayRunningManager\_YeePayRunningList.cshtml" />
+    <Content Include="Views\Statistical\ActiveUserAnalyze.cshtml" />
+    <Content Include="Views\Statistical\_PartialActiveUserList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

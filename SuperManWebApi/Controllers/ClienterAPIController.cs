@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using ETS.Util;
 using Ets.Service.Provider.Clienter;
 using Ets.Service.Provider.Common;
+using SuperManWebApi.App_Start.Filters;
 using SuperManWebApi.Providers;
 using Ets.Model.DataModel.Order;
 using ETS.Extension;
@@ -62,6 +63,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
+        [Token]
         public ResultModel<UploadIconModel> PostAudit_C()
         {
             if (HttpContext.Current.Request.Form.Count == 0)
@@ -107,6 +109,7 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>        
         [ExecuteTimeLog]
         [HttpPost]
+        [Token]
         public ResultModel<ClientOrderResultModel[]> GetMyJobList_C(ClientOrderInfoModel model)
         {
             degree.longitude = model.longitude;
@@ -196,6 +199,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <returns></returns>        
         [HttpPost]
+        [Token]
         public ResultModel<ClienterModifyPwdResultModel> PostModifyPwd_C(ModifyPwdInfoModel model)
         {
 
@@ -267,8 +271,9 @@ namespace SuperManWebApi.Controllers
         /// <param name="userId"></param>
         /// <param name="orderNo"></param>
         /// <returns></returns>
-        [ExecuteTimeLog]
         [HttpGet]
+        [Token]
+        [ExecuteTimeLog]
         public ResultModel<RushOrderResultModel> RushOrder_C(int userId, string orderNo)
         {
             return new ClienterProvider().RushOrder_C(userId, orderNo);
@@ -280,6 +285,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="phoneNo">手机号</param>
         /// <returns></returns>     
         [HttpGet]
+        [Token]
         public ResultModel<Ets.Model.DataModel.Clienter.MyBalanceResultModel> GetMyBalance(string phoneNo)
         {
             if (string.IsNullOrEmpty(phoneNo))
@@ -300,6 +306,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="phoneNo">手机号</param>
         /// <returns></returns>        
         [HttpGet]
+        [Token]
         public ResultModel<MyBalanceListResultModel[]> GetMyBalanceDynamic(string phoneNo, int? pagedSize, int? pagedIndex)
         {
             int pIndex = ParseHelper.ToInt(pagedIndex.HasValue, 1);
@@ -343,7 +350,7 @@ namespace SuperManWebApi.Controllers
                 key = RedissCacheKey.PostRegisterInfo_C + PhoneNumber;
                 msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCode, randomCode, SystemConst.MessageClinenter);
             }
-            else //修改密码
+            else if(type=="1") //忘记密码
             {
                 if (!checkUser)
                 {
@@ -353,12 +360,20 @@ namespace SuperManWebApi.Controllers
                 key = RedissCacheKey.PostForgetPwd_C + PhoneNumber;
                 msg = string.Format(SupermanApiConfig.Instance.SmsContentFindPassword, randomCode, SystemConst.MessageClinenter);
             }
+            else if(type=="2")//修改密码
+            {
+                if (!checkUser)
+                {
+                    //如果骑士不存在 
+                    return SimpleResultModel.Conclude(SendCheckCodeStatus.NotExists);
+                }
+                key = RedissCacheKey.ChangePasswordCheckCode_C + PhoneNumber;
+                msg = string.Format(SupermanApiConfig.Instance.SmsContentFindPassword, randomCode, SystemConst.MessageClinenter);
+            }
             try
             {
                 var redis = new RedisCache();
                 redis.Add(key, randomCode, new TimeSpan(0, 5, 0));
-
-
                 // 更新短信通道 
                 Task.Factory.StartNew(() =>
                 {
@@ -387,8 +402,13 @@ namespace SuperManWebApi.Controllers
             }
             var redis = new RedisCache();
             string msg = string.Empty;
-            string key = model.Stype == "0" ? RedissCacheKey.PostRegisterInfo_C + model.PhoneNumber : RedissCacheKey.PostForgetPwd_C + model.PhoneNumber;
-
+            string key = "";//model.Stype == "0" ? RedissCacheKey.PostRegisterInfo_C + model.PhoneNumber : RedissCacheKey.PostForgetPwd_C + model.PhoneNumber;
+            switch (model.Stype)
+            {
+                case "0":key = RedissCacheKey.PostRegisterInfo_C + model.PhoneNumber;break;
+                case "1": key = RedissCacheKey.PostForgetPwd_C + model.PhoneNumber; break;
+                case "2": key = RedissCacheKey.ChangePasswordCheckCode_C + model.PhoneNumber; break;
+            }
 
             string obj = redis.Get<string>(key);
             if (string.IsNullOrEmpty(obj))
@@ -416,7 +436,13 @@ namespace SuperManWebApi.Controllers
                     return SimpleResultModel.Conclude(SendCheckCodeStatus.AlreadyExists);
                 msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCodeVoice, tempcode, SystemConst.MessageClinenter);
             }
-            else //修改密码
+            else if(model.Stype=="1")//忘记密码
+            {
+                if (!userStatus)
+                    return SimpleResultModel.Conclude(SendCheckCodeStatus.NotExists);
+                msg = string.Format(SupermanApiConfig.Instance.SmsContentCheckCodeFindPwdVoice, tempcode, SystemConst.MessageClinenter);
+            }
+            else if (model.Stype == "2")//修改密码
             {
                 if (!userStatus)
                     return SimpleResultModel.Conclude(SendCheckCodeStatus.NotExists);
@@ -446,6 +472,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="paraModel"></param>
         /// <returns></returns>
         [HttpPost]
+        [Token]
         public SimpleResultModel ChangeWorkStatus(ChangeWorkStatusPM paraModel)
         {
             if (paraModel.WorkStatus == null) //检查非空
@@ -484,6 +511,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="parModel">userId</param>
         /// <returns></returns>    
         [HttpPost]
+        [Token]
         public ResultModel<ClienterStatusModel> GetUserStatus(UserStatusModel parModel)
         {
             var model = new ClienterProvider().GetUserStatus(parModel.userId);

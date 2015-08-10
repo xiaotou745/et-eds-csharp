@@ -38,6 +38,10 @@ namespace Ets.Model.DomainModel.Finance
         /// 商户所在城市
         /// </summary>
         public string BusinessCity { get; set; }
+        /// <summary>
+        /// 超时时间（单位为：天）
+        /// </summary>
+        public int DateDiff { get; set; }
         
         
 

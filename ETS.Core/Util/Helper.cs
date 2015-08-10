@@ -58,6 +58,15 @@ namespace ETS.Util
         }
 
         /// <summary>
+        /// 生成guid
+        /// </summary>
+        /// <returns></returns>
+        public static string GetToken()
+        {
+           return Uuid();
+        }
+
+        /// <summary>
         /// 获取图片路径+名称
         /// 窦海超
         /// 2015年4月9日 09:22:55

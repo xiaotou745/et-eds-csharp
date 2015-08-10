@@ -15,6 +15,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using SuperManWebApi.App_Start.Filters;
 
 namespace SuperManWebApi.Controllers
 {
@@ -26,25 +27,30 @@ namespace SuperManWebApi.Controllers
         /// 窦海超
         /// 2015年5月12日 14:35:05
         /// </summary>
-        //[HttpGet]
+        [Token]
         public ResultModel<PayResultModel> CreatePay(PayModel model)//
         {
-            //PayModel model = new PayModel()
-            //{
-            //    productId = 1,
-            //    orderId = 1358,
-            //    childId = 11,
-            //    payType = 1,
-            //    version = "1.0",
-            //    payStyle = 1
-            //};
             return payProvider.CreatePay(model);
         }
+        [HttpGet]
+       public ResultModel<PayResultModel> CreatePayTest(int orderId)
+        {
+            PayModel model = new PayModel()
+            {
+                productId = 1,
+                orderId = orderId,
+                childId = 1,
+                payType = 2,
+                version = "1.0",
+                payStyle = 1
+            };
+           return payProvider.CreatePay(model);
+       }
 
         #region 支付宝
 
         /// <summary>
-        /// 支付宝创建订单
+        /// 支付宝创建订单  回调
         /// 窦海超
         /// 2015年5月12日 14:35:10
         /// </summary>
@@ -55,7 +61,7 @@ namespace SuperManWebApi.Controllers
         }
 
         /// <summary>
-        /// Alipay自动返回,异步处理
+        /// Alipay自动返回,异步处理   回调
         /// 窦海超
         /// 2015年5月12日 14:35:15
         /// </summary>
@@ -88,35 +94,36 @@ namespace SuperManWebApi.Controllers
         /// 窦海超
         /// 2015年5月29日 15:09:29
         /// <param name="model"></param>
+       [Token]
         public ResultModel<BusinessRechargeResultModel> BusinessRecharge(BusinessRechargeModel model)
         {
             return payProvider.BusinessRecharge(model);
         }
 
         /// <summary>
-        /// 商家充值回调方法 
+        /// 商家充值回调方法回调
         /// 窦海超
         /// 2015年5月29日 15:17:07
         /// </summary>
         /// <returns></returns>
-        public dynamic BusinessRechargeNotify()
+        public void BusinessRechargeNotify()
         {
-            return payProvider.BusinessRechargeNotify();
+            payProvider.BusinessRechargeNotify();
         }
         #endregion
 
         #region 微信
 
         /// <summary>
-        /// 微信支付
+        /// 微信支付 回调
         /// 窦海超
         /// 2015年5月13日 15:02:42
         /// </summary>
         /// <returns></returns>
         //[HttpGet]
-        public dynamic ReturnWxpay()
+        public dynamic WxNotify()
         {
-            return payProvider.ReturnWxpay();
+            return payProvider.WxNotify();
         }
         #endregion
 

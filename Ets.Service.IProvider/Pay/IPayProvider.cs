@@ -72,7 +72,15 @@ namespace Ets.Service.IProvider.Pay
         /// 2015年5月13日 15:03:45
         /// </summary>
         /// <returns></returns>
-        dynamic ReturnWxpay();
+        dynamic WxNotify();
+
+        /// <summary>
+        /// 微信商家充值回调方法 
+        /// 窦海超
+        /// 2015年8月6日 23:06:02
+        /// </summary>
+        /// <returns></returns>
+        void BusinessRechargeWxNotify();
 
         /// <summary>
         /// 易宝转账回调接口
@@ -98,5 +106,11 @@ namespace Ets.Service.IProvider.Pay
         /// </summary>
         /// <param name="para"></param>
         TransferReturnModel TransferAccountsYee(YeeTransferParameter para);
+
+        /// <summary>
+        /// 易宝自动对账
+        /// danny-20150730
+        /// </summary>
+        void YeePayReconciliation();
     }
 }

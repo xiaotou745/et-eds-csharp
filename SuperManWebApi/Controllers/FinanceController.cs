@@ -41,6 +41,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model">参数实体</param>
         /// <returns></returns>
+        [Token]
         [HttpPost]
         public ResultModel<object> WithdrawC([FromBody]WithdrawCriteria model)
         {
@@ -52,6 +53,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="cardBindCpm">参数实体</param>
         /// <returns></returns>
+        [Token]
         [HttpPost]
         public ResultModel<object> CardBindC([FromBody]CardBindCPM cardBindCpm)
         {
@@ -63,6 +65,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="cardModifyCpm">参数实体</param>
         /// <returns></returns>
+        [Token]
         [HttpPost]
         public ResultModel<object> CardModifyC([FromBody]CardModifyCPM cardModifyCpm)
         {
@@ -78,6 +81,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="withdrawBpm">参数实体</param>
         /// <returns></returns>
+        [Token]
         [HttpPost]
         public ResultModel<object> WithdrawB([FromBody]WithdrawBPM withdrawBpm)
         {
@@ -90,6 +94,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="cardBindBpm">参数实体</param>
         /// <returns></returns>
         [HttpPost]
+        [Token]
         public ResultModel<object> CardBindB([FromBody]CardBindBPM cardBindBpm)
         {
             return iBusinessFinanceAccountProvider.CardBindB(cardBindBpm);
@@ -100,6 +105,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="cardModifyBpm">参数实体</param>
         /// <returns></returns>
+        [Token]
         [HttpPost]
         public ResultModel<object> CardModifyB([FromBody]CardModifyBPM cardModifyBpm)
         {
@@ -115,6 +121,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="bankProvinceCityPM"></param>
         /// <returns></returns>        
+        [Token]
         [HttpPost]
         [ApiVersionStatistic]
         public ResultModel<AreaModelList> GetBankProvinceCity([FromBody]BankProvinceCityPM bankProvinceCityPM)
