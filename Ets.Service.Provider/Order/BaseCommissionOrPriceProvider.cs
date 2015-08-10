@@ -32,7 +32,7 @@ namespace Ets.Service.Provider.Order
             {
                 distribe = GetOrderWebSubsidy(model);
             }
-            return Decimal.Round((GetBaseCommission(model) + distribe) * orderCount, 2);//计算佣金
+            return Decimal.Round((GetBaseCommission(model) + distribe) * orderCount, 2);//计算佣金:（基本佣金（可配置）+ 代收客配或网站补贴）*订单数量
         }
 
         /// <summary>
