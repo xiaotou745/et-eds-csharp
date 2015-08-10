@@ -1619,7 +1619,7 @@ into dbo.ClienterOptionLog(ClienterId,OptId,OptName,Remark)
 where Id=@Id ";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.Add("DeliveryCompanyId", DbType.Int32, 4).Value = clienterId;
+            dbParameters.Add("DeliveryCompanyId", DbType.Int32, 4).Value = deliveryCompanyId;
             dbParameters.Add("Id", DbType.Int32, 4).Value = clienterId;
             dbParameters.Add("OptId", DbType.Int32, 4).Value = optId;
             dbParameters.Add("OptName", DbType.String, 50).Value = optName;
