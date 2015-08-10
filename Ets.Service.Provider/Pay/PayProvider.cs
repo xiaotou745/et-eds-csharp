@@ -393,7 +393,6 @@ namespace Ets.Service.Provider.Pay
                 resultModel.notifyUrl = ETS.Config.NotifyUrl.Replace("Notify", "BusinessRechargeNotify");
                 //resultModel.orderNo = orderNo;
             }
-            resultModel.businessId = model.Businessid;//商家ID，回调的时候需要在attr里传回来 
             resultModel.payAmount = model.payAmount;
             resultModel.orderNo = orderNo;
             resultModel.PayType = model.PayType;
