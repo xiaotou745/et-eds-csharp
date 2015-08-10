@@ -385,8 +385,14 @@ namespace Ets.Service.Provider.Pay
             BusinessRechargeResultModel resultModel = new BusinessRechargeResultModel();
             if (model.PayType == PayTypeEnum.WeiXin.GetHashCode())
             {
+
                 resultModel.notifyUrl = ETS.Config.WXBusinessRecharge;
-                //resultModel.orderNo = string.Concat(model.Businessid + "_", orderNo);
+
+                NativePay nativePay = new NativePay();
+                string prepayId = string.Empty;
+                string code_url = nativePay.GetPayUrl(orderNo, model.payAmount * 100, "E代送商家充值", Config.WXBusinessRecharge, out prepayId);
+                resultModel.prepayId = prepayId;
+                resultModel.notifyUrl = Config.WXBusinessRecharge;
             }
             else
             {
@@ -426,6 +432,7 @@ namespace Ets.Service.Provider.Pay
                     {
                         HttpContext.Current.Response.Write(string.Format(errmsg, "回调的数据有问题，不存在下划线"));
                         HttpContext.Current.Response.End();
+                        return;
                     }
                     if (new BusinessRechargeDao().Check(notify.order_no))
                     {
@@ -434,6 +441,7 @@ namespace Ets.Service.Provider.Pay
                         //回头找到原因一定要改
                         HttpContext.Current.Response.Write("<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>");
                         HttpContext.Current.Response.End();
+                        return;
                     }
 
                     int businessid = ParseHelper.ToInt(ordermsg.Split('_')[0]);
@@ -448,7 +456,13 @@ namespace Ets.Service.Provider.Pay
                         PayStatus = 1,
                         PayType = PayTypeEnum.WeiXin.GetHashCode()
                     };
-                    BusinessRechargeSusess(businessRechargeModel);
+                   string msg= BusinessRechargeSusess(businessRechargeModel);
+                   if (msg.Equals("success"))
+                   {
+                        HttpContext.Current.Response.Write("<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>");
+                        HttpContext.Current.Response.End();
+                        return;
+                   }
                 }
                 #endregion
 
@@ -608,7 +622,9 @@ namespace Ets.Service.Provider.Pay
             if (payStyle == 1)//用户扫二维码
             {
                 NativePay nativePay = new NativePay();
-                code_url = nativePay.GetPayUrl(orderNo, totalPrice, "E代送收款", Config.WXNotifyUrl);
+                string prepayId = string.Empty;
+                code_url = nativePay.GetPayUrl(orderNo, totalPrice, "E代送收款", Config.WXNotifyUrl, out prepayId);
+                resultModel.prepayId = prepayId;
             }
 
             resultModel.aliQRCode = code_url;//微信地址
@@ -616,6 +632,7 @@ namespace Ets.Service.Provider.Pay
             resultModel.payAmount = totalPrice;//总金额，没乘以100的值
             resultModel.payType = PayTypeEnum.WeiXin.GetHashCode();//微信
             resultModel.notifyUrl = ETS.Config.WXNotifyUrl;//回调地址
+
             return ResultModel<PayResultModel>.Conclude(AliPayStatus.success, resultModel);
         }
 
@@ -625,7 +642,7 @@ namespace Ets.Service.Provider.Pay
         /// 2015年5月13日 15:03:45
         /// </summary>
         /// <returns></returns>
-        public dynamic WxNotify()
+        public void WxNotify()
         {
 
             #region 参数绑定
@@ -641,6 +658,7 @@ namespace Ets.Service.Provider.Pay
                     LogHelper.LogWriter(fail);
                     HttpContext.Current.Response.Write(string.Format(errmsg, fail));
                     HttpContext.Current.Response.End();
+                    return;
                 }
                 int productId = ParseHelper.ToInt(orderNo.Split('_')[0]);//产品编号
                 int orderId = ParseHelper.ToInt(orderNo.Split('_')[1]);//主订单号
@@ -652,6 +670,7 @@ namespace Ets.Service.Provider.Pay
                     LogHelper.LogWriter(fail);
                     HttpContext.Current.Response.Write(string.Format(errmsg, fail));
                     HttpContext.Current.Response.End();
+                    return;
                 }
 
                 OrderChildFinishModel model = new OrderChildFinishModel()
@@ -673,6 +692,7 @@ namespace Ets.Service.Provider.Pay
                     LogHelper.LogWriter(success);
                     HttpContext.Current.Response.Write("<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>");
                     HttpContext.Current.Response.End();
+                    return;
                 }
             }
             #endregion
@@ -680,8 +700,6 @@ namespace Ets.Service.Provider.Pay
             HttpContext.Current.Response.Write(errmsg);
             HttpContext.Current.Response.End();
             #endregion
-
-            return null;
         }
 
         #endregion

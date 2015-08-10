@@ -1,7 +1,7 @@
 use superman
 go
 
-ALTER TABLE [dbo].[order] ADD [BaseCommission] decimal(18,2) NULL ;--基本补贴佣金
+ALTER TABLE [dbo].[order] ADD [BaseCommission] decimal(18,2) not null default 0;--基本补贴佣金
 
 
 
