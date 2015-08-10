@@ -385,13 +385,16 @@ namespace Ets.Service.Provider.Pay
             BusinessRechargeResultModel resultModel = new BusinessRechargeResultModel();
             if (model.PayType == PayTypeEnum.WeiXin.GetHashCode())
             {
-
+                resultModel.notifyUrl = ETS.Config.WXBusinessRecharge;
+                //resultModel.orderNo = string.Concat(model.Businessid + "_", orderNo);
             }
             else
             {
                 resultModel.notifyUrl = ETS.Config.NotifyUrl.Replace("Notify", "BusinessRechargeNotify");
-                resultModel.payAmount = model.payAmount;
+                //resultModel.orderNo = orderNo;
             }
+            resultModel.businessId = model.Businessid;//商家ID，回调的时候需要在attr里传回来 
+            resultModel.payAmount = model.payAmount;
             resultModel.orderNo = orderNo;
             resultModel.PayType = model.PayType;
             //所属产品_主订单号_子订单号_支付方式
@@ -422,7 +425,6 @@ namespace Ets.Service.Provider.Pay
                     string ordermsg = notify.order_no;//商家ID_充值单ID
                     if (ordermsg.Contains("_"))
                     {
-
                         HttpContext.Current.Response.Write(string.Format(errmsg, "回调的数据有问题，不存在下划线"));
                         HttpContext.Current.Response.End();
                     }

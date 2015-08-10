@@ -28,6 +28,10 @@ namespace Ets.Model.DomainModel.Business
         /// </summary>
         public string notifyUrl { get; set; }
 
+        /// <summary>
+        /// 商家ID
+        /// </summary>
+        public int businessId { get; set; }
 
     }
 }
