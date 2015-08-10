@@ -385,8 +385,14 @@ namespace Ets.Service.Provider.Pay
             BusinessRechargeResultModel resultModel = new BusinessRechargeResultModel();
             if (model.PayType == PayTypeEnum.WeiXin.GetHashCode())
             {
+
                 resultModel.notifyUrl = ETS.Config.WXBusinessRecharge;
-                //resultModel.orderNo = string.Concat(model.Businessid + "_", orderNo);
+
+                NativePay nativePay = new NativePay();
+                string prepayId = string.Empty;
+                string code_url = nativePay.GetPayUrl(orderNo, model.payAmount * 100, "E代送商家充值", Config.WXBusinessRecharge, out prepayId);
+                resultModel.prepayId = prepayId;
+                resultModel.notifyUrl = Config.WXBusinessRecharge;
             }
             else
             {
@@ -608,7 +614,9 @@ namespace Ets.Service.Provider.Pay
             if (payStyle == 1)//用户扫二维码
             {
                 NativePay nativePay = new NativePay();
-                code_url = nativePay.GetPayUrl(orderNo, totalPrice, "E代送收款", Config.WXNotifyUrl);
+                string prepayId = string.Empty;
+                code_url = nativePay.GetPayUrl(orderNo, totalPrice, "E代送收款", Config.WXNotifyUrl, out prepayId);
+                resultModel.prepayId = prepayId;
             }
 
             resultModel.aliQRCode = code_url;//微信地址
@@ -616,6 +624,7 @@ namespace Ets.Service.Provider.Pay
             resultModel.payAmount = totalPrice;//总金额，没乘以100的值
             resultModel.payType = PayTypeEnum.WeiXin.GetHashCode();//微信
             resultModel.notifyUrl = ETS.Config.WXNotifyUrl;//回调地址
+
             return ResultModel<PayResultModel>.Conclude(AliPayStatus.success, resultModel);
         }
 
