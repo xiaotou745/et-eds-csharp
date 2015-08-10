@@ -38,7 +38,7 @@ namespace ETS.Library.Pay.WxPay
         /// <param name="notify_url">回调地址</param>
         /// <param name="total_fee">金额 分</param>
         /// <returns></returns>
-        public string GetPayUrl(string productId, decimal total_fee, string body, string notify_url)
+        public string GetPayUrl(string productId, decimal total_fee, string body, string notify_url, out string prepay_id)
         {
             Log.Info(this.GetType().ToString(), "Native pay mode 2 url is producing...");
 
@@ -58,7 +58,7 @@ namespace ETS.Library.Pay.WxPay
             data.SetValue("notify_url", notify_url);
             WxPayData result = WxPayApi.UnifiedOrder(data);//调用统一下单接口
             string url = result.GetValue("code_url").ToString();//获得统一下单接口返回的二维码链接
-
+            prepay_id = result.GetValue("prepay_id").ToString();
             Log.Info(this.GetType().ToString(), "Get native pay mode 2 url : " + url);
             return url;
         }
