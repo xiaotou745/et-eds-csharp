@@ -382,13 +382,18 @@ namespace Ets.Service.Provider.Pay
             #endregion
 
             string orderNo = Helper.generateOrderCode(model.Businessid);
-            BusinessRechargeResultModel resultModel = new BusinessRechargeResultModel()
+            BusinessRechargeResultModel resultModel = new BusinessRechargeResultModel();
+            if (model.PayType == PayTypeEnum.WeiXin.GetHashCode())
             {
-                notifyUrl = ETS.Config.NotifyUrl.Replace("Notify", "BusinessRechargeNotify"),
-                orderNo = orderNo,
-                payAmount = model.payAmount,
-                PayType = model.PayType
-            };
+
+            }
+            else
+            {
+                resultModel.notifyUrl = ETS.Config.NotifyUrl.Replace("Notify", "BusinessRechargeNotify");
+                resultModel.payAmount = model.payAmount;
+            }
+            resultModel.orderNo = orderNo;
+            resultModel.PayType = model.PayType;
             //所属产品_主订单号_子订单号_支付方式
 
             return ResultModel<BusinessRechargeResultModel>.Conclude(AliPayStatus.success, resultModel);
@@ -406,15 +411,6 @@ namespace Ets.Service.Provider.Pay
             try
             {
                 #region 参数绑定
-
-                //var request = System.Web.HttpContext.Current.Request;
-                //AlipayNotifyData notify = new AlipayNotifyData();
-                //notify.buyer_email = request["buyer_email"];
-                //notify.trade_status = request["trade_status"];
-                //notify.out_trade_no = request["out_trade_no"];
-                //notify.trade_no = request["trade_no"];
-                //notify.total_fee = ParseHelper.ToDecimal(request["total_fee"], 0);
-                //notify.out_biz_no = ParseHelper.ToInt(request["body"], 0);//businessid
                 WxNotifyResultModel notify = new ResultNotify().ProcessNotify();
                 string errmsg = "<xml><return_code><![CDATA[FAIL]]></return_code><return_msg><![CDATA[{0}]]></return_msg></xml>";
                 #endregion
