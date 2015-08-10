@@ -1050,7 +1050,7 @@ GROUP BY            c2.PhoneNo ,
                     c.Id
         ) AS T1 ";
             tables = string.Format(tables, starPar, endPar, remPar);
-            string whereStr = " 1=1 GROUP BY  T1.RecommendPhone";
+            string whereStr = " 1=1 GROUP BY T1.PhoneNo ,T1.TrueName ";
 
             var temp = new PageHelper().GetPages<RecommendDataModel>(SuperMan_Read, recommendQuery.PageIndex, whereStr,
                 "  T1.PhoneNo ", columnList, tables, ETS.Const.SystemConst.PageSize, false);
