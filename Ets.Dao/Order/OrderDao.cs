@@ -2101,6 +2101,7 @@ insert  into dbo.[order]
           ReceviceLatitude ,
           OrderCount ,
           CommissionRate ,
+          BaseCommission ,
           CommissionFormulaMode ,
           SongCanDate ,
           [Weight] ,
