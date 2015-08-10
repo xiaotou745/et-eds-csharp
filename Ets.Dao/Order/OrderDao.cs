@@ -239,7 +239,7 @@ namespace Ets.Dao.Order
                 @Remark,@Weight,@DistribSubsidy,@OrderCount,@ReceviceName,
                 @RecevicePhoneNo,@ReceiveProvinceCode,@ReceiveCityCode,@ReceiveAreaCode,@ReceviceAddress,
                 @ReceviceLongitude,@ReceviceLatitude,@BusinessId,@PickUpAddress,@Payment,@OrderCommission,
-                @WebsiteSubsidy,@CommissionRate,@CommissionFormulaMode,@ReceiveProvince,@ReceviceCity,@ReceiveArea,
+                @WebsiteSubsidy,@CommissionRate,@BaseCommission,@CommissionFormulaMode,@ReceiveProvince,@ReceviceCity,@ReceiveArea,
                 @PickupCode,@BusinessCommission,@SettleMoney,@Adjustment,@OrderFrom,@Status,@CommissionType,@CommissionFixValue,@BusinessGroupId,@Invoice,
                 @MealsSettleMode,@BusinessReceivable);
                select  IDENT_CURRENT('order') ";
@@ -273,6 +273,7 @@ namespace Ets.Dao.Order
             dbParameters.AddWithValue("@OrderCommission", paramodel.ordercommission);    //订单骑士佣金
             dbParameters.AddWithValue("@WebsiteSubsidy", paramodel.websitesubsidy);    //网站补贴
             dbParameters.AddWithValue("@CommissionRate", paramodel.commissionrate);    //订单佣金比例
+            dbParameters.AddWithValue("@BaseCommission", paramodel.basecommission);    //订单基本佣金
             dbParameters.AddWithValue("@CommissionFormulaMode", paramodel.CommissionFormulaMode); //订单佣金计算方式
             dbParameters.AddWithValue("@ReceiveProvince", paramodel.address.province);    //用户省
             dbParameters.AddWithValue("@ReceviceCity", paramodel.address.city); //用户市
@@ -2140,6 +2141,7 @@ values  ( @OrderNo ,
           @ReceviceLatitude ,
           @OrderCount ,
           @CommissionRate ,
+          @BaseCommission,
           @CommissionFormulaMode ,
           @SongCanDate ,
           @Weight1 ,
@@ -2182,6 +2184,7 @@ select @@identity";
             dbParameters.AddWithValue("@ReceviceLatitude", order.ReceviceLatitude);
             dbParameters.AddWithValue("@OrderCount", order.OrderCount);
             dbParameters.AddWithValue("@CommissionRate", order.CommissionRate);
+            dbParameters.AddWithValue("@BaseCommission", order.BaseCommission);
             dbParameters.AddWithValue("@CommissionFormulaMode", order.CommissionFormulaMode);
             dbParameters.AddWithValue("@SongCanDate", order.SongCanDate);
             dbParameters.AddWithValue("@Weight1", order.Weight);
@@ -2241,7 +2244,7 @@ values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude,@OneKeyPubOrder,@I
             dbOtherParameters.AddWithValue("@PubLongitude", order.PubLongitude);
             dbOtherParameters.AddWithValue("@PubLatitude", order.PubLatitude);
             dbOtherParameters.AddWithValue("@OneKeyPubOrder", order.OneKeyPubOrder);
-            dbOtherParameters.Add("@OneKeyPubOrder",DbType.Int32).Value=IsOrderChecked;
+            dbOtherParameters.Add("@IsOrderChecked", DbType.Int32).Value = IsOrderChecked;
             DbHelper.ExecuteScalar(SuperMan_Write, insertOtherSql, dbOtherParameters);
             #endregion
 

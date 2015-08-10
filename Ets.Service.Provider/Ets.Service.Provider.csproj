@@ -102,6 +102,7 @@
     <Compile Include="OpenApi\WanDaGroup.cs" />
     <Compile Include="Order\AmountOrPriceProvider.cs" />
     <Compile Include="Order\AutoAdjustProvider.cs" />
+    <Compile Include="Order\BaseCommissionOrPriceProvider.cs" />
     <Compile Include="Order\BreakEvenPointOrPriceProvider.cs" />
     <Compile Include="Order\CommissionFactory.cs" />
     <Compile Include="Order\DeliveryCompanyPriceProvider.cs" />

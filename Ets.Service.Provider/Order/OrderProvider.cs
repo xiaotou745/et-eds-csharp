@@ -315,6 +315,7 @@ namespace Ets.Service.Provider.Order
             OrderPriceProvider commProvider = CommissionFactory.GetCommission(business.StrategyId);
             to.CommissionFormulaMode = business.StrategyId;
             to.CommissionRate = commProvider.GetCommissionRate(orderComm); //佣金比例 
+            to.BaseCommission = commProvider.GetBaseCommission(orderComm);//基本佣金
             to.OrderCommission = commProvider.GetCurrenOrderCommission(orderComm); //订单佣金
             to.WebsiteSubsidy = commProvider.GetOrderWebSubsidy(orderComm);//网站补贴
             to.SettleMoney = commProvider.GetSettleMoney(orderComm);//订单结算金额            
@@ -654,6 +655,7 @@ namespace Ets.Service.Provider.Order
             paramodel.ordercommission = commissonPro.GetCurrenOrderCommission(orderComm);  //骑士佣金
             paramodel.websitesubsidy = commissonPro.GetOrderWebSubsidy(orderComm);//网站补贴
             paramodel.commissionrate = commissonPro.GetCommissionRate(orderComm);//订单佣金比例
+            paramodel.basecommission = commissonPro.GetBaseCommission(orderComm);//基本补贴佣金
             paramodel.settlemoney = commissonPro.GetSettleMoney(orderComm);//订单结算金额
             paramodel.adjustment = commissonPro.GetAdjustment(orderComm);//订单额外补贴金额
 
@@ -1101,6 +1103,7 @@ namespace Ets.Service.Provider.Order
             OrderPriceProvider commProvider = CommissionFactory.GetCommission(business.StrategyId);
             to.CommissionFormulaMode = business.StrategyId;
             to.CommissionRate = commProvider.GetCommissionRate(orderComm); //佣金比例 
+            to.BaseCommission = commProvider.GetBaseCommission(orderComm); //基本佣金
             to.OrderCommission = commProvider.GetCurrenOrderCommission(orderComm); //订单佣金
             to.WebsiteSubsidy = commProvider.GetOrderWebSubsidy(orderComm);//网站补贴
             to.SettleMoney = commProvider.GetSettleMoney(orderComm);//订单结算金额

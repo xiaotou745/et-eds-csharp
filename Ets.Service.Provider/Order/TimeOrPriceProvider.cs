@@ -65,5 +65,10 @@ namespace Ets.Service.Provider.Order
             return 0m;
         }
         #endregion
+
+        public override decimal GetBaseCommission(OrderCommission model)
+        {
+            return 0m;
+        }
     }
 }

@@ -53,6 +53,10 @@ namespace Ets.Model.DataModel.Order
         public Nullable<System.DateTime> SongCanDate { get; set; }
         public Nullable<int> OrderCount { get; set; }
         public Nullable<decimal> CommissionRate { get; set; }
+        /// <summary>
+        /// 基本补贴佣金 add by 彭宜 20150807
+        /// </summary>
+        public Nullable<decimal> BaseCommission { get; set; }
 
         public string BusinessName { get; set; }
 
