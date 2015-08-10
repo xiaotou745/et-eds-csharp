@@ -80,7 +80,11 @@ width: 100%;
                     {
                         AuditStatus = "待审核";
                     }
-                   
+                    decimal butie = 0.00M;
+                    if (item.IsNotRealOrder == 1)
+                    {
+                        butie = item.OrderCommission.Value - item.RealOrderCommission;    
+                    }
                     var diffMinutes = (DateTime.Now - DateTime.Parse(item.PubDate != null ? item.PubDate.ToString() : DateTime.Now.ToString())).TotalMinutes;
                     string timeoutStyle = diffMinutes > 5 && item.Status == 0 ? " style=background-color:#FFCCCC" : "";
                     <tr id="@item.Id" @timeoutStyle>
@@ -96,16 +100,6 @@ width: 100%;
                         <td style="color:red;font-weight:600">@item.Amount</td>
                         <td>@item.OrderCommission</td>
                         @{
-                            decimal butie = 0.00M;
-
-                            if (@item.AuditStatus!=2)
-                            {                                
-                                 <td>0.00</td>                               
-                            }
-                            else
-                            {                              
-                                butie = item.OrderCommission.Value - item.RealOrderCommission;                          
-
                                 if (butie > 0)
                                 {
                                     <td style="color:red;font-weight:600">@butie</td>
@@ -115,7 +109,6 @@ width: 100%;
                                     <td>@butie</td>
                                 }
                             }
-}
                         <td>@item.DistribSubsidy</td>
                         <td>@item.WebsiteSubsidy</td>
                         <td>@item.Adjustment</td>

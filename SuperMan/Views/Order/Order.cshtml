@@ -52,7 +52,7 @@
             <tr>
                 <td>
                     <span class="">筛选集团: </span>
-                    @Html.DropDownList("GroupId", new SelectList(new BusinessProvider().GetGroups() , "Id", "GroupName"), "--无--", new { @class = "selectw", style = "width:143px" })
+                    @Html.DropDownList("GroupId", new SelectList(ViewBag.GroupList, "Id", "GroupName"), "--无--", new { @class = "selectw", style = "width:143px" })
                     <span class="">原订单号: </span>
                     <input id="txtOriginalOrderNo" type="text" name="OriginalOrderNo" /> 
                     <span class="">订单号: </span>
