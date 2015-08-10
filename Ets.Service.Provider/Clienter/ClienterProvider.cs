@@ -628,6 +628,8 @@ namespace Ets.Service.Provider.Clienter
         }
         /// <summary>
         /// 超人完成订单  
+        /// 2015年8月10日11:27:18
+        /// 茹化肖
         /// </summary>
         /// <param name="userId">超人id</param>
         /// <param name="orderNo">订单号码</param>
@@ -685,20 +687,31 @@ namespace Ets.Service.Provider.Clienter
                     model.FinishOrderStatus = FinishOrderStatus.OrderHadCancel;
                     return model;
                 }                
-
                 //更新商家金额
                 bool blBusiness= UpdateBusinessMoney(myOrderInfo);
-                //更新骑士金额
-                bool blClienter = UpdateClienterMoney(myOrderInfo);
+               
+                if (myOrderInfo.IsOrderChecked == 1)//订单需要审核
+                {
+                    UpdateClienterMoney(myOrderInfo);//更新骑士金额
+                }
+                else//订单不需要审核
+                {
+                    //更新骑士金额和可提现金额 &&完成任务获得金额流水 和 提现流水
+                    UpdateClienterMoneyNotNeedChecked(myOrderInfo);
+                    //将订单标记为加入已提现
+                    orderDao.UpdateJoinWithdraw(myOrderInfo.Id);
+                    //订单审核通过 
+                    orderDao.UpdateAuditStatus(myOrderInfo.Id, OrderAuditStatusCommon.Through.GetHashCode()); 
+                }
                 //更新骑士无效订单金额
                 UpdateInvalidOrder(myOrderInfo);
                 //写入骑士完成坐标                 
                 orderOtherDao.UpdateComplete(parModel);
-                if (!blBusiness || !blClienter)
+                if (!blBusiness)
                 {
                     return model;
                 }
-             
+                
                 tran.Complete();
             }
             //异步回调第三方，推送通知
@@ -896,7 +909,7 @@ namespace Ets.Service.Provider.Clienter
                 if (orderOther.OrderStatus == OrderStatus.Status1.GetHashCode() && orderOther.OrderCreateTime > Convert.ToDateTime(date))
                 {
                     //更新骑士金额
-                    bool blClienter = UpdateClienterMoney(myOrderInfo);
+                    UpdateClienterMoney(myOrderInfo);
 
                     //更新无效订单状态
                     UpdateInvalidOrder(myOrderInfo);
@@ -1244,7 +1257,7 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="myOrderInfo"></param>
         /// <param name="uploadReceiptModel"></param>
         /// <param name="orderOther"></param>
-        bool UpdateClienterMoney(OrderListModel myOrderInfo)
+        void UpdateClienterMoney(OrderListModel myOrderInfo)
         {       
             if (myOrderInfo.HadUploadCount >= myOrderInfo.OrderCount)
             {
@@ -1253,10 +1266,6 @@ namespace Ets.Service.Provider.Clienter
                     UpdateClienterAccount(myOrderInfo);
                 }
              }
-
-            return true;        
-
-        
 
             #region
             ////没有上传完小票
@@ -1327,9 +1336,7 @@ namespace Ets.Service.Provider.Clienter
             //        }
             //    }               
             //}
-            #endregion
-
-            return false;            
+            #endregion           
         }
 
         /// <summary>
@@ -1437,7 +1444,7 @@ namespace Ets.Service.Provider.Clienter
         public void UpdateAccountBalanceAndWithdraw(OrderListModel myOrderInfo)
         {
             int userId = myOrderInfo.clienterId;
-            //更新骑士 金额  
+            //更新骑士金额和可提现金额  
             bool b = clienterDao.UpdateAccountBalanceAndWithdraw(new WithdrawRecordsModel() { UserId = userId, Amount = myOrderInfo.OrderCommission.Value });
             //增加记录 
             decimal? accountBalance = 0;
@@ -1453,7 +1460,7 @@ namespace Ets.Service.Provider.Clienter
             }
             allowWithdrawPrice = myOrderInfo.AllowWithdrawPrice;
 
-
+            //增加一条获得佣金的流水
             ClienterBalanceRecord cbrm = new ClienterBalanceRecord()
             {
                 ClienterId = userId,
@@ -1464,10 +1471,10 @@ namespace Ets.Service.Provider.Clienter
                 Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士:" + userId : myOrderInfo.ClienterName,
                 WithwardId = myOrderInfo.Id,
                 RelationNo = myOrderInfo.OrderNo,
-                Remark = "骑士完成订单"
+                Remark = "骑士完成订单"+(myOrderInfo.IsOrderChecked==0?"(订单不需审核)":"")
             };
             clienterBalanceRecordDao.Insert(cbrm);
-
+            //增加一条骑士获得可提现金额的流水
             ClienterAllowWithdrawRecord cawrm = new ClienterAllowWithdrawRecord()
             {
                 ClienterId = userId,
@@ -1478,7 +1485,7 @@ namespace Ets.Service.Provider.Clienter
                 Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士:" + userId : myOrderInfo.ClienterName,
                 WithwardId = myOrderInfo.Id,
                 RelationNo = myOrderInfo.OrderNo,
-                Remark = "骑士完成订单"
+                Remark = "骑士完成订单" + (myOrderInfo.IsOrderChecked == 0 ? "(订单不需审核)" : "")
             };
             clienterAllowWithdrawRecordDao.Insert(cawrm);
         }
@@ -1613,6 +1620,25 @@ namespace Ets.Service.Provider.Clienter
         //    clienterAllowWithdrawRecordDao.Insert(cawrm);
         //}
         #endregion
+
+        /// <summary>
+        /// 更新骑士金额(不需要审核的订单)
+        /// 茹化肖
+        /// 2015年8月10日11:07:28      
+        /// </summary>
+        /// <param name="myOrderInfo"></param>
+        /// <param name="uploadReceiptModel"></param>
+        /// <param name="orderOther"></param>
+        void UpdateClienterMoneyNotNeedChecked(OrderListModel myOrderInfo)
+        {
+            if (myOrderInfo.HadUploadCount >= myOrderInfo.OrderCount)//小票上传完成
+            {
+                if (CheckOrderPay(myOrderInfo.Id))//订单已经支付
+                {
+                    UpdateAccountBalanceAndWithdraw(myOrderInfo);
+                }
+            }
+        }
     }
 
 }
