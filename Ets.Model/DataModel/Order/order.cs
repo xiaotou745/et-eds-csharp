@@ -229,5 +229,9 @@ namespace Ets.Model.DataModel.Order
         /// 是否一键发单（0否，1是）
         /// </summary>
         public int OneKeyPubOrder { get; set; }
+        /// <summary>
+        /// 是否需要审核
+        /// </summary>
+        public int IsOrderChecked { get; set; }
     }
 }

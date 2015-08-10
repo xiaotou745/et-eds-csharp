@@ -11,43 +11,86 @@ namespace Ets.Model.DomainModel.Statistics
     /// </summary>
     public class RecommendDataModel
     {
-        public int ID { get; set; }
-
         /// <summary>
-        /// 商家名称
-        /// </summary>
-        public string Name { get; set; }
-        /// <summary>
-        /// 商家电话
+        /// 推荐人手机号(骑士)
         /// </summary>
         public string PhoneNo { get; set; }
         /// <summary>
-        /// 商家地址
+        /// 推荐人真实姓名 骑士
         /// </summary>
-        public string Address { get; set; }
+        public string TrueName { get; set; }
         /// <summary>
-        /// 注册时间
+        /// 推荐的骑士总数量 骑士
         /// </summary>
-        public DateTime InsertTime { get; set; }
+        public int ClienterCount { get; set; }
+        /// <summary>
+        /// 骑士完成的任务总数
+        /// </summary>
+        public int TaskCount { get; set; }
+        /// <summary>
+        /// 骑士完成的订单总素
+        /// </summary>
+        public int OrderCount { get; set; }
+        /// <summary>
+        /// 推荐人手机号商家
+        /// </summary>
+        public string RecommendPhone { get; set; }
+        /// <summary>
+        /// 推荐商家数量
+        /// </summary>
+        public int BusCount { get; set; }
+    }
+
+
+    /// <summary>
+    /// 推荐人统计 --用户类型商家
+    /// </summary>
+    public class RecommendDataModelB
+    {
         /// <summary>
         /// 推荐人手机号
         /// </summary>
         public string RecommendPhone { get; set; }
         /// <summary>
-        /// 订单数量
+        /// 推荐商家数量
+        /// </summary>
+        public int BusCount { get; set; }
+        /// <summary>
+        /// 推荐的任务总数量
+        /// </summary>
+        public int TaskCount { get; set; }
+        /// <summary>
+        /// 推荐的订单总数量
         /// </summary>
         public int OrderCount { get; set; }
-        /// <summary>
-        /// 商家审核状态
-        /// </summary>
-        public byte Status { get; set; }
+
     }
 
+    /// <summary>
+    /// 推荐人统计 --用户类型骑士
+    /// </summary>
+    public class RecommendDataModelC
+    {
+        /// <summary>
+        /// 推荐人手机号(骑士)
+        /// </summary>
+        public string PhoneNo { get; set; }
+        /// <summary>
+        /// 推荐人真实姓名
+        /// </summary>
+        public string TrueName { get; set; }
+        /// <summary>
+        /// 推荐的骑士总数量
+        /// </summary>
+        public int ClienterCount { get; set; }
+        /// <summary>
+        /// 骑士完成的任务总数
+        /// </summary>
+        public int TaskCount { get; set; }
+        /// <summary>
+        /// 骑士完成的订单总素
+        /// </summary>
+        public int OrderCount { get; set; }
+    }
 
-    //public class ResultRecommendDataList
-    //{
-    //    public IList<RecommendDataModel> DataList { get; set; }
-
-    //    public int TotalCount { get}
-    //}
 }

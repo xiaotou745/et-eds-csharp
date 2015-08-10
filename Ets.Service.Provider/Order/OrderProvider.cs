@@ -273,6 +273,7 @@ namespace Ets.Service.Provider.Order
                 to.BusinessGroupId = business.BusinessGroupId;
                 to.MealsSettleMode = business.MealsSettleMode;
                 to.OneKeyPubOrder = business.OneKeyPubOrder;
+                to.IsOrderChecked = business.IsOrderChecked;
             }
             if (ConfigSettings.Instance.IsGroupPush)
             {

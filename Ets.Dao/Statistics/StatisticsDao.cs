@@ -888,5 +888,176 @@ order by o.Date desc, o.ActiveClienterCount desc";
             #endregion
         }
         #endregion
+
+
+        #region 20150810新版推荐人统计 茹化肖 2015年8月10日13:48:043
+        /// <summary>
+        /// 推荐统计 商家 
+        /// 茹化肖
+        /// 2015年8月10日13:50:30
+        /// </summary>
+        /// <param name="recommendQuery"></param>
+        /// <returns></returns>
+        public PageInfo<RecommendDataModel> GetRecommendListB(RecommendQuery recommendQuery)
+        {
+            string starPar = "";
+            string endPar = "";
+            string remPar = "";
+            #region===拼参数
+            if (!string.IsNullOrWhiteSpace(recommendQuery.StartDate))
+            {
+                starPar = string.Format("AND o.PubDate>='{0}'", recommendQuery.StartDate);
+            }
+            if (!string.IsNullOrWhiteSpace(recommendQuery.EndDate))
+            {
+                endPar = string.Format(" AND o.PubDate<='{0}' ", Convert.ToDateTime(recommendQuery.EndDate).AddDays(1).ToString());
+            }
+            if (!string.IsNullOrWhiteSpace(recommendQuery.RecommendPhone))
+            {
+                remPar = string.Format(" AND b.RecommendPhone='{0}' ", recommendQuery.RecommendPhone.Trim());
+            }
+            #endregion
+
+            #region===查询数据总数
+            string getcount = @"SELECT  COUNT(1)
+FROM    ( SELECT    T.RecommendPhone ,
+                    COUNT(t.id) AS BusCount ,
+                    SUM(T.OrderCount) AS OrderCount ,
+                    SUM(T.TaskCount) AS TaskCount
+          FROM      ( SELECT    RecommendPhone ,
+                                b.id ,
+                                SUM(ISNULL(o.OrderCount, 0)) AS OrderCount ,
+                                COUNT(o.Id) AS TaskCount
+                      FROM      dbo.business AS b ( NOLOCK )
+                                LEFT JOIN dbo.[order] AS o ( NOLOCK ) ON b.id = o.businessId
+                      WHERE     ISNULL(b.RecommendPhone, '') != ''
+                                {0}
+                                {1}
+                                {2}
+GROUP BY                        b.RecommendPhone ,
+                                b.Id
+                    ) AS T
+          GROUP BY  T.RecommendPhone
+        ) AS T2
+";
+            var count = (int)DbHelper.ExecuteScalar(SuperMan_Read, CommandType.Text, string.Format(getcount, starPar, endPar, remPar));//总条数
+            int pagecount = Convert.ToInt32(Math.Ceiling(count * 1.0 / SystemConst.PageSize));//总页数
+            #endregion
+
+            #region===分页查询数据
+            string columnList = @"  T1.RecommendPhone,
+                                    COUNT(T1.id) AS BusCount,
+                                    SUM(T1.OrderCount) AS OrderCount ,
+                                    SUM(T1.TaskCount) AS TaskCount  ";
+            string tables = @"  (
+SELECT b.RecommendPhone,b.id,SUM(ISNULL(o.OrderCount,0)) AS OrderCount,COUNT(o.Id) AS TaskCount
+FROM dbo.business AS b (NOLOCK)
+LEFT JOIN dbo.[order] AS o(NOLOCK) ON b.id=o.businessId
+WHERE ISNULL(b.RecommendPhone,'')!=''
+{0}
+{1}
+{2}
+GROUP BY b.RecommendPhone,b.Id
+) AS T1 ";
+            string whereStr = " 1=1 GROUP BY  T1.RecommendPhone";
+            tables = string.Format(tables, starPar, endPar, remPar);
+            var temp = new PageHelper().GetPages<RecommendDataModel>(SuperMan_Read, recommendQuery.PageIndex, whereStr,
+                " T1.RecommendPhone ", columnList, tables, ETS.Const.SystemConst.PageSize, false);
+            #endregion
+            var result = new PageInfo<RecommendDataModel>(count, recommendQuery.PageIndex, temp.Records, pagecount, SystemConst.PageSize);
+            return result;
+        }
+        /// <summary>
+        /// 推荐统计 骑士
+        /// 茹化肖
+        /// 2015年8月10日13:50:30
+        /// </summary>
+        /// <param name="recommendQuery"></param>
+        /// <returns></returns>
+        public PageInfo<RecommendDataModel> GetRecommendListC(RecommendQuery recommendQuery)
+        {
+            string starPar = "";
+            string endPar = "";
+            string remPar = "";
+            #region===拼参数
+            if (!string.IsNullOrWhiteSpace(recommendQuery.StartDate))
+            {
+                starPar = string.Format("AND o.PubDate>='{0}'", recommendQuery.StartDate);
+            }
+            if (!string.IsNullOrWhiteSpace(recommendQuery.EndDate))
+            {
+                endPar = string.Format(" AND o.PubDate<='{0}' ", Convert.ToDateTime(recommendQuery.EndDate).AddDays(1).ToString());
+            }
+            if (!string.IsNullOrWhiteSpace(recommendQuery.RecommendPhone))
+            {
+                remPar = string.Format(" AND c.RecommendPhone='{0}' ", recommendQuery.RecommendPhone.Trim());
+            }
+            #endregion
+
+            #region===查询数据总数
+            string getcount = @"SELECT  COUNT(1)
+FROM    ( SELECT    T.PhoneNo ,
+                    T.TrueName ,
+                    COUNT(T.Id) AS ClienterCount ,
+                    SUM(T.TaskCount) AS TaskCount ,
+                    SUM(T.OrderCount) AS OrderCount
+          FROM      ( SELECT    c2.PhoneNo ,
+                                c2.TrueName ,
+                                c.Id ,
+                                COUNT(o.OrderNo) AS TaskCount ,
+                                SUM(ISNULL(o.OrderCount, 0)) AS OrderCount
+                      FROM      dbo.clienter AS c ( NOLOCK )
+                                JOIN dbo.clienter AS c2 ( NOLOCK ) ON c.recommendPhone = c2.PhoneNo
+                                LEFT JOIN dbo.[order] AS o ( NOLOCK ) ON o.clienterId = c.id
+                      WHERE     ISNULL(c.recommendPhone, '') <> ''
+								{0}
+                                {1}
+                                {2}
+GROUP BY                        c2.PhoneNo ,
+                                c2.TrueName ,
+                                c.Id
+                    ) AS T
+          GROUP BY  T.PhoneNo ,
+                    T.TrueName
+        ) AS T1
+";
+            var count = (int)DbHelper.ExecuteScalar(SuperMan_Read, CommandType.Text, string.Format(getcount, starPar, endPar, remPar));//总条数
+            int pagecount = Convert.ToInt32(Math.Ceiling(count * 1.0 / SystemConst.PageSize));//总页数
+            #endregion
+
+            #region===分页查询数据
+            string columnList = @"
+        T1.PhoneNo ,
+        T1.TrueName ,
+        COUNT(T1.Id) AS ClienterCount ,
+        SUM(T1.TaskCount) AS TaskCount ,
+        SUM(T1.OrderCount) AS OrderCount";
+           
+            string tables = @" ( SELECT    c2.PhoneNo ,
+                    c2.TrueName ,
+                    c.Id ,
+                    COUNT(o.OrderNo) AS TaskCount ,
+                    SUM(ISNULL(o.OrderCount, 0)) AS OrderCount
+          FROM      dbo.clienter AS c ( NOLOCK )
+                    JOIN dbo.clienter AS c2 ( NOLOCK ) ON c.recommendPhone = c2.PhoneNo
+                    LEFT JOIN dbo.[order] AS o ( NOLOCK ) ON o.clienterId = c.id
+          WHERE     ISNULL(c.recommendPhone, '') <> ''
+                    {0}
+                    {1}
+                    {2}
+GROUP BY            c2.PhoneNo ,
+                    c2.TrueName ,
+                    c.Id
+        ) AS T1 ";
+            tables = string.Format(tables, starPar, endPar, remPar);
+            string whereStr = " 1=1 GROUP BY  T1.RecommendPhone";
+
+            var temp = new PageHelper().GetPages<RecommendDataModel>(SuperMan_Read, recommendQuery.PageIndex, whereStr,
+                "  T1.PhoneNo ", columnList, tables, ETS.Const.SystemConst.PageSize, false);
+            #endregion
+            var result = new PageInfo<RecommendDataModel>(count, recommendQuery.PageIndex, temp.Records, pagecount, SystemConst.PageSize);
+            return result;
+        }
+        #endregion
     }
 }
