@@ -561,7 +561,8 @@ order by a.id desc
                                 b.BalancePrice,
                                 b.OneKeyPubOrder,
                                 b.IsAllowOverdraft,
-                                b.IsEmployerTask 
+                                b.IsEmployerTask,
+                                b.IsOrderChecked 
                                 FROM dbo.business as b WITH(NOLOCK)
                                 left join BusinessGroup on b.BusinessGroupId=BusinessGroup.Id
                                 WHERE b.Id = @busiId";

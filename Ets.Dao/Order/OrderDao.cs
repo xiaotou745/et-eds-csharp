@@ -561,8 +561,11 @@ select @@IDENTITY ";
                                     ,o.BusinessCommission --商家结算比例
                                     ,o.CommissionFixValue --商家结算固定金额
                                     ,o.CommissionType --结算类型
+                                    ,o.SettleMoney
+                                    ,o.CommissionFormulaMode
                                     ,oo.IsNotRealOrder
                                     ,oo.AuditStatus
+                                    ,oo.DeductCommissionReason
                                     ";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrWhiteSpace(criteria.businessName))
@@ -584,6 +587,10 @@ select @@IDENTITY ";
             if (criteria.orderStatus != -1)
             {
                 sbSqlWhere.AppendFormat(" AND o.Status={0} ", criteria.orderStatus);
+            }
+            if (criteria.IsNotRealOrder != -1)
+            {
+                sbSqlWhere.AppendFormat(" AND oo.IsNotRealOrder={0} ", criteria.IsNotRealOrder);
             }
             if (criteria.AuditStatus != -1)
             {
@@ -2101,6 +2108,7 @@ insert  into dbo.[order]
           ReceviceLatitude ,
           OrderCount ,
           CommissionRate ,
+          BaseCommission ,
           CommissionFormulaMode ,
           SongCanDate ,
           [Weight] ,
@@ -2228,13 +2236,7 @@ select @@identity";
             DbHelper.ExecuteNonQuery(SuperMan_Write, sqlOrderLog, orderLogParameters);
             #endregion
 
-            #region 写子OrderOther表
-            //查询商户是否需要订单审核
-            const string queryCheckOrder = @"SELECT b.IsOrderChecked FROM dbo.business AS b (NOLOCK) WHERE b.Id=@Businessid";
-            IDbParameters CheckOrdeParameters = DbHelper.CreateDbParameters();
-            CheckOrdeParameters.AddWithValue("@Businessid", order.businessId); //商户ID
-            var IsOrderChecked = ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, queryCheckOrder, CheckOrdeParameters),1);
-            
+            #region 写子OrderOther表        
             const string insertOtherSql = @"
 insert into OrderOther(OrderId,NeedUploadCount,HadUploadCount,PubLongitude,PubLatitude,OneKeyPubOrder,IsOrderChecked)
 values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude,@OneKeyPubOrder,@IsOrderChecked)";
@@ -2244,7 +2246,7 @@ values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude,@OneKeyPubOrder,@I
             dbOtherParameters.AddWithValue("@PubLongitude", order.PubLongitude);
             dbOtherParameters.AddWithValue("@PubLatitude", order.PubLatitude);
             dbOtherParameters.AddWithValue("@OneKeyPubOrder", order.OneKeyPubOrder);
-            dbOtherParameters.Add("@IsOrderChecked", DbType.Int32).Value = IsOrderChecked;
+            dbOtherParameters.Add("@IsOrderChecked", DbType.Int32).Value = order.IsOrderChecked;
             DbHelper.ExecuteScalar(SuperMan_Write, insertOtherSql, dbOtherParameters);
             #endregion
 
