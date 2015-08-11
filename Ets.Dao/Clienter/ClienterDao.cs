@@ -1634,12 +1634,18 @@ SELECT IDENT_CURRENT('clienter')"
         /// <param name="model"></param>
         /// <returns></returns>
         public bool ModifyClienterDetail(ClienterDetailModel model)
-        { 
+        {
+            var parm = DbHelper.CreateDbParameters();
             //string remark = model.OptUserName + "通过后台管理系统修改骑士信息";
             string sql = @"UPDATE clienter 
                             SET IDCard=@IDCard,
                                 TrueName=@TrueName,
-                                DeliveryCompanyId=@DeliveryCompanyId,recommendPhone=@recommendPhone ";
+                                DeliveryCompanyId=@DeliveryCompanyId ";
+		    if (!string.IsNullOrWhiteSpace(model.recommendPhone))
+		    {
+                sql = sql + " ,recommendPhone=@recommendPhone ";
+                parm.Add("@recommendPhone", DbType.String).Value = model.recommendPhone;
+		    }
             sql += @" OUTPUT
                         Inserted.Id,
                         @OptId,
@@ -1658,7 +1664,7 @@ SELECT IDENT_CURRENT('clienter')"
                         Platform,
                         Remark)
                         WHERE  Id = @Id;";
-            var parm = DbHelper.CreateDbParameters();
+           
             parm.AddWithValue("@IDCard", model.IDCard);
             parm.AddWithValue("@TrueName", model.TrueName);
             parm.AddWithValue("@DeliveryCompanyId", model.DeliveryCompanyId);
@@ -1666,6 +1672,7 @@ SELECT IDENT_CURRENT('clienter')"
             parm.AddWithValue("@OptId", model.OptUserId);
             parm.AddWithValue("@OptName", model.OptUserName);
             parm.AddWithValue("@Platform", 3);
+            
             //parm.AddWithValue("@Remark", model.Remark);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
