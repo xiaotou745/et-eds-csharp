@@ -255,6 +255,7 @@ namespace SuperMan.Controllers
         {
             RecommendQuery recommendQuery = new RecommendQuery();
             TryUpdateModel(recommendQuery);
+            recommendQuery.RecommendPhone = System.Web.HttpContext.Current.Request["phoneNum"];
             recommendQuery.PageIndex = PageIndex;
             if (recommendQuery.DataType != 1 && recommendQuery.DataType != 2)
             {
