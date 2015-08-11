@@ -105,10 +105,10 @@ width: 100%;
 
                     
                     string yingfuID = "yingfu" + item.Id;
-                    string yingfus = string.Format("[订单金额*佣金比例+外送费(或网站补贴)*订单数量]<br/>[{0}*{1}+{2}({3})*{4}]", item.Amount, item.CommissionRate, waisongfei, item.WebsiteSubsidy, item.OrderCount);
+                    string yingfus = string.Format("[订单金额*佣金比例+外送费(或网站补贴)*订单数量]<br/>[{0}*{1}+{2}({3})*{4}]", item.Amount, item.CommissionRate, item.DistribSubsidy, item.WebsiteSubsidy, item.OrderCount);
                     if (item.CommissionFormulaMode==3)
                     {
-                        yingfus = string.Format("[满额补贴+订单金额*佣金比例+外送费(或网站补贴)*订单数量]<br/>[{0}+{1}*{2}+{3}({4})*{5}]", item.Adjustment, item.Amount, item.CommissionRate, waisongfei, item.WebsiteSubsidy, item.OrderCount);
+                        yingfus = string.Format("[满额补贴+订单金额*佣金比例+外送费(或网站补贴)*订单数量]<br/>[{0}+{1}*{2}+{3}({4})*{5}]", item.Adjustment, item.Amount, item.CommissionRate, item.DistribSubsidy, item.WebsiteSubsidy, item.OrderCount);
                     }
                     else if (item.CommissionFormulaMode == 4)
                     {
