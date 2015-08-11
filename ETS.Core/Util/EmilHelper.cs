@@ -89,7 +89,7 @@ namespace ETS.Util
                 mail.BodyEncoding = Encoding.UTF8;
                 mail.IsBodyHtml = isBodyHtml;
                 //抄送
-                if (!string.IsNullOrEmpty(copyto)) mail.CC.Add(copyto);
+                if (!string.IsNullOrEmpty(copyto)) mail.CC.Add(copyto.Replace(";",","));
                 //附件
 
                 //if (stream != null)
