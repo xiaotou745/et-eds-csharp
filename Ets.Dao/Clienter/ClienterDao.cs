@@ -1640,12 +1640,8 @@ SELECT IDENT_CURRENT('clienter')"
             string sql = @"UPDATE clienter 
                             SET IDCard=@IDCard,
                                 TrueName=@TrueName,
-                                DeliveryCompanyId=@DeliveryCompanyId ";
-		    if (!string.IsNullOrWhiteSpace(model.recommendPhone))
-		    {
-                sql = sql + " ,recommendPhone=@recommendPhone ";
-                parm.Add("@recommendPhone", DbType.String).Value = model.recommendPhone;
-		    }
+                                DeliveryCompanyId=@DeliveryCompanyId,recommendPhone=@recommendPhone ";
+		     
             sql += @" OUTPUT
                         Inserted.Id,
                         @OptId,
@@ -1672,7 +1668,7 @@ SELECT IDENT_CURRENT('clienter')"
             parm.AddWithValue("@OptId", model.OptUserId);
             parm.AddWithValue("@OptName", model.OptUserName);
             parm.AddWithValue("@Platform", 3);
-            
+            parm.Add("@recommendPhone", DbType.String).Value = model.recommendPhone??"";
             //parm.AddWithValue("@Remark", model.Remark);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }

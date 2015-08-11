@@ -1241,10 +1241,9 @@ namespace Ets.Service.Provider.Clienter
                 DealFlag = false
             };
             if (!string.IsNullOrWhiteSpace(model.recommendPhone))
-            {
-                ClienterModel cm = clienterDao.GetUserInfoByUserPhoneNo(model.recommendPhone);
-                 
-                if (cm == null)
+            { 
+                int result = clienterDao.CheckRecommendPhone(model.recommendPhone); //判断推荐人号码在 骑士或者物流公司中是否存在
+                if (result == -1)
                 {
                     dealResultInfo.DealMsg = "推荐人不存在！";
                     return dealResultInfo;
