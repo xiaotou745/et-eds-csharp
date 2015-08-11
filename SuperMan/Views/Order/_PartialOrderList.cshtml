@@ -81,7 +81,7 @@ width: 100%;
                         AuditStatus = "待审核";
                     }
                     decimal butie = 0.00M;
-                    if (item.IsNotRealOrder == 1)
+                    if (item.IsNotRealOrder == 1 && item.AuditStatus == 2)
                     {
                         butie = item.OrderCommission.Value - item.RealOrderCommission;    
                     }
