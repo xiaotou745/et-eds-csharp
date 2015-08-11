@@ -2868,15 +2868,25 @@ order by a.id desc
         /// <UpdateTime>20150701</UpdateTime>
         public void UpdateTake(OrderPM modelPM)
         {
+           // string clienterTrueName = "";
+           //clienter c = clienterDao.GetById(modelPM.ClienterId);
+           // if (c != null)
+           // {
+           //     clienterTrueName = c.TrueName;
+           // }
             string updateSql = string.Format(@"
+begin 
+declare @ClienterTrueName nvarchar(40)
+SELECT @ClienterTrueName=TrueName FROM dbo.clienter(nolock) where id = @clienterId;
 update dbo.[Order] 
     set Status=4 
-output Inserted.Id,GETDATE(),'{0}','确认已取货',Inserted.clienterId,Inserted.[Status],{1} 
+output Inserted.Id,GETDATE(),@ClienterTrueName,'确认已取货',Inserted.clienterId,Inserted.[Status],{0} 
 into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform]) 
 where id=@orderid and Status=2 and clienterId=@clienterId; 
 update OrderOther 
     set TakeTime=GETDATE(),TakeLongitude=@TakeLongitude,TakeLatitude=@TakeLatitude 
-where orderid=@orderid", modelPM.ClienterTrueName, (int)SuperPlatform.FromClienter);
+where orderid=@orderid; 
+end ",(int)SuperPlatform.FromClienter);
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("TakeLongitude", modelPM.longitude);
             dbParameters.AddWithValue("TakeLatitude", modelPM.latitude);
