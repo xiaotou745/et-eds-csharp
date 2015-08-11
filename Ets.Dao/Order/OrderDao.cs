@@ -563,6 +563,7 @@ select @@IDENTITY ";
                                     ,o.CommissionType --结算类型
                                     ,o.SettleMoney
                                     ,o.CommissionFormulaMode
+                                    ,o.BaseCommission
                                     ,oo.IsNotRealOrder
                                     ,oo.AuditStatus
                                     ,oo.DeductCommissionReason

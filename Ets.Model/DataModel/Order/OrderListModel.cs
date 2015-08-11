@@ -358,6 +358,9 @@ namespace Ets.Model.DataModel.Order
         /// 订单商家的佣金结算策略id
         /// </summary>
         public int CommissionFormulaMode { get; set; }
-        
+        /// <summary>
+        /// 基本补贴佣金
+        /// </summary>
+        public decimal BaseCommission { get; set; }
     }
 }
