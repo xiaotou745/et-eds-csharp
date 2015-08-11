@@ -28,6 +28,7 @@ width: 100%;
             <th>订单金额</th>
             <th>应收</th>
             <th>订单佣金(应付)</th>
+            @*<th>补贴</th>*@
             <th>扣除补贴</th>
             <th>盈亏</th> 
             <th>订单状态</th>
@@ -62,16 +63,22 @@ width: 100%;
                     string reals = "否";
                     string real_tipString = "";
                     decimal butie = 0.00M;
+                    decimal kouchubutie = 0.00M;
                     if (item.IsNotRealOrder == 1)
                     {
-                        butie = item.OrderCommission.Value - item.RealOrderCommission;    
+                        butie = item.OrderCommission.Value - item.RealOrderCommission;  
+                        if (item.AuditStatus == 2)//审核拒绝时，才显示扣除的网站补贴
+                        {
+                            kouchubutie = butie;      
+                        }
+                      
                         reals = "是";
                         real_tipString = string.Format("  class=true style=color:blue; onmousemove=tip_show('{0}',event,'{1}'); onmouseout=tip_hide();", realID, item.DeductCommissionReason);
                     }
 
                     string yingkuiID = "yingkui" + item.Id;
-                    string yingkuis = string.Format("[应收-(应付-扣除补贴)]<br/>[{0}-({1}-{2})]", item.SettleMoney, item.OrderCommission, butie);
-                    decimal yingkui = item.SettleMoney - item.OrderCommission.Value + butie;
+                    string yingkuis = string.Format("[应收-(应付-扣除补贴)]<br/>[{0}-({1}-{2})]", item.SettleMoney, item.OrderCommission, kouchubutie);
+                    decimal yingkui = item.SettleMoney - item.OrderCommission.Value + kouchubutie;
                     string color = "blue";
                     if (yingkui<0)
                     {
@@ -94,7 +101,11 @@ width: 100%;
                     if (item.CommissionFormulaMode==3)
                     {
                         yingfus = string.Format("[满额补贴+订单金额*佣金比例+外送费(或网站补贴)*订单数量]<br/>[{0}+{1}*{2}+{3}({4})*{5}]", item.Adjustment, item.Amount, item.CommissionRate, item.DistribSubsidy, item.WebsiteSubsidy, item.OrderCount);
-	                }
+                    }
+                    else if (item.CommissionFormulaMode == 4)
+                    {
+                        yingfus = string.Format("[(基本佣金+外送费(或网站补贴))*订单数量]<br/>[({0}+{1}({2}))*{3}]", item.BaseCommission,item.DistribSubsidy, item.WebsiteSubsidy, item.OrderCount);
+                    }
                     string yingfu_tipString = string.Format("  class=true style=color:blue; onmousemove=tip_show('{0}',event,'{1}'); onmouseout=tip_hide();", yingfuID, yingfus);
                     
                     <tr id="@item.Id" @timeoutStyle>
@@ -106,19 +117,11 @@ width: 100%;
                         <td>@item.PubDate</td>
                         <td>@item.ActualDoneDate</td>
                         <td>@item.OrderCount</td>
-                        <td style="color:red;font-weight:600">@item.Amount</td>
+                        <td>@item.Amount</td>
                         <td id="@yingshouID" @yingshou_tipString>@item.SettleMoney</td>
                         <td id="@yingfuID" @yingfu_tipString>@item.OrderCommission</td>
-                        @{
-                                if (butie > 0)
-                                {
-                                    <td style="color:red;font-weight:600">@butie</td>
-                                }
-                                else
-                                {
-                                    <td>@butie</td>
-                                }
-                        }
+                        @*<td>@butie</td>*@
+                        <td>@kouchubutie</td>
                         <td id="@yingkuiID" @yingkui_tipString>@yingkui</td>
                         <td>@ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.OrderStatusCommon)item.Status).GetType(), (ETS.Enums.OrderStatusCommon)item.Status).Text</td>
                         <td>
@@ -145,7 +148,6 @@ width: 100%;
         showColumn();
         $("#selectAll").bind("change", checkAll);
         $("input[name='checkMenus']").bind("change", checkChange);
-        $("#auditStatus").bind("change", showColumn);
         
     });
     function funcViewOrder(id, pubDate, businessName, busiPhone, busiAddress, yongjin, disBuTie, WebBuTie, revPhone, revName, revAddress, Amount, isPay, superId, status, superManName) {
@@ -159,7 +161,7 @@ width: 100%;
         obj.html(val1);
         var targetObj=document.getElementById(id);
         var left = targetObj.offsetLeft+250;
-        var top = targetObj.offsetTop+270;
+        var top = targetObj.offsetTop+300;
         //alert(top+","+left);
         //var left = e.clientX+10;
         //var top = e.clientY - 10;

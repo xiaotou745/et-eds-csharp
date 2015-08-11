@@ -214,7 +214,16 @@ namespace ETS.Util
                 //异常发生地址
                 logstr = logstr + "异常发生地址:" + HttpContext.Current.Request.Url.AbsoluteUri.ToString() + "\r\n";
                 logstr = logstr + "请求类型:" + HttpContext.Current.Request.RequestType.ToString() + "\r\n";
-
+                
+                var allKeys = HttpContext.Current.Request.Form.AllKeys;
+                StringBuilder parstrBuilder=new StringBuilder("POST参数:");
+                for (int i = 0; i < allKeys.Length; i++)
+                {
+                    var key = allKeys[i];
+                    var value = HttpContext.Current.Request.Form[key];
+                    parstrBuilder.AppendFormat("{0}={1}\r\n", key, value);
+                }
+                logstr = logstr + parstrBuilder.ToString();
                 logstr = logstr + "异常:" + error.ToString() + "\r\n";
 
                 logstr += "--------------------end---------------------\r\n";

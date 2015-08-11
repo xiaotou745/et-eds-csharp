@@ -26,21 +26,27 @@
                                      <table border="0" cellspacing="0" cellpadding="0" style="width:1080px">
                                          <tr>
                                              <td>
-                                                 <span class="">审核状态: </span>
-                                                 @Html.DropDownList("auditStatus", new SelectList(EnumExtenstion.GetEnumItems(typeof(OrderAuditStatusCommon)), "Value", "Text"), new { @class = "selectw", style = "width:157px" })
                                                  <span class="">发布时间: </span>
                                                  <input id="txtOrderPubStart" readonly="readonly" type="text" name="OrderPubStart" />
                                                  <span class="">到: </span>
                                                  <input id="txtOrderPubEnd" readonly="readonly" type="text" name="OrderPubEnd" />
+                                             </td>
+                                         </tr>
+                                         <tr>
+                                             <td>
+                                                 <span class="">审核状态: </span>
+                                                 @Html.DropDownList("auditStatus", new SelectList(EnumExtenstion.GetEnumItems(typeof(OrderAuditStatusCommon)), "Value", "Text",0), "全部",new { @class = "selectw", style = "width:157px" })
                                                  <span class="">是否异常订单:</span>
                                                  <select name="IsNotRealOrder" class="selectw" id="IsNotRealOrder" style="width:143px">
                                                      <option value="-1" selected="selected">全部</option>
                                                      <option value="0">否</option>
                                                      <option value="1">是</option>
                                                  </select>
-
+                                                 <span class="">订单状态: </span>
+                                                 @Html.DropDownList("orderStatus", new SelectList(EnumExtenstion.GetEnumItems(typeof(OrderStatusCommon)), "Value", "Text"), "全部", new { @class = "selectw", style = "width:157px" })                                              
                                              </td>
                                          </tr>
+
                                          <tr>
                                              <td>
                                                  <span class="">骑士姓名: </span>
@@ -110,7 +116,19 @@
         $("#batchAuditCancel").bind("click", batchAuditCancel);
         $("#btnSaveDeductWebSubsidy").bind("click", btnSaveDeductWebSubsidy);
         $("#btnSaveBatchReason").bind("click", btnSaveBatchReason);
+        $('#btnSearch').bind("click", checkDate);
     });
+    function checkDate() {
+        var StartDate = $('#txtOrderPubStart').val();
+        var EndDate = $('#txtOrderPubEnd').val();
+        var intStartDate = StartDate.replace(/-/g, "");
+        var intEndDate = EndDate.replace(/-/g, "");
+        if (intStartDate > intEndDate) {
+            alert('开始日期不能大于结束日期');
+            return false;
+        }
+        return true;
+    }
     function lockButton() {
         document.getElementById("batchAuditPass").disabled = true;
         document.getElementById("batchAuditCancel").disabled = true;

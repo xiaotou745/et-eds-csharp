@@ -6,6 +6,7 @@
     int index = Model.Index; //页码
     int recordsCount = Model.Records.Count; //本页容量
     int pageSize = Model.PageSize;
+    string urlformat = string.Format("/{0}/{1}",ViewContext.RouteData.Values["controller"].ToString(),(string)ViewBag.ActionName);
 }
 <link rel="stylesheet" type="text/css" href="~/Content/pagestyle/pagerstyles.css" />
 <div>
@@ -14,6 +15,18 @@
             共 @pageCount 页 @all 条记录，当前为第 @index 页,本页 @recordsCount 条
         </span>
     </div>
+    @{
+        //页面第一次加载时，会触发mvcpager初始化（在mvcpager.js中的 $("[data-mvcpager=true]").initMvcPagers()）
+        //后续不会再次初始化，初始化时，会根据data-mvcpager=true初始化相关参数，但是当第一次的数据不足一页时，Ajax.Pager方法会返回空串（没有生成data-mvcpager=true）
+        //导致mvcpager不会初始化，后续分页按钮都走get请求（应该是post请求），因此添加如下判断，第一次不足一页时，自己创建data-mvcpager=true，触发mvcpager不会初始化
+        if (all <= pageSize)
+        {
+            <div data-ajax="true" data-ajax-dataformid="#searchForm" data-ajax-method="Post" data-ajax-update="#dataList" 
+                 data-invalidpageerrmsg="页索引无效" data-maxpages="@pageSize" data-mvcpager="true" data-outrangeerrmsg="页索引超出范围" 
+                 data-pageparameter="pageindex" data-urlformat="@urlformat?pageindex=__pageindex__" id="_badoopager" style="float:right"></div>
+        }
+        
+    }
     @Ajax.Pager(all, pageSize, index, (string)ViewBag.ActionName, null, null,
           new PagerOptions
           {

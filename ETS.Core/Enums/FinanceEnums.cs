@@ -429,7 +429,7 @@ namespace ETS.Enums
         /// <summary>
         /// 充值赠送
         /// </summary>
-        [DisplayText("充值赠送")]
+        [DisplayText("赠送")]
         Present = 12
     }
 
