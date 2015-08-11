@@ -75,7 +75,7 @@ namespace Ets.Service.Provider.Order
             
             var commissionFixMoney = ParseHelper.ToDecimal(model.CommissionFixValue);//商配定额
             var businessCommissionMoney = ParseHelper.ToDecimal(model.BusinessCommission / 100m);//商配比例金额
-            var distribSubsidy = model.IsConsiderDeliveryFee ? ParseHelper.ToDecimal(model.DistribSubsidy) : 0;//代收客配(外送费)
+            var distribSubsidy = model.IsConsiderDeliveryFee==1 ? ParseHelper.ToDecimal(model.DistribSubsidy) : 0;//代收客配(外送费)
 
             return Decimal.Round((commissionFixMoney + businessCommissionMoney + distribSubsidy) * ParseHelper.ToDecimal(model.OrderCount), 2);
         }

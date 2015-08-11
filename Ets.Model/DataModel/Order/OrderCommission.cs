@@ -51,8 +51,8 @@ namespace Ets.Model.DataModel.Order
         public decimal? OrderWebSubsidy { get; set; }
 
         /// <summary>
-        /// 结算时是否考虑外送费
+        /// 结算时是否考虑外送费0不考虑1考虑默认0
         /// </summary>
-        public bool IsConsiderDeliveryFee { get; set; }
+        public int IsConsiderDeliveryFee { get; set; }
     }
 }

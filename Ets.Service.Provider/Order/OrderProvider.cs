@@ -1042,20 +1042,24 @@ namespace Ets.Service.Provider.Order
             to.OrderNo = Helper.generateOrderCode(abusiness.Id);  //根据userId生成订单号(15位)
             to.businessId = abusiness.Id; //当前发布者
             BusListResultModel business = businessDao.GetBusiness(abusiness.Id);  //根据发布者id,获取发布者的相关信息实体
-            if (business != null)
+            if (business == null)
             {
-                to.PickUpCity = business.City;  //商户所在城市
-                to.PickUpAddress = business.Address;  //提取地址
-                to.PubDate = DateTime.Now; //提起时间
-                //to.ReceviceCity = business.City; //城市
-                //to.DistribSubsidy = business.DistribSubsidy;//设置外送费,从商户中找。
-                to.BusinessCommission = ParseHelper.ToDecimal(business.BusinessCommission);//商户结算比例
-                to.BusinessName = business.Name;
-                to.CommissionType = business.CommissionType;//结算类型：1：固定比例 2：固定金额
-                to.CommissionFixValue = ParseHelper.ToDecimal(business.CommissionFixValue);//固定金额     
-                to.BusinessGroupId = business.BusinessGroupId;
-                to.MealsSettleMode = business.MealsSettleMode;
+                return null;
             }
+            to.PickUpCity = business.City; //商户所在城市
+            to.PickUpAddress = business.Address; //提取地址
+            to.PubDate = DateTime.Now; //提起时间
+            //to.ReceviceCity = business.City; //城市
+            //to.DistribSubsidy = business.DistribSubsidy;//设置外送费,从商户中找。
+            to.BusinessCommission = ParseHelper.ToDecimal(business.BusinessCommission); //商户结算比例
+            to.BusinessName = business.Name;
+            to.CommissionType = business.CommissionType; //结算类型：1：固定比例 2：固定金额
+            to.CommissionFixValue = ParseHelper.ToDecimal(business.CommissionFixValue); //固定金额     
+            to.BusinessGroupId = business.BusinessGroupId;
+            to.MealsSettleMode = business.MealsSettleMode;
+            to.IsConsiderDeliveryFee = business.IsConsiderDeliveryFee; //结算时是否考虑外送费0不考虑1考虑默认0
+
+
             to.SongCanDate = from.SongCanDate; //送餐时间
             to.Remark = from.Remark;
             to.ReceviceName = from.ReceiveName;
@@ -1091,7 +1095,8 @@ namespace Ets.Service.Provider.Order
                 OrderCount = to.OrderCount/*订单数量*/,
                 BusinessCommission = to.BusinessCommission, /*商户结算比例*/
                 BusinessGroupId = business.BusinessGroupId,
-                StrategyId = business.StrategyId
+                StrategyId = business.StrategyId,
+                IsConsiderDeliveryFee = to.IsConsiderDeliveryFee  //结算时是否考虑外送费0不考虑1考虑默认0
             };
             OrderPriceProvider commProvider = CommissionFactory.GetCommission(business.StrategyId);
             to.CommissionFormulaMode = business.StrategyId;
