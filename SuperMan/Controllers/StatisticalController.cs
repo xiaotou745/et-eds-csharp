@@ -212,6 +212,10 @@ namespace SuperMan.Controllers
         {
             RecommendQuery recommendQuery=new RecommendQuery();
             TryUpdateModel(recommendQuery);
+            if (recommendQuery.DataType != 1 || recommendQuery.DataType != 2)
+            {
+                recommendQuery.DataType = 1;
+            }
             ViewBag.DataType = recommendQuery.DataType;
             recommendQuery.PageIndex = PageIndex;
             StatisticsProvider statisticsProvider  = new StatisticsProvider();
@@ -252,6 +256,10 @@ namespace SuperMan.Controllers
             RecommendQuery recommendQuery = new RecommendQuery();
             TryUpdateModel(recommendQuery);
             recommendQuery.PageIndex = PageIndex;
+            if (recommendQuery.DataType != 1 || recommendQuery.DataType != 2)
+            {
+                recommendQuery.DataType = 1;
+            }
             ViewBag.DataType = recommendQuery.DataType;
             var statisticsProvider = new StatisticsProvider();
             var pagelist = statisticsProvider.GetRecommendDetailList(recommendQuery);
