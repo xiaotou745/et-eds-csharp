@@ -531,7 +531,7 @@
         //if (!decimalFormat.test(distribSubsidy) || distribSubsidy == '') {
         //    alert("请输入正确的配送费，且不小于0元！");
         //    return;
-        //}
+        //} 
         if (recomPhone.trim().length > 0 && !reg.test(regPhone)) {
             alert("请输入正确的推荐人手机号!");
             return;
@@ -540,7 +540,12 @@
             alert("请选择城市！");
             return;
         }
-
+        if (recomPhone.trim().length > 0) {
+            if (recomPhone.trim() == phoneNo2.trim()) {
+                alert("不能推荐自己哦");
+                return;
+            }
+        }
         if (districtId == "") {
             alert("请选择区域！");
             return;
