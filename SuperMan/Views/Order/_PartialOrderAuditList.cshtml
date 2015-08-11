@@ -194,21 +194,15 @@ width: 100%;
         //只有待审核状态时，才显示全选全消和操作列
         var totalColumn = $("#dataTableRange").find("th").length;
         if ($("#auditStatus").val() == "0") {
-<<<<<<< HEAD
-=======
             $("#batchAuditPass").show();
             $("#batchAuditCancel").show();
->>>>>>> 45af23993cceeaef952c4c2fc9b8fdb1ac9fe268
             $("#dataTableRange tr").find('th:eq(0)').show();
             $("#dataTableRange tr").find("th:eq("+(totalColumn-1)+")").show();
             $("#dataTableRange tr").find('td:eq(0)').show();
             $("#dataTableRange tr").find("td:eq(" + (totalColumn - 1) + ")").show();
         } else {
-<<<<<<< HEAD
-=======
             $("#batchAuditPass").hide();
             $("#batchAuditCancel").hide();
->>>>>>> 45af23993cceeaef952c4c2fc9b8fdb1ac9fe268
             $("#dataTableRange tr").find('th:eq(0)').hide();
             $("#dataTableRange tr").find("th:eq(" + (totalColumn - 1) + ")").hide();
             $("#dataTableRange tr").find('td:eq(0)').hide();
