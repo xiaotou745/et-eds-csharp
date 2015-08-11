@@ -562,7 +562,8 @@ order by a.id desc
                                 b.OneKeyPubOrder,
                                 b.IsAllowOverdraft,
                                 b.IsEmployerTask,
-                                b.IsOrderChecked 
+                                b.IsOrderChecked,
+                                b.IsConsiderDeliveryFee 
                                 FROM dbo.business as b WITH(NOLOCK)
                                 left join BusinessGroup on b.BusinessGroupId=BusinessGroup.Id
                                 WHERE b.Id = @busiId";

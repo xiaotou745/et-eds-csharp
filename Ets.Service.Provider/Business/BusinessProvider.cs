@@ -1149,15 +1149,8 @@ namespace Ets.Service.Provider.Business
         {
             var busiInfo = businessDao.GetDistribSubsidy(id);
             var result = new BusiDistribSubsidyResultModel { DistribSubsidy = busiInfo.DistribSubsidy };
-            //结算类型：1：固定比例 2：固定金额
-            if (busiInfo.CommissionType == 1)
-            {
-                result.OrderBalance = amount * busiInfo.BusinessCommission / 100;//busiInfo.BusinessCommission  该参数在数据库中是个整数
-            }
-            else
-            {
-                result.OrderBalance = orderChildCount * busiInfo.CommissionFixValue;
-            }
+            result.OrderBalance = (amount*busiInfo.BusinessCommission/100 + busiInfo.CommissionFixValue +
+                                   busiInfo.DistribSubsidy ?? 0m)*orderChildCount;
             //剩余余额(商家余额 –当前任务结算金额)
             result.RemainBalance = busiInfo.BalancePrice - result.OrderBalance;
             return result;

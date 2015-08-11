@@ -56,24 +56,28 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public decimal GetSettleMoney(OrderCommission model)
         {
-            decimal sumsettleMoney = 0;
+            //decimal sumsettleMoney = 0;
 
-            decimal settleMoney = 0;
-            if (model.CommissionType == 2)//固定金额
-            {
-                settleMoney = Decimal.Round(ParseHelper.ToDecimal(model.CommissionFixValue) * ParseHelper.ToDecimal(model.OrderCount), 2);
-                sumsettleMoney = Decimal.Round(ParseHelper.ToDecimal(model.DistribSubsidy)
-                * ParseHelper.ToInt(model.OrderCount) + settleMoney, 2);
-            }
-            else
-            {
-                settleMoney = model.BusinessCommission == 0 ?
-                    0 : Decimal.Round(ParseHelper.ToDecimal(model.BusinessCommission / 100m) * ParseHelper.ToDecimal(model.Amount), 2);
-                sumsettleMoney = Decimal.Round(ParseHelper.ToDecimal(model.DistribSubsidy)
-                * ParseHelper.ToInt(model.OrderCount) + settleMoney, 2);
-            }
+            //decimal settleMoney = 0;
+            //if (model.CommissionType == 2)//固定金额
+            //{
+            //    settleMoney = Decimal.Round(ParseHelper.ToDecimal(model.CommissionFixValue) * ParseHelper.ToDecimal(model.OrderCount), 2);
+            //    sumsettleMoney = Decimal.Round(ParseHelper.ToDecimal(model.DistribSubsidy)
+            //    * ParseHelper.ToInt(model.OrderCount) + settleMoney, 2);
+            //}
+            //else
+            //{
+            //    settleMoney = model.BusinessCommission == 0 ?
+            //        0 : Decimal.Round(ParseHelper.ToDecimal(model.BusinessCommission / 100m) * ParseHelper.ToDecimal(model.Amount), 2);
+            //    sumsettleMoney = Decimal.Round(ParseHelper.ToDecimal(model.DistribSubsidy)
+            //    * ParseHelper.ToInt(model.OrderCount) + settleMoney, 2);
+            //}
+            
+            var commissionFixMoney = ParseHelper.ToDecimal(model.CommissionFixValue);//商配定额
+            var businessCommissionMoney = ParseHelper.ToDecimal(model.BusinessCommission / 100m);//商配比例金额
+            var distribSubsidy = model.IsConsiderDeliveryFee==1 ? ParseHelper.ToDecimal(model.DistribSubsidy) : 0;//代收客配(外送费)
 
-            return sumsettleMoney;
+            return Decimal.Round((commissionFixMoney + businessCommissionMoney + distribSubsidy) * ParseHelper.ToDecimal(model.OrderCount), 2);
         }
 
 

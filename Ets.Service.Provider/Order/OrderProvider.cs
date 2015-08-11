@@ -9,6 +9,7 @@ using Ets.Model.DataModel.Finance;
 using Ets.Model.DataModel.Order;
 using Ets.Model.DomainModel.Clienter;
 using Ets.Model.DomainModel.Order;
+using Ets.Model.ParameterModel.Business;
 using Ets.Model.ParameterModel.Finance;
 using Ets.Model.ParameterModel.Order;
 using Ets.Service.IProvider.Order;
@@ -252,7 +253,7 @@ namespace Ets.Service.Provider.Order
         /// <param name="busiOrderInfoModel"></param>
         /// <param name="business">返回商户信息</param>
         /// <returns></returns>
-        public order TranslateOrder(Ets.Model.ParameterModel.Business.BussinessOrderInfoPM busiOrderInfoModel, out BusListResultModel business)
+        public order TranslateOrder(BussinessOrderInfoPM busiOrderInfoModel, out BusListResultModel business)
         {
             order to = new order();
             ///TODO 订单号生成规则，定了以后要改；
@@ -278,15 +279,18 @@ namespace Ets.Service.Provider.Order
             if (ConfigSettings.Instance.IsGroupPush)
             {
                 if (busiOrderInfoModel.OrderFrom != 0)
+                {
                     to.OrderFrom = busiOrderInfoModel.OrderFrom;
+                }
                 else
+                {
                     to.OrderFrom = 0;
+                }
+
             }
             to.Remark = busiOrderInfoModel.Remark;
-            if (string.IsNullOrWhiteSpace(busiOrderInfoModel.receviceName))
-                to.ReceviceName = "";
-            else
-                to.ReceviceName = busiOrderInfoModel.receviceName;
+            to.ReceviceName = string.IsNullOrWhiteSpace(busiOrderInfoModel.receviceName) ? "" : busiOrderInfoModel.receviceName;
+
             to.RecevicePhoneNo = busiOrderInfoModel.recevicePhone;
             to.ReceviceAddress = busiOrderInfoModel.receviceAddress;
             to.IsPay = busiOrderInfoModel.IsPay;
@@ -910,6 +914,11 @@ namespace Ets.Service.Provider.Order
             }
 
         }
+        /// <summary>
+        /// 验证聚网客订单合法性
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         ResultModel<NewPostPublishOrderResultModel> Verification(NewPostPublishOrderModel model)
         {
             if (string.IsNullOrWhiteSpace(model.OriginalOrderNo))   //原始订单号非空验证
@@ -1020,74 +1029,60 @@ namespace Ets.Service.Provider.Order
         /// </summary>
         /// <param name="from">参数对象</param>
         /// <returns></returns>
-        private order OrderInstance(Model.ParameterModel.Order.NewPostPublishOrderModel from)
+        private order OrderInstance(NewPostPublishOrderModel from)
         {
             order to = new order();
 
             BusinessDao businessDao = new BusinessDao();
             BusinessModel abusiness = businessDao.GetBusiByOriIdAndOrderFrom(from.OriginalBusinessId, from.OrderFrom);
-
-            if (abusiness == null) return null;
-            //if (abusiness != null)
-            //{
-            //    from.BusinessId = abusiness.Id;
-            //}
-            //else
-            //{
-            //    return null;
-            //}
+            if (abusiness == null)
+            {
+                return null;
+            }
             to.OrderNo = Helper.generateOrderCode(abusiness.Id);  //根据userId生成订单号(15位)
             to.businessId = abusiness.Id; //当前发布者
             BusListResultModel business = businessDao.GetBusiness(abusiness.Id);  //根据发布者id,获取发布者的相关信息实体
-            if (business != null)
+            if (business == null)
             {
-                to.PickUpCity = business.City;  //商户所在城市
-                to.PickUpAddress = business.Address;  //提取地址
-                to.PubDate = DateTime.Now; //提起时间
-                //to.ReceviceCity = business.City; //城市
-                //to.DistribSubsidy = business.DistribSubsidy;//设置外送费,从商户中找。
-                to.BusinessCommission = ParseHelper.ToDecimal(business.BusinessCommission);//商户结算比例
-                to.BusinessName = business.Name;
-                to.CommissionType = business.CommissionType;//结算类型：1：固定比例 2：固定金额
-                to.CommissionFixValue = ParseHelper.ToDecimal(business.CommissionFixValue);//固定金额     
-                to.BusinessGroupId = business.BusinessGroupId;
-                to.MealsSettleMode = business.MealsSettleMode;
+                return null;
             }
+            to.PickUpCity = business.City; //商户所在城市
+            to.PickUpAddress = business.Address; //提取地址
+            to.PubDate = DateTime.Now; //提起时间
+            //to.ReceviceCity = business.City; //城市
+            //to.DistribSubsidy = business.DistribSubsidy;//设置外送费,从商户中找。
+            to.BusinessCommission = ParseHelper.ToDecimal(business.BusinessCommission); //商户结算比例
+            to.BusinessName = business.Name;
+            to.CommissionType = business.CommissionType; //结算类型：1：固定比例 2：固定金额
+            to.CommissionFixValue = ParseHelper.ToDecimal(business.CommissionFixValue); //固定金额     
+            to.BusinessGroupId = business.BusinessGroupId;
+            to.MealsSettleMode = business.MealsSettleMode;
+            to.IsConsiderDeliveryFee = business.IsConsiderDeliveryFee; //结算时是否考虑外送费0不考虑1考虑默认0
+
+
             to.SongCanDate = from.SongCanDate; //送餐时间
             to.Remark = from.Remark;
-
             to.ReceviceName = from.ReceiveName;
             to.RecevicePhoneNo = from.ReceivePhoneNo;
-
             to.ReceiveProvince = from.Receive_Province;
             to.ReceiveProvinceCode = from.Receive_ProvinceCode;
-
             to.ReceviceCity = from.Receive_City;
             to.ReceiveCityCode = from.Receive_CityCode;
-
             to.ReceiveArea = from.Receive_Area;
             to.ReceiveAreaCode = from.Receive_AreaCode;
-
             to.ReceviceLatitude = from.Receive_Latitude;
             to.ReceviceLongitude = from.Receive_Longitude;
-
             to.ReceviceAddress = from.Receive_Address;
-
             to.OrderFrom = from.OrderFrom;
             to.Quantity = from.Quantity;
             to.OriginalOrderNo = from.OriginalOrderNo;
-
             to.Weight = from.Weight;
-
             to.IsPay = from.IsPay;
             to.Amount = from.Amount - from.DistribSubsidy;//订单金额=聚网客总金额-外送费
-
             to.OrderType = from.OrderType; //订单类型 1送餐订单 2取餐盒订单 
             to.KM = from.KM; //送餐距离
-
             to.GuoJuQty = from.GuoJuQty; //锅具数量
             to.LuJuQty = from.LuJuQty;  //炉具数量
-
             to.DistribSubsidy = from.DistribSubsidy; //外送费
             to.OrderCount = from.OrderCount == 0 ? 1 : from.OrderCount; //订单数量
             //计算订单佣金
@@ -1100,7 +1095,8 @@ namespace Ets.Service.Provider.Order
                 OrderCount = to.OrderCount/*订单数量*/,
                 BusinessCommission = to.BusinessCommission, /*商户结算比例*/
                 BusinessGroupId = business.BusinessGroupId,
-                StrategyId = business.StrategyId
+                StrategyId = business.StrategyId,
+                IsConsiderDeliveryFee = to.IsConsiderDeliveryFee  //结算时是否考虑外送费0不考虑1考虑默认0
             };
             OrderPriceProvider commProvider = CommissionFactory.GetCommission(business.StrategyId);
             to.CommissionFormulaMode = business.StrategyId;
@@ -1116,12 +1112,8 @@ namespace Ets.Service.Provider.Order
 
             to.CommissionFormulaMode = business.StrategyId;
             to.Adjustment = commProvider.GetAdjustment(orderComm);//订单额外补贴金额
-
             to.Status = (byte)OrderStatus.Status0.GetHashCode();
-
-            //to.TimeSpan = busiOrderInfoModel.TimeSpan;
             to.listOrderChild = from.listOrderChlid;
-
             if (!(bool)to.IsPay && to.MealsSettleMode == MealsSettleMode.LineOn.GetHashCode())//未付款且线上支付
             {
                 to.BusinessReceivable = Decimal.Round(ParseHelper.ToDecimal(to.Amount) +

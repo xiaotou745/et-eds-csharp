@@ -215,7 +215,7 @@
                     <td>
                         <label style="color: red">基本佣金+平台补贴设置</label>
                         <br /><p>
-                            佣金公式： ( 基本佣金 (可配置) + 代收客配或 网站补贴)*订单数量
+                            佣金公式： ( 基本佣金 (可配置) + 网站补贴)*订单数量
                         </p>
                         佣金参数 基本佣金:<input name="txtBaseCommission" value="@(IsAdd == true ? 0 : ViewBag.GloglConfig.BaseCommission)" id="txtBaseCommission" type="text">
                         网站补贴:<input name="txtBaseSiteSubsidies" value="@(IsAdd == true ? 0 : ViewBag.GloglConfig.BaseSiteSubsidies)" id="txtBaseSiteSubsidies" type="text">
