@@ -563,6 +563,7 @@ select @@IDENTITY ";
                                     ,o.CommissionType --结算类型
                                     ,o.SettleMoney
                                     ,o.CommissionFormulaMode
+                                    ,o.BaseCommission
                                     ,oo.IsNotRealOrder
                                     ,oo.AuditStatus
                                     ,oo.DeductCommissionReason
@@ -925,6 +926,7 @@ select @@IDENTITY ";
                                         ,o.FinishAll
                                         ,ISNULL(oo.DeductCommissionType,0) DeductCommissionType
                                         ,ISNULL(oo.IsJoinWithdraw,0) IsJoinWithdraw
+                                        ,ISNULL(oo.IsOrderChecked,1) IsOrderChecked
                                     FROM [order] o WITH ( NOLOCK )
                                     LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                     LEFT JOIN clienter c WITH (NOLOCK) ON o.clienterId=c.Id
