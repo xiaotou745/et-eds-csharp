@@ -86,6 +86,12 @@ width: 100%;
                     }
                     string yingkui_tipString = string.Format("  class=true style=color:{0}; onmousemove=tip_show('{1}',event,'{2}'); onmouseout=tip_hide();",color, yingkuiID, yingkuis);
 
+                    decimal waisongfei = item.DistribSubsidy??0.00M;
+                    //第三方订单 不考虑外送费
+                    if (item.OrderFrom>0)
+                    {
+                        waisongfei = 0;
+                    }
                     //默认为结算比例
                     string yingshouID = "yingshou" + item.Id;
                     //string yingshou = string.Format("[商家结算比例*订单金额+外送费*订单数量]<br/>[{0}*{1}+{2}*{3}]", Decimal.Round(item.BusinessCommission*1.00M / 100,2), item.Amount, item.DistribSubsidy, item.OrderCount);
@@ -93,16 +99,16 @@ width: 100%;
                     //{
                     //    yingshou = string.Format("[商家固定金额*订单数量+外送费*订单数量]<br/>[{0}*{1}+{2}*{3}]", item.CommissionFixValue, item.OrderCount, item.DistribSubsidy, item.OrderCount);
                     //}
-                    string yingshou = string.Format("[订单金额*商配比例+(商配定额+代收客配)*订单数量]<br/>[{0}*{1}+({2}+{3})*{4}]", item.Amount, Decimal.Round(item.BusinessCommission * 1.00M / 100, 2), item.CommissionFixValue, item.DistribSubsidy, item.OrderCount);
+                    string yingshou = string.Format("[订单金额*商配比例+(商配定额+代收客配)*订单数量]<br/>[{0}*{1}+({2}+{3})*{4}]", item.Amount, Decimal.Round(item.BusinessCommission * 1.00M / 100, 2), item.CommissionFixValue, waisongfei, item.OrderCount);
                     
                     string yingshou_tipString = string.Format("  class=true style=color:blue; onmousemove=tip_show('{0}',event,'{1}'); onmouseout=tip_hide();", yingshouID, yingshou);
 
                     
                     string yingfuID = "yingfu" + item.Id;
-                    string yingfus = string.Format("[订单金额*佣金比例+外送费(或网站补贴)*订单数量]<br/>[{0}*{1}+{2}({3})*{4}]", item.Amount, item.CommissionRate, item.DistribSubsidy, item.WebsiteSubsidy, item.OrderCount);
+                    string yingfus = string.Format("[订单金额*佣金比例+外送费(或网站补贴)*订单数量]<br/>[{0}*{1}+{2}({3})*{4}]", item.Amount, item.CommissionRate, waisongfei, item.WebsiteSubsidy, item.OrderCount);
                     if (item.CommissionFormulaMode==3)
                     {
-                        yingfus = string.Format("[满额补贴+订单金额*佣金比例+外送费(或网站补贴)*订单数量]<br/>[{0}+{1}*{2}+{3}({4})*{5}]", item.Adjustment, item.Amount, item.CommissionRate, item.DistribSubsidy, item.WebsiteSubsidy, item.OrderCount);
+                        yingfus = string.Format("[满额补贴+订单金额*佣金比例+外送费(或网站补贴)*订单数量]<br/>[{0}+{1}*{2}+{3}({4})*{5}]", item.Adjustment, item.Amount, item.CommissionRate, waisongfei, item.WebsiteSubsidy, item.OrderCount);
                     }
                     else if (item.CommissionFormulaMode == 4)
                     {
