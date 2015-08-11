@@ -112,6 +112,7 @@
     <Compile Include="Order\OrderDetailProvider.cs" />
     <Compile Include="Order\OrderOtherProvider.cs" />
     <Compile Include="Order\OrderProvider.cs" />
+    <Compile Include="Order\OrderSettleMoneyProvider.cs" />
     <Compile Include="Order\ReceviceAddressProvider.cs" />
     <Compile Include="Order\TimeOrPriceProvider.cs" />
     <Compile Include="Pay\PayProvider.cs" />
