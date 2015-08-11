@@ -84,8 +84,8 @@
             </div>
             <div class="control-group">
                 <label>订单金额*</label> 
-                    <label title="应收商家配送费比例">商配比例</label><input id="bussinessDeliveryRatio" type="text" value="@Model.BusinessCommission" />%&nbsp;+&nbsp;<label title="应收商家配送费定额">商配定额</label><input id="bussinessFixValue" value="@Model.CommissionFixValue" />&nbsp;+&nbsp;
-                    <label title="代收客户配送费">代收客配</label><input id="customerDeliveryMoney" value="@Model.DistribSubsidy" />
+                    <label title="应收商家配送费比例">商配比例</label><input id="bussinessDeliveryRatio" style="width:100px" type="text" value="@Model.BusinessCommission" />%&nbsp;+&nbsp;<label title="应收商家配送费定额">商配定额</label><input id="bussinessFixValue" style="width:100px" value="@Model.CommissionFixValue" />&nbsp;+&nbsp;
+                    <label title="代收客户配送费">代收客配</label><input id="customerDeliveryMoney" style="width:100px" value="@Model.DistribSubsidy" />
 </div>
             @*<div class="control-group">
                 <input id="rCommissionFormulaMode0" name="rCommissionFormulaMode" type="radio" value="1" @(Model.CommissionType == 1 ? "checked" : "")>
@@ -487,8 +487,8 @@
             alert("商配比例数值必须在0-100之间");
             return;
         }
-        if (isNaN(parseFloat(bussinessFixValue)) || parseFloat(bussinessFixValue) < 0 ) {
-            alert("商配定额必须大于等于0");
+        if (isNaN(parseFloat(bussinessFixValue)) || parseFloat(bussinessFixValue) < 0 || parseFloat(bussinessFixValue)>100) {
+            alert("商配定额必须在0-100之间");
             return;
         }
         //商配比例为0，则结算类型为2;商配定额为0，则结算类型为1，都不为0，默认2
@@ -499,8 +499,8 @@
         //} else {
         //    commissionType = 2;
         //}
-        if (isNaN(parseFloat(customerDeliveryMoney)) || parseFloat(customerDeliveryMoney) < 0) {
-            alert("代收客配必须大于等于0");
+        if (isNaN(parseFloat(customerDeliveryMoney)) || parseFloat(customerDeliveryMoney) < 0 || parseFloat(customerDeliveryMoney) >100) {
+            alert("代收客配必须在0-100之间");
             return;
         }
         if (hidGroupId == 0) {

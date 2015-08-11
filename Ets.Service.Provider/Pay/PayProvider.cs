@@ -385,14 +385,11 @@ namespace Ets.Service.Provider.Pay
             BusinessRechargeResultModel resultModel = new BusinessRechargeResultModel();
             if (model.PayType == PayTypeEnum.WeiXin.GetHashCode())
             {
-
-                resultModel.notifyUrl = ETS.Config.WXBusinessRecharge;
-
                 NativePay nativePay = new NativePay();
                 string prepayId = string.Empty;
                 string code_url = nativePay.GetPayUrl(orderNo, model.payAmount * 100, "E代送商家充值", Config.WXBusinessRecharge, out prepayId);
                 resultModel.prepayId = prepayId;
-                resultModel.notifyUrl = Config.WXBusinessRecharge;
+                resultModel.notifyUrl = ETS.Config.WXBusinessRecharge;
             }
             else
             {
