@@ -144,9 +144,9 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <returns></returns>
         //[HttpGet]
-        public dynamic WxNotify()
+        public void WxNotify()
         {
-            return payProvider.WxNotify();
+            payProvider.WxNotify();
         }
         #endregion
 

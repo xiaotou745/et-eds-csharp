@@ -26,6 +26,7 @@ namespace SuperManWebApi.Controllers
             //参数校验
             if (vcmodel == null || vcmodel.PlatForm == 0)
             {
+            http://www.yy.com/90559774
                 return ResultModel<AppVerionModel>.Conclude(VersionStatus.NoPlatForm);
             }
             if (vcmodel.UserType == 0)

@@ -124,9 +124,9 @@ namespace SuperMan.Controllers
             {
                 criteria.businessCity = "";
             }
-
+            
             var pagedList = iOrderProvider.GetOrders(criteria);
-
+           
             if (pagedList != null && pagedList.Records.Count > 0)
             {
                 string filname = "e代送-{0}-订单数据.xls";
@@ -145,18 +145,18 @@ namespace SuperMan.Controllers
                 if (pagedList.Records.Count > 3)
                 {
                     byte[] data = Encoding.UTF8.GetBytes(CreateExcel(pagedList));
-                    return File(data, "application/ms-excel", filname);
+                    return File(data, "application/msexcel", filname);
                 }
                 else
                 {
                     byte[] data = Encoding.Default.GetBytes(CreateExcel(pagedList));
-                    return File(data, "application/ms-excel", filname);
+                    return File(data, "application/msexcel", filname);
                 }
 
             }
             
             //return PartialView("_PartialOrderList", pagedList);
-            return File(new byte[0]{}, "application/ms-excel", "无数据.xls");
+            return File(new byte[0]{}, "application/msexcel", "无数据.xls");
         }
 
 

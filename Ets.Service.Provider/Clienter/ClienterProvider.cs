@@ -1119,12 +1119,7 @@ namespace Ets.Service.Provider.Clienter
         /// <returns></returns>       
         public ResultModel<RushOrderResultModel> Receive_C(int userId, string orderNo, int bussinessId, float grabLongitude, float grabLatitude)
         {
-            //这里可以优化，去掉提前验证用户信息，当失败的时候在去验证 
-            OrderListModel model = new OrderListModel()
-            {
-                clienterId = userId,
-                OrderNo = orderNo
-            };
+            
             ///TODO 骑士是否有资格抢单放前面
             ClienterModel clienterModel = new Ets.Dao.Clienter.ClienterDao().GetUserInfoByUserId(userId);
 
@@ -1132,6 +1127,13 @@ namespace Ets.Service.Provider.Clienter
             {
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.HadCancelQualification);
             }
+            //这里可以优化，去掉提前验证用户信息，当失败的时候在去验证 
+            OrderListModel model = new OrderListModel()
+            {
+                clienterId = userId,
+                ClienterTrueName = clienterModel.TrueName,
+                OrderNo = orderNo
+            };
             bool bResult = orderDao.RushOrder(model);
             ///TODO 同步第三方状态和jpush 以后放到后台服务或mq进行。
             if (bResult)
@@ -1222,7 +1224,7 @@ namespace Ets.Service.Provider.Clienter
                 Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士" : myOrderInfo.ClienterName,
                 WithwardId = myOrderInfo.Id,
                 RelationNo = myOrderInfo.OrderNo,
-                Remark = "无效订单"
+                Remark = "异常原因"  //无效订单  修改为  异常原因  wc
             };
             clienterBalanceRecordDao.Insert(cbrm);
         }    
@@ -1238,6 +1240,16 @@ namespace Ets.Service.Provider.Clienter
             {
                 DealFlag = false
             };
+            if (!string.IsNullOrWhiteSpace(model.recommendPhone))
+            {
+                ClienterModel cm = clienterDao.GetUserInfoByUserPhoneNo(model.recommendPhone);
+                 
+                if (cm == null)
+                {
+                    dealResultInfo.DealMsg = "推荐人不存在！";
+                    return dealResultInfo;
+                } 
+            } 
             if (!clienterDao.ModifyClienterDetail(model))
             {
                 dealResultInfo.DealMsg = "修改骑士信息失败！";
@@ -1246,7 +1258,7 @@ namespace Ets.Service.Provider.Clienter
             dealResultInfo.DealMsg = "修改骑士信息成功！";
             dealResultInfo.DealFlag = true;
             return dealResultInfo;
-        }
+        } 
 
         #region  用户自定义方法 金额
         /// <summary>

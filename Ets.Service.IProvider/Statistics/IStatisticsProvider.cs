@@ -61,5 +61,11 @@ namespace Ets.Service.IProvider.Statistics
         /// <param name="queryInfo"></param>
         /// <returns></returns>
         PageInfo<ActiveUserInfo> QueryActiveUser(ActiveUserQuery queryInfo);
+        /// <summary>
+        /// 获取推荐统计详情分页
+        /// </summary>
+        /// <param name="recommendQuery"></param>
+        /// <returns></returns>
+        PageInfo<RecommendDetailDataModel> GetRecommendDetailList(RecommendQuery recommendQuery);
     }
 }
