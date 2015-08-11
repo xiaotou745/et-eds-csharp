@@ -41,7 +41,7 @@ namespace SuperMan.Controllers
             {
                 return Json(new ResultModel(false, "策略名称不能为空"));
             }
-            var mode = new StrategyModel { Name = name.Trim(), StrategyId = Convert.ToInt32(strategyid) };
+            var mode = new StrategyModel { Name = name.Trim(), StrategyId = Convert.ToInt32(strategyid),CreateBy = UserContext.Current.Name,UpdateBy = UserContext.Current.Name };
             var result = iStrategyProvider.HasExistsStrategy(mode);
             if (result.Result)
             {

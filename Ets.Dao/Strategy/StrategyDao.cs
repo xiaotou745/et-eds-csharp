@@ -24,15 +24,17 @@ namespace Ets.Dao.Strategy
         public int InsertDataStrategy(StrategyModel model)
         {
             string sql = @"INSERT INTO [dbo].[Strategy]
-                            ([Name],StrategyId                        
+                            ([Name],StrategyId,CreateBy,UpdateBy                        
                             )
                             VALUES
-                            (@Name,@StrategyId
+                            (@Name,@StrategyId,@CreateBy,@UpdateBy      
                           )
                             ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Name", model.Name);
             parm.AddWithValue("@StrategyId", model.StrategyId);
+            parm.AddWithValue("@CreateBy", model.CreateBy);
+            parm.AddWithValue("@UpdateBy", model.UpdateBy);
             object i = DbHelper.ExecuteScalar(SuperMan_Write, sql, parm);
             if (i != null)
             {
