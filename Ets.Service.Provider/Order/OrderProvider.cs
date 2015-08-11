@@ -323,7 +323,12 @@ namespace Ets.Service.Provider.Order
             to.BaseCommission = commProvider.GetBaseCommission(orderComm);//基本佣金
             to.OrderCommission = commProvider.GetCurrenOrderCommission(orderComm); //订单佣金
             to.WebsiteSubsidy = commProvider.GetOrderWebSubsidy(orderComm);//网站补贴
-            to.SettleMoney = commProvider.GetSettleMoney(orderComm);//订单结算金额            
+
+            to.SettleMoney = OrderSettleMoneyProvider.GetSettleMoney(orderComm.Amount ?? 0, orderComm.BusinessCommission,
+                orderComm.CommissionFixValue ?? 0, orderComm.OrderCount ?? 0,
+                orderComm.DistribSubsidy ?? 0, 0);//订单结算金额          
+
+         
             to.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet(business.BusinessGroupId).CommissionFormulaMode);
             to.Adjustment = commProvider.GetAdjustment(orderComm);//订单额外补贴金额           
             to.Status = Convert.ToByte(OrderStatus.Status0.GetHashCode());
@@ -662,7 +667,11 @@ namespace Ets.Service.Provider.Order
             paramodel.websitesubsidy = commissonPro.GetOrderWebSubsidy(orderComm);//网站补贴
             paramodel.commissionrate = commissonPro.GetCommissionRate(orderComm);//订单佣金比例
             paramodel.basecommission = commissonPro.GetBaseCommission(orderComm);//基本补贴佣金
-            paramodel.settlemoney = commissonPro.GetSettleMoney(orderComm);//订单结算金额
+
+            paramodel.settlemoney = OrderSettleMoneyProvider.GetSettleMoney(orderComm.Amount ?? 0,
+                orderComm.BusinessCommission,
+                orderComm.CommissionFixValue ?? 0, orderComm.OrderCount ?? 0, orderComm.DistribSubsidy ?? 0, paramodel.orderfrom);//订单结算金额          
+           
             paramodel.adjustment = commissonPro.GetAdjustment(orderComm);//订单额外补贴金额
 
             #endregion
@@ -1057,7 +1066,7 @@ namespace Ets.Service.Provider.Order
             to.CommissionFixValue = ParseHelper.ToDecimal(business.CommissionFixValue); //固定金额     
             to.BusinessGroupId = business.BusinessGroupId;
             to.MealsSettleMode = business.MealsSettleMode;
-            to.IsConsiderDeliveryFee = business.IsConsiderDeliveryFee; //结算时是否考虑外送费0不考虑1考虑默认0
+
 
 
             to.SongCanDate = from.SongCanDate; //送餐时间
@@ -1095,8 +1104,7 @@ namespace Ets.Service.Provider.Order
                 OrderCount = to.OrderCount/*订单数量*/,
                 BusinessCommission = to.BusinessCommission, /*商户结算比例*/
                 BusinessGroupId = business.BusinessGroupId,
-                StrategyId = business.StrategyId,
-                IsConsiderDeliveryFee = to.IsConsiderDeliveryFee  //结算时是否考虑外送费0不考虑1考虑默认0
+                StrategyId = business.StrategyId
             };
             OrderPriceProvider commProvider = CommissionFactory.GetCommission(business.StrategyId);
             to.CommissionFormulaMode = business.StrategyId;
@@ -1104,7 +1112,8 @@ namespace Ets.Service.Provider.Order
             to.BaseCommission = commProvider.GetBaseCommission(orderComm); //基本佣金
             to.OrderCommission = commProvider.GetCurrenOrderCommission(orderComm); //订单佣金
             to.WebsiteSubsidy = commProvider.GetOrderWebSubsidy(orderComm);//网站补贴
-            to.SettleMoney = commProvider.GetSettleMoney(orderComm);//订单结算金额
+            to.SettleMoney = OrderSettleMoneyProvider.GetSettleMoney(orderComm.Amount ?? 0, orderComm.BusinessCommission,
+                orderComm.CommissionFixValue ?? 0, orderComm.OrderCount ?? 0, orderComm.DistribSubsidy ?? 0, to.OrderFrom);//订单结算金额          
             if (!(bool)to.IsPay && to.MealsSettleMode == MealsSettleMode.LineOn.GetHashCode())//未付款且线上支付
             {
                 to.BusinessReceivable = Decimal.Round(ParseHelper.ToDecimal(from.Amount), 2);
