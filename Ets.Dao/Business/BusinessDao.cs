@@ -1961,7 +1961,8 @@ ORDER BY btr.Id;";
                                 OneKeyPubOrder=@OneKeyPubOrder,
                                 IsEmployerTask=@IsEmployerTask,
                                 IsAllowOverdraft=@IsAllowOverdraft,
-                                IsOrderChecked=@IsOrderChecked
+                                IsOrderChecked=@IsOrderChecked,
+                                RecommendPhone=@RecommendPhone 
                                            ";
             if (model.GroupId > 0)
             {
@@ -2016,8 +2017,8 @@ ORDER BY btr.Id;";
             parm.AddWithValue("@OneKeyPubOrder", model.OneKeyPubOrder);
             parm.AddWithValue("@IsEmployerTask", model.IsEmployerTask);
             parm.Add("@IsAllowOverdraft", DbType.Int16).Value = model.IsAllowOverdraft;
- 
-            parm.Add("@RecommendPhone", DbType.String).Value = model.RecommendPhone; //推荐人手机号 
+
+            parm.Add("@RecommendPhone", DbType.String).Value = model.RecommendPhone ?? ""; //推荐人手机号 
  
             parm.Add("@IsOrderChecked", DbType.Int32).Value = model.IsOrderChecked;
  

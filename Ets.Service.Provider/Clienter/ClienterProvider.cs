@@ -1243,6 +1243,7 @@ namespace Ets.Service.Provider.Clienter
             if (!string.IsNullOrWhiteSpace(model.recommendPhone))
             {
                 ClienterModel cm = clienterDao.GetUserInfoByUserPhoneNo(model.recommendPhone);
+                 
                 if (cm == null)
                 {
                     dealResultInfo.DealMsg = "推荐人不存在！";
