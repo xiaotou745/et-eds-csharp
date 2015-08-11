@@ -671,6 +671,8 @@ INTO BusinessBalanceRecord
    ,[Remark])
 from business b WITH ( ROWLOCK )
 where b.Id=@BusinessId;");
+
+
             var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Amount", model.RechargeAmount);
             parm.AddWithValue("@Status", BusinessBalanceRecordStatus.Success);

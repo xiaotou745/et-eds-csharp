@@ -1849,6 +1849,7 @@ namespace Ets.Service.Provider.Order
                 return CancelOrderStatus.VersionError;
             }
             order = orderDao.GetOrderById(paramodel.OrderId, paramodel.BusinessId, OrderStatus.Status0.GetHashCode());
+            
             if (order == null)
             {
                 return CancelOrderStatus.CancelOrderError;
