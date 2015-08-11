@@ -670,7 +670,29 @@ INTO BusinessBalanceRecord
    ,[OperateTime]
    ,[Remark])
 from business b WITH ( ROWLOCK )
-where b.Id=@BusinessId;");
+where b.Id=@BusinessId; 
+insert into dbo.BusinessRecharge
+        ( BusinessId ,
+          PayType ,
+          OrderNo ,
+          payAmount ,
+          PayStatus ,
+          PayBy ,
+          PayTime ,
+          OriginalOrderNo
+        )
+values  (
+        @BusinessId,
+        0,
+        '',
+        @Amount,
+        1,
+        @Operator,
+        getdate(),
+        '' );
+");
+
+
             var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Amount", model.RechargeAmount);
             parm.AddWithValue("@Status", BusinessBalanceRecordStatus.Success);
