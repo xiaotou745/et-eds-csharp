@@ -433,10 +433,6 @@ namespace SuperManWebApi.Controllers
             //= iBusinessProvider.GetBusiness(model.userId)
 
             order = iOrderProvider.TranslateOrder(model, out business);
-            if (order.CommissionType == OrderCommissionType.FixedRatio.GetHashCode() && order.BusinessCommission < 10m) //商户结算比例不能小于10
-            {
-                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.BusiSettlementRatioError);
-            }
 
             if (business == null) //如果商户不允许可透支发单，验证余额是否满足结算费用，如果不满足，提示：“您的余额不足，请及时充值!”
             {
