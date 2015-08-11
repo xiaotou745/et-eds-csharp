@@ -658,7 +658,8 @@ namespace Ets.Service.Provider.Order
                 BusinessCommission = paramodel.store_info.businesscommission,/*商户结算比例*/
                 BusinessGroupId = paramodel.BusinessGroupId,
                 StrategyId = business.StrategyId,
-                OrderWebSubsidy = paramodel.websitesubsidy
+                OrderWebSubsidy = paramodel.websitesubsidy,
+                CommissionFixValue = business.CommissionFixValue  //固定金额
 
             }/*网站补贴*/;
             OrderPriceProvider commissonPro = CommissionFactory.GetCommission(0);//万达、全时采用默认分组下策略
@@ -1104,7 +1105,8 @@ namespace Ets.Service.Provider.Order
                 OrderCount = to.OrderCount/*订单数量*/,
                 BusinessCommission = to.BusinessCommission, /*商户结算比例*/
                 BusinessGroupId = business.BusinessGroupId,
-                StrategyId = business.StrategyId
+                StrategyId = business.StrategyId,
+                CommissionFixValue = business.CommissionFixValue  //固定金额
             };
             OrderPriceProvider commProvider = CommissionFactory.GetCommission(business.StrategyId);
             to.CommissionFormulaMode = business.StrategyId;
