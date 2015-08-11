@@ -33,6 +33,6 @@
 @{ViewBag.ActionName = "PostIndex";}
 @{
     if (Model != null) { 
-    Html.Partial("~/views/shared/PagerControl.cshtml", Model);
+    @Html.Partial("~/views/shared/PagerControl.cshtml", Model);
     }
     }
