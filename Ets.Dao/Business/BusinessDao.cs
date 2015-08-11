@@ -562,8 +562,7 @@ order by a.id desc
                                 b.OneKeyPubOrder,
                                 b.IsAllowOverdraft,
                                 b.IsEmployerTask,
-                                b.IsOrderChecked,
-                                b.IsConsiderDeliveryFee 
+                                b.IsOrderChecked                                 
                                 FROM dbo.business as b WITH(NOLOCK)
                                 left join BusinessGroup on b.BusinessGroupId=BusinessGroup.Id
                                 WHERE b.Id = @busiId";
@@ -1842,8 +1841,7 @@ SELECT   b.Id ,
          b.IsAllowOverdraft,
          b.IsEmployerTask,
          ISNULL(b.RecommendPhone,'') AS RecommendPhone,
-         b.IsOrderChecked,
-         b.IsConsiderDeliveryFee  
+         b.IsOrderChecked 
 FROM business b WITH(NOLOCK) 
 	Left join BusinessFinanceAccount bfa WITH(NOLOCK) ON b.Id=bfa.BusinessId AND bfa.IsEnable=1
     Left join [group] g WITH(NOLOCK) on g.Id=b.GroupId 
@@ -1966,8 +1964,7 @@ ORDER BY btr.Id;";
                                 IsOrderChecked=@IsOrderChecked,
                                 RecommendPhone=@RecommendPhone,
                                 BusinessCommission=@BusinessCommission,
-                                CommissionFixValue=@CommissionFixValue,
-                                IsConsiderDeliveryFee=@IsConsiderDeliveryFee  
+                                CommissionFixValue=@CommissionFixValue                                 
                                            ";
             if (model.GroupId > 0)
             {
@@ -2021,8 +2018,6 @@ ORDER BY btr.Id;";
             parm.Add("@IsAllowOverdraft", DbType.Int16).Value = model.IsAllowOverdraft;
             parm.Add("@RecommendPhone", DbType.String).Value = model.RecommendPhone ?? ""; //推荐人手机号 
             parm.Add("@IsOrderChecked", DbType.Int32).Value = model.IsOrderChecked;
-            parm.Add("@IsConsiderDeliveryFee", DbType.Int32).Value = model.IsConsiderDeliveryFee; //是否考虑外送费
-                
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
         /// <summary>
