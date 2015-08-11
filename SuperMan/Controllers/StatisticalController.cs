@@ -216,6 +216,10 @@ namespace SuperMan.Controllers
             {
                 recommendQuery.DataType = 1;
             }
+            if (string.IsNullOrWhiteSpace(recommendQuery.StartDate))
+            {
+                recommendQuery.StartDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).ToString();
+            }
             ViewBag.DataType = recommendQuery.DataType;
             recommendQuery.PageIndex = PageIndex;
             StatisticsProvider statisticsProvider  = new StatisticsProvider();
@@ -255,7 +259,10 @@ namespace SuperMan.Controllers
         {
             RecommendQuery recommendQuery = new RecommendQuery();
             TryUpdateModel(recommendQuery);
-            recommendQuery.RecommendPhone = System.Web.HttpContext.Current.Request["phoneNum"];
+            if (string.IsNullOrWhiteSpace(recommendQuery.RecommendPhone))
+            {
+                recommendQuery.RecommendPhone = System.Web.HttpContext.Current.Request["phoneNum"];
+            }
             recommendQuery.PageIndex = PageIndex;
             if (recommendQuery.DataType != 1 && recommendQuery.DataType != 2)
             {
