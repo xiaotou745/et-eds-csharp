@@ -329,7 +329,7 @@ namespace Ets.Service.Provider.Order
                 orderComm.DistribSubsidy ?? 0, 0);//订单结算金额          
 
          
-            to.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet(business.BusinessGroupId).CommissionFormulaMode);
+            //to.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet(business.BusinessGroupId).CommissionFormulaMode);
             to.Adjustment = commProvider.GetAdjustment(orderComm);//订单额外补贴金额           
             to.Status = Convert.ToByte(OrderStatus.Status0.GetHashCode());
             to.TimeSpan = busiOrderInfoModel.TimeSpan;
@@ -645,7 +645,6 @@ namespace Ets.Service.Provider.Order
             #endregion
 
             #region 佣金相关  add by caoheyang 20150416
-            paramodel.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet(1).CommissionFormulaMode);//默认第三方策略，是默认组下的默认策略，目前即是普通策略 
             //paramodel.CommissionType = 1;//结算类型：1：固定比例 2：固定金额
             //paramodel.CommissionFixValue = 0;//固定金额
             //paramodel.BusinessGroupId = 1;//分组ID
@@ -663,6 +662,7 @@ namespace Ets.Service.Provider.Order
 
             }/*网站补贴*/;
             OrderPriceProvider commissonPro = CommissionFactory.GetCommission(0);//万达、全时采用默认分组下策略
+            paramodel.CommissionFormulaMode = 0;//ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet(1).CommissionFormulaMode);//默认第三方策略，是默认组下的默认策略，目前即是普通策略 
             paramodel.ordercommission = commissonPro.GetCurrenOrderCommission(orderComm);  //骑士佣金
             paramodel.websitesubsidy = commissonPro.GetOrderWebSubsidy(orderComm);//网站补贴
             paramodel.commissionrate = commissonPro.GetCommissionRate(orderComm);//订单佣金比例
@@ -1119,7 +1119,7 @@ namespace Ets.Service.Provider.Order
                 to.BusinessReceivable = Decimal.Round(ParseHelper.ToDecimal(from.Amount), 2);
             }
 
-            to.CommissionFormulaMode = business.StrategyId;
+            //to.CommissionFormulaMode = business.StrategyId;
             to.Adjustment = commProvider.GetAdjustment(orderComm);//订单额外补贴金额
             to.Status = (byte)OrderStatus.Status0.GetHashCode();
             to.listOrderChild = from.listOrderChlid;
