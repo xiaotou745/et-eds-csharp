@@ -1994,6 +1994,8 @@ where   o.Id = @orderId;
         /// <returns></returns>
         public IList<OrderRecordsLog> GetOrderRecords(string originalOrderNo, int group)
         {
+            #region 脚本
+
             string sql = @"
 
 select  *
@@ -2074,6 +2076,9 @@ from    ( select    sol.Id ,
           )
         ) bb
 order by bb.Id desc;";
+
+            #endregion
+
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OriginalOrderNo", SqlDbType.NVarChar);
             parm.SetValue("@OriginalOrderNo", originalOrderNo);
@@ -2915,10 +2920,19 @@ SELECT CASE SUM(oc.PayStatus)
         public order GetOrderById(int orderId, int businessId, int? status = null)
         {
             order order = null;
-            string sql = @" select * from [order] (nolock) where Id=@OrderId and businessId=@BusinessId";
+            //string sql = @" select * from [order] (nolock) where Id=@OrderId and businessId=@BusinessId";
+
+            string sql = @"select  o.Id ,
+        o.OrderNo ,
+        o.SettleMoney ,
+        b.Name BusinessName
+from    [order] o ( nolock )
+        join dbo.business b ( nolock ) on o.businessId = b.Id
+where   o.Id = @OrderId
+        and o.businessId = @BusinessId ";
             if (status != null)
             {
-                sql = sql + " and status=" + status;
+                sql = sql + " and o.status=" + status;
             }
             IDbParameters parm = DbHelper.CreateDbParameters("OrderId", DbType.Int32, 4, orderId);
             parm.Add("BusinessId", SqlDbType.Int).Value = businessId;
@@ -2929,7 +2943,7 @@ SELECT CASE SUM(oc.PayStatus)
             }
             return order;
         }
-
+         
         /// <summary>
         /// 根据订单号查询订单主表基本信息  add by caoheyang 20150521
         /// </summary>

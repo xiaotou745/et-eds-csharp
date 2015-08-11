@@ -24,14 +24,15 @@ namespace Ets.Service.Provider.Order
                 return 0;
             decimal distribe = 0;  //默认外送费，网站补贴都为0
             int orderCount = ParseHelper.ToInt(model.OrderCount); //订单数量 
-            if (model.DistribSubsidy != null && model.DistribSubsidy > 0) //如果外送费有数据，按照外送费计算骑士佣金
-            {
-                distribe = Convert.ToDecimal(model.DistribSubsidy);
-            }
-            else //如果外送费没数据，按照网站补贴计算骑士佣金
-            {
-                distribe = GetOrderWebSubsidy(model);
-            }
+            //if (model.DistribSubsidy != null && model.DistribSubsidy > 0) //如果外送费有数据，按照外送费计算骑士佣金
+            //{
+            //    distribe = Convert.ToDecimal(model.DistribSubsidy);
+            //}
+            //else //如果外送费没数据，按照网站补贴计算骑士佣金
+            //{
+            //    distribe = GetOrderWebSubsidy(model);
+            //}
+            distribe = GetOrderWebSubsidy(model);
             return Decimal.Round((GetBaseCommission(model) + distribe) * orderCount, 2);//计算佣金:（基本佣金（可配置）+ 代收客配或网站补贴）*订单数量
         }
 

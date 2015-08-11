@@ -9,6 +9,7 @@ using Ets.Model.DataModel.Finance;
 using Ets.Model.DataModel.Order;
 using Ets.Model.DomainModel.Clienter;
 using Ets.Model.DomainModel.Order;
+using Ets.Model.ParameterModel.Business;
 using Ets.Model.ParameterModel.Finance;
 using Ets.Model.ParameterModel.Order;
 using Ets.Service.IProvider.Order;
@@ -252,7 +253,7 @@ namespace Ets.Service.Provider.Order
         /// <param name="busiOrderInfoModel"></param>
         /// <param name="business">返回商户信息</param>
         /// <returns></returns>
-        public order TranslateOrder(Ets.Model.ParameterModel.Business.BussinessOrderInfoPM busiOrderInfoModel, out BusListResultModel business)
+        public order TranslateOrder(BussinessOrderInfoPM busiOrderInfoModel, out BusListResultModel business)
         {
             order to = new order();
             ///TODO 订单号生成规则，定了以后要改；
@@ -278,15 +279,18 @@ namespace Ets.Service.Provider.Order
             if (ConfigSettings.Instance.IsGroupPush)
             {
                 if (busiOrderInfoModel.OrderFrom != 0)
+                {
                     to.OrderFrom = busiOrderInfoModel.OrderFrom;
+                }
                 else
+                {
                     to.OrderFrom = 0;
+                }
+
             }
             to.Remark = busiOrderInfoModel.Remark;
-            if (string.IsNullOrWhiteSpace(busiOrderInfoModel.receviceName))
-                to.ReceviceName = "";
-            else
-                to.ReceviceName = busiOrderInfoModel.receviceName;
+            to.ReceviceName = string.IsNullOrWhiteSpace(busiOrderInfoModel.receviceName) ? "" : busiOrderInfoModel.receviceName;
+
             to.RecevicePhoneNo = busiOrderInfoModel.recevicePhone;
             to.ReceviceAddress = busiOrderInfoModel.receviceAddress;
             to.IsPay = busiOrderInfoModel.IsPay;
@@ -1038,20 +1042,24 @@ namespace Ets.Service.Provider.Order
             to.OrderNo = Helper.generateOrderCode(abusiness.Id);  //根据userId生成订单号(15位)
             to.businessId = abusiness.Id; //当前发布者
             BusListResultModel business = businessDao.GetBusiness(abusiness.Id);  //根据发布者id,获取发布者的相关信息实体
-            if (business != null)
+            if (business == null)
             {
-                to.PickUpCity = business.City;  //商户所在城市
-                to.PickUpAddress = business.Address;  //提取地址
-                to.PubDate = DateTime.Now; //提起时间
-                //to.ReceviceCity = business.City; //城市
-                //to.DistribSubsidy = business.DistribSubsidy;//设置外送费,从商户中找。
-                to.BusinessCommission = ParseHelper.ToDecimal(business.BusinessCommission);//商户结算比例
-                to.BusinessName = business.Name;
-                to.CommissionType = business.CommissionType;//结算类型：1：固定比例 2：固定金额
-                to.CommissionFixValue = ParseHelper.ToDecimal(business.CommissionFixValue);//固定金额     
-                to.BusinessGroupId = business.BusinessGroupId;
-                to.MealsSettleMode = business.MealsSettleMode;
+                return null;
             }
+            to.PickUpCity = business.City; //商户所在城市
+            to.PickUpAddress = business.Address; //提取地址
+            to.PubDate = DateTime.Now; //提起时间
+            //to.ReceviceCity = business.City; //城市
+            //to.DistribSubsidy = business.DistribSubsidy;//设置外送费,从商户中找。
+            to.BusinessCommission = ParseHelper.ToDecimal(business.BusinessCommission); //商户结算比例
+            to.BusinessName = business.Name;
+            to.CommissionType = business.CommissionType; //结算类型：1：固定比例 2：固定金额
+            to.CommissionFixValue = ParseHelper.ToDecimal(business.CommissionFixValue); //固定金额     
+            to.BusinessGroupId = business.BusinessGroupId;
+            to.MealsSettleMode = business.MealsSettleMode;
+
+
+
             to.SongCanDate = from.SongCanDate; //送餐时间
             to.Remark = from.Remark;
             to.ReceviceName = from.ReceiveName;
@@ -1840,6 +1848,7 @@ namespace Ets.Service.Provider.Order
                 return CancelOrderStatus.VersionError;
             }
             order = orderDao.GetOrderById(paramodel.OrderId, paramodel.BusinessId, OrderStatus.Status0.GetHashCode());
+            
             if (order == null)
             {
                 return CancelOrderStatus.CancelOrderError;

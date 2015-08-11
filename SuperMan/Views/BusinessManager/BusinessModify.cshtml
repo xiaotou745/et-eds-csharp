@@ -74,9 +74,9 @@
             </div>
             <div class="control-group" style="margin-bottom: 10px" id="OrderChecked">
                 <label style="margin-left: 5px">订单是否需要审核：</label>
-                <label><input name="IsCheckOrder" type="radio" value="1" @(Model.IsOrderChecked == 1 ? "checked" : "") />是 </label>
-                <label><input name="IsCheckOrder" type="radio" value="0" @(Model.IsOrderChecked == 0 ? "checked" : "") />否 </label> 
-            </div>
+                <label><input name="IsCheckOrder" type="radio" value="1" @(Model.IsOrderChecked == 1 ? "checked" : "")/>是 </label>
+                <label><input name="IsCheckOrder" type="radio" value="0" @(Model.IsOrderChecked == 0 ? "checked" : "")/>否 </label>
+            </div> 
         </div>
         <div style="width:750px;height: auto;border-bottom:solid 0px #dcdcdc;padding-left:10px;">
             <div class="control-group" style="margin-top: 10px">
@@ -466,7 +466,7 @@
         var latitude = $('#busiLatitude').val();
         var longitude = $('#busiLongitude').val();
         //var commissionType = $('input[name="rCommissionFormulaMode"]:checked').val();
-        var commissionType = 2;
+        //var commissionType = 2;
         //var commissionText = $('#busCommissionText').val();
         //var commissionFixValue = $('#CommissionFixValue').val();
         var businessGroupId = $('#businessGroupID').val();
@@ -492,13 +492,13 @@
             return;
         }
         //商配比例为0，则结算类型为2;商配定额为0，则结算类型为1，都不为0，默认2
-        if (parseFloat(bussinessDeliveryRatio) == 0) {
-            commissionType = 2;
-        } else if (parseFloat(bussinessFixValue) == 0) {
-            commissionType = 1;
-        } else {
-            commissionType = 2;
-        }
+        //if (parseFloat(bussinessDeliveryRatio) == 0) {
+        //    commissionType = 2;
+        //} else if (parseFloat(bussinessFixValue) == 0) {
+        //    commissionType = 1;
+        //} else {
+        //    commissionType = 2;
+        //}
         if (isNaN(parseFloat(customerDeliveryMoney)) || parseFloat(customerDeliveryMoney) < 0) {
             alert("代收客配必须大于等于0");
             return;
@@ -607,7 +607,7 @@
             "Address": adress,
             "Latitude": latitude,
             "Longitude": longitude,
-            "CommissionType": commissionType,
+            //"CommissionType": commissionType,
             "BusinessCommission": bussinessDeliveryRatio,
             "CommissionFixValue": bussinessFixValue,
             "BusinessGroupId": businessGroupId,
@@ -616,7 +616,7 @@
             "originalBusiId": originalBusiId,
             "oneKeyPubOrder": oneKeyPubOrder,
             "IsEmployerTask": IsEmployerTask,
-            "isAllowOverdraft": isAllowOverdraft,
+            "isAllowOverdraft": isAllowOverdraft, 
             "IsOrderChecked":$('#OrderChecked input[name="IsCheckOrder"]:checked ').val()
         };
         var url = "/BusinessManager/ModifyBusinessDetail";
