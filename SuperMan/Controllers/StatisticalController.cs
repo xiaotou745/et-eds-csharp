@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Web.Mvc;
 using Ets.Model.DomainModel.Statistics;
+using Ets.Service.IProvider.Clienter;
 using Ets.Service.IProvider.Statistics;
+using Ets.Service.Provider.Clienter;
 using Ets.Service.Provider.Statistics;
 using ETS.Data.PageData;
 using Ets.Model.Common;
@@ -34,6 +36,8 @@ namespace SuperMan.Controllers
         private readonly IAreaProvider areaProvider = new AreaProvider();
 
         private readonly IBusinessProvider bussinessProvider = new BusinessProvider();
+
+        private readonly IClienterProvider clienterProvider=new ClienterProvider();
 
         #region 订单完成时间间隔统计
 
@@ -222,13 +226,18 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         public ActionResult RecommendDetail(string phoneNum,string dataType)
         {
+           
             ViewBag.DataType = string.IsNullOrWhiteSpace(dataType) ? 1 : Convert.ToInt32(dataType);
             ViewBag.PhoneNum = string.IsNullOrWhiteSpace(phoneNum) ? "" : phoneNum;
-            ViewBag.TrueName = dataType == "2" ? "真实姓名" : "";
+            ViewBag.TrueName ="";
+            if (dataType == "2")
+            {
+                ViewBag.TrueName = clienterProvider.GetName(phoneNum);
+            }
             RecommendQuery recommendQuery = new RecommendQuery();
             recommendQuery.DataType = Convert.ToInt32(dataType);
             recommendQuery.PageIndex = 1;
-            recommendQuery.StartDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).ToString();
+            //recommendQuery.StartDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).ToString();
             recommendQuery.RecommendPhone = phoneNum;
             var pagelist = statisticsProvider.GetRecommendDetailList(recommendQuery);
             return View(pagelist);
@@ -243,11 +252,10 @@ namespace SuperMan.Controllers
             RecommendQuery recommendQuery = new RecommendQuery();
             TryUpdateModel(recommendQuery);
             recommendQuery.PageIndex = PageIndex;
-            ViewBag.DataType = recommendQuery.DataType;//设置显示商户列表
-            recommendQuery.StartDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).ToString();
+            ViewBag.DataType = recommendQuery.DataType;
             var statisticsProvider = new StatisticsProvider();
             var pagelist = statisticsProvider.GetRecommendDetailList(recommendQuery);
-            return View("_PsotRecommendList", pagelist);
+            return PartialView("_PostRecommendList", pagelist);
         }
         #endregion
 
