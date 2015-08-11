@@ -910,6 +910,11 @@ namespace Ets.Service.Provider.Order
             }
 
         }
+        /// <summary>
+        /// 验证聚网客订单合法性
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         ResultModel<NewPostPublishOrderResultModel> Verification(NewPostPublishOrderModel model)
         {
             if (string.IsNullOrWhiteSpace(model.OriginalOrderNo))   //原始订单号非空验证
