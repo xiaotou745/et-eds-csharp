@@ -112,7 +112,9 @@ width: 100%;
                         <td>@item.DistribSubsidy</td>
                         <td>@item.WebsiteSubsidy</td>
                         <td>@item.Adjustment</td>
-                        <td>@{ var commission = item.CommissionType == 1 ? item.BusinessCommission + "%" : item.CommissionFixValue.ToString();}
+                        <td>
+                            @{var commission = "["+item.BusinessCommission + "%+" + item.CommissionFixValue.ToString() +"+"+ item.DistribSubsidy+"]";
+                             }
                             @commission
                         </td>
                         <td>@item.GroupName</td>
