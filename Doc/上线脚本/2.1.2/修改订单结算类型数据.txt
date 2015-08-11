@@ -1,0 +1,47 @@
+
+ use superman
+ go
+ ------------1结算比例 修改固定金额为0
+ declare @countrow int;
+  --受影响行数 
+ select @countrow = count(1) FROM dbo.[order] (nolock)
+where CommissionType = 1
+ begin tran
+update dbo.[order]
+set CommissionFixValue=0
+where CommissionType=1
+ if ( @@error <> 0
+      or @@rowcount <> @countrow
+    )
+    begin
+        rollback;
+        print 'RollBack';
+        return;
+    end; 
+ print 'Commit Start';
+ commit;
+ print 'Commit Over'; 
+go
+
+ ----------- --2固定金额修改结算比例为 0
+ declare @countrow int;
+  --受影响行数 
+ select @countrow = count(1)
+ from   dbo.[order] (nolock)
+ where  CommissionType = 2;
+ begin tran
+ update dbo.[order]
+ set    BusinessCommission = 0
+ where  CommissionType = 2;
+ if ( @@error <> 0
+      or @@rowcount <> @countrow
+    )
+    begin
+        rollback;
+        print 'RollBack';
+        return;
+    end; 
+ print 'Commit Start';
+ commit;
+ print 'Commit Over'; 
+go
