@@ -910,6 +910,11 @@ namespace Ets.Service.Provider.Order
             }
 
         }
+        /// <summary>
+        /// 验证聚网客订单合法性
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         ResultModel<NewPostPublishOrderResultModel> Verification(NewPostPublishOrderModel model)
         {
             if (string.IsNullOrWhiteSpace(model.OriginalOrderNo))   //原始订单号非空验证
@@ -1020,22 +1025,16 @@ namespace Ets.Service.Provider.Order
         /// </summary>
         /// <param name="from">参数对象</param>
         /// <returns></returns>
-        private order OrderInstance(Model.ParameterModel.Order.NewPostPublishOrderModel from)
+        private order OrderInstance(NewPostPublishOrderModel from)
         {
             order to = new order();
 
             BusinessDao businessDao = new BusinessDao();
             BusinessModel abusiness = businessDao.GetBusiByOriIdAndOrderFrom(from.OriginalBusinessId, from.OrderFrom);
-
-            if (abusiness == null) return null;
-            //if (abusiness != null)
-            //{
-            //    from.BusinessId = abusiness.Id;
-            //}
-            //else
-            //{
-            //    return null;
-            //}
+            if (abusiness == null)
+            {
+                return null;
+            }
             to.OrderNo = Helper.generateOrderCode(abusiness.Id);  //根据userId生成订单号(15位)
             to.businessId = abusiness.Id; //当前发布者
             BusListResultModel business = businessDao.GetBusiness(abusiness.Id);  //根据发布者id,获取发布者的相关信息实体
@@ -1055,39 +1054,27 @@ namespace Ets.Service.Provider.Order
             }
             to.SongCanDate = from.SongCanDate; //送餐时间
             to.Remark = from.Remark;
-
             to.ReceviceName = from.ReceiveName;
             to.RecevicePhoneNo = from.ReceivePhoneNo;
-
             to.ReceiveProvince = from.Receive_Province;
             to.ReceiveProvinceCode = from.Receive_ProvinceCode;
-
             to.ReceviceCity = from.Receive_City;
             to.ReceiveCityCode = from.Receive_CityCode;
-
             to.ReceiveArea = from.Receive_Area;
             to.ReceiveAreaCode = from.Receive_AreaCode;
-
             to.ReceviceLatitude = from.Receive_Latitude;
             to.ReceviceLongitude = from.Receive_Longitude;
-
             to.ReceviceAddress = from.Receive_Address;
-
             to.OrderFrom = from.OrderFrom;
             to.Quantity = from.Quantity;
             to.OriginalOrderNo = from.OriginalOrderNo;
-
             to.Weight = from.Weight;
-
             to.IsPay = from.IsPay;
             to.Amount = from.Amount - from.DistribSubsidy;//订单金额=聚网客总金额-外送费
-
             to.OrderType = from.OrderType; //订单类型 1送餐订单 2取餐盒订单 
             to.KM = from.KM; //送餐距离
-
             to.GuoJuQty = from.GuoJuQty; //锅具数量
             to.LuJuQty = from.LuJuQty;  //炉具数量
-
             to.DistribSubsidy = from.DistribSubsidy; //外送费
             to.OrderCount = from.OrderCount == 0 ? 1 : from.OrderCount; //订单数量
             //计算订单佣金
@@ -1116,12 +1103,8 @@ namespace Ets.Service.Provider.Order
 
             to.CommissionFormulaMode = business.StrategyId;
             to.Adjustment = commProvider.GetAdjustment(orderComm);//订单额外补贴金额
-
             to.Status = (byte)OrderStatus.Status0.GetHashCode();
-
-            //to.TimeSpan = busiOrderInfoModel.TimeSpan;
             to.listOrderChild = from.listOrderChlid;
-
             if (!(bool)to.IsPay && to.MealsSettleMode == MealsSettleMode.LineOn.GetHashCode())//未付款且线上支付
             {
                 to.BusinessReceivable = Decimal.Round(ParseHelper.ToDecimal(to.Amount) +
