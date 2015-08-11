@@ -212,7 +212,7 @@ namespace SuperMan.Controllers
         {
             RecommendQuery recommendQuery=new RecommendQuery();
             TryUpdateModel(recommendQuery);
-            if (recommendQuery.DataType != 1 || recommendQuery.DataType != 2)
+            if (recommendQuery.DataType != 1 && recommendQuery.DataType != 2)
             {
                 recommendQuery.DataType = 1;
             }
@@ -256,7 +256,7 @@ namespace SuperMan.Controllers
             RecommendQuery recommendQuery = new RecommendQuery();
             TryUpdateModel(recommendQuery);
             recommendQuery.PageIndex = PageIndex;
-            if (recommendQuery.DataType != 1 || recommendQuery.DataType != 2)
+            if (recommendQuery.DataType != 1 && recommendQuery.DataType != 2)
             {
                 recommendQuery.DataType = 1;
             }
