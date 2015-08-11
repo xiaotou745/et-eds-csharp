@@ -100,10 +100,6 @@ namespace Ets.Model.DataModel.Business
         /// </summary>
         public int IsOrderChecked { get; set; }
 
-        /// <summary>
-        /// 结算时是否考虑外送费0不考虑1考虑默认0
-        /// </summary>
-        public int IsConsiderDeliveryFee { get; set; }
 
     }
 }
