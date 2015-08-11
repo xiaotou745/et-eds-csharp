@@ -9,6 +9,7 @@ using Ets.Model.DataModel.Finance;
 using Ets.Model.DataModel.Order;
 using Ets.Model.DomainModel.Clienter;
 using Ets.Model.DomainModel.Order;
+using Ets.Model.ParameterModel.Business;
 using Ets.Model.ParameterModel.Finance;
 using Ets.Model.ParameterModel.Order;
 using Ets.Service.IProvider.Order;
@@ -252,7 +253,7 @@ namespace Ets.Service.Provider.Order
         /// <param name="busiOrderInfoModel"></param>
         /// <param name="business">返回商户信息</param>
         /// <returns></returns>
-        public order TranslateOrder(Ets.Model.ParameterModel.Business.BussinessOrderInfoPM busiOrderInfoModel, out BusListResultModel business)
+        public order TranslateOrder(BussinessOrderInfoPM busiOrderInfoModel, out BusListResultModel business)
         {
             order to = new order();
             ///TODO 订单号生成规则，定了以后要改；
@@ -278,15 +279,18 @@ namespace Ets.Service.Provider.Order
             if (ConfigSettings.Instance.IsGroupPush)
             {
                 if (busiOrderInfoModel.OrderFrom != 0)
+                {
                     to.OrderFrom = busiOrderInfoModel.OrderFrom;
+                }
                 else
+                {
                     to.OrderFrom = 0;
+                }
+
             }
             to.Remark = busiOrderInfoModel.Remark;
-            if (string.IsNullOrWhiteSpace(busiOrderInfoModel.receviceName))
-                to.ReceviceName = "";
-            else
-                to.ReceviceName = busiOrderInfoModel.receviceName;
+            to.ReceviceName = string.IsNullOrWhiteSpace(busiOrderInfoModel.receviceName) ? "" : busiOrderInfoModel.receviceName;
+
             to.RecevicePhoneNo = busiOrderInfoModel.recevicePhone;
             to.ReceviceAddress = busiOrderInfoModel.receviceAddress;
             to.IsPay = busiOrderInfoModel.IsPay;
