@@ -1,0 +1,42 @@
+
+use superman;
+ go
+ ------------1结算比例 修改固定金额为0
+declare @countrow int;
+  --受影响行数 
+select  @countrow = count(1)
+from    dbo.BusinessBalanceRecord
+where   RecordType = 9;
+begin transaction;
+insert  into dbo.BusinessRecharge
+        ( BusinessId ,
+          PayType ,
+          OrderNo ,
+          payAmount ,
+          PayStatus ,
+          PayBy ,
+          PayTime ,
+          OriginalOrderNo
+        )
+        select  BusinessId ,
+                0 ,
+                '' ,
+                Amount ,
+                1 ,
+                Operator ,
+                OperateTime ,
+                ''
+        from    dbo.BusinessBalanceRecord
+        where   RecordType = 9;
+if ( @@error <> 0
+     or @@rowcount <> @countrow
+   )
+    begin
+        rollback;
+        print 'RollBack';
+        return;
+    end; 
+print 'Commit Start';
+commit;
+print 'Commit Over'; 
+go

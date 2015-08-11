@@ -121,12 +121,16 @@
     function checkDate() {
         var StartDate = $('#txtOrderPubStart').val();
         var EndDate = $('#txtOrderPubEnd').val();
-        var intStartDate = StartDate.replace(/-/g, "");
-        var intEndDate = EndDate.replace(/-/g, "");
-        if (intStartDate > intEndDate) {
-            alert('开始日期不能大于结束日期');
-            return false;
+        if (StartDate != "" && EndDate != "") {
+            var intStartDate = StartDate.replace(/-/g, "");
+            var intEndDate = EndDate.replace(/-/g, "");
+            if (intStartDate > intEndDate) {
+                alert('开始日期不能大于结束日期');
+                $('#txtOrderPubStart').val("");
+                return false;
+            }
         }
+
         return true;
     }
     function lockButton() {

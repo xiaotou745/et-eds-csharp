@@ -84,8 +84,8 @@
             </div>
             <div class="control-group">
                 <label>订单金额*</label> 
-                    <label title="应收商家配送费比例">商配比例</label><input id="bussinessDeliveryRatio" type="text" value="@Model.BusinessCommission" />%&nbsp;+&nbsp;<label title="应收商家配送费定额">商配定额</label><input id="bussinessFixValue" value="@Model.CommissionFixValue" />&nbsp;+&nbsp;
-                    <label title="代收客户配送费">代收客配</label><input id="customerDeliveryMoney" value="@Model.DistribSubsidy" />
+                    <label title="应收商家配送费比例">商配比例</label><input id="bussinessDeliveryRatio" style="width:100px" type="text" value="@Model.BusinessCommission" />%&nbsp;+&nbsp;<label title="应收商家配送费定额">商配定额</label><input id="bussinessFixValue" style="width:100px" value="@Model.CommissionFixValue" />&nbsp;+&nbsp;
+                    <label title="代收客户配送费">代收客配</label><input id="customerDeliveryMoney" style="width:100px" value="@Model.DistribSubsidy" />
 </div>
             @*<div class="control-group">
                 <input id="rCommissionFormulaMode0" name="rCommissionFormulaMode" type="radio" value="1" @(Model.CommissionType == 1 ? "checked" : "")>
@@ -616,7 +616,8 @@
             "originalBusiId": originalBusiId,
             "oneKeyPubOrder": oneKeyPubOrder,
             "IsEmployerTask": IsEmployerTask,
-            "isAllowOverdraft": isAllowOverdraft, 
+            "isAllowOverdraft": isAllowOverdraft,
+            "RecommendPhone": recomPhone,
             "IsOrderChecked":$('#OrderChecked input[name="IsCheckOrder"]:checked ').val()
         };
         var url = "/BusinessManager/ModifyBusinessDetail";
