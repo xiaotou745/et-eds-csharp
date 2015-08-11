@@ -76,12 +76,7 @@
                 <label style="margin-left: 5px">订单是否需要审核：</label>
                 <label><input name="IsCheckOrder" type="radio" value="1" @(Model.IsOrderChecked == 1 ? "checked" : "")/>是 </label>
                 <label><input name="IsCheckOrder" type="radio" value="0" @(Model.IsOrderChecked == 0 ? "checked" : "")/>否 </label>
-            </div>
-            <div class="control-group" style="margin-bottom: 10px" id="IsConsiderDeliveryFeeChecked">
-                <label style="margin-left: 5px">结算时是否考虑外送费：</label>
-                <label><input name="IsConsiderDeliveryFee" type="radio" value="1" @(Model.IsConsiderDeliveryFee == 1 ? "checked" : "") />考虑</label>
-                <label><input name="IsConsiderDeliveryFee" type="radio" value="0" @(Model.IsConsiderDeliveryFee == 0 ? "checked" : "") />不考虑</label>
-            </div>
+            </div> 
         </div>
         <div style="width:750px;height: auto;border-bottom:solid 0px #dcdcdc;padding-left:10px;">
             <div class="control-group" style="margin-top: 10px">
@@ -487,7 +482,6 @@
         var bussinessDeliveryRatio = $('#bussinessDeliveryRatio').val();//商配比例
         var bussinessFixValue = $('#bussinessFixValue').val(); // 商配定额
         var customerDeliveryMoney = $('#customerDeliveryMoney').val(); //代收客配
-        var isConsiderDeliveryFee = $('input[name="IsConsiderDeliveryFee"]:checked').val();
        // if (bussinessDeliveryRatio.trim() == '' || Number(bussinessDeliveryRatio) < 0 || Number(bussinessDeliveryRatio) > 100) {
         if (isNaN(parseFloat(bussinessDeliveryRatio)) || parseFloat(bussinessDeliveryRatio) < 0 || parseFloat(bussinessDeliveryRatio) > 100) {
             alert("商配比例数值必须在0-100之间");
@@ -622,8 +616,7 @@
             "originalBusiId": originalBusiId,
             "oneKeyPubOrder": oneKeyPubOrder,
             "IsEmployerTask": IsEmployerTask,
-            "isAllowOverdraft": isAllowOverdraft,
-            "IsConsiderDeliveryFee":isConsiderDeliveryFee,
+            "isAllowOverdraft": isAllowOverdraft, 
             "IsOrderChecked":$('#OrderChecked input[name="IsCheckOrder"]:checked ').val()
         };
         var url = "/BusinessManager/ModifyBusinessDetail";

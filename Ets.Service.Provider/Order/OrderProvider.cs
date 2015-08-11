@@ -1057,7 +1057,7 @@ namespace Ets.Service.Provider.Order
             to.CommissionFixValue = ParseHelper.ToDecimal(business.CommissionFixValue); //固定金额     
             to.BusinessGroupId = business.BusinessGroupId;
             to.MealsSettleMode = business.MealsSettleMode;
-            to.IsConsiderDeliveryFee = business.IsConsiderDeliveryFee; //结算时是否考虑外送费0不考虑1考虑默认0
+
 
 
             to.SongCanDate = from.SongCanDate; //送餐时间
@@ -1095,8 +1095,7 @@ namespace Ets.Service.Provider.Order
                 OrderCount = to.OrderCount/*订单数量*/,
                 BusinessCommission = to.BusinessCommission, /*商户结算比例*/
                 BusinessGroupId = business.BusinessGroupId,
-                StrategyId = business.StrategyId,
-                IsConsiderDeliveryFee = to.IsConsiderDeliveryFee  //结算时是否考虑外送费0不考虑1考虑默认0
+                StrategyId = business.StrategyId
             };
             OrderPriceProvider commProvider = CommissionFactory.GetCommission(business.StrategyId);
             to.CommissionFormulaMode = business.StrategyId;
