@@ -1841,7 +1841,8 @@ SELECT   b.Id ,
          b.IsAllowOverdraft,
          b.IsEmployerTask,
          ISNULL(b.RecommendPhone,'') AS RecommendPhone,
-         IsOrderChecked
+         b.IsOrderChecked,
+         b.IsConsiderDeliveryFee  
 FROM business b WITH(NOLOCK) 
 	Left join BusinessFinanceAccount bfa WITH(NOLOCK) ON b.Id=bfa.BusinessId AND bfa.IsEnable=1
     Left join [group] g WITH(NOLOCK) on g.Id=b.GroupId 
@@ -1942,6 +1943,7 @@ ORDER BY btr.Id;";
             string remark = GetRemark(brm, model); 
             //商铺名称、联系电话、联系座机、配 送 费、城 市、地 址、经 纬 度、结算比例设置、补贴策略设置(应付)、
             //补贴策略、餐费结算方式、一键发单、余额可以透支、使用雇主任务时间限制、第三方ID 
+            //结算类型去掉，以后这一列不在有用了
             string sql = @"UPDATE business 
                             SET Name=@Name,
                                 Landline=@Landline,
@@ -1955,27 +1957,21 @@ ORDER BY btr.Id;";
                                 Latitude=@Latitude,
                                 Longitude=@Longitude,
                                 BusinessGroupId=@BusinessGroupId,
-                                MealsSettleMode=@MealsSettleMode,
-                                CommissionType=@CommissionType,
+                                MealsSettleMode=@MealsSettleMode, 
                                 OriginalBusiId=@OriginalBusiId,
                                 OneKeyPubOrder=@OneKeyPubOrder,
                                 IsEmployerTask=@IsEmployerTask,
                                 IsAllowOverdraft=@IsAllowOverdraft,
                                 IsOrderChecked=@IsOrderChecked,
-                                RecommendPhone=@RecommendPhone 
+                                RecommendPhone=@RecommendPhone,
+                                BusinessCommission=@BusinessCommission,
+                                CommissionFixValue=@CommissionFixValue,
+                                IsConsiderDeliveryFee=@IsConsiderDeliveryFee  
                                            ";
             if (model.GroupId > 0)
             {
                 sql += " ,GroupId=@GroupId, ";
-            }
-            if (model.CommissionType == 1)
-            {
-                sql += " ,BusinessCommission=@BusinessCommission,CommissionFixValue=0 ";
-            }
-            else
-            {
-                sql += " ,CommissionFixValue=@CommissionFixValue,BusinessCommission=0 ";
-            }
+            }  
             sql += @" OUTPUT
                         Inserted.Id,
                         @OptId,
@@ -2003,8 +1999,13 @@ ORDER BY btr.Id;";
             parm.AddWithValue("@Address", model.Address);
             parm.AddWithValue("@Latitude", model.Latitude);
             parm.AddWithValue("@Longitude", model.Longitude);
-            parm.AddWithValue("@CommissionType", model.CommissionType);
-            parm.AddWithValue("@BusinessCommission", model.BusinessCommission);
+            //parm.AddWithValue("@CommissionType", model.CommissionType);
+            decimal businessCommission = 0;
+            if (model.BusinessCommission.HasValue)
+            {
+                businessCommission = model.BusinessCommission.Value;
+            }
+            parm.AddWithValue("@BusinessCommission", Math.Round(businessCommission, 1));
             parm.AddWithValue("@CommissionFixValue", model.CommissionFixValue);
             parm.AddWithValue("@BusinessGroupId", model.BusinessGroupId);
             parm.AddWithValue("@MealsSettleMode", model.MealsSettleMode);
@@ -2017,11 +2018,10 @@ ORDER BY btr.Id;";
             parm.AddWithValue("@OneKeyPubOrder", model.OneKeyPubOrder);
             parm.AddWithValue("@IsEmployerTask", model.IsEmployerTask);
             parm.Add("@IsAllowOverdraft", DbType.Int16).Value = model.IsAllowOverdraft;
- 
             parm.Add("@RecommendPhone", DbType.String).Value = model.RecommendPhone ?? ""; //推荐人手机号 
- 
             parm.Add("@IsOrderChecked", DbType.Int32).Value = model.IsOrderChecked;
- 
+            parm.Add("@IsConsiderDeliveryFee", DbType.Int32).Value = model.IsConsiderDeliveryFee; //是否考虑外送费
+                
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
         /// <summary>

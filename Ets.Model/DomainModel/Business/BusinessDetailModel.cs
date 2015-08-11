@@ -67,5 +67,9 @@ namespace Ets.Model.DomainModel.Business
         /// 订单是否审核 1是 0 否
         /// </summary>
         public int IsOrderChecked { get; set; }
+        /// <summary>
+        /// 结算时是否考虑外送费0不考虑1考虑默认0
+        /// </summary>
+        public int IsConsiderDeliveryFee { get; set; }
     }
 }
