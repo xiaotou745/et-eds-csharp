@@ -53,6 +53,7 @@
                             <input id="txtPubStart" readonly="readonly" type="text" name="txtPubStart" />*@
                         <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
                         <input value="导出" class="searchBtn" type="button" id="btnImport">
+                        <input value="导入骑士" class="searchBtn" type="button" id="btnImportC">
                     </td>
                 </tr>
             </table>
@@ -72,6 +73,10 @@
             var url ="@Url.Action("SuperManExport")";
             url = url + "?" + data;
             window.location.href = url;
+        });
+        //确认导入骑士
+        $("#btnImportC").click(function() {
+            window.location.href = "/DeliveryCompany/BatchImportClienter?companyId=" + $("#deliveryCompany").val() + "&CompanyName=" + $("#deliveryCompany option:selected").text();
         });
     });
 </script>
