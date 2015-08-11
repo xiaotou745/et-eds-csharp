@@ -31,5 +31,10 @@ namespace WebEdaiSong.Controllers
             return View();
         }
 
+        public ActionResult PrivacyAgreement()
+        {
+            return View();
+        }
+
     }
 }

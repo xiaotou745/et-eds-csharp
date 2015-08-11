@@ -1961,19 +1961,19 @@ ORDER BY btr.Id;";
                                 OneKeyPubOrder=@OneKeyPubOrder,
                                 IsEmployerTask=@IsEmployerTask,
                                 IsAllowOverdraft=@IsAllowOverdraft,
-                                IsOrderChecked=@IsOrderChecked,
+                                IsOrderChecked=@IsOrderChecked
                                            ";
             if (model.GroupId > 0)
             {
-                sql += " GroupId=@GroupId, ";
+                sql += " ,GroupId=@GroupId, ";
             }
             if (model.CommissionType == 1)
             {
-                sql += " BusinessCommission=@BusinessCommission ";
+                sql += " ,BusinessCommission=@BusinessCommission,CommissionFixValue=0 ";
             }
             else
             {
-                sql += " CommissionFixValue=@CommissionFixValue ";
+                sql += " ,CommissionFixValue=@CommissionFixValue,BusinessCommission=0 ";
             }
             sql += @" OUTPUT
                         Inserted.Id,
@@ -2016,7 +2016,11 @@ ORDER BY btr.Id;";
             parm.AddWithValue("@OneKeyPubOrder", model.OneKeyPubOrder);
             parm.AddWithValue("@IsEmployerTask", model.IsEmployerTask);
             parm.Add("@IsAllowOverdraft", DbType.Int16).Value = model.IsAllowOverdraft;
+ 
+            parm.Add("@RecommendPhone", DbType.String).Value = model.RecommendPhone; //推荐人手机号 
+ 
             parm.Add("@IsOrderChecked", DbType.Int32).Value = model.IsOrderChecked;
+ 
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
         /// <summary>
@@ -2101,9 +2105,16 @@ ORDER BY btr.Id;";
                     remark.AppendFormat("余额透支原值:{0},修改为{1};", brm.IsEmployerTask, model.IsEmployerTask);
                 }
                 //第三方Id
-                if (model.OriginalBusiId != model.OriginalBusiId)
+                if (brm.OriginalBusiId.HasValue)
                 {
-                    remark.AppendFormat("第三方ID原值:{0},修改为{1};", brm.OriginalBusiId, model.OriginalBusiId);
+                    if (brm.OriginalBusiId.Value != model.OriginalBusiId)
+                    {
+                        remark.AppendFormat("第三方ID原值:{0},修改为{1};", brm.OriginalBusiId, model.OriginalBusiId);
+                    }
+                } 
+                if (brm.RecommendPhone != model.RecommendPhone)
+                {
+                    remark.AppendFormat("推荐人手机号原值:{0},修改为{1};", brm.RecommendPhone, model.RecommendPhone);
                 }
             }
             return remark.ToString();

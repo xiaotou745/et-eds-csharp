@@ -11,6 +11,7 @@
         <th>状态</th>
         <th>时间</th>
         <th>操作人</th>
+        <th>备注</th>
     </thead>
     <tbody>
         @{
@@ -42,6 +43,7 @@
                         <td>@(item.Status == ETS.Enums.ClienterBalanceRecordStatus.Success.GetHashCode() ? "交易成功" : "交易中")</td>
                         <td>@item.OperateTime</td>
                         <td>@item.Operator</td>
+                        <td>@item.Remark</td>
                     </tr>
                 }
             }
