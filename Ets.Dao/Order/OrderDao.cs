@@ -925,6 +925,7 @@ select @@IDENTITY ";
                                         ,o.FinishAll
                                         ,ISNULL(oo.DeductCommissionType,0) DeductCommissionType
                                         ,ISNULL(oo.IsJoinWithdraw,0) IsJoinWithdraw
+                                        ,ISNULL(oo.IsOrderChecked,1) IsOrderChecked
                                     FROM [order] o WITH ( NOLOCK )
                                     LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                     LEFT JOIN clienter c WITH (NOLOCK) ON o.clienterId=c.Id
@@ -1083,7 +1084,7 @@ where  o.Id = @orderId");
             end
             insert  into dbo.OrderSubsidiesLog ( OrderId, Price, InsertTime, OptName,
                                                  Remark, OptId, OrderStatus, Platform )
-            select  o.Id, o.OrderCommission, getdate(), '骑士', '任务已被抢', @clienterId, @Status, @Platform
+            select  o.Id, o.OrderCommission, getdate(), @OptName, '任务已被抢', @clienterId, @Status, @Platform
             from    dbo.[order] o ( nolock )
             where   o.OrderNo = @OrderNo
             select 0";
@@ -1092,6 +1093,7 @@ where  o.Id = @orderId");
             dbParameters.Add("Status", DbType.Int32, 4).Value = OrderStatus.Status2.GetHashCode();
             dbParameters.Add("OrderNo", DbType.String, 50).Value = order.OrderNo;
             dbParameters.Add("Platform", DbType.Int32, 4).Value = SuperPlatform.FromClienter.GetHashCode();
+            dbParameters.Add("OptName", DbType.String, 200).Value = order.ClienterTrueName;  //抢单的骑士姓名
             object obj = DbHelper.ExecuteScalar(SuperMan_Write, sqlText, dbParameters);
             return ParseHelper.ToInt(obj, 1) == 0 ? true : false;
         }
@@ -1172,6 +1174,35 @@ where  o.Id = @orderId");
             return ParseHelper.ToInt(executeScalar, -1);
         }
 
+        /// <summary>
+        /// 根据订单号 修改订单状态 B端商家取消订单
+        /// wc
+        /// 取消订单的时候增加 日志
+        /// </summary> 
+        /// <returns></returns>
+        public int CancelOrderStatus(CancelOrderModel com)
+        {
+            string upSql = string.Format(@" UPDATE dbo.[order]
+ SET  [Status] = @status,OtherCancelReason=@OtherCancelReason
+ output Inserted.Id,@Price,GETDATE(),'{0}',@OtherCancelReason,Inserted.businessId,Inserted.[Status],{1}
+ into dbo.OrderSubsidiesLog(OrderId,Price,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform])
+ WHERE  OrderNo = @orderNo", com.OrderCancelName, com.OrderCancelFrom);
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("orderNo", DbType.String, 45).Value = com.OrderNo;
+            dbParameters.Add("status", DbType.Int32, 4).Value = com.OrderStatus;
+            dbParameters.Add("Price", DbType.Decimal, 9).Value = com.Price;
+            dbParameters.Add("OtherCancelReason", DbType.String, 500).Value = com.Remark;
+
+            if (com.Status != null)
+            {
+                upSql = upSql + " and Status=" + com.Status;
+            }
+
+            object executeScalar = DbHelper.ExecuteNonQuery(SuperMan_Write, upSql.ToString(), dbParameters);
+            return ParseHelper.ToInt(executeScalar, -1);
+        }
+
 
         /// <summary>
         ///  第三方更新E代送订单状态   add by caoheyang 20150421  
@@ -1229,12 +1260,13 @@ UPDATE dbo.[order]
 output Inserted.Id,GETDATE(),'{0}','任务已完成',Inserted.clienterId,Inserted.[Status],{1}
 into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform]) 
 WHERE  dbo.[order].Id = @orderId AND clienterId =@clienterId and Status = 4;
-", SuperPlatform.FromClienter, (int)SuperPlatform.FromClienter);
+", myOrderInfo.ClienterName, (int)SuperPlatform.FromClienter);
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("orderId", DbType.Int32, 4).Value = myOrderInfo.Id;
             dbParameters.Add("clienterId", DbType.Int32, 4).Value = myOrderInfo.clienterId;
             dbParameters.Add("status", DbType.Int32, 4).Value = OrderStatus.Status1.GetHashCode();
+
             return ParseHelper.ToInt(
                 DbHelper.ExecuteNonQuery(SuperMan_Write, upSql.ToString(), dbParameters),
                 -1
@@ -1260,7 +1292,7 @@ set @incomeTotal =convert(decimal(18,2),(select sum(TotalPrice) from dbo.OrderCh
 set @withdrawClienterPrice = convert(decimal(18,2),(select isnull( sum(isnull(Amount,0)),0) withPirce FROM dbo.ClienterWithdrawForm(nolock) cwf where Status =3)) 
 set @businessBalance=convert(decimal(18,2),(SELECT sum(BalancePrice) FROM dbo.business b(nolock) where Status=1 ))
 set @withdrawBusinessPrice=convert( decimal(18,2),(SELECT sum(Amount) as withdrawBusinessPrice FROM dbo.BusinessWithdrawForm(nolock) bwf where Status =3 ))
-set @rechargeTotal = (SELECT sum(payAmount) FROM BusinessRecharge(nolock) where PayStatus=1 ) --商户充值总计
+set @rechargeTotal = (SELECT sum(Amount) FROM dbo.BusinessBalanceRecord(nolock) bbr where RecordType=9  ) --商户充值总计
 select  ( select    sum(AccountBalance)
           from      dbo.clienter(nolock)
           where     AccountBalance >= 1000
@@ -2830,13 +2862,15 @@ order by a.id desc
         /// <UpdateTime>20150701</UpdateTime>
         public void UpdateTake(OrderPM modelPM)
         {
-            const string updateSql = @"
+            string updateSql = string.Format(@"
 update dbo.[Order] 
-    set Status=4
-where id=@orderid and Status=2 and clienterId=@clienterId;
+    set Status=4 
+output Inserted.Id,GETDATE(),'{0}','确认已取货',Inserted.clienterId,Inserted.[Status],{1} 
+into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform]) 
+where id=@orderid and Status=2 and clienterId=@clienterId; 
 update OrderOther 
     set TakeTime=GETDATE(),TakeLongitude=@TakeLongitude,TakeLatitude=@TakeLatitude 
-where orderid=@orderid";
+where orderid=@orderid", modelPM.ClienterTrueName, (int)SuperPlatform.FromClienter);
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("TakeLongitude", modelPM.longitude);
             dbParameters.AddWithValue("TakeLatitude", modelPM.latitude);
@@ -2880,7 +2914,7 @@ SELECT CASE SUM(oc.PayStatus)
         public order GetOrderById(int orderId, int businessId, int? status = null)
         {
             order order = null;
-            string sql = @" select * from [order] where Id=@OrderId and businessId=@BusinessId";
+            string sql = @" select * from [order] (nolock) where Id=@OrderId and businessId=@BusinessId";
             if (status != null)
             {
                 sql = sql + " and status=" + status;

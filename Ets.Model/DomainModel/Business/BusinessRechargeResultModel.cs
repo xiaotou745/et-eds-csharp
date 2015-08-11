@@ -28,5 +28,10 @@ namespace Ets.Model.DomainModel.Business
         /// </summary>
         public string notifyUrl { get; set; }
 
+        /// <summary>
+        /// 预支付交易会话标识
+        /// </summary>
+        public string prepayId { get; set; }
+
     }
 }

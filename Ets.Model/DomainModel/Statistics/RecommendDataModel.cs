@@ -42,55 +42,40 @@ namespace Ets.Model.DomainModel.Statistics
     }
 
 
-    /// <summary>
+        /// <summary>
     /// 推荐人统计 --用户类型商家
-    /// </summary>
-    public class RecommendDataModelB
+        /// </summary>
+    public class RecommendDetailDataModel
     {
         /// <summary>
-        /// 推荐人手机号
+        /// 商户名称
         /// </summary>
-        public string RecommendPhone { get; set; }
+        public string BusName { get; set; }
         /// <summary>
-        /// 推荐商家数量
+        /// 骑士名称
         /// </summary>
-        public int BusCount { get; set; }
+        public string CliName { get; set; }
         /// <summary>
-        /// 推荐的任务总数量
-        /// </summary>
-        public int TaskCount { get; set; }
-        /// <summary>
-        /// 推荐的订单总数量
-        /// </summary>
-        public int OrderCount { get; set; }
-
-    }
-
-    /// <summary>
-    /// 推荐人统计 --用户类型骑士
-    /// </summary>
-    public class RecommendDataModelC
-    {
-        /// <summary>
-        /// 推荐人手机号(骑士)
+        /// 注册手机号
         /// </summary>
         public string PhoneNo { get; set; }
+
         /// <summary>
-        /// 推荐人真实姓名
+        /// 商户地址
         /// </summary>
-        public string TrueName { get; set; }
+        public string BusAddress { get; set; }
         /// <summary>
-        /// 推荐的骑士总数量
+        /// 注册时间
         /// </summary>
-        public int ClienterCount { get; set; }
+        public DateTime RegDateTime { get; set; }
         /// <summary>
-        /// 骑士完成的任务总数
-        /// </summary>
-        public int TaskCount { get; set; }
-        /// <summary>
-        /// 骑士完成的订单总素
+        /// 订单总数
         /// </summary>
         public int OrderCount { get; set; }
+        /// <summary>
+        /// 任务总数
+        /// </summary>
+        public int TaskCount { get; set; }
     }
 
 }

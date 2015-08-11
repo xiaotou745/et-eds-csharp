@@ -60,7 +60,7 @@ namespace Ets.Model.DomainModel.Business
         /// </summary>
         public int BindClienterQty { get; set; }
         /// <summary>
-        /// 物流公司编号
+        /// 推荐人手机号
         /// </summary>
         public string RecommendPhone { get; set; }
         /// <summary>

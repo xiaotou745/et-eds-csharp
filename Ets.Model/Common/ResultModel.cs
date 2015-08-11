@@ -44,8 +44,8 @@ namespace Ets.Model.Common
             this.Data = data;
         }
 
-        public bool IsSuccess { get; private set; }
-        public string Message { get; private set; }
+        public bool IsSuccess { get;  set; }
+        public string Message { get;  set; }
         public object Data { get; set; }
     }
 

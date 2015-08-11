@@ -72,7 +72,7 @@ namespace Ets.Service.IProvider.Pay
         /// 2015年5月13日 15:03:45
         /// </summary>
         /// <returns></returns>
-        dynamic WxNotify();
+        void WxNotify();
 
         /// <summary>
         /// 微信商家充值回调方法 

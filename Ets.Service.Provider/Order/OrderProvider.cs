@@ -471,7 +471,6 @@ namespace Ets.Service.Provider.Order
         }
 
 
-
         /// <summary>
         /// 第三方订单列表根据订单号 修改订单状态   平杨  TODO 目前支适用于美团
         /// </summary>
@@ -491,7 +490,9 @@ namespace Ets.Service.Provider.Order
                 {
                     return 0;
                 }
-                int result = orderDao.CancelOrderStatus(orderNo, orderStatus, remark, status);
+                CancelOrderModel comModel = new CancelOrderModel() { OrderNo = orderNo, OrderStatus = orderStatus, Remark = remark, Status = status, OrderCancelFrom = SuperPlatform.ThirdParty.GetHashCode(),OrderCancelName = order.BusinessName};
+                //int result = orderDao.CancelOrderStatus(orderNo, orderStatus, remark, status);
+                int result = orderDao.CancelOrderStatus(comModel);
                 if (result > 0)
                 {
                     //确认接入订单时   扣除 商家结算费 
@@ -1531,7 +1532,9 @@ namespace Ets.Service.Provider.Order
             var order = orderDao.GetOrderByOrderNoAndOrderFrom(originalOrderNo, group, 0);
             if (order.Status == OrderStatus.Status0.GetHashCode())
             {
-                var k = orderDao.CancelOrderStatus(order.OrderNo, OrderStatus.Status3.GetHashCode(), "第三方取消订单", null);
+                CancelOrderModel comModel = new CancelOrderModel() { OrderNo = order.OrderNo, OrderStatus = OrderStatus.Status3.GetHashCode(), Remark = "第三方取消订单", Status = null};
+                var k = orderDao.CancelOrderStatus(comModel);
+                //var k = orderDao.CancelOrderStatus(order.OrderNo, OrderStatus.Status3.GetHashCode(), "第三方取消订单", null);
                 if (k > 0)
                 {
                     return "1"; //取消成功
@@ -1766,8 +1769,8 @@ namespace Ets.Service.Provider.Order
         /// <param name="modelPM"></param>
         public void UpdateTake(OrderPM modelPM)
         {
-            float takeLongitude = (float)modelPM.longitude;
-            float takeLatitude = (float)modelPM.latitude;
+            //float takeLongitude = (float)modelPM.longitude;
+            //float takeLatitude = (float)modelPM.latitude;
             orderDao.UpdateTake(modelPM);
         }
 
@@ -1799,7 +1802,9 @@ namespace Ets.Service.Provider.Order
                 {
                     return ResultModel<bool>.Conclude(tempresult, false);
                 }
-                int result = orderDao.CancelOrderStatus(paramodel.OrderNo, OrderStatus.Status3.GetHashCode(), "商家取消订单", OrderStatus.Status0.GetHashCode(), order.SettleMoney);
+                CancelOrderModel comModel = new CancelOrderModel() { OrderNo = paramodel.OrderNo, OrderStatus = OrderStatus.Status3.GetHashCode(), Remark = "商家取消订单", Status = OrderStatus.Status0.GetHashCode(), Price = order.SettleMoney ,OrderCancelFrom = SuperPlatform.FromBusiness.GetHashCode(), OrderCancelName = order.BusinessName};
+                int result = orderDao.CancelOrderStatus(comModel);
+                //int result = orderDao.CancelOrderStatus(paramodel.OrderNo, OrderStatus.Status3.GetHashCode(), "商家取消订单", OrderStatus.Status0.GetHashCode(), order.SettleMoney);
                 if (result > 0)
                 {
                     BusinessDao businessDao = new BusinessDao();
