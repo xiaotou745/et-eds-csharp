@@ -1,6 +1,6 @@
 ﻿@using Webdiyer.WebControls.Mvc;
 @using ETS.Util
-@model ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Statistics.RecommendDataModel>
+@model ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Statistics.RecommendDetailDataModel>
 @{
     ViewBag.Title = "推荐统计详情";
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
@@ -25,19 +25,20 @@
             <h4 style="color:black;font-weight:600">推荐详情</h4>
             <span>推荐人信息：@PhoneNum @TrueName</span><br/>
             <span>发单日期:</span>
-            <input id="startDate" name="StartDate" style="width:143px" value="@(new DateTime(DateTime.Now.Year,DateTime.Now.Month,1).ToString("yyyy-MM-dd"))" />
+            <input id="startDate" name="StartDate" style="width:143px" value="" />@*@(new DateTime(DateTime.Now.Year,DateTime.Now.Month,1).ToString("yyyy-MM-dd"))*@
             <span>到</span>
             <input id="endDate" name="EndDate" style="width:143px" />
-            <span>@(DataType==1?"商家注册手机号":"骑士注册手机号"):</span><input type="text" id="businessPhoneNum" name="BusinessPhoneNum" />
+            <span>@(DataType==1?"商家注册手机号":"骑士注册手机号"):</span><input type="text" id="businessPhoneNum" name="QueryPhone" />
             <input value="查询" class="searchBtn" type="submit" id="btnSearch">
             <input value="@DataType" type="hidden" name="DataType">
+            <input value="@PhoneNum" type="hidden" name="RecommendPhone">
             <br />
         </div>
 
     }
     <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
     <div class="bd clearfix" id="dataList">
-        @Html.Partial("_PsotRecommendList", Model)
+        @Html.Partial("_PostRecommendList", Model)
     </div>
     <hr />
 
