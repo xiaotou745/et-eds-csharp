@@ -2017,7 +2017,7 @@ ORDER BY btr.Id;";
             parm.AddWithValue("@IsEmployerTask", model.IsEmployerTask);
             parm.Add("@IsAllowOverdraft", DbType.Int16).Value = model.IsAllowOverdraft;
  
-            parm.Add("@RecommendPhone", DbType.String).Value = model.RecommendPhone; //推荐人手机号 
+            parm.Add("@RecommendPhone", DbType.String).Value = model.RecommendPhone ?? ""; //推荐人手机号 
  
             parm.Add("@IsOrderChecked", DbType.Int32).Value = model.IsOrderChecked;
  
