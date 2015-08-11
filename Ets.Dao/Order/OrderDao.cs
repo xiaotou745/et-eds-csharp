@@ -2008,6 +2008,7 @@ from    ( select    sol.Id ,
                       when 1 then '已完成'
                       when 2 then '已接单'
                       when 3 then '已取消'
+                      when 4 then '已取货' 
                       else '未知请联系e代送客服'
                     end OrderStatusStr ,
                     sol.InsertTime ,
@@ -2033,6 +2034,7 @@ from    ( select    sol.Id ,
                       when 1 then '已完成'
                       when 2 then '已接单'
                       when 3 then '已取消'
+                      when 4 then '已取货' 
                       else '未知请联系e代送客服'
                     end OrderStatusStr ,
                     sol.InsertTime ,
@@ -2058,6 +2060,7 @@ from    ( select    sol.Id ,
                       when 1 then '已完成'
                       when 2 then '已接单'
                       when 3 then '已取消'
+                      when 4 then '已取货' 
                       else '未知请联系e代送客服'
                     end OrderStatusStr ,
                     sol.InsertTime ,
