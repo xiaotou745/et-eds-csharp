@@ -93,7 +93,7 @@ width: 100%;
                     //{
                     //    yingshou = string.Format("[商家固定金额*订单数量+外送费*订单数量]<br/>[{0}*{1}+{2}*{3}]", item.CommissionFixValue, item.OrderCount, item.DistribSubsidy, item.OrderCount);
                     //}
-                    string yingshou = string.Format("[(订单金额*商配比例+商配定额+代收客配)*订单数量]<br/>[({0}*{1}+{2}+{3})*{4}]", item.Amount, Decimal.Round(item.BusinessCommission * 1.00M / 100, 2), item.CommissionFixValue, item.DistribSubsidy, item.OrderCount);
+                    string yingshou = string.Format("[订单金额*商配比例+(商配定额+代收客配)*订单数量]<br/>[{0}*{1}+({2}+{3})*{4}]", item.Amount, Decimal.Round(item.BusinessCommission * 1.00M / 100, 2), item.CommissionFixValue, item.DistribSubsidy, item.OrderCount);
                     
                     string yingshou_tipString = string.Format("  class=true style=color:blue; onmousemove=tip_show('{0}',event,'{1}'); onmouseout=tip_hide();", yingshouID, yingshou);
 
