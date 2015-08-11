@@ -65,73 +65,17 @@ namespace Ets.Model.DomainModel.Statistics
         /// </summary>
         public string BusAddress { get; set; }
         /// <summary>
-        /// 骑士完成的任务总数
+        /// 注册时间
         /// </summary>
         public DateTime RegDateTime { get; set; }
         /// <summary>
-        /// 骑士完成的订单总素
+        /// 订单总数
         /// </summary>
         public int OrderCount { get; set; }
         /// <summary>
-        /// 推荐人手机号商家
-        /// </summary>
-        public string RecommendPhone { get; set; }
-        /// <summary>
-        /// 推荐商家数量
-        /// </summary>
-        public int BusCount { get; set; }
-    }
-
-
-    /// <summary>
-    /// 推荐人统计 --用户类型商家
-    /// </summary>
-    public class RecommendDataModelB
-    {
-        /// <summary>
-        /// 推荐人手机号
-        /// </summary>
-        public int RecommendPhone { get; set; }
-        /// <summary>
-        /// 推荐商家数量
-        /// </summary>
-        public int BusCount { get; set; }
-        /// <summary>
-        /// 推荐的任务总数量
+        /// 任务总数
         /// </summary>
         public int TaskCount { get; set; }
-        /// <summary>
-        /// 推荐的订单总数量
-        /// </summary>
-        public int OrderCount { get; set; }
-
-    }
-
-    /// <summary>
-    /// 推荐人统计 --用户类型骑士
-    /// </summary>
-    public class RecommendDataModelC
-    {
-        /// <summary>
-        /// 推荐人手机号(骑士)
-        /// </summary>
-        public string PhoneNo { get; set; }
-        /// <summary>
-        /// 推荐人真实姓名
-        /// </summary>
-        public string TrueName { get; set; }
-        /// <summary>
-        /// 推荐的骑士总数量
-        /// </summary>
-        public int ClienterCount { get; set; }
-        /// <summary>
-        /// 骑士完成的任务总数
-        /// </summary>
-        public int TaskCount { get; set; }
-        /// <summary>
-        /// 骑士完成的订单总素
-        /// </summary>
-        public int OrderCount { get; set; }
     }
 
 }

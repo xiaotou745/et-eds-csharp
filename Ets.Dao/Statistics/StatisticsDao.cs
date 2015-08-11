@@ -1100,7 +1100,7 @@ FROM    ( SELECT    b.Name ,
                     COUNT(o.Id) AS TaskCount ,
                     SUM(o.OrderCount) AS OrderCount
           FROM      dbo.business AS b ( NOLOCK )
-                    JOIN dbo.[order] AS o ( NOLOCK ) ON o.businessId = b.Id
+                    LEFT JOIN dbo.[order] AS o ( NOLOCK ) ON o.businessId = b.Id
           WHERE     1 = 1
                     {0}
                     {1}
@@ -1126,7 +1126,7 @@ GROUP BY            b.Name ,
                     SUM(o.OrderCount) AS OrderCount ";
 
             string tables = @" dbo.business AS b ( NOLOCK )
-                    JOIN dbo.[order] AS o ( NOLOCK ) ON o.businessId = b.Id ";
+                    LEFT JOIN dbo.[order] AS o ( NOLOCK ) ON o.businessId = b.Id ";
 
 
             StringBuilder whereStr = new StringBuilder(" 1=1 ");
@@ -1215,7 +1215,7 @@ GROUP BY  c.PhoneNo ) AS T
             whereStr.Append(quyPar);
             whereStr.Append(@" GROUP BY c.PhoneNo ");
             var temp = new PageHelper().GetPages<RecommendDetailDataModel>(SuperMan_Read, recommendQuery.PageIndex, whereStr.ToString(),
-                "  c.InsertTime ", columnList, tables, ETS.Const.SystemConst.PageSize, false);
+                "  c.PhoneNo ", columnList, tables, ETS.Const.SystemConst.PageSize, false);
             #endregion
             var result = new PageInfo<RecommendDetailDataModel>(count, recommendQuery.PageIndex, temp.Records, pagecount, SystemConst.PageSize);
             return result;
