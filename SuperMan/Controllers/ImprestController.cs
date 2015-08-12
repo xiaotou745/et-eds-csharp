@@ -40,7 +40,7 @@ namespace SuperMan.Controllers
         /// 备用金充值功能 add by caoheyang  20150812
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
+        [HttpPost]
         public ActionResult ImprestRecharge()
         {
             return PartialView();

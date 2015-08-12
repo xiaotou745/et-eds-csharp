@@ -25,11 +25,6 @@
             <table>
                 <tr>
                     <td>
-                        <input type="button" value="添加消息" class="searchBtn" id="btnAddMessage" onclick="addMessage();" />
-                    </td>
-                </tr>
-                <tr>
-                    <td>
                         <span class="">充值日期: </span>
                         <input id="txtOptTimeStart" readonly="readonly" type="text" name="OptTimeStart" />
                         <span class="">到: </span>
@@ -43,7 +38,7 @@
     }
     <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
     <div class="bd clearfix" id="dataList">
-        @Html.Partial("PostList", (PageInfo<ImprestBalanceRecord>)ViewBag.PageModels)
+        @Html.Partial("DoImprestRechargeList", (PageInfo<ImprestBalanceRecord>)ViewBag.PageModels)
     </div>
     @*新增导出模板窗口*@
     <div id="divshow">
@@ -57,7 +52,7 @@
         $("#btnRecharge").click(function () {
             $.ajax({
                 type: 'POST',
-                url: "/Imprest/ImprestRecharge=",
+                url: "/Imprest/ImprestRecharge",
                 data: {},
                 success: function (data) {
                     $('#divshow').html(data);
