@@ -219,6 +219,7 @@
     <Compile Include="Controllers\DeliveryCompanyController.cs" />
     <Compile Include="Controllers\DeliveryManagerController.cs" />
     <Compile Include="Controllers\DownloadController.cs" />
+    <Compile Include="Controllers\ImprestController.cs" />
     <Compile Include="Controllers\MessageManagerController.cs" />
     <Compile Include="Controllers\StatisticalController.cs" />
     <Compile Include="Controllers\StrategyManagerController.cs" />
@@ -693,6 +694,10 @@
     <Content Include="Views\Order\_PartialOrderList.cshtml" />
     <Content Include="Views\Statistical\RecommendDetail.cshtml" />
     <Content Include="Views\Statistical\_PostRecommendList.cshtml" />
+    <Content Include="Views\Imprest\ImprestRechargeList.cshtml" />
+    <Content Include="Views\Imprest\DoImprestRechargeList.cshtml" />
+    <Content Include="Views\Imprest\ImprestPaymentList.cshtml" />
+    <Content Include="Views\Imprest\DoImprestPaymentList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
