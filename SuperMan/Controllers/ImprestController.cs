@@ -20,8 +20,8 @@ namespace SuperMan.Controllers
         [HttpGet]
         public ActionResult ImprestRechargeList()
         {
-            ImprestRecharge imprestRecharge = new ImprestRecharge();
-            PageInfo<ImprestBalanceRecord> models = new PageInfo<ImprestBalanceRecord>(0,1,new List<ImprestBalanceRecord>(),100,15);
+            ViewBag.ImprestRecharge = new ImprestRecharge();
+            ViewBag.PageModels = new PageInfo<ImprestBalanceRecord>(0, 1, new List<ImprestBalanceRecord>(), 100, 15); 
             return View();
         }
 
