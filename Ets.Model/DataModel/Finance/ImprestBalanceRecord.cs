@@ -55,5 +55,9 @@ namespace Ets.Model.DataModel.Finance
         /// </summary>
         public string ClienterPhoneNo { get; set; }
 
+        /// <summary>
+        /// 备用金接收人
+        /// </summary>
+        public string ImprestReceiver { get; set; }
     }
 }

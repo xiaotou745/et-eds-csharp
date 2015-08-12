@@ -27,8 +27,8 @@ namespace Ets.Dao.Finance
         public int Insert(ImprestBalanceRecord imprestBalanceRecord)
         {
             const string insertSql = @"
-insert into ImprestBalanceRecord(Amount,BeforeAmount,AfterAmount,OptName,OptType,Remark,ClienterName,ClienterPhoneNo)
-values(@Amount,@BeforeAmount,@AfterAmount,@OptName,@OptType,@Remark,@ClienterName,@ClienterPhoneNo)
+insert into ImprestBalanceRecord(Amount,BeforeAmount,AfterAmount,OptName,OptType,Remark,ClienterName,ClienterPhoneNo,ImprestReceiver)
+values(@Amount,@BeforeAmount,@AfterAmount,@OptName,@OptType,@Remark,@ClienterName,@ClienterPhoneNo,@ImprestReceiver)
 
 select @@IDENTITY";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -40,6 +40,7 @@ select @@IDENTITY";
             dbParameters.AddWithValue("Remark", imprestBalanceRecord.Remark);
             dbParameters.AddWithValue("ClienterName", imprestBalanceRecord.ClienterName);
             dbParameters.AddWithValue("ClienterPhoneNo", imprestBalanceRecord.ClienterPhoneNo);
+            dbParameters.AddWithValue("ImprestReceiver", imprestBalanceRecord.ImprestReceiver);
             return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters));
         }
         /// <summary>
@@ -49,7 +50,8 @@ select @@IDENTITY";
         {
             const string updateSql = @"
 update  ImprestBalanceRecord
-set  Amount=@Amount,BeforeAmount=@BeforeAmount,AfterAmount=@AfterAmount,OptName=@OptName,OptTime=@OptTime,OptType=@OptType,Remark=@Remark,ClienterName=@ClienterName,ClienterPhoneNo=@ClienterPhoneNo
+set  Amount=@Amount,BeforeAmount=@BeforeAmount,AfterAmount=@AfterAmount,OptName=@OptName,OptTime=@OptTime,OptType=@OptType,Remark=@Remark,ClienterName=@ClienterName,ClienterPhoneNo=@ClienterPhoneNo,
+ImprestReceiver=@ImprestReceiver 
 where  Id=@Id ";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -63,6 +65,7 @@ where  Id=@Id ";
             dbParameters.AddWithValue("Remark", imprestBalanceRecord.Remark);
             dbParameters.AddWithValue("ClienterName", imprestBalanceRecord.ClienterName);
             dbParameters.AddWithValue("ClienterPhoneNo", imprestBalanceRecord.ClienterPhoneNo);
+            dbParameters.AddWithValue("ImprestReceiver", imprestBalanceRecord.ImprestReceiver);
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
 
@@ -72,7 +75,7 @@ where  Id=@Id ";
         public ImprestBalanceRecord GetById(int id)
         {
             const string getbyidSql = @"
-select  Id,Amount,BeforeAmount,AfterAmount,OptName,OptTime,OptType,Remark,ClienterName,ClienterPhoneNo
+select  Id,Amount,BeforeAmount,AfterAmount,OptName,OptTime,OptType,Remark,ClienterName,ClienterPhoneNo,ImprestReceiver
 from  ImprestBalanceRecord (nolock)
 where  Id=@Id ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
