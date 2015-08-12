@@ -23,8 +23,8 @@ namespace SuperMan.Controllers
         [HttpGet]
         public ActionResult ImprestRechargeList()
         {
-            ImprestRecharge imprestRecharge = new ImprestRecharge();
-            PageInfo<ImprestBalanceRecord> models = new PageInfo<ImprestBalanceRecord>(0,1,new List<ImprestBalanceRecord>(),100,15);
+            ViewBag.ImprestRecharge = new ImprestRecharge();
+            ViewBag.PageModels = new PageInfo<ImprestBalanceRecord>(0, 1, new List<ImprestBalanceRecord>(), 100, 15); 
             return View();
         }
 
@@ -44,9 +44,19 @@ namespace SuperMan.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult ImprestRecharge()
+        public ActionResult ImprestRecharge()
         {
-            return new JsonResult();
+            return PartialView();
+        }
+
+        /// <summary>
+        /// 备用金充值功能 保存按钮  add by caoheyang  20150812
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult AjaxImprestRecharge()
+        {
+            return PartialView();
         }
 
         /// <summary>

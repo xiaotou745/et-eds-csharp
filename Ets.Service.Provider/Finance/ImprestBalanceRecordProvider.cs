@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Ets.Dao.Clienter;
 using Ets.Dao.Finance;
 using Ets.Model.DataModel.Finance;
+using Ets.Model.DomainModel.Finance;
+using Ets.Model.ParameterModel.Finance;
 using Ets.Service.IProvider.Finance;
 
 namespace Ets.Service.Provider.Finance
@@ -15,6 +17,9 @@ namespace Ets.Service.Provider.Finance
     /// </summary>
     public class ImprestBalanceRecordProvider : IImprestBalanceRecordProvider
     {
+
+ 		private readonly ImprestBalanceRecordDao _imprestBalanceRecordDao = new ImprestBalanceRecordDao();
+
         /// <summary>
         /// 验证手机号是否存在
         /// 2015年8月12日17:53:24
@@ -46,5 +51,36 @@ namespace Ets.Service.Provider.Finance
             mode.AllowWithdrawPrice = clienter.AllowWithdrawPrice;
             return mode;
         }
+
+        /// <summary>
+        /// 查询备用金流水列表  add by 彭宜  20150812
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public ETS.Data.PageData.PageInfo<ImprestBalanceRecordModel> GetImprestBalanceRecordList(ImprestBalanceRecordSearchCriteria criteria)
+        {
+            return _imprestBalanceRecordDao.GetImprestBalanceRecordList(criteria);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+>>>>>>> .theirs
     }
 }

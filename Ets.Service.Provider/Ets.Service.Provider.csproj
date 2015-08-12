@@ -90,6 +90,7 @@
     <Compile Include="Finance\ClienterWithdrawLogProvider.cs" />
     <Compile Include="Finance\ClienterFinanceAccountProvider.cs" />
     <Compile Include="Finance\ImprestBalanceRecordProvider.cs" />
+    <Compile Include="Finance\ImprestRechargeProvider.cs" />
     <Compile Include="GlobalConfig\GlobalConfigProvider.cs" />
     <Compile Include="Message\MessageProvider.cs" />
     <Compile Include="OpenApi\JuWangKeGroup.cs" />

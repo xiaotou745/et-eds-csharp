@@ -6,8 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 using ETS.Dao;
 using ETS.Data.Core;
+using ETS.Data.PageData;
 using ETS.Extension;
 using Ets.Model.DataModel.Finance;
+using Ets.Model.DomainModel.Finance;
+using Ets.Model.ParameterModel.Finance;
 using ETS.Util;
 
 namespace Ets.Dao.Finance
@@ -27,8 +30,8 @@ namespace Ets.Dao.Finance
         public int Insert(ImprestBalanceRecord imprestBalanceRecord)
         {
             const string insertSql = @"
-insert into ImprestBalanceRecord(Amount,BeforeAmount,AfterAmount,OptName,OptType,Remark,ClienterName,ClienterPhoneNo)
-values(@Amount,@BeforeAmount,@AfterAmount,@OptName,@OptType,@Remark,@ClienterName,@ClienterPhoneNo)
+insert into ImprestBalanceRecord(Amount,BeforeAmount,AfterAmount,OptName,OptType,Remark,ClienterName,ClienterPhoneNo,ImprestReceiver)
+values(@Amount,@BeforeAmount,@AfterAmount,@OptName,@OptType,@Remark,@ClienterName,@ClienterPhoneNo,@ImprestReceiver)
 
 select @@IDENTITY";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -40,6 +43,7 @@ select @@IDENTITY";
             dbParameters.AddWithValue("Remark", imprestBalanceRecord.Remark);
             dbParameters.AddWithValue("ClienterName", imprestBalanceRecord.ClienterName);
             dbParameters.AddWithValue("ClienterPhoneNo", imprestBalanceRecord.ClienterPhoneNo);
+            dbParameters.AddWithValue("ImprestReceiver", imprestBalanceRecord.ImprestReceiver);
             return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters));
         }
         /// <summary>
@@ -49,7 +53,8 @@ select @@IDENTITY";
         {
             const string updateSql = @"
 update  ImprestBalanceRecord
-set  Amount=@Amount,BeforeAmount=@BeforeAmount,AfterAmount=@AfterAmount,OptName=@OptName,OptTime=@OptTime,OptType=@OptType,Remark=@Remark,ClienterName=@ClienterName,ClienterPhoneNo=@ClienterPhoneNo
+set  Amount=@Amount,BeforeAmount=@BeforeAmount,AfterAmount=@AfterAmount,OptName=@OptName,OptTime=@OptTime,OptType=@OptType,Remark=@Remark,ClienterName=@ClienterName,ClienterPhoneNo=@ClienterPhoneNo,
+ImprestReceiver=@ImprestReceiver 
 where  Id=@Id ";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -63,6 +68,7 @@ where  Id=@Id ";
             dbParameters.AddWithValue("Remark", imprestBalanceRecord.Remark);
             dbParameters.AddWithValue("ClienterName", imprestBalanceRecord.ClienterName);
             dbParameters.AddWithValue("ClienterPhoneNo", imprestBalanceRecord.ClienterPhoneNo);
+            dbParameters.AddWithValue("ImprestReceiver", imprestBalanceRecord.ImprestReceiver);
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
 
@@ -72,7 +78,7 @@ where  Id=@Id ";
         public ImprestBalanceRecord GetById(int id)
         {
             const string getbyidSql = @"
-select  Id,Amount,BeforeAmount,AfterAmount,OptName,OptTime,OptType,Remark,ClienterName,ClienterPhoneNo
+select  Id,Amount,BeforeAmount,AfterAmount,OptName,OptTime,OptType,Remark,ClienterName,ClienterPhoneNo,ImprestReceiver
 from  ImprestBalanceRecord (nolock)
 where  Id=@Id ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -84,5 +90,54 @@ where  Id=@Id ";
             }
             return null;
 		}
+
+        /// <summary>
+        /// 查询备用金流水列表  add by 彭宜  20150812
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<ImprestBalanceRecordModel> GetImprestBalanceRecordList(ImprestBalanceRecordSearchCriteria criteria)
+        {
+            string columnList;
+            //查询备用金充值
+            if (criteria.OptType == 1)
+            {
+                columnList = @"  Id,
+                                    Amount,
+                                    OptName,
+                                    OptTime,
+                                    Remark,
+                                    ImprestReceiver";
+            }
+            //骑士支出
+            else
+            {
+                columnList = @"  Id,
+                                    Amount,
+                                    OptName,
+                                    OptTime,
+                                    Remark,
+                                    ClienterName,
+                                    ClienterPhoneNo";
+            }
+            var sbSqlWhere = new StringBuilder(" 1=1 ");
+            sbSqlWhere.AppendFormat(" AND OptType={0} ", criteria.OptType);
+            if (!string.IsNullOrWhiteSpace(criteria.ClienterPhoneNo))
+            {
+                sbSqlWhere.AppendFormat(" AND ClienterPhoneNo='{0}' ", criteria.ClienterPhoneNo.Trim());
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.OptDateStart))
+            {
+                sbSqlWhere.AppendFormat(" AND CONVERT(CHAR(10),OptTime,120)>=CONVERT(CHAR(10),'{0}',120) ", criteria.OptDateStart.Trim());
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.OptDateEnd))
+            {
+                sbSqlWhere.AppendFormat(" AND CONVERT(CHAR(10),OptTime,120)<=CONVERT(CHAR(10),'{0}',120) ", criteria.OptDateEnd.Trim());
+            }
+            string tableList = @" ImprestBalanceRecord with(nolock)";
+            string orderByColumn = " Id ";
+            return new PageHelper().GetPages<ImprestBalanceRecordModel>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
+        }
     }
 }

@@ -66,6 +66,7 @@
     <Compile Include="Finance\IClienterWithdrawFormProvider.cs" />
     <Compile Include="Finance\IClienterWithdrawLogProvider.cs" />
     <Compile Include="Finance\IImprestBalanceRecordProvider.cs" />
+    <Compile Include="Finance\IImprestRechargeProvider.cs" />
     <Compile Include="GlobalConfig\IGlobalConfigProvider.cs" />
     <Compile Include="Message\IMessageProvider.cs" />
     <Compile Include="OpenApi\IGroupProviderOpenApi.cs" />
