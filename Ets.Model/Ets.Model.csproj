@@ -91,6 +91,7 @@
     <Compile Include="DataModel\Finance\ImprestBalanceRecord.cs" />
     <Compile Include="DataModel\Finance\ImprestClienterCheck.cs" />
     <Compile Include="DataModel\Finance\ImprestRecharge.cs" />
+    <Compile Include="DataModel\Finance\ImprestWithdrawModel.cs" />
     <Compile Include="DataModel\Message\BusinessMessage.cs" />
     <Compile Include="DataModel\Message\ClienterMessage.cs" />
     <Compile Include="DataModel\Message\MessageModel.cs" />

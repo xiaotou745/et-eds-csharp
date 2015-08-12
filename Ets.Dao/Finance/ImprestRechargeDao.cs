@@ -93,14 +93,41 @@ where  Id=@Id ";
         }
 
         /// <summary>
-        /// 获取备用金余额(锁库)
+        /// 获取备用金信息(锁库)
         /// 2015年8月12日17:51:49
         /// 茹化肖
         /// </summary>
-        public int GetRemainingAmountLock()
+        public ImprestRecharge GetRemainingAmountLock()
         {
-            const string getbyidSql = @"SELECT ISNULL(RemainingAmount,0) AS RemainingAmount FROM ImprestRecharge ";
-            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, getbyidSql), 0);
+            const string getbyidSql = @"
+select  Id,TotalRecharge,RemainingAmount,TotalPayment,CreateTime
+from  ImprestRecharge";
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, getbyidSql));
+            if (DataTableHelper.CheckDt(dt))
+            {
+                return DataTableHelper.ConvertDataTableList<ImprestRecharge>(dt)[0];
+            }
+            return null;
         }
+
+        /// <summary>
+        /// 备用金支出
+        /// 2015年8月12日19:53:10
+        /// 茹化肖
+        /// </summary>
+        /// <param name="price"></param>
+        /// <returns></returns>
+        public bool ImprestRechargePayOut(decimal price,int ID)
+        {
+            const string updateSql = @"
+UPDATE  ImprestRecharge SET RemainingAmount=(RemainingAmount-@Price),TotalPayment=(TotalPayment+@Price) 
+WHERE Id=@Id ";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("@Price", DbType.Decimal).Value=price;
+            dbParameters.Add("@Id", DbType.Int32).Value=ID;
+            return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql,dbParameters), 0)>0;
+        }
+
+        //UPDATE  ImprestRecharge SET RemainingAmount=(RemainingAmount-@Price),TotalPayment=(TotalPayment+@Price) WHERE Id=1
 	}
 }

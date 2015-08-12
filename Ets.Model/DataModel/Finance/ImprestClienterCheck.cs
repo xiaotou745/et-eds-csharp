@@ -49,7 +49,7 @@ namespace Ets.Model.DataModel.Finance
     /// <summary>
     /// 点击提现返回值
     /// </summary>
-    public class ImImprestPayoutModel
+    public class ImprestPayoutModel
     {
         public int Status { get; set; }
         public string Message { get; set; }

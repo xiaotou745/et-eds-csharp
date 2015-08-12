@@ -7,7 +7,9 @@ using ETS.Data.PageData;
 using Ets.Model.DataModel.Finance;
 using Ets.Service.IProvider.Finance;
 using Ets.Service.Provider.Finance;
+using ETS.Util;
 using NPOI.SS.Formula.Functions;
+using SuperMan.App_Start;
 
 namespace SuperMan.Controllers
 {
@@ -94,6 +96,22 @@ namespace SuperMan.Controllers
             ImprestClienterModel model = imprestProvider.ClienterPhoneCheck(phonenum);
             return Json(model);
         }
+
+         /// <summary>
+         /// 支出备用金验证骑士手机号获取信息
+         /// 2015年8月12日16:55:56
+         /// 茹化肖
+         /// </summary>
+         /// <returns></returns>
+         [HttpPost]
+         public JsonResult ClienterWithdrawOk()
+         {
+             ImprestWithdrawModel parModel=new ImprestWithdrawModel();
+             TryUpdateModel(parModel);
+             parModel.OprName = UserContext.Current.Name;
+             ImprestPayoutModel model = imprestProvider.ClienterWithdrawOk(parModel);
+             return Json(model);
+         }
 
     }
 }

@@ -31,6 +31,15 @@ namespace Ets.Service.IProvider.Finance
         /// <returns></returns>
         ImprestClienterModel ClienterPhoneCheck(string phonenum);
 
+        /// <summary>
+        /// 备用金提现
+        /// 2015年8月12日18:17:22
+        /// 茹化肖
+        /// </summary>
+        /// <param name="Cid">骑士ID</param>
+        /// <returns></returns>
+        ImprestPayoutModel ClienterWithdrawOk(ImprestWithdrawModel model);
+
 
 
     }

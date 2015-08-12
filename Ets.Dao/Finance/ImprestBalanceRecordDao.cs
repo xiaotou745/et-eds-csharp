@@ -139,5 +139,45 @@ where  Id=@Id ";
             string orderByColumn = " Id ";
             return new PageHelper().GetPages<ImprestBalanceRecordModel>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
         }
+
+
+        /// <summary>
+        /// 增加一条准备金支出记录
+        /// </summary>
+        public bool InsertRecord(ImprestBalanceRecord imprestBalanceRecord)
+        {
+            const string insertSql = @"
+  INSERT INTO dbo.ImprestBalanceRecord
+          ( Amount ,
+            BeforeAmount ,
+            AfterAmount ,
+            OptName ,
+            OptType ,
+            Remark ,
+            ClienterName ,
+            ClienterPhoneNo ,
+          )
+  VALUES  ( @Amount ,
+            @BeforeAmount ,
+            @AfterAmount ,
+            @OptName ,
+            @OptType ,
+            @Remark ,
+            @ClienterName ,
+            @ClienterPhoneNo ,
+          )
+ 
+";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@Amount", imprestBalanceRecord.Amount);
+            dbParameters.AddWithValue("@BeforeAmount", imprestBalanceRecord.BeforeAmount);
+            dbParameters.AddWithValue("@AfterAmount", imprestBalanceRecord.AfterAmount);
+            dbParameters.AddWithValue("@OptName", imprestBalanceRecord.OptName);
+            dbParameters.AddWithValue("@OptType", imprestBalanceRecord.OptType);
+            dbParameters.AddWithValue("@Remark", imprestBalanceRecord.Remark);
+            dbParameters.AddWithValue("@ClienterName", imprestBalanceRecord.ClienterName);
+            dbParameters.AddWithValue("@ClienterPhoneNo", imprestBalanceRecord.ClienterPhoneNo);
+            return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, insertSql, dbParameters))>0;
+        }
     }
 }
