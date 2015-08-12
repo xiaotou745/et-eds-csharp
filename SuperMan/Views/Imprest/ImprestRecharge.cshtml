@@ -26,7 +26,7 @@
     </div>
 
     <p class="btnbox">
-        <input value="确认" type="button" id="btnSure" class="searchBtn" />
+        <input value="确认" type="button" id="btnSure" class="yesBtn" />
         <input value="取消" type="button" id="btnCanel" class="qxBtn" />
     </p>
 </div>
@@ -39,6 +39,8 @@
             var amount = $("#_txtAmount").val();
             var imprestReceiver = $("#_txtImprestReceiver").val();
             var remark = $("#_txtRemark").val();
+            
+            alert("ss")
             $.ajax({
                 type: 'POST',
                 url: "/Imprest/AjaxImprestRecharge",
