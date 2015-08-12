@@ -311,6 +311,7 @@ namespace SuperMan.Controllers
 
         /// <summary>
         /// 彭宜
+        /// 修改人：胡灵波
         /// 2015年8月3日 11:32:55
         /// 扣除网站补贴
         /// </summary>
@@ -330,7 +331,13 @@ namespace SuperMan.Controllers
             var reg = iOrderProvider.DeductWebSubsidy(orderOptionModel);
             return Json(new ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.AllowGet);
         }
-
+        /// <summary>
+        /// 审核通过
+        /// 胡灵波
+        /// 2015年8月12日 10:39:16
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
         [HttpPost]
         public JsonResult AuditOK(int orderId)
         {

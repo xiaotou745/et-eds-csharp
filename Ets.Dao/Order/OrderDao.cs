@@ -2526,7 +2526,13 @@ where   oo.IsJoinWithdraw = 0
             IDbParameters parm = DbHelper.CreateDbParameters("orderId", DbType.Int32, 4, orderId);
             DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm);
         }
-
+        /// <summary>
+        /// 更新审核状态
+        /// 胡灵波
+        /// 2015年8月12日 10:13:16
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <param name="auditstatus"></param>
         public void UpdateAuditStatus( int orderId,int auditstatus)
         {
             string sql = @"update dbo.OrderOther set auditstatus = @auditstatus where OrderId=@orderId";
@@ -2552,6 +2558,7 @@ select top {0}
         ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,
         b.Name as BusinessName, b.City as BusinessCity,
         b.Address as BusinessAddress, isnull(a.ReceviceCity, '') as UserCity,
+        a.Remark,
         isnull(a.ReceviceAddress, '附近3公里左右，由商户指定') as UserAddress,ISNULL(b.Longitude,0) as  Longitude,ISNULL(b.Latitude,0) as Latitude,
         case convert(varchar(100), PubDate, 23)
           when convert(varchar(100), getdate(), 23) then '今日 '
@@ -2593,6 +2600,7 @@ select top {0} a.Id,a.OrderCommission,a.OrderCount,
         (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
         b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
         ISNULL(a.ReceviceCity,'') as UserCity,ISNULL(a.ReceviceAddress,'附近3公里左右，由商户指定') as UserAddress,
+        a.Remark,
         ISNULL(b.Longitude,0) as  Longitude,ISNULL(b.Latitude,0) as Latitude,
         case convert(varchar(100), PubDate, 23) 
 	        when convert(varchar(100), getdate(), 23) then '今日 '
@@ -2641,6 +2649,7 @@ select top {0}
         ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,
         b.Name as BusinessName, b.City as BusinessCity,
         b.Address as BusinessAddress, isnull(a.ReceviceCity, '') as UserCity,
+       a.Remark,
         isnull(a.ReceviceAddress, '附近3公里左右，由商户指定') as UserAddress,ISNULL(b.Longitude,0) as  Longitude,ISNULL(b.Latitude,0) as Latitude,
         case convert(varchar(100), PubDate, 23)
           when convert(varchar(100), getdate(), 23) then '今日 '
@@ -2663,6 +2672,7 @@ select top {0}
         ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,
         b.Name as BusinessName, b.City as BusinessCity,
         b.Address as BusinessAddress, isnull(a.ReceviceCity, '') as UserCity,
+        a.Remark,
         isnull(a.ReceviceAddress, '附近3公里左右，由商户指定') as UserAddress,ISNULL(b.Longitude,0) as  Longitude,ISNULL(b.Latitude,0) as Latitude,
         case convert(varchar(100), PubDate, 23)
           when convert(varchar(100), getdate(), 23) then '今日 '
@@ -2715,6 +2725,7 @@ declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0} a.Id,a.OrderCommission,a.OrderCount,   
 (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
+a.Remark,
 b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
 ISNULL(a.ReceviceCity,'') as UserCity,ISNULL(a.ReceviceAddress,'附近3公里左右，由商户指定') as UserAddress,
 ISNULL(b.Longitude,0) as  Longitude,ISNULL(b.Latitude,0) as Latitude,
@@ -2739,6 +2750,7 @@ declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0} a.Id,a.OrderCommission,a.OrderCount,   
 (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
+a.Remark,
 b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
 ISNULL(a.ReceviceCity,'') as UserCity,ISNULL(a.ReceviceAddress,'附近3公里左右，由商户指定') as UserAddress,
 ISNULL(b.Longitude,0) as  Longitude,ISNULL(b.Latitude,0) as Latitude,
@@ -2793,6 +2805,7 @@ declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0}  a.BusinessId, a.Id,a.OrderCommission,a.OrderCount,   
 (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
+a.Remark,
 b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
 ISNULL(a.ReceviceCity,'') as UserCity,ISNULL(a.ReceviceAddress,'附近3公里左右，由商户指定') as UserAddress,
 ISNULL(b.Longitude,0) as  Longitude,ISNULL(b.Latitude,0) as Latitude,

@@ -689,15 +689,11 @@ namespace Ets.Service.Provider.Clienter
                     return model;
                 }
                 //更新商家金额
-                bool blBusiness = UpdateBusinessMoney(myOrderInfo);
-
-                UpdateClienterMoney(myOrderInfo);//更新骑士金额
+                UpdateBusinessMoney(myOrderInfo);
+                //更新骑士金额
+                UpdateClienterMoney(myOrderInfo);
                 //写入骑士完成坐标                 
-                orderOtherDao.UpdateComplete(parModel);
-                if (!blBusiness)
-                {
-                    return model;
-                }
+                orderOtherDao.UpdateComplete(parModel);              
 
                 tran.Complete();
             }
@@ -1358,7 +1354,7 @@ namespace Ets.Service.Provider.Clienter
         /// </summary>
         /// <param name="myOrderInfo"></param>
         /// <returns></returns>
-        bool UpdateBusinessMoney(OrderListModel myOrderInfo)
+        void UpdateBusinessMoney(OrderListModel myOrderInfo)
         {
             if (!(bool)myOrderInfo.IsPay && myOrderInfo.MealsSettleMode == MealsSettleMode.LineOn.GetHashCode())
             {
@@ -1382,9 +1378,7 @@ namespace Ets.Service.Provider.Clienter
                     RelationNo = myOrderInfo.OrderNo
                 });
                 #endregion
-            }
-
-            return true;
+            }            
         }
 
         /// <summary>

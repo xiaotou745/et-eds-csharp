@@ -58,6 +58,7 @@ namespace Ets.Service.Provider.Order
         private readonly ClienterDao clienterDao = new ClienterDao();
         ClienterBalanceRecordDao clienterBalanceRecordDao=new ClienterBalanceRecordDao();
         ClienterAllowWithdrawRecordDao  clienterAllowWithdrawRecordDao=new ClienterAllowWithdrawRecordDao();
+        OrderSubsidiesLogDao orderSubsidiesLogDao = new OrderSubsidiesLogDao();
 
         private readonly BusinessBalanceRecordDao _businessBalanceRecordDao = new BusinessBalanceRecordDao();
         ClienterFinanceDao clienterFinanceDao = new ClienterFinanceDao();
@@ -1344,6 +1345,16 @@ namespace Ets.Service.Provider.Order
                      {
                          decimal diffOrderCommission = orderModel.SettleMoney - orderModel.OrderCommission.Value;
                          iClienterProvider.UpdateNotRealOrderClienterAccount(orderModel, diffOrderCommission);
+
+                         OrderSubsidiesLog difforderSubsidiesLog = new OrderSubsidiesLog();
+                         difforderSubsidiesLog.OrderId = orderModel.Id;
+                         difforderSubsidiesLog.Price = diffOrderCommission;
+                         difforderSubsidiesLog.OptName = orderOptionModel.OptUserName;
+                         difforderSubsidiesLog.Remark = "扣除" + diffOrderCommission + "元无效订单金额";
+                         difforderSubsidiesLog.OptId = orderOptionModel.OptUserId;
+                         difforderSubsidiesLog.OrderStatus = OrderStatusCommon.AuditStatusRefuse.GetHashCode();
+                         difforderSubsidiesLog.Platform = SuperPlatform.ManagementBackground.GetHashCode();
+                         orderSubsidiesLogDao.Insert(difforderSubsidiesLog);
                      }                   
                 }
 
@@ -1370,6 +1381,17 @@ namespace Ets.Service.Provider.Order
                     Remark = "管理后台审核拒绝加可提现"
                 };
                 clienterAllowWithdrawRecordDao.Insert(cawrm);
+
+                //写入订单日志
+                OrderSubsidiesLog orderSubsidiesLog = new OrderSubsidiesLog();
+                orderSubsidiesLog.OrderId = orderModel.Id;
+                orderSubsidiesLog.Price = realOrderCommission;
+                orderSubsidiesLog.OptName = orderOptionModel.OptUserName;
+                orderSubsidiesLog.Remark = "增加" + realOrderCommission + "元可提现金额";
+                orderSubsidiesLog.OptId = orderOptionModel.OptUserId;
+                orderSubsidiesLog.OrderStatus = OrderStatusCommon.AuditStatusRefuse.GetHashCode();
+                orderSubsidiesLog.Platform = SuperPlatform.ManagementBackground.GetHashCode();
+                orderSubsidiesLogDao.Insert(orderSubsidiesLog);
 
 
                 //更新扣除补贴原因,扣除补贴方式为手动扣除
@@ -1401,7 +1423,6 @@ namespace Ets.Service.Provider.Order
                     dealResultInfo.DealMsg = "订单已分账，不能审核通过！";
                     return dealResultInfo;
                 }   
-
                 
                #region 调用老接口
                 //无效订单
@@ -1429,20 +1450,30 @@ namespace Ets.Service.Provider.Order
                 clienterDao.UpdateAllowWithdrawPrice(Convert.ToDecimal(orderModel.OrderCommission), orderModel.clienterId);
                 orderDao.UpdateJoinWithdraw(orderModel.Id);
                 orderDao.UpdateAuditStatus(orderModel.Id, OrderAuditStatusCommon.Through.GetHashCode());   
+                
+                clienterAllowWithdrawRecordDao.Insert(new ClienterAllowWithdrawRecord()
+                                    {
+                                        ClienterId = orderModel.clienterId,
+                                        Amount =Convert.ToDecimal(orderModel.OrderCommission),
+                                        Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(),
+                                        RecordType = ClienterAllowWithdrawRecordType.OrderCommission.GetHashCode(),
+                                        Operator = orderOptionModel.OptUserName,
+                                        WithwardId = orderModel.Id,
+                                        RelationNo = orderModel.OrderNo,
+                                        Remark = "管理后台审核通过加可提现"
+                                    }
+                );
 
-                ClienterAllowWithdrawRecord cawrm = new ClienterAllowWithdrawRecord()
-                {
-                    ClienterId = orderModel.clienterId,
-                    Amount =Convert.ToDecimal(orderModel.OrderCommission),
-                    Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(),
-                    RecordType = ClienterAllowWithdrawRecordType.OrderCommission.GetHashCode(),
-                    Operator = orderOptionModel.OptUserName,
-                    WithwardId = orderModel.Id,
-                    RelationNo = orderModel.OrderNo,
-                    Remark = "管理后台审核通过加可提现"
-                };
-                clienterAllowWithdrawRecordDao.Insert(cawrm);
-
+                //写入订单日志
+                OrderSubsidiesLog orderSubsidiesLog=new OrderSubsidiesLog();
+                orderSubsidiesLog. OrderId=orderModel.Id;
+                orderSubsidiesLog.Price = orderModel.OrderCommission.Value;
+                orderSubsidiesLog.OptName= orderOptionModel.OptUserName;
+                orderSubsidiesLog.Remark="增加"+orderModel.OrderCommission+"元可提现金额";
+                orderSubsidiesLog.OptId=orderOptionModel.OptUserId;
+                orderSubsidiesLog.OrderStatus = OrderStatusCommon.AuditStatusOk.GetHashCode();
+                orderSubsidiesLog.Platform = SuperPlatform.ManagementBackground.GetHashCode();
+                orderSubsidiesLogDao.Insert(orderSubsidiesLog);
 
                 tran.Complete();
                 dealResultInfo.DealFlag = true;;
