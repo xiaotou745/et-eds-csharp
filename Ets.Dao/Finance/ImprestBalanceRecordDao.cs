@@ -6,8 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 using ETS.Dao;
 using ETS.Data.Core;
+using ETS.Data.PageData;
 using ETS.Extension;
 using Ets.Model.DataModel.Finance;
+using Ets.Model.DomainModel.Finance;
+using Ets.Model.ParameterModel.Finance;
 using ETS.Util;
 
 namespace Ets.Dao.Finance
@@ -87,5 +90,54 @@ where  Id=@Id ";
             }
             return null;
 		}
+
+        /// <summary>
+        /// 查询备用金流水列表  add by 彭宜  20150812
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<ImprestBalanceRecordModel> GetImprestBalanceRecordList(ImprestBalanceRecordSearchCriteria criteria)
+        {
+            string columnList;
+            //查询备用金充值
+            if (criteria.OptType == 1)
+            {
+                columnList = @"  Id,
+                                    Amount,
+                                    OptName,
+                                    OptTime,
+                                    Remark,
+                                    ImprestReceiver";
+            }
+            //骑士支出
+            else
+            {
+                columnList = @"  Id,
+                                    Amount,
+                                    OptName,
+                                    OptTime,
+                                    Remark,
+                                    ClienterName,
+                                    ClienterPhoneNo";
+            }
+            var sbSqlWhere = new StringBuilder(" 1=1 ");
+            sbSqlWhere.AppendFormat(" AND OptType={0} ", criteria.OptType);
+            if (!string.IsNullOrWhiteSpace(criteria.ClienterPhoneNo))
+            {
+                sbSqlWhere.AppendFormat(" AND ClienterPhoneNo='{0}' ", criteria.ClienterPhoneNo.Trim());
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.OptDateStart))
+            {
+                sbSqlWhere.AppendFormat(" AND CONVERT(CHAR(10),OptTime,120)>=CONVERT(CHAR(10),'{0}',120) ", criteria.OptDateStart.Trim());
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.OptDateEnd))
+            {
+                sbSqlWhere.AppendFormat(" AND CONVERT(CHAR(10),OptTime,120)<=CONVERT(CHAR(10),'{0}',120) ", criteria.OptDateEnd.Trim());
+            }
+            string tableList = @" ImprestBalanceRecord with(nolock)";
+            string orderByColumn = " Id ";
+            return new PageHelper().GetPages<ImprestBalanceRecordModel>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
+        }
     }
 }
