@@ -1,7 +1,74 @@
 ﻿
+@using ETS.Data.PageData;
+@using ETS.Enums;
+@using ETS.Extension
+@using Ets.Model.DataModel.Finance
+@using Webdiyer.WebControls.Mvc;
 @{
-    ViewBag.Title = "ImprestRechargeList";
+    ViewBag.Title = "备用金充值";
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+    ImprestRecharge imprestRecharge = ViewBag.ImprestRecharge;
 }
+<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script src="~/Scripts/jquery-ui-1.8.20.js"></script>
+<script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置 财务管理> 备用金充值
+    </h2>
+    @using (Ajax.BeginForm("PostList", new RouteValueDictionary { { "pageindex", "" } },
+        new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
+        new RouteValueDictionary { { "id", "searchForm" } }))
+    {
+        <div class="SearchMd">
+            <table>
+                <tr>
+                    <td>
+                        <input type="button" value="添加消息" class="searchBtn" id="btnAddMessage" onclick="addMessage();" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="">充值日期: </span>
+                        <input id="txtOptTimeStart" readonly="readonly" type="text" name="OptTimeStart" />
+                        <span class="">到: </span>
+                        <input id="txtOptTimeEnd" readonly="readonly" type="text" name="OptTimeEnd" />
+                        <input type="button" value="查询" class="searchBtn" id="btnSearch" />
+                        <input type="button" value="充值" class="searchBtn" id="btnRecharge" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+    }
+    <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <div class="bd clearfix" id="dataList">
+        @Html.Partial("PostList", (PageInfo<ImprestBalanceRecord>)ViewBag.PageModels)
+    </div>
+    @*新增导出模板窗口*@
+    <div id="divshow">
 
-<h2>ImprestRechargeList</h2>
+    </div>
+</div>
+<script type="text/javascript">
+
+    $(function() {
+        //点击保证金充值按钮
+        $("#btnRecharge").click(function () {
+            $.ajax({
+                type: 'POST',
+                url: "/Imprest/ImprestRecharge=",
+                data: {},
+                success: function (data) {
+                    $('#divshow').html(data);
+                    adminjs.openwinbox('#AddDivShow');
+                }
+            });
+        });
+    });
+   
+</script>
+
+<script src="~/Scripts/view/MessageManagerList.js" type="text/javascript"></script>
+<script src="~/Scripts/mvcpager.js"></script>
 
