@@ -930,5 +930,21 @@ where Id=@WithwardId;");
             parm.AddWithValue("@WithwardId", withwardId);
             return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm));
         }
+
+        /// <summary>
+        ///  获取骑士体现中未打款的金额
+        /// 茹化肖
+        /// 2015年8月12日17:13:21
+        /// </summary>
+        /// <param name="withwardId"></param>
+        /// <returns></returns>
+        public int GetClienterWithdrawingAmount(int cId)
+        {
+            string sql = string.Format(@" 
+SELECT SUM(Amount) AS Amount FROM ClienterWithdrawForm ( NOLOCK) WHERE ClienterId=@CID AND Status=1 OR Status=2");
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@CID", cId);
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm));
+        }
     }
 }

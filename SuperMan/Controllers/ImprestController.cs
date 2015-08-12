@@ -67,5 +67,16 @@ namespace SuperMan.Controllers
             return PartialView();
         }
 
+        /// <summary>
+        /// 支出备用金验证骑士手机号获取信息
+        /// 2015年8月12日16:55:56
+        /// 茹化肖
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult CheckPhoneNum()
+        {
+            return null;
+        }
+
     }
 }
