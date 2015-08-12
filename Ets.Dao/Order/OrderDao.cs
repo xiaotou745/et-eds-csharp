@@ -1420,6 +1420,7 @@ where   o.[Status] <> 3
                                   ,[ActiveBusiness]
                                   ,[ActiveClienter]
                                   ,rechargeTotal
+                                  ,incomeTotal
                                     ";
 
             var sbSqlWhere = new StringBuilder(" 1=1 ");
