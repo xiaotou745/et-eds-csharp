@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using ETS.Data.PageData;
+using Ets.Model.DataModel.Finance;
 
 namespace SuperMan.Controllers
 {
@@ -18,6 +20,8 @@ namespace SuperMan.Controllers
         [HttpGet]
         public ActionResult ImprestRechargeList()
         {
+            ImprestRecharge imprestRecharge = new ImprestRecharge();
+            PageInfo<ImprestBalanceRecord> models = new PageInfo<ImprestBalanceRecord>(0,1,new List<ImprestBalanceRecord>(),100,15);
             return View();
         }
 
@@ -26,8 +30,9 @@ namespace SuperMan.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult DoImprestRechargeList()
+        public ActionResult DoImprestRechargeList(int pageindex = 1)
         {
+            PageInfo<ImprestBalanceRecord> models = new PageInfo<ImprestBalanceRecord>(0, 1, new List<ImprestBalanceRecord>(), 100, 15);
             return PartialView();
         }
 
