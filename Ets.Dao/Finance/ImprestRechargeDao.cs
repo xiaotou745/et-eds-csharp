@@ -80,5 +80,27 @@ where  Id=@Id ";
 		}
 
 		#endregion
+
+        /// <summary>
+        /// 获取备用金余额(不锁库)
+        /// 2015年8月12日17:51:49
+        /// 茹化肖
+        /// </summary>
+        public int GetRemainingAmountNoLock()
+        {
+            const string getbyidSql = @"SELECT ISNULL(RemainingAmount,0) AS RemainingAmount FROM ImprestRecharge (NOLOCK) ";
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, getbyidSql), 0);
+        }
+
+        /// <summary>
+        /// 获取备用金余额(锁库)
+        /// 2015年8月12日17:51:49
+        /// 茹化肖
+        /// </summary>
+        public int GetRemainingAmountLock()
+        {
+            const string getbyidSql = @"SELECT ISNULL(RemainingAmount,0) AS RemainingAmount FROM ImprestRecharge ";
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, getbyidSql), 0);
+        }
 	}
 }

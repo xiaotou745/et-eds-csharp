@@ -5,6 +5,8 @@ using System.Web;
 using System.Web.Mvc;
 using ETS.Data.PageData;
 using Ets.Model.DataModel.Finance;
+using Ets.Service.Provider.Finance;
+using NPOI.SS.Formula.Functions;
 
 namespace SuperMan.Controllers
 {
@@ -13,6 +15,7 @@ namespace SuperMan.Controllers
     /// </summary>
     public class ImprestController : Controller
     {
+        private readonly ImprestBalanceRecordProvider mpImprestBalanceRecordProvider=new ImprestBalanceRecordProvider();
         /// <summary>
         /// 备用金充值列表页  add by caoheyang  20150812
         /// </summary>
@@ -73,9 +76,12 @@ namespace SuperMan.Controllers
         /// 茹化肖
         /// </summary>
         /// <returns></returns>
-        public ActionResult CheckPhoneNum()
+         [HttpPost]
+        public JsonResult CheckPhoneNum()
         {
-            return null;
+            string phonenum = System.Web.HttpContext.Current.Request["PhoneNum"];
+            ImprestClienterModel model = mpImprestBalanceRecordProvider.ClienterPhoneCheck(phonenum);
+            return Json(model);
         }
 
     }
