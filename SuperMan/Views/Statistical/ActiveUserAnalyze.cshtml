@@ -23,7 +23,7 @@ new RouteValueDictionary { { "id", "searchForm" } }))
                             <span class="">日期: </span>
                             <input id="StartDate" readonly="readonly" type="text" name="StartDate" value="@DateTime.Now.AddMonths(-1).ToString("yyyy-MM-dd")" />
                             <span class="">到: </span>
-                            <input id="EndDate" readonly="readonly" type="text" name="EndDate" value="@DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd")" />
+                            <input id="EndDate" readonly="readonly" type="text" name="EndDate" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
                             <span>用户类型: </span>
                             <select name="UserType" id="UserType">
                                 <option value="0">骑士</option>

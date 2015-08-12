@@ -189,7 +189,12 @@ namespace Ets.Service.Provider.Statistics
                 recommendQuery.RecommendPhone = "";
             if (recommendQuery.PageIndex < 1)
                 recommendQuery.PageIndex = 1;
-            return statisticsDao.GetRecommendList(recommendQuery); ;
+            if (recommendQuery.DataType == 1)
+            {
+                //查询商户分页信息
+                return statisticsDao.GetRecommendListB(recommendQuery); 
+            }
+            return statisticsDao.GetRecommendListC(recommendQuery);
         }
 
         /// <summary>
@@ -219,6 +224,23 @@ namespace Ets.Service.Provider.Statistics
         public PageInfo<ActiveUserInfo> QueryActiveUser(ActiveUserQuery queryInfo)
         {
             return orderDao.GetActiveUserList(queryInfo);
+        }
+        /// <summary>
+        /// 推荐详情页面分页
+        /// </summary>
+        /// <param name="recommendQuery"></param>
+        /// <returns></returns>
+        public PageInfo<RecommendDetailDataModel> GetRecommendDetailList(RecommendQuery recommendQuery)
+        {
+            if(string.IsNullOrWhiteSpace(recommendQuery.RecommendPhone))
+                return null;
+            if (recommendQuery.DataType == 1)
+            {
+                //查询商户分页
+                return statisticsDao.GetRecommendDetailListB(recommendQuery);
+            }
+            //查询骑士分页
+            return statisticsDao.GetRecommendDetailListC(recommendQuery); 
         }
     }
 }

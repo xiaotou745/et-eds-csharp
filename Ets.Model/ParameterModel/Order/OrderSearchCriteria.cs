@@ -14,6 +14,7 @@ namespace Ets.Model.ParameterModel.Order
     {
         private int status = -1; //默认查询所有状态
         private int auditStatus = -1; //默认查询所有状态
+        private int isNotRealOrder = -1;//是否无效订单，默认所有
         public NewPagingResult PagingRequest { get; set; }
         public IList<OrderByItem<order>> OrderByItems { get; set; }
 
@@ -46,6 +47,12 @@ namespace Ets.Model.ParameterModel.Order
         /// 物流公司ID
         /// </summary>
         public string deliveryCompany { get; set; }
+
+        public int IsNotRealOrder
+        {
+            get { return isNotRealOrder; }
+            set { isNotRealOrder = value; }
+        }
 
     }
 

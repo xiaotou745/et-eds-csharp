@@ -20,6 +20,8 @@ using ETS.Util;
 using Ets.Model.Common;
 using Ets.Service.Provider.Clienter;
 using ETS.Enums;
+using Ets.Service.Provider.Business;
+using Ets.Service.IProvider.Business;
 namespace SuperMan.Controllers
 {
     [WebHandleError]
@@ -29,11 +31,12 @@ namespace SuperMan.Controllers
         Ets.Service.IProvider.Order.IOrderProvider iOrderProvider = new OrderProvider();
         IAreaProvider iAreaProvider = new AreaProvider();
         IAuthorityMenuProvider iAuthorityMenuProvider = new AuthorityMenuProvider();
+        IBusinessProvider iBusinessProvider = new BusinessProvider();
         //Get: /Order  订单管理
         public ActionResult Order()
         {
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;//集团id
-
+            ViewBag.GroupList = iBusinessProvider.GetGroups();
 
             int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(UserType));
@@ -51,17 +54,24 @@ namespace SuperMan.Controllers
             };
             if (!string.IsNullOrEmpty(Request.QueryString["phoneNo"]))
             {
+                criteria.orderPubStart = Request.QueryString["startDate"];
+                criteria.orderPubEnd = Request.QueryString["endDate"];
+
+                ViewBag.orderPubStart = Request.QueryString["startDate"];
+                ViewBag.orderPubEnd = Request.QueryString["endDate"];
                 if (Request.QueryString["userType"] == "0")
                 {
                     criteria.superManPhone = Request.QueryString["phoneNo"];
                     criteria.superManName = Request.QueryString["userName"];
+                    ViewBag.superManPhone = Request.QueryString["phoneNo"];
+                    ViewBag.superManName = Request.QueryString["userName"];
                 }
                 else
                 {
                     criteria.businessPhone = Request.QueryString["phoneNo"];
                     criteria.businessName = Request.QueryString["userName"];
-                    criteria.orderPubStart = Request.QueryString["startDate"];
-                    criteria.orderPubEnd = Request.QueryString["endDate"];
+                    ViewBag.businessPhone = Request.QueryString["phoneNo"];
+                    ViewBag.businessName = Request.QueryString["userName"];
                 }  
             }
 
@@ -114,9 +124,9 @@ namespace SuperMan.Controllers
             {
                 criteria.businessCity = "";
             }
-
+            
             var pagedList = iOrderProvider.GetOrders(criteria);
-
+           
             if (pagedList != null && pagedList.Records.Count > 0)
             {
                 string filname = "e代送-{0}-订单数据.xls";
@@ -135,18 +145,18 @@ namespace SuperMan.Controllers
                 if (pagedList.Records.Count > 3)
                 {
                     byte[] data = Encoding.UTF8.GetBytes(CreateExcel(pagedList));
-                    return File(data, "application/ms-excel", filname);
+                    return File(data, "application/msexcel", filname);
                 }
                 else
                 {
                     byte[] data = Encoding.Default.GetBytes(CreateExcel(pagedList));
-                    return File(data, "application/ms-excel", filname);
+                    return File(data, "application/msexcel", filname);
                 }
 
             }
             
             //return PartialView("_PartialOrderList", pagedList);
-            return File(new byte[0]{}, "application/ms-excel", "无数据.xls");
+            return File(new byte[0]{}, "application/msexcel", "无数据.xls");
         }
 
 
@@ -301,6 +311,7 @@ namespace SuperMan.Controllers
 
         /// <summary>
         /// 彭宜
+        /// 修改人：胡灵波
         /// 2015年8月3日 11:32:55
         /// 扣除网站补贴
         /// </summary>
@@ -320,7 +331,13 @@ namespace SuperMan.Controllers
             var reg = iOrderProvider.DeductWebSubsidy(orderOptionModel);
             return Json(new ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.AllowGet);
         }
-
+        /// <summary>
+        /// 审核通过
+        /// 胡灵波
+        /// 2015年8月12日 10:39:16
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
         [HttpPost]
         public JsonResult AuditOK(int orderId)
         {
@@ -343,6 +360,136 @@ namespace SuperMan.Controllers
                 return true;
             }
             return false;
+        }
+        /// <summary>
+        /// 财务管理-订单审核管理
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult OrderAudit()
+        {
+            ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;//集团id
+
+            ViewBag.GroupList = iBusinessProvider.GetGroups();
+            int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(UserType));
+            var superManModel = iDistributionProvider.GetClienterModelByGroupID(ViewBag.txtGroupId);
+            if (superManModel != null)
+            {
+                ViewBag.superManModel = superManModel;
+            }
+            var criteria = new OrderSearchCriteria()
+            {
+                AuditStatus = 0,
+                UserType = UserType,
+                //GroupId = UserContext.Current.GroupId,
+                AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType)
+            };
+
+
+            if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
+            {
+                return View();
+            }
+            var pagedList = iOrderProvider.GetOrders(criteria);
+            return View(pagedList);
+        }
+        [HttpPost]
+        public ActionResult PostOrderAudit(int pageindex = 1)
+        {
+            ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId; ;//集团id
+            int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(UserType));
+            var criteria = new OrderSearchCriteria();
+            TryUpdateModel(criteria);
+            criteria.AuthorityCityNameListStr =
+                iAreaProvider.GetAuthorityCityNameListStr(UserType);
+            criteria.UserType = UserType;
+            //指派超人时  以下代码 有用，现在 注释掉  wc 
+            //var superManModel = iDistributionProvider.GetClienterModelByGroupID(ViewBag.txtGroupId);
+            //if (superManModel != null)
+            //{
+            //    ViewBag.superManModel = superManModel;
+            //} 
+            if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
+            {
+                return PartialView("_PartialOrderAuditList");
+            }
+            var pagedList = iOrderProvider.GetOrders(criteria);
+
+            return PartialView("_PartialOrderAuditList", pagedList);
+        }
+        [HttpPost]
+        public JsonResult BatchAuditCancel(string orderIds, string remark)
+        {
+            string totalMsg = "";
+            if (!string.IsNullOrEmpty(orderIds))
+            {
+                string[] ids = orderIds.Split(new char[]{';'},System.StringSplitOptions.RemoveEmptyEntries);
+                Dictionary<string, DealResultInfo> result = new Dictionary<string, DealResultInfo>();
+                foreach (var item in ids)
+                {
+                    if (!string.IsNullOrEmpty(item))
+                    {
+                        string[] infos = item.Split(',');
+                        OrderOptionModel orderOptionModel = new OrderOptionModel()
+                        {
+                            OptUserId = UserContext.Current.Id,
+                            OptUserName = UserContext.Current.Name,
+                            OptLog = remark,
+                            OrderId = int.Parse(infos[0])
+                        };
+                        var reg = iOrderProvider.DeductWebSubsidy(orderOptionModel);
+                        result.Add(infos[1],reg);
+                    }
+                }
+                int successedNum = result.Where(p => p.Value.DealFlag == true).Count();
+                totalMsg = string.Format("共{0}个订单，其中{1}个操作成功;", ids.Length, successedNum);
+                if (successedNum<ids.Length)
+                {
+                    var failedList = result.Where(p => p.Value.DealFlag == false);
+                    var failedMsgList = failedList.Select(p => p.Key + ":" + p.Value.DealMsg);
+                    string failedMsg = string.Join("\n", failedMsgList);
+                    totalMsg += string.Format("{0}个操作失败:\n{1}",failedList.Count(), failedMsg);
+                }
+            }
+            return Json(new ResultModel(true, totalMsg), JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult BatchAuditOK(string orderIds)
+        {
+            string totalMsg = "";
+            if (!string.IsNullOrEmpty(orderIds))
+            {
+                string[] ids = orderIds.Split(new char[] { ';' }, System.StringSplitOptions.RemoveEmptyEntries);
+                Dictionary<string, DealResultInfo> result = new Dictionary<string, DealResultInfo>();
+                foreach (var item in ids)
+                {
+                    if (!string.IsNullOrEmpty(item))
+                    {
+                        string[] infos = item.Split(',');
+                        OrderOptionModel orderOptionModel = new OrderOptionModel()
+                        {
+                            OptUserId = UserContext.Current.Id,
+                            OptUserName = UserContext.Current.Name,
+                            OrderId = int.Parse(infos[0])
+                        };
+                        var reg = iOrderProvider.AuditOK(orderOptionModel);
+                        result.Add(infos[1], reg);
+                    }
+                }
+                int successedNum = result.Where(p => p.Value.DealFlag == true).Count();
+                totalMsg = string.Format("共{0}个订单，其中{1}个操作成功;", ids.Length, successedNum);
+                if (successedNum < ids.Length)
+                {
+                    var failedList = result.Where(p => p.Value.DealFlag == false);
+                    var failedMsgList = failedList.Select(p => p.Key + ":" + p.Value.DealMsg);
+                    string failedMsg = string.Join("\n", failedMsgList);
+                    totalMsg += string.Format("{0}个操作失败:\n{1}", failedList.Count(), failedMsg);
+                }
+            }
+            return Json(new ResultModel(true, totalMsg), JsonRequestBehavior.AllowGet);
+           
         }
     }
 }

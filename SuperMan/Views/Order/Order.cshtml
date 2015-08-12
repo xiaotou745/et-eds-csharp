@@ -27,13 +27,13 @@
             <tr>
                 <td>
                     <span class="">超人电话: </span>
-                    <input id="txtSuperManPhone" type="tel" name="superManPhone" />
+                    <input id="txtSuperManPhone" type="tel" name="superManPhone" value="@ViewBag.superManPhone" />
                     <span class="">超人姓名: </span>
-                    <input id="txtSuperManName" type="text" width="90px" name="superManName" />
+                    <input id="txtSuperManName" type="text" width="90px" name="superManName" value="@ViewBag.superManName" />
                     <span class="">商户电话: </span>
-                    <input id="txtBusinessPhone" type="tel" name="businessPhone" />
+                    <input id="txtBusinessPhone" type="tel" name="businessPhone" value="@ViewBag.businessPhone" />
                     <span class="">商户名称: </span>
-                    <input id="txtBusinessName" type="text" name="businessName" />
+                    <input id="txtBusinessName" type="text" name="businessName" value="@ViewBag.businessName" />
                 </td>
             </tr>
             <tr>
@@ -41,9 +41,9 @@
                     <span class="">订单状态: </span>
                     @Html.DropDownList("orderStatus", new SelectList(EnumExtenstion.GetEnumItems(typeof(OrderStatusCommon)), "Value", "Text"), "全部", new { @class = "selectw", style = "width:157px" }) 
                     <span class="">发布时间: </span>
-                    <input id="txtOrderPubStart" readonly="readonly" type="text" name="OrderPubStart" />
+                    <input id="txtOrderPubStart" readonly="readonly" type="text" name="OrderPubStart" value="@ViewBag.orderPubStart" />
                     <span class="">到: </span>
-                    <input id="txtOrderPubEnd" readonly="readonly" type="text" name="OrderPubEnd" />
+                    <input id="txtOrderPubEnd" readonly="readonly" type="text" name="OrderPubEnd" value="@ViewBag.orderPubEnd" />
                    @* <input id="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" name="GroupId" />*@
                     <span class="">筛选城市: </span>
                     @Html.DropDownList("businessCity", new SelectList(ViewBag.openCityList.Result.AreaModels, "Name", "Name"), "--无--", new { style = "width:155px" })
@@ -52,7 +52,7 @@
             <tr>
                 <td>
                     <span class="">筛选集团: </span>
-                    @Html.DropDownList("GroupId", new SelectList(new BusinessProvider().GetGroups() , "Id", "GroupName"), "--无--", new { @class = "selectw", style = "width:143px" })
+                    @Html.DropDownList("GroupId", new SelectList(ViewBag.GroupList, "Id", "GroupName"), "--无--", new { @class = "selectw", style = "width:143px" })
                     <span class="">原订单号: </span>
                     <input id="txtOriginalOrderNo" type="text" name="OriginalOrderNo" /> 
                     <span class="">订单号: </span>

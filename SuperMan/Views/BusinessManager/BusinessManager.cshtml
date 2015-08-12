@@ -300,9 +300,23 @@
                 <input name="busPhone" id="busPhone" disabled="disabled" type="text">
             </div>
             <div class="control-group">
-                <label>充值金额：</label>
-                <input name="busRechargeAmount" id="busRechargeAmount" type="text">元
-                <label style="font-size: 10px;color: red">（充值金额范围:1.00-50000.00元）</label>
+                <label>充值类型：</label> <select id="RechargeType">
+                    <option value="1">充值</option>
+                    <option value="2">赠送</option>
+                    <option value="3">充值+赠送</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <div id="busRechargeAmountDiv">
+                    <label>充值金额：</label>
+                    <input name="busRechargeAmount" id="busRechargeAmount" type="text">元
+                    <label style="font-size: 10px;color: red">（充值金额范围:1.00-50000.00元）</label><br />
+                </div>
+                <div id="busRechargeAmountFreeDiv">
+                    <label>赠送金额：</label>
+                    <input name="busRechargeAmountFree" id="busRechargeAmountFree" type="text">元
+                    <label style="font-size: 10px; color: red">（赠送金额范围:1.00-50000.00元）</label>
+                </div>
             </div>
             <div class="control-group">
                 <label>操作描述：</label>
@@ -345,20 +359,20 @@
             </div>
             <div class="control-group">
                 <label>省：</label>
-                <input type="text" disabled="disabled" id="openProvince"/>
+                <input type="text" disabled="disabled" id="openProvince" />
                 <input type="hidden" id="openProvinceCode" />
                 @*<select id="openProvince">
-                    <option value="" selected="selected">--省市--</option>
-                </select>*@
+                        <option value="" selected="selected">--省市--</option>
+                    </select>*@
             </div>
             <div class="control-group">
                 <label>市区：</label>
-                <input type="text" disabled="disabled" id="openCity"/>
-                <input type="hidden" id="openCityCode"/>
+                <input type="text" disabled="disabled" id="openCity" />
+                <input type="hidden" id="openCityCode" />
                 @*<label>市区：</label>
-                <select id="openCity">
-                    <option value="" selected="selected">--市区--</option>
-                </select>*@
+                    <select id="openCity">
+                        <option value="" selected="selected">--市区--</option>
+                    </select>*@
             </div>
             <div class="control-group">
                 <label>身份证号/营业执照：</label>
@@ -386,10 +400,31 @@
 <script>
     var adminjs = new adminglass(); //实例化后台类
     $(document).ready(function () {
-        //GetOpenProvince(); 
+        //GetOpenProvince();
         window.location.hash = '';
+        //注册充值下拉框改变事件
+        $('#RechargeType').change(function () {
+            $('#busRechargeAmount').val('');
+            $('#busRechargeAmountFree').val('');
+            var tempvalue = $('#RechargeType').val();
+            if (tempvalue == '1') {
+                //充值显示 赠送隐藏
+                $('#busRechargeAmountDiv').show();
+                $('#busRechargeAmountFreeDiv').hide();
+            }
+            if (tempvalue == '2') {
+                //充值隐藏 赠送显示
+                $('#busRechargeAmountDiv').hide();
+                $('#busRechargeAmountFreeDiv').show();
+            }
+            if (tempvalue == '3') {
+                //充值显示 赠送隐藏
+                $('#busRechargeAmountDiv').show();
+                $('#busRechargeAmountFreeDiv').show();
+            }
+        });
     });
-    
+
     //设置结算比例-外送费
     $("#btnCommissionConfim").on('click', function () {
         var busCommissionHid = $("#busCommissionHid").val(); //商户id
@@ -574,26 +609,48 @@
     $("#btnRechargeCommit").on('click', function () {
         var busiId = $("#busId").val(); //商户id
         var busiName = $("#busName").val(); //商户电话
+        var busRechargeType = $('#RechargeType').val();//充值类型
         var busiRechargeAmount = $("#busRechargeAmount").val(); //商户充值金额
+        var busiRechargeAmountFree = $("#busRechargeAmountFree").val(); //商户赠送金额
         var rechargeLog = $("#rechargeLog").val(); //充值描述
         if (rechargeLog.trim().length == 0) {
             alert("请输入充值操作描述!");
             return;
         }
         var decimalFormat = /^[0-9]*(\.[0-9]{1,2})?$/;
-        if (!decimalFormat.test(busiRechargeAmount)) {
-            alert("请输入正确的金额！");
+        if ((busRechargeType == '1' || busRechargeType == '3') && !decimalFormat.test(busiRechargeAmount)) {
+            alert("请输入正确的充值金额！");
             return;
         }
-        if (busiRechargeAmount < 1 || busiRechargeAmount > 50000) {
+        if ((busRechargeType == '1' || busRechargeType == '3') && (busiRechargeAmount < 1 || busiRechargeAmount > 50000)) {
             alert("充值金额须在1-50000元之间！");
             return;
         }
-        if (confirm("确定要为商户：" + busiName + "  充值：" + busiRechargeAmount + "元？")) {
+        if ((busRechargeType == '2' || busRechargeType == '3') && !decimalFormat.test(busiRechargeAmountFree)) {
+            alert("请输入正确的赠送金额！");
+            return;
+        }
+        if ((busRechargeType == '2' || busRechargeType == '3') && (busiRechargeAmountFree < 1 || busiRechargeAmountFree > 50000)) {
+            alert("赠送金额须在1-50000元之间！");
+            return;
+        }
+        var tipstr = "";
+        switch (busRechargeType) {
+            case "1":
+                tipstr = "确定要为商户：" + busiName + "  充值：" + busiRechargeAmount + "元？"; break;
+            case "2":
+                tipstr = "确定要为商户：" + busiName + "  赠送：" + busiRechargeAmountFree + "元？"; break;
+            case "3":
+                tipstr = "确定要为商户：" + busiName + "  充值：" + busiRechargeAmount + " 元,赠送:" + busiRechargeAmountFree + "元？"; break;
+
+        }
+        if (confirm(tipstr)) {
             var paramaters = {
                 "BusinessId": busiId,
                 "RechargeAmount": busiRechargeAmount,
-                "Remark": rechargeLog
+                "Remark": rechargeLog,
+                "RechargeAmountFree": busiRechargeAmountFree,
+                "RechargeType": busRechargeType
             };
             var url = "/BusinessManager/BusinessRecharge";
             $.ajax({
@@ -626,7 +683,7 @@
         //if (rechargeLog.trim().length == 0) {
         //    alert("请输入充值操作描述!");
         //    return;
-        //} 
+        //}
         var decimalFormat = /^[0-9]*(\.[0-9]{1,2})?$/;
         if (!decimalFormat.test(withdrawAmount)) {
             alert("请输入正确的金额！");
@@ -680,6 +737,6 @@
             $("#divCommissionFixValue").show();
         }
     });
-    
+
 </script>
 <script src="~/Scripts/mvcpager.js"></script>

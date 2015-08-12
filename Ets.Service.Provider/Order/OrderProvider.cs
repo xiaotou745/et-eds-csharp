@@ -9,6 +9,7 @@ using Ets.Model.DataModel.Finance;
 using Ets.Model.DataModel.Order;
 using Ets.Model.DomainModel.Clienter;
 using Ets.Model.DomainModel.Order;
+using Ets.Model.ParameterModel.Business;
 using Ets.Model.ParameterModel.Finance;
 using Ets.Model.ParameterModel.Order;
 using Ets.Service.IProvider.Order;
@@ -57,6 +58,7 @@ namespace Ets.Service.Provider.Order
         private readonly ClienterDao clienterDao = new ClienterDao();
         ClienterBalanceRecordDao clienterBalanceRecordDao=new ClienterBalanceRecordDao();
         ClienterAllowWithdrawRecordDao  clienterAllowWithdrawRecordDao=new ClienterAllowWithdrawRecordDao();
+        OrderSubsidiesLogDao orderSubsidiesLogDao = new OrderSubsidiesLogDao();
 
         private readonly BusinessBalanceRecordDao _businessBalanceRecordDao = new BusinessBalanceRecordDao();
         ClienterFinanceDao clienterFinanceDao = new ClienterFinanceDao();
@@ -252,7 +254,7 @@ namespace Ets.Service.Provider.Order
         /// <param name="busiOrderInfoModel"></param>
         /// <param name="business">返回商户信息</param>
         /// <returns></returns>
-        public order TranslateOrder(Ets.Model.ParameterModel.Business.BussinessOrderInfoPM busiOrderInfoModel, out BusListResultModel business)
+        public order TranslateOrder(BussinessOrderInfoPM busiOrderInfoModel, out BusListResultModel business)
         {
             order to = new order();
             ///TODO 订单号生成规则，定了以后要改；
@@ -273,19 +275,23 @@ namespace Ets.Service.Provider.Order
                 to.BusinessGroupId = business.BusinessGroupId;
                 to.MealsSettleMode = business.MealsSettleMode;
                 to.OneKeyPubOrder = business.OneKeyPubOrder;
+                to.IsOrderChecked = business.IsOrderChecked;
             }
             if (ConfigSettings.Instance.IsGroupPush)
             {
                 if (busiOrderInfoModel.OrderFrom != 0)
+                {
                     to.OrderFrom = busiOrderInfoModel.OrderFrom;
+                }
                 else
+                {
                     to.OrderFrom = 0;
+                }
+
             }
             to.Remark = busiOrderInfoModel.Remark;
-            if (string.IsNullOrWhiteSpace(busiOrderInfoModel.receviceName))
-                to.ReceviceName = "";
-            else
-                to.ReceviceName = busiOrderInfoModel.receviceName;
+            to.ReceviceName = string.IsNullOrWhiteSpace(busiOrderInfoModel.receviceName) ? "" : busiOrderInfoModel.receviceName;
+
             to.RecevicePhoneNo = busiOrderInfoModel.recevicePhone;
             to.ReceviceAddress = busiOrderInfoModel.receviceAddress;
             to.IsPay = busiOrderInfoModel.IsPay;
@@ -315,10 +321,16 @@ namespace Ets.Service.Provider.Order
             OrderPriceProvider commProvider = CommissionFactory.GetCommission(business.StrategyId);
             to.CommissionFormulaMode = business.StrategyId;
             to.CommissionRate = commProvider.GetCommissionRate(orderComm); //佣金比例 
+            to.BaseCommission = commProvider.GetBaseCommission(orderComm);//基本佣金
             to.OrderCommission = commProvider.GetCurrenOrderCommission(orderComm); //订单佣金
             to.WebsiteSubsidy = commProvider.GetOrderWebSubsidy(orderComm);//网站补贴
-            to.SettleMoney = commProvider.GetSettleMoney(orderComm);//订单结算金额            
-            to.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet(business.BusinessGroupId).CommissionFormulaMode);
+
+            to.SettleMoney = OrderSettleMoneyProvider.GetSettleMoney(orderComm.Amount ?? 0, orderComm.BusinessCommission,
+                orderComm.CommissionFixValue ?? 0, orderComm.OrderCount ?? 0,
+                orderComm.DistribSubsidy ?? 0, 0);//订单结算金额          
+
+         
+            //to.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet(business.BusinessGroupId).CommissionFormulaMode);
             to.Adjustment = commProvider.GetAdjustment(orderComm);//订单额外补贴金额           
             to.Status = Convert.ToByte(OrderStatus.Status0.GetHashCode());
             to.TimeSpan = busiOrderInfoModel.TimeSpan;
@@ -327,7 +339,7 @@ namespace Ets.Service.Provider.Order
             if (!(bool)to.IsPay && to.MealsSettleMode == MealsSettleMode.LineOn.GetHashCode())//未付款且线上支付
             {
                 to.BusinessReceivable = Decimal.Round(ParseHelper.ToDecimal(to.Amount) +
-                               ParseHelper.ToDecimal(to.DistribSubsidy) * ParseHelper.ToInt(to.OrderCount), 2);
+                               ParseHelper.ToDecimal(to.DistribSubsidy) * ParseHelper.ToInt(to.OrderCount), 2);//第三方如果设置商家外送费会多给第三方商户返回菜品金额+外送费
             }
 
             return to;
@@ -469,7 +481,6 @@ namespace Ets.Service.Provider.Order
         }
 
 
-
         /// <summary>
         /// 第三方订单列表根据订单号 修改订单状态   平杨  TODO 目前支适用于美团
         /// </summary>
@@ -489,7 +500,9 @@ namespace Ets.Service.Provider.Order
                 {
                     return 0;
                 }
-                int result = orderDao.CancelOrderStatus(orderNo, orderStatus, remark, status);
+                CancelOrderModel comModel = new CancelOrderModel() { OrderNo = orderNo, OrderStatus = orderStatus, Remark = remark, Status = status, OrderCancelFrom = SuperPlatform.ThirdParty.GetHashCode(),OrderCancelName = order.BusinessName};
+                //int result = orderDao.CancelOrderStatus(orderNo, orderStatus, remark, status);
+                int result = orderDao.CancelOrderStatus(comModel);
                 if (result > 0)
                 {
                     //确认接入订单时   扣除 商家结算费 
@@ -633,7 +646,6 @@ namespace Ets.Service.Provider.Order
             #endregion
 
             #region 佣金相关  add by caoheyang 20150416
-            paramodel.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet(1).CommissionFormulaMode);//默认第三方策略，是默认组下的默认策略，目前即是普通策略 
             //paramodel.CommissionType = 1;//结算类型：1：固定比例 2：固定金额
             //paramodel.CommissionFixValue = 0;//固定金额
             //paramodel.BusinessGroupId = 1;//分组ID
@@ -647,14 +659,21 @@ namespace Ets.Service.Provider.Order
                 BusinessCommission = paramodel.store_info.businesscommission,/*商户结算比例*/
                 BusinessGroupId = paramodel.BusinessGroupId,
                 StrategyId = business.StrategyId,
-                OrderWebSubsidy = paramodel.websitesubsidy
+                OrderWebSubsidy = paramodel.websitesubsidy,
+                CommissionFixValue = business.CommissionFixValue  //固定金额
 
             }/*网站补贴*/;
             OrderPriceProvider commissonPro = CommissionFactory.GetCommission(0);//万达、全时采用默认分组下策略
+            paramodel.CommissionFormulaMode = 0;//ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet(1).CommissionFormulaMode);//默认第三方策略，是默认组下的默认策略，目前即是普通策略 
             paramodel.ordercommission = commissonPro.GetCurrenOrderCommission(orderComm);  //骑士佣金
             paramodel.websitesubsidy = commissonPro.GetOrderWebSubsidy(orderComm);//网站补贴
             paramodel.commissionrate = commissonPro.GetCommissionRate(orderComm);//订单佣金比例
-            paramodel.settlemoney = commissonPro.GetSettleMoney(orderComm);//订单结算金额
+            paramodel.basecommission = commissonPro.GetBaseCommission(orderComm);//基本补贴佣金
+
+            paramodel.settlemoney = OrderSettleMoneyProvider.GetSettleMoney(orderComm.Amount ?? 0,
+                orderComm.BusinessCommission,
+                orderComm.CommissionFixValue ?? 0, orderComm.OrderCount ?? 0, orderComm.DistribSubsidy ?? 0, paramodel.orderfrom);//订单结算金额          
+           
             paramodel.adjustment = commissonPro.GetAdjustment(orderComm);//订单额外补贴金额
 
             #endregion
@@ -906,6 +925,11 @@ namespace Ets.Service.Provider.Order
             }
 
         }
+        /// <summary>
+        /// 验证聚网客订单合法性
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         ResultModel<NewPostPublishOrderResultModel> Verification(NewPostPublishOrderModel model)
         {
             if (string.IsNullOrWhiteSpace(model.OriginalOrderNo))   //原始订单号非空验证
@@ -1016,74 +1040,60 @@ namespace Ets.Service.Provider.Order
         /// </summary>
         /// <param name="from">参数对象</param>
         /// <returns></returns>
-        private order OrderInstance(Model.ParameterModel.Order.NewPostPublishOrderModel from)
+        private order OrderInstance(NewPostPublishOrderModel from)
         {
             order to = new order();
 
             BusinessDao businessDao = new BusinessDao();
             BusinessModel abusiness = businessDao.GetBusiByOriIdAndOrderFrom(from.OriginalBusinessId, from.OrderFrom);
-
-            if (abusiness == null) return null;
-            //if (abusiness != null)
-            //{
-            //    from.BusinessId = abusiness.Id;
-            //}
-            //else
-            //{
-            //    return null;
-            //}
+            if (abusiness == null)
+            {
+                return null;
+            }
             to.OrderNo = Helper.generateOrderCode(abusiness.Id);  //根据userId生成订单号(15位)
             to.businessId = abusiness.Id; //当前发布者
             BusListResultModel business = businessDao.GetBusiness(abusiness.Id);  //根据发布者id,获取发布者的相关信息实体
-            if (business != null)
+            if (business == null)
             {
-                to.PickUpCity = business.City;  //商户所在城市
-                to.PickUpAddress = business.Address;  //提取地址
-                to.PubDate = DateTime.Now; //提起时间
-                //to.ReceviceCity = business.City; //城市
-                //to.DistribSubsidy = business.DistribSubsidy;//设置外送费,从商户中找。
-                to.BusinessCommission = ParseHelper.ToDecimal(business.BusinessCommission);//商户结算比例
-                to.BusinessName = business.Name;
-                to.CommissionType = business.CommissionType;//结算类型：1：固定比例 2：固定金额
-                to.CommissionFixValue = ParseHelper.ToDecimal(business.CommissionFixValue);//固定金额     
-                to.BusinessGroupId = business.BusinessGroupId;
-                to.MealsSettleMode = business.MealsSettleMode;
+                return null;
             }
+            to.PickUpCity = business.City; //商户所在城市
+            to.PickUpAddress = business.Address; //提取地址
+            to.PubDate = DateTime.Now; //提起时间
+            //to.ReceviceCity = business.City; //城市
+            //to.DistribSubsidy = business.DistribSubsidy;//设置外送费,从商户中找。
+            to.BusinessCommission = ParseHelper.ToDecimal(business.BusinessCommission); //商户结算比例
+            to.BusinessName = business.Name;
+            to.CommissionType = business.CommissionType; //结算类型：1：固定比例 2：固定金额
+            to.CommissionFixValue = ParseHelper.ToDecimal(business.CommissionFixValue); //固定金额     
+            to.BusinessGroupId = business.BusinessGroupId;
+            to.MealsSettleMode = business.MealsSettleMode;
+
+
+
             to.SongCanDate = from.SongCanDate; //送餐时间
             to.Remark = from.Remark;
-
             to.ReceviceName = from.ReceiveName;
             to.RecevicePhoneNo = from.ReceivePhoneNo;
-
             to.ReceiveProvince = from.Receive_Province;
             to.ReceiveProvinceCode = from.Receive_ProvinceCode;
-
             to.ReceviceCity = from.Receive_City;
             to.ReceiveCityCode = from.Receive_CityCode;
-
             to.ReceiveArea = from.Receive_Area;
             to.ReceiveAreaCode = from.Receive_AreaCode;
-
             to.ReceviceLatitude = from.Receive_Latitude;
             to.ReceviceLongitude = from.Receive_Longitude;
-
             to.ReceviceAddress = from.Receive_Address;
-
             to.OrderFrom = from.OrderFrom;
             to.Quantity = from.Quantity;
             to.OriginalOrderNo = from.OriginalOrderNo;
-
             to.Weight = from.Weight;
-
             to.IsPay = from.IsPay;
             to.Amount = from.Amount - from.DistribSubsidy;//订单金额=聚网客总金额-外送费
-
             to.OrderType = from.OrderType; //订单类型 1送餐订单 2取餐盒订单 
             to.KM = from.KM; //送餐距离
-
             to.GuoJuQty = from.GuoJuQty; //锅具数量
             to.LuJuQty = from.LuJuQty;  //炉具数量
-
             to.DistribSubsidy = from.DistribSubsidy; //外送费
             to.OrderCount = from.OrderCount == 0 ? 1 : from.OrderCount; //订单数量
             //计算订单佣金
@@ -1096,27 +1106,26 @@ namespace Ets.Service.Provider.Order
                 OrderCount = to.OrderCount/*订单数量*/,
                 BusinessCommission = to.BusinessCommission, /*商户结算比例*/
                 BusinessGroupId = business.BusinessGroupId,
-                StrategyId = business.StrategyId
+                StrategyId = business.StrategyId,
+                CommissionFixValue = business.CommissionFixValue  //固定金额
             };
             OrderPriceProvider commProvider = CommissionFactory.GetCommission(business.StrategyId);
             to.CommissionFormulaMode = business.StrategyId;
             to.CommissionRate = commProvider.GetCommissionRate(orderComm); //佣金比例 
+            to.BaseCommission = commProvider.GetBaseCommission(orderComm); //基本佣金
             to.OrderCommission = commProvider.GetCurrenOrderCommission(orderComm); //订单佣金
             to.WebsiteSubsidy = commProvider.GetOrderWebSubsidy(orderComm);//网站补贴
-            to.SettleMoney = commProvider.GetSettleMoney(orderComm);//订单结算金额
+            to.SettleMoney = OrderSettleMoneyProvider.GetSettleMoney(orderComm.Amount ?? 0, orderComm.BusinessCommission,
+                orderComm.CommissionFixValue ?? 0, orderComm.OrderCount ?? 0, orderComm.DistribSubsidy ?? 0, to.OrderFrom);//订单结算金额          
             if (!(bool)to.IsPay && to.MealsSettleMode == MealsSettleMode.LineOn.GetHashCode())//未付款且线上支付
             {
                 to.BusinessReceivable = Decimal.Round(ParseHelper.ToDecimal(from.Amount), 2);
             }
 
-            to.CommissionFormulaMode = business.StrategyId;
+            //to.CommissionFormulaMode = business.StrategyId;
             to.Adjustment = commProvider.GetAdjustment(orderComm);//订单额外补贴金额
-
             to.Status = (byte)OrderStatus.Status0.GetHashCode();
-
-            //to.TimeSpan = busiOrderInfoModel.TimeSpan;
             to.listOrderChild = from.listOrderChlid;
-
             if (!(bool)to.IsPay && to.MealsSettleMode == MealsSettleMode.LineOn.GetHashCode())//未付款且线上支付
             {
                 to.BusinessReceivable = Decimal.Round(ParseHelper.ToDecimal(to.Amount) +
@@ -1336,6 +1345,16 @@ namespace Ets.Service.Provider.Order
                      {
                          decimal diffOrderCommission = orderModel.SettleMoney - orderModel.OrderCommission.Value;
                          iClienterProvider.UpdateNotRealOrderClienterAccount(orderModel, diffOrderCommission);
+
+                         OrderSubsidiesLog difforderSubsidiesLog = new OrderSubsidiesLog();
+                         difforderSubsidiesLog.OrderId = orderModel.Id;
+                         difforderSubsidiesLog.Price = diffOrderCommission;
+                         difforderSubsidiesLog.OptName = orderOptionModel.OptUserName;
+                         difforderSubsidiesLog.Remark = "扣除" + diffOrderCommission + "元无效订单金额";
+                         difforderSubsidiesLog.OptId = orderOptionModel.OptUserId;
+                         difforderSubsidiesLog.OrderStatus = OrderStatusCommon.AuditStatusRefuse.GetHashCode();
+                         difforderSubsidiesLog.Platform = SuperPlatform.ManagementBackground.GetHashCode();
+                         orderSubsidiesLogDao.Insert(difforderSubsidiesLog);
                      }                   
                 }
 
@@ -1362,6 +1381,17 @@ namespace Ets.Service.Provider.Order
                     Remark = "管理后台审核拒绝加可提现"
                 };
                 clienterAllowWithdrawRecordDao.Insert(cawrm);
+
+                //写入订单日志
+                OrderSubsidiesLog orderSubsidiesLog = new OrderSubsidiesLog();
+                orderSubsidiesLog.OrderId = orderModel.Id;
+                orderSubsidiesLog.Price = realOrderCommission;
+                orderSubsidiesLog.OptName = orderOptionModel.OptUserName;
+                orderSubsidiesLog.Remark = "增加" + realOrderCommission + "元可提现金额";
+                orderSubsidiesLog.OptId = orderOptionModel.OptUserId;
+                orderSubsidiesLog.OrderStatus = OrderStatusCommon.AuditStatusRefuse.GetHashCode();
+                orderSubsidiesLog.Platform = SuperPlatform.ManagementBackground.GetHashCode();
+                orderSubsidiesLogDao.Insert(orderSubsidiesLog);
 
 
                 //更新扣除补贴原因,扣除补贴方式为手动扣除
@@ -1393,7 +1423,6 @@ namespace Ets.Service.Provider.Order
                     dealResultInfo.DealMsg = "订单已分账，不能审核通过！";
                     return dealResultInfo;
                 }   
-
                 
                #region 调用老接口
                 //无效订单
@@ -1421,20 +1450,30 @@ namespace Ets.Service.Provider.Order
                 clienterDao.UpdateAllowWithdrawPrice(Convert.ToDecimal(orderModel.OrderCommission), orderModel.clienterId);
                 orderDao.UpdateJoinWithdraw(orderModel.Id);
                 orderDao.UpdateAuditStatus(orderModel.Id, OrderAuditStatusCommon.Through.GetHashCode());   
+                
+                clienterAllowWithdrawRecordDao.Insert(new ClienterAllowWithdrawRecord()
+                                    {
+                                        ClienterId = orderModel.clienterId,
+                                        Amount =Convert.ToDecimal(orderModel.OrderCommission),
+                                        Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(),
+                                        RecordType = ClienterAllowWithdrawRecordType.OrderCommission.GetHashCode(),
+                                        Operator = orderOptionModel.OptUserName,
+                                        WithwardId = orderModel.Id,
+                                        RelationNo = orderModel.OrderNo,
+                                        Remark = "管理后台审核通过加可提现"
+                                    }
+                );
 
-                ClienterAllowWithdrawRecord cawrm = new ClienterAllowWithdrawRecord()
-                {
-                    ClienterId = orderModel.clienterId,
-                    Amount =Convert.ToDecimal(orderModel.OrderCommission),
-                    Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(),
-                    RecordType = ClienterAllowWithdrawRecordType.OrderCommission.GetHashCode(),
-                    Operator = orderOptionModel.OptUserName,
-                    WithwardId = orderModel.Id,
-                    RelationNo = orderModel.OrderNo,
-                    Remark = "管理后台审核通过加可提现"
-                };
-                clienterAllowWithdrawRecordDao.Insert(cawrm);
-
+                //写入订单日志
+                OrderSubsidiesLog orderSubsidiesLog=new OrderSubsidiesLog();
+                orderSubsidiesLog. OrderId=orderModel.Id;
+                orderSubsidiesLog.Price = orderModel.OrderCommission.Value;
+                orderSubsidiesLog.OptName= orderOptionModel.OptUserName;
+                orderSubsidiesLog.Remark="增加"+orderModel.OrderCommission+"元可提现金额";
+                orderSubsidiesLog.OptId=orderOptionModel.OptUserId;
+                orderSubsidiesLog.OrderStatus = OrderStatusCommon.AuditStatusOk.GetHashCode();
+                orderSubsidiesLog.Platform = SuperPlatform.ManagementBackground.GetHashCode();
+                orderSubsidiesLogDao.Insert(orderSubsidiesLog);
 
                 tran.Complete();
                 dealResultInfo.DealFlag = true;;
@@ -1527,7 +1566,9 @@ namespace Ets.Service.Provider.Order
             var order = orderDao.GetOrderByOrderNoAndOrderFrom(originalOrderNo, group, 0);
             if (order.Status == OrderStatus.Status0.GetHashCode())
             {
-                var k = orderDao.CancelOrderStatus(order.OrderNo, OrderStatus.Status3.GetHashCode(), "第三方取消订单", null);
+                CancelOrderModel comModel = new CancelOrderModel() { OrderNo = order.OrderNo, OrderStatus = OrderStatus.Status3.GetHashCode(), Remark = "第三方取消订单", Status = null};
+                var k = orderDao.CancelOrderStatus(comModel);
+                //var k = orderDao.CancelOrderStatus(order.OrderNo, OrderStatus.Status3.GetHashCode(), "第三方取消订单", null);
                 if (k > 0)
                 {
                     return "1"; //取消成功
@@ -1762,8 +1803,8 @@ namespace Ets.Service.Provider.Order
         /// <param name="modelPM"></param>
         public void UpdateTake(OrderPM modelPM)
         {
-            float takeLongitude = (float)modelPM.longitude;
-            float takeLatitude = (float)modelPM.latitude;
+            //float takeLongitude = (float)modelPM.longitude;
+            //float takeLatitude = (float)modelPM.latitude;
             orderDao.UpdateTake(modelPM);
         }
 
@@ -1795,7 +1836,9 @@ namespace Ets.Service.Provider.Order
                 {
                     return ResultModel<bool>.Conclude(tempresult, false);
                 }
-                int result = orderDao.CancelOrderStatus(paramodel.OrderNo, OrderStatus.Status3.GetHashCode(), "商家取消订单", OrderStatus.Status0.GetHashCode(), order.SettleMoney);
+                CancelOrderModel comModel = new CancelOrderModel() { OrderNo = paramodel.OrderNo, OrderStatus = OrderStatus.Status3.GetHashCode(), Remark = "商家取消订单", Status = OrderStatus.Status0.GetHashCode(), Price = order.SettleMoney ,OrderCancelFrom = SuperPlatform.FromBusiness.GetHashCode(), OrderCancelName = order.BusinessName};
+                int result = orderDao.CancelOrderStatus(comModel);
+                //int result = orderDao.CancelOrderStatus(paramodel.OrderNo, OrderStatus.Status3.GetHashCode(), "商家取消订单", OrderStatus.Status0.GetHashCode(), order.SettleMoney);
                 if (result > 0)
                 {
                     BusinessDao businessDao = new BusinessDao();
@@ -1848,6 +1891,7 @@ namespace Ets.Service.Provider.Order
                 return CancelOrderStatus.VersionError;
             }
             order = orderDao.GetOrderById(paramodel.OrderId, paramodel.BusinessId, OrderStatus.Status0.GetHashCode());
+            
             if (order == null)
             {
                 return CancelOrderStatus.CancelOrderError;

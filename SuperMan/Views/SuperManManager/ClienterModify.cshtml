@@ -20,12 +20,13 @@
         <div style="float: left;width:350px;height: 200px;  border-bottom:solid 0px #dcdcdc;padding-left:10px;">
             <div class="control-group" style="margin-top: 15px">
                 <label style="margin-left: 29px">手 机 号：</label>
-                <label>@Model.PhoneNo</label>
+                <label id="phoneNo">@Model.PhoneNo</label>
                 <input name="hidId" id="hidId" type="hidden" value="@Model.Id">
             </div>
             <div class="control-group" style="margin-top: 15px">
                 <label style="margin-left: 29px">推 荐 人：</label>
-                <label>@(string.IsNullOrEmpty(Model.recommendPhone) ? "-----------" : Model.recommendPhone)</label>
+                @*<label>@(string.IsNullOrEmpty(Model.recommendPhone) ? "-----------" : Model.recommendPhone)</label>*@
+                <input name="recommendPhone" id="recommendPhone" value="@Model.recommendPhone" />
             </div>
             <div class="control-group" style="margin-top: 15px">
                 <label style="margin-left: 44px">姓  名：</label>
@@ -68,15 +69,14 @@
 
     </div>
     @*<div id="right" style="float: left;width: 250px;height: auto;">
-        
-    </div>*@
+
+        </div>*@
     <div style="clear: both"></div>
 </div>
 <script type="text/javascript">
     var adminjs = new adminglass();
     //实例化后台类
     $(document).ready(function () {
-        
         var businessId = $('#busiId').val();
     });
 
@@ -90,6 +90,12 @@
         var trueName = $('#trueName').val();
         var idCard = $('#idCard').val();
         var deliveryCompany = $('#deliveryCompany').val();
+        var recommendPhone = $('#recommendPhone').val().trim();
+        var regPhone = /^0?1\d{10}$/; 
+        if (recommendPhone.length > 0 && !regPhone.test(recommendPhone)) {
+            alert("请输入正确的推荐人手机号!");
+            return;
+        }
         if (trueName.trim().length == 0) {
             alert("请输入骑士名称！");
             return;
@@ -97,6 +103,12 @@
         if (idCard.trim().length == 0) {
             alert("请输入骑士身份证号！");
             return;
+        }  
+        if (recommendPhone.trim().length > 0) {
+            if (recommendPhone.trim() == $('#phoneNo').text().trim()) {
+                alert("不能推荐自己哦");
+                return;
+            }
         }
         var reg = /^(\d{15}$|^\d{18}$|^\d{17}(\d|X|x))$/;
         if (!reg.test(idCard)) {
@@ -107,8 +119,9 @@
         //    alert("请选择配送公司！");
         //    return;
         //}
+
         var paramaters = {
-            "Id": id, "TrueName": trueName, "IDcard": idCard, "DeliveryCompanyId": deliveryCompany
+            "Id": id, "TrueName": trueName, "IDcard": idCard, "DeliveryCompanyId": deliveryCompany, "recommendPhone": recommendPhone
         };
         var url = "/SuperManManager/ModifyClienterDetail";
         $.ajax({

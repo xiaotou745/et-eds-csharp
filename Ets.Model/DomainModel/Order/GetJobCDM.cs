@@ -66,5 +66,10 @@ namespace Ets.Model.DomainModel.Order
         /// </summary>
         public decimal Latitude { get; set; }
 
+        /// <summary>
+        /// 备注
+        /// </summary>
+        public string Remark { get; set; }
+
     }
 }

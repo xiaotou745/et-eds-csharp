@@ -38,34 +38,39 @@
     <script type="text/javascript" src="~/Scripts/usaArea.js"></script>
     <script type="text/javascript" src="~/Scripts/usaarea.retriever.js"></script>
     <script type="text/javascript" src="~/Scripts/html5shiv-printshiv.js"></script>
-</head>
-<body>
-    <div class="container-fluid">
-        <header class="hd clearfix">
-            <div class="logo">
-                <div class="toptitle">
-                    e代送管理后台
-                </div>
-            </div>
-            <div class="loginInfo" style="width: 460px;">
-                您好： <strong>@UserContext.Current.Name</strong>，欢迎使用<span class="line">|</span><a href="/Account/LogOff" class="importMsg">退出</a>
-            </div>
-        </header>
-        <div class="main-container">
-            <div class="sidebar">
-                <ul class="nav nav-list">
-                    @if (SuperMan.App_Start.UserContext.Current.HasAuthority(50))
+    <script>
+        $(document).ajaxError( function(event, jqXHR, options, errorMsg){
+            alert(errorMsg+";"+options.url + ";" + jqXHR.responseText);
+        });
+    </script>
+        </head>
+        <body>
+            <div class="container-fluid">
+                <header class="hd clearfix">
+                    <div class="logo">
+                        <div class="toptitle">
+                            e代送管理后台
+                        </div>
+                    </div>
+                    <div class="loginInfo" style="width: 460px;">
+                        您好： <strong>@UserContext.Current.Name</strong>，欢迎使用<span class="line">|</span><a href="/Account/LogOff" class="importMsg">退出</a>
+                    </div>
+                </header>
+                <div class="main-container">
+                    <div class="sidebar">
+                        <ul class="nav nav-list">
+                            @if (SuperMan.App_Start.UserContext.Current.HasAuthority(50))
                     {
                         <li>
-                            <a href="/HomeCount/Index">
-                                <i class="homeicon"></i>
-                                <span class="menu-text">后台首页</span>
-                            </a>
-                        </li>
+                                    <a href="/HomeCount/Index">
+                                        <i class="homeicon"></i>
+                                        <span class="menu-text">后台首页</span>
+                                    </a>
+                                </li>
                     }
-                    @{
+                            @{
                         if (menus != null)
-                        { 
+                        {
                             List<AuthorityMenuModel> partMenus = (from m in menus where m.ParId == 0 select m).ToList();
                             foreach (var pMenu in partMenus)
                             {
@@ -79,14 +84,14 @@
                                     continue;
                                 }
                                 <li>
-                                  <a class="dropdown-toggle" href="javascript:void(0);">
-                                      <i class="skuicon"></i>
-                                      <span class="menu-text">@pMenu.MenuName</span>
-                                      <b class="arrow icon-angle-down"></b>
-                                  </a>
-                                  <ul class="submenu">
-                                      @{
-                                        
+                                          <a class="dropdown-toggle" href="javascript:void(0);">
+                                              <i class="skuicon"></i>
+                                              <span class="menu-text">@pMenu.MenuName</span>
+                                              <b class="arrow icon-angle-down"></b>
+                                          </a>
+                                          <ul class="submenu">
+                                              @{
+
                                           if (childMenus!=null && childMenus.Count > 0)
                                           {
                                               foreach(var cMenu in childMenus)
@@ -94,27 +99,27 @@
                                                   <li><a href="@cMenu.Url" data-url-def="#">@cMenu.MenuName</a></li>
                                               }
                                           }
-}  
-                                  </ul> </li>  
+}
+                                          </ul> </li>
                             }
                         }
 
-                    }  
-                </ul>
-                <div id="sidebar-collapse" class="sidebar-collapse">
-                    <i data-icon2="icon-double-angle-right" data-icon1="icon-double-angle-left" class="icon-double-angle-left"></i>
+                    }
+                        </ul>
+                        <div id="sidebar-collapse" class="sidebar-collapse">
+                            <i data-icon2="icon-double-angle-right" data-icon1="icon-double-angle-left" class="icon-double-angle-left"></i>
+                        </div>
+                    </div>
+                    <div class="main-content">
+                        <div class="page-content">
+                            @RenderBody()
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="main-content">
-                <div class="page-content">
-                    @RenderBody()
-                </div>
-            </div>
-        </div>
-   </div>
-    @Scripts.Render("~/js")
-    @*<script type="text/javascript" src="~/Scripts/bootstrap.min.js"></script>*@
-    <script type="text/javascript" src="~/Scripts/Layout/Layout.js"></script>
+           </div>
+            @Scripts.Render("~/js")
+            @*<script type="text/javascript" src="~/Scripts/bootstrap.min.js"></script>*@
+            <script type="text/javascript" src="~/Scripts/Layout/Layout.js"></script>
     <script type="text/javascript" src="~/Scripts/jquery.colorbox-min.js"></script>
     @RenderSection("scripts", false)
 </body>

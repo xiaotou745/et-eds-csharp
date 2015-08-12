@@ -645,7 +645,7 @@ WHERE bbr.BusinessId=@BusinessId ";
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public bool BusinessRecharge(BusinessOptionLog model)
+        public bool BusinessRecharge(BusinessRechargeLog model)
         {
             string sql = string.Format(@" 
 update b
@@ -670,11 +670,33 @@ INTO BusinessBalanceRecord
    ,[OperateTime]
    ,[Remark])
 from business b WITH ( ROWLOCK )
-where b.Id=@BusinessId;");
+where b.Id=@BusinessId; 
+insert into dbo.BusinessRecharge
+        ( BusinessId ,
+          PayType ,
+          OrderNo ,
+          payAmount ,
+          PayStatus ,
+          PayBy ,
+          PayTime ,
+          OriginalOrderNo
+        )
+values  (
+        @BusinessId,
+        0,
+        '',
+        @Amount,
+        1,
+        @Operator,
+        getdate(),
+        '' );
+");
+
+
             var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Amount", model.RechargeAmount);
             parm.AddWithValue("@Status", BusinessBalanceRecordStatus.Success);
-            parm.AddWithValue("@RecordType", BusinessBalanceRecordRecordType.Recharge);
+            parm.AddWithValue("@RecordType", model.RechargeType == 1 ? BusinessBalanceRecordRecordType.Recharge : BusinessBalanceRecordRecordType.Present);
             parm.AddWithValue("@Operator", model.OptName);
             parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@BusinessId", model.BusinessId);

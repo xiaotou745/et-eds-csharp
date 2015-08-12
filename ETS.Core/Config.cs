@@ -89,9 +89,15 @@ namespace ETS
         public static string NotifyUrl { get { return ConfigKey("NotifyUrl"); } }
 
         /// <summary>
-        /// 微信回调地址
+        /// 微信订单支付回调地址
         /// </summary>
         public static string WXNotifyUrl { get { return string.Concat(ConfigKey("YeePayNotifyUrl").TrimEnd('/'), "/Pay/WxNotify"); } }
+
+        /// <summary>
+        /// 微信商家充值回调地址
+        /// </summary>
+        public static string WXBusinessRecharge { get { return string.Concat(ConfigKey("YeePayNotifyUrl").TrimEnd('/'), "/Pay/BusinessRechargeWxNotify"); } }
+        
         #region 取Web.Config值
 
         /// <summary>

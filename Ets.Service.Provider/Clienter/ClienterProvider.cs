@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using ETS.Const;
 using Ets.Dao.Clienter;
@@ -231,11 +232,11 @@ namespace Ets.Service.Provider.Clienter
                     resultModel.IsOnlyShowBussinessTask = IsOnlyShowBussinessTask(resultModel.userId);
                 }
 
-                 string token = iTokenProvider.GetToken(new TokenModel()
-                    {
-                        Ssid = model.Ssid,
-                        Appkey = resultModel.Appkey.ToString()
-                    });
+                string token = iTokenProvider.GetToken(new TokenModel()
+                   {
+                       Ssid = model.Ssid,
+                       Appkey = resultModel.Appkey.ToString()
+                   });
                 resultModel.Token = token;
                 return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.Success, resultModel);
             }
@@ -628,6 +629,8 @@ namespace Ets.Service.Provider.Clienter
         }
         /// <summary>
         /// 超人完成订单  
+        /// 2015年8月10日11:27:18
+        /// 茹化肖
         /// </summary>
         /// <param name="userId">超人id</param>
         /// <param name="orderNo">订单号码</param>
@@ -658,7 +661,7 @@ namespace Ets.Service.Provider.Clienter
             //取到任务的接单时间、从缓存中读取完成任务时间限制，判断要用户点击完成时间>接单时间+限制时间 
             int limitFinish = ParseHelper.ToInt(globalSetting.CompleteTimeSet, 0);
             //LogHelper.LogWriter("完成时间:" + limitFinish);
-            if (limitFinish > 0)
+            if (limitFinish > 0 && myOrderInfo.IsOrderChecked == 1)//任务需要判断的时候进来
             {
                 //LogHelper.LogWriter("完成太快时间:" + limitFinish);
                 DateTime yuJiFinish = myOrderInfo.GrabTime.Value.AddMinutes(limitFinish);
@@ -684,21 +687,14 @@ namespace Ets.Service.Provider.Clienter
                 {
                     model.FinishOrderStatus = FinishOrderStatus.OrderHadCancel;
                     return model;
-                }                
-
-                //更新商家金额
-                bool blBusiness= UpdateBusinessMoney(myOrderInfo);
-                //更新骑士金额
-                bool blClienter = UpdateClienterMoney(myOrderInfo);
-                //更新骑士无效订单金额
-                UpdateInvalidOrder(myOrderInfo);
-                //写入骑士完成坐标                 
-                orderOtherDao.UpdateComplete(parModel);
-                if (!blBusiness || !blClienter)
-                {
-                    return model;
                 }
-             
+                //更新商家金额
+                UpdateBusinessMoney(myOrderInfo);
+                //更新骑士金额
+                UpdateClienterMoney(myOrderInfo);
+                //写入骑士完成坐标                 
+                orderOtherDao.UpdateComplete(parModel);              
+
                 tran.Complete();
             }
             //异步回调第三方，推送通知
@@ -793,7 +789,7 @@ namespace Ets.Service.Provider.Clienter
             //model.FinishOrderStatus = FinishOrderStatus.Success;
             //return model;
             #endregion
-        }  
+        }
 
         public ClienterModel GetUserInfoByUserId(int UserId)
         {
@@ -878,7 +874,7 @@ namespace Ets.Service.Provider.Clienter
                 //if (myOrderInfo.ActualDoneDate != null && DateTime.Now >= doneDate)
                 //{
                 //    IsPayOrderCommission = false;
-                 //   orderDao.UpdateJoinWithdraw(myOrderInfo.Id);//把订单加入到已增加可提现里
+                //   orderDao.UpdateJoinWithdraw(myOrderInfo.Id);//把订单加入到已增加可提现里
 
                 //    if (orderOther.HadUploadCount >= orderOther.NeedUploadCount && orderOther.OrderStatus == OrderStatus.Status1.GetHashCode())
                 //    {
@@ -896,10 +892,7 @@ namespace Ets.Service.Provider.Clienter
                 if (orderOther.OrderStatus == OrderStatus.Status1.GetHashCode() && orderOther.OrderCreateTime > Convert.ToDateTime(date))
                 {
                     //更新骑士金额
-                    bool blClienter = UpdateClienterMoney(myOrderInfo);
-
-                    //更新无效订单状态
-                    UpdateInvalidOrder(myOrderInfo);
+                    UpdateClienterMoney(myOrderInfo);
                 }
 
                 tran.Complete();
@@ -1106,12 +1099,7 @@ namespace Ets.Service.Provider.Clienter
         /// <returns></returns>       
         public ResultModel<RushOrderResultModel> Receive_C(int userId, string orderNo, int bussinessId, float grabLongitude, float grabLatitude)
         {
-            //这里可以优化，去掉提前验证用户信息，当失败的时候在去验证 
-            OrderListModel model = new OrderListModel()
-            {
-                clienterId = userId,
-                OrderNo = orderNo
-            };
+
             ///TODO 骑士是否有资格抢单放前面
             ClienterModel clienterModel = new Ets.Dao.Clienter.ClienterDao().GetUserInfoByUserId(userId);
 
@@ -1119,6 +1107,13 @@ namespace Ets.Service.Provider.Clienter
             {
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.HadCancelQualification);
             }
+            //这里可以优化，去掉提前验证用户信息，当失败的时候在去验证 
+            OrderListModel model = new OrderListModel()
+            {
+                clienterId = userId,
+                ClienterTrueName = clienterModel.TrueName,
+                OrderNo = orderNo
+            };
             bool bResult = orderDao.RushOrder(model);
             ///TODO 同步第三方状态和jpush 以后放到后台服务或mq进行。
             if (bResult)
@@ -1176,7 +1171,7 @@ namespace Ets.Service.Provider.Clienter
         public PageInfo<ClienterListModel> GetClienterList(ClienterSearchCriteria criteria)
         {
             return clienterDao.GetClienterList<ClienterListModel>(criteria);
-        }   
+        }
         /// <summary>
         /// 更新无效订单用户金额
         ///  zhaohailong20150706
@@ -1209,10 +1204,10 @@ namespace Ets.Service.Provider.Clienter
                 Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士" : myOrderInfo.ClienterName,
                 WithwardId = myOrderInfo.Id,
                 RelationNo = myOrderInfo.OrderNo,
-                Remark = "无效订单"
+                Remark = "异常原因"  //无效订单  修改为  异常原因  wc
             };
             clienterBalanceRecordDao.Insert(cbrm);
-        }    
+        }
         /// <summary>
         /// 修改骑士详细信息
         /// danny-20150707
@@ -1225,6 +1220,15 @@ namespace Ets.Service.Provider.Clienter
             {
                 DealFlag = false
             };
+            if (!string.IsNullOrWhiteSpace(model.recommendPhone))
+            {
+                int result = clienterDao.CheckRecommendPhone(model.recommendPhone); //判断推荐人号码在 骑士或者物流公司中是否存在
+                if (result == -1)
+                {
+                    dealResultInfo.DealMsg = "推荐人不存在！";
+                    return dealResultInfo;
+                }
+            }
             if (!clienterDao.ModifyClienterDetail(model))
             {
                 dealResultInfo.DealMsg = "修改骑士信息失败！";
@@ -1244,20 +1248,33 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="myOrderInfo"></param>
         /// <param name="uploadReceiptModel"></param>
         /// <param name="orderOther"></param>
-        bool UpdateClienterMoney(OrderListModel myOrderInfo)
-        {       
-            if (myOrderInfo.HadUploadCount >= myOrderInfo.OrderCount)
+        void UpdateClienterMoney(OrderListModel myOrderInfo)
+        {
+            if (myOrderInfo.HadUploadCount < myOrderInfo.OrderCount)
             {
-                if (CheckOrderPay(myOrderInfo.Id))
-                {
-                    UpdateClienterAccount(myOrderInfo);
-                }
-             }
-
-            return true;        
-
-        
-
+                return;
+            }
+            if (!CheckOrderPay(myOrderInfo.Id))
+            {
+                return;
+            }
+            //需要审核
+            if (myOrderInfo.IsOrderChecked == 1)
+            {
+                UpdateClienterAccount(myOrderInfo);
+            }
+            else
+            {
+                //不需要审核
+                //UpdateClienterMoneyNotNeedChecked(myOrderInfo);
+                UpdateAccountBalanceAndWithdraw(myOrderInfo);
+                //将订单标记为加入已提现
+                orderDao.UpdateJoinWithdraw(myOrderInfo.Id);
+                //订单审核通过 
+                orderDao.UpdateAuditStatus(myOrderInfo.Id, OrderAuditStatusCommon.Through.GetHashCode());
+            }
+            //更新骑士无效订单金额
+            UpdateInvalidOrder(myOrderInfo);
             #region
             ////没有上传完小票
             //if (myOrderInfo.HadUploadCount < myOrderInfo.OrderCount) 
@@ -1328,8 +1345,6 @@ namespace Ets.Service.Provider.Clienter
             //    }               
             //}
             #endregion
-
-            return false;            
         }
 
         /// <summary>
@@ -1339,7 +1354,7 @@ namespace Ets.Service.Provider.Clienter
         /// </summary>
         /// <param name="myOrderInfo"></param>
         /// <returns></returns>
-        bool UpdateBusinessMoney(OrderListModel myOrderInfo)
+        void UpdateBusinessMoney(OrderListModel myOrderInfo)
         {
             if (!(bool)myOrderInfo.IsPay && myOrderInfo.MealsSettleMode == MealsSettleMode.LineOn.GetHashCode())
             {
@@ -1363,9 +1378,7 @@ namespace Ets.Service.Provider.Clienter
                     RelationNo = myOrderInfo.OrderNo
                 });
                 #endregion
-            }
-
-            return true;
+            }            
         }
 
         /// <summary>
@@ -1376,7 +1389,7 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="myOrderInfo"></param>
         /// <param name="isNotRealOrder"></param>
         private void UpdateInvalidOrder(OrderListModel myOrderInfo)
-        {      
+        {
             decimal realOrderCommission = myOrderInfo.OrderCommission == null ? 0 : myOrderInfo.OrderCommission.Value;
             var deductCommissionReason = "";//无效订单原因
             bool isNotRealOrder = CheckIsNotRealOrder(myOrderInfo, out deductCommissionReason);
@@ -1387,7 +1400,7 @@ namespace Ets.Service.Provider.Clienter
                 //更新无效订单佣金
                 orderDao.UpdateOrderRealOrderCommission(myOrderInfo.Id.ToString(), realOrderCommission);
                 //更新无效订单(状态，原因)
-                orderOtherDao.UpdateOrderIsReal(myOrderInfo.Id, deductCommissionReason);              
+                orderOtherDao.UpdateOrderIsReal(myOrderInfo.Id, deductCommissionReason);
             }
         }
 
@@ -1427,6 +1440,8 @@ namespace Ets.Service.Provider.Clienter
                 Remark = "骑士完成订单"
             };
             clienterBalanceRecordDao.Insert(cbrm);
+
+
         }
 
         /// <summary>
@@ -1437,7 +1452,7 @@ namespace Ets.Service.Provider.Clienter
         public void UpdateAccountBalanceAndWithdraw(OrderListModel myOrderInfo)
         {
             int userId = myOrderInfo.clienterId;
-            //更新骑士 金额  
+            //更新骑士金额和可提现金额  
             bool b = clienterDao.UpdateAccountBalanceAndWithdraw(new WithdrawRecordsModel() { UserId = userId, Amount = myOrderInfo.OrderCommission.Value });
             //增加记录 
             decimal? accountBalance = 0;
@@ -1453,7 +1468,7 @@ namespace Ets.Service.Provider.Clienter
             }
             allowWithdrawPrice = myOrderInfo.AllowWithdrawPrice;
 
-
+            //增加一条获得佣金的流水
             ClienterBalanceRecord cbrm = new ClienterBalanceRecord()
             {
                 ClienterId = userId,
@@ -1464,10 +1479,10 @@ namespace Ets.Service.Provider.Clienter
                 Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士:" + userId : myOrderInfo.ClienterName,
                 WithwardId = myOrderInfo.Id,
                 RelationNo = myOrderInfo.OrderNo,
-                Remark = "骑士完成订单"
+                Remark = "骑士完成订单" + (myOrderInfo.IsOrderChecked == 0 ? "(订单不需审核)" : "")
             };
             clienterBalanceRecordDao.Insert(cbrm);
-
+            //增加一条骑士获得可提现金额的流水
             ClienterAllowWithdrawRecord cawrm = new ClienterAllowWithdrawRecord()
             {
                 ClienterId = userId,
@@ -1478,7 +1493,7 @@ namespace Ets.Service.Provider.Clienter
                 Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士:" + userId : myOrderInfo.ClienterName,
                 WithwardId = myOrderInfo.Id,
                 RelationNo = myOrderInfo.OrderNo,
-                Remark = "骑士完成订单"
+                Remark = "骑士完成订单" + (myOrderInfo.IsOrderChecked == 0 ? "(订单不需审核)" : "")
             };
             clienterAllowWithdrawRecordDao.Insert(cawrm);
         }
@@ -1493,13 +1508,14 @@ namespace Ets.Service.Provider.Clienter
         {
             OrderMapDetail mapDetail = orderDao.GetOrderMapDetail(myOrderInfo.Id);
             GlobalConfigModel globalSetting = GlobalConfigDao.GlobalConfigGet(0);
-            reason = "";
+            bool boolreason = false;
+            StringBuilder sb = new StringBuilder();
             if (mapDetail.GrabToCompleteDistance > -1)//如果抢单和完成两个点的坐标都有效，才进行距离判断
             {
                 if (mapDetail.GrabToCompleteDistance <= ParseHelper.ToInt(globalSetting.GrabToCompleteDistance, 0))
                 {
-                    reason = "接单完成位置重合";
-                    return true;
+                    sb.Append("接单完成位置重合;");
+                    boolreason = true;
                 }
             }
 
@@ -1507,8 +1523,8 @@ namespace Ets.Service.Provider.Clienter
             if (!(myOrderInfo.GrabTime.Value.AddMinutes(5) < actualDoneDate &&
                 actualDoneDate < myOrderInfo.GrabTime.Value.AddMinutes(120)))
             {
-                reason = "完成时间不在5-120分钟内";
-                return true;
+                sb.Append("完成时间不在5-120分钟内;");
+                boolreason = true;
             }
 
             int num = orderDao.GetTotalOrderNumByClienterID(myOrderInfo.clienterId, actualDoneDate);
@@ -1516,19 +1532,19 @@ namespace Ets.Service.Provider.Clienter
             //如果骑士今天已经完成（或完成后，又取消了,不包含当前任务中的订单数量）的订单数量大于配置的值，则当前任务中的所有订单都扣除网站补贴
             if (num > orderCountSetting)
             {
-                reason = string.Format("完成订单量超过{0}个", orderCountSetting);
-                return true;
+                sb.AppendFormat("完成订单量超过{0}个;", orderCountSetting);
+                boolreason = true;
             }
 
             DateTime doneDate = ParseHelper.ToDatetime(myOrderInfo.ActualDoneDate, DateTime.Now).AddDays(1);//完成时间加一天
             if (myOrderInfo.Status == OrderStatus.Status1.GetHashCode() && myOrderInfo.ActualDoneDate != null && DateTime.Now >= doneDate)
             {
-                reason = "小票上传时间超过24小时";
-                return true;
+                sb.Append("小票上传时间超过24小时;");
+                boolreason = true;
             }
-
-            return false;
-        }      
+            reason = sb.ToString();
+            return boolreason;
+        }
         #endregion
 
         /// <summary>
@@ -1613,6 +1629,25 @@ namespace Ets.Service.Provider.Clienter
         //    clienterAllowWithdrawRecordDao.Insert(cawrm);
         //}
         #endregion
+
+        /// <summary>
+        /// 更新骑士金额(不需要审核的订单)
+        /// 茹化肖
+        /// 2015年8月10日11:07:28      
+        /// </summary>
+        /// <param name="myOrderInfo"></param>
+        /// <param name="uploadReceiptModel"></param>
+        /// <param name="orderOther"></param>
+        void UpdateClienterMoneyNotNeedChecked(OrderListModel myOrderInfo)
+        {
+            if (myOrderInfo.HadUploadCount >= myOrderInfo.OrderCount)//小票上传完成
+            {
+                if (CheckOrderPay(myOrderInfo.Id))//订单已经支付
+                {
+                    UpdateAccountBalanceAndWithdraw(myOrderInfo);
+                }
+            }
+        }
     }
 
 }

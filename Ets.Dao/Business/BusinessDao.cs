@@ -561,7 +561,8 @@ order by a.id desc
                                 b.BalancePrice,
                                 b.OneKeyPubOrder,
                                 b.IsAllowOverdraft,
-                                b.IsEmployerTask 
+                                b.IsEmployerTask,
+                                b.IsOrderChecked                                 
                                 FROM dbo.business as b WITH(NOLOCK)
                                 left join BusinessGroup on b.BusinessGroupId=BusinessGroup.Id
                                 WHERE b.Id = @busiId";
@@ -1839,7 +1840,8 @@ SELECT   b.Id ,
          ISNULL(b.OneKeyPubOrder,0) OneKeyPubOrder,
          b.IsAllowOverdraft,
          b.IsEmployerTask,
-         ISNULL(b.RecommendPhone,'') AS RecommendPhone
+         ISNULL(b.RecommendPhone,'') AS RecommendPhone,
+         b.IsOrderChecked 
 FROM business b WITH(NOLOCK) 
 	Left join BusinessFinanceAccount bfa WITH(NOLOCK) ON b.Id=bfa.BusinessId AND bfa.IsEnable=1
     Left join [group] g WITH(NOLOCK) on g.Id=b.GroupId 
@@ -1940,6 +1942,7 @@ ORDER BY btr.Id;";
             string remark = GetRemark(brm, model); 
             //商铺名称、联系电话、联系座机、配 送 费、城 市、地 址、经 纬 度、结算比例设置、补贴策略设置(应付)、
             //补贴策略、餐费结算方式、一键发单、余额可以透支、使用雇主任务时间限制、第三方ID 
+            //结算类型去掉，以后这一列不在有用了
             string sql = @"UPDATE business 
                             SET Name=@Name,
                                 Landline=@Landline,
@@ -1953,25 +1956,20 @@ ORDER BY btr.Id;";
                                 Latitude=@Latitude,
                                 Longitude=@Longitude,
                                 BusinessGroupId=@BusinessGroupId,
-                                MealsSettleMode=@MealsSettleMode,
-                                CommissionType=@CommissionType,
+                                MealsSettleMode=@MealsSettleMode, 
                                 OriginalBusiId=@OriginalBusiId,
                                 OneKeyPubOrder=@OneKeyPubOrder,
                                 IsEmployerTask=@IsEmployerTask,
-IsAllowOverdraft=@IsAllowOverdraft,
+                                IsAllowOverdraft=@IsAllowOverdraft,
+                                IsOrderChecked=@IsOrderChecked,
+                                RecommendPhone=@RecommendPhone,
+                                BusinessCommission=@BusinessCommission,
+                                CommissionFixValue=@CommissionFixValue                                 
                                            ";
             if (model.GroupId > 0)
             {
-                sql += " GroupId=@GroupId, ";
-            }
-            if (model.CommissionType == 1)
-            {
-                sql += " BusinessCommission=@BusinessCommission ";
-            }
-            else
-            {
-                sql += " CommissionFixValue=@CommissionFixValue ";
-            }
+                sql += " ,GroupId=@GroupId, ";
+            }  
             sql += @" OUTPUT
                         Inserted.Id,
                         @OptId,
@@ -1999,8 +1997,13 @@ IsAllowOverdraft=@IsAllowOverdraft,
             parm.AddWithValue("@Address", model.Address);
             parm.AddWithValue("@Latitude", model.Latitude);
             parm.AddWithValue("@Longitude", model.Longitude);
-            parm.AddWithValue("@CommissionType", model.CommissionType);
-            parm.AddWithValue("@BusinessCommission", model.BusinessCommission);
+            //parm.AddWithValue("@CommissionType", model.CommissionType);
+            decimal businessCommission = 0;
+            if (model.BusinessCommission.HasValue)
+            {
+                businessCommission = model.BusinessCommission.Value;
+            }
+            parm.AddWithValue("@BusinessCommission", Math.Round(businessCommission, 1));
             parm.AddWithValue("@CommissionFixValue", model.CommissionFixValue);
             parm.AddWithValue("@BusinessGroupId", model.BusinessGroupId);
             parm.AddWithValue("@MealsSettleMode", model.MealsSettleMode);
@@ -2013,6 +2016,8 @@ IsAllowOverdraft=@IsAllowOverdraft,
             parm.AddWithValue("@OneKeyPubOrder", model.OneKeyPubOrder);
             parm.AddWithValue("@IsEmployerTask", model.IsEmployerTask);
             parm.Add("@IsAllowOverdraft", DbType.Int16).Value = model.IsAllowOverdraft;
+            parm.Add("@RecommendPhone", DbType.String).Value = model.RecommendPhone ?? ""; //推荐人手机号 
+            parm.Add("@IsOrderChecked", DbType.Int32).Value = model.IsOrderChecked;
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
         /// <summary>
@@ -2097,9 +2102,16 @@ IsAllowOverdraft=@IsAllowOverdraft,
                     remark.AppendFormat("余额透支原值:{0},修改为{1};", brm.IsEmployerTask, model.IsEmployerTask);
                 }
                 //第三方Id
-                if (model.OriginalBusiId != model.OriginalBusiId)
+                if (brm.OriginalBusiId.HasValue)
                 {
-                    remark.AppendFormat("第三方ID原值:{0},修改为{1};", brm.OriginalBusiId, model.OriginalBusiId);
+                    if (brm.OriginalBusiId.Value != model.OriginalBusiId)
+                    {
+                        remark.AppendFormat("第三方ID原值:{0},修改为{1};", brm.OriginalBusiId, model.OriginalBusiId);
+                    }
+                } 
+                if (brm.RecommendPhone != model.RecommendPhone)
+                {
+                    remark.AppendFormat("推荐人手机号原值:{0},修改为{1};", brm.RecommendPhone, model.RecommendPhone);
                 }
             }
             return remark.ToString();

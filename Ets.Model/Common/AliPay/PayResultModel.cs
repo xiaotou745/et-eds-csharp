@@ -32,5 +32,10 @@ namespace Ets.Model.Common.AliPay
         /// 回调地址
         /// </summary>
         public string notifyUrl { get; set; }
+
+        /// <summary>
+        /// 微信预支付交易会话标识
+        /// </summary>
+        public string prepayId { get; set; }
     }
 }

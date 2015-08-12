@@ -87,6 +87,16 @@ namespace Ets.Model.DomainModel.GlobalConfig
         public string OverStoreSubsidies { get; set; }
 
         /// <summary>
+        /// 基本补贴佣金
+        /// </summary>
+        public string BaseCommission { get; set; }
+
+        /// <summary>
+        /// 基本补贴佣金网站补贴
+        /// </summary>
+        public string BaseSiteSubsidies { get; set; }
+
+        /// <summary>
         /// 是否开启跨店抢单补贴(0不开启,1开启)
         /// </summary>
         public string IsStartOverStoreSubsidies { get; set; }

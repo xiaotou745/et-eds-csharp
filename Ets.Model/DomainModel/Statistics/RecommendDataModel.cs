@@ -11,43 +11,71 @@ namespace Ets.Model.DomainModel.Statistics
     /// </summary>
     public class RecommendDataModel
     {
-        public int ID { get; set; }
-
         /// <summary>
-        /// 商家名称
-        /// </summary>
-        public string Name { get; set; }
-        /// <summary>
-        /// 商家电话
+        /// 推荐人手机号(骑士)
         /// </summary>
         public string PhoneNo { get; set; }
         /// <summary>
-        /// 商家地址
+        /// 推荐人真实姓名 骑士
         /// </summary>
-        public string Address { get; set; }
+        public string TrueName { get; set; }
         /// <summary>
-        /// 注册时间
+        /// 推荐的骑士总数量 骑士
         /// </summary>
-        public DateTime InsertTime { get; set; }
+        public int ClienterCount { get; set; }
         /// <summary>
-        /// 推荐人手机号
+        /// 骑士完成的任务总数
         /// </summary>
-        public string RecommendPhone { get; set; }
+        public int TaskCount { get; set; }
         /// <summary>
-        /// 订单数量
+        /// 骑士完成的订单总素
         /// </summary>
         public int OrderCount { get; set; }
         /// <summary>
-        /// 商家审核状态
+        /// 推荐人手机号商家
         /// </summary>
-        public byte Status { get; set; }
+        public string RecommendPhone { get; set; }
+        /// <summary>
+        /// 推荐商家数量
+        /// </summary>
+        public int BusCount { get; set; }
     }
 
 
-    //public class ResultRecommendDataList
-    //{
-    //    public IList<RecommendDataModel> DataList { get; set; }
+        /// <summary>
+    /// 推荐人统计 --用户类型商家
+        /// </summary>
+    public class RecommendDetailDataModel
+    {
+        /// <summary>
+        /// 商户名称
+        /// </summary>
+        public string BusName { get; set; }
+        /// <summary>
+        /// 骑士名称
+        /// </summary>
+        public string CliName { get; set; }
+        /// <summary>
+        /// 注册手机号
+        /// </summary>
+        public string PhoneNo { get; set; }
 
-    //    public int TotalCount { get}
-    //}
+        /// <summary>
+        /// 商户地址
+        /// </summary>
+        public string BusAddress { get; set; }
+        /// <summary>
+        /// 注册时间
+        /// </summary>
+        public DateTime RegDateTime { get; set; }
+        /// <summary>
+        /// 订单总数
+        /// </summary>
+        public int OrderCount { get; set; }
+        /// <summary>
+        /// 任务总数
+        /// </summary>
+        public int TaskCount { get; set; }
+    }
+
 }

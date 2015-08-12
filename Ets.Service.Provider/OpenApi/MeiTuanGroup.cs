@@ -354,7 +354,9 @@ namespace Ets.Service.Provider.OpenApi
             model.ordercommission = commissonPro.GetCurrenOrderCommission(orderComm);  //骑士佣金
             model.websitesubsidy = commissonPro.GetOrderWebSubsidy(orderComm);//网站补贴
             model.commissionrate = commissonPro.GetCommissionRate(orderComm);//订单佣金比例
-            model.settlemoney = commissonPro.GetSettleMoney(orderComm);//订单结算金额
+            model.basecommission = commissonPro.GetBaseCommission(orderComm);//基础补贴佣金
+
+            model.settlemoney =0; //订单结算金额
             model.adjustment = commissonPro.GetAdjustment(orderComm);//订单额外补贴金额
             #endregion
             if (!(bool)model.is_pay && model.MealsSettleMode == MealsSettleMode.LineOn.GetHashCode())//未付款且线上支付

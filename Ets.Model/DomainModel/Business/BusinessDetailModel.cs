@@ -60,8 +60,12 @@ namespace Ets.Model.DomainModel.Business
         /// </summary>
         public int BindClienterQty { get; set; }
         /// <summary>
-        /// 物流公司编号
+        /// 推荐人手机号
         /// </summary>
         public string RecommendPhone { get; set; }
+        /// <summary>
+        /// 订单是否审核 1是 0 否
+        /// </summary>
+        public int IsOrderChecked { get; set; } 
     }
 }

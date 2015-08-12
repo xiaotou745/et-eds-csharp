@@ -33,5 +33,9 @@ namespace Ets.Model.ParameterModel.Order
         /// 骑士纬度
         /// </summary>
         public double latitude { get; set; }
+        /// <summary>
+        /// 骑士真实名称
+        /// </summary>
+        public string ClienterTrueName { get; set; }
     }
 }

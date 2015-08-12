@@ -45,7 +45,10 @@ namespace Ets.Model.DomainModel.Clienter
         public decimal? AccountBalance { get; set; }
 
         public decimal AllowWithdrawPrice { get; set; }
-
+        /// <summary>
+        /// 物流公司Id
+        /// </summary>
+        public int DeliveryCompanyId { get; set; }
         /// <summary>
         /// 状态
         /// </summary>

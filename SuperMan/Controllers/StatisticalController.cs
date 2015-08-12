@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Web.Mvc;
 using Ets.Model.DomainModel.Statistics;
+using Ets.Service.IProvider.Clienter;
 using Ets.Service.IProvider.Statistics;
+using Ets.Service.Provider.Clienter;
 using Ets.Service.Provider.Statistics;
 using ETS.Data.PageData;
 using Ets.Model.Common;
@@ -34,6 +36,8 @@ namespace SuperMan.Controllers
         private readonly IAreaProvider areaProvider = new AreaProvider();
 
         private readonly IBusinessProvider bussinessProvider = new BusinessProvider();
+
+        private readonly IClienterProvider clienterProvider=new ClienterProvider();
 
         #region 订单完成时间间隔统计
 
@@ -192,8 +196,10 @@ namespace SuperMan.Controllers
         {
             RecommendQuery recommendQuery=new RecommendQuery();
             recommendQuery.PageIndex = 1;
+            recommendQuery.DataType = 1;
+            ViewBag.DataType = 1;//设置显示商户列表
             recommendQuery.StartDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).ToString();
-            StatisticsProvider statisticsProvider = new StatisticsProvider();
+            var statisticsProvider = new StatisticsProvider();
             var pagelist = statisticsProvider.GetRecommendList(recommendQuery);
             return View(pagelist);
         }
@@ -202,15 +208,71 @@ namespace SuperMan.Controllers
         /// </summary>
         /// <param name="recommendQuery"></param>
         /// <returns></returns>
-        public ActionResult PostRecommendStatistical(RecommendQuery recommendQuery)
+        public ActionResult PostRecommendStatistical(int PageIndex = 1)
         {
-            //var criteria=new
+            RecommendQuery recommendQuery=new RecommendQuery();
+            TryUpdateModel(recommendQuery);
+            if (recommendQuery.DataType != 1 && recommendQuery.DataType != 2)
+            {
+                recommendQuery.DataType = 1;
+            }
+            if (string.IsNullOrWhiteSpace(recommendQuery.StartDate))
+            {
+                recommendQuery.StartDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).ToString();
+            }
+            ViewBag.DataType = recommendQuery.DataType;
+            recommendQuery.PageIndex = PageIndex;
             StatisticsProvider statisticsProvider  = new StatisticsProvider();
             var pagelist= statisticsProvider.GetRecommendList(recommendQuery);
             return PartialView("PostRecommendStatistical", pagelist);
-            //return View();
         }
-
+        /// <summary>
+        /// 推荐统计详情
+        /// 茹化肖
+        /// 2015年8月10日16:34:42
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult RecommendDetail(string phoneNum,string dataType)
+        {
+           
+            ViewBag.DataType = string.IsNullOrWhiteSpace(dataType) ? 1 : Convert.ToInt32(dataType);
+            ViewBag.PhoneNum = string.IsNullOrWhiteSpace(phoneNum) ? "" : phoneNum;
+            ViewBag.TrueName ="";
+            if (dataType == "2")
+            {
+                ViewBag.TrueName = clienterProvider.GetName(phoneNum);
+            }
+            RecommendQuery recommendQuery = new RecommendQuery();
+            recommendQuery.DataType = Convert.ToInt32(dataType);
+            recommendQuery.PageIndex = 1;
+            //recommendQuery.StartDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).ToString();
+            recommendQuery.RecommendPhone = phoneNum;
+            var pagelist = statisticsProvider.GetRecommendDetailList(recommendQuery);
+            return View(pagelist);
+        }
+        /// <summary>
+        /// 推荐统计详情分页
+        /// </summary>
+        /// <param name="PageIndex"></param>
+        /// <returns></returns>
+        public ActionResult PsotRecommendList(int PageIndex = 1)
+        {
+            RecommendQuery recommendQuery = new RecommendQuery();
+            TryUpdateModel(recommendQuery);
+            if (string.IsNullOrWhiteSpace(recommendQuery.RecommendPhone))
+            {
+                recommendQuery.RecommendPhone = System.Web.HttpContext.Current.Request["phoneNum"];
+            }
+            recommendQuery.PageIndex = PageIndex;
+            if (recommendQuery.DataType != 1 && recommendQuery.DataType != 2)
+            {
+                recommendQuery.DataType = 1;
+            }
+            ViewBag.DataType = recommendQuery.DataType;
+            var statisticsProvider = new StatisticsProvider();
+            var pagelist = statisticsProvider.GetRecommendDetailList(recommendQuery);
+            return PartialView("_PostRecommendList", pagelist);
+        }
         #endregion
 
         /// <summary>

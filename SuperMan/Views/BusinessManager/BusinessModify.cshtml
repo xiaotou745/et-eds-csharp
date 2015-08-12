@@ -30,9 +30,14 @@
             <div class="control-group" style="margin-top: 10px">
                 <label>注册账号：</label>
                 <label>@Model.PhoneNo</label>
-                <div class="SearchMd" style="padding:0px;border-bottom:solid 0px #dcdcdc;">
-                    <div style="margin-left: 630px;margin-top: -22px"><input type="button" value="保存" class="searchBtn" id="btnModifyCommit" /></div>
+                <div class="SearchMd" style="padding: 0px; border-bottom: solid 0px #dcdcdc;">
+                    <div style="margin-left: 630px; margin-top: -22px"><input type="button" value="保存" class="searchBtn" id="btnModifyCommit"/>
+                    </div>
                 </div>
+            </div>
+            <div class="control-group" style="margin-top: 10px">
+                <label>推荐人账号：</label>
+                <input name="RecommendPhone" id="recomPhone" value="@Model.RecommendPhone" />
             </div>
             <div class="control-group">
                 <label>商铺名称：</label>
@@ -47,10 +52,10 @@
                 <label>联系座机：</label>
                 <input name="busiLandline" id="busiLandline" type="text" value="@Model.Landline">
             </div>
-            <div class="control-group">
+            @*<div class="control-group">
                 <label style="margin-left: 5px">配  送  费：</label>
                 <input name="busiWaisong" id="busiWaisong" type="text" value="@Model.DistribSubsidy">
-            </div>
+            </div>*@
             <div class="control-group">
                 <label style="margin-left: 20px">城  市：</label>
                 @Html.DropDownList("busiCity", new SelectList(ViewBag.openCityList.Result.AreaModels, "Code", "Name", Model.CityId), "-请选择-", new { style = "width:77px" })
@@ -67,12 +72,22 @@
                 <input name="busiLatitude" id="busiLatitude" style="width: 120px;" type="text" value="@Model.Latitude" disabled="disabled">
                 <a id="postion" style="margin-left: 15px"><b>地图定位</b></a>
             </div>
+            <div class="control-group" style="margin-bottom: 10px" id="OrderChecked">
+                <label style="margin-left: 5px">订单是否需要审核：</label>
+                <label><input name="IsCheckOrder" type="radio" value="1" @(Model.IsOrderChecked == 1 ? "checked" : "")/>是 </label>
+                <label><input name="IsCheckOrder" type="radio" value="0" @(Model.IsOrderChecked == 0 ? "checked" : "")/>否 </label>
+            </div> 
         </div>
         <div style="width:750px;height: auto;border-bottom:solid 0px #dcdcdc;padding-left:10px;">
             <div class="control-group" style="margin-top: 10px">
-                <label style="font-size:15px">结算比例设置(应收)</label>
+                <label style="font-size: 15px">应收商家</label>
             </div>
             <div class="control-group">
+                <label>订单金额*</label> 
+                    <label title="应收商家配送费比例">商配比例</label><input id="bussinessDeliveryRatio" style="width:100px" type="text" value="@Model.BusinessCommission" />%&nbsp;+&nbsp;<label title="应收商家配送费定额">商配定额</label><input id="bussinessFixValue" style="width:100px" value="@Model.CommissionFixValue" />&nbsp;+&nbsp;
+                    <label title="代收客户配送费">代收客配</label><input id="customerDeliveryMoney" style="width:100px" value="@Model.DistribSubsidy" />
+</div>
+            @*<div class="control-group">
                 <input id="rCommissionFormulaMode0" name="rCommissionFormulaMode" type="radio" value="1" @(Model.CommissionType == 1 ? "checked" : "")>
                 <label for="rCommissionFormulaMode0">结算比例：</label>
                 <input id="rCommissionFormulaMode1" name="rCommissionFormulaMode" type="radio" value="2" style="margin-left:30px" @(Model.CommissionType == 2 ? "checked" : "")>
@@ -86,7 +101,7 @@
                 <div id="divCommissionFixValue" @(Model.CommissionType == 1 ? "hidden" : "")>
                     <input name="CommissionFixValue" id="CommissionFixValue" style="width: 120px;" type="text" value="@Model.CommissionFixValue">元/单
                 </div>
-            </div>
+            </div>*@
         </div>
         <div style="width:750px;height: auto;border-bottom:solid 1px #dcdcdc;padding-left:10px;">
             <div class="control-group" style="margin-top: 10px">
@@ -166,10 +181,7 @@
                         }
                     </div>
                 </div>*@
-        </div>
-
-
-
+        </div> 
         @*<div style="width:750px;height: auto;border-bottom:solid 1px #dcdcdc;padding-left:10px;">
             </div>*@
         @*<div class="SearchMd">
@@ -294,6 +306,7 @@
         <input value="关闭" type="button" class="J_closebox qxBtn" />
     </p>
 </div>
+@* ReSharper disable Html.CssIdNotUsed *@
 <script type="text/javascript">
     var adminjs = new adminglass();
     //实例化后台类
@@ -341,12 +354,10 @@
                         } else {
                             $(":checkbox[id='" + businessExpressRef[i].ExpressId + "']").prop("checked", false);
                         }
-
                     }
                 }
             }
         });
-
     };
 
     function funAddThirdRelation() {
@@ -446,7 +457,7 @@
         var name = $('#busiName').val();
         var phoneNo2 = $('#busiPhoneNo2').val();
         var landline = $('#busiLandline').val();
-        var distribSubsidy = $('#busiWaisong').val();
+        //var distribSubsidy = $('#busiWaisong').val();
         var cityId = $('#busiCity').val();
         var districtId = $('#busiDistrict').val();
         var cityName = $('#busiCity option:selected').text();
@@ -454,9 +465,10 @@
         var adress = $('#busiAddr').val();
         var latitude = $('#busiLatitude').val();
         var longitude = $('#busiLongitude').val();
-        var commissionType = $('input[name="rCommissionFormulaMode"]:checked').val();
-        var commissionText = $('#busCommissionText').val();
-        var commissionFixValue = $('#CommissionFixValue').val();
+        //var commissionType = $('input[name="rCommissionFormulaMode"]:checked').val();
+        //var commissionType = 2;
+        //var commissionText = $('#busCommissionText').val();
+        //var commissionFixValue = $('#CommissionFixValue').val();
         var businessGroupId = $('#businessGroupID').val();
         var mealsSettleMode = $('#busiMealsSettleMode').val();
         var groupId = 0;
@@ -464,8 +476,33 @@
         var hidGroupId = $('#hidGroupId').val();
         var oneKeyPubOrder = $('input[name="rOneKeyPubOrder"]:checked').val();
         var IsEmployerTask = $('input[name="rIsEmployerTask"]:checked').val();
-
         var isAllowOverdraft = $('input[name="rBalanceAllowOverDraft"]:checked').val();
+        var recomPhone = $('#recomPhone').val(); //推荐人账户
+
+        var bussinessDeliveryRatio = $('#bussinessDeliveryRatio').val();//商配比例
+        var bussinessFixValue = $('#bussinessFixValue').val(); // 商配定额
+        var customerDeliveryMoney = $('#customerDeliveryMoney').val(); //代收客配
+       // if (bussinessDeliveryRatio.trim() == '' || Number(bussinessDeliveryRatio) < 0 || Number(bussinessDeliveryRatio) > 100) {
+        if (isNaN(parseFloat(bussinessDeliveryRatio)) || parseFloat(bussinessDeliveryRatio) < 0 || parseFloat(bussinessDeliveryRatio) > 100) {
+            alert("商配比例数值必须在0-100之间");
+            return;
+        }
+        if (isNaN(parseFloat(bussinessFixValue)) || parseFloat(bussinessFixValue) < 0 || parseFloat(bussinessFixValue)>100) {
+            alert("商配定额必须在0-100之间");
+            return;
+        }
+        //商配比例为0，则结算类型为2;商配定额为0，则结算类型为1，都不为0，默认2
+        //if (parseFloat(bussinessDeliveryRatio) == 0) {
+        //    commissionType = 2;
+        //} else if (parseFloat(bussinessFixValue) == 0) {
+        //    commissionType = 1;
+        //} else {
+        //    commissionType = 2;
+        //}
+        if (isNaN(parseFloat(customerDeliveryMoney)) || parseFloat(customerDeliveryMoney) < 0 || parseFloat(customerDeliveryMoney) >100) {
+            alert("代收客配必须在0-100之间");
+            return;
+        }
         if (hidGroupId == 0) {
             groupId = $('#busGroupId').val();
         }
@@ -492,15 +529,24 @@
             alert("请输入正确的座机号!");
             return;
         }
-        if (!decimalFormat.test(distribSubsidy) || distribSubsidy == '') {
-            alert("请输入正确的配送费，且不小于0元！");
+        //if (!decimalFormat.test(distribSubsidy) || distribSubsidy == '') {
+        //    alert("请输入正确的配送费，且不小于0元！");
+        //    return;
+        //} 
+        if (recomPhone.trim().length > 0 && !reg.test(recomPhone)) {
+            alert("请输入正确的推荐人手机号!");
             return;
         }
         if (cityId == "") {
             alert("请选择城市！");
             return;
         }
-
+        if (recomPhone.trim().length > 0) {
+            if (recomPhone.trim() == phoneNo2.trim()) {
+                alert("不能推荐自己哦");
+                return;
+            }
+        }
         if (districtId == "") {
             alert("请选择区域！");
             return;
@@ -517,19 +563,18 @@
             alert("请输入纬度！");
             return;
         }
-        if (commissionType == 1) {
-            if (commissionText == '' || Number(commissionText) < 1 || Number(commissionText) > 100) {
-                alert("结算比例的区间为1-100!");
-                return;
-            }
-        } else {
+        //if (commissionType == 1) {
+        //    if (commissionText == '' || Number(commissionText) < 1 || Number(commissionText) > 100) {
+        //        alert("结算比例的区间为1-100!");
+        //        return;
+        //    }
+        //} else {
 
-            if (!decimalFormat.test(commissionFixValue) || commissionFixValue == '') {
-                alert("请输入正确的固定金额，且不小于0元!");
-                return;
-            }
-        }
-
+        //    if (!decimalFormat.test(commissionFixValue) || commissionFixValue == '') {
+        //        alert("请输入正确的固定金额，且不小于0元!");
+        //        return;
+        //    }
+        //} 
         //var dealflag = false;
         //$(".third-list").each(function () {
         //    var busiSourceId = $(this).find("input[name=busiSourceId]").val().trim();
@@ -550,9 +595,30 @@
         //    return false ;
         //}
         var paramaters = {
-            "Id": id, "Name": name, "Landline": landline, "PhoneNo2": phoneNo2, "DistribSubsidy": distribSubsidy, "CityId": cityId, "districtId": districtId, "City": cityName,
-            "district": districtName, "Address": adress, "Latitude": latitude, "Longitude": longitude, "CommissionType": commissionType, "BusinessCommission": commissionText,
-            "CommissionFixValue": commissionFixValue, "BusinessGroupId": businessGroupId, "MealsSettleMode": mealsSettleMode, "groupId": groupId, "originalBusiId": originalBusiId, "oneKeyPubOrder": oneKeyPubOrder, "IsEmployerTask": IsEmployerTask, "isAllowOverdraft": isAllowOverdraft
+            "Id": id,
+            "Name": name,
+            "Landline": landline,
+            "PhoneNo2": phoneNo2,
+            "DistribSubsidy": customerDeliveryMoney,
+            "CityId": cityId,
+            "districtId": districtId,
+            "City": cityName,
+            "district": districtName,
+            "Address": adress,
+            "Latitude": latitude,
+            "Longitude": longitude,
+            //"CommissionType": commissionType,
+            "BusinessCommission": bussinessDeliveryRatio,
+            "CommissionFixValue": bussinessFixValue,
+            "BusinessGroupId": businessGroupId,
+            "MealsSettleMode": mealsSettleMode,
+            "groupId": groupId,
+            "originalBusiId": originalBusiId,
+            "oneKeyPubOrder": oneKeyPubOrder,
+            "IsEmployerTask": IsEmployerTask,
+            "isAllowOverdraft": isAllowOverdraft,
+            "RecommendPhone": recomPhone,
+            "IsOrderChecked":$('#OrderChecked input[name="IsCheckOrder"]:checked ').val()
         };
         var url = "/BusinessManager/ModifyBusinessDetail";
         $.ajax({
@@ -607,5 +673,6 @@
         return false;
     });
 </script>
+@* ReSharper restore Html.CssIdNotUsed *@
 <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=dAeaG6HwIFGlkbqtyKkyFGEC"></script>
 
