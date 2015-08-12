@@ -1,0 +1,88 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using ETS.Dao;
+using ETS.Data.Core;
+using ETS.Extension;
+using Ets.Model.DataModel.Finance;
+using ETS.Util;
+
+namespace Ets.Dao.Finance
+{
+    /// <summary>
+    /// 数据访问类ImprestBalanceRecordDao。
+    /// Generate By: tools.etaoshi.com
+    /// Generate Time: 2015-08-12 17:03:48
+    ///  caoheyang 
+    /// </summary>
+
+    public class ImprestBalanceRecordDao : DaoBase
+    {
+        /// <summary>
+        /// 增加一条记录
+        /// </summary>
+        public int Insert(ImprestBalanceRecord imprestBalanceRecord)
+        {
+            const string insertSql = @"
+insert into ImprestBalanceRecord(Amount,BeforeAmount,AfterAmount,OptName,OptType,Remark,ClienterName,ClienterPhoneNo)
+values(@Amount,@BeforeAmount,@AfterAmount,@OptName,@OptType,@Remark,@ClienterName,@ClienterPhoneNo)
+
+select @@IDENTITY";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("Amount", imprestBalanceRecord.Amount);
+            dbParameters.AddWithValue("BeforeAmount", imprestBalanceRecord.BeforeAmount);
+            dbParameters.AddWithValue("AfterAmount", imprestBalanceRecord.AfterAmount);
+            dbParameters.AddWithValue("OptName", imprestBalanceRecord.OptName);
+            dbParameters.AddWithValue("OptType", imprestBalanceRecord.OptType);
+            dbParameters.AddWithValue("Remark", imprestBalanceRecord.Remark);
+            dbParameters.AddWithValue("ClienterName", imprestBalanceRecord.ClienterName);
+            dbParameters.AddWithValue("ClienterPhoneNo", imprestBalanceRecord.ClienterPhoneNo);
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters));
+        }
+        /// <summary>
+        /// 更新一条记录
+        /// </summary>
+        public void Update(ImprestBalanceRecord imprestBalanceRecord)
+        {
+            const string updateSql = @"
+update  ImprestBalanceRecord
+set  Amount=@Amount,BeforeAmount=@BeforeAmount,AfterAmount=@AfterAmount,OptName=@OptName,OptTime=@OptTime,OptType=@OptType,Remark=@Remark,ClienterName=@ClienterName,ClienterPhoneNo=@ClienterPhoneNo
+where  Id=@Id ";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("Id", imprestBalanceRecord.Id);
+            dbParameters.AddWithValue("Amount", imprestBalanceRecord.Amount);
+            dbParameters.AddWithValue("BeforeAmount", imprestBalanceRecord.BeforeAmount);
+            dbParameters.AddWithValue("AfterAmount", imprestBalanceRecord.AfterAmount);
+            dbParameters.AddWithValue("OptName", imprestBalanceRecord.OptName);
+            dbParameters.AddWithValue("OptTime", imprestBalanceRecord.OptTime);
+            dbParameters.AddWithValue("OptType", imprestBalanceRecord.OptType);
+            dbParameters.AddWithValue("Remark", imprestBalanceRecord.Remark);
+            dbParameters.AddWithValue("ClienterName", imprestBalanceRecord.ClienterName);
+            dbParameters.AddWithValue("ClienterPhoneNo", imprestBalanceRecord.ClienterPhoneNo);
+            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+        }
+
+        /// <summary>
+        /// 根据ID获取对象
+        /// </summary>
+        public ImprestBalanceRecord GetById(int id)
+        {
+            const string getbyidSql = @"
+select  Id,Amount,BeforeAmount,AfterAmount,OptName,OptTime,OptType,Remark,ClienterName,ClienterPhoneNo
+from  ImprestBalanceRecord (nolock)
+where  Id=@Id ";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("Id", id);
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, getbyidSql, dbParameters));
+            if (DataTableHelper.CheckDt(dt))
+            {
+                return DataTableHelper.ConvertDataTableList<ImprestBalanceRecord>(dt)[0];
+            }
+            return null;
+		}
+    }
+}
