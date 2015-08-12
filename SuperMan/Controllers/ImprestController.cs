@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using Microsoft.Ajax.Utilities;
+using ETS.Data.PageData;
+using Ets.Model.DataModel.Finance;
 
 namespace SuperMan.Controllers
 {
@@ -16,8 +17,11 @@ namespace SuperMan.Controllers
         /// 备用金充值列表页  add by caoheyang  20150812
         /// </summary>
         /// <returns></returns>
+        [HttpGet]
         public ActionResult ImprestRechargeList()
         {
+            ImprestRecharge imprestRecharge = new ImprestRecharge();
+            PageInfo<ImprestBalanceRecord> models = new PageInfo<ImprestBalanceRecord>(0,1,new List<ImprestBalanceRecord>(),100,15);
             return View();
         }
 
@@ -25,8 +29,10 @@ namespace SuperMan.Controllers
         /// 备用金充值列表页  异步加载区域 add by caoheyang  20150812
         /// </summary>
         /// <returns></returns>
-        public ActionResult DoImprestRechargeList()
+        [HttpPost]
+        public ActionResult DoImprestRechargeList(int pageindex = 1)
         {
+            PageInfo<ImprestBalanceRecord> models = new PageInfo<ImprestBalanceRecord>(0, 1, new List<ImprestBalanceRecord>(), 100, 15);
             return PartialView();
         }
 
@@ -34,6 +40,7 @@ namespace SuperMan.Controllers
         /// 备用金充值功能 add by caoheyang  20150812
         /// </summary>
         /// <returns></returns>
+        [HttpPost]
         public JsonResult ImprestRecharge()
         {
             return new JsonResult();
@@ -43,6 +50,7 @@ namespace SuperMan.Controllers
         /// 备用金支出列表页 
         /// </summary>
         /// <returns></returns>
+        [HttpGet]
         public ActionResult ImprestPaymentList()
         {
             return View();
@@ -52,6 +60,8 @@ namespace SuperMan.Controllers
         /// 备用金支出列表页     异步加载区域
         /// </summary>
         /// <returns></returns>
+
+        [HttpPost]
         public ActionResult DoImprestPaymentList()
         {
             return PartialView();
