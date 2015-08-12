@@ -61,26 +61,5 @@ namespace Ets.Service.Provider.Finance
         {
             return _imprestBalanceRecordDao.GetImprestBalanceRecordList(criteria);
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
->>>>>>> .theirs
     }
 }
