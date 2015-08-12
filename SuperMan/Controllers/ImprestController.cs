@@ -40,10 +40,20 @@ namespace SuperMan.Controllers
         /// 备用金充值功能 add by caoheyang  20150812
         /// </summary>
         /// <returns></returns>
-        [HttpPost]
-        public JsonResult ImprestRecharge()
+        [HttpGet]
+        public ActionResult ImprestRecharge()
         {
-            return new JsonResult();
+            return PartialView();
+        }
+
+        /// <summary>
+        /// 备用金充值功能 保存按钮  add by caoheyang  20150812
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult AjaxImprestRecharge()
+        {
+            return PartialView();
         }
 
         /// <summary>
