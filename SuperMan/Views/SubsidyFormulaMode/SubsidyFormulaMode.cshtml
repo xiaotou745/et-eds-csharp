@@ -215,7 +215,7 @@
                     <td>
                         <label style="color: red">基本佣金+平台补贴设置</label>
                         <br /><p>
-                            佣金公式： ( 基本佣金 (可配置) + 代收客配或 网站补贴)*订单数量
+                            佣金公式： ( 基本佣金 (可配置) + 网站补贴)*订单数量
                         </p>
                         佣金参数 基本佣金:<input name="txtBaseCommission" value="@(IsAdd == true ? 0 : ViewBag.GloglConfig.BaseCommission)" id="txtBaseCommission" type="text">
                         网站补贴:<input name="txtBaseSiteSubsidies" value="@(IsAdd == true ? 0 : ViewBag.GloglConfig.BaseSiteSubsidies)" id="txtBaseSiteSubsidies" type="text">
@@ -605,11 +605,11 @@
         {
             CommonCommissionRatio = $("#txtptCommonCommissionRatio").val();
             CommonSiteSubsidies = $("#txttpCommonSiteSubsidies").val();
-            if (isNaN(CommonCommissionRatio) || CommonCommissionRatio < 0) {
+            if (CommonCommissionRatio.trim().length == 0 ||isNaN(CommonCommissionRatio) || CommonCommissionRatio < 0) {
                 alert("配置数据不能小于0！");
                 return;
             }
-            if (isNaN(CommonSiteSubsidies) || CommonSiteSubsidies < 0) {
+            if (CommonSiteSubsidies.trim().length == 0 ||isNaN(CommonSiteSubsidies) || CommonSiteSubsidies < 0) {
                 alert("配置数据不能小于0！");
                 return;
             }
@@ -618,15 +618,15 @@
             TimeSpanCommissionRatio = $("#txtTimeSpanCommissionRatio").val();
             TimeSpanInPrice = $("#txttpTimeSpanInPrice").val();
             TimeSpanOutPrice = $("#txttpTimeSpanOutPrice").val();
-            if (isNaN(TimeSpanCommissionRatio) || TimeSpanCommissionRatio < 0) {
+            if (TimeSpanCommissionRatio.trim().length == 0 ||isNaN(TimeSpanCommissionRatio) || TimeSpanCommissionRatio < 0) {
                 alert("配置数据不能小于0！");
                 return;
             }
-            if (isNaN(TimeSpanInPrice) || TimeSpanInPrice < 0) {
+            if (TimeSpanInPrice.trim().length == 0 ||isNaN(TimeSpanInPrice) || TimeSpanInPrice < 0) {
                 alert("配置数据不能小于0！");
                 return;
             }
-            if (isNaN(TimeSpanOutPrice) || TimeSpanOutPrice < 0) {
+            if (TimeSpanOutPrice.trim().length == 0 ||isNaN(TimeSpanOutPrice) || TimeSpanOutPrice < 0) {
                 alert("配置数据不能小于0！");
                 return;
             }
@@ -634,11 +634,11 @@
         if (StrategyId == 2) {
             CommissionRatio = $("#txtCommissionRatio").val();
             SiteSubsidies = $("#txtSiteSubsidies").val();
-            if (isNaN(CommissionRatio) || CommissionRatio < 0) {
+            if (CommissionRatio.trim().length == 0 ||isNaN(CommissionRatio) || CommissionRatio < 0) {
                 alert("配置数据不能小于0！");
                 return;
             }
-            if (isNaN(SiteSubsidies) || SiteSubsidies < 0) {
+            if (SiteSubsidies.trim().length == 0 ||isNaN(SiteSubsidies) || SiteSubsidies < 0) {
                 alert("配置数据不能小于0！");
                 return;
             }
@@ -646,11 +646,11 @@
         if (StrategyId == 3) {
             PriceCommissionRatio = $("#txtPriceCommissionRatio").val();
             PriceSiteSubsidies = $("#txtPriceSiteSubsidies").val();
-            if (isNaN(PriceCommissionRatio) || PriceCommissionRatio < 0) {
+            if (PriceCommissionRatio.trim().length == 0 ||isNaN(PriceCommissionRatio) || PriceCommissionRatio < 0) {
                 alert("配置数据不能小于0！");
                 return;
             }
-            if (isNaN(PriceSiteSubsidies) || PriceSiteSubsidies < 0) {
+            if (PriceSiteSubsidies.trim().length == 0 ||isNaN(PriceSiteSubsidies) || PriceSiteSubsidies < 0) {
                 alert("配置数据不能小于0！");
                 return;
             }
@@ -658,11 +658,11 @@
         if (StrategyId == 4) {
             BaseCommission = $("#txtBaseCommission").val();
             BaseSiteSubsidies = $("#txtBaseSiteSubsidies").val();
-            if (isNaN(BaseCommission) || BaseCommission < 0) {
+            if (BaseCommission.trim().length == 0 || isNaN(BaseCommission) || BaseCommission < 0) {
                 alert("基本佣金只能是数字而且不能小于0！");
                 return;
             }
-            if (isNaN(BaseSiteSubsidies) ||BaseSiteSubsidies < 0) {
+            if (BaseSiteSubsidies.trim().length == 0 ||isNaN(BaseSiteSubsidies) ||BaseSiteSubsidies < 0) {
                 alert("网站补贴只能是数字而且不能小于0！");
                 return;
             }

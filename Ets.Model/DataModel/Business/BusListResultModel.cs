@@ -32,9 +32,17 @@ namespace Ets.Model.DataModel.Business
         public string CityCode { get; set; }
         public string AreaCode { get; set; }
         public string Province { get; set; }
-        public Nullable<int> CommissionTypeId { get; set; }
-        public Nullable<decimal> DistribSubsidy { get; set; }
-        public Nullable<decimal> BusinessCommission { get; set; }
+        public int? CommissionTypeId { get; set; }
+        
+        /// <summary>
+        /// 外送费
+        /// </summary>
+        public decimal? DistribSubsidy { get; set; }
+        
+        /// <summary>
+        /// 结算比例
+        /// </summary>
+        public decimal? BusinessCommission { get; set; }
         public string GroupName {get;set;}
         //public virtual ICollection<order> order { get; set; }
         /// <summary>
@@ -91,5 +99,7 @@ namespace Ets.Model.DataModel.Business
         /// 是否需要审核
         /// </summary>
         public int IsOrderChecked { get; set; }
+
+
     }
 }

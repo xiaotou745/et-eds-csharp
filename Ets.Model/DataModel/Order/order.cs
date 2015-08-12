@@ -233,5 +233,7 @@ namespace Ets.Model.DataModel.Order
         /// 是否需要审核
         /// </summary>
         public int IsOrderChecked { get; set; }
+
+
     }
 }

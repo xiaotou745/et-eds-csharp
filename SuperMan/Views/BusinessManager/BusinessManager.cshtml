@@ -311,12 +311,13 @@
                     <label>充值金额：</label>
                     <input name="busRechargeAmount" id="busRechargeAmount" type="text">元
                     <label style="font-size: 10px;color: red">（充值金额范围:1.00-50000.00元）</label><br />
-                </div> 
+                </div>
                 <div id="busRechargeAmountFreeDiv">
                     <label>赠送金额：</label>
                     <input name="busRechargeAmountFree" id="busRechargeAmountFree" type="text">元
-                    <label style="font-size: 10px;color: red">（赠送金额范围:1.00-50000.00元）</label>
+                    <label style="font-size: 10px; color: red">（赠送金额范围:1.00-50000.00元）</label>
                 </div>
+            </div>
             <div class="control-group">
                 <label>操作描述：</label>
                 <div class="controls">
@@ -358,20 +359,20 @@
             </div>
             <div class="control-group">
                 <label>省：</label>
-                <input type="text" disabled="disabled" id="openProvince"/>
+                <input type="text" disabled="disabled" id="openProvince" />
                 <input type="hidden" id="openProvinceCode" />
                 @*<select id="openProvince">
-                    <option value="" selected="selected">--省市--</option>
-                </select>*@
+                        <option value="" selected="selected">--省市--</option>
+                    </select>*@
             </div>
             <div class="control-group">
                 <label>市区：</label>
-                <input type="text" disabled="disabled" id="openCity"/>
-                <input type="hidden" id="openCityCode"/>
+                <input type="text" disabled="disabled" id="openCity" />
+                <input type="hidden" id="openCityCode" />
                 @*<label>市区：</label>
-                <select id="openCity">
-                    <option value="" selected="selected">--市区--</option>
-                </select>*@
+                    <select id="openCity">
+                        <option value="" selected="selected">--市区--</option>
+                    </select>*@
             </div>
             <div class="control-group">
                 <label>身份证号/营业执照：</label>
@@ -399,7 +400,7 @@
 <script>
     var adminjs = new adminglass(); //实例化后台类
     $(document).ready(function () {
-        //GetOpenProvince(); 
+        //GetOpenProvince();
         window.location.hash = '';
         //注册充值下拉框改变事件
         $('#RechargeType').change(function () {
@@ -423,7 +424,7 @@
             }
         });
     });
-    
+
     //设置结算比例-外送费
     $("#btnCommissionConfim").on('click', function () {
         var busCommissionHid = $("#busCommissionHid").val(); //商户id
@@ -682,7 +683,7 @@
         //if (rechargeLog.trim().length == 0) {
         //    alert("请输入充值操作描述!");
         //    return;
-        //} 
+        //}
         var decimalFormat = /^[0-9]*(\.[0-9]{1,2})?$/;
         if (!decimalFormat.test(withdrawAmount)) {
             alert("请输入正确的金额！");
@@ -736,6 +737,6 @@
             $("#divCommissionFixValue").show();
         }
     });
-    
+
 </script>
 <script src="~/Scripts/mvcpager.js"></script>

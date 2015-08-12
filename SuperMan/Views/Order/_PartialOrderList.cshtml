@@ -81,7 +81,7 @@ width: 100%;
                         AuditStatus = "待审核";
                     }
                     decimal butie = 0.00M;
-                    if (item.IsNotRealOrder == 1)
+                    if (item.IsNotRealOrder == 1 && item.AuditStatus == 2)
                     {
                         butie = item.OrderCommission.Value - item.RealOrderCommission;    
                     }
@@ -112,7 +112,9 @@ width: 100%;
                         <td>@item.DistribSubsidy</td>
                         <td>@item.WebsiteSubsidy</td>
                         <td>@item.Adjustment</td>
-                        <td>@{ var commission = item.CommissionType == 1 ? item.BusinessCommission + "%" : item.CommissionFixValue.ToString();}
+                        <td>
+                            @{var commission = "["+item.BusinessCommission + "%+" + item.CommissionFixValue.ToString() +"+"+ item.DistribSubsidy+"]";
+                             }
                             @commission
                         </td>
                         <td>@item.GroupName</td>

@@ -563,6 +563,7 @@ select @@IDENTITY ";
                                     ,o.CommissionType --结算类型
                                     ,o.SettleMoney
                                     ,o.CommissionFormulaMode
+                                    ,o.BaseCommission
                                     ,oo.IsNotRealOrder
                                     ,oo.AuditStatus
                                     ,oo.DeductCommissionReason
@@ -1673,7 +1674,8 @@ select top 1
         o.Amount,
         o.DeliveryCompanySettleMoney,
         o.DeliveryCompanyID,
-        o.MealsSettleMode         
+        o.MealsSettleMode,
+        ISNULL(oo.IsOrderChecked,1) AS IsOrderChecked         
 from    [order] o with ( nolock )
         join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
         join dbo.business b with ( nolock ) on o.businessId = b.Id
@@ -1993,6 +1995,8 @@ where   o.Id = @orderId;
         /// <returns></returns>
         public IList<OrderRecordsLog> GetOrderRecords(string originalOrderNo, int group)
         {
+            #region 脚本
+
             string sql = @"
 
 select  *
@@ -2004,7 +2008,8 @@ from    ( select    sol.Id ,
                       when 1 then '已完成'
                       when 2 then '已接单'
                       when 3 then '已取消'
-                      else '未知请联系e代送客服'
+                      when 4 then '已取货' 
+                      else '未知请联系E代送客服'
                     end OrderStatusStr ,
                     sol.InsertTime ,
                     '' OptName ,
@@ -2029,7 +2034,8 @@ from    ( select    sol.Id ,
                       when 1 then '已完成'
                       when 2 then '已接单'
                       when 3 then '已取消'
-                      else '未知请联系e代送客服'
+                      when 4 then '已取货' 
+                      else '未知请联系E代送客服'
                     end OrderStatusStr ,
                     sol.InsertTime ,
                     c.TrueName OptName ,
@@ -2054,7 +2060,8 @@ from    ( select    sol.Id ,
                       when 1 then '已完成'
                       when 2 then '已接单'
                       when 3 then '已取消'
-                      else '未知请联系e代送客服'
+                      when 4 then '已取货' 
+                      else '未知请联系E代送客服'
                     end OrderStatusStr ,
                     sol.InsertTime ,
                     c.LoginName OptName ,
@@ -2073,6 +2080,9 @@ from    ( select    sol.Id ,
           )
         ) bb
 order by bb.Id desc;";
+
+            #endregion
+
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OriginalOrderNo", SqlDbType.NVarChar);
             parm.SetValue("@OriginalOrderNo", originalOrderNo);
@@ -2862,15 +2872,25 @@ order by a.id desc
         /// <UpdateTime>20150701</UpdateTime>
         public void UpdateTake(OrderPM modelPM)
         {
+           // string clienterTrueName = "";
+           //clienter c = clienterDao.GetById(modelPM.ClienterId);
+           // if (c != null)
+           // {
+           //     clienterTrueName = c.TrueName;
+           // }
             string updateSql = string.Format(@"
+begin 
+declare @ClienterTrueName nvarchar(40)
+SELECT @ClienterTrueName=TrueName FROM dbo.clienter(nolock) where id = @clienterId;
 update dbo.[Order] 
     set Status=4 
-output Inserted.Id,GETDATE(),'{0}','确认已取货',Inserted.clienterId,Inserted.[Status],{1} 
+output Inserted.Id,GETDATE(),@ClienterTrueName,'确认已取货',Inserted.clienterId,Inserted.[Status],{0} 
 into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform]) 
 where id=@orderid and Status=2 and clienterId=@clienterId; 
 update OrderOther 
     set TakeTime=GETDATE(),TakeLongitude=@TakeLongitude,TakeLatitude=@TakeLatitude 
-where orderid=@orderid", modelPM.ClienterTrueName, (int)SuperPlatform.FromClienter);
+where orderid=@orderid; 
+end ",(int)SuperPlatform.FromClienter);
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("TakeLongitude", modelPM.longitude);
             dbParameters.AddWithValue("TakeLatitude", modelPM.latitude);
@@ -2914,10 +2934,19 @@ SELECT CASE SUM(oc.PayStatus)
         public order GetOrderById(int orderId, int businessId, int? status = null)
         {
             order order = null;
-            string sql = @" select * from [order] (nolock) where Id=@OrderId and businessId=@BusinessId";
+            //string sql = @" select * from [order] (nolock) where Id=@OrderId and businessId=@BusinessId";
+
+            string sql = @"select  o.Id ,
+        o.OrderNo ,
+        o.SettleMoney ,
+        b.Name BusinessName
+from    [order] o ( nolock )
+        join dbo.business b ( nolock ) on o.businessId = b.Id
+where   o.Id = @OrderId
+        and o.businessId = @BusinessId ";
             if (status != null)
             {
-                sql = sql + " and status=" + status;
+                sql = sql + " and o.status=" + status;
             }
             IDbParameters parm = DbHelper.CreateDbParameters("OrderId", DbType.Int32, 4, orderId);
             parm.Add("BusinessId", SqlDbType.Int).Value = businessId;
@@ -2928,7 +2957,7 @@ SELECT CASE SUM(oc.PayStatus)
             }
             return order;
         }
-
+         
         /// <summary>
         /// 根据订单号查询订单主表基本信息  add by caoheyang 20150521
         /// </summary>
