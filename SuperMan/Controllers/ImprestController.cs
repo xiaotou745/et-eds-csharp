@@ -57,7 +57,7 @@ namespace SuperMan.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult AjaxImprestRecharge()
+        public ActionResult AjaxImprestRecharge(ImprestBalanceRecord model)
         {
             return PartialView();
         }
