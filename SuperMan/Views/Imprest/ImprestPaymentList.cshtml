@@ -182,9 +182,13 @@
             url: posturl,
             data: postPar,
             success: function(result) {
-                if (result.length < 1 || result.Status == 0) {
-                    alert('骑士不存在或当前骑士不可提现');
-                } else if (result.Status == 1) {
+                if (result.Status == 0) {
+                    alert('没有查询到骑士，请重新输入');
+                }
+                else if (result.Status == 2) {
+                    alert('该骑士尚未审核通过');
+                }
+                else if (result.Status == 1) {
                     $('#yesBtn').show();
                     FillInfo(result);
                 }
