@@ -1097,11 +1097,11 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="orderNo">订单号</param>
         /// <param name="bussinessId"></param>
         /// <returns></returns>       
-        public ResultModel<RushOrderResultModel> Receive_C(int userId, string orderNo, int bussinessId, float grabLongitude, float grabLatitude)
+        public ResultModel<RushOrderResultModel> Receive_C(OrderReceiveModel parmodel)
         {
-
+            //int userId, string orderNo, int bussinessId, float grabLongitude, float grabLatitude
             ///TODO 骑士是否有资格抢单放前面
-            ClienterModel clienterModel = new Ets.Dao.Clienter.ClienterDao().GetUserInfoByUserId(userId);
+            ClienterModel clienterModel = new Ets.Dao.Clienter.ClienterDao().GetUserInfoByUserId(parmodel.userId);
 
             if (clienterModel.Status != 1)  //判断 该骑士 是否 有资格 抢单 wc
             {
@@ -1110,9 +1110,10 @@ namespace Ets.Service.Provider.Clienter
             //这里可以优化，去掉提前验证用户信息，当失败的时候在去验证 
             OrderListModel model = new OrderListModel()
             {
-                clienterId = userId,
+                clienterId = parmodel.userId,
                 ClienterTrueName = clienterModel.TrueName,
-                OrderNo = orderNo
+                OrderNo = parmodel.orderNo,
+                DeliveryCompanyID=parmodel.deliveryId//物流公司ID
             };
             bool bResult = orderDao.RushOrder(model);
             ///TODO 同步第三方状态和jpush 以后放到后台服务或mq进行。
@@ -1122,9 +1123,9 @@ namespace Ets.Service.Provider.Clienter
                 Task.Factory.StartNew(() =>
                 {
                     //写入骑士抢单坐标
-                    orderOtherDao.UpdateGrab(orderNo, grabLongitude, grabLatitude);
-                    new OrderProvider().AsyncOrderStatus(orderNo);//同步第三方订单
-                    Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", bussinessId.ToString(), string.Empty);
+                    orderOtherDao.UpdateGrab(parmodel.orderNo, parmodel.Longitude, parmodel.Latitude);
+                    new OrderProvider().AsyncOrderStatus(parmodel.orderNo);//同步第三方订单
+                    Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", parmodel.businessId.ToString(), string.Empty);
                 });
 
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Success);
@@ -1181,7 +1182,7 @@ namespace Ets.Service.Provider.Clienter
         public void UpdateNotRealOrderClienterAccount(OrderListModel myOrderInfo, decimal realOrderCommission)
         {
             //更新骑士 金额  
-            bool b = clienterDao.UpdateClienterAccountBalanceForFinish(new WithdrawRecordsModel() { UserId = myOrderInfo.clienterId, Amount = realOrderCommission });
+            bool b = clienterDao.UpdateCAccountBalance(new UpdateForWithdrawPM() { Id = myOrderInfo.clienterId, Money = realOrderCommission });
             //增加记录 
             decimal? accountBalance = 0;
             //更新用户相关金额数据 
@@ -1261,90 +1262,47 @@ namespace Ets.Service.Provider.Clienter
             //需要审核
             if (myOrderInfo.IsOrderChecked == 1)
             {
-                UpdateClienterAccount(myOrderInfo);
+                decimal orderCommission = myOrderInfo.OrderCommission == null ? 0 : myOrderInfo.OrderCommission.Value;
+                decimal accountBalance = myOrderInfo.AccountBalance == null ? 0 : myOrderInfo.AccountBalance.Value;
+                decimal balance = accountBalance + orderCommission;               
+                UpdateCAccountBalance(new ClienterMoneyPM() 
+                                        {
+                                            ClienterId = myOrderInfo.clienterId,
+                                            Amount = orderCommission,
+                                            Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
+                                            Balance = balance,
+                                            RecordType = ClienterBalanceRecordRecordType.OrderCommission.GetHashCode(),
+                                            Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士" : myOrderInfo.ClienterName,
+                                            WithwardId = myOrderInfo.Id,
+                                            RelationNo = myOrderInfo.OrderNo,
+                                            Remark = "骑士完成订单"
+                                        } );
             }
             else
             {
-                //不需要审核
-                //UpdateClienterMoneyNotNeedChecked(myOrderInfo);
-                UpdateAccountBalanceAndWithdraw(myOrderInfo);
+                decimal orderCommission = myOrderInfo.OrderCommission == null ? 0 : myOrderInfo.OrderCommission.Value;
+                decimal accountBalance = myOrderInfo.AccountBalance == null ? 0 : myOrderInfo.AccountBalance.Value;
+                decimal balance = accountBalance + orderCommission;
+                UpdateCBalanceAndWithdraw(new ClienterMoneyPM()
+                                        {                        
+                                            ClienterId = myOrderInfo.clienterId,
+                                            Amount = orderCommission,
+                                            Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
+                                            Balance = balance,
+                                            RecordType = ClienterBalanceRecordRecordType.OrderCommission.GetHashCode(),
+                                            Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士" : myOrderInfo.ClienterName,
+                                            WithwardId = myOrderInfo.Id,
+                                            RelationNo = myOrderInfo.OrderNo,
+                                            Remark = "骑士完成订单" + (myOrderInfo.IsOrderChecked == 0 ? "(订单不需审核)" : "")
+                                        });
                 //将订单标记为加入已提现
-                orderDao.UpdateJoinWithdraw(myOrderInfo.Id);
+                orderOtherDao.UpdateJoinWithdraw(myOrderInfo.Id);
                 //订单审核通过 
-                orderDao.UpdateAuditStatus(myOrderInfo.Id, OrderAuditStatusCommon.Through.GetHashCode());
+                orderOtherDao.UpdateAuditStatus(myOrderInfo.Id, OrderAuditStatusCommon.Through.GetHashCode());
             }
+
             //更新骑士无效订单金额
-            UpdateInvalidOrder(myOrderInfo);
-            #region
-            ////没有上传完小票
-            //if (myOrderInfo.HadUploadCount < myOrderInfo.OrderCount) 
-            //    return false;
-
-            ////更新订单支付
-            //bool blpay = CheckOrderPay(myOrderInfo.Id);
-            //if (!blpay) return false;
-
-            //UpdateClienterAccount(myOrderInfo);
-
-            //if ((bool)myOrderInfo.IsPay)
-            //{
-            //    UpdateClienterAccount(myOrderInfo);
-            //}
-            //else if (!(bool)myOrderInfo.IsPay && myOrderInfo.MealsSettleMode == MealsSettleMode.LineOff.GetHashCode())
-            //{
-            //   UpdateClienterAccount(myOrderInfo);
-            //}
-            //else if (!(bool)myOrderInfo.IsPay && myOrderInfo.MealsSettleMode == MealsSettleMode.LineOn.GetHashCode())//未付款,线上结算,扫码支付
-            //{
-            //    UpdateAccountBalanceAndWithdraw(myOrderInfo);
-            //    iOrderOtherProvider.UpdateIsJoinWithdraw(myOrderInfo.Id);
-            //    orderDao.UpdateAuditStatus(myOrderInfo.Id, OrderAuditStatusCommon.Through.GetHashCode());   
-            //}
-            #endregion
-
-            #region 临时
-            //if ((bool)myOrderInfo.IsPay)//已付款
-            //{
-            //    //上传完小票
-            //    //(1)更新给骑士余额
-            //    if (myOrderInfo.HadUploadCount >= myOrderInfo.OrderCount)
-            //    {
-            //        if (CheckOrderPay(myOrderInfo.Id))
-            //        {                        
-            //            UpdateClienterAccount(myOrderInfo);
-            //            return true;
-            //        }
-            //    }             
-            //}
-            //else if (!(bool)myOrderInfo.IsPay && myOrderInfo.MealsSettleMode == MealsSettleMode.LineOff.GetHashCode())//未付款,骑士代付
-            //{
-            //    //上传完小票
-            //    //(1)更新给骑士余额
-            //    if (myOrderInfo.HadUploadCount >= myOrderInfo.OrderCount)
-            //    {
-            //        if (CheckOrderPay(myOrderInfo.Id))
-            //        {                      
-            //            UpdateClienterAccount(myOrderInfo);
-            //            return true;
-            //        }
-            //    }                
-            //}
-            //else if (!(bool)myOrderInfo.IsPay && myOrderInfo.MealsSettleMode == MealsSettleMode.LineOn.GetHashCode())//未付款,线上结算
-            //{
-            //    //上传完小票
-            //    //(1)更新给骑士余额、可提现余额
-            //    //(2)把OrderOther把IsJoinWithdraw状态改为1
-            //    if (myOrderInfo.HadUploadCount >= myOrderInfo.OrderCount)
-            //    {
-            //        if (CheckOrderPay(myOrderInfo.Id))
-            //        {                      
-            //            UpdateAccountBalanceAndWithdraw(myOrderInfo);
-            //            iOrderOtherProvider.UpdateIsJoinWithdraw(myOrderInfo.Id);
-            //            return true;
-            //        }
-            //    }               
-            //}
-            #endregion
+            UpdateInvalidOrder(myOrderInfo);      
         }
 
         /// <summary>
@@ -1382,7 +1340,7 @@ namespace Ets.Service.Provider.Clienter
         }
 
         /// <summary>
-        /// 更新无效订单
+        ///  更新无效订单
         ///  胡灵波
         ///  2015年8月6日 20:11:09
         /// </summary>
@@ -1405,97 +1363,186 @@ namespace Ets.Service.Provider.Clienter
         }
 
         /// <summary>
-        /// 更新用户金额
-        /// wc 完成订单时候调用
+        /// 更新骑士余额
+        /// 胡灵波
+        /// 2015年8月13日 09:53:33
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="myOrderInfo"></param>
-        public void UpdateClienterAccount(OrderListModel myOrderInfo)
+        public void UpdateCAccountBalance(ClienterMoneyPM clienterMoneyPM)
         {
-            //更新骑士 金额  
-            bool b = clienterDao.UpdateClienterAccountBalanceForFinish(new WithdrawRecordsModel() { UserId = myOrderInfo.clienterId, Amount = myOrderInfo.OrderCommission.Value });
-            //增加记录 
-            decimal? accountBalance = 0;
-            //更新用户相关金额数据 
-            if (myOrderInfo.AccountBalance.HasValue)
-            {
-                accountBalance = myOrderInfo.AccountBalance.Value + (myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission));
-            }
-            else
-            {
-                accountBalance = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission);
-            }
+            //更新骑士余额
+            clienterDao.UpdateCAccountBalance(new UpdateForWithdrawPM()
+                                            {
+                                                Id = clienterMoneyPM.ClienterId,
+                                                Money = clienterMoneyPM.Amount
+                                            } );
+
+            //更新骑士余额流水          
+            clienterBalanceRecordDao.Insert(new ClienterBalanceRecord()
+                                            {
+                                                ClienterId = clienterMoneyPM.ClienterId,
+                                                Amount = clienterMoneyPM.Amount,
+                                                Status = clienterMoneyPM.Status,
+                                                Balance = clienterMoneyPM.Balance,
+                                                RecordType = clienterMoneyPM.RecordType,
+                                                Operator = clienterMoneyPM.Operator,
+                                                WithwardId = clienterMoneyPM.WithwardId,
+                                                RelationNo = clienterMoneyPM.RelationNo,
+                                                Remark = clienterMoneyPM.Remark
+                                            });
+            #region 临时
+            ////更新骑士 金额  
+            //bool b = clienterDao.UpdateCAccountBalance(new UpdateForWithdrawPM() { Id = myOrderInfo.clienterId, Money = myOrderInfo.OrderCommission.Value });
+            ////增加记录 
+            //decimal? accountBalance = 0;
+            ////更新用户相关金额数据 
+            //if (myOrderInfo.AccountBalance.HasValue)
+            //{
+            //    accountBalance = myOrderInfo.AccountBalance.Value + (myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission));
+            //}
+            //else
+            //{
+            //    accountBalance = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission);
+            //}
 
             ///TODO 骑士余额流水表，不是这个吧？
-            ClienterBalanceRecord cbrm = new ClienterBalanceRecord()
-            {
-                ClienterId = myOrderInfo.clienterId,
-                Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
-                Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
-                Balance = accountBalance ?? 0,
-                RecordType = ClienterBalanceRecordRecordType.OrderCommission.GetHashCode(),
-                Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士" : myOrderInfo.ClienterName,
-                WithwardId = myOrderInfo.Id,
-                RelationNo = myOrderInfo.OrderNo,
-                Remark = "骑士完成订单"
-            };
-            clienterBalanceRecordDao.Insert(cbrm);
-
-
+            //ClienterBalanceRecord cbrm = new ClienterBalanceRecord()
+            //{
+            //    ClienterId = myOrderInfo.clienterId,
+            //    Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
+            //    Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
+            //    Balance = accountBalance ?? 0,
+            //    RecordType = ClienterBalanceRecordRecordType.OrderCommission.GetHashCode(),
+            //    Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士" : myOrderInfo.ClienterName,
+            //    WithwardId = myOrderInfo.Id,
+            //    RelationNo = myOrderInfo.OrderNo,
+            //    Remark = "骑士完成订单"
+            //};
+            //clienterBalanceRecordDao.Insert(cbrm);
+            #endregion
         }
 
         /// <summary>
-        /// 更新用户金额      
+        /// 更新骑士可提现余额
+        /// 胡灵波
+        /// 2015年8月13日 10:38:31
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="myOrderInfo"></param>
-        public void UpdateAccountBalanceAndWithdraw(OrderListModel myOrderInfo)
+        public void UpdateCAllowWithdrawPrice(ClienterMoneyPM clienterMoneyPM)
         {
-            int userId = myOrderInfo.clienterId;
-            //更新骑士金额和可提现金额  
-            bool b = clienterDao.UpdateAccountBalanceAndWithdraw(new WithdrawRecordsModel() { UserId = userId, Amount = myOrderInfo.OrderCommission.Value });
-            //增加记录 
-            decimal? accountBalance = 0;
-            decimal allowWithdrawPrice = 0;
-            //更新用户相关金额数据 
-            if (myOrderInfo.AccountBalance.HasValue)
-            {
-                accountBalance = myOrderInfo.AccountBalance.Value + (myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission));
-            }
-            else
-            {
-                accountBalance = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission);
-            }
-            allowWithdrawPrice = myOrderInfo.AllowWithdrawPrice;
+            //更新骑士余额
+            clienterDao.UpdateCAllowWithdrawPrice(new UpdateForWithdrawPM()
+                                            {
+                                                Id = clienterMoneyPM.ClienterId,
+                                                Money = clienterMoneyPM.Amount
+                                            });
 
-            //增加一条获得佣金的流水
-            ClienterBalanceRecord cbrm = new ClienterBalanceRecord()
-            {
-                ClienterId = userId,
-                Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
-                Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
-                Balance = accountBalance ?? 0,
-                RecordType = ClienterBalanceRecordRecordType.OrderCommission.GetHashCode(),
-                Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士:" + userId : myOrderInfo.ClienterName,
-                WithwardId = myOrderInfo.Id,
-                RelationNo = myOrderInfo.OrderNo,
-                Remark = "骑士完成订单" + (myOrderInfo.IsOrderChecked == 0 ? "(订单不需审核)" : "")
-            };
-            clienterBalanceRecordDao.Insert(cbrm);
-            //增加一条骑士获得可提现金额的流水
-            ClienterAllowWithdrawRecord cawrm = new ClienterAllowWithdrawRecord()
-            {
-                ClienterId = userId,
-                Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
-                Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(),
-                Balance = allowWithdrawPrice,
-                RecordType = ClienterAllowWithdrawRecordType.OrderCommission.GetHashCode(),
-                Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士:" + userId : myOrderInfo.ClienterName,
-                WithwardId = myOrderInfo.Id,
-                RelationNo = myOrderInfo.OrderNo,
-                Remark = "骑士完成订单" + (myOrderInfo.IsOrderChecked == 0 ? "(订单不需审核)" : "")
-            };
-            clienterAllowWithdrawRecordDao.Insert(cawrm);
+            //更新骑士可提现流水          
+            clienterAllowWithdrawRecordDao.Insert(new ClienterAllowWithdrawRecord()
+                                            {
+                                                ClienterId = clienterMoneyPM.ClienterId,
+                                                Amount = clienterMoneyPM.Amount,
+                                                Status = clienterMoneyPM.Status,
+                                                Balance = clienterMoneyPM.Balance,
+                                                RecordType = clienterMoneyPM.RecordType,
+                                                Operator = clienterMoneyPM.Operator,
+                                                WithwardId = clienterMoneyPM.WithwardId,
+                                                RelationNo = clienterMoneyPM.RelationNo,
+                                                Remark = clienterMoneyPM.Remark
+                                            });
+        }
+
+        /// <summary>
+        /// 更新骑士余额、可提现余额      
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="myOrderInfo"></param>
+        public void UpdateCBalanceAndWithdraw(ClienterMoneyPM clienterMoneyPM)
+        {
+            //更新骑士余额
+            clienterDao.UpdateCBalanceAndWithdraw(new UpdateForWithdrawPM()
+                                                {
+                                                    Id = clienterMoneyPM.ClienterId,
+                                                    Money = clienterMoneyPM.Amount
+                                                });
+
+            //更新骑士余额流水          
+            clienterBalanceRecordDao.Insert(new ClienterBalanceRecord()
+                                            {
+                                                ClienterId = clienterMoneyPM.ClienterId,
+                                                Amount = clienterMoneyPM.Amount,
+                                                Status = clienterMoneyPM.Status,
+                                                Balance = clienterMoneyPM.Balance,
+                                                RecordType = clienterMoneyPM.RecordType,
+                                                Operator = clienterMoneyPM.Operator,
+                                                WithwardId = clienterMoneyPM.WithwardId,
+                                                RelationNo = clienterMoneyPM.RelationNo,
+                                                Remark = clienterMoneyPM.Remark
+                                            });
+            //更新骑士可提现流水          
+            clienterAllowWithdrawRecordDao.Insert(new ClienterAllowWithdrawRecord()
+                                            {
+                                                ClienterId = clienterMoneyPM.ClienterId,
+                                                Amount = clienterMoneyPM.Amount,
+                                                Status = clienterMoneyPM.Status,
+                                                Balance = clienterMoneyPM.Balance,
+                                                RecordType = clienterMoneyPM.RecordType,
+                                                Operator = clienterMoneyPM.Operator,
+                                                WithwardId = clienterMoneyPM.WithwardId,
+                                                RelationNo = clienterMoneyPM.RelationNo,
+                                                Remark = clienterMoneyPM.Remark
+                                            } );
+
+
+            #region 临时
+            //int userId = myOrderInfo.clienterId;
+            ////更新骑士金额和可提现金额  
+            //bool b = clienterDao.UpdateAccountBalanceAndWithdraw(new WithdrawRecordsModel() { UserId = userId, Amount = myOrderInfo.OrderCommission.Value });
+            ////增加记录 
+            //decimal? accountBalance = 0;
+            //decimal allowWithdrawPrice = 0;
+            ////更新用户相关金额数据 
+            //if (myOrderInfo.AccountBalance.HasValue)
+            //{
+            //    accountBalance = myOrderInfo.AccountBalance.Value + (myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission));
+            //}
+            //else
+            //{
+            //    accountBalance = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission);
+            //}
+            //allowWithdrawPrice = myOrderInfo.AllowWithdrawPrice;
+
+            ////增加一条获得佣金的流水
+            //ClienterBalanceRecord cbrm = new ClienterBalanceRecord()
+            //{
+            //    ClienterId = userId,
+            //    Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
+            //    Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
+            //    Balance = accountBalance ?? 0,
+            //    RecordType = ClienterBalanceRecordRecordType.OrderCommission.GetHashCode(),
+            //    Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士:" + userId : myOrderInfo.ClienterName,
+            //    WithwardId = myOrderInfo.Id,
+            //    RelationNo = myOrderInfo.OrderNo,
+            //    Remark = "骑士完成订单" + (myOrderInfo.IsOrderChecked == 0 ? "(订单不需审核)" : "")
+            //};
+            //clienterBalanceRecordDao.Insert(cbrm);
+            ////增加一条骑士获得可提现金额的流水
+            //ClienterAllowWithdrawRecord cawrm = new ClienterAllowWithdrawRecord()
+            //{
+            //    ClienterId = userId,
+            //    Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
+            //    Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(),
+            //    Balance = allowWithdrawPrice,
+            //    RecordType = ClienterAllowWithdrawRecordType.OrderCommission.GetHashCode(),
+            //    Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士:" + userId : myOrderInfo.ClienterName,
+            //    WithwardId = myOrderInfo.Id,
+            //    RelationNo = myOrderInfo.OrderNo,
+            //    Remark = "骑士完成订单" + (myOrderInfo.IsOrderChecked == 0 ? "(订单不需审核)" : "")
+            //};
+            //clienterAllowWithdrawRecordDao.Insert(cawrm);
+            #endregion
         }
 
         /// <summary>
@@ -1520,8 +1567,8 @@ namespace Ets.Service.Provider.Clienter
             }
 
             DateTime actualDoneDate = actualDoneDate = ParseHelper.ToDatetime(mapDetail.ActualDoneDate);
-            if (!(myOrderInfo.GrabTime.Value.AddMinutes(5) < actualDoneDate &&
-                actualDoneDate < myOrderInfo.GrabTime.Value.AddMinutes(120)))
+            if (!(DateTime.Parse(mapDetail.GrabTime).AddMinutes(5) < actualDoneDate &&
+                actualDoneDate < DateTime.Parse(mapDetail.GrabTime).AddMinutes(120)))
             {
                 sb.Append("完成时间不在5-120分钟内;");
                 boolreason = true;
@@ -1579,75 +1626,7 @@ namespace Ets.Service.Provider.Clienter
             }
 
             return 0;
-        }
-
-
-        #region 临时
-        //public void UpdateNotRealOrderClienterAccountAndWithdraw(OrderListModel myOrderInfo, decimal realOrderCommission)
-        //{
-        //    //更新骑士 金额  
-        //    bool b = clienterDao.UpdateAccountBalanceAndWithdraw(new WithdrawRecordsModel() { UserId = myOrderInfo.clienterId, Amount = realOrderCommission });
-        //    //增加记录 
-        //    decimal? accountBalance = 0;
-        //    decimal allowWithdrawPrice= myOrderInfo.AllowWithdrawPrice;
-        //    //更新用户相关金额数据 
-        //    if (myOrderInfo.AccountBalance.HasValue)
-        //    {
-        //        accountBalance = myOrderInfo.AccountBalance.Value + myOrderInfo.OrderCommission.Value + realOrderCommission;
-        //    }
-        //    else
-        //    {
-        //        accountBalance = myOrderInfo.OrderCommission.Value + realOrderCommission;
-        //    }
-
-        //    ClienterBalanceRecord cbrm = new ClienterBalanceRecord()
-        //    {
-        //        ClienterId = myOrderInfo.clienterId,
-        //        Amount = realOrderCommission,
-        //        Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
-        //        Balance = accountBalance ?? 0,
-        //        RecordType = ClienterBalanceRecordRecordType.BalanceAdjustment.GetHashCode(),
-        //        Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士" : myOrderInfo.ClienterName,
-        //        WithwardId = myOrderInfo.Id,
-        //        RelationNo = myOrderInfo.OrderNo,
-        //        Remark = "无效订单"
-        //    };
-        //    clienterBalanceRecordDao.Insert(cbrm);
-
-        //    ClienterAllowWithdrawRecord cawrm = new ClienterAllowWithdrawRecord()
-        //    {
-        //        ClienterId = myOrderInfo.clienterId,
-        //        Amount = realOrderCommission,
-        //        Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(),
-        //        Balance = allowWithdrawPrice,
-        //        RecordType = ClienterAllowWithdrawRecordType.BalanceAdjustment.GetHashCode(),
-        //        Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士" : myOrderInfo.ClienterName,
-        //        WithwardId = myOrderInfo.Id,
-        //        RelationNo = myOrderInfo.OrderNo,
-        //        Remark = "无效订单"
-        //    };
-        //    clienterAllowWithdrawRecordDao.Insert(cawrm);
-        //}
-        #endregion
-
-        /// <summary>
-        /// 更新骑士金额(不需要审核的订单)
-        /// 茹化肖
-        /// 2015年8月10日11:07:28      
-        /// </summary>
-        /// <param name="myOrderInfo"></param>
-        /// <param name="uploadReceiptModel"></param>
-        /// <param name="orderOther"></param>
-        void UpdateClienterMoneyNotNeedChecked(OrderListModel myOrderInfo)
-        {
-            if (myOrderInfo.HadUploadCount >= myOrderInfo.OrderCount)//小票上传完成
-            {
-                if (CheckOrderPay(myOrderInfo.Id))//订单已经支付
-                {
-                    UpdateAccountBalanceAndWithdraw(myOrderInfo);
-                }
-            }
-        }
+        }    
     }
 
 }

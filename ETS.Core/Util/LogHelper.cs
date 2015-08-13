@@ -221,11 +221,16 @@ namespace ETS.Util
                 {
                     var key = allKeys[i];
                     var value = HttpContext.Current.Request.Form[key];
-                    parstrBuilder.AppendFormat("{0}={1}\r\n", key, value);
+                    parstrBuilder.AppendFormat("{0}={1}&", key, value);
                 }
-                logstr = logstr + parstrBuilder.ToString();
-                logstr = logstr + "异常:" + error.ToString() + "\r\n";
-
+                string postData = parstrBuilder.ToString();
+                if (allKeys.Length > 0)
+                {
+                    postData = postData.Substring(0, postData.Length - 1);
+                }
+                logstr += (postData + "\r\n");
+                logstr += ("异常:" + error.Message + "\r\n");
+                logstr += ("堆栈:" + error.StackTrace + "\r\n");
                 logstr += "--------------------end---------------------\r\n";
                 //发送邮件
                 if (ConfigSettings.Instance.IsSendMail == "true")

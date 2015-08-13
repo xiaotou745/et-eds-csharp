@@ -12,7 +12,6 @@ using System.Web.Mvc;
 
 namespace SuperMan.Controllers
 {
-    [WebHandleError]
     public class HomeCountController : BaseController
     {
         IOrderProvider iOrderProvider = new OrderProvider();

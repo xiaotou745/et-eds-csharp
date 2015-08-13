@@ -14,7 +14,6 @@ namespace SuperMan.Controllers
     /// <summary>
     /// 商户结算控制器
     /// </summary>
-    [WebHandleError]
     public class BusinessCommissionController : BaseController
     {
         /// <summary>

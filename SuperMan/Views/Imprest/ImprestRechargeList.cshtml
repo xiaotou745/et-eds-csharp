@@ -26,12 +26,15 @@
                 <tr>
                     <td>
                         <span class="">充值日期: </span>
-                        <input id="txtOptTimeStart" readonly="readonly" type="text" name="OptTimeStart" />
+                        <input id="txtOptTimeStart" readonly="readonly" type="text" name="OptDateStart" />
                         <span class="">到: </span>
-                        <input id="txtOptTimeEnd" readonly="readonly" type="text" name="OptTimeEnd" />
-                        <input type="button" value="查询" class="searchBtn" id="btnSearch" />
+                        <input id="txtOptTimeEnd" readonly="readonly" type="text" name="OptDateEnd" />
+                        <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
                         <input type="button" value="充值" class="searchBtn" id="btnRecharge" />
                     </td>
+                </tr>
+                <tr>
+                    <td>备用金总充值金额：@imprestRecharge.TotalRecharge  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 备用金剩余金额：@imprestRecharge.RemainingAmount </td>
                 </tr>
             </table>
         </div>
@@ -47,7 +50,9 @@
 </div>
 <script type="text/javascript">
 
-    $(function() {
+    $(function () {
+        $('#txtOptTimeStart').datepicker();
+        $('#txtOptTimeEnd').datepicker();
         //点击保证金充值按钮
         $("#btnRecharge").click(function () {
             $.ajax({

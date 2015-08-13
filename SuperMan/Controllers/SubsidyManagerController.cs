@@ -10,7 +10,6 @@ using Ets.Service.Provider.Subsidy;
 using Ets.Model.Common;
 namespace SuperMan.Controllers
 {
-    [WebHandleError]
     public class SubsidyManagerController : BaseController
     {
         ISubsidyProvider iSubsidyProvider = new SubsidyProvider();

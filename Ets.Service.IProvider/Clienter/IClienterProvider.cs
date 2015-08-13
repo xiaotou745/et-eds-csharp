@@ -14,12 +14,6 @@ namespace Ets.Service.IProvider.Clienter
     public interface IClienterProvider
     {
         /// <summary>
-        /// 更新添加骑士佣金金额
-        /// wc
-        /// </summary>
-        /// <param name="myOrderInfo"></param>
-        void UpdateClienterAccount(OrderListModel myOrderInfo);
-        /// <summary>
         /// 骑士上下班功能 add by caoheyang 20150312
         /// </summary>
         /// <param name="paraModel"></param>

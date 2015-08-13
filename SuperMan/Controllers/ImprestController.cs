@@ -22,6 +22,7 @@ namespace SuperMan.Controllers
     public class ImprestController : BaseController
     {
         private readonly IImprestBalanceRecordProvider imprestProvider = new ImprestBalanceRecordProvider();
+        private readonly IImprestRechargeProvider imprestRechargeProvider = new ImprestRechargeProvider();
         /// <summary>
         /// 备用金充值列表页  add by caoheyang  20150812
         /// </summary>
@@ -29,7 +30,7 @@ namespace SuperMan.Controllers
         [HttpGet]
         public ActionResult ImprestRechargeList()
         {
-            ViewBag.ImprestRecharge = new ImprestRecharge();
+            ViewBag.ImprestRecharge = imprestRechargeProvider.GetRemainingAmountLock();
             ViewBag.PageModels = imprestProvider.GetImprestBalanceRecordList(new ImprestBalanceRecordSearchCriteria()
             {
                 OptType = ImprestBalanceRecordOptType.Recharge.GetHashCode()
@@ -67,7 +68,6 @@ namespace SuperMan.Controllers
         [HttpPost]
         public JsonResult AjaxImprestRecharge(ImprestBalanceRecord model)
         {
-            
             model.OptName = UserContext.Current.Name;
             model.OptType = ImprestBalanceRecordOptType.Recharge.GetHashCode();
             return new JsonResult()
@@ -87,7 +87,7 @@ namespace SuperMan.Controllers
         {
             var criteria = new ImprestBalanceRecordSearchCriteria()
             {
-                OptType = 2,
+                OptType = ImprestBalanceRecordOptType.Payment.GetHashCode(),
             };
             var pagedList = imprestProvider.GetImprestBalanceRecordList(criteria);
             return View(pagedList);
@@ -103,7 +103,7 @@ namespace SuperMan.Controllers
         {
             var criteria = new ImprestBalanceRecordSearchCriteria();
             TryUpdateModel(criteria);
-            criteria.OptType = 2;
+            criteria.OptType = ImprestBalanceRecordOptType.Payment.GetHashCode();
             var pagedList = imprestProvider.GetImprestBalanceRecordList(criteria);
             return PartialView(pagedList);
         }
@@ -139,16 +139,8 @@ namespace SuperMan.Controllers
                 {
                     filname = string.Format(filname, criteria.OptDateStart + ":" + criteria.OptDateEnd);
                 }
-                if (pagedList.Records.Count > 3)
-                {
-                    byte[] data = Encoding.UTF8.GetBytes(CreateExcel(pagedList));
-                    buffer = data;
-                }
-                else
-                {
-                    byte[] data = Encoding.Default.GetBytes(CreateExcel(pagedList));
-                    buffer = data;
-                }
+                byte[] data = Encoding.UTF8.GetBytes(CreateExcel(pagedList));
+                buffer = data;
             }
             Response.AppendHeader("Content-Disposition", string.Format("attachment;filename={0}",filname));
             Response.BinaryWrite(buffer);
