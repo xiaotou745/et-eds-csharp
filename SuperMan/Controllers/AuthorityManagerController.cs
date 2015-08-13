@@ -18,7 +18,6 @@ using Ets.Model.Common;
 
 namespace SuperMan.Controllers
 {
-    [WebHandleError]
     public class AuthorityManagerController : BaseController
     {
         IAuthorityMenuProvider iAuthorityMenuProvider = new AuthorityMenuProvider();

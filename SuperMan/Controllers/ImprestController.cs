@@ -16,7 +16,7 @@ namespace SuperMan.Controllers
     /// <summary>
     /// 备用金controller 
     /// </summary>
-    public class ImprestController : Controller
+    public class ImprestController : BaseController
     {
         private readonly IImprestBalanceRecordProvider imprestProvider = new ImprestBalanceRecordProvider();
         /// <summary>
