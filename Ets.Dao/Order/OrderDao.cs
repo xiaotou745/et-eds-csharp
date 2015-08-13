@@ -515,19 +515,19 @@ select @@IDENTITY ";
             string columnList = @"   o.[Id]
                                     ,o.[OrderNo]
                                     ,o.[PickUpAddress]
-                                    ,o.[PubDate]
+                                    ,isnull(o.[PubDate],'') as PubDate
                                     ,o.[ReceviceName]
                                     ,o.[RecevicePhoneNo]
                                     ,o.[ReceviceAddress]
-                                    ,o.[ActualDoneDate]
-                                    ,o.[IsPay]
-                                    ,o.[Amount]
-                                    ,o.[OrderCommission]
+                                    ,isnull(o.[ActualDoneDate],'') as ActualDoneDate
+                                    ,isnull(o.[IsPay],0) as IsPay
+                                    ,isnull(o.[Amount],0) as Amount
+                                    ,isnull(o.[OrderCommission],0) as OrderCommission
                                     ,o.[RealOrderCommission]
-                                    ,o.[DistribSubsidy]
-                                    ,o.[WebsiteSubsidy]
+                                    ,isnull(o.[DistribSubsidy],0) as DistribSubsidy
+                                    ,isnull(o.[WebsiteSubsidy],0) as WebsiteSubsidy
                                     ,o.[Remark]
-                                    ,o.[Status]
+                                    ,isnull(o.[Status],0) as Status
                                     ,o.[clienterId]
                                     ,o.[businessId]
                                     ,o.[ReceviceCity]
