@@ -53,12 +53,12 @@ namespace Ets.Dao.Distribution
                                     ,C.[BussinessID]
                                     ,C.[WorkStatus] 
                                     ,C.[AllowWithdrawPrice] 
-                                    ,g.GroupName 
+                                    ,isnull(g.GroupName,'') 
                                     ,isnull(cs.ClienterId,0) as CSID  --如果非0就存在跨店
                                     ,ISNULL(DC.DeliveryCompanyName,'') AS CompanyName
 ";
 
-            var sbSqlWhere = new StringBuilder(" 1=1 AND DC.IsEnable = 1 ");
+            var sbSqlWhere = new StringBuilder(" 1=1 ");// AND DC.IsEnable = 1 
             if (!string.IsNullOrEmpty(criteria.clienterPhone))
             {
                 sbSqlWhere.AppendFormat(" AND C.PhoneNo='{0}' ", criteria.clienterPhone);
