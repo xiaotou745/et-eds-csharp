@@ -101,8 +101,9 @@ namespace SuperMan.Controllers
         /// <param name="pageindex"></param>
         /// <returns></returns>
         [HttpGet]
-        public FileContentResult PostDaoChuImprestPayment(int pageindex = 1)
+        public void PostDaoChuImprestPayment(int pageindex = 1)
         {
+            var isB = Response.BufferOutput;
             ImprestBalanceRecordSearchCriteria criteria = new ImprestBalanceRecordSearchCriteria();
             TryUpdateModel(criteria);
             criteria.PageIndex = 1;
@@ -110,9 +111,12 @@ namespace SuperMan.Controllers
 
             var pagedList = imprestProvider.GetImprestBalanceRecordList(criteria);
 
+            var buffer = new byte[0] {};
+            Response.ContentType = "application/msexcel";
+            string filname = "无数据.xls";
             if (pagedList != null && pagedList.Records.Count > 0)
             {
-                string filname = "e代送-{0}-备用金支出数据.xls";
+                filname = "e代送-{0}-备用金支出数据.xls";
                 if (!string.IsNullOrWhiteSpace(criteria.ClienterPhoneNo))
                 {
                     filname = string.Format(filname, criteria.ClienterPhoneNo);
@@ -124,15 +128,19 @@ namespace SuperMan.Controllers
                 if (pagedList.Records.Count > 3)
                 {
                     byte[] data = Encoding.UTF8.GetBytes(CreateExcel(pagedList));
-                    return File(data, "application/msexcel", filname);
+                    buffer = data;
                 }
                 else
                 {
                     byte[] data = Encoding.Default.GetBytes(CreateExcel(pagedList));
-                    return File(data, "application/msexcel", filname);
+                    buffer = data;
                 }
             }
-            return File(new byte[0] { }, "application/msexcel", "无数据.xls");
+            Response.AppendHeader("Content-Disposition", string.Format("attachment;filename={0}",filname));
+            Response.BinaryWrite(buffer);
+            Response.Flush();
+            Response.End();
+            //return File(new byte[0] { }, "application/msexcel", "无数据.xls");
         }
 
         /// <summary>
