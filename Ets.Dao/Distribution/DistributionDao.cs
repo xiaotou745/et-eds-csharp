@@ -53,7 +53,7 @@ namespace Ets.Dao.Distribution
                                     ,C.[BussinessID]
                                     ,C.[WorkStatus] 
                                     ,C.[AllowWithdrawPrice] 
-                                    ,isnull(g.GroupName,'') 
+                                    ,g.GroupName
                                     ,isnull(cs.ClienterId,0) as CSID  --如果非0就存在跨店
                                     ,ISNULL(DC.DeliveryCompanyName,'') AS CompanyName
 ";
