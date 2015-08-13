@@ -208,11 +208,11 @@
             $('#Tip').text('请输入正确的提现金额!');
             return;
         }
-        if (withdrawPrice > allowwithdrawPrice) {
+        if (parseFloat(withdrawPrice) > parseFloat(allowwithdrawPrice)) {
             $('#Tip').text('提现金额超过该骑士可提现金额!');
             return;
         }
-        if (withdrawPrice > imprice) {
+        if (parseFloat(withdrawPrice) > parseFloat(imprice)) {
             $('#Tip').text('提现金额超过备用金账户总余额!');
             return;
         }
