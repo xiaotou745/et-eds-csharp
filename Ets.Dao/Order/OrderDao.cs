@@ -4,6 +4,7 @@ using Ets.Dao.WtihdrawRecords;
 using Ets.Model.Common;
 using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.DeliveryCompany;
+using Ets.Model.DataModel.Finance;
 using Ets.Model.DataModel.Order;
 using Ets.Model.DataModel.Subsidy;
 using Ets.Model.DomainModel.Order;
@@ -3624,6 +3625,174 @@ where   Id = @OrderId and FinishAll = 0";
                 }
             }
             return string.Format(clienterSql, sb.ToString());
+        }
+        /// <summary>
+        /// 根据订单号查订单信息
+        /// danny-20150320
+        /// </summary>
+        /// <param name="overTimeHour"></param>
+        /// <returns></returns>
+        public IList<OrderListModel> GetDealOverTimeOrderList(int overTimeHour=24)
+        {
+            #region 查询脚本
+            string sql = @"SELECT        o.[Id]
+                                        ,o.[OrderNo]
+                                        ,o.[PickUpAddress]
+                                        ,o.PubDate
+                                        ,o.[ReceviceName]
+                                        ,o.[RecevicePhoneNo]
+                                        ,o.[ReceviceAddress]
+                                        ,o.[ActualDoneDate]
+                                        ,o.[IsPay]
+                                        ,o.[Amount]
+                                        ,o.[OrderCommission]
+                                        ,o.[DistribSubsidy]
+                                        ,o.[WebsiteSubsidy]
+                                        ,o.[Remark]
+                                        ,o.[Status]
+                                        ,o.[clienterId]
+                                        ,o.[businessId]
+                                        ,o.[ReceviceCity]
+                                        ,o.[ReceviceLongitude]
+                                        ,o.[ReceviceLatitude]
+                                        ,o.[OrderFrom]
+                                        ,o.[OriginalOrderId]
+                                        ,o.[OriginalOrderNo]
+                                        ,o.[Quantity]
+                                        ,o.[Weight]
+                                        ,o.[ReceiveProvince]
+                                        ,o.[ReceiveArea]
+                                        ,o.[ReceiveProvinceCode]
+                                        ,o.[ReceiveCityCode]
+                                        ,o.[ReceiveAreaCode]
+                                        ,o.[OrderType]
+                                        ,o.[KM]
+                                        ,o.[GuoJuQty]
+                                        ,o.[LuJuQty]
+                                        ,o.[SongCanDate]
+                                        ,o.[OrderCount]
+                                        ,o.[CommissionRate] 
+                                        ,o.[RealOrderCommission] 
+                                        ,b.[City] BusinessCity
+                                        ,b.Name BusinessName
+                                        ,b.PhoneNo BusinessPhoneNo
+                                        ,b.PhoneNo2 BusinessPhoneNo2
+                                        ,b.Address BusinessAddress
+                                        ,c.PhoneNo ClienterPhoneNo
+                                        ,c.TrueName ClienterTrueName
+                                        ,c.TrueName ClienterName
+                                        ,c.AccountBalance AccountBalance
+                                        ,b.GroupId
+                                        ,case when o.orderfrom=0 then '客户端' else g.GroupName end GroupName
+                                        ,o.OriginalOrderNo
+                                        ,oo.NeedUploadCount
+                                        ,oo.HadUploadCount
+                                        ,oo.ReceiptPic
+                                        ,oo.IsNotRealOrder IsNotRealOrder
+                                        ,o.OtherCancelReason
+                                        ,o.OriginalOrderNo
+                                        ,ISNULL(o.MealsSettleMode,0) MealsSettleMode
+                                        ,ISNULL(oo.IsJoinWithdraw,0) IsJoinWithdraw
+                                        ,o.BusinessReceivable
+                                        ,o.SettleMoney
+                                        ,o.FinishAll
+                                    FROM [order] o WITH ( NOLOCK )
+                                    JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
+                                    JOIN OrderOther oo WITH (NOLOCK) ON oo.OrderId=o.Id
+                                    left JOIN clienter c WITH (NOLOCK) ON o.clienterId=c.Id
+                                    WHERE o.PubDate BETWEEN DATEADD(HOUR,-24,Convert(DateTime,Convert(Varchar(10),GetDate(),120))) 
+                                    AND Convert(DateTime,Convert(Varchar(10),GetDate(),120))
+                                    AND o.FinishAll=0 AND o.Status<>4";
+            #endregion
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@overTimeHour", overTimeHour);
+            var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
+            var list = ConvertDataTableList<OrderListModel>(dt);
+            if (list != null && list.Count > 0)
+            {
+                return list;
+            }
+            return null;
+        }
+        /// <summary>
+        /// 修改订单状态
+        /// danny-20150813
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool ModifyOrderStatus(OrderListModel model)
+        {
+            string sql = string.Format(@" UPDATE dbo.[order]
+                                             SET    [Status] = @Status
+                                            OUTPUT
+                                              Inserted.Id,
+                                              @Price,
+                                              GETDATE(),
+                                              @OptId,
+                                              @OptName,
+                                              Inserted.[Status],
+                                              @Platform,
+                                              @Remark
+                                            INTO dbo.OrderSubsidiesLog
+                                              (OrderId,
+                                              Price,
+                                              InsertTime,
+                                              OptId,
+                                              OptName,
+                                              OrderStatus,
+                                              Platform,
+                                              Remark)
+                                             WHERE  Id = @Id AND Status=@OldStatus ");
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Id", model.Id);
+            parm.AddWithValue("@Status", model.Status);
+            parm.AddWithValue("@OldStatus", model.OldStatus);
+            parm.AddWithValue("@Price", model.OrderCommission);
+            parm.AddWithValue("@OptId", 0);
+            parm.AddWithValue("@OptName", "服务");
+            parm.AddWithValue("@Platform", 2);
+            parm.AddWithValue("@Remark", "服务自动处理超时未完成订单");
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ;
+        }
+        /// <summary>
+        /// 添加骑士可提现余额流水记录
+        /// danny-20150813
+        /// </summary>
+        /// <param name="clienterAllowWithdrawRecord"></param>
+        /// <returns></returns>
+        public bool InsertClienterAllowWithdrawRecord(ClienterAllowWithdrawRecord clienterAllowWithdrawRecord)
+        {
+            const string insertSql = @"
+insert into ClienterAllowWithdrawRecord
+            (ClienterId
+            ,Amount
+            ,Status
+            ,Balance
+            ,RecordType
+            ,Operator
+            ,WithwardId
+            ,RelationNo
+            ,Remark)
+select   @ClienterId
+        ,@Amount
+        ,@Status
+        ,c.AllowWithdrawPrice
+        ,@RecordType
+        ,@Operator
+        ,@WithwardId
+        ,@RelationNo
+        ,@Remark 
+from dbo.clienter as c where Id=@ClienterId";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("ClienterId", clienterAllowWithdrawRecord.ClienterId);//骑士id
+            dbParameters.AddWithValue("Amount", clienterAllowWithdrawRecord.Amount);//流水金额
+            dbParameters.AddWithValue("Status", clienterAllowWithdrawRecord.Status); //流水状态(1、交易成功 2、交易中）
+            dbParameters.AddWithValue("RecordType", clienterAllowWithdrawRecord.RecordType); //交易类型(1佣金 2奖励 3提现 4取消订单赔偿 5无效订单扣款)
+            dbParameters.AddWithValue("Operator", clienterAllowWithdrawRecord.Operator); //操作人 
+            dbParameters.AddWithValue("WithwardId", clienterAllowWithdrawRecord.WithwardId); //关联ID
+            dbParameters.AddWithValue("RelationNo", clienterAllowWithdrawRecord.RelationNo); //关联单号
+            dbParameters.AddWithValue("Remark", clienterAllowWithdrawRecord.Remark); //描述
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, insertSql, dbParameters) > 0;
         }
     }
 }
