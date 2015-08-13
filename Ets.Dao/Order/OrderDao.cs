@@ -1133,28 +1133,8 @@ select 0
             dbParameters.Add("@orderNo", SqlDbType.NVarChar);
             dbParameters.SetValue("@orderNo", orderNo);
             object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, selSql, dbParameters);
-
             return ParseHelper.ToInt(executeScalar, 0);
-
-        }
-
-
-        /// <summary>
-        /// 订单是否被抢
-        /// 平扬 
-        /// </summary>
-        /// <param name="orderNo"></param>
-        /// <returns></returns>
-        public bool CheckOrderIsAllowRush(string orderNo)
-        {
-            string selSql = string.Format(@" SELECT 1 FROM  [order] WITH(NOLOCK)  WHERE  OrderNo = @orderNo and [Status]=0 ");
-            IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            //订单号
-            dbParameters.Add("@orderNo", SqlDbType.NVarChar);
-            dbParameters.SetValue("@orderNo", orderNo);
-            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, selSql, dbParameters);
-            return ParseHelper.ToInt(executeScalar, 0) > 0;
-        }
+        }  
 
 
 
@@ -1348,31 +1328,6 @@ where   o.[Status] <> 3
         /// <returns></returns>
         public PageInfo<T> GetOrderCount<T>(HomeCountCriteria criteria)
         {
-            //            string columnList = @"  b.district
-            //				                    ,COUNT(*) orderCount
-            //				                    ,SUM(o.DistribSubsidy)distribSubsidy
-            //				                    ,SUM(o.WebsiteSubsidy)websiteSubsidy
-            //				                    ,SUM(o.OrderCommission)orderCommission
-            //				                    ,SUM(o.DistribSubsidy+o.WebsiteSubsidy+o.OrderCommission)deliverAmount
-            //				                    ,SUM(Amount)orderAmount ";
-            //            var sbSqlWhere = new StringBuilder(" 1=1 ");
-            //            if (criteria.searchType == 1)//当天
-            //            {
-            //                sbSqlWhere.Append(" AND DateDiff(DAY, GetDate(),o.PubDate)=0 ");
-            //            }
-            //            else if (criteria.searchType == 2)//本周
-            //            {
-            //                sbSqlWhere.Append(" AND DateDiff(WEEK, GetDate(),DATEADD (DAY, -1,o.PubDate))=0 ");
-            //            }
-            //            else if (criteria.searchType == 3)//本月
-            //            {
-            //                sbSqlWhere.Append(" AND DateDiff(MONTH, GetDate(),o.PubDate)=0 ");
-            //            }
-            //            sbSqlWhere.Append(" group by b.district ");
-            //            string tableList = @" business b with(nolock)
-            //                                  join [order] o with(nolock) on b.Id=o.businessId ";
-            //            string orderByColumn = " COUNT(*) DESC ";
-            //            return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
             var sbtbl = new StringBuilder(@" (select    b.district
                                     ,sum(OrderCount) orderCount --订单数 
                                     ,SUM(o.WebsiteSubsidy)websiteSubsidy  --网站补贴
@@ -1723,21 +1678,14 @@ where   1 = 1 and o.Id = @Id
         /// <param name="Id">订单ID</param>
         /// <returns></returns>
         public OrderChildPayModel GetOrderById(int Id)
-        {
-            //string sql = "SELECT clienterId FROM dbo.[order] o where id = @id";
+        {        
             string sql = @"
 SELECT clienterId,min(PayStatus) as PayStatus FROM dbo.[order] o(nolock)
 join dbo.OrderChild oc(nolock) on o.Id= oc.OrderId
- where o.id=@id group by PayStatus,clienterId
- ";
-            //IDbParameters parms = DbHelper.CreateDbParameters("id", DbType.Int32, 4, Id);
+ where o.id=@id group by PayStatus,clienterId ";
+
             IDbParameters parms = DbHelper.CreateDbParameters();
-            parms.Add("id", DbType.Int32, 4).Value = Id;
-            //return DbHelper.QueryForObjectDelegate<OrderListModel>(SuperMan_Read, sql, row => new OrderListModel()
-            //{
-            //    clienterId = ParseHelper.ToInt(row["clienterId"]),
-            //    IsPay = ParseHelper.ToBool(row["IsPay"], false)//是否允许点击完成，1=允许，0=不允许 
-            //});
+            parms.Add("id", DbType.Int32, 4).Value = Id;          
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parms);
             if (dt == null || dt.Rows.Count <= 0)
             {
@@ -1754,12 +1702,6 @@ join dbo.OrderChild oc(nolock) on o.Id= oc.OrderId
         /// <returns></returns>
         public IList<OrderAutoAdjustModel> GetOverTimeOrder(string IntervalMinute)
         {
-            //            string sql = string.Format(@"select 
-            //                            Id,
-            //                            DealCount,
-            //                            DateDiff(MINUTE,PubDate, GetDate()) IntervalMinute
-            //                            from [order] with(nolock)
-            //                            where Status=0 AND DateDiff(MINUTE,PubDate, GetDate()) in ({0})", IntervalMinute);
             string sql = string.Format(@"
 SELECT 
 distinct(o.Id), --因为本地会有多条数据，所以加了一个distinct，线上应该不会存在这个问题
@@ -1794,42 +1736,7 @@ DateDiff(MINUTE,PubDate, GetDate()) in ({0})", IntervalMinute);
             parm.AddWithValue("@OrderId", OrderId);
             parm.AddWithValue("@AdjustAmount", AdjustAmount);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
-        }
-
-        /// <summary>
-        ///添加订单佣金日志
-        /// danny-20150402
-        /// </summary>
-        /// <param name="config"></param>
-        /// <param name="Id"></param>
-        /// <returns></returns>
-        public bool addOrderSubsidiesLog(decimal AdjustAmount, int OrderId, string Remark, string OptName = "发布订单", int OrderStatus = 0)
-        {
-            string sql =
-                @"INSERT INTO OrderSubsidiesLog
-                                (Price
-                                ,OrderId
-                                ,InsertTime
-                                ,OptName
-                                ,OrderStatus
-                                ,Remark)
-                     VALUES
-                                (@Price
-                                ,@OrderId
-                                ,Getdate()
-                                ,@OptName
-                                ,@OrderStatus
-                                ,@Remark);";
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@Price", AdjustAmount);
-            parm.AddWithValue("@OrderId", OrderId);
-            parm.AddWithValue("@Remark", Remark);
-            parm.AddWithValue("@OptName", OptName);
-            parm.AddWithValue("@OrderStatus", OrderStatus);
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
-
-        }
-
+        }      
 
         /// <summary>
         ///添加订单佣金日志
@@ -3637,7 +3544,6 @@ where   Id = @OrderId and FinishAll = 0";
         /// 根据订单号查订单信息
         /// danny-20150320
         /// </summary>
-        /// <param name="overTimeHour"></param>
         /// <returns></returns>
         public IList<OrderListModel> GetDealOverTimeOrderList()
         {
@@ -3787,7 +3693,7 @@ set    c.AccountBalance=ISNULL(c.AccountBalance, 0)+@Amount
       ,c.AllowWithdrawPrice=ISNULL(c.AllowWithdrawPrice, 0)+@Amount
 OUTPUT
   Inserted.Id,
-  -@Amount,
+  @Amount,
   @Status,
   Inserted.AccountBalance,
   @RecordType,
