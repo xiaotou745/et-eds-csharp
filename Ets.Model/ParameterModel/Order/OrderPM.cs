@@ -37,5 +37,10 @@ namespace Ets.Model.ParameterModel.Order
         /// 骑士真实名称
         /// </summary>
         public string ClienterTrueName { get; set; }
+
+        /// <summary>
+        /// 物流公司ID 
+        /// </summary>
+        public int DeliveryCompanyID { get; set; }
     }
 }
