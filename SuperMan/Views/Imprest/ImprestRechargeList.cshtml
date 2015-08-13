@@ -29,7 +29,7 @@
                         <input id="txtOptTimeStart" readonly="readonly" type="text" name="OptDateStart" />
                         <span class="">到: </span>
                         <input id="txtOptTimeEnd" readonly="readonly" type="text" name="OptDateEnd" />
-                        <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
+                        <input type="button" value="查询" class="searchBtn" id="btnSearch" />
                         <input type="button" value="充值" class="searchBtn" id="btnRecharge" />
                     </td>
                 </tr>
@@ -53,6 +53,20 @@
     $(function () {
         $('#txtOptTimeStart').datepicker();
         $('#txtOptTimeEnd').datepicker();
+        //查询 
+        $("#btnSearch").on('click', function () {
+            var startDate = $('#txtOptTimeStart').val();
+            var endDate = $('#txtOptTimeEnd').val();
+            if (startDate != "" && endDate!="") {
+                var start = new Date(startDate);
+                var end = new Date(endDate);
+                if (end < start) {
+                    alert("开始日期不能大于结束日期");
+                    return;
+                }
+            }
+            $("#btnSearch").submit();
+        });
         //点击保证金充值按钮
         $("#btnRecharge").click(function () {
             $.ajax({

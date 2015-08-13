@@ -33,6 +33,9 @@ using Ets.Dao.Business;
 using Ets.Service.IProvider.Common;
 using Ets.Service.Provider.Common;
 using Ets.Model.DomainModel.Business;
+using Ets.Model.ParameterModel.Finance;
+using Ets.Dao.Finance;
+using Ets.Model.DataModel.Finance;
 namespace Ets.Service.Provider.Business
 {
 
@@ -43,6 +46,7 @@ namespace Ets.Service.Provider.Business
     {
         readonly IAreaProvider iAreaProvider = new AreaProvider();
         readonly BusinessDao businessDao = new BusinessDao();
+        readonly BusinessBalanceRecordDao businessBalanceRecordDao = new BusinessBalanceRecordDao();
         readonly ITokenProvider iTokenProvider = new TokenProvider();
         /// <summary>
         /// app端商户获取订单   add by caoheyang 20150311
@@ -1168,6 +1172,8 @@ namespace Ets.Service.Provider.Business
         }
         /// <summary>
         /// 获取商户详细信息
+        /// 胡灵波
+        /// 2015年8月13日 16:42:01
         /// </summary>
         /// <param name="businessId">商户Id</param>
         /// <returns></returns>
@@ -1499,6 +1505,37 @@ namespace Ets.Service.Provider.Business
                 return ResultModel<object>.Conclude(SystemState.SystemError,
                       new { PushTime = 0 });
             }
+        }
+
+
+        /// <summary>
+        /// 更新商家余额、可提现余额     
+        /// 胡灵波
+        /// 2015年8月13日 16:41:11
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="myOrderInfo"></param>
+        public void UpdateBBalanceAndWithdraw(BusinessMoneyPM businessMoneyPM)
+        {
+            //更新商户余额、可提现
+            businessDao.UpdateForWithdrawC(new UpdateForWithdrawPM()
+            {
+                Id = businessMoneyPM.BusinessId,
+                Money = businessMoneyPM.Amount
+            });
+            
+            //更新商户余额流水          
+            businessBalanceRecordDao.Insert(new BusinessBalanceRecord()
+            {
+                BusinessId = businessMoneyPM.BusinessId,
+                Amount = businessMoneyPM.Amount,
+                Status = businessMoneyPM.Status,               
+                RecordType = businessMoneyPM.RecordType,
+                Operator = businessMoneyPM.Operator,
+                WithwardId = businessMoneyPM.WithwardId,
+                RelationNo = businessMoneyPM.RelationNo,
+                Remark = businessMoneyPM.Remark              
+            });          
         }
     }
 }

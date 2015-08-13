@@ -1502,24 +1502,7 @@ where  Id IN({0})";
 
             }).ToDictionary(m => m.Id);
         }
-
-        /// <summary>
-        ///  商户 余额，可提现余额   add by caoheyang 20150509
-        /// </summary>
-        /// <param name="model">超人信息</param>
-        /// <returns></returns>
-        public void UpdateForWithdrawC(UpdateForWithdrawPM model)
-        {
-            const string updateSql = @"
-update  business
-set  BalancePrice=BalancePrice+@WithdrawPrice,AllowWithdrawPrice=AllowWithdrawPrice+@WithdrawPrice
-where  Id=@Id ";
-            IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("Id", model.Id);
-            dbParameters.AddWithValue("WithdrawPrice", model.Money);
-            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
-        }
-
+      
         /// <summary>
         /// 获取商家详情
         /// </summary>
@@ -1868,23 +1851,6 @@ WHERE b.Id = @BusinessId  ";
             parm.Add("businessId", DbType.Int32, 4).Value = businessId;
             parm.Add("price", DbType.Decimal, 18).Value = price;
             DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm);
-        }
-
-
-        public bool UpdateBusinessBalancePrice(int businessId, decimal shouldPayBusiMoney)
-        {
-            bool b = false;
-            //更新商户表中的 BalancePrice 余额字段
-            StringBuilder upStringBuilder = new StringBuilder(@"
-update  dbo.business
-set     BalancePrice = BalancePrice + @BalancePrice
-where   Id = @Id;");
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.Add("@BalancePrice", DbType.Decimal).Value = shouldPayBusiMoney;
-            parm.Add("@Id", DbType.Int32, 4).Value = businessId;
-            int iResult = DbHelper.ExecuteNonQuery(SuperMan_Write, upStringBuilder.ToString(), parm);
-            //更新商户流水表
-            return iResult > 0 ? true : false;
         }
 
         /// <summary>
@@ -2618,5 +2584,26 @@ select 1 as UserType, b.Name as TrueName,b.Longitude,b.Latitude,b.PhoneNo as Pho
             var list = MapRows<AppActiveInfo>(dt);
             return list;
         }
+
+        /// <summary>
+        ///  更新商户余额、可提现余额  
+        ///  胡灵波
+        ///  2015年8月13日 16:19:04
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public void UpdateForWithdrawC(UpdateForWithdrawPM model)
+        {
+            const string updateSql = @"
+update  business
+set  BalancePrice=BalancePrice+@Money,
+AllowWithdrawPrice=AllowWithdrawPrice+@Money
+where  Id=@Id ";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("Id", model.Id);
+            dbParameters.AddWithValue("Money", model.Money);
+            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+        }
+
     }
 }

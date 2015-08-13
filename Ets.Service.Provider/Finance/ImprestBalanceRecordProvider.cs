@@ -54,6 +54,11 @@ namespace Ets.Service.Provider.Finance
                 mode.Status = 0;
                 return mode;
             }
+            if (clienter.Status!=1)
+            {
+                mode.Status = 2;
+                return mode;
+            }
             //获取骑士提现中金额
             var amount = _clienterFinanceDao.GetClienterWithdrawingAmount(clienter.Id);
             //获取备用金可用余额
@@ -146,7 +151,7 @@ namespace Ets.Service.Provider.Finance
                     Balance = (decimal) (climodel.AccountBalance - parmodel.WithdrawPrice), //提现后余额
                     TrueName = climodel.TrueName,//骑士收款户名
                     AccountNo = "", //卡号(DES加密)
-                    AccountType = 1, //账号类型：
+                    AccountType = ClienterFinanceAccountType.Imprest.GetHashCode(), //账号类型：
                     BelongType = 0,//账号类别  0 个人账户 1 公司账户  
                     OpenBank = "",//开户行
                     OpenSubBank = "", //开户支行
@@ -176,42 +181,12 @@ namespace Ets.Service.Provider.Finance
                     ClienterId = climodel.Id,
                     Amount = -parmodel.WithdrawPrice,
                     Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
-                    RecordType = (int)ClienterBalanceRecordRecordType.WithdrawApply,
+                    RecordType = (int)ClienterBalanceRecordRecordType.CashWithdraw,
                     Operator = parmodel.OprName,
                     WithwardId = withwardId,
                     RelationNo = withwardNo,
                     Remark = "骑士提现(备用金提现)"
                 });
-                ////更新骑士表的余额，可提现余额
-                //_clienterDao.UpdateCBalanceAndWithdraw(new UpdateForWithdrawPM
-                //{
-                //    Id = climodel.Id,
-                //    Money = -parmodel.WithdrawPrice
-                //});
-                ////骑士余额流水
-                //_clienterBalanceRecordDao.Insert(new ClienterBalanceRecord()
-                //{
-                //    ClienterId = climodel.Id,//骑士Id
-                //    Amount = -parmodel.WithdrawPrice,//流水金额
-                //    Status = (int)ClienterBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
-                //    RecordType = (int)ClienterBalanceRecordRecordType.WithdrawApply,
-                //    Operator = parmodel.OprName,
-                //    WithwardId = withwardId,
-                //    RelationNo = withwardNo,
-                //    Remark = "骑士提现(备用金提现)"
-                //});
-                ////骑士可用余额流水
-                //_clienterAllowWithdrawRecordDao.Insert(new ClienterAllowWithdrawRecord()
-                //{
-                //    ClienterId = climodel.Id,//骑士Id
-                //    Amount = -parmodel.WithdrawPrice,//流水金额
-                //    Status = (int)ClienterAllowWithdrawRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
-                //    RecordType = (int)ClienterAllowWithdrawRecordType.WithdrawApply,
-                //    Operator = parmodel.OprName,
-                //    WithwardId = withwardId,
-                //    RelationNo = withwardNo,
-                //    Remark = "骑士提现(备用金提现)"
-                //});
                 #endregion
 
                 #region===5.修改骑士表累计提现金额
@@ -225,14 +200,14 @@ namespace Ets.Service.Provider.Finance
                     OprName = parmodel.OprName,
                     ClienterName = climodel.TrueName,
                     ClienterPhoneNo = climodel.PhoneNo,
-                    OptType = 2,
+                    OptType = ImprestBalanceRecordOptType.Payment.GetHashCode(),
                     Remark = parmodel.Remark
                 });
                 #endregion
                 if (flag)
                 {
                     tran.Complete();
-                    model.Status = 0;
+                    model.Status = 1;
                     model.Message = "备用金提现成功";
                     return model;
                 }
@@ -269,9 +244,13 @@ namespace Ets.Service.Provider.Finance
             {
                 return ResultModel<string>.Conclude(AjaxImprestRechargeReturnEnum.MoneyError);
             }
-            if (string.IsNullOrWhiteSpace(model.ImprestReceiver)) //备用金接收人不能为空
+            if (string.IsNullOrWhiteSpace(model.ImprestReceiver) || model.ImprestReceiver.Trim().Length<2)//备用金接收人不能为空
             {
                 return ResultModel<string>.Conclude(AjaxImprestRechargeReturnEnum.ImprestReceiverError);
+            }
+            if (string.IsNullOrWhiteSpace(model.Remark) || model.Remark.Trim().Length < 5)//备用金接收人不能为空
+            {
+                return ResultModel<string>.Conclude(AjaxImprestRechargeReturnEnum.RemarkError);
             }
             if (_imprestBalanceRecordDao.InsertRechargeRecord(model))
             {

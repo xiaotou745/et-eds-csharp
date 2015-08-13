@@ -22,6 +22,7 @@
                 <div style="float: left">
                     <label>备注：</label>
                     <textarea style="width:600px; height:90px;" name="Remark" id="_txtRemark"></textarea>
+                    <label style="color:red;">*</label>
                 </div>
             </div>
         </div>
@@ -38,9 +39,6 @@
     $(function () {
         //点击备用金充值确认按钮    确验证
         $("#btnSure").click(function () {
-            if (!confirm("您确认充值备用金吗？")) {
-                return;
-            }
             var amount = $("#_txtAmount").val();
             var imprestReceiver = $("#_txtImprestReceiver").val();
             var remark = $("#_txtRemark").val();
@@ -53,11 +51,18 @@
                 return;
             }
             if (parseFloat(amount.replace(/(^\s*)|(\s*$)/g, "")) < 1 || parseFloat(amount.replace(/(^\s*)|(\s*$)/g, "")) > 1000000) {
-                alert("充值金额必须介于1到1000000之间");
+                alert("充值金额必须在1到1000000之间");
                 return;
             }
-            if (imprestReceiver.replace(/(^\s*)|(\s*$)/g, "").length == 0) {
-                alert("备用金接收人不能为空");
+            if (imprestReceiver.replace(/(^\s*)|(\s*$)/g, "").length == 0 || imprestReceiver.length < 2 || imprestReceiver.length>10) {
+                alert("备用金接收人不能为空且在2-10个字符之间");
+                return;
+            }
+            if (remark.replace(/(^\s*)|(\s*$)/g, "").length == 0 || remark.length < 5 || remark.length>50) {
+                alert("备注信息不能为空且在5-50个字符之间");
+                return;
+            }
+            if (!confirm("您确认充值备用金吗？")) {
                 return;
             }
             $.ajax({

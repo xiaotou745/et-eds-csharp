@@ -199,7 +199,12 @@ namespace ETS.Enums
         /// 手续费
         /// </summary>
         [DisplayText("手续费")]
-        ProcedureFee = 9
+        ProcedureFee = 9,
+        /// <summary>
+        /// 现金提现
+        /// </summary>
+        [DisplayText("现金提现")]
+        CashWithdraw = 10
     }
 
     public enum ClienterAllowWithdrawRecordType
@@ -273,7 +278,9 @@ namespace ETS.Enums
         [DisplayText("财付通")]
         CaiFuTong = 4,
         [DisplayText("百度钱包")]
-        BaiDuQinBao = 5
+        BaiDuQinBao = 5,
+        [DisplayText("备用金")]
+        Imprest = 6,
     }
 
     /// <summary>
@@ -674,9 +681,15 @@ namespace ETS.Enums
         [DisplayText("备用金充值金额有误")]
         MoneyError = 3,
         /// <summary>
-        /// 备用金接收人不能为空
+        /// 备用金接收人不能为空且至少两个字符
         /// </summary>
-        [DisplayText("备用金接收人不能为空")]
-        ImprestReceiverError = 4
+        [DisplayText("备用金接收人不能为空且在2-10个字符之间")]
+        ImprestReceiverError = 4,
+        /// <summary>
+        /// 备用信息不能为空且至少五个字符
+        /// </summary>
+        [DisplayText("备注信息不能为空且在5-50个字符之间")]
+        RemarkError = 5
+
     }
 }

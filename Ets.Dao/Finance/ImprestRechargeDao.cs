@@ -87,11 +87,11 @@ where  Id=@Id ";
         /// 2015年8月12日17:51:49
         /// 茹化肖
         /// </summary>
-        public int GetRemainingAmountNoLock()
+        public decimal GetRemainingAmountNoLock()
         {
             const string getbyidSql = @"SELECT ISNULL(RemainingAmount,0) AS RemainingAmount FROM ImprestRecharge (NOLOCK) ";
             var obj = DbHelper.ExecuteScalar(SuperMan_Read, getbyidSql);
-            return obj == null ? 0 : Convert.ToInt32(obj);
+            return obj == null ? 0 : Convert.ToDecimal(obj);
         }
 
         /// <summary>

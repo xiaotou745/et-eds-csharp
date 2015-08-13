@@ -47,6 +47,11 @@ namespace Ets.Model.DataModel.Clienter
         public int IsDisplay { get; set; }
 
         /// <summary>
+        ///物流公司是否显示原金额1:显示,0不显示
+        /// </summary>
+        //public int IsDisplayDeliveryMoney { get; set; }
+
+        /// <summary>
         /// 超人状态 0上班  1下班 默认为0
         /// </summary>
         public int WorkStatus { get; set; }

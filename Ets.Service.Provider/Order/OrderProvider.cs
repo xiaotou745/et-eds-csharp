@@ -1,5 +1,6 @@
 ﻿#region
 using CalculateCommon;
+using ETS;
 using Ets.Dao.Finance;
 using Ets.Dao.Order;
 using Ets.Model.Common;
@@ -369,36 +370,35 @@ namespace Ets.Service.Provider.Order
                 if (result <= 0)//订单发布失败
                 {
                     return PubOrderStatus.InvalidPubOrder;
-                }
+                }                
+                 
+                // 更新商户余额、可提现余额                        
+                iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
+                                                        {
+                                                            BusinessId=order.businessId.Value,                    
+                                                            Amount = -order.SettleMoney,
+                                                            Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
+                                                            RecordType = BusinessBalanceRecordRecordType.PublishOrder.GetHashCode(),
+                                                            Operator = order.BusinessName,
 
-                //扣商户金额
-                _businessDao.UpdateForWithdrawC(new UpdateForWithdrawPM()
-                {
-                    Id = Convert.ToInt32(order.businessId),
-                    Money = -order.SettleMoney
-                });
-
-                #region 商户余额流水操作
-                _businessBalanceRecordDao.Insert(new BusinessBalanceRecord()
-                {
-                    BusinessId = Convert.ToInt32(order.businessId),
-                    Amount = -order.SettleMoney,
-                    Status = (int)BusinessBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
-                    RecordType = (int)BusinessBalanceRecordRecordType.PublishOrder,
-                    Operator = order.BusinessName,
-                    Remark = "扣除商家结算费",
-                    WithwardId = result,
-                    RelationNo = order.OrderNo
-                });
-                #endregion
+                                                            WithwardId = result,
+                                                            RelationNo = order.OrderNo,
+                                                            Remark = "扣除商家结算费"
+                                                        });
 
                 if (order.Adjustment > 0)
-                {
-                    bool b = orderDao.addOrderSubsidiesLog(order.Adjustment, result, "补贴加钱,订单金额:" + order.Amount + "-佣金补贴策略id:" + order.CommissionFormulaMode);
-                    if (!b)//写入日志失败
-                    {
-                        return PubOrderStatus.InvalidPubOrder;
-                    }
+                {                      
+                    //更新订单日志
+                    orderSubsidiesLogDao.Insert(new OrderSubsidiesLog()
+                                                {
+                                                    OrderId =result,
+                                                    Price = order.Adjustment,
+                                                    OptName = "发布订单",
+                                                    Remark = "补贴加钱,订单金额:" + order.Amount + "-佣金补贴策略id:" + order.CommissionFormulaMode,
+                                                    OptId = order.businessId.Value,
+                                                    OrderStatus = OrderStatusCommon.UnReceive.GetHashCode(),
+                                                    Platform = SuperPlatform.FromBusiness.GetHashCode()
+                                                });                  
                 }
 
                 tran.Complete();
@@ -766,7 +766,18 @@ namespace Ets.Service.Provider.Order
             //
             if (order.Adjustment > 0)
             {
-                bool b = orderDao.addOrderSubsidiesLog(order.Adjustment, order.Id, "补贴加钱,订单金额:" + order.Amount + "-佣金补贴策略id:" + order.CommissionFormulaMode);
+                //更新订单日志
+                orderSubsidiesLogDao.Insert(new OrderSubsidiesLog()
+                                            {
+                                                OrderId = order.Id,
+                                                Price = order.Adjustment,
+                                                OptName = "发布订单",
+                                                Remark = "补贴加钱,订单金额:" + order.Amount + "-佣金补贴策略id:" + order.CommissionFormulaMode,
+                                                OptId = order.businessId.Value,
+                                                OrderStatus = OrderStatusCommon.UnReceive.GetHashCode(),
+                                                Platform = SuperPlatform.FromBusiness.GetHashCode()
+                                            });              
+
             }
         }
 
@@ -1310,11 +1321,13 @@ namespace Ets.Service.Provider.Order
         }
 
         /// <summary>
-        /// 通过订单号手动扣除订单网站补贴
+        /// 审核拒绝
         /// 彭宜-20150803
+        /// 胡灵波
+        /// 2015年8月13日 14:54:45
         /// </summary>
         /// <returns></returns>
-        public DealResultInfo DeductWebSubsidy(OrderOptionModel orderOptionModel)
+        public DealResultInfo AuditRefuse(OrderOptionModel orderOptionModel)
         {
             var dealResultInfo = new DealResultInfo
             {
@@ -1346,63 +1359,69 @@ namespace Ets.Service.Provider.Order
                     if (currModel == null)
                     {
                         decimal diffOrderCommission = orderModel.SettleMoney - orderModel.OrderCommission.Value;
-                        iClienterProvider.UpdateNotRealOrderClienterAccount(orderModel, diffOrderCommission);
+                        //更新骑士余额
+                        iClienterProvider.UpdateCAccountBalance(new ClienterMoneyPM()
+                                                                {
+                                                                    ClienterId = orderModel.clienterId,
+                                                                    Amount = diffOrderCommission,
+                                                                    Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
+                                                                    RecordType = ClienterBalanceRecordRecordType.OrderCommission.GetHashCode(),
+                                                                    Operator = orderOptionModel.OptUserName,
+                                                                    WithwardId = orderModel.Id,
+                                                                    RelationNo = orderModel.OrderNo,
+                                                                    Remark = "异常原因"
+                                                                });
+                        //更新扣除补贴原因,扣除补贴方式为手动扣除
+                        orderOtherDao.UpdateOrderDeductCommissionReason(orderModel.Id, orderOptionModel.OptLog, 2);
 
-                        OrderSubsidiesLog difforderSubsidiesLog = new OrderSubsidiesLog();
-                        difforderSubsidiesLog.OrderId = orderModel.Id;
-                        difforderSubsidiesLog.Price = diffOrderCommission;
-                        difforderSubsidiesLog.OptName = orderOptionModel.OptUserName;
-                        difforderSubsidiesLog.Remark = "扣除" + diffOrderCommission + "元无效订单金额";
-                        difforderSubsidiesLog.OptId = orderOptionModel.OptUserId;
-                        difforderSubsidiesLog.OrderStatus = OrderStatusCommon.AuditStatusRefuse.GetHashCode();
-                        difforderSubsidiesLog.Platform = SuperPlatform.ManagementBackground.GetHashCode();
-                        orderSubsidiesLogDao.Insert(difforderSubsidiesLog);
+                        //更新订单日志
+                        orderSubsidiesLogDao.Insert(new OrderSubsidiesLog()
+                                                    {
+                                                        OrderId = orderModel.Id,
+                                                        Price = diffOrderCommission,
+                                                        OptName = orderOptionModel.OptUserName,
+                                                        Remark = "扣除" + diffOrderCommission + "元无效订单金额",
+                                                        OptId = orderOptionModel.OptUserId,
+                                                        OrderStatus = OrderStatusCommon.AuditStatusRefuse.GetHashCode(),
+                                                        Platform = SuperPlatform.ManagementBackground.GetHashCode()
+                                                    });
                     }
                 }
 
-                //更新订单真实佣金
+               //更新订单真实佣金
                 decimal realOrderCommission = orderModel.OrderCommission.Value;
                 realOrderCommission = realOrderCommission > orderModel.SettleMoney ? orderModel.SettleMoney : realOrderCommission;
+                
+                //更新骑士可提现余额
+                iClienterProvider.UpdateCAllowWithdrawPrice(new ClienterMoneyPM()
+                                                            {
+                                                                ClienterId = orderModel.clienterId,
+                                                                Amount = realOrderCommission,
+                                                                Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(),
+                                                                RecordType = ClienterAllowWithdrawRecordType.OrderCommission.GetHashCode(),
+                                                                Operator = orderOptionModel.OptUserName,
+                                                                WithwardId = orderModel.Id,
+                                                                RelationNo = orderModel.OrderNo,
+                                                                Remark = "管理后台审核拒绝加可提现"
+                                                            });
+                //更新订单真实佣金
                 orderDao.UpdateOrderRealOrderCommission(orderModel.Id.ToString(), realOrderCommission);
-
-                //加可提现                
-                clienterDao.UpdateCAllowWithdrawPrice(new UpdateForWithdrawPM
-                {
-                                Id=orderModel.clienterId,
-                                Money=realOrderCommission          
-                             }
-                );
+                //更新已提现状态
                 orderOtherDao.UpdateJoinWithdraw(orderModel.Id);
-                orderOtherDao.UpdateAuditStatus(orderModel.Id, OrderAuditStatusCommon.Refuse.GetHashCode());
-
-                //加可提现金额
-                ClienterAllowWithdrawRecord cawrm = new ClienterAllowWithdrawRecord()
-                {
-                    ClienterId = orderModel.clienterId,
-                    Amount = Convert.ToDecimal(realOrderCommission),
-                    Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(),
-                    RecordType = ClienterAllowWithdrawRecordType.OrderCommission.GetHashCode(),
-                    Operator = orderOptionModel.OptUserName,
-                    WithwardId = orderModel.Id,
-                    RelationNo = orderModel.OrderNo,
-                    Remark = "管理后台审核拒绝加可提现"
-                };
-                clienterAllowWithdrawRecordDao.Insert(cawrm);
-
+                //更新审核状态
+                orderOtherDao.UpdateAuditStatus(orderModel.Id, OrderAuditStatusCommon.Refuse.GetHashCode());            
                 //写入订单日志
-                OrderSubsidiesLog orderSubsidiesLog = new OrderSubsidiesLog();
-                orderSubsidiesLog.OrderId = orderModel.Id;
-                orderSubsidiesLog.Price = realOrderCommission;
-                orderSubsidiesLog.OptName = orderOptionModel.OptUserName;
-                orderSubsidiesLog.Remark = "增加" + realOrderCommission + "元可提现金额";
-                orderSubsidiesLog.OptId = orderOptionModel.OptUserId;
-                orderSubsidiesLog.OrderStatus = OrderStatusCommon.AuditStatusRefuse.GetHashCode();
-                orderSubsidiesLog.Platform = SuperPlatform.ManagementBackground.GetHashCode();
-                orderSubsidiesLogDao.Insert(orderSubsidiesLog);
+                orderSubsidiesLogDao.Insert(new OrderSubsidiesLog()
+                                            {
+                                                OrderId = orderModel.Id,
+                                                Price = realOrderCommission,
+                                                OptName = orderOptionModel.OptUserName,
+                                                Remark = "增加" + realOrderCommission + "元可提现金额",
+                                                OptId = orderOptionModel.OptUserId,
+                                                OrderStatus = OrderStatusCommon.AuditStatusRefuse.GetHashCode(),
+                                                Platform = SuperPlatform.ManagementBackground.GetHashCode()
+                                            });                
 
-
-                //更新扣除补贴原因,扣除补贴方式为手动扣除
-                orderOtherDao.UpdateOrderDeductCommissionReason(orderModel.Id, orderOptionModel.OptLog, 2);
                 tran.Complete();
                 dealResultInfo.DealFlag = true;
                 dealResultInfo.DealMsg = "扣取网站补贴成功！";
@@ -1431,7 +1450,7 @@ namespace Ets.Service.Provider.Order
                     return dealResultInfo;
                 }
 
-                #region 调用老接口
+                #region 调用老接口 临时用
                 //无效订单
                 if (orderModel.OrderCommission > orderModel.SettleMoney)
                 {
@@ -1441,50 +1460,78 @@ namespace Ets.Service.Provider.Order
                     {
                         if (orderModel.IsPay.Value || (!orderModel.IsPay.Value && orderModel.MealsSettleMode == MealsSettleMode.LineOff.GetHashCode()))
                         {
-                            //加余额，加余额流水
-                            UpdateClienterAccount(orderModel, -currModel.Amount);
+                            //更新骑士余额
+                            iClienterProvider.UpdateCAccountBalance(new ClienterMoneyPM()
+                                                                    {
+                                                                        ClienterId = orderModel.clienterId,
+                                                                        Amount = -currModel.Amount,
+                                                                        Status = ClienterBalanceRecordStatus.Success.GetHashCode(),                        
+                                                                        RecordType = ClienterBalanceRecordRecordType.BalanceAdjustment.GetHashCode(),
+                                                                        Operator = orderOptionModel.OptUserName,
+                                                                        WithwardId = orderModel.Id,
+                                                                        RelationNo = orderModel.OrderNo,
+                                                                        Remark = "余额调整"
+                                                                    });
                         }
                         else
-                        {
-                            //加余额、可提现、余额流水
-                            UpdateAccountBalanceAndWithdraw(orderModel, -currModel.Amount);
+                        {                         
+                            //更新骑士余额、可提现余额  
+                            iClienterProvider.UpdateCBalanceAndWithdraw(new ClienterMoneyPM()
+                                                                        {
+                                                                            ClienterId =  orderModel.clienterId,
+                                                                            Amount = -currModel.Amount,
+                                                                            Status = ClienterBalanceRecordStatus.Success.GetHashCode(),                             
+                                                                            RecordType = ClienterBalanceRecordRecordType.BalanceAdjustment.GetHashCode(),
+                                                                            Operator = orderOptionModel.OptUserName,
+                                                                            WithwardId = orderModel.Id,
+                                                                            RelationNo = orderModel.OrderNo,
+                                                                            Remark = "余额调整"
+                                                                        });
                         }
-                        orderDao.addOrderSubsidiesLog(currModel.Amount, orderModel.Id, "返还网站补贴" + (-currModel.Amount) + "元", "完成订单", 1);
+                        //订单日志
+                        orderSubsidiesLogDao.Insert(new OrderSubsidiesLog()
+                                                    {
+                                                        OrderId = orderModel.Id,
+                                                        Price = -currModel.Amount,
+                                                        OptName = orderOptionModel.OptUserName,
+                                                        Remark = "审核通过，无效订单返还网站补贴" + (-currModel.Amount) + "元",
+                                                        OptId = orderOptionModel.OptUserId,
+                                                        OrderStatus = OrderStatusCommon.AuditStatusOk.GetHashCode(),
+                                                        Platform = SuperPlatform.ManagementBackground.GetHashCode()
+                                                    });
+                
                     }
                 }
                 #endregion
 
-                clienterDao.UpdateCAllowWithdrawPrice(new UpdateForWithdrawPM
-                {
-                    Id=orderModel.clienterId,
-                    Money=orderModel.OrderCommission.Value                }
-                    );
-                orderOtherDao.UpdateJoinWithdraw(orderModel.Id);
-                orderOtherDao.UpdateAuditStatus(orderModel.Id, OrderAuditStatusCommon.Through.GetHashCode());   
-                
-                clienterAllowWithdrawRecordDao.Insert(new ClienterAllowWithdrawRecord()
-                                    {
-                                        ClienterId = orderModel.clienterId,
-                                        Amount = Convert.ToDecimal(orderModel.OrderCommission),
-                                        Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(),
-                                        RecordType = ClienterAllowWithdrawRecordType.OrderCommission.GetHashCode(),
-                                        Operator = orderOptionModel.OptUserName,
-                                        WithwardId = orderModel.Id,
-                                        RelationNo = orderModel.OrderNo,
-                                        Remark = "管理后台审核通过加可提现"
-                                    }
-                );
+                 //更新骑士可提现余额
+                iClienterProvider.UpdateCAllowWithdrawPrice(new ClienterMoneyPM()
+                                                            {
+                                                                ClienterId = orderModel.clienterId,
+                                                                Amount = orderModel.OrderCommission == null ? 0 : orderModel.OrderCommission.Value,
+                                                                Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(),
+                                                                RecordType = ClienterAllowWithdrawRecordType.OrderCommission.GetHashCode(),
+                                                                Operator = orderOptionModel.OptUserName,
+                                                                WithwardId = orderModel.Id,
+                                                                RelationNo = orderModel.OrderNo,
+                                                                Remark = "管理后台审核通过加可提现"
+                                                            });
 
-                //写入订单日志
-                OrderSubsidiesLog orderSubsidiesLog = new OrderSubsidiesLog();
-                orderSubsidiesLog.OrderId = orderModel.Id;
-                orderSubsidiesLog.Price = orderModel.OrderCommission.Value;
-                orderSubsidiesLog.OptName = orderOptionModel.OptUserName;
-                orderSubsidiesLog.Remark = "增加" + orderModel.OrderCommission + "元可提现金额";
-                orderSubsidiesLog.OptId = orderOptionModel.OptUserId;
-                orderSubsidiesLog.OrderStatus = OrderStatusCommon.AuditStatusOk.GetHashCode();
-                orderSubsidiesLog.Platform = SuperPlatform.ManagementBackground.GetHashCode();
-                orderSubsidiesLogDao.Insert(orderSubsidiesLog);
+                //更新已提现状态
+                orderOtherDao.UpdateJoinWithdraw(orderModel.Id);
+                //更新审核状态
+                orderOtherDao.UpdateAuditStatus(orderModel.Id, OrderAuditStatusCommon.Through.GetHashCode());   
+                //写入订单日志                
+                orderSubsidiesLogDao.Insert(new OrderSubsidiesLog()
+                                            {
+                                                OrderId = orderModel.Id,
+                                                Price = orderModel.OrderCommission.Value,
+                                                OptName = orderOptionModel.OptUserName,
+                                                Remark = "审核通过，增加" + orderModel.OrderCommission + "元可提现金额",
+                                                OptId = orderOptionModel.OptUserId,
+                                                OrderStatus = OrderStatusCommon.AuditStatusOk.GetHashCode(),
+                                                Platform = SuperPlatform.ManagementBackground.GetHashCode()
+                                            });
 
                 tran.Complete();
                 dealResultInfo.DealFlag = true; ;
@@ -1636,9 +1683,9 @@ namespace Ets.Service.Provider.Order
 
             #region 获取物流公司应付骑士佣金  2015年8月13日 09:34:02 窦海超
             DeliveryCompanyModel deliveryModel = null;
-            if (order.DeliveryCompanyID > 0)
+            if (modelPM.DeliveryCompanyID > 0)
             {
-                deliveryModel = new DeliveryCompanyDao().GetById(order.DeliveryCompanyID);
+                deliveryModel = new DeliveryCompanyDao().GetById(modelPM.DeliveryCompanyID);
             }
             decimal orderCommission = ParseHelper.ToDecimal(order.OrderCommission);
             if (deliveryModel != null)
@@ -1647,7 +1694,7 @@ namespace Ets.Service.Provider.Order
                 if (deliveryModel.SettleType == 1)
                 {
                     //订单金额/骑士结算比例值*订单数量
-                    orderCommission = deliveryModel.ClienterSettleRatio == 0 ? 0 : ParseHelper.ToDecimal(order.Amount) / deliveryModel.ClienterSettleRatio * ParseHelper.ToInt(order.OrderCount);
+                    orderCommission = deliveryModel.ClienterSettleRatio == 0 ? 0 : ParseHelper.ToDecimal(order.Amount) * deliveryModel.ClienterSettleRatio/100 * ParseHelper.ToInt(order.OrderCount);
                 }
                 else if (deliveryModel.SettleType == 2)
                 {
@@ -2074,68 +2121,106 @@ namespace Ets.Service.Provider.Order
         {
             return orderDao.UpdateOrderAddressAndPhone(orderId, newAddress, newPhone);
         }
-
-
-        #region 用户自定义方法
         /// <summary>
-        /// 更新用户金额
-        /// wc 完成订单时候调用
+        /// 自动处理超时未处理订单
+        /// danny-20150812
         /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="myOrderInfo"></param>
-        public void UpdateClienterAccount(OrderListModel myOrderInfo, decimal money)
+        public void AutoDealOverTimeOrder()
         {
-            //更新骑士 金额  
-            bool b = clienterDao.UpdateCAccountBalance(new UpdateForWithdrawPM() { Id = myOrderInfo.clienterId, Money = money });
-            //增加记录 
-            decimal? accountBalance = myOrderInfo.AccountBalance.Value + money;
-
-            ///TODO 骑士余额流水表，不是这个吧？
-            ClienterBalanceRecord cbrm = new ClienterBalanceRecord()
+            #region 对象声明及初始化
+            var orderList = orderDao.GetDealOverTimeOrderList();
+            if (orderList == null || orderList.Count == 0)
             {
-                ClienterId = myOrderInfo.clienterId,
-                Amount = money,
-                Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
-                Balance = accountBalance ?? 0,
-                RecordType = ClienterBalanceRecordRecordType.BalanceAdjustment.GetHashCode(),
-                Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士" : myOrderInfo.ClienterName,
-                WithwardId = myOrderInfo.Id,
-                RelationNo = myOrderInfo.OrderNo,
-                Remark = "余额调整"
-            };
-            clienterBalanceRecordDao.Insert(cbrm);
-        }
-
-        /// <summary>
-        /// 更新用户金额      
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="myOrderInfo"></param>
-        public void UpdateAccountBalanceAndWithdraw(OrderListModel myOrderInfo, decimal money)
-        {
-            int userId = myOrderInfo.clienterId;
-            //更新骑士 金额  
-            bool b = clienterDao.UpdateAccountBalanceAndWithdraw(new WithdrawRecordsModel() { UserId = userId, Amount = money });
-            //增加记录 
-            decimal? accountBalance = myOrderInfo.AccountBalance.Value + money;
-
-            ClienterBalanceRecord cbrm = new ClienterBalanceRecord()
+                return;
+            }
+            orderList = orderList.Where(t => !(t.MealsSettleMode == 1 && t.IsPay == false)).ToList();
+            if (orderList.Count == 0)
             {
-                ClienterId = userId,
-                Amount = myOrderInfo.OrderCommission == null ? 0 : Convert.ToDecimal(myOrderInfo.OrderCommission),
-                Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
-                Balance = accountBalance ?? 0,
-                RecordType = ClienterBalanceRecordRecordType.BalanceAdjustment.GetHashCode(),
-                Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士:" + userId : myOrderInfo.ClienterName,
-                WithwardId = myOrderInfo.Id,
-                RelationNo = myOrderInfo.OrderNo,
-                Remark = "余额调整"
-            };
-            clienterBalanceRecordDao.Insert(cbrm);
+                return;
+            }
+            #endregion
+
+            #region 处理订单状态为 0：未抢单 2：已抢单 3：已取货
+            var unFinishOrderrList = orderList.Where(t => t.Status == 0 || t.Status == 2 || t.Status == 4).ToList();
+            if (unFinishOrderrList.Count > 0)
+            {
+                foreach (var orderListModel in unFinishOrderrList)
+                {
+                    using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+                    {
+                        if (orderDao.ModifyOrderStatus(new OrderListModel()
+                        {
+                            Id = orderListModel.Id,
+                            Status = (byte?) OrderStatus.Status3,
+                            OldStatus = orderListModel.Status,
+                            OrderCommission = orderListModel.OrderCommission
+                        }))
+                        {
+                            if (orderDao.OrderCancelReturnBusiness(new OrderListModel()
+                            {
+                                SettleMoney = orderListModel.SettleMoney,
+                                OptUserName = "服务",
+                                Id = orderListModel.Id,
+                                OrderNo = orderListModel.OrderNo,
+                                Remark = "服务自动处理超时未完成订单",
+                                businessId = orderListModel.businessId
+                            }))
+                            {
+                                tran.Complete();
+                            }
+                        }
+                    }
+                }
+            }
+            #endregion
+
+            #region 处理已完成未完成小票上传的订单
+            var halfFinishOrderList = orderList.Where(t => t.Status == 1).ToList();
+            if (halfFinishOrderList.Count > 0)
+            {
+                foreach (var orderListModel in halfFinishOrderList)
+                {
+                    using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+                    {
+                        if (orderDao.OrderAuditRefuseModifyOrder(new OrderListModel()
+                        {
+                            Id = orderListModel.Id,
+                            RealOrderCommission = ParseHelper.ToDecimal(orderListModel.OrderCommission) - ParseHelper.ToDecimal(orderListModel.WebsiteSubsidy),
+                        }))
+                        {
+                            if (orderDao.OrderAuditRefuseReturnClienter(new OrderListModel()
+                            {
+                                RealOrderCommission = ParseHelper.ToDecimal(orderListModel.OrderCommission) - ParseHelper.ToDecimal(orderListModel.WebsiteSubsidy),
+                                Id = orderListModel.Id,
+                                OrderNo = orderListModel.OrderNo,
+                                clienterId = orderListModel.clienterId
+
+                            }))
+                            {
+                                if (orderDao.InsertClienterAllowWithdrawRecord(new ClienterAllowWithdrawRecord()
+                                {
+                                    ClienterId = orderListModel.clienterId,
+                                    Amount = ParseHelper.ToDecimal(orderListModel.OrderCommission) - ParseHelper.ToDecimal(orderListModel.WebsiteSubsidy),
+                                    Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
+                                    RecordType = ClienterBalanceRecordRecordType.OrderCommission.GetHashCode(),
+                                    Operator = "服务",
+                                    WithwardId =orderListModel.Id,
+                                    RelationNo = orderListModel.OrderNo,
+                                    Remark = "服务自动处理超时未完成订单"
+                                }))
+                                {
+                                    orderDao.AutoAuditRefuseDeal(orderListModel.Id);
+                                    tran.Complete();
+                                }
+                            }
+                        }
+                        
+                    }
+                }
+            }
+            #endregion
 
         }
-
-        #endregion
 
     }
 }
