@@ -30,7 +30,10 @@ namespace SuperMan.Controllers
         public ActionResult ImprestRechargeList()
         {
             ViewBag.ImprestRecharge = new ImprestRecharge();
-            ViewBag.PageModels = new PageInfo<ImprestBalanceRecord>(0, 1, new List<ImprestBalanceRecord>(), 100, 15); 
+            ViewBag.PageModels = imprestProvider.GetImprestBalanceRecordList(new ImprestBalanceRecordSearchCriteria()
+            {
+                OptType = ImprestBalanceRecordOptType.Recharge.GetHashCode()
+            });
             return View();
         }
 
@@ -41,8 +44,10 @@ namespace SuperMan.Controllers
         [HttpPost]
         public ActionResult DoImprestRechargeList(int pageindex = 1)
         {
-            PageInfo<ImprestBalanceRecord> models = new PageInfo<ImprestBalanceRecord>(0, 1, new List<ImprestBalanceRecord>(), 100, 15);
-            return PartialView();
+            var criteria = new ImprestBalanceRecordSearchCriteria();
+            TryUpdateModel(criteria);
+            criteria.OptType = ImprestBalanceRecordOptType.Recharge.GetHashCode();
+            return PartialView(imprestProvider.GetImprestBalanceRecordList(criteria));
         }
 
         /// <summary>
@@ -62,6 +67,7 @@ namespace SuperMan.Controllers
         [HttpPost]
         public JsonResult AjaxImprestRecharge(ImprestBalanceRecord model)
         {
+            
             model.OptName = UserContext.Current.Name;
             model.OptType = ImprestBalanceRecordOptType.Recharge.GetHashCode();
             return new JsonResult()
