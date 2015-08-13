@@ -163,5 +163,10 @@ namespace ETS.Const
         /// </summary>
         public const string Ets_ImprestWithdraw_Lock_C = "Ets_ImprestWithdraw_Lock_C_{0}";
 
+        /// <summary>
+        /// 备用金充值锁
+        /// </summary>
+        public const string Ets_Recharge_Lock = "Ets_Recharge_Lock_{0}";
+
     }
 }

@@ -5,6 +5,7 @@ using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using ETS.Data.PageData;
+using ETS.Enums;
 using Ets.Model.DataModel.Finance;
 using Ets.Model.ParameterModel.Finance;
 using Ets.Service.IProvider.Finance;
@@ -18,7 +19,7 @@ namespace SuperMan.Controllers
     /// <summary>
     /// 备用金controller 
     /// </summary>
-    public class ImprestController : Controller
+    public class ImprestController : BaseController
     {
         private readonly IImprestBalanceRecordProvider imprestProvider = new ImprestBalanceRecordProvider();
         /// <summary>
@@ -45,7 +46,7 @@ namespace SuperMan.Controllers
         }
 
         /// <summary>
-        /// 备用金充值功能 add by caoheyang  20150812
+        /// 备用金充值功能页面 add by caoheyang  20150812
         /// </summary>
         /// <returns></returns>
         [HttpPost]
@@ -59,9 +60,15 @@ namespace SuperMan.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult AjaxImprestRecharge(ImprestBalanceRecord model)
+        public JsonResult AjaxImprestRecharge(ImprestBalanceRecord model)
         {
-            return PartialView();
+            model.OptName = UserContext.Current.Name;
+            model.OptType = ImprestBalanceRecordOptType.Recharge.GetHashCode();
+            return new JsonResult()
+            {
+                JsonRequestBehavior = JsonRequestBehavior.DenyGet,
+                Data = imprestProvider.AjaxImprestRecharge(model)
+            };
         }
 
         /// <summary>
@@ -101,7 +108,7 @@ namespace SuperMan.Controllers
         /// <param name="pageindex"></param>
         /// <returns></returns>
         [HttpGet]
-        public FileContentResult PostDaoChuImprestPayment(int pageindex = 1)
+        public void PostDaoChuImprestPayment(int pageindex = 1)
         {
             ImprestBalanceRecordSearchCriteria criteria = new ImprestBalanceRecordSearchCriteria();
             TryUpdateModel(criteria);
@@ -110,9 +117,14 @@ namespace SuperMan.Controllers
 
             var pagedList = imprestProvider.GetImprestBalanceRecordList(criteria);
 
+            var buffer = new byte[0] {};
+            Response.ContentType = "application/msexcel";
+            Response.Clear();
+            Response.BufferOutput = true;
+            string filname = "无数据.xls";
             if (pagedList != null && pagedList.Records.Count > 0)
             {
-                string filname = "e代送-{0}-备用金支出数据.xls";
+                filname = "e代送-{0}-备用金支出数据.xls";
                 if (!string.IsNullOrWhiteSpace(criteria.ClienterPhoneNo))
                 {
                     filname = string.Format(filname, criteria.ClienterPhoneNo);
@@ -124,15 +136,19 @@ namespace SuperMan.Controllers
                 if (pagedList.Records.Count > 3)
                 {
                     byte[] data = Encoding.UTF8.GetBytes(CreateExcel(pagedList));
-                    return File(data, "application/msexcel", filname);
+                    buffer = data;
                 }
                 else
                 {
                     byte[] data = Encoding.Default.GetBytes(CreateExcel(pagedList));
-                    return File(data, "application/msexcel", filname);
+                    buffer = data;
                 }
             }
-            return File(new byte[0] { }, "application/msexcel", "无数据.xls");
+            Response.AppendHeader("Content-Disposition", string.Format("attachment;filename={0}",filname));
+            Response.BinaryWrite(buffer);
+            Response.Flush();
+            Response.End();
+            //return File(new byte[0] { }, "application/msexcel", "无数据.xls");
         }
 
         /// <summary>
