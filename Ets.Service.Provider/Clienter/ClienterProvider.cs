@@ -1123,6 +1123,8 @@ namespace Ets.Service.Provider.Clienter
                 return;
             }
 
+            //物流公司 
+            //更新骑士余额、可提现余额, 将订单标记为加入已提现,更新订单审核通过 
             if (myOrderInfo.DeliveryCompanyID > 0)
             {
                 // 更新骑士余额、可提现余额  
@@ -1139,12 +1141,13 @@ namespace Ets.Service.Provider.Clienter
                                         });
                 //将订单标记为加入已提现
                 orderOtherDao.UpdateJoinWithdraw(myOrderInfo.Id);
-                //订单审核通过 
+                //更新订单审核通过 
                 orderOtherDao.UpdateAuditStatus(myOrderInfo.Id, OrderAuditStatusCommon.Through.GetHashCode());
-            }
+            }//非物流公司
             else
             {
-                //需要审核
+                //需要审核 
+                //更新骑士余额,更新骑士无效订单金额
                 if (myOrderInfo.IsOrderChecked == 1)
                 {
                     //更新骑士余额
@@ -1159,9 +1162,11 @@ namespace Ets.Service.Provider.Clienter
                                                 RelationNo = myOrderInfo.OrderNo,
                                                 Remark = "骑士完成订单"
                                             });
+                    //更新骑士无效订单金额
+                    UpdateInvalidOrder(myOrderInfo);
                 }
-                else
-                {
+                else//不需要审核
+                {   
                     // 更新骑士余额、可提现余额  
                     UpdateCBalanceAndWithdraw(new ClienterMoneyPM()
                                             {
@@ -1178,10 +1183,9 @@ namespace Ets.Service.Provider.Clienter
                     orderOtherDao.UpdateJoinWithdraw(myOrderInfo.Id);
                     //订单审核通过 
                     orderOtherDao.UpdateAuditStatus(myOrderInfo.Id, OrderAuditStatusCommon.Through.GetHashCode());
-                }
-
-                //更新骑士无效订单金额
-                UpdateInvalidOrder(myOrderInfo);
+                    //更新骑士无效订单金额
+                    UpdateInvalidOrder(myOrderInfo);
+                }             
             }
         }
 
@@ -1348,6 +1352,8 @@ namespace Ets.Service.Provider.Clienter
         /// <summary>
         /// 判断当前订单是否为无效订单
         /// zhaohailong20150706
+        /// 更改人：胡灵波
+        /// 2015年8月13日 19:50:45
         /// </summary>
         /// <param name="myOrderInfo"></param>
         /// <returns></returns>
