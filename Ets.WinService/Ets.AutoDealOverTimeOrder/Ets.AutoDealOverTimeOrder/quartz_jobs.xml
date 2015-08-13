@@ -11,8 +11,8 @@
   <schedule>
     <!--定时导出发送邮件-->
     <job>
-      <name>AutoDealBLL</name>
-      <group>AutoDealGroup</group>
+      <name>AutoDealOverTimeOrderBLL</name>
+      <group>AutoDealOverTimeOrderGroup</group>
       <description>AutoDealService</description>
       <job-type>Ets.AutoDealOverTimeOrder.AutoDealOverTimeOrderBLL,Ets.AutoDealOverTimeOrder</job-type>
       <durable>true</durable>
@@ -22,10 +22,10 @@
     <!--定时导出发送邮件-->
     <trigger>
       <cron>
-        <name>AutoDealBLLTrigger</name>
-        <group>AutoDealTriggerGroup</group>
-        <job-name>AutoDealBLL</job-name>
-        <job-group>AutoDealGroup</job-group>
+        <name>AutoDealOverTimeOrderBLLTrigger</name>
+        <group>AutoDealOverTimeOrderTriggerGroup</group>
+        <job-name>AutoDealOverTimeOrderBLL</job-name>
+        <job-group>AutoDealOverTimeOrderGroup</job-group>
         <cron-expression>* 1/3 * * * ?</cron-expression>
       </cron>
     </trigger>

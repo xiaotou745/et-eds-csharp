@@ -3659,7 +3659,7 @@ where   Id = @OrderId and FinishAll = 0";
                                     JOIN OrderOther oo WITH (NOLOCK) ON oo.OrderId=o.Id
                                     WHERE o.PubDate BETWEEN DATEADD(HOUR,-@overTimeHour,Convert(DateTime,Convert(Varchar(10),GetDate(),120))) 
                                     AND Convert(DateTime,Convert(Varchar(10),GetDate(),120))
-                                    AND o.FinishAll=0 AND o.Status<>3";
+                                    AND o.FinishAll=0 AND o.Status<>3 AND ISNULL(o.DeliveryCompanyID,0)=0 AND ISNULL(o.OrderFrom,0)=0 ";
             #endregion
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@overTimeHour", DbType.Int32).Value = ParseHelper.ToInt(Config.ConfigKey("OverTimeHour"), 24);
