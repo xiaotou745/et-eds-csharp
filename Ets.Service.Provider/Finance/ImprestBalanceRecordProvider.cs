@@ -34,6 +34,7 @@ namespace Ets.Service.Provider.Finance
         private readonly ImprestRechargeDao _imprestRechargeDao=new ImprestRechargeDao();
         private readonly ClienterBalanceRecordDao _clienterBalanceRecordDao= new ClienterBalanceRecordDao();
         private readonly ClienterAllowWithdrawRecordDao _clienterAllowWithdrawRecordDao= new ClienterAllowWithdrawRecordDao();
+        private readonly ClienterWithdrawLogDao _clienterWithdrawLogDao = new ClienterWithdrawLogDao();
         /// <summary>
         /// 验证手机号是否存在
         /// 2015年8月12日17:53:24
@@ -108,12 +109,21 @@ namespace Ets.Service.Provider.Finance
             #region===验证提现
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                //1.验证 查询可提现金额>骑士提现金额
+                #region===1.验证 查询可提现金额>骑士提现金额
                 var climodel = _clienterDao.GetUserInfoByUserId(parmodel.ClienterId);
+                if (climodel == null || climodel.Status == null || climodel.Status != ClienteStatus.Status1.GetHashCode())
+                {
+                    return new ImprestPayoutModel() { Status = 0, Message = "该骑士不可提现!" };
+                }
                 if (parmodel.WithdrawPrice > climodel.AllowWithdrawPrice)
                 {
                     return new ImprestPayoutModel(){Status = 0,Message = "提现金额大于可提现金额!"};
                 }
+                if (climodel.AccountBalance < climodel.AllowWithdrawPrice)
+                {
+                    return new ImprestPayoutModel() { Status = 0, Message = "账户余额小于可提现金额,账号异常!" };
+                }
+                #endregion
                 //2.验证 查询备用金账户余额>骑士提现金额
                 var imprsetAmount = _imprestRechargeDao.GetRemainingAmountLock();
                 if (parmodel.WithdrawPrice > imprsetAmount.RemainingAmount)
@@ -121,7 +131,7 @@ namespace Ets.Service.Provider.Finance
                     return new ImprestPayoutModel() { Status = 0, Message = "提现金额大于备用金可用余额!" };
                 }
 
-                #region ===3.创建骑士提现单,状态打款成功
+                #region ===3.创建骑士提现单,状态打款成功,创建骑士提现记录
                 string withwardNo = Helper.generateOrderCode(parmodel.ClienterId);
                 long withwardId = _clienterWithdrawFormDao.Insert(new ClienterWithdrawForm()
                 {
@@ -148,6 +158,13 @@ namespace Ets.Service.Provider.Finance
                     PhoneNo = climodel.PhoneNo, //手机号
                     HandChargeThreshold = 0//手续费阈值
                 });
+                _clienterWithdrawLogDao.Insert(new ClienterWithdrawLog()
+                {
+                    WithwardId = withwardId,
+                    Status = (int)ClienterWithdrawFormStatus.Success,//打款完成
+                    Remark = "骑士备用金提现操作",
+                    Operator = parmodel.OprName
+                }); //更新骑士表的余额，可提现余
                 #endregion
                 
                 #region===4.扣除骑士余额,提现余额,写流水
@@ -157,7 +174,7 @@ namespace Ets.Service.Provider.Finance
                     Id = climodel.Id,
                     Money = -parmodel.WithdrawPrice
                 });
-
+                //骑士余额流水
                 _clienterBalanceRecordDao.Insert(new ClienterBalanceRecord()
                 {
                     ClienterId = climodel.Id,//骑士Id
@@ -169,7 +186,7 @@ namespace Ets.Service.Provider.Finance
                     RelationNo = withwardNo,
                     Remark = "骑士提现(备用金提现)"
                 });
-
+                //骑士可用余额流水
                 _clienterAllowWithdrawRecordDao.Insert(new ClienterAllowWithdrawRecord()
                 {
                     ClienterId = climodel.Id,//骑士Id
