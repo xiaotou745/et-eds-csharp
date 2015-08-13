@@ -567,6 +567,9 @@ select @@IDENTITY ";
                                     ,oo.IsNotRealOrder
                                     ,oo.AuditStatus
                                     ,oo.DeductCommissionReason
+                                    ,o.IsEnable
+                                    ,o.FinishAll
+                                    ,ISNULL(oo.IsJoinWithdraw,0) IsJoinWithdraw
                                     ";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrWhiteSpace(criteria.businessName))

@@ -115,9 +115,19 @@ width: 100%;
                         yingfus = string.Format("[(基本佣金+网站补贴)*订单数量]<br/>[({0}+{1})*{2}]", item.BaseCommission,item.WebsiteSubsidy, item.OrderCount);
                     }
                     string yingfu_tipString = string.Format("  class=true style=color:blue; onmousemove=tip_show('{0}',event,'{1}'); onmouseout=tip_hide();", yingfuID, yingfus);
-                    
+                    bool canOperation=SuperMan.App_Start.UserContext.Current.HasAuthority(80) && 
+                                        item.FinishAll == 1 && 
+                                        item.IsJoinWithdraw == 0 && 
+                                        item.IsEnable == 1 && 
+                                        item.Status!=(byte)ETS.Enums.OrderStatusCommon.Cancel;
+
                     <tr id="@item.Id" @timeoutStyle>
-                        <td><input type="checkbox" name="checkMenus" id="@item.OrderNo" value="@item.Id" /></td>
+                        <td>
+                        @if (canOperation)
+                            {
+                        <input type="checkbox" name="checkMenus" id="@item.OrderNo" value="@item.Id" />
+                        }
+                            </td>
                         <td><a href="/Order/OrderDetail?OrderNo=@item.OrderNo&OrderId=@item.Id ">@item.OrderNo</a></td>
                         <td id="@realID" @real_tipString>@reals</td>
                         <td>@item.BusinessName <br> @item.BusinessPhoneNo</td>
@@ -135,7 +145,13 @@ width: 100%;
                         <td>
                             @AuditStatus
                         </td>
-                        <td><a href="javascript:btnAuditOk('@item.Id','@item.OrderNo')">审核通过</a><a href="javascript:btnAuditCancel('@item.Id','@item.OrderNo','@item.DeductCommissionReason')">审核拒绝</a></td>
+                        <td>
+                            @if (canOperation)
+                            {
+                        <a href="javascript:btnAuditOk('@item.Id','@item.OrderNo')">审核通过</a>
+                        <a href="javascript:btnAuditCancel('@item.Id','@item.OrderNo','@item.DeductCommissionReason')">审核拒绝</a> 
+                            }               
+    </td>
                     </tr>
                 }
             }
@@ -203,7 +219,8 @@ width: 100%;
     function showColumn() {
         //只有待审核状态时，才显示全选全消和操作列
         var totalColumn = $("#dataTableRange").find("th").length;
-        if ($("#auditStatus").val() == "0") {
+        var hasAuth = "@SuperMan.App_Start.UserContext.Current.HasAuthority(80)";
+        if ($("#auditStatus").val() == "0" && hasAuth!="False") {
             $("#batchAuditPass").show();
             $("#batchAuditCancel").show();
             $("#dataTableRange tr").find('th:eq(0)').show();

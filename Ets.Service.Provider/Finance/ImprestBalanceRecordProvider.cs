@@ -72,7 +72,7 @@ namespace Ets.Service.Provider.Finance
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        public ETS.Data.PageData.PageInfo<ImprestBalanceRecordModel> GetImprestBalanceRecordList(ImprestBalanceRecordSearchCriteria criteria)
+        public ETS.Data.PageData.PageInfo<ImprestBalanceRecord> GetImprestBalanceRecordList(ImprestBalanceRecordSearchCriteria criteria)
         {
             return _imprestBalanceRecordDao.GetImprestBalanceRecordList(criteria);
         }
