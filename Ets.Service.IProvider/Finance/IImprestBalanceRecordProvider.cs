@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ETS.Data.PageData;
+using Ets.Model.DataModel.Finance;
 using Ets.Model.DomainModel.Finance;
 using Ets.Model.ParameterModel.Finance;
 
@@ -19,6 +20,6 @@ namespace Ets.Service.IProvider.Finance
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        PageInfo<ImprestBalanceRecordModel> GetImprestBalanceRecordList(ImprestBalanceRecordSearchCriteria criteria);
+        PageInfo<ImprestBalanceRecord> GetImprestBalanceRecordList(ImprestBalanceRecordSearchCriteria criteria);
     }
 }

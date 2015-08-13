@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Ets.Dao.Finance;
+using Ets.Model.DataModel.Finance;
 using Ets.Model.DomainModel.Finance;
 using Ets.Model.ParameterModel.Finance;
 using Ets.Service.IProvider.Finance;
@@ -22,7 +23,7 @@ namespace Ets.Service.Provider.Finance
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        public ETS.Data.PageData.PageInfo<ImprestBalanceRecordModel> GetImprestBalanceRecordList(ImprestBalanceRecordSearchCriteria criteria)
+        public ETS.Data.PageData.PageInfo<ImprestBalanceRecord> GetImprestBalanceRecordList(ImprestBalanceRecordSearchCriteria criteria)
         {
             return _imprestBalanceRecordDao.GetImprestBalanceRecordList(criteria);
         }
