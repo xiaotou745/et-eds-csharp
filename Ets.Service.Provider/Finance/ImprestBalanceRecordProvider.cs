@@ -205,17 +205,14 @@ namespace Ets.Service.Provider.Finance
                 #endregion
 
                 #region===6.扣除备用金账户总额,写备用金支出流水
-                flag = _imprestRechargeDao.ImprestRechargePayOut(parmodel.WithdrawPrice, 1);
-                flag = _imprestBalanceRecordDao.InsertRecord(new ImprestBalanceRecord()
+                flag = _imprestRechargeDao.ImprestRechargePayOut(new ImprestPayoutPM()
                 {
-                     Amount=parmodel.WithdrawPrice,
-                     BeforeAmount = imprsetAmount.RemainingAmount,
-                     AfterAmount = imprsetAmount.RemainingAmount - parmodel.WithdrawPrice,
-                     OptName = parmodel.OprName,
-                     Remark = parmodel.Remark,
-                     ClienterName = climodel.TrueName,
-                     ClienterPhoneNo = climodel.PhoneNo,
-                     OptType = 2
+                    Price = parmodel.WithdrawPrice,
+                    OprName = parmodel.OprName,
+                    ClienterName = climodel.TrueName,
+                    ClienterPhoneNo = climodel.PhoneNo,
+                    OptType = 2,
+                    Remark = parmodel.Remark
                 });
                 #endregion
                 if (flag)
@@ -228,6 +225,48 @@ namespace Ets.Service.Provider.Finance
             }
             #endregion
             return model;
+        }
+
+        /// <summary>
+        /// 备用金充值 时间锁
+        /// </summary>
+        private static object mylockAjaxImprestRecharge = new object();
+
+        /// <summary>
+        /// 充值 备用金流水
+        /// </summary>
+        /// <param name="model">参数</param>
+        /// <returns></returns>
+        public ResultModel<string> AjaxImprestRecharge(ImprestBalanceRecord model)
+        {
+            #region 时间锁
+            lock (mylockAjaxImprestRecharge)
+            {
+                string key = string.Format(RedissCacheKey.Ets_Recharge_Lock, model.OptName);
+                var redis = new ETS.NoSql.RedisCache.RedisCache();
+                if (redis.Get<int>(key) == 1)
+                {
+                    return ResultModel<string>.Conclude(AjaxImprestRechargeReturnEnum.Repert);
+                }
+                redis.Set(key, 1, new TimeSpan(0, 1, 0));
+            }
+            #endregion
+            if (model.Amount < 1 || model.Amount > 1000000)  //备用金充值金额有误
+            {
+                return ResultModel<string>.Conclude(AjaxImprestRechargeReturnEnum.MoneyError);
+            }
+            if (string.IsNullOrWhiteSpace(model.ImprestReceiver)) //备用金接收人不能为空
+            {
+                return ResultModel<string>.Conclude(AjaxImprestRechargeReturnEnum.ImprestReceiverError);
+            }
+            if (_imprestBalanceRecordDao.InsertRechargeRecord(model))
+            {
+                return ResultModel<string>.Conclude(AjaxImprestRechargeReturnEnum.Success);
+            }
+            else
+            {
+                return ResultModel<string>.Conclude(SystemState.SystemError);
+            }
         }
     }
 }

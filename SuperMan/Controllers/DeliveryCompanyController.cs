@@ -27,7 +27,6 @@ namespace SuperMan.Controllers
     /// <summary>
     /// 物流公司相关业务 
     /// </summary>
-    [WebHandleError]
     public class DeliveryCompanyController : BaseController
     {
         private DeliveryCompanyProvider deliveryCompanyProvider = new DeliveryCompanyProvider();

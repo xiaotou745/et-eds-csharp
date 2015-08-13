@@ -40,7 +40,6 @@ using Ets.Service.IProvider.Statistics;
 using ETS.Enums;
 namespace SuperMan.Controllers
 {
-    [WebHandleError]
     public class BusinessManagerController : BaseController
     {
         /// <summary>
