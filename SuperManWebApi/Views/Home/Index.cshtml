@@ -39,36 +39,36 @@
     //    error: function () { }
     //});
 
-    $.ajax({
-        type: 'POST',
-        dataType: 'json',
-        url: '/Order/Push',
-        data: {
-            "userId": 1812,
-            "ReceiveName": "健康快乐",
-            "receviceAddress": "别动我数据",
-            "recevicePhone": "13595555877",            
-            "Amount": 50,
-            "IsPay":false,
-            "Remark":null ,
-            "OrderCount": 1,
-            "OrderSign": "1431935133274",
-            "TimeSpan": 20007,
-            "Version": "1.1.0",
-            "PubLongitude": 0.011,
-            "PubLatitude": 0.021,
-            "listOrderChlid": [
-                       {
-                           "ChildId": 1,
-                           "GoodPrice": 50
-                       }
-            ]
-        },
-        success: function (data) {
-            console.log(data);
-        },
-        error: function () { }
-    });
+    //$.ajax({
+    //    type: 'POST',
+    //    dataType: 'json',
+    //    url: '/Order/Push',
+    //    data: {
+    //        "userId": 1812,
+    //        "ReceiveName": "健康快乐",
+    //        "receviceAddress": "别动我数据",
+    //        "recevicePhone": "13595555877",            
+    //        "Amount": 50,
+    //        "IsPay":false,
+    //        "Remark":null ,
+    //        "OrderCount": 1,
+    //        "OrderSign": "1431935133274",
+    //        "TimeSpan": 20008,
+    //        "Version": "1.1.0",
+    //        "PubLongitude": 0.011,
+    //        "PubLatitude": 0.021,
+    //        "listOrderChlid": [
+    //                   {
+    //                       "ChildId": 1,
+    //                       "GoodPrice": 50
+    //                   }
+    //        ]
+    //    },
+    //    success: function (data) {
+    //        console.log(data);
+    //    },
+    //    error: function () { }
+    //});
 
     //$.ajax({
     //    type: 'POST',
@@ -112,9 +112,9 @@
         dataType: 'json',
         url: '/Order/Complete',
         data: {
-            "userId": 3201,
-            "orderId":144651,
-            "orderNo":"2070150728171415904",
+            "userId": 3231,
+            "orderId": 145167,
+            "orderNo": "2092150813155518704",
             "pickupCode": "",
             "version": "1.0",
             "longitude":0.201,

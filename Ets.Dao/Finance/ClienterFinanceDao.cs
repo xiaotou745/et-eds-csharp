@@ -1,4 +1,5 @@
-﻿using ETS.Enums;
+﻿using System;
+using ETS.Enums;
 using Ets.Model.Common.YeePay;
 using Ets.Model.DataModel.Finance;
 using Ets.Model.DomainModel.Finance;
@@ -938,13 +939,14 @@ where Id=@WithwardId;");
         /// </summary>
         /// <param name="withwardId"></param>
         /// <returns></returns>
-        public int GetClienterWithdrawingAmount(int cId)
+        public decimal GetClienterWithdrawingAmount(int cId)
         {
             string sql = string.Format(@" 
-SELECT SUM(Amount) AS Amount FROM ClienterWithdrawForm ( NOLOCK) WHERE ClienterId=@CID AND Status=1 OR Status=2");
+SELECT ISNULL(SUM(Amount),0) AS Amount FROM ClienterWithdrawForm ( NOLOCK) WHERE ClienterId=@CID AND (Status=1 OR Status=2)");
             var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@CID", cId);
-            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm));
+            var obj = DbHelper.ExecuteScalar(SuperMan_Write, sql, parm);
+            return obj == null ? 0 : Convert.ToDecimal(obj);
         }
     }
 }

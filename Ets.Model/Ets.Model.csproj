@@ -157,6 +157,7 @@
     <Compile Include="DomainModel\Order\NonJoinWithdrawModel.cs" />
     <Compile Include="DomainModel\Finance\FinanceRecordsDMList.cs" />
     <Compile Include="DomainModel\Order\CancelOrderModel.cs" />
+    <Compile Include="DomainModel\Order\OrderAuditStatisticalModel.cs" />
     <Compile Include="DomainModel\Order\OrderChildForTicket.cs" />
     <Compile Include="DomainModel\Order\RushOrderModel.cs" />
     <Compile Include="DomainModel\Statistics\ActiveBusinessClienterInfo.cs" />
@@ -265,6 +266,7 @@
     <Compile Include="ParameterModel\Business\BussinessPM.cs" />
     <Compile Include="ParameterModel\Business\RegisterInfoModel.cs" />
     <Compile Include="ParameterModel\Business\UpdateBusinessInfoBPM.cs" />
+    <Compile Include="ParameterModel\Business\BusinessMoneyPM.cs" />
     <Compile Include="ParameterModel\Clienter\ClienterMoneyPM.cs" />
     <Compile Include="ParameterModel\Clienter\ClienterRecordsPM.cs" />
     <Compile Include="ParameterModel\Clienter\ClienterPM.cs" />

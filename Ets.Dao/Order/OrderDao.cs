@@ -515,19 +515,19 @@ select @@IDENTITY ";
             string columnList = @"   o.[Id]
                                     ,o.[OrderNo]
                                     ,o.[PickUpAddress]
-                                    ,o.[PubDate]
+                                    ,isnull(o.[PubDate],'') as PubDate
                                     ,o.[ReceviceName]
                                     ,o.[RecevicePhoneNo]
                                     ,o.[ReceviceAddress]
-                                    ,o.[ActualDoneDate]
-                                    ,o.[IsPay]
-                                    ,o.[Amount]
-                                    ,o.[OrderCommission]
+                                    ,isnull(o.[ActualDoneDate],'') as ActualDoneDate
+                                    ,isnull(o.[IsPay],0) as IsPay
+                                    ,isnull(o.[Amount],0) as Amount
+                                    ,isnull(o.[OrderCommission],0) as OrderCommission
                                     ,o.[RealOrderCommission]
-                                    ,o.[DistribSubsidy]
-                                    ,o.[WebsiteSubsidy]
+                                    ,isnull(o.[DistribSubsidy],0) as DistribSubsidy
+                                    ,isnull(o.[WebsiteSubsidy],0) as WebsiteSubsidy
                                     ,o.[Remark]
-                                    ,o.[Status]
+                                    ,isnull(o.[Status],0) as Status
                                     ,o.[clienterId]
                                     ,o.[businessId]
                                     ,o.[ReceviceCity]
@@ -1104,7 +1104,7 @@ from    dbo.[order] o ( nolock )
 where   o.OrderNo = @OrderNo
 select 0
 ";
-
+            //*@ordercount
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("clienterId", DbType.Int32, 4).Value = order.clienterId;// userId;
             dbParameters.Add("Status", DbType.Int32, 4).Value = OrderStatus.Status2.GetHashCode();
@@ -2548,6 +2548,7 @@ select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0}
         a.Id, a.OrderCommission, a.OrderCount,
         ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,
+        a.Amount CpAmount,
         b.Name as BusinessName, b.City as BusinessCity,
         b.Address as BusinessAddress, isnull(a.ReceviceCity, '') as UserCity,
         a.Remark,
@@ -2590,6 +2591,7 @@ declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0} a.Id,a.OrderCommission,a.OrderCount,   
         (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
+        a.Amount CpAmount,
         b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
         ISNULL(a.ReceviceCity,'') as UserCity,ISNULL(a.ReceviceAddress,'附近3公里左右，由商户指定') as UserAddress,
         a.Remark,
@@ -2639,6 +2641,7 @@ select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0}
         a.Id, a.OrderCommission, a.OrderCount,
         ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,
+        a.Amount CpAmount,
         b.Name as BusinessName, b.City as BusinessCity,
         b.Address as BusinessAddress, isnull(a.ReceviceCity, '') as UserCity,
        a.Remark,
@@ -2662,6 +2665,7 @@ select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0}
         a.Id, a.OrderCommission, a.OrderCount,
         ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,
+        a.Amount CpAmount,
         b.Name as BusinessName, b.City as BusinessCity,
         b.Address as BusinessAddress, isnull(a.ReceviceCity, '') as UserCity,
         a.Remark,
@@ -2717,6 +2721,7 @@ declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0} a.Id,a.OrderCommission,a.OrderCount,   
 (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
+a.Amount CpAmount,
 a.Remark,
 b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
 ISNULL(a.ReceviceCity,'') as UserCity,ISNULL(a.ReceviceAddress,'附近3公里左右，由商户指定') as UserAddress,
@@ -2742,6 +2747,7 @@ declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0} a.Id,a.OrderCommission,a.OrderCount,   
 (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
+a.Amount CpAmount,
 a.Remark,
 b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
 ISNULL(a.ReceviceCity,'') as UserCity,ISNULL(a.ReceviceAddress,'附近3公里左右，由商户指定') as UserAddress,
@@ -2797,6 +2803,7 @@ declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0}  a.BusinessId, a.Id,a.OrderCommission,a.OrderCount,   
 (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
+ a.Amount CpAmount,
 a.Remark,
 b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
 ISNULL(a.ReceviceCity,'') as UserCity,ISNULL(a.ReceviceAddress,'附近3公里左右，由商户指定') as UserAddress,
@@ -2861,7 +2868,7 @@ order by a.id desc
                     if (deliveryModel.SettleType == 1)
                     {
                         //订单金额/骑士结算比例值*订单数量
-                        orderCommission = deliveryModel.ClienterSettleRatio == 0 ? 0 : ParseHelper.ToDecimal(dataRow["Amount"]) / deliveryModel.ClienterSettleRatio * ParseHelper.ToInt(dataRow["OrderCount"]);
+                        orderCommission = deliveryModel.ClienterSettleRatio == 0 ? 0 : ParseHelper.ToDecimal(dataRow["CpAmount"]) * deliveryModel.ClienterSettleRatio / 100;// *ParseHelper.ToInt(dataRow["OrderCount"]);
                     }
                     else if (deliveryModel.SettleType == 2)
                     {
@@ -3632,87 +3639,36 @@ where   Id = @OrderId and FinishAll = 0";
         /// </summary>
         /// <param name="overTimeHour"></param>
         /// <returns></returns>
-        public IList<OrderListModel> GetDealOverTimeOrderList(int overTimeHour=24)
+        public IList<OrderListModel> GetDealOverTimeOrderList()
         {
             #region 查询脚本
             string sql = @"SELECT        o.[Id]
-                                        ,o.[OrderNo]
-                                        ,o.[PickUpAddress]
-                                        ,o.PubDate
-                                        ,o.[ReceviceName]
-                                        ,o.[RecevicePhoneNo]
-                                        ,o.[ReceviceAddress]
-                                        ,o.[ActualDoneDate]
-                                        ,o.[IsPay]
-                                        ,o.[Amount]
-                                        ,o.[OrderCommission]
-                                        ,o.[DistribSubsidy]
-                                        ,o.[WebsiteSubsidy]
-                                        ,o.[Remark]
                                         ,o.[Status]
+                                        ,o.[OrderCommission]
+                                        ,o.[SettleMoney]
+                                        ,o.[OrderNo]
                                         ,o.[clienterId]
                                         ,o.[businessId]
-                                        ,o.[ReceviceCity]
-                                        ,o.[ReceviceLongitude]
-                                        ,o.[ReceviceLatitude]
-                                        ,o.[OrderFrom]
-                                        ,o.[OriginalOrderId]
-                                        ,o.[OriginalOrderNo]
-                                        ,o.[Quantity]
-                                        ,o.[Weight]
-                                        ,o.[ReceiveProvince]
-                                        ,o.[ReceiveArea]
-                                        ,o.[ReceiveProvinceCode]
-                                        ,o.[ReceiveCityCode]
-                                        ,o.[ReceiveAreaCode]
-                                        ,o.[OrderType]
-                                        ,o.[KM]
-                                        ,o.[GuoJuQty]
-                                        ,o.[LuJuQty]
-                                        ,o.[SongCanDate]
-                                        ,o.[OrderCount]
-                                        ,o.[CommissionRate] 
-                                        ,o.[RealOrderCommission] 
-                                        ,b.[City] BusinessCity
-                                        ,b.Name BusinessName
-                                        ,b.PhoneNo BusinessPhoneNo
-                                        ,b.PhoneNo2 BusinessPhoneNo2
-                                        ,b.Address BusinessAddress
-                                        ,c.PhoneNo ClienterPhoneNo
-                                        ,c.TrueName ClienterTrueName
-                                        ,c.TrueName ClienterName
-                                        ,c.AccountBalance AccountBalance
-                                        ,b.GroupId
-                                        ,case when o.orderfrom=0 then '客户端' else g.GroupName end GroupName
-                                        ,o.OriginalOrderNo
-                                        ,oo.NeedUploadCount
-                                        ,oo.HadUploadCount
-                                        ,oo.ReceiptPic
-                                        ,oo.IsNotRealOrder IsNotRealOrder
-                                        ,o.OtherCancelReason
-                                        ,o.OriginalOrderNo
+                                        ,o.[WebsiteSubsidy]
+                                        ,o.[OrderCommission]
+                                        ,o.[IsPay]
+                                        ,o.FinishAll
                                         ,ISNULL(o.MealsSettleMode,0) MealsSettleMode
                                         ,ISNULL(oo.IsJoinWithdraw,0) IsJoinWithdraw
-                                        ,o.BusinessReceivable
-                                        ,o.SettleMoney
-                                        ,o.FinishAll
                                     FROM [order] o WITH ( NOLOCK )
-                                    JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                     JOIN OrderOther oo WITH (NOLOCK) ON oo.OrderId=o.Id
-                                    left JOIN clienter c WITH (NOLOCK) ON o.clienterId=c.Id
-                                    WHERE o.PubDate BETWEEN DATEADD(HOUR,-24,Convert(DateTime,Convert(Varchar(10),GetDate(),120))) 
+                                    WHERE o.PubDate BETWEEN DATEADD(HOUR,-@overTimeHour,Convert(DateTime,Convert(Varchar(10),GetDate(),120))) 
                                     AND Convert(DateTime,Convert(Varchar(10),GetDate(),120))
-                                    AND o.FinishAll=0 AND o.Status<>4";
+                                    AND o.FinishAll=0 AND o.Status<>3";
             #endregion
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@overTimeHour", overTimeHour);
+            parm.Add("@overTimeHour", DbType.Int32).Value = ParseHelper.ToInt(Config.ConfigKey("OverTimeHour"), 24);
             var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
-            var list = ConvertDataTableList<OrderListModel>(dt);
-            if (list != null && list.Count > 0)
+            if (dt == null || dt.Rows.Count <= 0)
             {
-                return list;
+                return null;
             }
-            return null;
+            return ConvertDataTableList<OrderListModel>(dt);
         }
         /// <summary>
         /// 修改订单状态
@@ -3752,7 +3708,7 @@ where   Id = @OrderId and FinishAll = 0";
             parm.AddWithValue("@OptName", "服务");
             parm.AddWithValue("@Platform", 2);
             parm.AddWithValue("@Remark", "服务自动处理超时未完成订单");
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
         /// <summary>
         /// 添加骑士可提现余额流水记录
@@ -3793,6 +3749,139 @@ from dbo.clienter as c where Id=@ClienterId";
             dbParameters.AddWithValue("RelationNo", clienterAllowWithdrawRecord.RelationNo); //关联单号
             dbParameters.AddWithValue("Remark", clienterAllowWithdrawRecord.Remark); //描述
             return DbHelper.ExecuteNonQuery(SuperMan_Write, insertSql, dbParameters) > 0;
+        }
+        /// <summary>
+        /// 自动审核拒绝处理
+        /// danny-20150813
+        /// </summary>
+        /// <param name="orderId">订单Id</param>
+        /// <returns></returns>
+        public bool AutoAuditRefuseDeal(int orderId)
+        {
+            const string sql = @"
+update OrderOther
+set  IsJoinWithdraw=@IsJoinWithdraw
+    ,AuditStatus = @Auditstatus
+    ,DeductCommissionReason=@DeductCommissionReason
+    ,DeductCommissionType=@DeductCommissionType
+where orderId=@orderId";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@orderId", orderId);
+            dbParameters.AddWithValue("@IsJoinWithdraw", 1);
+            dbParameters.AddWithValue("@Auditstatus", OrderAuditStatusCommon.Refuse.GetHashCode());
+            dbParameters.AddWithValue("@DeductCommissionType", 1);
+            dbParameters.AddWithValue("@DeductCommissionReason", "未在规定时间段内完成上传小票");
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters) > 0;
+        }
+        /// <summary>
+        /// 订单自动审核拒绝增加除网站外的金额
+        /// danny-20150813
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool OrderAuditRefuseReturnClienter(OrderListModel model)
+        {
+            string sql = string.Format(@" 
+update c
+set    c.AccountBalance=ISNULL(c.AccountBalance, 0)+@Amount
+      ,c.AllowWithdrawPrice=ISNULL(c.AllowWithdrawPrice, 0)+@Amount
+OUTPUT
+  Inserted.Id,
+  -@Amount,
+  @Status,
+  Inserted.AccountBalance,
+  @RecordType,
+  @Operator,
+  getdate(),
+  @WithwardId,
+  @RelationNo,
+  @Remark
+INTO ClienterBalanceRecord
+  (  [ClienterId]
+    ,[Amount]
+    ,[Status]
+    ,[Balance]
+    ,[RecordType]
+    ,[Operator]
+    ,[OperateTime]
+    ,[WithwardId]
+    ,[RelationNo]
+    ,[Remark])
+from clienter c
+where c.Id=@ClienterId;");
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Amount", model.RealOrderCommission);
+            parm.AddWithValue("@Status", ClienterBalanceRecordStatus.Success);
+            parm.AddWithValue("@RecordType", ClienterBalanceRecordRecordType.CancelOrder);
+            parm.AddWithValue("@Operator", "服务");
+            parm.AddWithValue("@WithwardId", model.Id);
+            parm.AddWithValue("@RelationNo", model.OrderNo);
+            parm.AddWithValue("@Remark", "服务自动处理超时未完成订单");
+            parm.AddWithValue("@ClienterId", model.clienterId);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
+        }
+        /// <summary>
+        /// 订单审核拒绝修改订单
+        /// danny-20150813
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool OrderAuditRefuseModifyOrder(OrderListModel model)
+        {
+            string sql = string.Format(@" UPDATE dbo.[order]
+                                             SET    FinishAll = @FinishAll,
+                                                    RealOrderCommission=@RealOrderCommission
+                                            OUTPUT
+                                              Inserted.Id,
+                                              @Price,
+                                              GETDATE(),
+                                              @OptId,
+                                              @OptName,
+                                              Inserted.[Status],
+                                              @Platform,
+                                              @Remark
+                                            INTO dbo.OrderSubsidiesLog
+                                              (OrderId,
+                                              Price,
+                                              InsertTime,
+                                              OptId,
+                                              OptName,
+                                              OrderStatus,
+                                              Platform,
+                                              Remark)
+                                             WHERE  Id = @Id  ");
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Id", model.Id);
+            parm.AddWithValue("@FinishAll", 1);
+            parm.AddWithValue("@RealOrderCommission", model.RealOrderCommission);
+            parm.AddWithValue("@Price", model.RealOrderCommission);
+            parm.AddWithValue("@OptId", 0);
+            parm.AddWithValue("@OptName", "服务");
+            parm.AddWithValue("@Platform", 2);
+            parm.AddWithValue("@Remark", "服务自动处理超时未完成订单");
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
+        }
+        /// <summary>
+        /// 查询前一天订单审核数据
+        /// danny-20150813
+        /// </summary>
+        /// <returns></returns>
+        public OrderAuditStatisticalModel GetOrderAuditStatistical()
+        {
+            string sql = @" SELECT  ISNULL(COUNT(CASE when oo.AuditStatus=0 AND  o.FinishAll=1 THEN oo.Id END),0) UnAuditQty,
+									ISNULL(COUNT(CASE when oo.AuditStatus=1 THEN oo.Id END),0) AuditOkQty,
+									ISNULL(COUNT(CASE when oo.AuditStatus=2 THEN oo.Id END),0) AuditRefuseQty
+                            FROM [order] o WITH(NOLOCK)
+                            JOIN dbo.OrderOther oo WITH(NOLOCK) ON oo.OrderId=o.Id
+                            WHERE o.PubDate BETWEEN DATEADD(HOUR,-24,Convert(DateTime,Convert(Varchar(10),GetDate(),120))) 
+								AND Convert(DateTime,Convert(Varchar(10),GetDate(),120))";
+
+            var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql));
+            if (dt == null || dt.Rows.Count <= 0)
+            {
+                return null;
+            }
+            return MapRows<OrderAuditStatisticalModel>(dt)[0];
         }
     }
 }

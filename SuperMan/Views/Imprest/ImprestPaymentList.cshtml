@@ -35,7 +35,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
+                        <input type="button" value="查询" class="searchBtn" id="btnSearch" />
                         <input type="button" value="导出" class="searchBtn" id="btnExport" onclick="return DaoCHu()" />
                         <input type="button" value="备用金支出" class="searchBtn" id="btnPayment" />
                     </td>
@@ -93,9 +93,14 @@
                     <label>备注:</label><br/>
                     <textarea cols="45" rows="3" id="remark"></textarea>
                 </div>
+                <p id="ptip">
+                    温馨提示：支出金额超过该骑士可提现金额!<br />
+                    1. 如果该骑士有提现申请中的记录，财务人员可人工拒绝提现申请后，在《备用金支出》中重新发起。<br />
+                    2. 如果该骑士有待审核的任务，及时审核后在《备用金支出》中重新发起
+                </p>
             </div>
             <br/>
-            <label id="Tip"></label>
+            <label id="Tip"></label><br />
             <p class="btnbox">
                 <input value="确认支出" type="button" id="yesBtn" class="yesBtn" />
                 <input value="关闭" type="button" class="J_closebox qxBtn" id="cancelBox" />
@@ -133,12 +138,21 @@
             PayOutOk();
         });
         $('#yesBtn').hide();//设置disabled属性为true，按钮不可用
-        //关闭弹层
-        //$('.J_closebox').click(function () {
-        //    ClearInfo();
-            
-        //    return false;
-        //});
+        $('#ptip').hide();
+    });
+    //查询 
+    $("#btnSearch").on('click', function () {
+        var startDate = $('#txtOptTimeStart').val();
+        var endDate = $('#txtOptTimeEnd').val();
+        if (startDate != "" && endDate != "") {
+            var start = new Date(startDate);
+            var end = new Date(endDate);
+            if (end < start) {
+                alert("开始日期不能大于结束日期");
+                return;
+            }
+        }
+        $("#btnSearch").submit();
     });
 
     //导出
@@ -182,9 +196,10 @@
             url: posturl,
             data: postPar,
             success: function(result) {
-                if (result.length < 1 || result.Status == 0) {
-                    alert('骑士不存在或当前骑士不可提现');
-                } else if (result.Status == 1) {
+                if (result.Status == 0) {
+                    alert(result.Tip);
+                }
+                else if (result.Status == 1) {
                     $('#yesBtn').show();
                     FillInfo(result);
                 }
@@ -217,20 +232,24 @@
             $('#Tip').text('请先查询骑士数据!');
             return;
         }
-        if (parseFloat(withdrawPrice) <= 0) {
-            $('#Tip').text('提现金额必须大于零元!');
+        if (parseFloat(withdrawPrice) < 1) {
+            $('#Tip').text('支出金额必须大于等于1元!');
             return;
         }
         if (!decimalReg.test(withdrawPrice) || withdrawPrice.length<1) {
-            $('#Tip').text('请输入正确的提现金额!');
+            $('#Tip').text('请输入正确的支出金额!');
             return;
         }
         if (parseFloat(withdrawPrice) > parseFloat(allowwithdrawPrice)) {
-            $('#Tip').text('提现金额超过该骑士可提现金额!');
+            //$('#Tip').text('提现金额超过该骑士可提现金额!');
+            $('#ptip').show();
+            $('#Tip').text('');
             return;
+        } else {
+            $('#ptip').hide();
         }
         if (parseFloat(withdrawPrice) > parseFloat(imprice)) {
-            $('#Tip').text('提现金额超过备用金账户总余额!');
+            $('#Tip').text('支出金额超过备用金账户总余额!');
             return;
         }
         if (remark.length<1) {
@@ -280,6 +299,7 @@
         $('#Tip').text('');
         $('#clienterInfoDiv').hide();
         $('#yesBtn').hide();
+        $('#ptip').hide();
         //隐藏充值窗
         //$('#ImprestPayBox').hide();
         

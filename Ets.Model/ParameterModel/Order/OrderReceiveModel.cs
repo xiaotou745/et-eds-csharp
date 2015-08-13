@@ -25,7 +25,7 @@ namespace Ets.Model.ParameterModel.Order
         /// <summary>
         /// 物流公司ID
         /// </summary>
-        public int deliveryId { get; set; }
+        public int DeliveryCompanyID { get; set; }
 
     }
 }

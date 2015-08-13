@@ -45,6 +45,11 @@ namespace Ets.Model.DataModel.Finance
         /// </summary>
         public decimal ImprestPrice { get; set; }
 
+        /// <summary>
+        /// 提示信息
+        /// </summary>
+        public string Tip { get; set; }
+
     }
     /// <summary>
     /// 点击提现返回值

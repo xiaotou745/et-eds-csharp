@@ -52,6 +52,19 @@ namespace Ets.Service.Provider.Finance
             if (clienter == null)
             {
                 mode.Status = 0;
+                mode.Tip = "没有查询到骑士，请重新输入";
+                return mode;
+            }
+            if (clienter.Status!=1)
+            {
+                mode.Status = 0;
+                mode.Tip = "该骑士尚未审核通过";
+                return mode;
+            }
+            if (clienter.DeliveryCompanyId != 0)
+            {
+                mode.Status = 0;
+                mode.Tip = "该骑士为物流公司绑定骑士,不可备用金提现";
                 return mode;
             }
             //获取骑士提现中金额
@@ -176,7 +189,7 @@ namespace Ets.Service.Provider.Finance
                     ClienterId = climodel.Id,
                     Amount = -parmodel.WithdrawPrice,
                     Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
-                    RecordType = (int)ClienterBalanceRecordRecordType.WithdrawApply,
+                    RecordType = (int)ClienterBalanceRecordRecordType.CashWithdraw,
                     Operator = parmodel.OprName,
                     WithwardId = withwardId,
                     RelationNo = withwardNo,
