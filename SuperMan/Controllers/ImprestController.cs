@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using ETS.Data.PageData;
 using Ets.Model.DataModel.Finance;
+using Ets.Model.ParameterModel.Finance;
 using Ets.Service.IProvider.Finance;
 using Ets.Service.Provider.Finance;
 using ETS.Util;
@@ -64,23 +66,73 @@ namespace SuperMan.Controllers
 
         /// <summary>
         /// 备用金支出列表页 
+        /// 彭宜
         /// </summary>
         /// <returns></returns>
         [HttpGet]
         public ActionResult ImprestPaymentList()
         {
-            return View();
+            var criteria = new ImprestBalanceRecordSearchCriteria()
+            {
+                OptType = 2,
+            };
+            var pagedList = imprestProvider.GetImprestBalanceRecordList(criteria);
+            return View(pagedList);
         }
 
         /// <summary>
         /// 备用金支出列表页     异步加载区域
+        /// 彭宜
         /// </summary>
         /// <returns></returns>
-
         [HttpPost]
-        public ActionResult DoImprestPaymentList()
+        public ActionResult DoImprestPaymentList(int pageindex = 1)
         {
-            return PartialView();
+            var criteria = new ImprestBalanceRecordSearchCriteria();
+            TryUpdateModel(criteria);
+            criteria.OptType = 2;
+            var pagedList = imprestProvider.GetImprestBalanceRecordList(criteria);
+            return PartialView(pagedList);
+        }
+
+        /// <summary>
+        /// 导出备用金支出列表
+        /// </summary>
+        /// <param name="pageindex"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public FileContentResult PostDaoChuImprestPayment(int pageindex = 1)
+        {
+            ImprestBalanceRecordSearchCriteria criteria = new ImprestBalanceRecordSearchCriteria();
+            TryUpdateModel(criteria);
+            criteria.PageIndex = 1;
+            criteria.PageSize = 65534;
+
+            var pagedList = imprestProvider.GetImprestBalanceRecordList(criteria);
+
+            if (pagedList != null && pagedList.Records.Count > 0)
+            {
+                string filname = "e代送-{0}-备用金支出数据.xls";
+                if (!string.IsNullOrWhiteSpace(criteria.ClienterPhoneNo))
+                {
+                    filname = string.Format(filname, criteria.ClienterPhoneNo);
+                }
+                if (!string.IsNullOrWhiteSpace(criteria.OptDateStart))
+                {
+                    filname = string.Format(filname, criteria.OptDateStart + ":" + criteria.OptDateEnd);
+                }
+                if (pagedList.Records.Count > 3)
+                {
+                    byte[] data = Encoding.UTF8.GetBytes(CreateExcel(pagedList));
+                    return File(data, "application/msexcel", filname);
+                }
+                else
+                {
+                    byte[] data = Encoding.Default.GetBytes(CreateExcel(pagedList));
+                    return File(data, "application/msexcel", filname);
+                }
+            }
+            return File(new byte[0] { }, "application/msexcel", "无数据.xls");
         }
 
         /// <summary>
@@ -113,5 +165,37 @@ namespace SuperMan.Controllers
              return Json(model);
          }
 
+         /// <summary>
+         /// 生成excel文件
+         /// 导出字段：骑士姓名、电话、支出金额、日期、操作人、备注
+         /// 彭宜
+         /// </summary>
+         /// <returns></returns>
+         private string CreateExcel(PageInfo<ImprestBalanceRecord> paraModel)
+         {
+             StringBuilder strBuilder = new StringBuilder();
+             strBuilder.AppendLine("<table border=1 cellspacing=0 cellpadding=5 rules=all>");
+             //输出表头.
+             strBuilder.AppendLine("<tr style=\"font-weight: bold; white-space: nowrap;\">");
+             strBuilder.AppendLine("<td>骑士姓名</td>");
+             strBuilder.AppendLine("<td>电话</td>");
+             strBuilder.AppendLine("<td>支出金额</td>");
+             strBuilder.AppendLine("<td>日期</td>");
+             strBuilder.AppendLine("<td>操作人</td>");
+             strBuilder.AppendLine("<td>备注</td>");
+             strBuilder.AppendLine("</tr>");
+             //输出数据.
+             foreach (var record in paraModel.Records)
+             {
+                 strBuilder.AppendLine(string.Format("<tr><td>{0}</td>", record.ClienterName));
+                 strBuilder.AppendLine(string.Format("<td>{0}</td>", record.ClienterPhoneNo));
+                 strBuilder.AppendLine(string.Format("<td>{0}</td>", record.Amount));
+                 strBuilder.AppendLine(string.Format("<td>{0}</td>", record.OptTime));
+                 strBuilder.AppendLine(string.Format("<td>{0}</td>", record.OptName));
+                 strBuilder.AppendLine(string.Format("<td>{0}</td>", record.Remark));
+             }
+             strBuilder.AppendLine("</table>");
+             return strBuilder.ToString();
+         }
     }
 }
