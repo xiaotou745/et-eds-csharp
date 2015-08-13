@@ -68,7 +68,6 @@ namespace SuperMan.Controllers
         [HttpPost]
         public JsonResult AjaxImprestRecharge(ImprestBalanceRecord model)
         {
-            
             model.OptName = UserContext.Current.Name;
             model.OptType = ImprestBalanceRecordOptType.Recharge.GetHashCode();
             return new JsonResult()
