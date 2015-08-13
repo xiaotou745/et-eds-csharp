@@ -1,4 +1,4 @@
-﻿namespace Ets.AutoDealWithward
+﻿namespace Ets.AutoDealOverTimeOrder
 {
     partial class AutoDealOverTimeOrderService
     {

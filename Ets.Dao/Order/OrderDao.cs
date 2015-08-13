@@ -2861,7 +2861,7 @@ order by a.id desc
                     if (deliveryModel.SettleType == 1)
                     {
                         //订单金额/骑士结算比例值*订单数量
-                        orderCommission = deliveryModel.ClienterSettleRatio == 0 ? 0 : ParseHelper.ToDecimal(dataRow["Amount"]) / deliveryModel.ClienterSettleRatio * ParseHelper.ToInt(dataRow["OrderCount"]);
+                        orderCommission = deliveryModel.ClienterSettleRatio == 0 ? 0 : ParseHelper.ToDecimal(dataRow["Amount"]) * deliveryModel.ClienterSettleRatio/100 * ParseHelper.ToInt(dataRow["OrderCount"]);
                     }
                     else if (deliveryModel.SettleType == 2)
                     {

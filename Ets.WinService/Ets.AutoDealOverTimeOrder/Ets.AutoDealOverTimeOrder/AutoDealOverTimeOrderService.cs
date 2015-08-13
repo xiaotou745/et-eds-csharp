@@ -11,7 +11,7 @@ using ETS.Util;
 using Quartz.Impl;
 using System.Threading;
 
-namespace Ets.AutoDealWithward
+namespace Ets.AutoDealOverTimeOrder
 {
     public partial class AutoDealOverTimeOrderService : ServiceBase
     {

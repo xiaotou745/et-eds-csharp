@@ -118,11 +118,12 @@ where  Id=@Id ";
             }
             if (!string.IsNullOrWhiteSpace(criteria.OptDateStart))
             {
-                sbSqlWhere.AppendFormat(" AND CONVERT(CHAR(10),OptTime,120)>=CONVERT(CHAR(10),'{0}',120) ", criteria.OptDateStart.Trim());
+
+                sbSqlWhere.AppendFormat(string.Format("and OptTime>='{0} 00:00:00' ", criteria.OptDateStart.Trim()));
             }
             if (!string.IsNullOrWhiteSpace(criteria.OptDateEnd))
             {
-                sbSqlWhere.AppendFormat(" AND CONVERT(CHAR(10),OptTime,120)<=CONVERT(CHAR(10),'{0}',120) ", criteria.OptDateEnd.Trim());
+                sbSqlWhere.AppendFormat(string.Format("and OptTime<='{0} 23:59:59' ", criteria.OptDateEnd.Trim()));
             }
             string tableList = @" ImprestBalanceRecord with(nolock)";
             string orderByColumn = " Id DESC";

@@ -14,7 +14,7 @@
       <name>AutoDealBLL</name>
       <group>AutoDealGroup</group>
       <description>AutoDealService</description>
-      <job-type>Ets.AutoDealWithward.AutoDealBLL,Ets.AutoDealWithward</job-type>
+      <job-type>Ets.AutoDealOverTimeOrder.AutoDealOverTimeOrderBLL,Ets.AutoDealOverTimeOrder</job-type>
       <durable>true</durable>
       <recover>false</recover>
     </job>
