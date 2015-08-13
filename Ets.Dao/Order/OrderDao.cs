@@ -1082,6 +1082,7 @@ where  o.Id = @orderId");
             string sqlText = @"
             update dbo.[order]
             set clienterId=@clienterId,Status=@Status
+            
             where OrderNo=@OrderNo and Status=0
             if(@@error<>0 or @@ROWCOUNT=0)
             begin
