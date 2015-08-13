@@ -269,9 +269,13 @@ namespace Ets.Service.Provider.Finance
             {
                 return ResultModel<string>.Conclude(AjaxImprestRechargeReturnEnum.MoneyError);
             }
-            if (string.IsNullOrWhiteSpace(model.ImprestReceiver)) //备用金接收人不能为空
+            if (string.IsNullOrWhiteSpace(model.ImprestReceiver) || model.ImprestReceiver.Trim().Length<2)//备用金接收人不能为空
             {
                 return ResultModel<string>.Conclude(AjaxImprestRechargeReturnEnum.ImprestReceiverError);
+            }
+            if (string.IsNullOrWhiteSpace(model.Remark) || model.Remark.Trim().Length < 5)//备用金接收人不能为空
+            {
+                return ResultModel<string>.Conclude(AjaxImprestRechargeReturnEnum.RemarkError);
             }
             if (_imprestBalanceRecordDao.InsertRechargeRecord(model))
             {
