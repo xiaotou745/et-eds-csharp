@@ -6,26 +6,50 @@
         <div style="width:798px;height:auto;padding-left:10px;border:1px #dcdcdc solid;border-left:hidden;border-right:hidden;border-top:hidden">
             <div style="width:780px;height:25px;">
                 <div style="float: left">
-                    <label>充值金额：</label>
-                    <input type="text" name="" id="" value="" />
+                    <label>充值金额：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                    <input type="text" name="Amount" id="_txtAmount" value="" />
                 </div>
             </div>
             <div style="width:780px;height:25px;">
                 <div style="float: left">
                     <label>备用金接收人：</label>
-                    <input type="text" name="" id="" value=""/>
+                    <input type="text" name="ImprestReceiver" id="_txtImprestReceiver" value="" />
                 </div>
             </div>
-            <div style="width:780px;height:25px;">
+            <div style="width:780px;height:100px;">
                 <div style="float: left">
                     <label>备注：</label>
-                    <textarea ></textarea>
+                    <textarea style="width:600px; height:90px;" name="Remark" id="_txtRemark"></textarea>
                 </div>
             </div>
         </div>
     </div>
 
     <p class="btnbox">
-        <input value="关闭" type="button" id="btnCanel" class="qxBtn" />
+        <input value="确认" type="button" id="btnSure" class="yesBtn" />
+        <input value="取消" type="button" id="btnCanel" class="qxBtn" />
     </p>
 </div>
+
+<script type="text/javascript">
+
+    $(function () {
+        //点击备用金充值确认按钮    确验证
+        $("#btnSure").click(function () {
+            var amount = $("#_txtAmount").val();
+            var imprestReceiver = $("#_txtImprestReceiver").val();
+            var remark = $("#_txtRemark").val();
+            
+            alert("ss")
+            $.ajax({
+                type: 'POST',
+                url: "/Imprest/AjaxImprestRecharge",
+                data: { "amount": amount, "imprestReceiver": imprestReceiver, "remark": remark },
+                success: function (data) {
+
+                }
+            });
+        });
+    });
+
+</script>

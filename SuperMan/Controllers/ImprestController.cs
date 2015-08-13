@@ -5,6 +5,11 @@ using System.Web;
 using System.Web.Mvc;
 using ETS.Data.PageData;
 using Ets.Model.DataModel.Finance;
+using Ets.Service.IProvider.Finance;
+using Ets.Service.Provider.Finance;
+using ETS.Util;
+using NPOI.SS.Formula.Functions;
+using SuperMan.App_Start;
 
 namespace SuperMan.Controllers
 {
@@ -13,6 +18,7 @@ namespace SuperMan.Controllers
     /// </summary>
     public class ImprestController : Controller
     {
+        private readonly IImprestBalanceRecordProvider imprestProvider = new ImprestBalanceRecordProvider();
         /// <summary>
         /// 备用金充值列表页  add by caoheyang  20150812
         /// </summary>
@@ -40,7 +46,7 @@ namespace SuperMan.Controllers
         /// 备用金充值功能 add by caoheyang  20150812
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
+        [HttpPost]
         public ActionResult ImprestRecharge()
         {
             return PartialView();
@@ -51,7 +57,7 @@ namespace SuperMan.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult AjaxImprestRecharge()
+        public ActionResult AjaxImprestRecharge(ImprestBalanceRecord model)
         {
             return PartialView();
         }
@@ -83,10 +89,29 @@ namespace SuperMan.Controllers
         /// 茹化肖
         /// </summary>
         /// <returns></returns>
-        public ActionResult CheckPhoneNum()
+         [HttpPost]
+        public JsonResult CheckPhoneNum()
         {
-            return null;
+            string phonenum = System.Web.HttpContext.Current.Request["PhoneNum"];
+            ImprestClienterModel model = imprestProvider.ClienterPhoneCheck(phonenum);
+            return Json(model);
         }
+
+         /// <summary>
+         /// 支出备用金验证骑士手机号获取信息
+         /// 2015年8月12日16:55:56
+         /// 茹化肖
+         /// </summary>
+         /// <returns></returns>
+         [HttpPost]
+         public JsonResult ClienterWithdrawOk()
+         {
+             ImprestWithdrawModel parModel=new ImprestWithdrawModel();
+             TryUpdateModel(parModel);
+             parModel.OprName = UserContext.Current.Name;
+             ImprestPayoutModel model = imprestProvider.ClienterWithdrawOk(parModel);
+             return Json(model);
+         }
 
     }
 }
