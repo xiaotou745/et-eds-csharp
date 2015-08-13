@@ -256,8 +256,8 @@
             $('#Tip').text('备注不能为空');
             return;
         }
-        if (remark.length >50) {
-            $('#Tip').text('备注不能超过50个字符');
+        if (remark.length <5 || remark.length >50) {
+            $('#Tip').text('备注在5至50个字符之间');
             return;
         }
         var parmodel = {
