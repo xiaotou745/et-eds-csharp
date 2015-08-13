@@ -5,6 +5,7 @@ using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using ETS.Data.PageData;
+using ETS.Enums;
 using Ets.Model.DataModel.Finance;
 using Ets.Model.ParameterModel.Finance;
 using Ets.Service.IProvider.Finance;
@@ -18,7 +19,7 @@ namespace SuperMan.Controllers
     /// <summary>
     /// 备用金controller 
     /// </summary>
-    public class ImprestController : Controller
+    public class ImprestController : BaseController
     {
         private readonly IImprestBalanceRecordProvider imprestProvider = new ImprestBalanceRecordProvider();
         /// <summary>
@@ -45,7 +46,7 @@ namespace SuperMan.Controllers
         }
 
         /// <summary>
-        /// 备用金充值功能 add by caoheyang  20150812
+        /// 备用金充值功能页面 add by caoheyang  20150812
         /// </summary>
         /// <returns></returns>
         [HttpPost]
@@ -59,9 +60,15 @@ namespace SuperMan.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult AjaxImprestRecharge(ImprestBalanceRecord model)
+        public JsonResult AjaxImprestRecharge(ImprestBalanceRecord model)
         {
-            return PartialView();
+            model.OptName = UserContext.Current.Name;
+            model.OptType = ImprestBalanceRecordOptType.Recharge.GetHashCode();
+            return new JsonResult()
+            {
+                JsonRequestBehavior = JsonRequestBehavior.DenyGet,
+                Data = imprestProvider.AjaxImprestRecharge(model)
+            };
         }
 
         /// <summary>
