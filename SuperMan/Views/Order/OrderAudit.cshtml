@@ -42,9 +42,7 @@
                                                      <option value="0">否</option>
                                                      <option value="1">是</option>
                                                  </select>
-                                                 <span class="">订单状态: </span>
-                                                 @Html.DropDownList("orderStatus", new SelectList(EnumExtenstion.GetEnumItems(typeof(OrderStatusCommon)), "Value", "Text"), "全部", new { @class = "selectw", style = "width:157px" })                                              
-                                             </td>
+                                               </td>
                                          </tr>
 
                                          <tr>
@@ -57,8 +55,11 @@
                                                  <span class="">订单号: </span>
                                                  <input id="txtOrderNo" type="text" name="orderId" />
                                                  <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
+@if (SuperMan.App_Start.UserContext.Current.HasAuthority(80))
+{
                                                  <input type="button" value="批量审核通过" onclick="return batchAuditPass()" class="searchBtn" id="batchAuditPass" />
                                                  <input type="button" value="批量审核拒绝" onclick="return batchAuditCancel()" class="searchBtn" id="batchAuditCancel" />
+}
                                                  <span id="opTipMsg" style="color:red"></span>
                                              </td>
                                          </tr>
