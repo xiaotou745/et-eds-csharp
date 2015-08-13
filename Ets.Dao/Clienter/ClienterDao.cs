@@ -222,7 +222,7 @@ where   c.PhoneNo = @PhoneNo
         /// <returns></returns>
         public ClienterModel GetUserInfoByUserPhoneNo(string phoneNo)
         {
-            string sql = "SELECT Status,Id,TrueName,PhoneNo,AccountBalance,IDCard,[Password],DeliveryCompanyId,AllowWithdrawPrice FROM dbo.clienter(NOLOCK) WHERE PhoneNo=@PhoneNo";
+            string sql = "SELECT DeliveryCompanyId,Status,Id,TrueName,PhoneNo,AccountBalance,IDCard,[Password],DeliveryCompanyId,AllowWithdrawPrice FROM dbo.clienter(NOLOCK) WHERE PhoneNo=@PhoneNo";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@PhoneNo", SqlDbType.NVarChar);
             parm.SetValue("@PhoneNo", phoneNo);
