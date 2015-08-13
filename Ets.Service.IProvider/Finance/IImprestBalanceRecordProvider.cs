@@ -41,7 +41,7 @@ namespace Ets.Service.IProvider.Finance
         /// <param name="Cid">骑士ID</param>
         /// <returns></returns>
         ImprestPayoutModel ClienterWithdrawOk(ImprestWithdrawModel model);
-<<<<<<< HEAD
+
 
 
         /// <summary>
@@ -51,7 +51,5 @@ namespace Ets.Service.IProvider.Finance
         /// <returns></returns>
         ResultModel<string> AjaxImprestRecharge(ImprestBalanceRecord model);
         
-=======
->>>>>>> f5364f7c11c314362a047393dece3d210b6af608
     }
 }
