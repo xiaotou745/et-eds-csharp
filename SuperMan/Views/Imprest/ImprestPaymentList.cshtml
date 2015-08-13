@@ -35,7 +35,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
+                        <input type="button" value="查询" class="searchBtn" id="btnSearch" />
                         <input type="button" value="导出" class="searchBtn" id="btnExport" onclick="return DaoCHu()" />
                         <input type="button" value="备用金支出" class="searchBtn" id="btnPayment" />
                     </td>
@@ -140,6 +140,20 @@
         $('#yesBtn').hide();//设置disabled属性为true，按钮不可用
         $('#ptip').hide();
     });
+    //查询 
+    $("#btnSearch").on('click', function () {
+        var startDate = $('#txtOptTimeStart').val();
+        var endDate = $('#txtOptTimeEnd').val();
+        if (startDate != "" && endDate != "") {
+            var start = new Date(startDate);
+            var end = new Date(endDate);
+            if (end < start) {
+                alert("开始日期不能大于结束日期");
+                return;
+            }
+        }
+        $("#btnSearch").submit();
+    });
 
     //导出
     function DaoCHu() {
@@ -183,10 +197,7 @@
             data: postPar,
             success: function(result) {
                 if (result.Status == 0) {
-                    alert('没有查询到骑士，请重新输入');
-                }
-                else if (result.Status == 2) {
-                    alert('该骑士尚未审核通过');
+                    alert(result.Tip);
                 }
                 else if (result.Status == 1) {
                     $('#yesBtn').show();
