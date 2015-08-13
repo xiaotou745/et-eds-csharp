@@ -54,6 +54,11 @@ namespace Ets.Service.Provider.Finance
                 mode.Status = 0;
                 return mode;
             }
+            if (clienter.Status!=1)
+            {
+                mode.Status = 2;
+                return mode;
+            }
             //获取骑士提现中金额
             var amount = _clienterFinanceDao.GetClienterWithdrawingAmount(clienter.Id);
             //获取备用金可用余额
