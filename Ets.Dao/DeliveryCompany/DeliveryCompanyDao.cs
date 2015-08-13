@@ -147,7 +147,7 @@ select @@IDENTITY ";
            StringBuilder upSql = new StringBuilder(@"
 update  dbo.DeliveryCompany
  set     DeliveryCompanyName = @DeliveryCompanyName ,
-        IsEnable = @IsEnable ,
+        -- IsEnable = @IsEnable ,
         SettleType = @SettleType ,
         ModifyName = @ModifyName ,
         ModifyTime = getdate() ");
@@ -177,22 +177,16 @@ update  dbo.DeliveryCompany
             dbParameters.Add("@DeliveryCompanyName", DbType.String).Value = deliveryCompanyModel.DeliveryCompanyName;
             dbParameters.Add("@SettleType", DbType.Int16).Value = deliveryCompanyModel.SettleType;
             dbParameters.Add("@IsDisplay", DbType.Int16).Value = deliveryCompanyModel.IsDisplay;
-            dbParameters.Add("@IsEnable", DbType.Int16).Value = deliveryCompanyModel.IsEnable;
+           // dbParameters.Add("@IsEnable", DbType.Int16).Value = deliveryCompanyModel.IsEnable;
             if (deliveryCompanyModel.SettleType == 1)
             {
                 dbParameters.Add("@ClienterSettleRatio", DbType.Decimal).Value = deliveryCompanyModel.ClienterSettle;
-                dbParameters.Add("@DeliveryCompanyRatio", DbType.Decimal).Value = deliveryCompanyModel.DeliveryCompanySettle;
-
-                //dbParameters.Add("@ClienterFixMoney", DbType.Decimal).Value = 0;
-                //dbParameters.Add("@DeliveryCompanySettleMoney", DbType.Decimal).Value = 0;
+                dbParameters.Add("@DeliveryCompanyRatio", DbType.Decimal).Value = deliveryCompanyModel.DeliveryCompanySettle; 
             }
             else
             {
                 dbParameters.Add("@ClienterFixMoney", DbType.Decimal).Value = deliveryCompanyModel.ClienterSettle;
-                dbParameters.Add("@DeliveryCompanySettleMoney", DbType.Decimal).Value = deliveryCompanyModel.DeliveryCompanySettle;
-
-                //dbParameters.Add("@ClienterSettleRatio", DbType.Decimal).Value = 0;
-                //dbParameters.Add("@DeliveryCompanyRatio", DbType.Decimal).Value = 0;
+                dbParameters.Add("@DeliveryCompanySettleMoney", DbType.Decimal).Value = deliveryCompanyModel.DeliveryCompanySettle; 
             }
             dbParameters.Add("@ModifyName", DbType.String).Value = deliveryCompanyModel.ModifyName;
             int result= ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, upSql.ToString(), dbParameters));

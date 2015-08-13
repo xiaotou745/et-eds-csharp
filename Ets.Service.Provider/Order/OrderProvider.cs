@@ -1,4 +1,6 @@
 ﻿#region
+
+using System.Text;
 using CalculateCommon;
 using ETS;
 using Ets.Dao.Finance;
@@ -1694,7 +1696,7 @@ namespace Ets.Service.Provider.Order
                 if (deliveryModel.SettleType == 1)
                 {
                     //订单金额/骑士结算比例值*订单数量
-                    orderCommission = deliveryModel.ClienterSettleRatio == 0 ? 0 : ParseHelper.ToDecimal(order.Amount) * deliveryModel.ClienterSettleRatio / 100 * ParseHelper.ToInt(order.OrderCount);
+                    orderCommission = deliveryModel.ClienterSettleRatio == 0 ? 0 : ParseHelper.ToDecimal(order.Amount) * deliveryModel.ClienterSettleRatio / 100;//* ParseHelper.ToInt(order.OrderCount);
                 }
                 else if (deliveryModel.SettleType == 2)
                 {
@@ -2128,9 +2130,19 @@ namespace Ets.Service.Provider.Order
         public void AutoDealOverTimeOrder()
         {
             #region 对象声明及初始化
+            var emailSendTo = Config.ConfigKey("EmailSendTo");
+            var copyTo = Config.ConfigKey("CopyTo");
             var orderList = orderDao.GetDealOverTimeOrderList();
+            var orderAuditStatistical = orderDao.GetOrderAuditStatistical();
+            var sbEmail = new StringBuilder("昨日订单审核数据统计：");
+            sbEmail.AppendLine("");
+            //OrderAuditStatisticalModel GetOrderAuditStatistical()
             if (orderList == null || orderList.Count == 0)
             {
+                sbEmail.AppendLine("待审核订单数量：【" + orderAuditStatistical.UnAuditQty +"】单");
+                sbEmail.AppendLine("已审核订单数量：【" + orderAuditStatistical.AuditOkQty + "】单");
+                sbEmail.AppendLine("已审核订单数量：【" + orderAuditStatistical.AuditRefuseQty + "】单");
+                EmailHelper.SendEmailTo(sbEmail.ToString(), emailSendTo, "订单审核数据统计", copyTo, false);
                 return;
             }
             #region 去掉线上支付，未付款任务
@@ -2138,6 +2150,10 @@ namespace Ets.Service.Provider.Order
             orderList = orderList.Where(t => !(t.MealsSettleMode == 1 && t.IsPay == false)).ToList();
             if (orderList.Count == 0)
             {
+                sbEmail.AppendLine("待审核订单数量：【" + orderAuditStatistical.UnAuditQty + "】单");
+                sbEmail.AppendLine("已审核订单数量：【" + orderAuditStatistical.AuditOkQty + "】单");
+                sbEmail.AppendLine("已审核订单数量：【" + orderAuditStatistical.AuditRefuseQty + "】单");
+                EmailHelper.SendEmailTo(sbEmail.ToString(), emailSendTo, "订单审核数据统计", copyTo, false);
                 return;
             }
             #endregion
@@ -2182,31 +2198,33 @@ namespace Ets.Service.Provider.Order
 
             #region 处理已完成未完成小票上传的订单
             var halfFinishOrderList = orderList.Where(t => t.Status == 1).ToList();
+            
             if (halfFinishOrderList.Count > 0)
             {
                 foreach (var orderListModel in halfFinishOrderList)
                 {
                     using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
                     {
+                        decimal realOrderCommission = ParseHelper.ToDecimal(orderListModel.SettleMoney) >ParseHelper.ToDecimal(orderListModel.OrderCommission)
+                            ? ParseHelper.ToDecimal(orderListModel.OrderCommission): ParseHelper.ToDecimal(orderListModel.SettleMoney);
                         if (orderDao.OrderAuditRefuseModifyOrder(new OrderListModel()
                         {
                             Id = orderListModel.Id,
-                            RealOrderCommission = ParseHelper.ToDecimal(orderListModel.OrderCommission) - ParseHelper.ToDecimal(orderListModel.WebsiteSubsidy)
+                            RealOrderCommission = realOrderCommission 
                         }))
                         {
                             if (orderDao.OrderAuditRefuseReturnClienter(new OrderListModel()
                             {
-                                RealOrderCommission = ParseHelper.ToDecimal(orderListModel.OrderCommission) - ParseHelper.ToDecimal(orderListModel.WebsiteSubsidy),
+                                RealOrderCommission = realOrderCommission,
                                 Id = orderListModel.Id,
                                 OrderNo = orderListModel.OrderNo,
                                 clienterId = orderListModel.clienterId
-
                             }))
                             {
                                 if (orderDao.InsertClienterAllowWithdrawRecord(new ClienterAllowWithdrawRecord()
                                 {
                                     ClienterId = orderListModel.clienterId,
-                                    Amount = ParseHelper.ToDecimal(orderListModel.OrderCommission) - ParseHelper.ToDecimal(orderListModel.WebsiteSubsidy),
+                                    Amount = realOrderCommission,
                                     Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
                                     RecordType = ClienterBalanceRecordRecordType.OrderCommission.GetHashCode(),
                                     Operator = "system",
@@ -2217,6 +2235,7 @@ namespace Ets.Service.Provider.Order
                                 {
                                     orderDao.AutoAuditRefuseDeal(orderListModel.Id);
                                     tran.Complete();
+                                    orderAuditStatistical.AuditRefuseQty++;
                                 }
                             }
                         }
@@ -2224,6 +2243,10 @@ namespace Ets.Service.Provider.Order
                     }
                 }
             }
+            sbEmail.AppendLine("待审核订单数量：【" + orderAuditStatistical.UnAuditQty + "】单");
+            sbEmail.AppendLine("已审核订单数量：【" + orderAuditStatistical.AuditOkQty + "】单");
+            sbEmail.AppendLine("已审核订单数量：【" + orderAuditStatistical.AuditRefuseQty + "】单");
+            EmailHelper.SendEmailTo(sbEmail.ToString(), emailSendTo, "订单审核数据统计", copyTo, false);
             #endregion
 
         }

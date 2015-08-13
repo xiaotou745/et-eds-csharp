@@ -54,13 +54,13 @@
             }
             <label id="lblDeliverySettlement">@(Model.SettleType == 2 ? "元/单" : "%")</label>
         </div>
-        <div class="control-group">
+        @*<div class="control-group">
             <label>是否启用：</label>
             <input id="rDeliveryIsEnable1" name="rDeliveryIsEnableCheck" type="radio" value="1" @(Model.IsEnable == 1 ? "checked" : "")/>
             <label for="rDeliveryIsEnable1">启用</label>
             <input id="rDeliveryIsEnable0" name="rDeliveryIsEnableCheck" type="radio" value="0" @(Model.IsEnable == 0 ? "checked" : "")/>
             <label for="rDeliveryIsEnable0">不启用</label>
-        </div>
+        </div>*@
         <div class="control-group" style="margin-top: 5px">
             <input value="修改确认" type="button" id="btnModifyDelivery" class="yesBtn" style="margin-right: 20px" />
             <input value="返回" type="button" class="J_closebox qxBtn" id="goBackDelivery" />
@@ -80,7 +80,7 @@
         }
         var decimalFormat = /^[0-9]*(\.[0-9]{1,3})?$/;
         var settleType = $('input[name="rDeliveryCheck"]:checked').val();
-        var isEnable = $('input[name="rDeliveryIsEnableCheck"]:checked').val();
+       // var isEnable = $('input[name="rDeliveryIsEnableCheck"]:checked').val();
 
         if (clienterSettlement == "" || deliverySettlement == "") {
             alert("骑士结算和配送公司结算必须填写!");
@@ -95,7 +95,7 @@
             return;
         }
 
-        var paramaters = { "Id": deliveryCompanyId, "SettleType": settleType, "DeliveryCompanyName": deliveryCompanyName,"DeliveryCompanyOldName":deliveryCompanyOldName, "ClienterSettle": clienterSettlement, "DeliveryCompanySettle": deliverySettlement, "IsEnable": isEnable };
+        var paramaters = { "Id": deliveryCompanyId, "SettleType": settleType, "DeliveryCompanyName": deliveryCompanyName, "DeliveryCompanyOldName": deliveryCompanyOldName, "ClienterSettle": clienterSettlement, "DeliveryCompanySettle": deliverySettlement };//, "IsEnable": isEnable 
         var url = "/DeliveryCompany/ModifyDeliveryCompany";
         $.ajax({
             type: 'POST',
