@@ -44,21 +44,21 @@ namespace Ets.Dao.DeliveryCompany
         public PageInfo<T> Get<T>(DeliveryCompanyCriteria deliveryCompanyCriteria)
         {
             string columnList = @"
-        Id ,
-        DeliveryCompanyName ,
-        DeliveryCompanyCode ,
-        IsEnable ,
-        SettleType ,
-        ClienterFixMoney ,
-        ClienterSettleRatio ,
-        DeliveryCompanySettleMoney ,
-        DeliveryCompanyRatio ,
-        BusinessQuantity ,
-        ClienterQuantity ,
-        CreateTime ,
-        CreateName ,
-        ModifyName ,
-        ModifyTime";
+        a.Id ,
+        a.DeliveryCompanyName ,
+        a.DeliveryCompanyCode ,
+        a.IsEnable ,
+        a.SettleType ,
+        a.ClienterFixMoney ,
+        a.ClienterSettleRatio ,
+        a.DeliveryCompanySettleMoney ,
+        a.DeliveryCompanyRatio ,
+        ISNULL(tempBusiness.businessNum, 0) AS BusinessQuantity ,
+        ISNULL(tempClienter.clienterNum, 0) AS ClienterQuantity ,
+        a.CreateTime ,
+        a.CreateName ,
+        a.ModifyName ,
+        a.ModifyTime";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             if (!string.IsNullOrEmpty(deliveryCompanyCriteria.DeliveryCompanyName))
@@ -66,7 +66,19 @@ namespace Ets.Dao.DeliveryCompany
                 sbSqlWhere.AppendFormat(" AND DeliveryCompanyName='{0}' ", deliveryCompanyCriteria.DeliveryCompanyName.Trim());
                 //dbParameters.Add("DeliveryCompanyName",DbType.String,200).Value= deliveryCompanyCriteria.DeliveryCompanyName.Trim();
             }
-            string tableList = @" dbo.DeliveryCompany(nolock) ";
+            string tableList = @" dbo.DeliveryCompany a (nolock)
+                    LEFT JOIN ( SELECT  ExpressId ,
+                                        COUNT(0) AS businessNum
+                                FROM    BusinessExpressRelation (nolock)
+                                WHERE   IsEnable = 1
+                                GROUP BY ExpressId
+                              ) tempBusiness ON a.id = tempBusiness.ExpressId
+                    LEFT JOIN ( SELECT  DeliveryCompanyId ,
+                                        COUNT(0) AS clienterNum
+                                FROM    clienter (nolock)
+                                WHERE   DeliveryCompanyId > 0
+                                GROUP BY DeliveryCompanyId
+                              ) tempClienter ON a.id = tempClienter.DeliveryCompanyId ";
             string orderByColumn = " Id DESC";
             return new PageHelper().GetPages<T>(SuperMan_Read, deliveryCompanyCriteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, deliveryCompanyCriteria.PageSize, true);
         }

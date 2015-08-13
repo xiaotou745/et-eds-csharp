@@ -26,137 +26,139 @@
     </h2>
 
     <div id="left" style="float: left;width:750px;height: auto;border-right: 1px #dcdcdc solid;margin-top: -10px; ">
-        <div style="width:750px;height: auto;  border-bottom:solid 0px #dcdcdc;padding-left:10px;">
-            <div class="control-group" style="margin-top: 10px">
-                <label>注册账号：</label>
-                <label>@Model.PhoneNo</label>
-                <div class="SearchMd" style="padding: 0px; border-bottom: solid 0px #dcdcdc;">
-                    <div style="margin-left: 630px; margin-top: -22px"><input type="button" value="保存" class="searchBtn" id="btnModifyCommit"/>
+        <form id="busForm" action="">
+            <div style="width:750px;height: auto;  border-bottom:solid 0px #dcdcdc;padding-left:10px;">
+                <div class="control-group" style="margin-top: 10px">
+                    <label>注册账号：</label>
+                    <label>@Model.PhoneNo</label>
+                    <div class="SearchMd" style="padding: 0px; border-bottom: solid 0px #dcdcdc;">
+                        <div style="margin-left: 630px; margin-top: -22px">
+                            <input type="button" value="保存" class="searchBtn" id="btnModifyCommit" />
+                        </div>
                     </div>
                 </div>
+                <div class="control-group" style="margin-top: 10px">
+                    <label>推荐人账号：</label>
+                    <input name="RecommendPhone" id="recomPhone" value="@Model.RecommendPhone" />
+                </div>
+                <div class="control-group">
+                    <label>商铺名称：</label>
+                    <input name="busiName" id="busiName" type="text" value="@Model.Name">
+                    <input name="busiId" id="busiId" type="hidden" value="@Model.Id">
+                </div>
+                <div class="control-group">
+                    <label>联系电话：</label>
+                    <input name="busiPhoneNo2" id="busiPhoneNo2" type="text" value="@Model.PhoneNo2">
+                </div>
+                <div class="control-group">
+                    <label>联系座机：</label>
+                    <input name="busiLandline" id="busiLandline" type="text" value="@Model.Landline">
+                </div>
+                @*<div class="control-group">
+                    <label style="margin-left: 5px">配  送  费：</label>
+                    <input name="busiWaisong" id="busiWaisong" type="text" value="@Model.DistribSubsidy">
+                </div>*@
+                <div class="control-group">
+                    <label style="margin-left: 20px">城  市：</label>
+                    @Html.DropDownList("busiCity", new SelectList(ViewBag.openCityList.Result.AreaModels, "Code", "Name", Model.CityId), "-请选择-", new { style = "width:77px" })
+                    <label>区  域：</label>
+                    @Html.DropDownList("busiDistrict", new SelectList(ViewBag.openAreaList, "Code", "Name", Model.districtId), "-请选择-", new { style = "width:78px" })
+                </div>
+                <div class="control-group">
+                    <label style="margin-left: 20px">地  址：</label>
+                    <input name="busiAddr" id="busiAddr" style="width: 200px;" type="text" value="@Model.Address">
+                </div>
+                <div class="control-group" style="margin-bottom: 10px">
+                    <label style="margin-left: 5px">经  纬  度：</label>
+                    <input name="busiLongitude" id="busiLongitude" style="width: 120px;" type="text" value="@Model.Longitude" disabled="disabled">
+                    <input name="busiLatitude" id="busiLatitude" style="width: 120px;" type="text" value="@Model.Latitude" disabled="disabled">
+                    <a id="postion" style="margin-left: 15px"><b>地图定位</b></a>
+                </div>
+                <div class="control-group" style="margin-bottom: 10px" id="OrderChecked">
+                    <label style="margin-left: 5px">订单是否需要审核：</label>
+                    <label><input name="IsCheckOrder" type="radio" value="1" @(Model.IsOrderChecked == 1 ? "checked" : "") />是 </label>
+                    <label><input name="IsCheckOrder" type="radio" value="0" @(Model.IsOrderChecked == 0 ? "checked" : "") />否 </label>
+                </div>
             </div>
-            <div class="control-group" style="margin-top: 10px">
-                <label>推荐人账号：</label>
-                <input name="RecommendPhone" id="recomPhone" value="@Model.RecommendPhone" />
-            </div>
-            <div class="control-group">
-                <label>商铺名称：</label>
-                <input name="busiName" id="busiName" type="text" value="@Model.Name">
-                <input name="busiId" id="busiId" type="hidden" value="@Model.Id">
-            </div>
-            <div class="control-group">
-                <label>联系电话：</label>
-                <input name="busiPhoneNo2" id="busiPhoneNo2" type="text" value="@Model.PhoneNo2">
-            </div>
-            <div class="control-group">
-                <label>联系座机：</label>
-                <input name="busiLandline" id="busiLandline" type="text" value="@Model.Landline">
-            </div>
-            @*<div class="control-group">
-                <label style="margin-left: 5px">配  送  费：</label>
-                <input name="busiWaisong" id="busiWaisong" type="text" value="@Model.DistribSubsidy">
-            </div>*@
-            <div class="control-group">
-                <label style="margin-left: 20px">城  市：</label>
-                @Html.DropDownList("busiCity", new SelectList(ViewBag.openCityList.Result.AreaModels, "Code", "Name", Model.CityId), "-请选择-", new { style = "width:77px" })
-                <label>区  域：</label>
-                @Html.DropDownList("busiDistrict", new SelectList(ViewBag.openAreaList, "Code", "Name", Model.districtId), "-请选择-", new { style = "width:78px" })
-            </div>
-            <div class="control-group">
-                <label style="margin-left: 20px">地  址：</label>
-                <input name="busiAddr" id="busiAddr" style="width: 200px;" type="text" value="@Model.Address">
-            </div>
-            <div class="control-group" style="margin-bottom: 10px">
-                <label style="margin-left: 5px">经  纬  度：</label>
-                <input name="busiLongitude" id="busiLongitude" style="width: 120px;" type="text" value="@Model.Longitude" disabled="disabled">
-                <input name="busiLatitude" id="busiLatitude" style="width: 120px;" type="text" value="@Model.Latitude" disabled="disabled">
-                <a id="postion" style="margin-left: 15px"><b>地图定位</b></a>
-            </div>
-            <div class="control-group" style="margin-bottom: 10px" id="OrderChecked">
-                <label style="margin-left: 5px">订单是否需要审核：</label>
-                <label><input name="IsCheckOrder" type="radio" value="1" @(Model.IsOrderChecked == 1 ? "checked" : "")/>是 </label>
-                <label><input name="IsCheckOrder" type="radio" value="0" @(Model.IsOrderChecked == 0 ? "checked" : "")/>否 </label>
-            </div> 
-        </div>
-        <div style="width:750px;height: auto;border-bottom:solid 0px #dcdcdc;padding-left:10px;">
-            <div class="control-group" style="margin-top: 10px">
-                <label style="font-size: 15px">应收商家</label>
-            </div>
-            <div class="control-group">
-                <label>订单金额*</label> 
+            <div style="width:750px;height: auto;border-bottom:solid 0px #dcdcdc;padding-left:10px;">
+                <div class="control-group" style="margin-top: 10px">
+                    <label style="font-size: 15px">应收商家</label>
+                </div>
+                <div class="control-group">
+                    <label>订单金额*</label>
                     <label title="应收商家配送费比例">商配比例</label><input id="bussinessDeliveryRatio" style="width:100px" type="text" value="@Model.BusinessCommission" />%&nbsp;+&nbsp;<label title="应收商家配送费定额">商配定额</label><input id="bussinessFixValue" style="width:100px" value="@Model.CommissionFixValue" />&nbsp;+&nbsp;
                     <label title="代收客户配送费">代收客配</label><input id="customerDeliveryMoney" style="width:100px" value="@Model.DistribSubsidy" />
-</div>
-            @*<div class="control-group">
-                <input id="rCommissionFormulaMode0" name="rCommissionFormulaMode" type="radio" value="1" @(Model.CommissionType == 1 ? "checked" : "")>
-                <label for="rCommissionFormulaMode0">结算比例：</label>
-                <input id="rCommissionFormulaMode1" name="rCommissionFormulaMode" type="radio" value="2" style="margin-left:30px" @(Model.CommissionType == 2 ? "checked" : "")>
-                <label for="rCommissionFormulaMode1">固定金额：</label>
-                <input type="hidden" id="oldCommissionType" name="oldCommissionType">
-            </div>
-            <div class="control-group" style="margin-bottom: 10px">
-                <div id="divbusCommissionText" @(Model.CommissionType == 2 ? "hidden" : "")>
-                    <input name="busCommissionText" id="busCommissionText" style="width: 120px;" type="text" value="@Model.BusinessCommission">%
                 </div>
-                <div id="divCommissionFixValue" @(Model.CommissionType == 1 ? "hidden" : "")>
-                    <input name="CommissionFixValue" id="CommissionFixValue" style="width: 120px;" type="text" value="@Model.CommissionFixValue">元/单
+                @*<div class="control-group">
+                    <input id="rCommissionFormulaMode0" name="rCommissionFormulaMode" type="radio" value="1" @(Model.CommissionType == 1 ? "checked" : "")>
+                    <label for="rCommissionFormulaMode0">结算比例：</label>
+                    <input id="rCommissionFormulaMode1" name="rCommissionFormulaMode" type="radio" value="2" style="margin-left:30px" @(Model.CommissionType == 2 ? "checked" : "")>
+                    <label for="rCommissionFormulaMode1">固定金额：</label>
+                    <input type="hidden" id="oldCommissionType" name="oldCommissionType">
                 </div>
-            </div>*@
-        </div>
-        <div style="width:750px;height: auto;border-bottom:solid 1px #dcdcdc;padding-left:10px;">
-            <div class="control-group" style="margin-top: 10px">
-                <label style="font-size:15px">补贴策略设置(应付)</label>
+                <div class="control-group" style="margin-bottom: 10px">
+                    <div id="divbusCommissionText" @(Model.CommissionType == 2 ? "hidden" : "")>
+                        <input name="busCommissionText" id="busCommissionText" style="width: 120px;" type="text" value="@Model.BusinessCommission">%
+                    </div>
+                    <div id="divCommissionFixValue" @(Model.CommissionType == 1 ? "hidden" : "")>
+                        <input name="CommissionFixValue" id="CommissionFixValue" style="width: 120px;" type="text" value="@Model.CommissionFixValue">元/单
+                    </div>
+                </div>*@
             </div>
-            <div class="control-group" style="margin-left:27px">
-                <label id="labGlobalConfig" style="margin-left: 48px">@ViewBag.subsidyConfig</label>
-            </div>
-            <div class="control-group">
-                <label style="margin-left:74px">补贴策略：</label>
-                @Html.DropDownList("businessGroupID", new SelectList(new BusinessGroupProvider().GetBusinessGroupList(), "Id", "Name", @Model.BusinessGroupId), new { @class = "selectw", style = "width:143px" })
-            </div>
-            <div class="control-group" style="margin-left:2px">
-                <label style="margin-left: 48px">餐费结算方式：</label>
-                <select name="busiMealsSettleMode" class="selectw" id="busiMealsSettleMode" style="width:143px">
-                    <option value="0">线下结算</option>
-                    <option value="1">线上结算</option>
-                </select>
-            </div>
-            <div class="control-group">
-                <label style="margin-left: 73px">一键发单：</label>
-                <input id="rOneKeyPubOrderY" name="rOneKeyPubOrder" type="radio" value="1" @(Model.OneKeyPubOrder == 1 ? "checked" : "")>
-                <label>是</label>
-                <input id="rOneKeyPubOrderN" name="rOneKeyPubOrder" type="radio" value="0" style="margin-left: 30px" @(Model.OneKeyPubOrder == 0 ? "checked" : "")>
-                <label>否</label>
-            </div>
-            <div class="control-group">
-                <label style="margin-left: 48px">余额可以透支：</label>
-                <input id="rBbalanceAllowOverDraftY" name="rBalanceAllowOverDraft" type="radio" value="1" @(Model.IsAllowOverdraft == 1 ? "checked" : "")>
-                <label>是</label>
-                <input id="rBbalanceAllowOverDraftN" name="rBalanceAllowOverDraft" type="radio" value="0" style="margin-left: 30px" @(Model.IsAllowOverdraft == 0 ? "checked" : "")>
-                <label>否</label>
-            </div>
-            <div class="control-group">
-                <label>使用雇主任务时间限制：</label>
-                <input id="rIsEmployerTaskY" name="rIsEmployerTask" type="radio" value="1" @(Model.IsEmployerTask == 1 ? "checked" : "")>
-                <label>是</label>
-                <input id="rIsEmployerTaskN" name="rIsEmployerTask" type="radio" value="0" style="margin-left: 30px" @(Model.IsEmployerTask == 0 ? "checked" : "")>
-                <label>否</label>
-            </div>
-            <div class="control-group" style="margin-bottom: 10px">
-                <label style="margin-left: 70px">第三方ID：</label>
-                <input name="busiSourceId" id="busiSourceId" type="text" value="@Model.OriginalBusiId" @(Model.IsModifyBind == 0 && Model.GroupId > 0 ? "disabled" : "") />
-                <input type="hidden" id="hidGroupId" name="hidGroupId" value="@Model.GroupId" />
-                @if (Model.GroupId > 0)
+            <div style="width:750px;height: auto;border-bottom:solid 1px #dcdcdc;padding-left:10px;">
+                <div class="control-group" style="margin-top: 10px">
+                    <label style="font-size:15px">补贴策略设置(应付)</label>
+                </div>
+                <div class="control-group" style="margin-left:27px">
+                    <label id="labGlobalConfig" style="margin-left: 48px">@ViewBag.subsidyConfig</label>
+                </div>
+                <div class="control-group">
+                    <label style="margin-left:74px">补贴策略：</label>
+                    @Html.DropDownList("businessGroupID", new SelectList(new BusinessGroupProvider().GetBusinessGroupList(), "Id", "Name", @Model.BusinessGroupId), new { @class = "selectw", style = "width:143px" })
+                </div>
+                <div class="control-group" style="margin-left:2px">
+                    <label style="margin-left: 48px">餐费结算方式：</label>
+                    <select name="busiMealsSettleMode" class="selectw" id="busiMealsSettleMode" style="width:143px">
+                        <option value="0">线下结算</option>
+                        <option value="1">线上结算</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label style="margin-left: 73px">一键发单：</label>
+                    <input id="rOneKeyPubOrderY" name="rOneKeyPubOrder" type="radio" value="1" @(Model.OneKeyPubOrder == 1 ? "checked" : "")>
+                    <label>是</label>
+                    <input id="rOneKeyPubOrderN" name="rOneKeyPubOrder" type="radio" value="0" style="margin-left: 30px" @(Model.OneKeyPubOrder == 0 ? "checked" : "")>
+                    <label>否</label>
+                </div>
+                <div class="control-group">
+                    <label style="margin-left: 48px">余额可以透支：</label>
+                    <input id="rBbalanceAllowOverDraftY" name="rBalanceAllowOverDraft" type="radio" value="1" @(Model.IsAllowOverdraft == 1 ? "checked" : "")>
+                    <label>是</label>
+                    <input id="rBbalanceAllowOverDraftN" name="rBalanceAllowOverDraft" type="radio" value="0" style="margin-left: 30px" @(Model.IsAllowOverdraft == 0 ? "checked" : "")>
+                    <label>否</label>
+                </div>
+                <div class="control-group">
+                    <label>使用雇主任务时间限制：</label>
+                    <input id="rIsEmployerTaskY" name="rIsEmployerTask" type="radio" value="1" @(Model.IsEmployerTask == 1 ? "checked" : "")>
+                    <label>是</label>
+                    <input id="rIsEmployerTaskN" name="rIsEmployerTask" type="radio" value="0" style="margin-left: 30px" @(Model.IsEmployerTask == 0 ? "checked" : "")>
+                    <label>否</label>
+                </div>
+                <div class="control-group" style="margin-bottom: 10px">
+                    <label style="margin-left: 70px">第三方ID：</label>
+                    <input name="busiSourceId" id="busiSourceId" type="text" value="@Model.OriginalBusiId" @(Model.IsModifyBind == 0 && Model.GroupId > 0 ? "disabled" : "") />
+                    <input type="hidden" id="hidGroupId" name="hidGroupId" value="@Model.GroupId" />
+                    @if (Model.GroupId > 0)
                 {
-                    <label>来源平台：@Model.GroupName</label>
+                <label>来源平台：@Model.GroupName</label>
                 }
                 else
                 {
-                    @Html.DropDownList("busGroupId",
+                @Html.DropDownList("busGroupId",
                         new SelectList(new BusinessProvider().GetGroups().Where(i => i.IsModifyBind == 1).ToList(), "Id", "GroupName"), "--请选择--", htmlAttributes: new { @class = "selectw", style = "width:100px; " })
                 }
-            </div>
-            @*<div class="control-group" style="margin-bottom: 10px">
+                </div>
+                @*<div class="control-group" style="margin-bottom: 10px">
                     <label>绑定第三方ID：点击添加，绑定第三方商铺ID信息</label>
                     <input name="btnAddThird" num="0" id="btnAddThird" type="button" value="添加第三方" class="searchBtn" style="margin-left:25px"><br />
                     <div style="background-color:lightgray;width: 530px" id="big-third">
@@ -181,57 +183,58 @@
                         }
                     </div>
                 </div>*@
-        </div> 
-        @*<div style="width:750px;height: auto;border-bottom:solid 1px #dcdcdc;padding-left:10px;">
+            </div>
+            </form>
+            @*<div style="width:750px;height: auto;border-bottom:solid 1px #dcdcdc;padding-left:10px;">
             </div>*@
-        @*<div class="SearchMd">
+            @*<div class="SearchMd">
                 <div style="margin-left: 100px;float: left"><input type="button" value="保存" class="searchBtn" id="btnModifyCommit" /></div>
                 <div style="margin-left: 180px;float: left"><input type="button" value="返回" class="searchBtn" id="btnReturn" /></div>
                 <br />
             </div>*@
 
-        <div style="width:750px;height:auto;overflow:auto;margin-top:10px;border-bottom:solid 1px #dcdcdc;" id="divDeliveryCompany">
-            <div style="float: left">
-                <label>绑定配送公司：</label>
-            </div>
-            <div id="deliveryCompanyList" style="float: left;width:550px">
-                @{
-                    var deliveryCompany = ViewBag.deliveryCompany as List<DeliveryCompanyModel>;
-                    if (deliveryCompany != null && deliveryCompany.Count > 0)
-                    {
-                        <div style="width: 110px;height:25px;float: left">
-                            <input type="checkbox" name="checkAllMenus" id="selectAll" onclick="checkAll()" />全部
-                        </div>
-                        foreach (var item in deliveryCompany)
+            <div style="width:750px;height:auto;overflow:auto;margin-top:10px;border-bottom:solid 1px #dcdcdc;" id="divDeliveryCompany">
+                <div style="float: left">
+                    <label>绑定配送公司：</label>
+                </div>
+                <div id="deliveryCompanyList" style="float: left;width:550px">
+                    @{
+                        var deliveryCompany = ViewBag.deliveryCompany as List<DeliveryCompanyModel>;
+                        if (deliveryCompany != null && deliveryCompany.Count > 0)
                         {
-                            var check = item.DeliveryCompanyCode.Trim().Equals(Model.RecommendPhone.Trim()) ? "checked='checked'" : ""; 
                             <div style="width: 110px;height:25px;float: left">
-                                <input type="checkbox" name="checkMenus" id="@item.Id" value="@item.Id" @check/>
-                                <label>@item.DeliveryCompanyName</label>
+                                <input type="checkbox" name="checkAllMenus" id="selectAll" onclick="checkAll()" />全部
                             </div>
+                            foreach (var item in deliveryCompany)
+                            {
+                                var check = item.DeliveryCompanyCode.Trim().Equals(Model.RecommendPhone.Trim()) ? "checked='checked'" : "";
+                                <div style="width: 110px;height:25px;float: left">
+                                    <input type="checkbox" name="checkMenus" id="@item.Id" value="@item.Id" @check />
+                                    <label>@item.DeliveryCompanyName</label>
+                                </div>
+                            }
                         }
                     }
-                }
-                @*<input type="hidden" name="hidDeliveryCompany" id="hidDeliveryCompany" value="@Model.PushCity" />*@
+                    @*<input type="hidden" name="hidDeliveryCompany" id="hidDeliveryCompany" value="@Model.PushCity" />*@
+                </div>
+                <div class="SearchMd" style="padding:0px;border-bottom:solid 0px #dcdcdc;">
+                    <div style="margin-left: 640px;margin-top: 0px"><input type="button" value="保存" class="searchBtn" id="btnModifyExpress" /></div>
+                </div>
             </div>
-            <div class="SearchMd" style="padding:0px;border-bottom:solid 0px #dcdcdc;">
-                <div style="margin-left: 640px;margin-top: 0px"><input type="button" value="保存" class="searchBtn" id="btnModifyExpress" /></div>
-            </div>
-        </div>
-        @*第三方绑定关系模板div*@
-        <div id="clone">
-            <div class="third hide" v="1">
-                <label>第三方ID：</label>
-                <input name="busiSourceId" id="busiSourceId" type="text">
-                @Html.DropDownList("busGroupId",
+            @*第三方绑定关系模板div*@
+            <div id="clone">
+                <div class="third hide" v="1">
+                    <label>第三方ID：</label>
+                    <input name="busiSourceId" id="busiSourceId" type="text">
+                    @Html.DropDownList("busGroupId",
                     new SelectList(new BusinessProvider().GetGroups(), "Id", "GroupName"), "--请选择--", new { @class = "selectw", style = "width:100px" })
-                <input id="rAuditStatusY" name="rAuditStatus" type="radio" value="1" style="margin-left: 15px" checked="checked">通 过
-                <input id="rAuditStatusN" name="rAuditStatus" type="radio" value="0" style="margin-left: 15px">拒 绝
-                <a class="remove" style="margin-right: 15px;margin-left: 25px">移 除</a><br />
+                    <input id="rAuditStatusY" name="rAuditStatus" type="radio" value="1" style="margin-left: 15px" checked="checked">通 过
+                    <input id="rAuditStatusN" name="rAuditStatus" type="radio" value="0" style="margin-left: 15px">拒 绝
+                    <a class="remove" style="margin-right: 15px;margin-left: 25px">移 除</a><br />
+                </div>
             </div>
-        </div>
 
-    </div>
+</div>
     @{
         var originSize = "_0_0";
         var bigFileName = puth + "/nopic.jpg";
@@ -316,6 +319,7 @@
         $('#busiMealsSettleMode').val(@Model.MealsSettleMode);
         var businessId = $('#busiId').val();
         funcCheckExpress(businessId);
+        oldForm = $("#busForm").serialize();
         //var hidPushCity = $("#hidPushCity").val();
         //var cityArr = hidPushCity.split(",");
         //$.each(cityArr, function (i, n) {
@@ -334,6 +338,8 @@
     $("#btnAddThird").click(function () {
         funAddThirdRelation();
     });
+    var oldForm = "";    
+    var oldValues= new Array();   
 
     function funcCheckExpress(businessId) {
         var businessExpressRef;
@@ -356,6 +362,14 @@
                         }
                     }
                 }
+                //保存商家的物流公司设置
+                $("input[name='checkMenus']").each(function () {
+                    if ($(this).is(':checked')) {
+                        oldValues.push(1);
+                    } else {
+                        oldValues.push(0);
+                    }
+                });
             }
         });
     };
@@ -453,6 +467,11 @@
     });
     //保存
     $("#btnModifyCommit").click(function () {
+        var data = $("#busForm").serialize();
+        if (oldForm == data) {
+            alert("没有需要更新的信息");
+            return;
+        }
         var id = $('#busiId').val();
         var name = $('#busiName').val();
         var phoneNo2 = $('#busiPhoneNo2').val();
@@ -628,7 +647,7 @@
             success: function (result) {
                 if (result.IsSuccess) {
                     alert(result.Message);
-                    //window.location.href = "/BusinessManager/BusinessManager";
+                    window.location.href = window.location.href;
                 } else {
                     alert(result.Message);
                 }
@@ -638,34 +657,52 @@
     });
     //保存物流公司配置
     $("#btnModifyExpress").click(function () {
-        if (confirm("确定要提交保存吗？")) {
-            var busiId = $('#busiId').val();
-            var deliveryCompanyList = "";
-            $("input[name='checkMenus']").each(function () {
-                if ($(this).is(':checked')) {
-                    deliveryCompanyList = deliveryCompanyList + $(this).val() + ",1;";
-                }
-                else {
-                    deliveryCompanyList = deliveryCompanyList + $(this).val() + ",0;";
-                }
-            });
-            var paramaters = { "busiId": busiId, "deliveryCompanyList": deliveryCompanyList };
-            var url = "/BusinessManager/ModifyBusinessExpress";
-            $.ajax({
-                type: 'POST',
-                url: url,
-                data: paramaters,
-                success: function (result) {
-                    if (result.IsSuccess) {
-                        alert(result.Message);
-                        //window.location.href = "/OpenCityManager/OpenCityManager";
+       
+        var busiId = $('#busiId').val();
+        var deliveryCompanyList = "";
+
+        var newKeys = new Array();
+        var newValues = new Array();
+        $("input[name='checkMenus']").each(
+                function () {
+                    newKeys.push($(this).val());
+                    if ($(this).is(':checked')) {
+                        newValues.push(1);
                     } else {
-                        alert(result.Message);
+                        newValues.push(0);
                     }
-                }
-            });
+                });
+
+
+        for (var i = 0; i < newKeys.length; i++) {//发生了改变，才需要提交db
+            if (oldValues[i] != newValues[i]) {
+                deliveryCompanyList = deliveryCompanyList + newKeys[i]
+                        + "," + newValues[i] + ";";
+            }
+        }
+        if (deliveryCompanyList == "") {
+            alert("物流公司数据没有发生变更，不需要保存");
+            return;
         }
 
+        if (!confirm("确定要提交保存吗？")) {
+            return;
+        }
+        var paramaters = { "busiId": busiId, "deliveryCompanyList": deliveryCompanyList };
+        var url = "/BusinessManager/ModifyBusinessExpress";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert(result.Message);
+                    window.location.href = window.location.href;
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
     });
     //关闭弹层
     $('.J_closebox').click(function () {
