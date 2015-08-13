@@ -87,7 +87,7 @@ namespace SuperMan.Controllers
         {
             var criteria = new ImprestBalanceRecordSearchCriteria()
             {
-                OptType = 2,
+                OptType = ImprestBalanceRecordOptType.Payment.GetHashCode(),
             };
             var pagedList = imprestProvider.GetImprestBalanceRecordList(criteria);
             return View(pagedList);
@@ -103,7 +103,7 @@ namespace SuperMan.Controllers
         {
             var criteria = new ImprestBalanceRecordSearchCriteria();
             TryUpdateModel(criteria);
-            criteria.OptType = 2;
+            criteria.OptType = ImprestBalanceRecordOptType.Payment.GetHashCode();
             var pagedList = imprestProvider.GetImprestBalanceRecordList(criteria);
             return PartialView(pagedList);
         }
@@ -139,16 +139,8 @@ namespace SuperMan.Controllers
                 {
                     filname = string.Format(filname, criteria.OptDateStart + ":" + criteria.OptDateEnd);
                 }
-                if (pagedList.Records.Count > 3)
-                {
-                    byte[] data = Encoding.UTF8.GetBytes(CreateExcel(pagedList));
-                    buffer = data;
-                }
-                else
-                {
-                    byte[] data = Encoding.Default.GetBytes(CreateExcel(pagedList));
-                    buffer = data;
-                }
+                byte[] data = Encoding.UTF8.GetBytes(CreateExcel(pagedList));
+                buffer = data;
             }
             Response.AppendHeader("Content-Disposition", string.Format("attachment;filename={0}",filname));
             Response.BinaryWrite(buffer);

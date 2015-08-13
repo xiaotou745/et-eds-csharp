@@ -154,7 +154,8 @@ namespace Ets.Dao.Clienter
         ISNULL(d.Id,0) as DeliveryCompanyId,
         isnull(d.DeliveryCompanyName,'') DeliveryCompanyName,
         isnull(d.IsDisplay,1) IsDisplay,
-        c.Appkey
+        c.Appkey,
+        (case when d.SettleType=1 and ClienterSettleRatio>0 or d.SettleType=2 and d.ClienterFixMoney>0 then 1 else 0 end) IsDisplayDeliveryMoney
 from    dbo.clienter c(nolock)
  left join dbo.DeliveryCompany d(nolock) on c.DeliveryCompanyId = d.Id
 where   c.PhoneNo = @PhoneNo
@@ -202,7 +203,7 @@ where   c.PhoneNo = @PhoneNo
         /// <returns></returns>
         public ClienterModel GetUserInfoByUserId(int UserId)
         {
-            string sql = "SELECT TrueName,PhoneNo,AccountBalance,AllowWithdrawPrice,Status,IDCard  FROM dbo.clienter(NOLOCK) WHERE Id=" + UserId;
+            string sql = "SELECT ID,TrueName,PhoneNo,AccountBalance,AllowWithdrawPrice,Status,IDCard  FROM dbo.clienter(NOLOCK) WHERE Id=" + UserId;
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql);
             IList<ClienterModel> list = MapRows<ClienterModel>(dt);
             if (list == null || list.Count <= 0)
@@ -234,68 +235,7 @@ where   c.PhoneNo = @PhoneNo
             return list[0];
         }
 
-        /// <summary>
-        /// 更新用户余额
-        /// 窦海超
-        /// 2015年3月23日 12:47:54
-        /// </summary>
-        /// <param name="UserId">用户ID</param>
-        /// <param name="Account">提现金额</param>
-        /// <returns></returns>
-        public bool UpdateClienterAccountBalance(WithdrawRecordsModel model)
-        {
-            Ets.Model.DomainModel.Clienter.ClienterModel cliterModel = new ClienterDao().GetUserInfoByUserId(model.UserId);//获取当前用户余额
-            decimal balance = ParseHelper.ToDecimal(cliterModel.AccountBalance, 0);
-            decimal Money = balance + model.Amount;
-            if (Money < 0)//如果提现金额大于当前余额则不能提现
-            {
-                return false;
-            }
-            model.Balance = balance;
-            string sql = @"UPDATE dbo.clienter SET AccountBalance=@Money WHERE id=" + model.UserId;
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@Money", Money);
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
-        }
-
-        /// <summary>
-        /// 更新骑士 金额  
-        /// 王超
-        /// 2015年7月1日 12:02:57
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public bool UpdateClienterAccountBalanceForFinish(WithdrawRecordsModel model)
-        {
-            string sql = @"UPDATE dbo.clienter SET AccountBalance=AccountBalance + @Money WHERE id=" + model.UserId;
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@Money", model.Amount);
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
-        }
-
-        /// <summary>
-        /// 更新用户余额以及可提现金额
-        /// 窦海超
-        /// 2015年3月23日 12:47:54
-        /// </summary>
-        /// <returns></returns>
-        public bool UpdateAccountBalanceAndWithdraw(WithdrawRecordsModel model)
-        {
-            ClienterModel cliterModel = GetUserInfoByUserId(model.UserId);//获取当前用户余额
-            decimal balance = ParseHelper.ToDecimal(cliterModel.AccountBalance, 0);
-            decimal Money = balance + model.Amount;
-            if (Money < 0)//如果提现金额大于当前余额则不能提现
-            {
-                return false;
-            }
-            model.Balance = balance;
-            string sql = @"update dbo.clienter set AccountBalance = @Money , AllowWithdrawPrice=AllowWithdrawPrice+@AllowWithdrawPrice WHERE id=" + model.UserId;
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@Money", Money);
-            parm.Add("AllowWithdrawPrice", DbType.Decimal, 18).Value = model.Amount;
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
-        }
-
+     
         /// <summary>
         /// 根据用户ID更新密码
         /// </summary>
@@ -1117,8 +1057,9 @@ where  Id=@Id ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Id", model.Id);
             dbParameters.AddWithValue("WithdrawPrice", model.Money);
-            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+            var  num=DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
+
 
         /// <summary>
         /// 获取骑士详情    
@@ -1360,25 +1301,7 @@ WHERE c.Id = @ClienterId  ";
             }
         }
 
-        #endregion
-
-
-        /// <summary>
-        /// 更改可提现金额
-        /// 窦海超
-        /// 2015年5月15日 16:56:37
-        /// </summary>
-        /// <param name="price">金额</param>
-        /// <param name="clienterId">可提现金额的骑士ID</param>
-        public void UpdateAllowWithdrawPrice(decimal price, int clienterid)
-        {
-            string sql = "update dbo.clienter set AllowWithdrawPrice=AllowWithdrawPrice+@price where Id=@clienterid";
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.Add("clienterid", DbType.Int32, 4).Value = clienterid;
-            parm.Add("price", DbType.Decimal, 18).Value = price;
-            DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm);
-        }
-
+        #endregion    
 
         /// <summary>
         /// 获取骑士用户名
@@ -1698,5 +1621,111 @@ SELECT IDENT_CURRENT('clienter')"
             var list = ConvertDataTableList<ClienterPicModel>(dt);
             return list;
         }
+
+        #region 更新骑士余额 可提现
+        /// <summary>
+        /// 更新骑士余额
+        /// 胡灵波        
+        /// 2015年8月12日 18:10:58
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool UpdateCAccountBalance(UpdateForWithdrawPM model)
+        {
+            const string updateSql = @"
+update dbo.clienter set AccountBalance=AccountBalance + @Money
+where id=@Id";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("Id", DbType.Int32, 4).Value = model.Id;
+            dbParameters.AddWithValue("@Money", model.Money);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters) > 0 ? true : false;
+        }
+
+        /// <summary>
+        /// 更新骑士可提现金额
+        /// 胡灵波
+        /// 2015年8月12日 18:11:26
+        /// </summary>
+        /// <param name="model"></param>
+        public void UpdateCAllowWithdrawPrice(UpdateForWithdrawPM model)
+        {
+            const string updateSql = @"
+update dbo.clienter 
+set AllowWithdrawPrice=AllowWithdrawPrice+@Money
+where Id=@Id";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("Id", DbType.Int32, 4).Value = model.Id;
+            dbParameters.AddWithValue("@Money", model.Money);
+            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+        }
+
+        /// <summary>
+        ///  更新骑士余额和可提现金额
+        ///  胡灵波
+        ///  2015年8月12日 18:12:17
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public void UpdateCBalanceAndWithdraw(UpdateForWithdrawPM model)
+        {
+            const string updateSql = @"
+update  clienter
+set  AccountBalance=AccountBalance+@Money,
+     AllowWithdrawPrice=AllowWithdrawPrice+@Money
+where  Id=@Id ";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("Id", DbType.Int32, 4).Value = model.Id;
+            dbParameters.AddWithValue("@Money", model.Money);
+            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+        }
+    
+        /// <summary>
+        /// 更新用户余额
+        /// 窦海超
+        /// 2015年3月23日 12:47:54
+        /// </summary>
+        /// <param name="UserId">用户ID</param>
+        /// <param name="Account">提现金额</param>
+        /// <returns></returns>
+        public bool UpdateClienterAccountBalance(WithdrawRecordsModel model)
+        {
+            Ets.Model.DomainModel.Clienter.ClienterModel cliterModel = new ClienterDao().GetUserInfoByUserId(model.UserId);//获取当前用户余额
+            decimal balance = ParseHelper.ToDecimal(cliterModel.AccountBalance, 0);
+            decimal Money = balance + model.Amount;
+            if (Money < 0)//如果提现金额大于当前余额则不能提现
+            {
+                return false;
+            }
+            model.Balance = balance;
+            string sql = @"UPDATE dbo.clienter SET AccountBalance=@Money WHERE id=" + model.UserId;
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Money", Money);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+        }        
+
+        /// <summary>
+        /// 更新用户余额以及可提现金额
+        /// 窦海超
+        /// 2015年3月23日 12:47:54
+        /// </summary>
+        /// <returns></returns>
+        public bool UpdateAccountBalanceAndWithdraw(WithdrawRecordsModel model)
+        {
+            ClienterModel cliterModel = GetUserInfoByUserId(model.UserId);//获取当前用户余额
+            decimal balance = ParseHelper.ToDecimal(cliterModel.AccountBalance, 0);
+            decimal Money = balance + model.Amount;
+            if (Money < 0)//如果提现金额大于当前余额则不能提现
+            {
+                return false;
+            }
+            model.Balance = balance;
+            string sql = @"update dbo.clienter set AccountBalance = @Money , AllowWithdrawPrice=AllowWithdrawPrice+@AllowWithdrawPrice WHERE id=" + model.UserId;
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Money", Money);
+            parm.Add("AllowWithdrawPrice", DbType.Decimal, 18).Value = model.Amount;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+        }
+
+        #endregion
     }
 }
