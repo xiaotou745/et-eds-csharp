@@ -275,9 +275,9 @@
                 if (result.Status == 0 || result.Status=="0") {
                     alert(result.Message);
                 } else if (result.Status == 1 || result.Status == "1") {
-                   
                    alert(result.Message);
                    ClearInfo();
+                   location.reload();
                 }
             }
         });
