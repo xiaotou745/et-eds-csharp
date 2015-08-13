@@ -1087,7 +1087,7 @@ select @orderamount=o.Amount,@ordercommission=o.OrderCommission,@ordercount=o.Or
 
 if(@DeliveryCompanyID>0)
 begin
-select @ordercommission=case when dc.SettleType=1 then @orderamount*dc.ClienterSettleRatio/100 when dc.SettleType=2 then dc.ClienterFixMoney*@ordercount end
+select @ordercommission=case when dc.SettleType=1 then @orderamount*dc.ClienterSettleRatio/100*@ordercount when dc.SettleType=2 then dc.ClienterFixMoney*@ordercount end
 from DeliveryCompany dc(nolock) 
 where dc.Id=@DeliveryCompanyID
 end
