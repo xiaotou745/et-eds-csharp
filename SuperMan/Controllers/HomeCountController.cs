@@ -19,8 +19,13 @@ namespace SuperMan.Controllers
         // GET: HomeCount
         public ActionResult Index()
         {
+            //当前用户没有后台首页的权限，但是有物流公司订单管理权限，则认为是物流公司登陆，返回物流公司的订单管理页面
             if (!UserContext.Current.HasAuthority(50))
             {
+                if (UserContext.Current.HasAuthority(70))
+                {
+                    return new ContentResult() { Content = "<script>window.location='/DeliveryManager/OrderManager'</script>" };
+                }
                 return new ContentResult() { Content = "<script>window.location='/order/order'</script>" };
             }
             Ets.Service.Provider.Common.HomeCountProvider homeCountProvider = new Ets.Service.Provider.Common.HomeCountProvider();
