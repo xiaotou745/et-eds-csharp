@@ -327,7 +327,7 @@ namespace SuperMan.Controllers
                 OptLog = OrderOptionLog,
                 OrderId = orderId
             };
-            var reg = iOrderProvider.DeductWebSubsidy(orderOptionModel);
+            var reg = iOrderProvider.AuditRefuse(orderOptionModel);
             return Json(new ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.AllowGet);
         }
         /// <summary>
@@ -437,7 +437,7 @@ namespace SuperMan.Controllers
                             OptLog = remark,
                             OrderId = int.Parse(infos[0])
                         };
-                        var reg = iOrderProvider.DeductWebSubsidy(orderOptionModel);
+                        var reg = iOrderProvider.AuditRefuse(orderOptionModel);
                         result.Add(infos[1],reg);
                     }
                 }
