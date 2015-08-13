@@ -3544,7 +3544,6 @@ where   Id = @OrderId and FinishAll = 0";
         /// 根据订单号查订单信息
         /// danny-20150320
         /// </summary>
-        /// <param name="overTimeHour"></param>
         /// <returns></returns>
         public IList<OrderListModel> GetDealOverTimeOrderList()
         {
@@ -3694,7 +3693,7 @@ set    c.AccountBalance=ISNULL(c.AccountBalance, 0)+@Amount
       ,c.AllowWithdrawPrice=ISNULL(c.AllowWithdrawPrice, 0)+@Amount
 OUTPUT
   Inserted.Id,
-  -@Amount,
+  @Amount,
   @Status,
   Inserted.AccountBalance,
   @RecordType,
