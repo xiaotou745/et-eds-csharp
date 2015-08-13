@@ -200,6 +200,10 @@
         var remark = $('#remark').val().trim();
         var allowwithdrawPrice = $('#labAllowWithdrawPrice').text().trim();
         var imprice = $('#labImprestPrice').text().trim();
+        if (clienterID=='') {
+            $('#Tip').text('请先查询骑士数据!');
+            return;
+        }
         if (parseFloat(withdrawPrice) < 0) {
             $('#Tip').text('提现金额必须大于零元!');
             return;
