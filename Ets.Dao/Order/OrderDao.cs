@@ -2868,7 +2868,7 @@ order by a.id desc
                     if (deliveryModel.SettleType == 1)
                     {
                         //订单金额/骑士结算比例值*订单数量
-                       orderCommission = deliveryModel.ClienterSettleRatio == 0 ? 0 : ParseHelper.ToDecimal(dataRow["CpAmount"]) * deliveryModel.ClienterSettleRatio/100 * ParseHelper.ToInt(dataRow["OrderCount"]);
+                        orderCommission = deliveryModel.ClienterSettleRatio == 0 ? 0 : ParseHelper.ToDecimal(dataRow["CpAmount"]) * deliveryModel.ClienterSettleRatio / 100 * ParseHelper.ToInt(dataRow["OrderCount"]);
                     }
                     else if (deliveryModel.SettleType == 2)
                     {
@@ -3639,7 +3639,7 @@ where   Id = @OrderId and FinishAll = 0";
         /// </summary>
         /// <param name="overTimeHour"></param>
         /// <returns></returns>
-        public IList<OrderListModel> GetDealOverTimeOrderList(int overTimeHour=24)
+        public IList<OrderListModel> GetDealOverTimeOrderList()
         {
             #region 查询脚本
             string sql = @"SELECT        o.[Id]
@@ -3659,17 +3659,17 @@ where   Id = @OrderId and FinishAll = 0";
                                     JOIN OrderOther oo WITH (NOLOCK) ON oo.OrderId=o.Id
                                     WHERE o.PubDate BETWEEN DATEADD(HOUR,-@overTimeHour,Convert(DateTime,Convert(Varchar(10),GetDate(),120))) 
                                     AND Convert(DateTime,Convert(Varchar(10),GetDate(),120))
-                                    AND o.FinishAll=0 AND o.Status<>4";
+                                    AND o.FinishAll=0 AND o.Status<>3";
             #endregion
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@overTimeHour", overTimeHour);
+            parm.Add("@overTimeHour", DbType.Int32).Value = ParseHelper.ToInt(Config.ConfigKey("OverTimeHour"), 24);
             var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
-            var list = ConvertDataTableList<OrderListModel>(dt);
-            if (list != null && list.Count > 0)
+            if (dt == null || dt.Rows.Count <= 0)
             {
-                return list;
+                return null;
             }
-            return null;
+            var list = ConvertDataTableList<OrderListModel>(dt);
+            return list;
         }
         /// <summary>
         /// 修改订单状态
@@ -3709,7 +3709,7 @@ where   Id = @OrderId and FinishAll = 0";
             parm.AddWithValue("@OptName", "服务");
             parm.AddWithValue("@Platform", 2);
             parm.AddWithValue("@Remark", "服务自动处理超时未完成订单");
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
         /// <summary>
         /// 添加骑士可提现余额流水记录

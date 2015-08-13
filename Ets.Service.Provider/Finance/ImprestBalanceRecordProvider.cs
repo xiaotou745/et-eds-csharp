@@ -181,7 +181,7 @@ namespace Ets.Service.Provider.Finance
                     ClienterId = climodel.Id,
                     Amount = -parmodel.WithdrawPrice,
                     Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
-                    RecordType = (int)ClienterBalanceRecordRecordType.WithdrawApply,
+                    RecordType = (int)ClienterBalanceRecordRecordType.CashWithdraw,
                     Operator = parmodel.OprName,
                     WithwardId = withwardId,
                     RelationNo = withwardNo,

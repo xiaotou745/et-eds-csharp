@@ -8,6 +8,7 @@ using ETS;
 using Ets.Service.IProvider.Pay;
 using Ets.Service.Provider.Pay;
 using ETS.Util;
+using Ets.Service.Provider.Order;
 
 namespace Ets.AutoDealOverTimeOrder
 {
@@ -30,6 +31,8 @@ namespace Ets.AutoDealOverTimeOrder
             {
                 //var iPayProvider = new PayProvider();
                 //iPayProvider.AutoDealWithdrawForm();
+                OrderProvider order = new OrderProvider();
+                order.AutoDealOverTimeOrder();
             }
             catch (Exception ex)
             {
