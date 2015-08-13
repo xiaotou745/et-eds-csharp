@@ -1087,7 +1087,7 @@ select @orderamount=o.Amount,@ordercommission=o.OrderCommission,@ordercount=o.Or
 
 if(@DeliveryCompanyID>0)
 begin
-select @ordercommission=case when dc.SettleType=1 then @orderamount*dc.ClienterSettleRatio/100*@ordercount when dc.SettleType=2 then dc.ClienterFixMoney*@ordercount end
+select @ordercommission=case when dc.SettleType=1 then @orderamount*dc.ClienterSettleRatio/100 when dc.SettleType=2 then dc.ClienterFixMoney*@ordercount end
 from DeliveryCompany dc(nolock) 
 where dc.Id=@DeliveryCompanyID
 end
@@ -1104,7 +1104,7 @@ from    dbo.[order] o ( nolock )
 where   o.OrderNo = @OrderNo
 select 0
 ";
-
+            //*@ordercount
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("clienterId", DbType.Int32, 4).Value = order.clienterId;// userId;
             dbParameters.Add("Status", DbType.Int32, 4).Value = OrderStatus.Status2.GetHashCode();
@@ -2868,7 +2868,7 @@ order by a.id desc
                     if (deliveryModel.SettleType == 1)
                     {
                         //订单金额/骑士结算比例值*订单数量
-                        orderCommission = deliveryModel.ClienterSettleRatio == 0 ? 0 : ParseHelper.ToDecimal(dataRow["CpAmount"]) * deliveryModel.ClienterSettleRatio / 100 * ParseHelper.ToInt(dataRow["OrderCount"]);
+                        orderCommission = deliveryModel.ClienterSettleRatio == 0 ? 0 : ParseHelper.ToDecimal(dataRow["CpAmount"]) * deliveryModel.ClienterSettleRatio / 100;// *ParseHelper.ToInt(dataRow["OrderCount"]);
                     }
                     else if (deliveryModel.SettleType == 2)
                     {
