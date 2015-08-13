@@ -87,7 +87,7 @@ namespace SuperMan.Controllers
         {
             var criteria = new ImprestBalanceRecordSearchCriteria()
             {
-                OptType = 2,
+                OptType = ImprestBalanceRecordOptType.Payment.GetHashCode(),
             };
             var pagedList = imprestProvider.GetImprestBalanceRecordList(criteria);
             return View(pagedList);
@@ -103,7 +103,7 @@ namespace SuperMan.Controllers
         {
             var criteria = new ImprestBalanceRecordSearchCriteria();
             TryUpdateModel(criteria);
-            criteria.OptType = 2;
+            criteria.OptType = ImprestBalanceRecordOptType.Payment.GetHashCode();
             var pagedList = imprestProvider.GetImprestBalanceRecordList(criteria);
             return PartialView(pagedList);
         }
