@@ -259,7 +259,7 @@
                 document.getElementById("btnReasionCancel").disabled = true;
                 $("#cancelTipMsg").html("正在执行....");
                 var paramaters = { "orderId": orderId, "OrderOptionLog": orderOptionLog };
-                var url = "/Order/AuditCancel";
+                var url = "/Order/AuditRefuse";
                 $.ajax({
                     type: 'POST',
                     url: url,
