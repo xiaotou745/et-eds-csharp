@@ -153,7 +153,8 @@
             }
         }
         $("#btnSearch").submit();
-    });
+    });
+
     //导出
     function DaoCHu() {
         var clienterPhoneNo = $("#clienterPhoneNo").val();
@@ -196,10 +197,7 @@
             data: postPar,
             success: function(result) {
                 if (result.Status == 0) {
-                    alert('没有查询到骑士，请重新输入');
-                }
-                else if (result.Status == 2) {
-                    alert('该骑士尚未审核通过');
+                    alert(result.Tip);
                 }
                 else if (result.Status == 1) {
                     $('#yesBtn').show();
