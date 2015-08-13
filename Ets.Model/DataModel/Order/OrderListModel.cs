@@ -362,5 +362,9 @@ namespace Ets.Model.DataModel.Order
         /// 基本补贴佣金
         /// </summary>
         public decimal BaseCommission { get; set; }
+        /// <summary>
+        /// 原订单状态
+        /// </summary>
+        public byte? OldStatus { get; set; }
     }
 }

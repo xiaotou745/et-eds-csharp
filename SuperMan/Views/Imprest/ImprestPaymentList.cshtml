@@ -51,14 +51,14 @@
 
 @*备用金支出弹窗*@
 <div class="ImprestPayOutDiv" id="ImprestPayBox">
-    <div class="add-openbox add-form" id="ImprestPayOutDiv" style="width:500px">
+    <div class="add-openbox add-form" id="ImprestPayOutDiv" style="width:500px;top: 30%">
         <h2>
             <p id="addstatusFin">备用金支出</p>
         </h2>
         <fieldset>
             <div class="control-group">
                 <label>支出类型:</label>
-                <input type="radio" name="OptType" /><label>骑士支出</label>
+                <input type="radio" name="OptType" checked="checked" /><label>骑士支出</label>
             </div>
             <div class="control-group">
                 <label>骑士电话:</label>
@@ -74,45 +74,51 @@
                     <input type="hidden" id="labClienterID" />
                 </div>
                 <div class="control-group">
-                    <label>余额:</label><label id="labAccountBalance"></label>
+                    <label>骑士余额:</label><label id="labAccountBalance"></label>元
                 </div>
                 <div class="control-group">
-                    <label>可提现余额:</label><label id="labAllowWithdrawPrice"></label>
+                    <label>骑士可提现余额:</label><label id="labAllowWithdrawPrice"></label>元
                 </div>
                 <div class="control-group">
-                    <label>提现申请中金额:</label><label id="labWithdrawingPrice"></label>
+                    <label>提现申请中金额:</label><label id="labWithdrawingPrice"></label>元
                 </div>
                 <div class="control-group">
-                    <label>可用备用金余额:</label><label id="labImprestPrice"></label>
+                    <label>可用备用金余额:</label><label id="labImprestPrice"></label>元
                 </div>
                 <div class="control-group">
                     <label>备用金支出:</label>
                     <input name="WithdrawPrice" id="withdrawPrice" type="text">
                 </div>
                 <div class="control-group">
-                    <label>备注:</label>
-                    <textarea cols="45" rows="5" id="remark"></textarea>
+                    <label>备注:</label><br/>
+                    <textarea cols="45" rows="3" id="remark"></textarea>
                 </div>
-                <p class="btnbox">
-                    <input value="确认支出" type="button" id="btnAddBusiness" class="yesBtn" />
-                    <input value="关闭" type="button" class="J_closebox qxBtn" id="cancelBox"/>
-                </p>
             </div>
+            <br/>
+            <label id="Tip"></label>
+            <p class="btnbox">
+                <input value="确认支出" type="button" id="yesBtn" class="yesBtn" />
+                <input value="关闭" type="button" class="J_closebox qxBtn" id="cancelBox" />
+            </p>
         </fieldset>
     </div>
 </div>
 <script type="text/javascript">
-
-    $(document).ready(function() {
+    var adminjs;
+    var decimalReg = /^[0-9]*(\.[0-9]{1,2})?$/;
+    var phoneReg = /^0?1\d{10}$/;
+    $(document).ready(function () {
+         adminjs = new adminglass(); //实例化后台类
         $('#txtOptTimeStart').datepicker();
         $('#txtOptTimeEnd').datepicker();
         window.location.hash = '';
         //隐藏充值窗
-        $('#ImprestPayBox').hide();
+       // $('#ImprestPayBox').hide();
         $('#clienterInfoDiv').hide();
         //点击备用金支出按钮
-        $('#btnPayment').click(function() {
-            $('#ImprestPayBox').show();
+        $('#btnPayment').click(function () {
+            adminjs.openwinbox('#ImprestPayOutDiv');
+           // $('#ImprestPayBox').show();
         });
         //根据骑士电话查询信息
         $('#btnclienterserach').click(function() {
@@ -121,7 +127,17 @@
         //取消充值
         $('#cancelBox').click(function() {
             ClearInfo();
+           // adminjs.closewinbox('.add-openbox');
         });
+        $('#yesBtn').click(function() {
+            PayOutOk();
+        });
+        //关闭弹层
+        //$('.J_closebox').click(function () {
+        //    ClearInfo();
+            
+        //    return false;
+        //});
     });
 
     //导出
@@ -140,8 +156,11 @@
 
     //查询骑士电话
     function CheckClienterPhone(phoneNum) {
-        if (phoneNum.length < 1)
+        if (!phoneReg.test(phoneNum)) {
+            alert('请输入正确的手机号!');
             return;
+        }
+           
         var posturl = "/Imprest/CheckPhoneNum";
         var postPar = {
             PhoneNum: $('#phoneNum').val()
@@ -175,11 +194,36 @@
 
     //确认支出
     function PayOutOk() {
-        var withdrawPrice = $('#withdrawPrice').val();
-        var clienterID = $('#labClienterID').val();
-        var phoneNum = $('#labClienterPhoneNo').text();
-        var remark = $('#remark').text();
-
+        var withdrawPrice = $('#withdrawPrice').val().trim();
+        var clienterID = $('#labClienterID').val().trim();
+        var phoneNum = $('#labClienterPhoneNo').text().trim();
+        var remark = $('#remark').val().trim();
+        var allowwithdrawPrice = $('#labAllowWithdrawPrice').text().trim();
+        var imprice = $('#labImprestPrice').text().trim();
+        if (clienterID=='') {
+            $('#Tip').text('请先查询骑士数据!');
+            return;
+        }
+        if (parseFloat(withdrawPrice) < 0) {
+            $('#Tip').text('提现金额必须大于零元!');
+            return;
+        }
+        if (!decimalReg.test(withdrawPrice)) {
+            $('#Tip').text('请输入正确的提现金额!');
+            return;
+        }
+        if (parseFloat(withdrawPrice) > parseFloat(allowwithdrawPrice)) {
+            $('#Tip').text('提现金额超过该骑士可提现金额!');
+            return;
+        }
+        if (parseFloat(withdrawPrice) > parseFloat(imprice)) {
+            $('#Tip').text('提现金额超过备用金账户总余额!');
+            return;
+        }
+        if (remark.length<1) {
+            $('#Tip').text('备注不能为空');
+            return;
+        }
         var parmodel = {
             ClienterId: clienterID,
             WithdrawPrice: withdrawPrice,
@@ -192,17 +236,20 @@
             url: posturl,
             data: parmodel,
             success: function(result) {
-                if (result.Status == 0) {
+                if (result.Status == 0 || result.Status=="0") {
                     alert(result.Message);
-                } else if (result.Status == 1) {
-                    alert(result.Message);
-                    // FillInfo(result);
+                } else if (result.Status == 1 || result.Status == "1") {
+                   
+                   alert(result.Message);
+                   ClearInfo();
                 }
             }
         });
     }
     //清除数据
     function ClearInfo() {
+        adminjs.closewinbox('.add-openbox');
+        
         $('#labClienterName').text('');
         $('#labClienterPhoneNo').text('');
         $('#labAccountBalance').text('');
@@ -211,9 +258,14 @@
         $('#labImprestPrice').text('');
         $('#labClienterID').val('');
         $('#phoneNum').val('');
-        //隐藏充值窗
-        $('#ImprestPayBox').hide();
+        $('#withdrawPrice').val('');
+        $('#remark').val('');
+        $('#Tip').text('');
         $('#clienterInfoDiv').hide();
+        //隐藏充值窗
+        //$('#ImprestPayBox').hide();
+        
+        
     }
 </script>
 

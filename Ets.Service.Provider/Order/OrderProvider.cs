@@ -1680,9 +1680,9 @@ namespace Ets.Service.Provider.Order
 
             #region 获取物流公司应付骑士佣金  2015年8月13日 09:34:02 窦海超
             DeliveryCompanyModel deliveryModel = null;
-            if (order.DeliveryCompanyID > 0)
+            if (modelPM.DeliveryCompanyID > 0)
             {
-                deliveryModel = new DeliveryCompanyDao().GetById(order.DeliveryCompanyID);
+                deliveryModel = new DeliveryCompanyDao().GetById(modelPM.DeliveryCompanyID);
             }
             decimal orderCommission = ParseHelper.ToDecimal(order.OrderCommission);
             if (deliveryModel != null)
@@ -2117,6 +2117,85 @@ namespace Ets.Service.Provider.Order
         public int UpdateOrderAddressAndPhone(string orderId, string newAddress, string newPhone)
         {
             return orderDao.UpdateOrderAddressAndPhone(orderId, newAddress, newPhone);
+        }
+        /// <summary>
+        /// 自动处理超时未处理订单
+        /// danny-20150812
+        /// </summary>
+        public void AutoDealOverTimeOrder()
+        {
+            #region 根据配置时间获取未处理超时订单
+
+            var orderList = orderDao.GetDealOverTimeOrderList();
+            if (orderList == null || orderList.Count == 0)
+            {
+                return;
+            }
+            orderList = orderList.Where(t => !(t.MealsSettleMode == 1 && t.IsPay == false)).ToList();
+            if (orderList.Count == 0)
+            {
+                return;
+            }
+            var unFinishOrderrList = orderList.Where(t => t.Status == 0 || t.Status == 2 || t.Status == 4).ToList();//状态为 0：未抢单 2：已抢单 3：已取货
+            if (unFinishOrderrList.Count > 0)
+            {
+                foreach (var orderListModel in unFinishOrderrList)
+                {
+                    using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+                    {
+                        if (orderDao.ModifyOrderStatus(new OrderListModel()
+                        {
+                            Id = orderListModel.Id,
+                            Status = (byte?) OrderStatus.Status3,
+                            OldStatus = orderListModel.Status,
+                            OrderCommission = orderListModel.OrderCommission
+                        }))
+                        {
+                            if (orderDao.OrderCancelReturnBusiness(new OrderListModel()
+                            {
+                                SettleMoney = orderListModel.SettleMoney,
+                                OptUserName = "服务",
+                                Id = orderListModel.Id,
+                                OrderNo = orderListModel.OrderNo,
+                                Remark = "服务自动处理超时未完成订单",
+                                businessId = orderListModel.businessId
+                            }))
+                            {
+                                tran.Complete();
+                            }
+                        }
+                    }
+                }
+            }
+            var halfFinishOrderList = orderList.Where(t => t.Status == 1).ToList();//已完成未完成小票上传
+            if (halfFinishOrderList.Count > 0)
+            {
+                foreach (var orderListModel in halfFinishOrderList)
+                {
+                    using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+                    {
+                        if (orderDao.ModifyOrderStatus(new OrderListModel()
+                        {
+                            Id = orderListModel.Id,
+                            Status = (byte?) OrderStatus.Status3,
+                            OldStatus = orderListModel.Status,
+                            OrderCommission = orderListModel.OrderCommission
+                        }))
+                        {
+                            if (orderDao.OrderCancelReturnClienter(new OrderListModel()
+                            {
+
+                            }))
+                            {
+                                tran.Complete();
+                            }
+                        }
+                        
+                    }
+                }
+            }
+
+            #endregion
         }
 
 

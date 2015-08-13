@@ -154,7 +154,8 @@ namespace Ets.Dao.Clienter
         ISNULL(d.Id,0) as DeliveryCompanyId,
         isnull(d.DeliveryCompanyName,'') DeliveryCompanyName,
         isnull(d.IsDisplay,1) IsDisplay,
-        c.Appkey
+        c.Appkey,
+        (case when d.SettleType=1 and ClienterSettleRatio>0 or d.SettleType=2 and d.ClienterFixMoney>0 then 1 else 0 end) IsDisplayDeliveryMoney
 from    dbo.clienter c(nolock)
  left join dbo.DeliveryCompany d(nolock) on c.DeliveryCompanyId = d.Id
 where   c.PhoneNo = @PhoneNo
@@ -202,7 +203,7 @@ where   c.PhoneNo = @PhoneNo
         /// <returns></returns>
         public ClienterModel GetUserInfoByUserId(int UserId)
         {
-            string sql = "SELECT TrueName,PhoneNo,AccountBalance,AllowWithdrawPrice,Status,IDCard  FROM dbo.clienter(NOLOCK) WHERE Id=" + UserId;
+            string sql = "SELECT ID,TrueName,PhoneNo,AccountBalance,AllowWithdrawPrice,Status,IDCard  FROM dbo.clienter(NOLOCK) WHERE Id=" + UserId;
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql);
             IList<ClienterModel> list = MapRows<ClienterModel>(dt);
             if (list == null || list.Count <= 0)
@@ -1042,6 +1043,23 @@ where  Id IN({0}) ";
              }).ToDictionary(m => m.Id);
         }
 
+        /// <summary>
+        ///  骑士更新 余额，可提现余额 功能 add by caoheyang 20150509
+        /// </summary>
+        /// <param name="model">骑士信息</param>
+        /// <returns></returns>
+        public void UpdateForWithdrawC(UpdateForWithdrawPM model)
+        {
+            const string updateSql = @"
+update  clienter
+set  AccountBalance=AccountBalance+@WithdrawPrice,AllowWithdrawPrice=AllowWithdrawPrice+@WithdrawPrice
+where  Id=@Id ";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("Id", model.Id);
+            dbParameters.AddWithValue("WithdrawPrice", model.Money);
+            var  num=DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+        }
+
 
         /// <summary>
         /// 获取骑士详情    
@@ -1258,6 +1276,7 @@ WHERE c.Id = @ClienterId  ";
                 result.AreaCode = dataReader["AreaCode"].ToString();
                 result.CityCode = dataReader["CityCode"].ToString();
                 result.Province = dataReader["Province"].ToString();
+                result.IsDisplayDeliveryMoney = ParseHelper.ToInt(dataReader["IsDisplayDeliveryMoney"].ToString());
                 obj = dataReader["BussinessID"];
                 if (obj != null && obj != DBNull.Value)
                 {
@@ -1278,6 +1297,7 @@ WHERE c.Id = @ClienterId  ";
                 {
                     result.HasWithdrawPrice = decimal.Parse(obj.ToString());
                 }
+
 
                 return result;
             }
