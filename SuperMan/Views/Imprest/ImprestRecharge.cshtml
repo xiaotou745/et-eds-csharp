@@ -39,9 +39,6 @@
     $(function () {
         //点击备用金充值确认按钮    确验证
         $("#btnSure").click(function () {
-            if (!confirm("您确认充值备用金吗？")) {
-                return;
-            }
             var amount = $("#_txtAmount").val();
             var imprestReceiver = $("#_txtImprestReceiver").val();
             var remark = $("#_txtRemark").val();
@@ -63,6 +60,9 @@
             }
             if (remark.replace(/(^\s*)|(\s*$)/g, "").length == 0 || remark.length < 5 || remark.length>50) {
                 alert("备注信息不能为空且在5-50个字符之间");
+                return;
+            }
+            if (!confirm("您确认充值备用金吗？")) {
                 return;
             }
             $.ajax({
