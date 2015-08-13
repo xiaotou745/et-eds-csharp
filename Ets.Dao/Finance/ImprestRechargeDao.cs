@@ -90,7 +90,8 @@ where  Id=@Id ";
         public int GetRemainingAmountNoLock()
         {
             const string getbyidSql = @"SELECT ISNULL(RemainingAmount,0) AS RemainingAmount FROM ImprestRecharge (NOLOCK) ";
-            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, getbyidSql), 0);
+            var obj = DbHelper.ExecuteScalar(SuperMan_Read, getbyidSql);
+            return obj == null ? 0 : Convert.ToInt32(obj);
         }
 
         /// <summary>
