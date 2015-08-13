@@ -3636,71 +3636,21 @@ where   Id = @OrderId and FinishAll = 0";
         {
             #region 查询脚本
             string sql = @"SELECT        o.[Id]
-                                        ,o.[OrderNo]
-                                        ,o.[PickUpAddress]
-                                        ,o.PubDate
-                                        ,o.[ReceviceName]
-                                        ,o.[RecevicePhoneNo]
-                                        ,o.[ReceviceAddress]
-                                        ,o.[ActualDoneDate]
-                                        ,o.[IsPay]
-                                        ,o.[Amount]
-                                        ,o.[OrderCommission]
-                                        ,o.[DistribSubsidy]
-                                        ,o.[WebsiteSubsidy]
-                                        ,o.[Remark]
                                         ,o.[Status]
+                                        ,o.[OrderCommission]
+                                        ,o.[SettleMoney]
+                                        ,o.[OrderNo]
                                         ,o.[clienterId]
                                         ,o.[businessId]
-                                        ,o.[ReceviceCity]
-                                        ,o.[ReceviceLongitude]
-                                        ,o.[ReceviceLatitude]
-                                        ,o.[OrderFrom]
-                                        ,o.[OriginalOrderId]
-                                        ,o.[OriginalOrderNo]
-                                        ,o.[Quantity]
-                                        ,o.[Weight]
-                                        ,o.[ReceiveProvince]
-                                        ,o.[ReceiveArea]
-                                        ,o.[ReceiveProvinceCode]
-                                        ,o.[ReceiveCityCode]
-                                        ,o.[ReceiveAreaCode]
-                                        ,o.[OrderType]
-                                        ,o.[KM]
-                                        ,o.[GuoJuQty]
-                                        ,o.[LuJuQty]
-                                        ,o.[SongCanDate]
-                                        ,o.[OrderCount]
-                                        ,o.[CommissionRate] 
-                                        ,o.[RealOrderCommission] 
-                                        ,b.[City] BusinessCity
-                                        ,b.Name BusinessName
-                                        ,b.PhoneNo BusinessPhoneNo
-                                        ,b.PhoneNo2 BusinessPhoneNo2
-                                        ,b.Address BusinessAddress
-                                        ,c.PhoneNo ClienterPhoneNo
-                                        ,c.TrueName ClienterTrueName
-                                        ,c.TrueName ClienterName
-                                        ,c.AccountBalance AccountBalance
-                                        ,b.GroupId
-                                        ,case when o.orderfrom=0 then '客户端' else g.GroupName end GroupName
-                                        ,o.OriginalOrderNo
-                                        ,oo.NeedUploadCount
-                                        ,oo.HadUploadCount
-                                        ,oo.ReceiptPic
-                                        ,oo.IsNotRealOrder IsNotRealOrder
-                                        ,o.OtherCancelReason
-                                        ,o.OriginalOrderNo
+                                        ,o.[WebsiteSubsidy]
+                                        ,o.[OrderCommission]
+                                        ,o.[IsPay]
+                                        ,o.FinishAll
                                         ,ISNULL(o.MealsSettleMode,0) MealsSettleMode
                                         ,ISNULL(oo.IsJoinWithdraw,0) IsJoinWithdraw
-                                        ,o.BusinessReceivable
-                                        ,o.SettleMoney
-                                        ,o.FinishAll
                                     FROM [order] o WITH ( NOLOCK )
-                                    JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                     JOIN OrderOther oo WITH (NOLOCK) ON oo.OrderId=o.Id
-                                    left JOIN clienter c WITH (NOLOCK) ON o.clienterId=c.Id
-                                    WHERE o.PubDate BETWEEN DATEADD(HOUR,-24,Convert(DateTime,Convert(Varchar(10),GetDate(),120))) 
+                                    WHERE o.PubDate BETWEEN DATEADD(HOUR,-@overTimeHour,Convert(DateTime,Convert(Varchar(10),GetDate(),120))) 
                                     AND Convert(DateTime,Convert(Varchar(10),GetDate(),120))
                                     AND o.FinishAll=0 AND o.Status<>4";
             #endregion
