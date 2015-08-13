@@ -51,7 +51,7 @@
 
 @*备用金支出弹窗*@
 <div class="ImprestPayOutDiv" id="ImprestPayBox">
-    <div class="add-openbox add-form" id="ImprestPayOutDiv" style="width:500px">
+    <div class="add-openbox add-form" id="ImprestPayOutDiv" style="width:500px;top: 30%">
         <h2>
             <p id="addstatusFin">备用金支出</p>
         </h2>
@@ -91,7 +91,7 @@
                 </div>
                 <div class="control-group">
                     <label>备注:</label><br/>
-                    <textarea cols="45" rows="5" id="remark"></textarea>
+                    <textarea cols="45" rows="3" id="remark"></textarea>
                 </div>
             </div>
             <br/>
@@ -194,13 +194,13 @@
 
     //确认支出
     function PayOutOk() {
-        var withdrawPrice = $('#withdrawPrice').val();
-        var clienterID = $('#labClienterID').val();
-        var phoneNum = $('#labClienterPhoneNo').text();
-        var remark = $('#remark').val();
-        var allowwithdrawPrice = $('#labAllowWithdrawPrice').text();
-        var imprice = $('#labImprestPrice').text();
-        if (withdrawPrice<0) {
+        var withdrawPrice = $('#withdrawPrice').val().trim();
+        var clienterID = $('#labClienterID').val().trim();
+        var phoneNum = $('#labClienterPhoneNo').text().trim();
+        var remark = $('#remark').val().trim();
+        var allowwithdrawPrice = $('#labAllowWithdrawPrice').text().trim();
+        var imprice = $('#labImprestPrice').text().trim();
+        if (parseFloat(withdrawPrice) < 0) {
             $('#Tip').text('提现金额必须大于零元!');
             return;
         }
@@ -232,11 +232,12 @@
             url: posturl,
             data: parmodel,
             success: function(result) {
-                if (result.Status == 0) {
+                if (result.Status == 0 || result.Status=="0") {
                     alert(result.Message);
-                } else if (result.Status == 1) {
-                    alert(result.Message);
-                    FillInfo(result);
+                } else if (result.Status == 1 || result.Status == "1") {
+                   
+                   alert(result.Message);
+                   ClearInfo();
                 }
             }
         });
@@ -255,6 +256,7 @@
         $('#phoneNum').val('');
         $('#withdrawPrice').val('');
         $('#remark').val('');
+        $('#Tip').text('');
         $('#clienterInfoDiv').hide();
         //隐藏充值窗
         //$('#ImprestPayBox').hide();
