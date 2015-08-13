@@ -1691,7 +1691,7 @@ namespace Ets.Service.Provider.Order
                 if (deliveryModel.SettleType == 1)
                 {
                     //订单金额/骑士结算比例值*订单数量
-                    orderCommission = deliveryModel.ClienterSettleRatio == 0 ? 0 : ParseHelper.ToDecimal(order.Amount) / deliveryModel.ClienterSettleRatio * ParseHelper.ToInt(order.OrderCount);
+                    orderCommission = deliveryModel.ClienterSettleRatio == 0 ? 0 : ParseHelper.ToDecimal(order.Amount) * deliveryModel.ClienterSettleRatio/100 * ParseHelper.ToInt(order.OrderCount);
                 }
                 else if (deliveryModel.SettleType == 2)
                 {
