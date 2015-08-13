@@ -865,29 +865,7 @@ namespace Ets.Service.Provider.Clienter
                 if (orderOther == null) return null;
 
                 //上传成功后， 判断 订单 创建时间在 2015-4-18 00：00 之前的订单不在增加佣金
-                string date = "2015-04-18 00:00:00";
-
-                //更新骑士金额
-                //#region 是否给骑士加佣金，如果当前时间大于等于 上传小票的时间+24小时，就不增加佣金 && 把订单加入到已增加已提现里
-                //DateTime doneDate = ParseHelper.ToDatetime(myOrderInfo.ActualDoneDate, DateTime.Now).AddDays(1);//完成时间加一天
-                //bool IsPayOrderCommission = true;
-                //if (myOrderInfo.ActualDoneDate != null && DateTime.Now >= doneDate)
-                //{
-                //    IsPayOrderCommission = false;
-                //   orderDao.UpdateJoinWithdraw(myOrderInfo.Id);//把订单加入到已增加可提现里
-
-                //    if (orderOther.HadUploadCount >= orderOther.NeedUploadCount && orderOther.OrderStatus == OrderStatus.Status1.GetHashCode())
-                //    {
-                //        CheckOrderPay(myOrderInfo.Id);
-                //    }
-                //}
-                //#endregion
-
-                //if (IsPayOrderCommission && orderOther.OrderCreateTime > Convert.ToDateTime(date)
-                //   && orderOther.OrderStatus == OrderStatus.Status1.GetHashCode())
-                //{
-                //    UpdateClienterMoney(myOrderInfo, uploadReceiptModel, orderOther);
-                //}
+                string date = "2015-04-18 00:00:00";             
 
                 if (orderOther.OrderStatus == OrderStatus.Status1.GetHashCode() && orderOther.OrderCreateTime > Convert.ToDateTime(date))
                 {
@@ -920,28 +898,28 @@ namespace Ets.Service.Provider.Clienter
             return orderDao.UpdateFinishAll(orderId);
         }
 
-        /// <summary>
-        /// 删除小票
-        /// wc
-        /// </summary>
-        /// <param name="uploadReceiptModel"></param>
-        /// <returns></returns>
-        public OrderOther DeleteReceipt(UploadReceiptModel uploadReceiptModel)
-        {
-            var orderOther = clienterDao.DeleteReceipt(uploadReceiptModel);
+        ///// <summary>
+        ///// 删除小票
+        ///// wc
+        ///// </summary>
+        ///// <param name="uploadReceiptModel"></param>
+        ///// <returns></returns>
+        //public OrderOther DeleteReceipt(UploadReceiptModel uploadReceiptModel)
+        //{
+        //    var orderOther = clienterDao.DeleteReceipt(uploadReceiptModel);
 
-            return orderOther;
-        }
-        /// <summary>
-        /// 新增小票信息
-        /// wc
-        /// </summary>
-        /// <param name="uploadReceiptModel"></param>
-        /// <returns></returns>
-        public OrderOther InsertReceiptInfo(UploadReceiptModel uploadReceiptModel)
-        {
-            return clienterDao.InsertReceiptInfo(uploadReceiptModel);
-        }
+        //    return orderOther;
+        //}
+        ///// <summary>
+        ///// 新增小票信息
+        ///// wc
+        ///// </summary>
+        ///// <param name="uploadReceiptModel"></param>
+        ///// <returns></returns>
+        //public OrderOther InsertReceiptInfo(UploadReceiptModel uploadReceiptModel)
+        //{
+        //    return clienterDao.InsertReceiptInfo(uploadReceiptModel);
+        //}
 
         /// <summary>
         /// 根据订单Id获取小票信息
@@ -1049,8 +1027,7 @@ namespace Ets.Service.Provider.Clienter
         /// <returns></returns>
         public ClienterDM GetDetails(int id)
         {
-            ClienterDM model = clienterDao.GetDetails(id);
-            //model.HasMessage = new ClienterMessageDao().HasMessage(id);
+            ClienterDM model = clienterDao.GetDetails(id);           
             return model;
         }
 
@@ -1172,43 +1149,7 @@ namespace Ets.Service.Provider.Clienter
         public PageInfo<ClienterListModel> GetClienterList(ClienterSearchCriteria criteria)
         {
             return clienterDao.GetClienterList<ClienterListModel>(criteria);
-        }
-        /// <summary>
-        /// 更新无效订单用户金额
-        ///  zhaohailong20150706
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="myOrderInfo"></param>
-        public void UpdateNotRealOrderClienterAccount(OrderListModel myOrderInfo, decimal realOrderCommission)
-        {
-            //更新骑士 金额  
-            bool b = clienterDao.UpdateCAccountBalance(new UpdateForWithdrawPM() { Id = myOrderInfo.clienterId, Money = realOrderCommission });
-            //增加记录 
-            decimal? accountBalance = 0;
-            //更新用户相关金额数据 
-            if (myOrderInfo.AccountBalance.HasValue)
-            {
-                accountBalance = myOrderInfo.AccountBalance.Value + myOrderInfo.OrderCommission.Value + realOrderCommission;
-            }
-            else
-            {
-                accountBalance = myOrderInfo.OrderCommission.Value + realOrderCommission;
-            }
-
-            ClienterBalanceRecord cbrm = new ClienterBalanceRecord()
-            {
-                ClienterId = myOrderInfo.clienterId,
-                Amount = realOrderCommission,
-                Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
-                Balance = accountBalance ?? 0,
-                RecordType = ClienterBalanceRecordRecordType.BalanceAdjustment.GetHashCode(),
-                Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士" : myOrderInfo.ClienterName,
-                WithwardId = myOrderInfo.Id,
-                RelationNo = myOrderInfo.OrderNo,
-                Remark = "异常原因"  //无效订单  修改为  异常原因  wc
-            };
-            clienterBalanceRecordDao.Insert(cbrm);
-        }
+        }       
         /// <summary>
         /// 修改骑士详细信息
         /// danny-20150707
@@ -1262,15 +1203,12 @@ namespace Ets.Service.Provider.Clienter
             //需要审核
             if (myOrderInfo.IsOrderChecked == 1)
             {
-                decimal orderCommission = myOrderInfo.OrderCommission == null ? 0 : myOrderInfo.OrderCommission.Value;
-                decimal accountBalance = myOrderInfo.AccountBalance == null ? 0 : myOrderInfo.AccountBalance.Value;
-                decimal balance = accountBalance + orderCommission;               
+                //更新骑士余额
                 UpdateCAccountBalance(new ClienterMoneyPM() 
                                         {
                                             ClienterId = myOrderInfo.clienterId,
-                                            Amount = orderCommission,
-                                            Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
-                                            Balance = balance,
+                                            Amount = myOrderInfo.OrderCommission == null ? 0 : myOrderInfo.OrderCommission.Value,
+                                            Status = ClienterBalanceRecordStatus.Success.GetHashCode(),                                            
                                             RecordType = ClienterBalanceRecordRecordType.OrderCommission.GetHashCode(),
                                             Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士" : myOrderInfo.ClienterName,
                                             WithwardId = myOrderInfo.Id,
@@ -1280,15 +1218,12 @@ namespace Ets.Service.Provider.Clienter
             }
             else
             {
-                decimal orderCommission = myOrderInfo.OrderCommission == null ? 0 : myOrderInfo.OrderCommission.Value;
-                decimal accountBalance = myOrderInfo.AccountBalance == null ? 0 : myOrderInfo.AccountBalance.Value;
-                decimal balance = accountBalance + orderCommission;
+                // 更新骑士余额、可提现余额  
                 UpdateCBalanceAndWithdraw(new ClienterMoneyPM()
                                         {                        
                                             ClienterId = myOrderInfo.clienterId,
-                                            Amount = orderCommission,
-                                            Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
-                                            Balance = balance,
+                                            Amount = myOrderInfo.OrderCommission == null ? 0 : myOrderInfo.OrderCommission.Value,
+                                            Status = ClienterBalanceRecordStatus.Success.GetHashCode(),                                        
                                             RecordType = ClienterBalanceRecordRecordType.OrderCommission.GetHashCode(),
                                             Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士" : myOrderInfo.ClienterName,
                                             WithwardId = myOrderInfo.Id,
@@ -1305,6 +1240,28 @@ namespace Ets.Service.Provider.Clienter
             UpdateInvalidOrder(myOrderInfo);      
         }
 
+        /// <summary>
+        ///  更新无效订单
+        ///  胡灵波
+        ///  2015年8月6日 20:11:09
+        /// </summary>
+        /// <param name="myOrderInfo"></param>
+        /// <param name="isNotRealOrder"></param>
+        private void UpdateInvalidOrder(OrderListModel myOrderInfo)
+        {
+            decimal realOrderCommission = myOrderInfo.OrderCommission == null ? 0 : myOrderInfo.OrderCommission.Value;
+            var deductCommissionReason = "";//无效订单原因
+            bool isNotRealOrder = CheckIsNotRealOrder(myOrderInfo, out deductCommissionReason);
+            if (isNotRealOrder)
+            {
+                //获取无效订单佣金
+                realOrderCommission = realOrderCommission > myOrderInfo.SettleMoney ? myOrderInfo.SettleMoney : realOrderCommission;
+                //更新无效订单佣金
+                orderDao.UpdateOrderRealOrderCommission(myOrderInfo.Id.ToString(), realOrderCommission);
+                //更新无效订单(状态，原因)
+                orderOtherDao.UpdateOrderIsReal(myOrderInfo.Id, deductCommissionReason);
+            }
+        }
         /// <summary>
         /// 更新商户金额
         /// 胡灵波
@@ -1337,30 +1294,7 @@ namespace Ets.Service.Provider.Clienter
                 });
                 #endregion
             }            
-        }
-
-        /// <summary>
-        ///  更新无效订单
-        ///  胡灵波
-        ///  2015年8月6日 20:11:09
-        /// </summary>
-        /// <param name="myOrderInfo"></param>
-        /// <param name="isNotRealOrder"></param>
-        private void UpdateInvalidOrder(OrderListModel myOrderInfo)
-        {
-            decimal realOrderCommission = myOrderInfo.OrderCommission == null ? 0 : myOrderInfo.OrderCommission.Value;
-            var deductCommissionReason = "";//无效订单原因
-            bool isNotRealOrder = CheckIsNotRealOrder(myOrderInfo, out deductCommissionReason);
-            if (isNotRealOrder)
-            {
-                //获取无效订单佣金
-                realOrderCommission = realOrderCommission > myOrderInfo.SettleMoney ? myOrderInfo.SettleMoney : realOrderCommission;
-                //更新无效订单佣金
-                orderDao.UpdateOrderRealOrderCommission(myOrderInfo.Id.ToString(), realOrderCommission);
-                //更新无效订单(状态，原因)
-                orderOtherDao.UpdateOrderIsReal(myOrderInfo.Id, deductCommissionReason);
-            }
-        }
+        }      
 
         /// <summary>
         /// 更新骑士余额

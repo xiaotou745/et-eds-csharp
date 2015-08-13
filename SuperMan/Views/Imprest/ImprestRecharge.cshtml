@@ -57,12 +57,12 @@
                 alert("充值金额必须在1到1000000之间");
                 return;
             }
-            if (imprestReceiver.replace(/(^\s*)|(\s*$)/g, "").length < 2) {
-                alert("备用金接收人不能为空且至少两个字符");
+            if (imprestReceiver.replace(/(^\s*)|(\s*$)/g, "").length == 0 || imprestReceiver.length < 2 || imprestReceiver.length>10) {
+                alert("备用金接收人不能为空且在2-10个字符之间");
                 return;
             }
-            if (remark.replace(/(^\s*)|(\s*$)/g, "").length<5) {
-                alert("备用信息不能为空且至少五个字符");
+            if (remark.replace(/(^\s*)|(\s*$)/g, "").length == 0 || remark.length < 5 || remark.length>50) {
+                alert("备注信息不能为空且在5-50个字符之间");
                 return;
             }
             $.ajax({

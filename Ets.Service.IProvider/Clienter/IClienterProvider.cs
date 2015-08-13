@@ -162,13 +162,13 @@ namespace Ets.Service.IProvider.Clienter
         /// <param name="uploadReceiptModel"></param>
         /// <returns></returns>
         OrderOther UpdateClientReceiptPicInfo(UploadReceiptModel uploadReceiptModel);
-        /// <summary>
-        /// 删除小票
-        /// wc
-        /// </summary>
-        /// <param name="uploadReceiptModel"></param>
-        /// <returns></returns>
-        OrderOther DeleteReceipt(UploadReceiptModel uploadReceiptModel);
+        ///// <summary>
+        ///// 删除小票
+        ///// wc
+        ///// </summary>
+        ///// <param name="uploadReceiptModel"></param>
+        ///// <returns></returns>
+        //OrderOther DeleteReceipt(UploadReceiptModel uploadReceiptModel);
         /// <summary>
         /// 根据订单Id获取小票信息
         /// </summary>
