@@ -22,6 +22,7 @@ namespace SuperMan.Controllers
     public class ImprestController : BaseController
     {
         private readonly IImprestBalanceRecordProvider imprestProvider = new ImprestBalanceRecordProvider();
+        private readonly IImprestRechargeProvider imprestRechargeProvider = new ImprestRechargeProvider();
         /// <summary>
         /// 备用金充值列表页  add by caoheyang  20150812
         /// </summary>
@@ -29,7 +30,7 @@ namespace SuperMan.Controllers
         [HttpGet]
         public ActionResult ImprestRechargeList()
         {
-            ViewBag.ImprestRecharge = new ImprestRecharge();
+            ViewBag.ImprestRecharge = imprestRechargeProvider.GetRemainingAmountLock();
             ViewBag.PageModels = imprestProvider.GetImprestBalanceRecordList(new ImprestBalanceRecordSearchCriteria()
             {
                 OptType = ImprestBalanceRecordOptType.Recharge.GetHashCode()
