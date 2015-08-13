@@ -323,7 +323,7 @@
         }
         if (confirm("确定要扣除该订单网站补贴吗？")) {
             var paramaters = { "orderId": orderId, "OrderOptionLog": orderOptionLog };
-            var url = "/Order/AuditCancel";
+            var url = "/Order/AuditRefuse";
             $.ajax({
                 type: 'POST',
                 url: url,
