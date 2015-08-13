@@ -66,9 +66,11 @@ select id from dbo.[order] where OrderNo=@OrderNo
 
         /// <summary>
         /// 更新已提现
+        /// 胡灵波
+        /// 2015年8月13日 11:54:51
         /// </summary>
         /// <param name="orderId"></param>
-        public void UpdateIsJoinWithdraw(int orderId)
+        public void UpdateJoinWithdraw(int orderId)
         {
             const string UPDATE_SQL = @"
 update OrderOther set IsJoinWithdraw=1 where orderId=@orderId";
@@ -76,6 +78,33 @@ update OrderOther set IsJoinWithdraw=1 where orderId=@orderId";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@orderId", orderId);
             DbHelper.ExecuteNonQuery(SuperMan_Write, UPDATE_SQL, dbParameters);
+        }
+
+        ///// <summary>
+        ///// 更新订单是否加入已提现
+        ///// 窦海超
+        ///// 2015年5月15日 17:08:27
+        ///// </summary>
+        ///// <param name="orderId"></param>
+        //public void UpdateJoinWithdraw(int orderId)
+        //{
+        //    string sql = @"update dbo.OrderOther set IsJoinWithdraw = 1 where OrderId=@orderId";
+        //    IDbParameters parm = DbHelper.CreateDbParameters("orderId", DbType.Int32, 4, orderId);
+        //    DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm);
+        //}
+        /// <summary>
+        /// 更新审核状态
+        /// 胡灵波
+        /// 2015年8月12日 10:13:16
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <param name="auditstatus"></param>
+        public void UpdateAuditStatus(int orderId, int auditstatus)
+        {
+            string sql = @"update dbo.OrderOther set auditstatus = @auditstatus where OrderId=@orderId";
+            IDbParameters parm = DbHelper.CreateDbParameters("orderId", DbType.Int32, 4, orderId);
+            parm.AddWithValue("@auditstatus", auditstatus);
+            DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm);
         }
         /// <summary>
         /// 更新订单是否无效的标记

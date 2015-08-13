@@ -219,7 +219,7 @@ namespace SuperManWebApi.Controllers
         /// </summary> 
         /// <returns></returns>
         [HttpPost]
-        [Token]
+        //[Token]
         public ResultModel<FinishOrderResultModel> Complete(OrderCompleteModel parModel)
         {
             if (parModel.userId <= 0)  //用户id非空验证 骑士Id

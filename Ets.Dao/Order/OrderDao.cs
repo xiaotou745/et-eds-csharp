@@ -2531,32 +2531,6 @@ where   oo.IsJoinWithdraw = 0
             return MapRows<NonJoinWithdrawModel>(dt);
         }
 
-        /// <summary>
-        /// 更新订单是否加入已提现
-        /// 窦海超
-        /// 2015年5月15日 17:08:27
-        /// </summary>
-        /// <param name="orderId"></param>
-        public void UpdateJoinWithdraw(int orderId)
-        {
-            string sql = @"update dbo.OrderOther set IsJoinWithdraw = 1 where OrderId=@orderId";
-            IDbParameters parm = DbHelper.CreateDbParameters("orderId", DbType.Int32, 4, orderId);
-            DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm);
-        }
-        /// <summary>
-        /// 更新审核状态
-        /// 胡灵波
-        /// 2015年8月12日 10:13:16
-        /// </summary>
-        /// <param name="orderId"></param>
-        /// <param name="auditstatus"></param>
-        public void UpdateAuditStatus(int orderId, int auditstatus)
-        {
-            string sql = @"update dbo.OrderOther set auditstatus = @auditstatus where OrderId=@orderId";
-            IDbParameters parm = DbHelper.CreateDbParameters("orderId", DbType.Int32, 4, orderId);
-            parm.AddWithValue("@auditstatus", auditstatus);
-            DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm);
-        }
 
         /// <summary>
         /// 获取物流公司全部任务
@@ -2910,6 +2884,7 @@ order by a.id desc
                 temp.BusinessAddress = dataRow["BusinessAddress"] == null
                     ? ""
                     : dataRow["BusinessAddress"].ToString();
+                temp.Remark = dataRow["Remark"] == null ? "" : dataRow["Remark"].ToString();
                 temp.UserCity = dataRow["UserCity"] == null ? "" : dataRow["UserCity"].ToString();
                 temp.UserAddress = dataRow["UserAddress"] == null ? "" : dataRow["UserAddress"].ToString();
                 int distanceToBusiness = ParseHelper.ToInt(dataRow["DistanceToBusiness"], 0);
