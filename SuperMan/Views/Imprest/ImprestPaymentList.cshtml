@@ -35,7 +35,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
+                        <input type="button" value="查询" class="searchBtn" id="btnSearch" />
                         <input type="button" value="导出" class="searchBtn" id="btnExport" onclick="return DaoCHu()" />
                         <input type="button" value="备用金支出" class="searchBtn" id="btnPayment" />
                     </td>
@@ -139,6 +139,20 @@
         });
         $('#yesBtn').hide();//设置disabled属性为true，按钮不可用
         $('#ptip').hide();
+    });
+    //查询 
+    $("#btnSearch").on('click', function () {
+        var startDate = $('#txtOptTimeStart').val();
+        var endDate = $('#txtOptTimeEnd').val();
+        if (startDate != "" && endDate != "") {
+            var start = new Date(startDate);
+            var end = new Date(endDate);
+            if (end < start) {
+                alert("开始日期不能大于结束日期");
+                return;
+            }
+        }
+        $("#btnSearch").submit();
     });
 
     //导出
