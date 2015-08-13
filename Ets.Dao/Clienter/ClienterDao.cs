@@ -202,7 +202,7 @@ where   c.PhoneNo = @PhoneNo
         /// <returns></returns>
         public ClienterModel GetUserInfoByUserId(int UserId)
         {
-            string sql = "SELECT TrueName,PhoneNo,AccountBalance,AllowWithdrawPrice,Status FROM dbo.clienter(NOLOCK) WHERE Id=" + UserId;
+            string sql = "SELECT TrueName,PhoneNo,AccountBalance,AllowWithdrawPrice,Status,IDCard  FROM dbo.clienter(NOLOCK) WHERE Id=" + UserId;
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql);
             IList<ClienterModel> list = MapRows<ClienterModel>(dt);
             if (list == null || list.Count <= 0)
@@ -221,7 +221,7 @@ where   c.PhoneNo = @PhoneNo
         /// <returns></returns>
         public ClienterModel GetUserInfoByUserPhoneNo(string phoneNo)
         {
-            string sql = "SELECT Id,TrueName,PhoneNo,AccountBalance,IDCard,[Password],DeliveryCompanyId FROM dbo.clienter(NOLOCK) WHERE PhoneNo=@PhoneNo";
+            string sql = "SELECT Id,TrueName,PhoneNo,AccountBalance,IDCard,[Password],DeliveryCompanyId,AllowWithdrawPrice FROM dbo.clienter(NOLOCK) WHERE PhoneNo=@PhoneNo";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@PhoneNo", SqlDbType.NVarChar);
             parm.SetValue("@PhoneNo", phoneNo);

@@ -54,7 +54,7 @@
         s;
         debugger
         if (o.length > 0 && (u = o.val()), s = new RegExp("^\\s*(\\d+)\\s*$"), s.test(u)) {
-            if (RegExp.$1 < 1 || RegExp.$1 > h) {
+            if (parseInt(u) < 1 || parseInt(u) > h) {
                 alert(l);
                 return
             }
@@ -158,6 +158,7 @@
             i;
             "onhashchange" in window && (r === undefined || r > 7) ? n(window).bind("hashchange",
             function () {
+                t.searchCriteria = $(t.dataFormId).serializeArray();
                 var n = u(t.pageIndexName);
                 n === 0 && (n = t.initIndex),
                 t.loadData(n, {
@@ -166,6 +167,7 @@
                 })
             }) : (i = window.location.hash, setInterval(function () {
                 if (window.location.hash != i) {
+                    t.searchCriteria = $(t.dataFormId).serializeArray();
                     i = window.location.hash;
                     var n = u(t.pageIndexName);
                     n === 0 && (n = t.initIndex),

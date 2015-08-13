@@ -1,0 +1,58 @@
+﻿@using ETS.Enums
+@using ETS.Extension
+@using ETS.Util
+@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Finance.ImprestBalanceRecord>
+@{
+    Layout = null;
+}
+@if (Model != null && Model.Records.Count != 0)
+{
+
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+        <thead>
+            <tr class="tdbg">
+                <th style="width: 70px;">编码</th>
+                <th>充值日期</th>
+                <th>充值金额</th>
+                <th>备用金接收人</th>
+                <th>操作人</th>
+                <th>备注</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+
+    for (int i = 0; i < Model.Records.Count; i++)
+    {
+        <tr id="@Model.Records[i].Id">
+            <td>@(i + 1)</td>
+            <td>
+                @Model.Records[i].OptTime
+            </td>
+            <td>
+                @Model.Records[i].Amount
+            </td>
+            <td>
+                @Model.Records[i].ImprestReceiver
+            </td>
+            <td>
+                @Model.Records[i].OptName
+            </td>
+            <td>
+                @Model.Records[i].Remark
+            </td>
+        </tr>
+    }
+            }
+        </tbody>
+    </table>
+
+    ViewBag.ActionName = "PostList";
+    @Html.Partial("~/views/shared/PagerControl.cshtml", Model)
+}
+else
+{
+    <p style="font-weight: 200;font-size: 30px;margin: 15px;">
+        暂无消息数据！
+    </p>
+}
