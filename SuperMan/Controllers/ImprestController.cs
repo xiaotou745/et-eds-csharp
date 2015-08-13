@@ -110,7 +110,6 @@ namespace SuperMan.Controllers
         [HttpGet]
         public void PostDaoChuImprestPayment(int pageindex = 1)
         {
-            var isB = Response.BufferOutput;
             ImprestBalanceRecordSearchCriteria criteria = new ImprestBalanceRecordSearchCriteria();
             TryUpdateModel(criteria);
             criteria.PageIndex = 1;
@@ -120,6 +119,8 @@ namespace SuperMan.Controllers
 
             var buffer = new byte[0] {};
             Response.ContentType = "application/msexcel";
+            Response.Clear();
+            Response.BufferOutput = true;
             string filname = "无数据.xls";
             if (pagedList != null && pagedList.Records.Count > 0)
             {
