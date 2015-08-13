@@ -58,10 +58,11 @@
                         <td style="color:red;font-weight:600"><a href="/SuperManManager/ClienterDetail?clienterId=@item.Id ">￥@ParseHelper.ToSplitByPercentile(false, item.AccountBalance)</a></td>
                         <td>￥@ParseHelper.ToSplitByPercentile(false, item.AllowWithdrawPrice)</td>
                         <td>
-                            @if (item.GroupId != null) //当前商户有集团信息
+                            @*@if (item.GroupId != null) //当前商户有集团信息
                             {
                                 @Html.Raw(new GroupProvider().GetGroupName(Convert.ToInt32(item.GroupId)))
-                            }
+                            }*@
+                            @item.GroupName
                         </td>
                         <td>@item.CompanyName</td>
                         @{

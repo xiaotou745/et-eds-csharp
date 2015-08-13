@@ -53,11 +53,12 @@ namespace Ets.Dao.Distribution
                                     ,C.[BussinessID]
                                     ,C.[WorkStatus] 
                                     ,C.[AllowWithdrawPrice] 
+                                    ,g.GroupName 
                                     ,isnull(cs.ClienterId,0) as CSID  --如果非0就存在跨店
                                     ,ISNULL(DC.DeliveryCompanyName,'') AS CompanyName
 ";
 
-            var sbSqlWhere = new StringBuilder(" 1=1 ");
+            var sbSqlWhere = new StringBuilder(" 1=1 AND DC.IsEnable = 1 ");
             if (!string.IsNullOrEmpty(criteria.clienterPhone))
             {
                 sbSqlWhere.AppendFormat(" AND C.PhoneNo='{0}' ", criteria.clienterPhone);
@@ -108,6 +109,7 @@ namespace Ets.Dao.Distribution
                                                FROM CrossShopLog csl WITH(NOLOCK) 
                                                 GROUP BY csl.ClienterId) cs on c.Id=cs.ClienterId
                                   LEFT JOIN DeliveryCompany DC (NOLOCK) ON c.DeliveryCompanyId=DC.Id
+                                  LEFT JOIN dbo.[group] g WITH(NOLOCK) ON g.Id = c.GroupId 
                                   --left JOIN  dbo.WtihdrawRecords ON WtihdrawRecords.UserId = C.Id 
                                   --left join dbo.CrossShopLog cs on c.Id=cs.ClienterId
                                 ";

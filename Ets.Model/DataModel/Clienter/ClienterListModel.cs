@@ -46,6 +46,9 @@ namespace Ets.Model.DataModel.Clienter
         /// 物流公司名称
         /// </summary>
         public string CompanyName { get; set; }
-
+        /// <summary>
+        /// 集团名称
+        /// </summary>
+        public string GroupName { get; set; }
     }
 }
