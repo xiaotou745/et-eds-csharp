@@ -4,6 +4,7 @@ using Ets.Dao.WtihdrawRecords;
 using Ets.Model.Common;
 using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.DeliveryCompany;
+using Ets.Model.DataModel.Finance;
 using Ets.Model.DataModel.Order;
 using Ets.Model.DataModel.Subsidy;
 using Ets.Model.DomainModel.Order;
@@ -3751,7 +3752,47 @@ where   Id = @OrderId and FinishAll = 0";
             parm.AddWithValue("@OptName", "服务");
             parm.AddWithValue("@Platform", 2);
             parm.AddWithValue("@Remark", "服务自动处理超时未完成订单");
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ;
+        }
+        /// <summary>
+        /// 添加骑士可提现余额流水记录
+        /// danny-20150813
+        /// </summary>
+        /// <param name="clienterAllowWithdrawRecord"></param>
+        /// <returns></returns>
+        public bool InsertClienterAllowWithdrawRecord(ClienterAllowWithdrawRecord clienterAllowWithdrawRecord)
+        {
+            const string insertSql = @"
+insert into ClienterAllowWithdrawRecord
+            (ClienterId
+            ,Amount
+            ,Status
+            ,Balance
+            ,RecordType
+            ,Operator
+            ,WithwardId
+            ,RelationNo
+            ,Remark)
+select   @ClienterId
+        ,@Amount
+        ,@Status
+        ,c.AllowWithdrawPrice
+        ,@RecordType
+        ,@Operator
+        ,@WithwardId
+        ,@RelationNo
+        ,@Remark 
+from dbo.clienter as c where Id=@ClienterId";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("ClienterId", clienterAllowWithdrawRecord.ClienterId);//骑士id
+            dbParameters.AddWithValue("Amount", clienterAllowWithdrawRecord.Amount);//流水金额
+            dbParameters.AddWithValue("Status", clienterAllowWithdrawRecord.Status); //流水状态(1、交易成功 2、交易中）
+            dbParameters.AddWithValue("RecordType", clienterAllowWithdrawRecord.RecordType); //交易类型(1佣金 2奖励 3提现 4取消订单赔偿 5无效订单扣款)
+            dbParameters.AddWithValue("Operator", clienterAllowWithdrawRecord.Operator); //操作人 
+            dbParameters.AddWithValue("WithwardId", clienterAllowWithdrawRecord.WithwardId); //关联ID
+            dbParameters.AddWithValue("RelationNo", clienterAllowWithdrawRecord.RelationNo); //关联单号
+            dbParameters.AddWithValue("Remark", clienterAllowWithdrawRecord.Remark); //描述
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, insertSql, dbParameters) > 0;
         }
     }
 }
