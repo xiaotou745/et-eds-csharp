@@ -125,7 +125,7 @@ where  Id=@Id ";
                 sbSqlWhere.AppendFormat(" AND CONVERT(CHAR(10),OptTime,120)<=CONVERT(CHAR(10),'{0}',120) ", criteria.OptDateEnd.Trim());
             }
             string tableList = @" ImprestBalanceRecord with(nolock)";
-            string orderByColumn = " Id ";
+            string orderByColumn = " Id DESC";
             return new PageHelper().GetPages<ImprestBalanceRecord>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
         }
 
