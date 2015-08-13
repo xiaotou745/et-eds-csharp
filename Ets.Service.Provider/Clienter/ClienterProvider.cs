@@ -1089,7 +1089,7 @@ namespace Ets.Service.Provider.Clienter
                 clienterId = parmodel.userId,
                 ClienterTrueName = clienterModel.TrueName,
                 OrderNo = parmodel.orderNo,
-                DeliveryCompanyID=parmodel.deliveryId//物流公司ID
+                DeliveryCompanyID = parmodel.DeliveryCompanyID//物流公司ID
             };
             bool bResult = orderDao.RushOrder(model);
             ///TODO 同步第三方状态和jpush 以后放到后台服务或mq进行。

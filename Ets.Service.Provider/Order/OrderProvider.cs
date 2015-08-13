@@ -2126,8 +2126,7 @@ namespace Ets.Service.Provider.Order
         public void AutoDealOverTimeOrder()
         {
             #region 对象声明及初始化
-            var overTimeHour = ParseHelper.ToInt(Config.ConfigKey("OverTimeHour"));
-            var orderList = orderDao.GetDealOverTimeOrderList(overTimeHour);
+            var orderList = orderDao.GetDealOverTimeOrderList();
             if (orderList == null || orderList.Count == 0)
             {
                 return;
