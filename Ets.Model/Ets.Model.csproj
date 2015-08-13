@@ -301,6 +301,7 @@
     <Compile Include="ParameterModel\Finance\ClienterWithdrawLogPM.cs" />
     <Compile Include="ParameterModel\Finance\ClienterWithdrawSearchCriteria.cs" />
     <Compile Include="ParameterModel\Finance\ImprestBalanceRecordSearchCriteria.cs" />
+    <Compile Include="ParameterModel\Finance\ImprestPayoutModel.cs" />
     <Compile Include="ParameterModel\Finance\UpdateForWithdrawPM.cs" />
     <Compile Include="ParameterModel\Finance\WithdrawBBackPM.cs" />
     <Compile Include="ParameterModel\Finance\WithdrawBPM.cs" />

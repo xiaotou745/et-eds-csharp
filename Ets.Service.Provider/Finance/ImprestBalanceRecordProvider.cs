@@ -205,17 +205,14 @@ namespace Ets.Service.Provider.Finance
                 #endregion
 
                 #region===6.扣除备用金账户总额,写备用金支出流水
-                flag = _imprestRechargeDao.ImprestRechargePayOut(parmodel.WithdrawPrice, 1);
-                flag = _imprestBalanceRecordDao.InsertRecord(new ImprestBalanceRecord()
+                flag = _imprestRechargeDao.ImprestRechargePayOut(new ImprestPayoutPM()
                 {
-                     Amount=parmodel.WithdrawPrice,
-                     BeforeAmount = imprsetAmount.RemainingAmount,
-                     AfterAmount = imprsetAmount.RemainingAmount - parmodel.WithdrawPrice,
-                     OptName = parmodel.OprName,
-                     Remark = parmodel.Remark,
-                     ClienterName = climodel.TrueName,
-                     ClienterPhoneNo = climodel.PhoneNo,
-                     OptType = 2
+                    Price = parmodel.WithdrawPrice,
+                    OprName = parmodel.OprName,
+                    ClienterName = climodel.TrueName,
+                    ClienterPhoneNo = climodel.PhoneNo,
+                    OptType = 2,
+                    Remark = parmodel.Remark
                 });
                 #endregion
                 if (flag)
