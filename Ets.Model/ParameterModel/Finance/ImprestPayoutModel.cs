@@ -4,33 +4,31 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ets.Model.DomainModel.Finance
+namespace Ets.Model.ParameterModel.Finance
 {
     /// <summary>
-    /// 备用金支出流水 add by 彭宜20150812
+    /// 备用金支出model
+    /// 2015年8月13日10:33:25
+    /// 茹化肖
     /// </summary>
-    public class ImprestBalanceRecordModel
+    public class ImprestPayoutPM
     {
         /// <summary>
-        /// 主键Id
+        /// 支出金额
         /// </summary>
-        public int Id { get; set; }
-        /// <summary>
-        /// 操作金额
-        /// </summary>
-        public decimal Amount { get; set; }
+        public decimal Price { get; set; }
         /// <summary>
         /// 操作人
         /// </summary>
-        public string OptName { get; set; }
-        /// <summary>
-        /// 操作时间
-        /// </summary>
-        public DateTime OptTime { get; set; }
+        public string OprName { get; set; }
         /// <summary>
         /// 备注
         /// </summary>
         public string Remark { get; set; }
+        /// <summary>
+        /// 操作类型 1 收入 2 骑士支出
+        /// </summary>
+        public int OptType { get; set; }
         /// <summary>
         /// 骑士姓名
         /// </summary>
@@ -39,9 +37,5 @@ namespace Ets.Model.DomainModel.Finance
         /// 骑士电话
         /// </summary>
         public string ClienterPhoneNo { get; set; }
-        /// <summary>
-        /// 备用金接收人
-        /// </summary>
-        public string ImprestReceiver { get; set; }
     }
 }

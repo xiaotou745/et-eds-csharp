@@ -1050,7 +1050,7 @@ namespace Ets.Service.Provider.Clienter
         public ClienterDM GetDetails(int id)
         {
             ClienterDM model = clienterDao.GetDetails(id);
-            model.HasMessage = new ClienterMessageDao().HasMessage(id);
+            //model.HasMessage = new ClienterMessageDao().HasMessage(id);
             return model;
         }
 

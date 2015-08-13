@@ -36,17 +36,38 @@
     $(function () {
         //点击备用金充值确认按钮    确验证
         $("#btnSure").click(function () {
+            if (!confirm("您确认充值备用金吗？")) {
+                return;
+            }
             var amount = $("#_txtAmount").val();
             var imprestReceiver = $("#_txtImprestReceiver").val();
             var remark = $("#_txtRemark").val();
-            
-            alert("ss")
+            if ( amount.replace(/(^\s*)|(\s*$)/g, "").length == 0) {
+                alert("充值金额不能为空");
+                return;
+            }
+            if (isNaN(parseFloat(amount.replace(/(^\s*)|(\s*$)/g, "")))) {
+                alert("充值金额录入无效");
+                return;
+            }
+            if (parseFloat(amount.replace(/(^\s*)|(\s*$)/g, "")) < 1 || parseFloat(amount.replace(/(^\s*)|(\s*$)/g, "")) > 1000000) {
+                alert("充值金额必须介于1到1000000之间");
+                return;
+            }
+            if (imprestReceiver.replace(/(^\s*)|(\s*$)/g, "").length == 0) {
+                alert("备用金接收人不能为空");
+                return;
+            }
             $.ajax({
                 type: 'POST',
                 url: "/Imprest/AjaxImprestRecharge",
                 data: { "amount": amount, "imprestReceiver": imprestReceiver, "remark": remark },
                 success: function (data) {
-
+                    if (data.Status == 1) {
+                        alert("充值成功！");
+                    } else {
+                        alert(data.Message);
+                    }
                 }
             });
         });

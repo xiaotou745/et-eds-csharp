@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Ets.Model.Common;
 using Ets.Model.DataModel.Finance;
 using ETS.Data.PageData;
 using Ets.Model.DataModel.Finance;
@@ -40,5 +41,13 @@ namespace Ets.Service.IProvider.Finance
         /// <param name="Cid">骑士ID</param>
         /// <returns></returns>
         ImprestPayoutModel ClienterWithdrawOk(ImprestWithdrawModel model);
+
+        /// <summary>
+        /// 充值 备用金流水
+        /// </summary>
+        /// <param name="model">参数</param>
+        /// <returns></returns>
+        ResultModel<string> AjaxImprestRecharge(ImprestBalanceRecord model);
+        
     }
 }
