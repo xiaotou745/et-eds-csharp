@@ -199,7 +199,12 @@ namespace ETS.Enums
         /// 手续费
         /// </summary>
         [DisplayText("手续费")]
-        ProcedureFee = 9
+        ProcedureFee = 9,
+        /// <summary>
+        /// 现金提现
+        /// </summary>
+        [DisplayText("现金提现")]
+        CashWithdraw = 10
     }
 
     public enum ClienterAllowWithdrawRecordType
