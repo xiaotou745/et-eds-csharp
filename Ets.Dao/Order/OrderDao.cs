@@ -2915,7 +2915,7 @@ order by a.id desc
                 int distanceToBusiness = ParseHelper.ToInt(dataRow["DistanceToBusiness"], 0);
                 temp.DistanceToBusiness = distanceToBusiness < 1000
                     ? distanceToBusiness + "m"
-                    : Math.Round(distanceToBusiness * 0.001, 2) + "Km";
+                    : Math.Round(distanceToBusiness * 0.001, 2) + "km";
                 models.Add(temp);
             }
             return models;
