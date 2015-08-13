@@ -118,6 +118,7 @@ namespace SuperMan.Controllers
         {
             ImprestBalanceRecordSearchCriteria criteria = new ImprestBalanceRecordSearchCriteria();
             TryUpdateModel(criteria);
+            criteria.OptType = ImprestBalanceRecordOptType.Payment.GetHashCode();
             criteria.PageIndex = 1;
             criteria.PageSize = 65534;
 

@@ -676,9 +676,15 @@ namespace ETS.Enums
         [DisplayText("备用金充值金额有误")]
         MoneyError = 3,
         /// <summary>
-        /// 备用金接收人不能为空
+        /// 备用金接收人不能为空且至少两个字符
         /// </summary>
-        [DisplayText("备用金接收人不能为空")]
-        ImprestReceiverError = 4
+        [DisplayText("备用金接收人不能为空且至少两个字符")]
+        ImprestReceiverError = 4,
+        /// <summary>
+        /// 备用信息不能为空且至少五个字符
+        /// </summary>
+        [DisplayText("备用信息不能为空且至少五个字符")]
+        RemarkError = 5
+
     }
 }
