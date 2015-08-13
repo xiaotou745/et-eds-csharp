@@ -1043,7 +1043,6 @@ where  Id IN({0}) ";
              }).ToDictionary(m => m.Id);
         }
 
-<<<<<<< HEAD
         /// <summary>
         ///  骑士更新 余额，可提现余额 功能 add by caoheyang 20150509
         /// </summary>
@@ -1060,8 +1059,7 @@ where  Id=@Id ";
             dbParameters.AddWithValue("WithdrawPrice", model.Money);
             var  num=DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
-=======
->>>>>>> 3ec0a023a9ffbafd97337bbb8057758ecca20def
+
 
         /// <summary>
         /// 获取骑士详情    
