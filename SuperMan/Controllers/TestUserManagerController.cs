@@ -10,7 +10,7 @@ using SuperMan.App_Start;
 
 namespace SuperMan.Controllers
 {
-    public class TestUserManagerController : Controller
+    public class TestUserManagerController : BaseController
     {
         TestUserProvider provider = new TestUserProvider();
 

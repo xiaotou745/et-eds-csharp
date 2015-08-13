@@ -88,6 +88,10 @@
     <Compile Include="DataModel\Common\ExportSqlManage.cs" />
     <Compile Include="DataModel\DeliveryCompany\DeliveryCompanyModel.cs" />
     <Compile Include="DataModel\Finance\ClienterAllowWithdrawRecord.cs" />
+    <Compile Include="DataModel\Finance\ImprestBalanceRecord.cs" />
+    <Compile Include="DataModel\Finance\ImprestClienterCheck.cs" />
+    <Compile Include="DataModel\Finance\ImprestRecharge.cs" />
+    <Compile Include="DataModel\Finance\ImprestWithdrawModel.cs" />
     <Compile Include="DataModel\Message\BusinessMessage.cs" />
     <Compile Include="DataModel\Message\ClienterMessage.cs" />
     <Compile Include="DataModel\Message\MessageModel.cs" />
@@ -296,6 +300,8 @@
     <Compile Include="ParameterModel\Finance\ClienterWithdrawFormPM.cs" />
     <Compile Include="ParameterModel\Finance\ClienterWithdrawLogPM.cs" />
     <Compile Include="ParameterModel\Finance\ClienterWithdrawSearchCriteria.cs" />
+    <Compile Include="ParameterModel\Finance\ImprestBalanceRecordSearchCriteria.cs" />
+    <Compile Include="ParameterModel\Finance\ImprestPayoutModel.cs" />
     <Compile Include="ParameterModel\Finance\UpdateForWithdrawPM.cs" />
     <Compile Include="ParameterModel\Finance\WithdrawBBackPM.cs" />
     <Compile Include="ParameterModel\Finance\WithdrawBPM.cs" />

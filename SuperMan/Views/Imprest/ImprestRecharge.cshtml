@@ -1,0 +1,76 @@
+﻿<div class="add-openbox add-form" id="AddDivShow" style="width:auto;">
+    <div style="width:800px;height:auto;border: 1px #dcdcdc solid">
+        <h2 class="crumbs">
+            备用金充值
+        </h2>
+        <div style="width:798px;height:auto;padding-left:10px;border:1px #dcdcdc solid;border-left:hidden;border-right:hidden;border-top:hidden">
+            <div style="width:780px;height:25px;">
+                <div style="float: left">
+                    <label>充值金额：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                    <input type="text" name="Amount" id="_txtAmount" value="" />
+                </div>
+            </div>
+            <div style="width:780px;height:25px;">
+                <div style="float: left">
+                    <label>备用金接收人：</label>
+                    <input type="text" name="ImprestReceiver" id="_txtImprestReceiver" value="" />
+                </div>
+            </div>
+            <div style="width:780px;height:100px;">
+                <div style="float: left">
+                    <label>备注：</label>
+                    <textarea style="width:600px; height:90px;" name="Remark" id="_txtRemark"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <p class="btnbox">
+        <input value="确认" type="button" id="btnSure" class="yesBtn" />
+        <input value="取消" type="button" id="btnCanel" class="qxBtn" />
+    </p>
+</div>
+
+<script type="text/javascript">
+
+    $(function () {
+        //点击备用金充值确认按钮    确验证
+        $("#btnSure").click(function () {
+            if (!confirm("您确认充值备用金吗？")) {
+                return;
+            }
+            var amount = $("#_txtAmount").val();
+            var imprestReceiver = $("#_txtImprestReceiver").val();
+            var remark = $("#_txtRemark").val();
+            if ( amount.replace(/(^\s*)|(\s*$)/g, "").length == 0) {
+                alert("充值金额不能为空");
+                return;
+            }
+            if (isNaN(parseFloat(amount.replace(/(^\s*)|(\s*$)/g, "")))) {
+                alert("充值金额录入无效");
+                return;
+            }
+            if (parseFloat(amount.replace(/(^\s*)|(\s*$)/g, "")) < 1 || parseFloat(amount.replace(/(^\s*)|(\s*$)/g, "")) > 1000000) {
+                alert("充值金额必须介于1到1000000之间");
+                return;
+            }
+            if (imprestReceiver.replace(/(^\s*)|(\s*$)/g, "").length == 0) {
+                alert("备用金接收人不能为空");
+                return;
+            }
+            $.ajax({
+                type: 'POST',
+                url: "/Imprest/AjaxImprestRecharge",
+                data: { "amount": amount, "imprestReceiver": imprestReceiver, "remark": remark },
+                success: function (data) {
+                    if (data.Status == 1) {
+                        alert("充值成功！");
+                    } else {
+                        alert(data.Message);
+                    }
+                }
+            });
+        });
+    });
+
+</script>

@@ -1,7 +1,9 @@
 ﻿using Ets.Dao.Clienter;
+using Ets.Dao.DeliveryCompany;
 using Ets.Dao.WtihdrawRecords;
 using Ets.Model.Common;
 using Ets.Model.DataModel.Clienter;
+using Ets.Model.DataModel.DeliveryCompany;
 using Ets.Model.DataModel.Order;
 using Ets.Model.DataModel.Subsidy;
 using Ets.Model.DomainModel.Order;
@@ -567,6 +569,9 @@ select @@IDENTITY ";
                                     ,oo.IsNotRealOrder
                                     ,oo.AuditStatus
                                     ,oo.DeductCommissionReason
+                                    ,o.IsEnable
+                                    ,o.FinishAll
+                                    ,ISNULL(oo.IsJoinWithdraw,0) IsJoinWithdraw
                                     ";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrWhiteSpace(criteria.businessName))
@@ -630,7 +635,7 @@ select @@IDENTITY ";
             {
                 sbSqlWhere.AppendFormat(" AND b.City='{0}' ", criteria.businessCity.Trim());
             }
-            if (criteria.AuthorityCityNameListStr != null && !string.IsNullOrEmpty(criteria.AuthorityCityNameListStr.Trim())&&criteria.UserType!=0)
+            if (criteria.AuthorityCityNameListStr != null && !string.IsNullOrEmpty(criteria.AuthorityCityNameListStr.Trim()) && criteria.UserType != 0)
             {
                 sbSqlWhere.AppendFormat(" AND b.City IN({0}) ", criteria.AuthorityCityNameListStr.Trim());
             }
@@ -836,7 +841,7 @@ select @@IDENTITY ";
                                     WHERE 1=1 ";
             #endregion
             IDbParameters parm = DbHelper.CreateDbParameters();
-            if (id>0)
+            if (id > 0)
             {
                 sql += " AND o.id=@id";
                 parm.Add("@id", SqlDbType.Int);
@@ -1044,57 +1049,68 @@ where  o.Id = @orderId");
         /// <summary>
         /// 订单指派超人
         /// danny-20150320
+        /// 修改
+        /// 窦海超 
+        /// 2015年8月13日 13:11:35
+        /// 把抢单规则变更，抢单时要把该订单佣金变更，且所属订单也根据该骑士所属物流公司变更
         /// </summary>
         /// <param name="order"></param>
         /// <returns></returns>
         public bool RushOrder(OrderListModel order)
         {
-            //bool reslut = false;
-            //try
-            //{
-            //    string sql = @" update [order] set clienterId=@clienterId,Status=@Status where OrderNo=@OrderNo and Status=0 and Status!=3 ";
-            //    IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            //    dbParameters.AddWithValue("@clienterId", order.clienterId);
-            //    dbParameters.AddWithValue("@Status", ConstValues.ORDER_ACCEPT);
-            //    dbParameters.Add("@OrderNo", SqlDbType.NVarChar);
-            //    dbParameters.SetValue("@OrderNo", order.OrderNo);
+            //            string sqlText = @"
+            //            update dbo.[order]
+            //            set clienterId=@clienterId,Status=@Status
+            //            
+            //            where OrderNo=@OrderNo and Status=0
+            //            if(@@error<>0 or @@ROWCOUNT=0)
+            //            begin
+            //	            select 1 --更改状态失败
+            //	            return
+            //            end
+            //            insert  into dbo.OrderSubsidiesLog ( OrderId, Price, InsertTime, OptName,
+            //                                                 Remark, OptId, OrderStatus, Platform )
+            //            select  o.Id, o.OrderCommission, getdate(), @OptName, '任务已被抢', @clienterId, @Status, @Platform
+            //            from    dbo.[order] o ( nolock )
+            //            where   o.OrderNo = @OrderNo
+            //            select 0";
 
-            //    int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
-            //    if (i > 0)
-            //    {
-            //        reslut = true;
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    reslut = false;
-            //    LogHelper.LogWriter(ex, "订单指派超人");
-            //    throw;
-            //}
-            //return reslut;
-            StringBuilder sql = new StringBuilder();
 
             string sqlText = @"
-            update dbo.[order]
-            set clienterId=@clienterId,Status=@Status
-            where OrderNo=@OrderNo and Status=0
-            if(@@error<>0 or @@ROWCOUNT=0)
-            begin
-	            select 1 --更改状态失败
-	            return
-            end
-            insert  into dbo.OrderSubsidiesLog ( OrderId, Price, InsertTime, OptName,
-                                                 Remark, OptId, OrderStatus, Platform )
-            select  o.Id, o.OrderCommission, getdate(), @OptName, '任务已被抢', @clienterId, @Status, @Platform
-            from    dbo.[order] o ( nolock )
-            where   o.OrderNo = @OrderNo
-            select 0";
+declare 
+@orderamount decimal(18,3),
+@ordercommission decimal(18,3),
+@ordercount int 
+
+select @orderamount=o.Amount,@ordercommission=o.OrderCommission,@ordercount=o.OrderCount from [order] o(nolock) where o.OrderNo=@OrderNo and Status=0
+
+if(@DeliveryCompanyID>0)
+begin
+select @ordercommission=case when dc.SettleType=1 then @orderamount*dc.ClienterSettleRatio/100 when dc.SettleType=2 then dc.ClienterFixMoney*@ordercount end
+from DeliveryCompany dc(nolock) 
+where dc.Id=@DeliveryCompanyID
+end
+update [order] set Status=@Status,clienterId=@clienterId,OrderCommission=@ordercommission,DeliveryCompanyID=@DeliveryCompanyID where [order].OrderNo=@OrderNo
+if(@@error<>0 or @@ROWCOUNT=0)
+begin
+	select 1 --更改状态失败
+	return
+end
+insert  into dbo.OrderSubsidiesLog ( OrderId, Price, InsertTime, OptName,
+                                        Remark, OptId, OrderStatus, Platform )
+select  o.Id, o.OrderCommission, getdate(), @OptName, '任务已被抢', @clienterId, @Status, @Platform
+from    dbo.[order] o ( nolock )
+where   o.OrderNo = @OrderNo
+select 0
+";
+
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("clienterId", DbType.Int32, 4).Value = order.clienterId;// userId;
             dbParameters.Add("Status", DbType.Int32, 4).Value = OrderStatus.Status2.GetHashCode();
             dbParameters.Add("OrderNo", DbType.String, 50).Value = order.OrderNo;
             dbParameters.Add("Platform", DbType.Int32, 4).Value = SuperPlatform.FromClienter.GetHashCode();
             dbParameters.Add("OptName", DbType.String, 200).Value = order.ClienterTrueName;  //抢单的骑士姓名
+            dbParameters.Add("DeliveryCompanyID", DbType.Int32, 4).Value = order.DeliveryCompanyID;//物流公司ID
             object obj = DbHelper.ExecuteScalar(SuperMan_Write, sqlText, dbParameters);
             return ParseHelper.ToInt(obj, 1) == 0 ? true : false;
         }
@@ -1786,7 +1802,7 @@ DateDiff(MINUTE,PubDate, GetDate()) in ({0})", IntervalMinute);
         /// <param name="config"></param>
         /// <param name="Id"></param>
         /// <returns></returns>
-        public bool addOrderSubsidiesLog(decimal AdjustAmount, int OrderId, string Remark, string OptName = "发布订单",int OrderStatus=0)
+        public bool addOrderSubsidiesLog(decimal AdjustAmount, int OrderId, string Remark, string OptName = "发布订单", int OrderStatus = 0)
         {
             string sql =
                 @"INSERT INTO OrderSubsidiesLog
@@ -2279,7 +2295,7 @@ select @@identity";
             DbHelper.ExecuteNonQuery(SuperMan_Write, sqlOrderLog, orderLogParameters);
             #endregion
 
-            #region 写子OrderOther表        
+            #region 写子OrderOther表
             const string insertOtherSql = @"
 insert into OrderOther(OrderId,NeedUploadCount,HadUploadCount,PubLongitude,PubLatitude,OneKeyPubOrder,IsOrderChecked)
 values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude,@OneKeyPubOrder,@IsOrderChecked)";
@@ -2390,7 +2406,7 @@ select  o.Id,o.OrderNo,o.PickUpAddress,o.PubDate,o.ReceviceName,o.RecevicePhoneN
     o.ReceviceLatitude,o.OrderFrom,o.OriginalOrderId,o.OriginalOrderNo,o.Quantity,o.Weight,o.ReceiveProvince,o.ReceiveArea,o.ReceiveProvinceCode,
     o.ReceiveCityCode,o.ReceiveAreaCode,o.OrderType,o.KM,o.GuoJuQty,o.LuJuQty,o.SongCanDate,o.OrderCount,o.CommissionRate,o.Payment,
     o.CommissionFormulaMode,o.Adjustment,o.BusinessCommission,o.SettleMoney,o.DealCount,o.PickupCode,o.OtherCancelReason,o.CommissionType,
-    o.CommissionFixValue,o.BusinessGroupId,o.TimeSpan,o.Invoice,
+    o.CommissionFixValue,o.BusinessGroupId,o.TimeSpan,o.Invoice,o.DeliveryCompanyID,
     isnull(o.DistribSubsidy,0)*isnull(o.OrderCount,0) as TotalDistribSubsidy,(o.Amount+isnull(o.DistribSubsidy,0)*isnull(o.OrderCount,0)) as TotalAmount,
     o.MealsSettleMode,
     b.[City] BusinessCity,b.Name BusinessName,b.PhoneNo BusinessPhone ,b.PhoneNo2 BusinessPhone2,b.Address BusinessAddress ,b.GroupId, b.Landline,
@@ -2525,7 +2541,7 @@ where   oo.IsJoinWithdraw = 0
         /// <returns></returns>
         public IList<GetJobCDM> GetExpressAllJob(GetJobCPM model)
         {
-            string querysql =string.Format(@"
+            string querysql = string.Format(@"
 declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0}
@@ -2554,7 +2570,7 @@ order by a.Id desc", model.TopNum);
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
             if (DataTableHelper.CheckDt(dt))
             {
-                return TranslateGetJobC(dt);
+                return TranslateGetJobC(dt, model);
             }
             return new List<GetJobCDM>();
         }
@@ -2568,7 +2584,7 @@ order by a.Id desc", model.TopNum);
         /// <returns></returns>
         public IList<GetJobCDM> GetExpressNearJob(GetJobCPM model)
         {
-            string querysql= string.Format(@"
+            string querysql = string.Format(@"
 declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0} a.Id,a.OrderCommission,a.OrderCount,   
@@ -2591,7 +2607,7 @@ where a.status=0 and a.IsEnable=1 and ber.IsEnable=1 and ber.ExpressId=@ExpressI
 and  geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint)<= @PushRadius
 order by geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint) asc
 ", model.TopNum);
-     
+
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Latitude", model.Latitude);
             dbParameters.AddWithValue("Longitude", model.Longitude);
@@ -2600,7 +2616,7 @@ order by geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDis
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
             if (DataTableHelper.CheckDt(dt))
             {
-                return TranslateGetJobC(dt);
+                return TranslateGetJobC(dt, model);
             }
             return new List<GetJobCDM>();
         }
@@ -2680,7 +2696,7 @@ order by a.Id desc", model.TopNum, model.ClienterId, model.ExclusiveOrderTime, w
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, dbParameters));
             if (DataTableHelper.CheckDt(dt))
             {
-                return TranslateGetJobC(dt);
+                return TranslateGetJobC(dt, model);
             }
             return new List<GetJobCDM>();
         }
@@ -2763,7 +2779,7 @@ order by geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDis
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, dbParameters));
             if (DataTableHelper.CheckDt(dt))
             {
-                return TranslateGetJobC(dt);
+                return TranslateGetJobC(dt, model);
             }
             return new List<GetJobCDM>();
         }
@@ -2804,7 +2820,7 @@ order by a.id desc
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, dbParameters));
             if (DataTableHelper.CheckDt(dt))
             {
-                return TranslateGetJobC(dt);
+                return TranslateGetJobC(dt, model);
             }
             return new List<GetJobCDM>();
         }
@@ -2824,15 +2840,41 @@ order by a.id desc
         /// </summary>
         /// <param name="dt">datatable</param>
         /// <returns></returns>
-        private IList<GetJobCDM> TranslateGetJobC(DataTable dt)
+        private IList<GetJobCDM> TranslateGetJobC(DataTable dt, GetJobCPM parmModel)
         {
             IList<GetJobCDM> models = new List<GetJobCDM>();
+            DeliveryCompanyModel deliveryModel = null;
+            if (parmModel.ExpressId > 0)
+            {
+                deliveryModel = new DeliveryCompanyDao().GetById(parmModel.ExpressId);
+            }
+
             foreach (DataRow dataRow in dt.Rows)
             {
+                #region 获取物流公司应付骑士佣金  2015年8月13日 09:34:02 窦海超
+
+                decimal orderCommission = ParseHelper.ToDecimal(dataRow["OrderCommission"]);
+                if (deliveryModel != null)
+                {
+                    //SettleType=结算类型（1结算比例、2固定金额）
+                    if (deliveryModel.SettleType == 1)
+                    {
+                        //订单金额/骑士结算比例值*订单数量
+                        orderCommission = deliveryModel.ClienterSettleRatio == 0 ? 0 : ParseHelper.ToDecimal(dataRow["Amount"]) / deliveryModel.ClienterSettleRatio * ParseHelper.ToInt(dataRow["OrderCount"]);
+                    }
+                    else if (deliveryModel.SettleType == 2)
+                    {
+                        //骑士固定金额值*订单数量 
+                        orderCommission = deliveryModel.ClienterFixMoney == 0 ? 0 : deliveryModel.ClienterFixMoney * ParseHelper.ToInt(dataRow["OrderCount"]);
+                    }
+                }
+                #endregion
+
+
                 GetJobCDM temp = new GetJobCDM();
                 temp.Id = ParseHelper.ToInt(dataRow["Id"]);
                 temp.PubDate = dataRow["PubDate"].ToString();
-                temp.OrderCommission = ParseHelper.ToDecimal(dataRow["OrderCommission"]);
+                temp.OrderCommission = orderCommission;// ParseHelper.ToDecimal(dataRow["OrderCommission"]);
                 temp.OrderCount = ParseHelper.ToInt(dataRow["OrderCount"]);
                 temp.Amount = ParseHelper.ToDecimal(dataRow["Amount"]);
                 temp.BusinessName = dataRow["BusinessName"].ToString();
@@ -2861,12 +2903,12 @@ order by a.id desc
         /// <UpdateTime>20150701</UpdateTime>
         public void UpdateTake(OrderPM modelPM)
         {
-           // string clienterTrueName = "";
-           //clienter c = clienterDao.GetById(modelPM.ClienterId);
-           // if (c != null)
-           // {
-           //     clienterTrueName = c.TrueName;
-           // }
+            // string clienterTrueName = "";
+            //clienter c = clienterDao.GetById(modelPM.ClienterId);
+            // if (c != null)
+            // {
+            //     clienterTrueName = c.TrueName;
+            // }
             string updateSql = string.Format(@"
 begin 
 declare @ClienterTrueName nvarchar(40)
@@ -2879,7 +2921,7 @@ where id=@orderid and Status=2 and clienterId=@clienterId;
 update OrderOther 
     set TakeTime=GETDATE(),TakeLongitude=@TakeLongitude,TakeLatitude=@TakeLatitude 
 where orderid=@orderid; 
-end ",(int)SuperPlatform.FromClienter);
+end ", (int)SuperPlatform.FromClienter);
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("TakeLongitude", modelPM.longitude);
             dbParameters.AddWithValue("TakeLatitude", modelPM.latitude);
@@ -2946,7 +2988,7 @@ where   o.Id = @OrderId
             }
             return order;
         }
-         
+
         /// <summary>
         /// 根据订单号查询订单主表基本信息  add by caoheyang 20150521
         /// </summary>
@@ -3399,7 +3441,7 @@ where   Id = @OrderId and FinishAll = 0";
         {
             string sql = "select count(1) from [dbo].[order]  (nolock) where clienterId=@clientId and (Status=2 or Status=4);";
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.Add("@clientId", DbType.Int32,4).Value = clienterId;
+            parm.Add("@clientId", DbType.Int32, 4).Value = clienterId;
             return int.Parse(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm).ToString()) > 0;
         }
 
@@ -3447,10 +3489,10 @@ where   Id = @OrderId and FinishAll = 0";
                             where id=@orderId";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.Add("@OrderCommission",DbType.Decimal).Value= orderCommission;
-            dbParameters.Add("@DeliveryCompanySettleMoney",DbType.Decimal).Value= deliveryCompanySettleMoney;
-            dbParameters.Add("@DeliveryCompanyID",DbType.Int32).Value=  deliveryCompanyID;
-            dbParameters.Add("@OrderId",DbType.Int32).Value=  ParseHelper.ToInt(orderID,0);
+            dbParameters.Add("@OrderCommission", DbType.Decimal).Value = orderCommission;
+            dbParameters.Add("@DeliveryCompanySettleMoney", DbType.Decimal).Value = deliveryCompanySettleMoney;
+            dbParameters.Add("@DeliveryCompanyID", DbType.Int32).Value = deliveryCompanyID;
+            dbParameters.Add("@OrderId", DbType.Int32).Value = ParseHelper.ToInt(orderID, 0);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
         }
         /// <summary>
@@ -3540,8 +3582,8 @@ where   Id = @OrderId and FinishAll = 0";
                     sb.Append(string.Format(" and b.name='{0}'", recommendQuery.UserInfo));
                 }
             }
-          return string.Format(businessSql, sb.ToString());
-          
+            return string.Format(businessSql, sb.ToString());
+
         }
         /// <summary>
         /// 返回活跃骑士的查询sql
@@ -3581,7 +3623,7 @@ where   Id = @OrderId and FinishAll = 0";
                     sb.Append(string.Format(" and b.truename='{0}'", recommendQuery.UserInfo));
                 }
             }
-           return string.Format(clienterSql, sb.ToString());
+            return string.Format(clienterSql, sb.ToString());
         }
     }
 }

@@ -202,7 +202,7 @@ where   c.PhoneNo = @PhoneNo
         /// <returns></returns>
         public ClienterModel GetUserInfoByUserId(int UserId)
         {
-            string sql = "SELECT TrueName,PhoneNo,AccountBalance,AllowWithdrawPrice,Status FROM dbo.clienter(NOLOCK) WHERE Id=" + UserId;
+            string sql = "SELECT TrueName,PhoneNo,AccountBalance,AllowWithdrawPrice,Status,IDCard  FROM dbo.clienter(NOLOCK) WHERE Id=" + UserId;
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql);
             IList<ClienterModel> list = MapRows<ClienterModel>(dt);
             if (list == null || list.Count <= 0)
@@ -221,7 +221,7 @@ where   c.PhoneNo = @PhoneNo
         /// <returns></returns>
         public ClienterModel GetUserInfoByUserPhoneNo(string phoneNo)
         {
-            string sql = "SELECT Id,TrueName,PhoneNo,AccountBalance,IDCard,[Password],DeliveryCompanyId FROM dbo.clienter(NOLOCK) WHERE PhoneNo=@PhoneNo";
+            string sql = "SELECT Id,TrueName,PhoneNo,AccountBalance,IDCard,[Password],DeliveryCompanyId,AllowWithdrawPrice FROM dbo.clienter(NOLOCK) WHERE PhoneNo=@PhoneNo";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@PhoneNo", SqlDbType.NVarChar);
             parm.SetValue("@PhoneNo", phoneNo);
@@ -1044,7 +1044,13 @@ where  Id IN({0}) ";
 
 
         /// <summary>
-        /// 获取骑士详情        
+        /// 获取骑士详情    
+        /// 
+        /// 修改
+        /// 2015年8月13日 10:07:52
+        /// 窦海超 
+        /// 把获取用户信息里的是否有未读站内信写在获取用户的SQL里了
+        /// 另外物流公司如果比例或固定金额大于0返回显示列表物流公司金额 
         /// </summary>
         /// <UpdateBy>hulingbo</UpdateBy>
         /// <UpdateTime>20150512</UpdateTime>
@@ -1055,12 +1061,21 @@ where  Id IN({0}) ";
             ClienterDM clienterDM = new ClienterDM();
 
             #region 骑士表
+//            string queryClienterSql = @"
+//select  Id,PhoneNo,LoginName,recommendPhone,Password,TrueName,IDCard,PicWithHandUrl,PicUrl,Status,
+//AccountBalance,InsertTime,InviteCode,City,CityId,GroupId,HealthCardID,InternalDepart,ProvinceCode
+//,AreaCode,CityCode,Province,BussinessID,WorkStatus,AllowWithdrawPrice,HasWithdrawPrice
+//from  clienter (nolock) 
+//where Id=@Id";
             string queryClienterSql = @"
-select  Id,PhoneNo,LoginName,recommendPhone,Password,TrueName,IDCard,PicWithHandUrl,PicUrl,Status,
+select  c.Id,PhoneNo,LoginName,recommendPhone,Password,TrueName,IDCard,PicWithHandUrl,PicUrl,Status,
 AccountBalance,InsertTime,InviteCode,City,CityId,GroupId,HealthCardID,InternalDepart,ProvinceCode
-,AreaCode,CityCode,Province,BussinessID,WorkStatus,AllowWithdrawPrice,HasWithdrawPrice
-from  clienter (nolock) 
-where Id=@Id";
+,AreaCode,CityCode,Province,BussinessID,WorkStatus,AllowWithdrawPrice,HasWithdrawPrice,
+(case when (select count(1) from dbo.ClienterMessage cm(nolock) where cm.ClienterId=c.id and cm.IsRead=0)=0 then 0 else 1 end) HasMessage,
+(case when dc.SettleType=1 and ClienterSettleRatio>0 or dc.SettleType=2 and dc.ClienterFixMoney>0 then 1 else 0 end) IsDisplayDeliveryMoney
+from  dbo.clienter c (nolock) 
+left join dbo.DeliveryCompany dc(nolock) on c.DeliveryCompanyId=dc.Id
+where c.Id=@Id";
 
             IDbParameters dbClienterParameters = DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);
             clienterDM = DbHelper.QueryForObject(SuperMan_Read, queryClienterSql, dbClienterParameters, new ClienterRowMapper());

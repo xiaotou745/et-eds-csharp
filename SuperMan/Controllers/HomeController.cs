@@ -5,7 +5,6 @@ using System.Web;
 using System.Web.Mvc;
 namespace SuperMan.Controllers
 {
-    [WebHandleError]
     public class HomeController : BaseController
     {
         public ActionResult Index()

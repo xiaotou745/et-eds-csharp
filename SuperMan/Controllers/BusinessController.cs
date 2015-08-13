@@ -6,7 +6,6 @@ using System.Web.Mvc;
 
 namespace SuperMan.Controllers
 {
-    [WebHandleError]
     public class BusinessController : BaseController
     {
         // GET: Business

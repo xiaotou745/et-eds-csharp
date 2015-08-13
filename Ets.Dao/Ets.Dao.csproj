@@ -71,6 +71,8 @@
     <Compile Include="Finance\ClienterWithdrawFormDao.cs" />
     <Compile Include="Finance\BusinessWithdrawLogDao.cs" />
     <Compile Include="Finance\ClienterWithdrawLogDao.cs" />
+    <Compile Include="Finance\ImprestBalanceRecordDao.cs" />
+    <Compile Include="Finance\ImprestRechargeDao.cs" />
     <Compile Include="GlobalConfig\GlobalConfigDao.cs" />
     <Compile Include="MenuSet\AuthoritySetDao.cs" />
     <Compile Include="Distribution\DistributionDao.cs" />

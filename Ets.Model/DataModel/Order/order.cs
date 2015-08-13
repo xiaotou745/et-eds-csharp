@@ -234,6 +234,10 @@ namespace Ets.Model.DataModel.Order
         /// </summary>
         public int IsOrderChecked { get; set; }
 
+        /// <summary>
+        /// 物流公司ID
+        /// </summary>
+        public int DeliveryCompanyID { get; set; }
 
     }
 }
