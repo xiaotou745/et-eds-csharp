@@ -96,27 +96,5 @@ namespace Ets.Service.Provider.WtihdrawRecords
             return null;
 
         }
-
-        ////<summary>
-        ////增加一条流水记录
-        ////平扬
-        ////2015年3月23日
-        ////</summary>
-        ////<param name="model"></param>
-        ////<returns></returns>
-        //public bool AddRecords(WithdrawRecordsModel model)
-        //{
-        //    try
-        //    {
-        //        WtihdrawRecordsDao withDao = new WtihdrawRecordsDao();
-        //        return withDao.AddRecords(model);//新增提现流水记录
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        LogHelper.LogWriterFromFilter(ex);
-        //        return false;
-        //    }
-        //    return false;
-        //}
     }
 }

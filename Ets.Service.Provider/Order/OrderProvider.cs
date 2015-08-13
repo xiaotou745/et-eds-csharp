@@ -1364,9 +1364,14 @@ namespace Ets.Service.Provider.Order
                 orderDao.UpdateOrderRealOrderCommission(orderModel.Id.ToString(), realOrderCommission);
 
                 //加可提现                
-                clienterDao.UpdateAllowWithdrawPrice(realOrderCommission, orderModel.clienterId);
-                orderDao.UpdateJoinWithdraw(orderModel.Id);
-                orderDao.UpdateAuditStatus(orderModel.Id, OrderAuditStatusCommon.Refuse.GetHashCode());
+                clienterDao.UpdateCAllowWithdrawPrice(new UpdateForWithdrawPM
+                {
+                                Id=orderModel.clienterId,
+                                Money=realOrderCommission          
+                             }
+                );
+                orderOtherDao.UpdateJoinWithdraw(orderModel.Id);
+                orderOtherDao.UpdateAuditStatus(orderModel.Id, OrderAuditStatusCommon.Refuse.GetHashCode());
 
                 //加可提现金额
                 ClienterAllowWithdrawRecord cawrm = new ClienterAllowWithdrawRecord()
@@ -1447,9 +1452,13 @@ namespace Ets.Service.Provider.Order
                 }
                 #endregion
 
-                clienterDao.UpdateAllowWithdrawPrice(Convert.ToDecimal(orderModel.OrderCommission), orderModel.clienterId);
-                orderDao.UpdateJoinWithdraw(orderModel.Id);
-                orderDao.UpdateAuditStatus(orderModel.Id, OrderAuditStatusCommon.Through.GetHashCode());   
+                clienterDao.UpdateCAllowWithdrawPrice(new UpdateForWithdrawPM
+                {
+                    Id=orderModel.clienterId,
+                    Money=orderModel.OrderCommission.Value                }
+                    );
+                orderOtherDao.UpdateJoinWithdraw(orderModel.Id);
+                orderOtherDao.UpdateAuditStatus(orderModel.Id, OrderAuditStatusCommon.Through.GetHashCode());   
                 
                 clienterAllowWithdrawRecordDao.Insert(new ClienterAllowWithdrawRecord()
                                     {
@@ -2050,7 +2059,7 @@ namespace Ets.Service.Provider.Order
         public void UpdateClienterAccount(OrderListModel myOrderInfo,decimal money)
         {
             //更新骑士 金额  
-            bool b = clienterDao.UpdateClienterAccountBalanceForFinish(new WithdrawRecordsModel() { UserId = myOrderInfo.clienterId, Amount = money });
+            bool b = clienterDao.UpdateCAccountBalance(new UpdateForWithdrawPM() { Id = myOrderInfo.clienterId, Money = money });
             //增加记录 
             decimal? accountBalance = myOrderInfo.AccountBalance.Value + money;           
 

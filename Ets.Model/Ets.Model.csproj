@@ -261,6 +261,7 @@
     <Compile Include="ParameterModel\Business\BussinessPM.cs" />
     <Compile Include="ParameterModel\Business\RegisterInfoModel.cs" />
     <Compile Include="ParameterModel\Business\UpdateBusinessInfoBPM.cs" />
+    <Compile Include="ParameterModel\Clienter\ClienterMoneyPM.cs" />
     <Compile Include="ParameterModel\Clienter\ClienterRecordsPM.cs" />
     <Compile Include="ParameterModel\Clienter\ClienterPM.cs" />
     <Compile Include="ParameterModel\Clienter\ChangeWorkStatusPM.cs" />

@@ -53,7 +53,7 @@ namespace Ets.Service.Provider.Order
         /// </summary>
         public void UpdateIsJoinWithdraw(int orderId)
         {
-             orderOtherDao.UpdateIsJoinWithdraw(orderId);
+             orderOtherDao.UpdateJoinWithdraw(orderId);
         }
     }
 }
