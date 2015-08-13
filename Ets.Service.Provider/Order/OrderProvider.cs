@@ -1,5 +1,6 @@
 ﻿#region
 using CalculateCommon;
+using ETS;
 using Ets.Dao.Finance;
 using Ets.Dao.Order;
 using Ets.Model.Common;
@@ -1693,7 +1694,7 @@ namespace Ets.Service.Provider.Order
                 if (deliveryModel.SettleType == 1)
                 {
                     //订单金额/骑士结算比例值*订单数量
-                    orderCommission = deliveryModel.ClienterSettleRatio == 0 ? 0 : ParseHelper.ToDecimal(order.Amount) / deliveryModel.ClienterSettleRatio * ParseHelper.ToInt(order.OrderCount);
+                    orderCommission = deliveryModel.ClienterSettleRatio == 0 ? 0 : ParseHelper.ToDecimal(order.Amount) * deliveryModel.ClienterSettleRatio/100 * ParseHelper.ToInt(order.OrderCount);
                 }
                 else if (deliveryModel.SettleType == 2)
                 {
@@ -2126,9 +2127,9 @@ namespace Ets.Service.Provider.Order
         /// </summary>
         public void AutoDealOverTimeOrder()
         {
-            #region 根据配置时间获取未处理超时订单
-
-            var orderList = orderDao.GetDealOverTimeOrderList();
+            #region 对象声明及初始化
+            var overTimeHour = ParseHelper.ToInt(Config.ConfigKey("OverTimeHour"));
+            var orderList = orderDao.GetDealOverTimeOrderList(overTimeHour);
             if (orderList == null || orderList.Count == 0)
             {
                 return;
@@ -2138,7 +2139,10 @@ namespace Ets.Service.Provider.Order
             {
                 return;
             }
-            var unFinishOrderrList = orderList.Where(t => t.Status == 0 || t.Status == 2 || t.Status == 4).ToList();//状态为 0：未抢单 2：已抢单 3：已取货
+            #endregion
+
+            #region 处理订单状态为 0：未抢单 2：已抢单 3：已取货
+            var unFinishOrderrList = orderList.Where(t => t.Status == 0 || t.Status == 2 || t.Status == 4).ToList();
             if (unFinishOrderrList.Count > 0)
             {
                 foreach (var orderListModel in unFinishOrderrList)
@@ -2169,35 +2173,54 @@ namespace Ets.Service.Provider.Order
                     }
                 }
             }
-            var halfFinishOrderList = orderList.Where(t => t.Status == 1).ToList();//已完成未完成小票上传
+            #endregion
+
+            #region 处理已完成未完成小票上传的订单
+            var halfFinishOrderList = orderList.Where(t => t.Status == 1).ToList();
             if (halfFinishOrderList.Count > 0)
             {
                 foreach (var orderListModel in halfFinishOrderList)
                 {
                     using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
                     {
-                        if (orderDao.ModifyOrderStatus(new OrderListModel()
+                        if (orderDao.OrderAuditRefuseModifyOrder(new OrderListModel()
                         {
                             Id = orderListModel.Id,
-                            Status = (byte?) OrderStatus.Status3,
-                            OldStatus = orderListModel.Status,
-                            OrderCommission = orderListModel.OrderCommission
+                            RealOrderCommission = ParseHelper.ToDecimal(orderListModel.OrderCommission) - ParseHelper.ToDecimal(orderListModel.WebsiteSubsidy),
                         }))
                         {
-                            if (orderDao.OrderCancelReturnClienter(new OrderListModel()
+                            if (orderDao.OrderAuditRefuseReturnClienter(new OrderListModel()
                             {
+                                RealOrderCommission = ParseHelper.ToDecimal(orderListModel.OrderCommission) - ParseHelper.ToDecimal(orderListModel.WebsiteSubsidy),
+                                Id = orderListModel.Id,
+                                OrderNo = orderListModel.OrderNo,
+                                clienterId = orderListModel.clienterId
 
                             }))
                             {
-                                tran.Complete();
+                                if (orderDao.InsertClienterAllowWithdrawRecord(new ClienterAllowWithdrawRecord()
+                                {
+                                    ClienterId = orderListModel.clienterId,
+                                    Amount = ParseHelper.ToDecimal(orderListModel.OrderCommission) - ParseHelper.ToDecimal(orderListModel.WebsiteSubsidy),
+                                    Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
+                                    RecordType = ClienterBalanceRecordRecordType.OrderCommission.GetHashCode(),
+                                    Operator = "服务",
+                                    WithwardId =orderListModel.Id,
+                                    RelationNo = orderListModel.OrderNo,
+                                    Remark = "服务自动处理超时未完成订单"
+                                }))
+                                {
+                                    orderDao.AutoAuditRefuseDeal(orderListModel.Id);
+                                    tran.Complete();
+                                }
                             }
                         }
                         
                     }
                 }
             }
-
             #endregion
+
         }
 
     }

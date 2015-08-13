@@ -31,6 +31,11 @@ namespace Ets.Model.DomainModel.Order
         /// 任务总金额（订单金额总和）  会加上外送费显示
         /// </summary>
         public decimal Amount { get; set; }
+
+        /// <summary>
+        /// 菜品金额
+        /// </summary>
+        public decimal CpAmount { get; set; }
         /// <summary>
         ///取货地址（商户名称）
         /// </summary>
