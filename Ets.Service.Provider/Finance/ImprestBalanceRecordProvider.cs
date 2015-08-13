@@ -228,23 +228,40 @@ namespace Ets.Service.Provider.Finance
         }
 
         /// <summary>
+        /// 备用金充值 时间锁
+        /// </summary>
+        private static object mylockAjaxImprestRecharge = new object();
+
+        /// <summary>
         /// 充值 备用金流水
         /// </summary>
         /// <param name="model">参数</param>
         /// <returns></returns>
         public ResultModel<string> AjaxImprestRecharge(ImprestBalanceRecord model)
         {
+            #region 时间锁
+            lock (mylockAjaxImprestRecharge)
+            {
+                string key = string.Format(RedissCacheKey.Ets_Recharge_Lock, model.OptName);
+                var redis = new ETS.NoSql.RedisCache.RedisCache();
+                if (redis.Get<int>(key) == 1)
+                {
+                    return ResultModel<string>.Conclude(AjaxImprestRechargeReturnEnum.Repert);
+                }
+                redis.Set(key, 1, new TimeSpan(0, 1, 0));
+            }
+            #endregion
             if (model.Amount < 1 || model.Amount > 1000000)  //备用金充值金额有误
             {
-                return ResultModel<string>.Conclude(SystemState.ParaError);
+                return ResultModel<string>.Conclude(AjaxImprestRechargeReturnEnum.MoneyError);
             }
             if (string.IsNullOrWhiteSpace(model.ImprestReceiver)) //备用金接收人不能为空
             {
-                return ResultModel<string>.Conclude(SystemState.ParaError);
+                return ResultModel<string>.Conclude(AjaxImprestRechargeReturnEnum.ImprestReceiverError);
             }
             if (_imprestBalanceRecordDao.InsertRechargeRecord(model))
             {
-                return ResultModel<string>.Conclude(SystemState.Success);
+                return ResultModel<string>.Conclude(AjaxImprestRechargeReturnEnum.Success);
             }
             else
             {
