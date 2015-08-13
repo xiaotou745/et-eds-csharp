@@ -1636,9 +1636,9 @@ namespace Ets.Service.Provider.Order
 
             #region 获取物流公司应付骑士佣金  2015年8月13日 09:34:02 窦海超
             DeliveryCompanyModel deliveryModel = null;
-            if (order.DeliveryCompanyID > 0)
+            if (modelPM.DeliveryCompanyID > 0)
             {
-                deliveryModel = new DeliveryCompanyDao().GetById(order.DeliveryCompanyID);
+                deliveryModel = new DeliveryCompanyDao().GetById(modelPM.DeliveryCompanyID);
             }
             decimal orderCommission = ParseHelper.ToDecimal(order.OrderCommission);
             if (deliveryModel != null)

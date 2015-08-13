@@ -1276,6 +1276,7 @@ WHERE c.Id = @ClienterId  ";
                 result.AreaCode = dataReader["AreaCode"].ToString();
                 result.CityCode = dataReader["CityCode"].ToString();
                 result.Province = dataReader["Province"].ToString();
+                result.IsDisplayDeliveryMoney = ParseHelper.ToInt(dataReader["IsDisplayDeliveryMoney"].ToString());
                 obj = dataReader["BussinessID"];
                 if (obj != null && obj != DBNull.Value)
                 {
@@ -1296,6 +1297,7 @@ WHERE c.Id = @ClienterId  ";
                 {
                     result.HasWithdrawPrice = decimal.Parse(obj.ToString());
                 }
+
 
                 return result;
             }
