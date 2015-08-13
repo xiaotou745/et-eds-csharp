@@ -2548,6 +2548,7 @@ select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0}
         a.Id, a.OrderCommission, a.OrderCount,
         ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,
+        a.Amount CpAmount,
         b.Name as BusinessName, b.City as BusinessCity,
         b.Address as BusinessAddress, isnull(a.ReceviceCity, '') as UserCity,
         a.Remark,
@@ -2590,6 +2591,7 @@ declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0} a.Id,a.OrderCommission,a.OrderCount,   
         (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
+        a.Amount CpAmount,
         b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
         ISNULL(a.ReceviceCity,'') as UserCity,ISNULL(a.ReceviceAddress,'附近3公里左右，由商户指定') as UserAddress,
         a.Remark,
@@ -2639,6 +2641,7 @@ select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0}
         a.Id, a.OrderCommission, a.OrderCount,
         ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,
+        a.Amount CpAmount,
         b.Name as BusinessName, b.City as BusinessCity,
         b.Address as BusinessAddress, isnull(a.ReceviceCity, '') as UserCity,
        a.Remark,
@@ -2662,6 +2665,7 @@ select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0}
         a.Id, a.OrderCommission, a.OrderCount,
         ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,
+        a.Amount CpAmount,
         b.Name as BusinessName, b.City as BusinessCity,
         b.Address as BusinessAddress, isnull(a.ReceviceCity, '') as UserCity,
         a.Remark,
@@ -2717,6 +2721,7 @@ declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0} a.Id,a.OrderCommission,a.OrderCount,   
 (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
+a.Amount CpAmount,
 a.Remark,
 b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
 ISNULL(a.ReceviceCity,'') as UserCity,ISNULL(a.ReceviceAddress,'附近3公里左右，由商户指定') as UserAddress,
@@ -2742,6 +2747,7 @@ declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0} a.Id,a.OrderCommission,a.OrderCount,   
 (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
+a.Amount CpAmount,
 a.Remark,
 b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
 ISNULL(a.ReceviceCity,'') as UserCity,ISNULL(a.ReceviceAddress,'附近3公里左右，由商户指定') as UserAddress,
@@ -2797,6 +2803,7 @@ declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0}  a.BusinessId, a.Id,a.OrderCommission,a.OrderCount,   
 (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
+ a.Amount CpAmount,
 a.Remark,
 b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
 ISNULL(a.ReceviceCity,'') as UserCity,ISNULL(a.ReceviceAddress,'附近3公里左右，由商户指定') as UserAddress,
@@ -2861,7 +2868,7 @@ order by a.id desc
                     if (deliveryModel.SettleType == 1)
                     {
                         //订单金额/骑士结算比例值*订单数量
-                        orderCommission = deliveryModel.ClienterSettleRatio == 0 ? 0 : ParseHelper.ToDecimal(dataRow["Amount"]) * deliveryModel.ClienterSettleRatio/100 * ParseHelper.ToInt(dataRow["OrderCount"]);
+                       orderCommission = deliveryModel.ClienterSettleRatio == 0 ? 0 : ParseHelper.ToDecimal(dataRow["CpAmount"]) * deliveryModel.ClienterSettleRatio/100 * ParseHelper.ToInt(dataRow["OrderCount"]);
                     }
                     else if (deliveryModel.SettleType == 2)
                     {
@@ -3636,71 +3643,21 @@ where   Id = @OrderId and FinishAll = 0";
         {
             #region 查询脚本
             string sql = @"SELECT        o.[Id]
-                                        ,o.[OrderNo]
-                                        ,o.[PickUpAddress]
-                                        ,o.PubDate
-                                        ,o.[ReceviceName]
-                                        ,o.[RecevicePhoneNo]
-                                        ,o.[ReceviceAddress]
-                                        ,o.[ActualDoneDate]
-                                        ,o.[IsPay]
-                                        ,o.[Amount]
-                                        ,o.[OrderCommission]
-                                        ,o.[DistribSubsidy]
-                                        ,o.[WebsiteSubsidy]
-                                        ,o.[Remark]
                                         ,o.[Status]
+                                        ,o.[OrderCommission]
+                                        ,o.[SettleMoney]
+                                        ,o.[OrderNo]
                                         ,o.[clienterId]
                                         ,o.[businessId]
-                                        ,o.[ReceviceCity]
-                                        ,o.[ReceviceLongitude]
-                                        ,o.[ReceviceLatitude]
-                                        ,o.[OrderFrom]
-                                        ,o.[OriginalOrderId]
-                                        ,o.[OriginalOrderNo]
-                                        ,o.[Quantity]
-                                        ,o.[Weight]
-                                        ,o.[ReceiveProvince]
-                                        ,o.[ReceiveArea]
-                                        ,o.[ReceiveProvinceCode]
-                                        ,o.[ReceiveCityCode]
-                                        ,o.[ReceiveAreaCode]
-                                        ,o.[OrderType]
-                                        ,o.[KM]
-                                        ,o.[GuoJuQty]
-                                        ,o.[LuJuQty]
-                                        ,o.[SongCanDate]
-                                        ,o.[OrderCount]
-                                        ,o.[CommissionRate] 
-                                        ,o.[RealOrderCommission] 
-                                        ,b.[City] BusinessCity
-                                        ,b.Name BusinessName
-                                        ,b.PhoneNo BusinessPhoneNo
-                                        ,b.PhoneNo2 BusinessPhoneNo2
-                                        ,b.Address BusinessAddress
-                                        ,c.PhoneNo ClienterPhoneNo
-                                        ,c.TrueName ClienterTrueName
-                                        ,c.TrueName ClienterName
-                                        ,c.AccountBalance AccountBalance
-                                        ,b.GroupId
-                                        ,case when o.orderfrom=0 then '客户端' else g.GroupName end GroupName
-                                        ,o.OriginalOrderNo
-                                        ,oo.NeedUploadCount
-                                        ,oo.HadUploadCount
-                                        ,oo.ReceiptPic
-                                        ,oo.IsNotRealOrder IsNotRealOrder
-                                        ,o.OtherCancelReason
-                                        ,o.OriginalOrderNo
+                                        ,o.[WebsiteSubsidy]
+                                        ,o.[OrderCommission]
+                                        ,o.[IsPay]
+                                        ,o.FinishAll
                                         ,ISNULL(o.MealsSettleMode,0) MealsSettleMode
                                         ,ISNULL(oo.IsJoinWithdraw,0) IsJoinWithdraw
-                                        ,o.BusinessReceivable
-                                        ,o.SettleMoney
-                                        ,o.FinishAll
                                     FROM [order] o WITH ( NOLOCK )
-                                    JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                     JOIN OrderOther oo WITH (NOLOCK) ON oo.OrderId=o.Id
-                                    left JOIN clienter c WITH (NOLOCK) ON o.clienterId=c.Id
-                                    WHERE o.PubDate BETWEEN DATEADD(HOUR,-24,Convert(DateTime,Convert(Varchar(10),GetDate(),120))) 
+                                    WHERE o.PubDate BETWEEN DATEADD(HOUR,-@overTimeHour,Convert(DateTime,Convert(Varchar(10),GetDate(),120))) 
                                     AND Convert(DateTime,Convert(Varchar(10),GetDate(),120))
                                     AND o.FinishAll=0 AND o.Status<>4";
             #endregion

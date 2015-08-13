@@ -45,7 +45,7 @@ namespace SuperManWebApi.Controllers
             try
             {
                 //通过传过来的字符串序列化对象                
-                model.listOrderChlid = ParseHelper.Deserialize<List<OrderChlidPM>>(model.OrderChlidJson);
+                //model.listOrderChlid = ParseHelper.Deserialize<List<OrderChlidPM>>(model.OrderChlidJson);
 
                 order order;
                 ResultModel<BusiOrderResultModel> currResModel = Verification(model, out order);
@@ -219,7 +219,7 @@ namespace SuperManWebApi.Controllers
         /// </summary> 
         /// <returns></returns>
         [HttpPost]
-        [Token]
+        //[Token]
         public ResultModel<FinishOrderResultModel> Complete(OrderCompleteModel parModel)
         {
             if (parModel.userId <= 0)  //用户id非空验证 骑士Id

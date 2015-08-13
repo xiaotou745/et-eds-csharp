@@ -318,7 +318,7 @@ namespace SuperMan.Controllers
         /// <param name="OrderOptionLog"></param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult AuditCancel(int orderId, string OrderOptionLog)
+        public JsonResult AuditRefuse(int orderId, string OrderOptionLog)
         {
             OrderOptionModel orderOptionModel = new OrderOptionModel()
             {

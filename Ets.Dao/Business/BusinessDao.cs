@@ -1502,24 +1502,7 @@ where  Id IN({0})";
 
             }).ToDictionary(m => m.Id);
         }
-
-        /// <summary>
-        ///  商户 余额，可提现余额   add by caoheyang 20150509
-        /// </summary>
-        /// <param name="model">超人信息</param>
-        /// <returns></returns>
-        public void UpdateForWithdrawC(UpdateForWithdrawPM model)
-        {
-            const string updateSql = @"
-update  business
-set  BalancePrice=BalancePrice+@WithdrawPrice,AllowWithdrawPrice=AllowWithdrawPrice+@WithdrawPrice
-where  Id=@Id ";
-            IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("Id", model.Id);
-            dbParameters.AddWithValue("WithdrawPrice", model.Money);
-            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
-        }
-
+      
         /// <summary>
         /// 获取商家详情
         /// </summary>
@@ -2601,5 +2584,26 @@ select 1 as UserType, b.Name as TrueName,b.Longitude,b.Latitude,b.PhoneNo as Pho
             var list = MapRows<AppActiveInfo>(dt);
             return list;
         }
+
+        /// <summary>
+        ///  更新商户余额、可提现余额  
+        ///  胡灵波
+        ///  2015年8月13日 16:19:04
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public void UpdateForWithdrawC(UpdateForWithdrawPM model)
+        {
+            const string updateSql = @"
+update  business
+set  BalancePrice=BalancePrice+@Money,
+AllowWithdrawPrice=AllowWithdrawPrice+@Money
+where  Id=@Id ";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("Id", model.Id);
+            dbParameters.AddWithValue("Money", model.Money);
+            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+        }
+
     }
 }
