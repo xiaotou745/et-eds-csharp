@@ -182,9 +182,13 @@
             url: posturl,
             data: postPar,
             success: function(result) {
-                if (result.length < 1 || result.Status == 0) {
-                    alert('骑士不存在或当前骑士不可提现');
-                } else if (result.Status == 1) {
+                if (result.Status == 0) {
+                    alert('没有查询到骑士，请重新输入');
+                }
+                else if (result.Status == 2) {
+                    alert('该骑士尚未审核通过');
+                }
+                else if (result.Status == 1) {
                     $('#yesBtn').show();
                     FillInfo(result);
                 }
@@ -217,8 +221,8 @@
             $('#Tip').text('请先查询骑士数据!');
             return;
         }
-        if (parseFloat(withdrawPrice) <= 0) {
-            $('#Tip').text('提现金额必须大于零元!');
+        if (parseFloat(withdrawPrice) <= 1) {
+            $('#Tip').text('提现金额必须大于1元!');
             return;
         }
         if (!decimalReg.test(withdrawPrice) || withdrawPrice.length<1) {
