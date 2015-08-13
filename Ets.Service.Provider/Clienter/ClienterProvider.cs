@@ -1027,8 +1027,7 @@ namespace Ets.Service.Provider.Clienter
         /// <returns></returns>
         public ClienterDM GetDetails(int id)
         {
-            ClienterDM model = clienterDao.GetDetails(id);           
-            return model;
+            return clienterDao.GetDetails(id);           
         }
 
         /// <summary>
