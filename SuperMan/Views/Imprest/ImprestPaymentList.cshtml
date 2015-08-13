@@ -150,11 +150,22 @@
             alert("请输入时间范围!");
             return false;
         }
+        if (txtOptTimeStart != "" &&txtOptTimeEnd != "") {
+            if (CheckTime(txtOptTimeStart, txtOptTimeEnd)) {
+                alert("开始时间不能大于结束时间");
+                return false;
+            }
+        }
         var url = "/Imprest/PostDaoChuImprestPayment?ClienterPhoneNo=" + clienterPhoneNo + "&OptDateStart=" + txtOptTimeStart + "&OptDateEnd=" + txtOptTimeEnd + "&OptType=2";
         window.location.href = url;
         return true;
     }
-
+    //验证时间大小
+    function CheckTime(d1, d2) {
+        var d11 = new Date(d1.replace(/\-/g, '/'));
+        var d22 = new Date(d2.replace(/\-/g, '/'));
+        return d1 > d2;
+    }
     //查询骑士电话
     function CheckClienterPhone(phoneNum) {
         if (!phoneReg.test(phoneNum)) {

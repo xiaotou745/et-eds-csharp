@@ -5,7 +5,7 @@ using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ets.AutoDealWithward
+namespace Ets.AutoDealOverTimeOrder
 {
     static class Program
     {
