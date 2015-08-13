@@ -8,12 +8,14 @@
                 <div style="float: left">
                     <label>充值金额：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
                     <input type="text" name="Amount" id="_txtAmount" value="" />
+                    <label style="color:red;">*</label>
                 </div>
             </div>
             <div style="width:780px;height:25px;">
                 <div style="float: left">
                     <label>备用金接收人：</label>
                     <input type="text" name="ImprestReceiver" id="_txtImprestReceiver" value="" />
+                    <label style="color:red;">*</label>
                 </div>
             </div>
             <div style="width:780px;height:100px;">
@@ -65,11 +67,19 @@
                 success: function (data) {
                     if (data.Status == 1) {
                         alert("充值成功！");
+                        window.location.href = "/Imprest/ImprestRechargeList";
                     } else {
                         alert(data.Message);
                     }
                 }
             });
+        });
+        
+
+        //关闭弹层
+        $('#btnCanel').live("click", function () {
+            adminjs.closewinbox('.add-openbox');
+            return false;
         });
     });
 

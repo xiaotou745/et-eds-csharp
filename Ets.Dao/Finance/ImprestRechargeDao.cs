@@ -90,7 +90,8 @@ where  Id=@Id ";
         public int GetRemainingAmountNoLock()
         {
             const string getbyidSql = @"SELECT ISNULL(RemainingAmount,0) AS RemainingAmount FROM ImprestRecharge (NOLOCK) ";
-            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, getbyidSql), 0);
+            var obj = DbHelper.ExecuteScalar(SuperMan_Read, getbyidSql);
+            return obj == null ? 0 : Convert.ToInt32(obj);
         }
 
         /// <summary>
@@ -129,7 +130,7 @@ select @@IDENTITY ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("@Price", DbType.Decimal).Value = paymodel.Price;
             dbParameters.Add("@OprName", DbType.String).Value = paymodel.OprName;
-            dbParameters.Add("@Remark", DbType.String).Value = paymodel.Remark;
+            dbParameters.Add("@Remark", DbType.StringFixedLength).Value = paymodel.Remark;
             dbParameters.Add("@OptType", DbType.Int32).Value = paymodel.OptType;
             dbParameters.Add("@ClienterName", DbType.String).Value = paymodel.ClienterName;
             dbParameters.Add("@ClienterPhoneNo", DbType.String).Value = paymodel.ClienterPhoneNo;

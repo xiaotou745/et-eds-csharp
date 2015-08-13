@@ -12,7 +12,9 @@ using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.Finance;
 using Ets.Model.DomainModel.Finance;
 using Ets.Model.ParameterModel.Finance;
+using Ets.Model.ParameterModel.Order;
 using Ets.Service.IProvider.Finance;
+using Ets.Service.Provider.Clienter;
 using Ets.Service.Provider.Order;
 using ETS.Transaction;
 using ETS.Transaction.Common;
@@ -168,36 +170,48 @@ namespace Ets.Service.Provider.Finance
                 #endregion
                 
                 #region===4.扣除骑士余额,提现余额,写流水
-                //更新骑士表的余额，可提现余额
-                _clienterDao.UpdateForWithdrawC(new UpdateForWithdrawPM
+
+                new ClienterProvider().UpdateCBalanceAndWithdraw(new ClienterMoneyPM()
                 {
-                    Id = climodel.Id,
-                    Money = -parmodel.WithdrawPrice
-                });
-                //骑士余额流水
-                _clienterBalanceRecordDao.Insert(new ClienterBalanceRecord()
-                {
-                    ClienterId = climodel.Id,//骑士Id
-                    Amount = -parmodel.WithdrawPrice,//流水金额
-                    Status = (int)ClienterBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
+                    ClienterId = climodel.Id,
+                    Amount = -parmodel.WithdrawPrice,
+                    Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
                     RecordType = (int)ClienterBalanceRecordRecordType.WithdrawApply,
                     Operator = parmodel.OprName,
                     WithwardId = withwardId,
                     RelationNo = withwardNo,
                     Remark = "骑士提现(备用金提现)"
                 });
-                //骑士可用余额流水
-                _clienterAllowWithdrawRecordDao.Insert(new ClienterAllowWithdrawRecord()
-                {
-                    ClienterId = climodel.Id,//骑士Id
-                    Amount = -parmodel.WithdrawPrice,//流水金额
-                    Status = (int)ClienterAllowWithdrawRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
-                    RecordType = (int)ClienterAllowWithdrawRecordType.WithdrawApply,
-                    Operator = parmodel.OprName,
-                    WithwardId = withwardId,
-                    RelationNo = withwardNo,
-                    Remark = "骑士提现(备用金提现)"
-                });
+                ////更新骑士表的余额，可提现余额
+                //_clienterDao.UpdateCBalanceAndWithdraw(new UpdateForWithdrawPM
+                //{
+                //    Id = climodel.Id,
+                //    Money = -parmodel.WithdrawPrice
+                //});
+                ////骑士余额流水
+                //_clienterBalanceRecordDao.Insert(new ClienterBalanceRecord()
+                //{
+                //    ClienterId = climodel.Id,//骑士Id
+                //    Amount = -parmodel.WithdrawPrice,//流水金额
+                //    Status = (int)ClienterBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
+                //    RecordType = (int)ClienterBalanceRecordRecordType.WithdrawApply,
+                //    Operator = parmodel.OprName,
+                //    WithwardId = withwardId,
+                //    RelationNo = withwardNo,
+                //    Remark = "骑士提现(备用金提现)"
+                //});
+                ////骑士可用余额流水
+                //_clienterAllowWithdrawRecordDao.Insert(new ClienterAllowWithdrawRecord()
+                //{
+                //    ClienterId = climodel.Id,//骑士Id
+                //    Amount = -parmodel.WithdrawPrice,//流水金额
+                //    Status = (int)ClienterAllowWithdrawRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
+                //    RecordType = (int)ClienterAllowWithdrawRecordType.WithdrawApply,
+                //    Operator = parmodel.OprName,
+                //    WithwardId = withwardId,
+                //    RelationNo = withwardNo,
+                //    Remark = "骑士提现(备用金提现)"
+                //});
                 #endregion
 
                 #region===5.修改骑士表累计提现金额
