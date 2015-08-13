@@ -678,12 +678,12 @@ namespace ETS.Enums
         /// <summary>
         /// 备用金接收人不能为空且至少两个字符
         /// </summary>
-        [DisplayText("备用金接收人不能为空且至少两个字符")]
+        [DisplayText("备用金接收人不能为空且在2-10个字符之间")]
         ImprestReceiverError = 4,
         /// <summary>
         /// 备用信息不能为空且至少五个字符
         /// </summary>
-        [DisplayText("备用信息不能为空且至少五个字符")]
+        [DisplayText("备注信息不能为空且在5-50个字符之间")]
         RemarkError = 5
 
     }
