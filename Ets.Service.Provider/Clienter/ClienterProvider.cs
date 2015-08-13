@@ -1097,11 +1097,11 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="orderNo">订单号</param>
         /// <param name="bussinessId"></param>
         /// <returns></returns>       
-        public ResultModel<RushOrderResultModel> Receive_C(int userId, string orderNo, int bussinessId, float grabLongitude, float grabLatitude)
+        public ResultModel<RushOrderResultModel> Receive_C(OrderReceiveModel parmodel)
         {
-
+            //int userId, string orderNo, int bussinessId, float grabLongitude, float grabLatitude
             ///TODO 骑士是否有资格抢单放前面
-            ClienterModel clienterModel = new Ets.Dao.Clienter.ClienterDao().GetUserInfoByUserId(userId);
+            ClienterModel clienterModel = new Ets.Dao.Clienter.ClienterDao().GetUserInfoByUserId(parmodel.userId);
 
             if (clienterModel.Status != 1)  //判断 该骑士 是否 有资格 抢单 wc
             {
@@ -1110,9 +1110,10 @@ namespace Ets.Service.Provider.Clienter
             //这里可以优化，去掉提前验证用户信息，当失败的时候在去验证 
             OrderListModel model = new OrderListModel()
             {
-                clienterId = userId,
+                clienterId = parmodel.userId,
                 ClienterTrueName = clienterModel.TrueName,
-                OrderNo = orderNo
+                OrderNo = parmodel.orderNo,
+                DeliveryCompanyID=parmodel.deliveryId//物流公司ID
             };
             bool bResult = orderDao.RushOrder(model);
             ///TODO 同步第三方状态和jpush 以后放到后台服务或mq进行。
@@ -1122,9 +1123,9 @@ namespace Ets.Service.Provider.Clienter
                 Task.Factory.StartNew(() =>
                 {
                     //写入骑士抢单坐标
-                    orderOtherDao.UpdateGrab(orderNo, grabLongitude, grabLatitude);
-                    new OrderProvider().AsyncOrderStatus(orderNo);//同步第三方订单
-                    Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", bussinessId.ToString(), string.Empty);
+                    orderOtherDao.UpdateGrab(parmodel.orderNo, parmodel.Longitude, parmodel.Latitude);
+                    new OrderProvider().AsyncOrderStatus(parmodel.orderNo);//同步第三方订单
+                    Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", parmodel.businessId.ToString(), string.Empty);
                 });
 
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Success);

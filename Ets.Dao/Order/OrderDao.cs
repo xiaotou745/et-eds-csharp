@@ -1049,58 +1049,68 @@ where  o.Id = @orderId");
         /// <summary>
         /// 订单指派超人
         /// danny-20150320
+        /// 修改
+        /// 窦海超 
+        /// 2015年8月13日 13:11:35
+        /// 把抢单规则变更，抢单时要把该订单佣金变更，且所属订单也根据该骑士所属物流公司变更
         /// </summary>
         /// <param name="order"></param>
         /// <returns></returns>
         public bool RushOrder(OrderListModel order)
         {
-            //bool reslut = false;
-            //try
-            //{
-            //    string sql = @" update [order] set clienterId=@clienterId,Status=@Status where OrderNo=@OrderNo and Status=0 and Status!=3 ";
-            //    IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            //    dbParameters.AddWithValue("@clienterId", order.clienterId);
-            //    dbParameters.AddWithValue("@Status", ConstValues.ORDER_ACCEPT);
-            //    dbParameters.Add("@OrderNo", SqlDbType.NVarChar);
-            //    dbParameters.SetValue("@OrderNo", order.OrderNo);
+            //            string sqlText = @"
+            //            update dbo.[order]
+            //            set clienterId=@clienterId,Status=@Status
+            //            
+            //            where OrderNo=@OrderNo and Status=0
+            //            if(@@error<>0 or @@ROWCOUNT=0)
+            //            begin
+            //	            select 1 --更改状态失败
+            //	            return
+            //            end
+            //            insert  into dbo.OrderSubsidiesLog ( OrderId, Price, InsertTime, OptName,
+            //                                                 Remark, OptId, OrderStatus, Platform )
+            //            select  o.Id, o.OrderCommission, getdate(), @OptName, '任务已被抢', @clienterId, @Status, @Platform
+            //            from    dbo.[order] o ( nolock )
+            //            where   o.OrderNo = @OrderNo
+            //            select 0";
 
-            //    int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
-            //    if (i > 0)
-            //    {
-            //        reslut = true;
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    reslut = false;
-            //    LogHelper.LogWriter(ex, "订单指派超人");
-            //    throw;
-            //}
-            //return reslut;
-            StringBuilder sql = new StringBuilder();
 
             string sqlText = @"
-            update dbo.[order]
-            set clienterId=@clienterId,Status=@Status
-            
-            where OrderNo=@OrderNo and Status=0
-            if(@@error<>0 or @@ROWCOUNT=0)
-            begin
-	            select 1 --更改状态失败
-	            return
-            end
-            insert  into dbo.OrderSubsidiesLog ( OrderId, Price, InsertTime, OptName,
-                                                 Remark, OptId, OrderStatus, Platform )
-            select  o.Id, o.OrderCommission, getdate(), @OptName, '任务已被抢', @clienterId, @Status, @Platform
-            from    dbo.[order] o ( nolock )
-            where   o.OrderNo = @OrderNo
-            select 0";
+declare 
+@orderamount decimal(18,3),
+@ordercommission decimal(18,3),
+@ordercount int 
+
+select @orderamount=o.Amount,@ordercommission=o.OrderCommission,@ordercount=o.OrderCount from [order] o(nolock) where o.OrderNo=@OrderNo and Status=0
+
+if(@DeliveryCompanyID>0)
+begin
+select @ordercommission=case when dc.SettleType=1 then @orderamount*dc.ClienterSettleRatio/100 when dc.SettleType=2 then dc.ClienterFixMoney*@ordercount end
+from DeliveryCompany dc(nolock) 
+where dc.Id=@DeliveryCompanyID
+end
+update [order] set Status=@Status,clienterId=@clienterId,OrderCommission=@ordercommission,DeliveryCompanyID=@DeliveryCompanyID where [order].OrderNo=@OrderNo
+if(@@error<>0 or @@ROWCOUNT=0)
+begin
+	select 1 --更改状态失败
+	return
+end
+insert  into dbo.OrderSubsidiesLog ( OrderId, Price, InsertTime, OptName,
+                                        Remark, OptId, OrderStatus, Platform )
+select  o.Id, o.OrderCommission, getdate(), @OptName, '任务已被抢', @clienterId, @Status, @Platform
+from    dbo.[order] o ( nolock )
+where   o.OrderNo = @OrderNo
+select 0
+";
+
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("clienterId", DbType.Int32, 4).Value = order.clienterId;// userId;
             dbParameters.Add("Status", DbType.Int32, 4).Value = OrderStatus.Status2.GetHashCode();
             dbParameters.Add("OrderNo", DbType.String, 50).Value = order.OrderNo;
             dbParameters.Add("Platform", DbType.Int32, 4).Value = SuperPlatform.FromClienter.GetHashCode();
             dbParameters.Add("OptName", DbType.String, 200).Value = order.ClienterTrueName;  //抢单的骑士姓名
+            dbParameters.Add("DeliveryCompanyID", DbType.Int32, 4).Value = order.DeliveryCompanyID;//物流公司ID
             object obj = DbHelper.ExecuteScalar(SuperMan_Write, sqlText, dbParameters);
             return ParseHelper.ToInt(obj, 1) == 0 ? true : false;
         }

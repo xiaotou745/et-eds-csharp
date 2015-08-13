@@ -211,7 +211,7 @@ namespace SuperManWebApi.Controllers
             }
             #endregion
 
-            return new ClienterProvider().Receive_C(model.userId, model.orderNo, model.businessId, model.Longitude, model.Latitude);
+            return new ClienterProvider().Receive_C(model);//model.userId, model.orderNo, model.businessId, model.Longitude, model.Latitude
         }
 
         /// <summary>
