@@ -515,19 +515,19 @@ select @@IDENTITY ";
             string columnList = @"   o.[Id]
                                     ,o.[OrderNo]
                                     ,o.[PickUpAddress]
-                                    ,o.[PubDate]
+                                    ,isnull(o.[PubDate],'') as PubDate
                                     ,o.[ReceviceName]
                                     ,o.[RecevicePhoneNo]
                                     ,o.[ReceviceAddress]
-                                    ,o.[ActualDoneDate]
-                                    ,o.[IsPay]
-                                    ,o.[Amount]
-                                    ,o.[OrderCommission]
+                                    ,isnull(o.[ActualDoneDate],'') as ActualDoneDate
+                                    ,isnull(o.[IsPay],0) as IsPay
+                                    ,isnull(o.[Amount],0) as Amount
+                                    ,isnull(o.[OrderCommission],0) as OrderCommission
                                     ,o.[RealOrderCommission]
-                                    ,o.[DistribSubsidy]
-                                    ,o.[WebsiteSubsidy]
+                                    ,isnull(o.[DistribSubsidy],0) as DistribSubsidy
+                                    ,isnull(o.[WebsiteSubsidy],0) as WebsiteSubsidy
                                     ,o.[Remark]
-                                    ,o.[Status]
+                                    ,isnull(o.[Status],0) as Status
                                     ,o.[clienterId]
                                     ,o.[businessId]
                                     ,o.[ReceviceCity]
@@ -3668,8 +3668,7 @@ where   Id = @OrderId and FinishAll = 0";
             {
                 return null;
             }
-            var list = ConvertDataTableList<OrderListModel>(dt);
-            return list;
+            return ConvertDataTableList<OrderListModel>(dt);
         }
         /// <summary>
         /// 修改订单状态
@@ -3861,6 +3860,28 @@ where c.Id=@ClienterId;");
             parm.AddWithValue("@Platform", 2);
             parm.AddWithValue("@Remark", "服务自动处理超时未完成订单");
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
+        }
+        /// <summary>
+        /// 查询前一天订单审核数据
+        /// danny-20150813
+        /// </summary>
+        /// <returns></returns>
+        public OrderAuditStatisticalModel GetOrderAuditStatistical()
+        {
+            string sql = @" SELECT  ISNULL(COUNT(CASE when oo.AuditStatus=0 AND  o.FinishAll=1 THEN oo.Id END),0) UnAuditQty,
+									ISNULL(COUNT(CASE when oo.AuditStatus=1 THEN oo.Id END),0) AuditOkQty,
+									ISNULL(COUNT(CASE when oo.AuditStatus=2 THEN oo.Id END),0) AuditRefuseQty
+                            FROM [order] o WITH(NOLOCK)
+                            JOIN dbo.OrderOther oo WITH(NOLOCK) ON oo.OrderId=o.Id
+                            WHERE o.PubDate BETWEEN DATEADD(HOUR,-24,Convert(DateTime,Convert(Varchar(10),GetDate(),120))) 
+								AND Convert(DateTime,Convert(Varchar(10),GetDate(),120))";
+
+            var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql));
+            if (dt == null || dt.Rows.Count <= 0)
+            {
+                return null;
+            }
+            return MapRows<OrderAuditStatisticalModel>(dt)[0];
         }
     }
 }
