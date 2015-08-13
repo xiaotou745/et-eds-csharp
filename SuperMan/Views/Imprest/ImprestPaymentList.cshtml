@@ -1,4 +1,4 @@
-﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Finance.ImprestBalanceRecordModel>
+﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Finance.ImprestBalanceRecord>
 @using ETS.Data.PageData;
 @using ETS.Enums;
 @using ETS.Extension
@@ -17,7 +17,7 @@
     <h2 class="crumbs">
         您所在位置 财务管理> 备用金支出
     </h2>
-    @using (Ajax.BeginForm("PostList", new RouteValueDictionary { { "pageindex", "" } },
+    @using (Ajax.BeginForm("DoImprestPaymentList", new RouteValueDictionary { { "pageindex", "" } },
         new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
         new RouteValueDictionary { { "id", "searchForm" } }))
     {
@@ -47,7 +47,7 @@
     }
     <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
     <div class="bd clearfix" id="dataList">
-        @Html.Partial("PostList", (PageInfo<ImprestBalanceRecord>)ViewBag.PageModels)
+        @Html.Partial("DoImprestPaymentList", (PageInfo<ImprestBalanceRecord>)ViewBag.PageModels)
     </div>
 </div>
 <script type="text/javascript">

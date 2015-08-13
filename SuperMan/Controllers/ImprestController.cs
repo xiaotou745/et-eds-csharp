@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using ETS.Data.PageData;
 using Ets.Model.DataModel.Finance;
+using Ets.Model.ParameterModel.Finance;
 using Ets.Service.IProvider.Finance;
 using Ets.Service.Provider.Finance;
 using ETS.Util;
@@ -69,7 +70,12 @@ namespace SuperMan.Controllers
         [HttpGet]
         public ActionResult ImprestPaymentList()
         {
-            return View();
+            var criteria = new ImprestBalanceRecordSearchCriteria()
+            {
+                OptType = 2,
+            };
+            var pagedList = imprestProvider.GetImprestBalanceRecordList(criteria);
+            return View(pagedList);
         }
 
         /// <summary>
@@ -78,9 +84,13 @@ namespace SuperMan.Controllers
         /// <returns></returns>
 
         [HttpPost]
-        public ActionResult DoImprestPaymentList()
+        public ActionResult DoImprestPaymentList(int pageindex = 1)
         {
-            return PartialView();
+            var criteria = new ImprestBalanceRecordSearchCriteria();
+            TryUpdateModel(criteria);
+            criteria.OptType = 2;
+            var pagedList = imprestProvider.GetImprestBalanceRecordList(criteria);
+            return PartialView(pagedList);
         }
 
         /// <summary>

@@ -145,7 +145,6 @@
     <Compile Include="DomainModel\Finance\ClienterWithdrawFormModel.cs" />
     <Compile Include="DomainModel\Finance\ClienterWithdrawLogModel.cs" />
     <Compile Include="DomainModel\Finance\FinanceRecordsDM.cs" />
-    <Compile Include="DomainModel\Finance\ImprestBalanceRecordModel.cs" />
     <Compile Include="DomainModel\Message\ListBDM.cs" />
     <Compile Include="DomainModel\Message\ListCDM.cs" />
     <Compile Include="DomainModel\Message\MessageModelDM.cs" />
