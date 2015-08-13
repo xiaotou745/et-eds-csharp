@@ -93,9 +93,14 @@
                     <label>备注:</label><br/>
                     <textarea cols="45" rows="3" id="remark"></textarea>
                 </div>
+                <p id="ptip">
+                    温馨提示：支出金额超过该骑士可提现金额!<br />
+                    1. 如果该骑士有提现申请中的记录，财务人员可人工拒绝提现申请后，在《备用金支出》中重新发起。<br />
+                    2. 如果该骑士有待审核的任务，及时审核后在《备用金支出》中重新发起
+                </p>
             </div>
             <br/>
-            <label id="Tip"></label>
+            <label id="Tip"></label><br />
             <p class="btnbox">
                 <input value="确认支出" type="button" id="yesBtn" class="yesBtn" />
                 <input value="关闭" type="button" class="J_closebox qxBtn" id="cancelBox" />
@@ -133,12 +138,7 @@
             PayOutOk();
         });
         $('#yesBtn').hide();//设置disabled属性为true，按钮不可用
-        //关闭弹层
-        //$('.J_closebox').click(function () {
-        //    ClearInfo();
-            
-        //    return false;
-        //});
+        $('#ptip').hide();
     });
 
     //导出
@@ -222,19 +222,23 @@
             return;
         }
         if (parseFloat(withdrawPrice) < 1) {
-            $('#Tip').text('提现金额必须大于等于1元!');
+            $('#Tip').text('支出金额必须大于等于1元!');
             return;
         }
         if (!decimalReg.test(withdrawPrice) || withdrawPrice.length<1) {
-            $('#Tip').text('请输入正确的提现金额!');
+            $('#Tip').text('请输入正确的支出金额!');
             return;
         }
         if (parseFloat(withdrawPrice) > parseFloat(allowwithdrawPrice)) {
-            $('#Tip').text('提现金额超过该骑士可提现金额!');
+            //$('#Tip').text('提现金额超过该骑士可提现金额!');
+            $('#ptip').show();
+            $('#Tip').text('');
             return;
+        } else {
+            $('#ptip').hide();
         }
         if (parseFloat(withdrawPrice) > parseFloat(imprice)) {
-            $('#Tip').text('提现金额超过备用金账户总余额!');
+            $('#Tip').text('支出金额超过备用金账户总余额!');
             return;
         }
         if (remark.length<1) {
@@ -284,6 +288,7 @@
         $('#Tip').text('');
         $('#clienterInfoDiv').hide();
         $('#yesBtn').hide();
+        $('#ptip').hide();
         //隐藏充值窗
         //$('#ImprestPayBox').hide();
         
