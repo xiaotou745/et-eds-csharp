@@ -8,6 +8,7 @@ using ETS.Dao;
 using ETS.Data.Core;
 using ETS.Extension;
 using Ets.Model.DataModel.Finance;
+using Ets.Model.ParameterModel.Finance;
 using ETS.Util;
 
 namespace Ets.Dao.Finance
@@ -111,20 +112,27 @@ from  ImprestRecharge";
         }
 
         /// <summary>
-        /// 备用金支出
+        /// 备用金支出+写流水
         /// 2015年8月12日19:53:10
         /// 茹化肖
         /// </summary>
         /// <param name="price"></param>
         /// <returns></returns>
-        public bool ImprestRechargePayOut(decimal price,int ID)
+        public bool ImprestRechargePayOut(ImprestPayoutPM paymodel)
         {
             const string updateSql = @"
-UPDATE  ImprestRecharge SET RemainingAmount=(RemainingAmount-@Price),TotalPayment=(TotalPayment+@Price) 
-WHERE Id=@Id ";
+ update dbo.ImprestRecharge set RemainingAmount=RemainingAmount-@Price,TotalPayment=TotalPayment+@Price      
+ insert into ImprestBalanceRecord
+(Amount,BeforeAmount,AfterAmount,OptName,OptType,Remark,ClienterName,ClienterPhoneNo)
+select @Price,RemainingAmount+@Price,RemainingAmount,@OprName,@OptType,@Remark,@ClienterName,@ClienterPhoneNo  from dbo.ImprestRecharge as b 
+select @@IDENTITY ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.Add("@Price", DbType.Decimal).Value=price;
-            dbParameters.Add("@Id", DbType.Int32).Value=ID;
+            dbParameters.Add("@Price", DbType.Decimal).Value = paymodel.Price;
+            dbParameters.Add("@OprName", DbType.String).Value = paymodel.OprName;
+            dbParameters.Add("@Remark", DbType.String).Value = paymodel.Remark;
+            dbParameters.Add("@OptType", DbType.Int32).Value = paymodel.OptType;
+            dbParameters.Add("@ClienterName", DbType.String).Value = paymodel.ClienterName;
+            dbParameters.Add("@ClienterPhoneNo", DbType.String).Value = paymodel.ClienterPhoneNo;
             return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql,dbParameters), 0)>0;
         }
 

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Ets.Model.Common;
 using Ets.Model.DataModel.Finance;
 using ETS.Data.PageData;
+using Ets.Model.DataModel.Finance;
 using Ets.Model.DomainModel.Finance;
 using Ets.Model.ParameterModel.Finance;
 
@@ -21,7 +22,7 @@ namespace Ets.Service.IProvider.Finance
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        PageInfo<ImprestBalanceRecordModel> GetImprestBalanceRecordList(ImprestBalanceRecordSearchCriteria criteria);
+        PageInfo<ImprestBalanceRecord> GetImprestBalanceRecordList(ImprestBalanceRecordSearchCriteria criteria);
 		
 		/// <summary>
         /// 通过手机号获取骑士的提现信息
@@ -40,6 +41,7 @@ namespace Ets.Service.IProvider.Finance
         /// <param name="Cid">骑士ID</param>
         /// <returns></returns>
         ImprestPayoutModel ClienterWithdrawOk(ImprestWithdrawModel model);
+<<<<<<< HEAD
 
 
         /// <summary>
@@ -49,5 +51,7 @@ namespace Ets.Service.IProvider.Finance
         /// <returns></returns>
         ResultModel<string> AjaxImprestRecharge(ImprestBalanceRecord model);
         
+=======
+>>>>>>> f5364f7c11c314362a047393dece3d210b6af608
     }
 }

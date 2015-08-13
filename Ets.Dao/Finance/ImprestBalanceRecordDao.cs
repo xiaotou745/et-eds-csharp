@@ -97,30 +97,19 @@ where  Id=@Id ";
         /// <typeparam name="T"></typeparam>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        public PageInfo<ImprestBalanceRecordModel> GetImprestBalanceRecordList(ImprestBalanceRecordSearchCriteria criteria)
+        public PageInfo<ImprestBalanceRecord> GetImprestBalanceRecordList(ImprestBalanceRecordSearchCriteria criteria)
         {
-            string columnList;
-            //查询备用金充值
-            if (criteria.OptType == 1)
-            {
-                columnList = @"  Id,
-                                    Amount,
-                                    OptName,
-                                    OptTime,
-                                    Remark,
-                                    ImprestReceiver";
-            }
-            //骑士支出
-            else
-            {
-                columnList = @"  Id,
+            string columnList = @"  Id,
                                     Amount,
                                     OptName,
                                     OptTime,
                                     Remark,
                                     ClienterName,
-                                    ClienterPhoneNo";
-            }
+                                    ClienterPhoneNo,
+                                    ImprestReceiver,
+                                    OptType,
+                                    BeforeAmount,
+                                    AfterAmount";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             sbSqlWhere.AppendFormat(" AND OptType={0} ", criteria.OptType);
             if (!string.IsNullOrWhiteSpace(criteria.ClienterPhoneNo))
@@ -137,7 +126,7 @@ where  Id=@Id ";
             }
             string tableList = @" ImprestBalanceRecord with(nolock)";
             string orderByColumn = " Id ";
-            return new PageHelper().GetPages<ImprestBalanceRecordModel>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
+            return new PageHelper().GetPages<ImprestBalanceRecord>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
         }
 
 
