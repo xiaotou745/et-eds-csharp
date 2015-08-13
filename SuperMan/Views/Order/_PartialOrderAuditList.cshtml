@@ -78,7 +78,7 @@ width: 100%;
 
                     string yingkuiID = "yingkui" + item.Id;
                     string yingkuis = string.Format("[应收-(应付-扣除补贴)]<br/>[{0}-({1}-{2})]", item.SettleMoney, item.OrderCommission, kouchubutie);
-                    decimal yingkui = item.SettleMoney - item.OrderCommission.Value + kouchubutie;
+                    decimal yingkui = item.SettleMoney - item.OrderCommission ?? 0+ kouchubutie;
                     string color = "blue";
                     if (yingkui<0)
                     {
