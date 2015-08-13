@@ -29,9 +29,7 @@ namespace Ets.AutoDealOverTimeOrder
             Thread.Sleep(10000);
             try
             {
-                //var iPayProvider = new PayProvider();
-                //iPayProvider.AutoDealWithdrawForm();
-                OrderProvider order = new OrderProvider();
+                var order = new OrderProvider();
                 order.AutoDealOverTimeOrder();
             }
             catch (Exception ex)

@@ -1087,7 +1087,7 @@ select @orderamount=o.Amount,@ordercommission=o.OrderCommission,@ordercount=o.Or
 
 if(@DeliveryCompanyID>0)
 begin
-select @ordercommission=case when dc.SettleType=1 then @orderamount*dc.ClienterSettleRatio/100*@ordercount when dc.SettleType=2 then dc.ClienterFixMoney*@ordercount end
+select @ordercommission=case when dc.SettleType=1 then @orderamount*dc.ClienterSettleRatio/100 when dc.SettleType=2 then dc.ClienterFixMoney*@ordercount end
 from DeliveryCompany dc(nolock) 
 where dc.Id=@DeliveryCompanyID
 end
@@ -1104,7 +1104,7 @@ from    dbo.[order] o ( nolock )
 where   o.OrderNo = @OrderNo
 select 0
 ";
-
+            //*@ordercount
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("clienterId", DbType.Int32, 4).Value = order.clienterId;// userId;
             dbParameters.Add("Status", DbType.Int32, 4).Value = OrderStatus.Status2.GetHashCode();
@@ -2868,7 +2868,7 @@ order by a.id desc
                     if (deliveryModel.SettleType == 1)
                     {
                         //订单金额/骑士结算比例值*订单数量
-                        orderCommission = deliveryModel.ClienterSettleRatio == 0 ? 0 : ParseHelper.ToDecimal(dataRow["CpAmount"]) * deliveryModel.ClienterSettleRatio / 100 * ParseHelper.ToInt(dataRow["OrderCount"]);
+                        orderCommission = deliveryModel.ClienterSettleRatio == 0 ? 0 : ParseHelper.ToDecimal(dataRow["CpAmount"]) * deliveryModel.ClienterSettleRatio / 100;// *ParseHelper.ToInt(dataRow["OrderCount"]);
                     }
                     else if (deliveryModel.SettleType == 2)
                     {
@@ -3659,7 +3659,7 @@ where   Id = @OrderId and FinishAll = 0";
                                     JOIN OrderOther oo WITH (NOLOCK) ON oo.OrderId=o.Id
                                     WHERE o.PubDate BETWEEN DATEADD(HOUR,-@overTimeHour,Convert(DateTime,Convert(Varchar(10),GetDate(),120))) 
                                     AND Convert(DateTime,Convert(Varchar(10),GetDate(),120))
-                                    AND o.FinishAll=0 AND o.Status<>3";
+                                    AND o.FinishAll=0 AND o.Status<>3 AND ISNULL(o.DeliveryCompanyID,0)=0 AND ISNULL(o.OrderFrom,0)=0 ";
             #endregion
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@overTimeHour", DbType.Int32).Value = ParseHelper.ToInt(Config.ConfigKey("OverTimeHour"), 24);
@@ -3668,8 +3668,7 @@ where   Id = @OrderId and FinishAll = 0";
             {
                 return null;
             }
-            var list = ConvertDataTableList<OrderListModel>(dt);
-            return list;
+            return ConvertDataTableList<OrderListModel>(dt);
         }
         /// <summary>
         /// 修改订单状态
@@ -3861,6 +3860,28 @@ where c.Id=@ClienterId;");
             parm.AddWithValue("@Platform", 2);
             parm.AddWithValue("@Remark", "服务自动处理超时未完成订单");
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
+        }
+        /// <summary>
+        /// 查询前一天订单审核数据
+        /// danny-20150813
+        /// </summary>
+        /// <returns></returns>
+        public OrderAuditStatisticalModel GetOrderAuditStatistical()
+        {
+            string sql = @" SELECT  ISNULL(COUNT(CASE when oo.AuditStatus=0 AND  o.FinishAll=1 THEN oo.Id END),0) UnAuditQty,
+									ISNULL(COUNT(CASE when oo.AuditStatus=1 THEN oo.Id END),0) AuditOkQty,
+									ISNULL(COUNT(CASE when oo.AuditStatus=2 THEN oo.Id END),0) AuditRefuseQty
+                            FROM [order] o WITH(NOLOCK)
+                            JOIN dbo.OrderOther oo WITH(NOLOCK) ON oo.OrderId=o.Id
+                            WHERE o.PubDate BETWEEN DATEADD(HOUR,-24,Convert(DateTime,Convert(Varchar(10),GetDate(),120))) 
+								AND Convert(DateTime,Convert(Varchar(10),GetDate(),120))";
+
+            var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql));
+            if (dt == null || dt.Rows.Count <= 0)
+            {
+                return null;
+            }
+            return MapRows<OrderAuditStatisticalModel>(dt)[0];
         }
     }
 }
