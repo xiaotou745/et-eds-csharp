@@ -169,7 +169,7 @@ namespace Ets.Service.Provider.Finance
                 
                 #region===4.扣除骑士余额,提现余额,写流水
                 //更新骑士表的余额，可提现余额
-                _clienterDao.UpdateForWithdrawC(new UpdateForWithdrawPM
+                _clienterDao.UpdateCBalanceAndWithdraw(new UpdateForWithdrawPM
                 {
                     Id = climodel.Id,
                     Money = -parmodel.WithdrawPrice
