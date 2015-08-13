@@ -158,6 +158,15 @@ namespace ETS.Const
         /// 商家提现单创建锁
         /// </summary>
         public const string Ets_Withdraw_Create_Lock_B = "Ets_Withdraw_Create_Lock_B_{0}";
+        /// <summary>
+        /// 骑士备用金提现锁
+        /// </summary>
+        public const string Ets_ImprestWithdraw_Lock_C = "Ets_ImprestWithdraw_Lock_C_{0}";
+
+        /// <summary>
+        /// 备用金充值锁
+        /// </summary>
+        public const string Ets_Recharge_Lock = "Ets_Recharge_Lock_{0}";
 
     }
 }

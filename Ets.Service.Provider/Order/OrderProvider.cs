@@ -43,6 +43,8 @@ using Ets.Service.IProvider.Business;
 using Ets.Service.Provider.Business;
 using Ets.Dao.Business;
 using Ets.Model.ParameterModel.WtihdrawRecords;
+using Ets.Model.DataModel.DeliveryCompany;
+using Ets.Dao.DeliveryCompany;
 #endregion
 namespace Ets.Service.Provider.Order
 {
@@ -1364,9 +1366,14 @@ namespace Ets.Service.Provider.Order
                 orderDao.UpdateOrderRealOrderCommission(orderModel.Id.ToString(), realOrderCommission);
 
                 //加可提现                
-                clienterDao.UpdateAllowWithdrawPrice(realOrderCommission, orderModel.clienterId);
-                orderDao.UpdateJoinWithdraw(orderModel.Id);
-                orderDao.UpdateAuditStatus(orderModel.Id, OrderAuditStatusCommon.Refuse.GetHashCode());
+                clienterDao.UpdateCAllowWithdrawPrice(new UpdateForWithdrawPM
+                {
+                                Id=orderModel.clienterId,
+                                Money=realOrderCommission          
+                             }
+                );
+                orderOtherDao.UpdateJoinWithdraw(orderModel.Id);
+                orderOtherDao.UpdateAuditStatus(orderModel.Id, OrderAuditStatusCommon.Refuse.GetHashCode());
 
                 //加可提现金额
                 ClienterAllowWithdrawRecord cawrm = new ClienterAllowWithdrawRecord()
@@ -1447,10 +1454,14 @@ namespace Ets.Service.Provider.Order
                 }
                 #endregion
 
-                clienterDao.UpdateAllowWithdrawPrice(Convert.ToDecimal(orderModel.OrderCommission), orderModel.clienterId);
-                orderDao.UpdateJoinWithdraw(orderModel.Id);
-                orderDao.UpdateAuditStatus(orderModel.Id, OrderAuditStatusCommon.Through.GetHashCode());
-
+                clienterDao.UpdateCAllowWithdrawPrice(new UpdateForWithdrawPM
+                {
+                    Id=orderModel.clienterId,
+                    Money=orderModel.OrderCommission.Value                }
+                    );
+                orderOtherDao.UpdateJoinWithdraw(orderModel.Id);
+                orderOtherDao.UpdateAuditStatus(orderModel.Id, OrderAuditStatusCommon.Through.GetHashCode());   
+                
                 clienterAllowWithdrawRecordDao.Insert(new ClienterAllowWithdrawRecord()
                                     {
                                         ClienterId = orderModel.clienterId,
@@ -1622,11 +1633,35 @@ namespace Ets.Service.Provider.Order
 
             int id = modelPM.OrderId;
             order order = GetById(modelPM);
+
+            #region 获取物流公司应付骑士佣金  2015年8月13日 09:34:02 窦海超
+            DeliveryCompanyModel deliveryModel = null;
+            if (modelPM.DeliveryCompanyID > 0)
+            {
+                deliveryModel = new DeliveryCompanyDao().GetById(modelPM.DeliveryCompanyID);
+            }
+            decimal orderCommission = ParseHelper.ToDecimal(order.OrderCommission);
+            if (deliveryModel != null)
+            {
+                //SettleType=结算类型（1结算比例、2固定金额）
+                if (deliveryModel.SettleType == 1)
+                {
+                    //订单金额/骑士结算比例值*订单数量
+                    orderCommission = deliveryModel.ClienterSettleRatio == 0 ? 0 : ParseHelper.ToDecimal(order.Amount) / deliveryModel.ClienterSettleRatio * ParseHelper.ToInt(order.OrderCount);
+                }
+                else if (deliveryModel.SettleType == 2)
+                {
+                    //骑士固定金额值*订单数量 
+                    orderCommission = deliveryModel.ClienterFixMoney == 0 ? 0 : deliveryModel.ClienterFixMoney * ParseHelper.ToInt(order.OrderCount);
+                }
+            }
+            #endregion
+
             orderDM.Id = order.Id;
             orderDM.OrderNo = order.OrderNo;
             orderDM.OriginalOrderNo = order.OriginalOrderNo;
             orderDM.OrderFrom = order.OrderFrom;
-            orderDM.OrderCommission = order.OrderCommission;
+            orderDM.OrderCommission = orderCommission;// order.OrderCommission;
             orderDM.PubDate = ParseHelper.ToDatetime(order.PubDate, DateTime.Now).ToString("yyyy-MM-dd HH:mm");
             orderDM.businessName = order.BusinessName;
             orderDM.pickUpCity = order.PickUpCity;
@@ -1765,6 +1800,7 @@ namespace Ets.Service.Provider.Order
                     model.TopNum = GlobalConfigDao.GlobalConfigGet(0).ClienterOrderPageSize;// top 值
                     jobs = orderDao.GetExpressNearJob(model);
                 }
+
                 #endregion
             }
             else
@@ -2129,7 +2165,7 @@ namespace Ets.Service.Provider.Order
         public void UpdateClienterAccount(OrderListModel myOrderInfo, decimal money)
         {
             //更新骑士 金额  
-            bool b = clienterDao.UpdateClienterAccountBalanceForFinish(new WithdrawRecordsModel() { UserId = myOrderInfo.clienterId, Amount = money });
+            bool b = clienterDao.UpdateCAccountBalance(new UpdateForWithdrawPM() { Id = myOrderInfo.clienterId, Money = money });
             //增加记录 
             decimal? accountBalance = myOrderInfo.AccountBalance.Value + money;
 

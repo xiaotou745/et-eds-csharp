@@ -1,0 +1,273 @@
+﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Finance.ImprestBalanceRecord>
+@using ETS.Data.PageData;
+@using ETS.Enums;
+@using ETS.Extension
+@using Ets.Model.DataModel.Finance
+@using Webdiyer.WebControls.Mvc;
+@{
+    ViewBag.Title = "ImprestPaymentList";
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+}
+
+<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script src="~/Scripts/jquery-ui-1.8.20.js"></script>
+<script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置 财务管理> 备用金支出
+    </h2>
+    @using (Ajax.BeginForm("DoImprestPaymentList", new RouteValueDictionary { { "pageindex", "" } },
+        new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
+        new RouteValueDictionary { { "id", "searchForm" } }))
+    {
+        <div class="SearchMd">
+            <table>
+                <tr>
+                    <td>
+                        <span class="">骑士电话: </span>
+                        <input type="text" name="clienterPhoneNo" id="clienterPhoneNo" />
+                        <span class="">日期: </span>
+                        <input id="txtOptTimeStart" readonly="readonly" type="text" name="OptDateStart" />
+                        <span class="">到: </span>
+                        <input id="txtOptTimeEnd" readonly="readonly" type="text" name="OptDateEnd" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
+                        <input type="button" value="导出" class="searchBtn" id="btnExport" onclick="return DaoCHu()" />
+                        <input type="button" value="备用金支出" class="searchBtn" id="btnPayment" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+    }
+    <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <div class="bd clearfix" id="dataList">
+        @Html.Partial("DoImprestPaymentList", Model)
+    </div>
+</div>
+
+@*备用金支出弹窗*@
+<div class="ImprestPayOutDiv" id="ImprestPayBox">
+    <div class="add-openbox add-form" id="ImprestPayOutDiv" style="width:500px;top: 30%">
+        <h2>
+            <p id="addstatusFin">备用金支出</p>
+        </h2>
+        <fieldset>
+            <div class="control-group">
+                <label>支出类型:</label>
+                <input type="radio" name="OptType" checked="checked" /><label>骑士支出</label>
+            </div>
+            <div class="control-group">
+                <label>骑士电话:</label>
+                <input name="PhoneNum" id="phoneNum" type="text">
+                <input type="button" value="查询" id="btnclienterserach" />
+            </div>
+            <div id="clienterInfoDiv">
+                <div class="control-group">
+                    <label>骑士姓名:</label><label id="labClienterName"></label>
+                </div>
+                <div class="control-group">
+                    <label>骑士电话:</label><label id="labClienterPhoneNo"></label>
+                    <input type="hidden" id="labClienterID" />
+                </div>
+                <div class="control-group">
+                    <label>骑士余额:</label><label id="labAccountBalance"></label>元
+                </div>
+                <div class="control-group">
+                    <label>骑士可提现余额:</label><label id="labAllowWithdrawPrice"></label>元
+                </div>
+                <div class="control-group">
+                    <label>提现申请中金额:</label><label id="labWithdrawingPrice"></label>元
+                </div>
+                <div class="control-group">
+                    <label>可用备用金余额:</label><label id="labImprestPrice"></label>元
+                </div>
+                <div class="control-group">
+                    <label>备用金支出:</label>
+                    <input name="WithdrawPrice" id="withdrawPrice" type="text">
+                </div>
+                <div class="control-group">
+                    <label>备注:</label><br/>
+                    <textarea cols="45" rows="3" id="remark"></textarea>
+                </div>
+            </div>
+            <br/>
+            <label id="Tip"></label>
+            <p class="btnbox">
+                <input value="确认支出" type="button" id="yesBtn" class="yesBtn" />
+                <input value="关闭" type="button" class="J_closebox qxBtn" id="cancelBox" />
+            </p>
+        </fieldset>
+    </div>
+</div>
+<script type="text/javascript">
+    var adminjs;
+    var decimalReg = /^[0-9]*(\.[0-9]{1,2})?$/;
+    var phoneReg = /^0?1\d{10}$/;
+    $(document).ready(function () {
+         adminjs = new adminglass(); //实例化后台类
+        $('#txtOptTimeStart').datepicker();
+        $('#txtOptTimeEnd').datepicker();
+        window.location.hash = '';
+        //隐藏充值窗
+       // $('#ImprestPayBox').hide();
+        $('#clienterInfoDiv').hide();
+        //点击备用金支出按钮
+        $('#btnPayment').click(function () {
+            adminjs.openwinbox('#ImprestPayOutDiv');
+           // $('#ImprestPayBox').show();
+        });
+        //根据骑士电话查询信息
+        $('#btnclienterserach').click(function() {
+            CheckClienterPhone($('#phoneNum').val());
+        });
+        //取消充值
+        $('#cancelBox').click(function() {
+            ClearInfo();
+           // adminjs.closewinbox('.add-openbox');
+        });
+        $('#yesBtn').click(function() {
+            PayOutOk();
+        });
+        //关闭弹层
+        //$('.J_closebox').click(function () {
+        //    ClearInfo();
+            
+        //    return false;
+        //});
+    });
+
+    //导出
+    function DaoCHu() {
+        var clienterPhoneNo = $("#clienterPhoneNo").val();
+        var txtOptTimeStart = $("#txtOptTimeStart").val();
+        var txtOptTimeEnd = $("#txtOptTimeEnd").val();
+        if (txtOptTimeStart == "" || txtOptTimeEnd == "") {
+            alert("请输入时间范围!");
+            return false;
+        }
+        var url = "/Imprest/PostDaoChuImprestPayment?ClienterPhoneNo=" + clienterPhoneNo + "&OptDateStart=" + txtOptTimeStart + "&OptDateEnd=" + txtOptTimeEnd + "&OptType=2";
+        window.location.href = url;
+        return true;
+    }
+
+    //查询骑士电话
+    function CheckClienterPhone(phoneNum) {
+        if (!phoneReg.test(phoneNum)) {
+            alert('请输入正确的手机号!');
+            return;
+        }
+           
+        var posturl = "/Imprest/CheckPhoneNum";
+        var postPar = {
+            PhoneNum: $('#phoneNum').val()
+        }
+        $.ajax({
+            type: 'POST',
+            url: posturl,
+            data: postPar,
+            success: function(result) {
+                if (result.length < 1 || result.Status == 0) {
+                    alert('骑士不存在或当前骑士不可提现');
+                } else if (result.Status == 1) {
+                    FillInfo(result);
+                }
+            }
+        });
+    }
+
+    //填充数据
+    function FillInfo(data) {
+        $('#labClienterName').text(data.TrueName);
+        $('#labClienterPhoneNo').text(data.PhoneNo);
+        $('#labAccountBalance').text(data.AccountBalance);
+        $('#labAllowWithdrawPrice').text(data.AllowWithdrawPrice);
+        $('#labWithdrawingPrice').text(data.WithdrawingPrice);
+        $('#labImprestPrice').text(data.ImprestPrice);
+        $('#labClienterID').val(data.Id);
+        $('#clienterInfoDiv').show();
+      
+    }
+
+    //确认支出
+    function PayOutOk() {
+        var withdrawPrice = $('#withdrawPrice').val().trim();
+        var clienterID = $('#labClienterID').val().trim();
+        var phoneNum = $('#labClienterPhoneNo').text().trim();
+        var remark = $('#remark').val().trim();
+        var allowwithdrawPrice = $('#labAllowWithdrawPrice').text().trim();
+        var imprice = $('#labImprestPrice').text().trim();
+        if (clienterID=='') {
+            $('#Tip').text('请先查询骑士数据!');
+            return;
+        }
+        if (parseFloat(withdrawPrice) < 0) {
+            $('#Tip').text('提现金额必须大于零元!');
+            return;
+        }
+        if (!decimalReg.test(withdrawPrice)) {
+            $('#Tip').text('请输入正确的提现金额!');
+            return;
+        }
+        if (parseFloat(withdrawPrice) > parseFloat(allowwithdrawPrice)) {
+            $('#Tip').text('提现金额超过该骑士可提现金额!');
+            return;
+        }
+        if (parseFloat(withdrawPrice) > parseFloat(imprice)) {
+            $('#Tip').text('提现金额超过备用金账户总余额!');
+            return;
+        }
+        if (remark.length<1) {
+            $('#Tip').text('备注不能为空');
+            return;
+        }
+        var parmodel = {
+            ClienterId: clienterID,
+            WithdrawPrice: withdrawPrice,
+            Remark: remark,
+            PhoneNum: phoneNum
+        }
+        var posturl = '/Imprest/ClienterWithdrawOk';
+        $.ajax({
+            type: 'POST',
+            url: posturl,
+            data: parmodel,
+            success: function(result) {
+                if (result.Status == 0 || result.Status=="0") {
+                    alert(result.Message);
+                } else if (result.Status == 1 || result.Status == "1") {
+                   
+                   alert(result.Message);
+                   ClearInfo();
+                }
+            }
+        });
+    }
+    //清除数据
+    function ClearInfo() {
+        adminjs.closewinbox('.add-openbox');
+        
+        $('#labClienterName').text('');
+        $('#labClienterPhoneNo').text('');
+        $('#labAccountBalance').text('');
+        $('#labAllowWithdrawPrice').text('');
+        $('#labWithdrawingPrice').text('');
+        $('#labImprestPrice').text('');
+        $('#labClienterID').val('');
+        $('#phoneNum').val('');
+        $('#withdrawPrice').val('');
+        $('#remark').val('');
+        $('#Tip').text('');
+        $('#clienterInfoDiv').hide();
+        //隐藏充值窗
+        //$('#ImprestPayBox').hide();
+        
+        
+    }
+</script>
+
+<script src="~/Scripts/mvcpager.js"></script>
+

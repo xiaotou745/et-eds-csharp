@@ -74,7 +74,7 @@ namespace Ets.Service.Provider.Finance
                 }
                 else
                 {
-                    _clienterDao.UpdateForWithdrawC(new UpdateForWithdrawPM
+                    _clienterDao.UpdateCBalanceAndWithdraw(new UpdateForWithdrawPM
                     {
                         Id = model.ClienterId,
                         Money = -model.WithdrawPrice
@@ -829,7 +829,7 @@ namespace Ets.Service.Provider.Finance
                         && clienterFinanceDao.ModifyClienterBalanceRecordStatus(model.WithwardId.ToString())
                         && clienterFinanceDao.ModifyClienterAmountInfo(model.WithwardId.ToString()))
                     {
-                        _clienterDao.UpdateForWithdrawC(new UpdateForWithdrawPM
+                        _clienterDao.UpdateCBalanceAndWithdraw(new UpdateForWithdrawPM
                         {
                             Id = withdraw.ClienterId,
                             Money = -withdraw.HandCharge

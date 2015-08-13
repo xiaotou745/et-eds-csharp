@@ -11,8 +11,7 @@ using SuperMan.App_Start;
 
 namespace SuperMan.Controllers
 {
-    [WebHandleError]
-    public class YeePayRunningManagerController : Controller
+    public class YeePayRunningManagerController : BaseController
     {
         private YeePayRunningProvider yeePayRunningProvider = new YeePayRunningProvider();
         

@@ -14,7 +14,6 @@ namespace SuperMan.Controllers
     /// <summary>
     /// 权限业务操作类--平扬 2015.3.18
     /// </summary>
-    [WebHandleError]
     public class MenuManagerController : BaseController
     {
         /// <summary>

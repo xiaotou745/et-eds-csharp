@@ -211,7 +211,7 @@ namespace SuperManWebApi.Controllers
             }
             #endregion
 
-            return new ClienterProvider().Receive_C(model.userId, model.orderNo, model.businessId, model.Longitude, model.Latitude);
+            return new ClienterProvider().Receive_C(model);//model.userId, model.orderNo, model.businessId, model.Longitude, model.Latitude
         }
 
         /// <summary>
@@ -219,7 +219,7 @@ namespace SuperManWebApi.Controllers
         /// </summary> 
         /// <returns></returns>
         [HttpPost]
-        [Token]
+        //[Token]
         public ResultModel<FinishOrderResultModel> Complete(OrderCompleteModel parModel)
         {
             if (parModel.userId <= 0)  //用户id非空验证 骑士Id

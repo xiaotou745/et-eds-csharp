@@ -9,7 +9,6 @@ using SuperMan.App_Start;
 using Ets.Model.DomainModel.Group;
 namespace SuperMan.Controllers
 {
-    [WebHandleError]
     public class GroupManagerController : BaseController
     {
         /// <summary>

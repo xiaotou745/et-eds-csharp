@@ -207,7 +207,8 @@ namespace ETS.Enums
         /// <summary>
         /// 订单佣金
         /// </summary>
-        [DisplayText("订单佣金")] OrderCommission = 1,
+        [DisplayText("订单佣金")]
+        OrderCommission = 1,
         /// <summary>
         /// 提现申请
         /// </summary>
@@ -272,7 +273,9 @@ namespace ETS.Enums
         [DisplayText("财付通")]
         CaiFuTong = 4,
         [DisplayText("百度钱包")]
-        BaiDuQinBao = 5
+        BaiDuQinBao = 5,
+        [DisplayText("备用金")]
+        Imprest = 6,
     }
 
     /// <summary>
@@ -462,7 +465,7 @@ namespace ETS.Enums
         Dealing = 0,
         [DisplayText("已处理")]
         Dealed = 1,
-        
+
     }
     /// <summary>
     ///商户金融账号 账号类型：(1网银 2支付宝 3微信 4财付通 5百度钱包）枚举 add by caoheyang 20150511
@@ -507,7 +510,7 @@ namespace ETS.Enums
         [DisplayText("审核通过")]
         AuditStatusOk = 11,
         [DisplayText("审核拒绝")]
-        AuditStatusRefuse= 12
+        AuditStatusRefuse = 12
     }
     public enum OrderAuditStatusCommon
     {
@@ -516,7 +519,7 @@ namespace ETS.Enums
         [DisplayText("待审核")]
         NotAudit = 0,
         [DisplayText("审核通过")]
-        Through = 1       
+        Through = 1
     }
     /// <summary>
     ///提现单处理状态(0：初始值1：待注册 2：已注册 3：待转账 4：已转账 5：待提现 6：已提现) 
@@ -637,5 +640,51 @@ namespace ETS.Enums
     {
         [DisplayText("请等待一分钟后创建提现申请单")]
         Warn = 1
+    }
+
+    /// <summary>
+    /// 备用金余额流水 操作类型
+    /// </summary>
+    public enum ImprestBalanceRecordOptType
+    {
+        [DisplayText("充值")]
+        Recharge = 1,
+        [DisplayText("骑士支出")]
+        Payment = 2
+    }
+
+
+
+    /// <summary>
+    /// 备用金余额流水 操作类型
+    /// </summary>
+    public enum AjaxImprestRechargeReturnEnum
+    {
+        /// <summary>
+        /// 充值成功
+        /// </summary>
+        [DisplayText("充值成功")]
+        Success = 1,
+        /// <summary>
+        /// 备用金充值正在执行中，请勿重新提交，请一分钟后重试
+        /// </summary>
+        [DisplayText("备用金充值正在执行中，请勿重新提交，请一分钟后重试")]
+        Repert = 2,
+         /// <summary>
+        /// 备用金充值金额有误
+         /// </summary>
+        [DisplayText("备用金充值金额有误")]
+        MoneyError = 3,
+        /// <summary>
+        /// 备用金接收人不能为空且至少两个字符
+        /// </summary>
+        [DisplayText("备用金接收人不能为空且在2-10个字符之间")]
+        ImprestReceiverError = 4,
+        /// <summary>
+        /// 备用信息不能为空且至少五个字符
+        /// </summary>
+        [DisplayText("备注信息不能为空且在5-50个字符之间")]
+        RemarkError = 5
+
     }
 }
