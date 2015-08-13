@@ -58,7 +58,7 @@ namespace Ets.Model.ParameterModel.Clienter
         /// <summary>
         /// 物流公司是否显示原金额1:显示,0不显示
         /// </summary>
-        public int IsDisplayDeliveryMoney { get; set; }
+        //public int IsDisplayDeliveryMoney { get; set; }
 
 
 

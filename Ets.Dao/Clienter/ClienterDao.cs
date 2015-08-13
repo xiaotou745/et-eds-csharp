@@ -153,9 +153,9 @@ namespace Ets.Dao.Clienter
         c.IsBind ,
         ISNULL(d.Id,0) as DeliveryCompanyId,
         isnull(d.DeliveryCompanyName,'') DeliveryCompanyName,
-        isnull(d.IsDisplay,1) IsDisplay,
+        --isnull(d.IsDisplay,1) IsDisplay,
         c.Appkey,
-        (case when d.SettleType=1 and ClienterSettleRatio>0 or d.SettleType=2 and d.ClienterFixMoney>0 then 1 else 0 end) IsDisplayDeliveryMoney
+        (case when d.SettleType=1 and ClienterSettleRatio>0 or d.SettleType=2 and d.ClienterFixMoney>0 then 1 else 0 end) IsDisplay
 from    dbo.clienter c(nolock)
  left join dbo.DeliveryCompany d(nolock) on c.DeliveryCompanyId = d.Id
 where   c.PhoneNo = @PhoneNo
@@ -534,8 +534,8 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.FromClienter, OrderConst.O
         c.IsBind,
         ISNULL(d.Id,0) as DeliveryCompanyId,
         isnull(d.DeliveryCompanyName,'') DeliveryCompanyName,
-        isnull(d.IsDisplay,1) IsDisplay,
-        (case when d.SettleType=1 and ClienterSettleRatio>0 or d.SettleType=2 and d.ClienterFixMoney>0 then 1 else 0 end) IsDisplayDeliveryMoney
+        --isnull(d.IsDisplay,1) IsDisplay,
+        (case when d.SettleType=1 and ClienterSettleRatio>0 or d.SettleType=2 and d.ClienterFixMoney>0 then 1 else 0 end) IsDisplay
 from    dbo.clienter c ( nolock )
  left join dbo.DeliveryCompany d ( nolock ) on c.DeliveryCompanyId = d.Id 
 where c.Id=@clienterId ";
@@ -1092,7 +1092,7 @@ select  c.Id,PhoneNo,LoginName,recommendPhone,Password,TrueName,IDCard,PicWithHa
 AccountBalance,InsertTime,InviteCode,City,CityId,GroupId,HealthCardID,InternalDepart,ProvinceCode
 ,AreaCode,CityCode,Province,BussinessID,WorkStatus,AllowWithdrawPrice,HasWithdrawPrice,
 (case when (select count(1) from dbo.ClienterMessage cm(nolock) where cm.ClienterId=c.id and cm.IsRead=0)=0 then 0 else 1 end) HasMessage,
-(case when dc.SettleType=1 and ClienterSettleRatio>0 or dc.SettleType=2 and dc.ClienterFixMoney>0 then 1 else 0 end) IsDisplayDeliveryMoney
+--(case when dc.SettleType=1 and ClienterSettleRatio>0 or dc.SettleType=2 and dc.ClienterFixMoney>0 then 1 else 0 end) IsDisplayDeliveryMoney
 from  dbo.clienter c (nolock) 
 left join dbo.DeliveryCompany dc(nolock) on c.DeliveryCompanyId=dc.Id
 where c.Id=@Id";
@@ -1278,7 +1278,7 @@ WHERE c.Id = @ClienterId  ";
                 result.AreaCode = dataReader["AreaCode"].ToString();
                 result.CityCode = dataReader["CityCode"].ToString();
                 result.Province = dataReader["Province"].ToString();
-                result.IsDisplayDeliveryMoney = ParseHelper.ToInt(dataReader["IsDisplayDeliveryMoney"].ToString());
+                //result.IsDisplayDeliveryMoney = ParseHelper.ToInt(dataReader["IsDisplayDeliveryMoney"].ToString());
                 obj = dataReader["BussinessID"];
                 if (obj != null && obj != DBNull.Value)
                 {

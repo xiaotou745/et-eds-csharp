@@ -2125,7 +2125,6 @@ namespace Ets.Service.Provider.Order
         public void AutoDealOverTimeOrder()
         {
             #region 根据配置时间获取未处理超时订单
-
             var orderList = orderDao.GetDealOverTimeOrderList();
             if (orderList == null || orderList.Count == 0)
             {
@@ -2174,25 +2173,34 @@ namespace Ets.Service.Provider.Order
                 {
                     using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
                     {
-                        if (orderDao.ModifyOrderStatus(new OrderListModel()
+                        if (orderDao.OrderAuditRefuseModifyOrder(new OrderListModel()
                         {
                             Id = orderListModel.Id,
-                            Status = (byte?) OrderStatus.Status3,
-                            OldStatus = orderListModel.Status,
-                            OrderCommission = orderListModel.OrderCommission
+                            RealOrderCommission = ParseHelper.ToDecimal(orderListModel.OrderCommission) - ParseHelper.ToDecimal(orderListModel.WebsiteSubsidy),
                         }))
                         {
-                            if (orderDao.OrderCancelReturnClienter(new OrderListModel()
+                            if (orderDao.OrderAuditRefuseReturnClienter(new OrderListModel()
                             {
+                                RealOrderCommission = ParseHelper.ToDecimal(orderListModel.OrderCommission) - ParseHelper.ToDecimal(orderListModel.WebsiteSubsidy),
+                                Id = orderListModel.Id,
+                                OrderNo = orderListModel.OrderNo,
+                                clienterId = orderListModel.clienterId
 
                             }))
                             {
                                 if (orderDao.InsertClienterAllowWithdrawRecord(new ClienterAllowWithdrawRecord()
                                 {
                                     ClienterId = orderListModel.clienterId,
-                                    Amount = 0
+                                    Amount = ParseHelper.ToDecimal(orderListModel.OrderCommission) - ParseHelper.ToDecimal(orderListModel.WebsiteSubsidy),
+                                    Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
+                                    RecordType = ClienterBalanceRecordRecordType.OrderCommission.GetHashCode(),
+                                    Operator = "服务",
+                                    WithwardId =orderListModel.Id,
+                                    RelationNo = orderListModel.OrderNo,
+                                    Remark = "服务自动处理超时未完成订单"
                                 }))
                                 {
+                                    orderDao.AutoAuditRefuseDeal(orderListModel.Id);
                                     tran.Complete();
                                 }
                             }
