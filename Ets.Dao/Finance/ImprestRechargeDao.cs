@@ -130,7 +130,7 @@ select @@IDENTITY ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("@Price", DbType.Decimal).Value = paymodel.Price;
             dbParameters.Add("@OprName", DbType.String).Value = paymodel.OprName;
-            dbParameters.Add("@Remark", DbType.String).Value = paymodel.Remark;
+            dbParameters.Add("@Remark", DbType.StringFixedLength).Value = paymodel.Remark;
             dbParameters.Add("@OptType", DbType.Int32).Value = paymodel.OptType;
             dbParameters.Add("@ClienterName", DbType.String).Value = paymodel.ClienterName;
             dbParameters.Add("@ClienterPhoneNo", DbType.String).Value = paymodel.ClienterPhoneNo;
