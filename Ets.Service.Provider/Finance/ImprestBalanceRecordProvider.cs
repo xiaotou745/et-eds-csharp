@@ -212,5 +212,30 @@ namespace Ets.Service.Provider.Finance
             #endregion
             return model;
         }
+
+        /// <summary>
+        /// 充值 备用金流水
+        /// </summary>
+        /// <param name="model">参数</param>
+        /// <returns></returns>
+        public ResultModel<string> AjaxImprestRecharge(ImprestBalanceRecord model)
+        {
+            if (model.Amount < 1 || model.Amount > 1000000)  //备用金充值金额有误
+            {
+                return ResultModel<string>.Conclude(SystemState.ParaError);
+            }
+            if (string.IsNullOrWhiteSpace(model.ImprestReceiver)) //备用金接收人不能为空
+            {
+                return ResultModel<string>.Conclude(SystemState.ParaError);
+            }
+            if (_imprestBalanceRecordDao.InsertRechargeRecord(model))
+            {
+                return ResultModel<string>.Conclude(SystemState.Success);
+            }
+            else
+            {
+                return ResultModel<string>.Conclude(SystemState.SystemError);
+            }
+        }
     }
 }

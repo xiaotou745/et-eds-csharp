@@ -142,7 +142,7 @@ where  Id=@Id ";
 
 
         /// <summary>
-        /// 增加一条准备金支出记录
+        /// 增加一条准备金支出记录  茹化肖
         /// </summary>
         public bool InsertRecord(ImprestBalanceRecord imprestBalanceRecord)
         {
@@ -178,6 +178,28 @@ where  Id=@Id ";
             dbParameters.AddWithValue("@ClienterName", imprestBalanceRecord.ClienterName);
             dbParameters.AddWithValue("@ClienterPhoneNo", imprestBalanceRecord.ClienterPhoneNo);
             return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, insertSql, dbParameters))>0;
+        }
+
+
+        /// <summary>
+        /// 备用金充值功能 add by caoheyang 20150813
+        /// </summary>
+        /// <param name="imprestBalanceRecord"></param>
+        /// <returns></returns>
+        public bool InsertRechargeRecord(ImprestBalanceRecord imprestBalanceRecord)
+        {
+            const string insertSql = @"
+update dbo.ImprestRecharge set TotalRecharge=TotalRecharge+@Amount,RemainingAmount=RemainingAmount+@Amount
+output @Amount,inserted.RemainingAmount-@Amount,Inserted.RemainingAmount, @OptName,@OptType,@Remark,@ImprestReceiver
+into ImprestBalanceRecord(Amount,BeforeAmount,AfterAmount,OptName,OptType,Remark,ImprestReceiver)
+";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@Amount", imprestBalanceRecord.Amount);
+            dbParameters.AddWithValue("@OptName", imprestBalanceRecord.OptName);
+            dbParameters.AddWithValue("@OptType", imprestBalanceRecord.OptType);
+            dbParameters.AddWithValue("@Remark", imprestBalanceRecord.Remark);
+            dbParameters.AddWithValue("@ImprestReceiver", imprestBalanceRecord.ImprestReceiver);;
+            return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, insertSql, dbParameters)) > 0;
         }
     }
 }

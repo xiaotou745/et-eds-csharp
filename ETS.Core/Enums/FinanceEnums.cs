@@ -638,4 +638,15 @@ namespace ETS.Enums
         [DisplayText("请等待一分钟后创建提现申请单")]
         Warn = 1
     }
+
+    /// <summary>
+    /// 备用金余额流水 操作类型
+    /// </summary>
+    public enum ImprestBalanceRecordOptType
+    {
+        [DisplayText("充值")]
+        Recharge = 1,
+        [DisplayText("骑士支出")]
+        Payment = 2
+    }
 }
