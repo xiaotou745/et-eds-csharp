@@ -24,7 +24,6 @@ using Ets.Model.Common;
 using ETS.Enums;
 namespace SuperMan.Controllers
 {
-    [WebHandleError]
     public class SuperManManagerController : BaseController
     {
         readonly Ets.Service.IProvider.Distribution.IDistributionProvider iDistributionProvider = new DistributionProvider();

@@ -22,7 +22,6 @@ namespace SuperMan.Controllers
     /// <summary>
     /// 物流订单管理模块相关业务
     /// </summary>
-    [WebHandleError]
     public class DeliveryManagerController : BaseController
     {
         readonly IAreaProvider iAreaProvider = new AreaProvider();

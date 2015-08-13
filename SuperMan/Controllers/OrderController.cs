@@ -24,7 +24,6 @@ using Ets.Service.Provider.Business;
 using Ets.Service.IProvider.Business;
 namespace SuperMan.Controllers
 {
-    [WebHandleError]
     public class OrderController : BaseController
     {
         Ets.Service.IProvider.Distribution.IDistributionProvider iDistributionProvider = new DistributionProvider();

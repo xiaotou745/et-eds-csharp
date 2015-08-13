@@ -3,7 +3,6 @@
 
 namespace SuperMan.Controllers
 {
-    [WebHandleError]
     public class CommonController : BaseController
     {
          /// <summary>
