@@ -942,7 +942,7 @@ where Id=@WithwardId;");
         public decimal GetClienterWithdrawingAmount(int cId)
         {
             string sql = string.Format(@" 
-SELECT SUM(Amount) AS Amount FROM ClienterWithdrawForm ( NOLOCK) WHERE ClienterId=@CID AND (Status=1 OR Status=2)");
+SELECT ISNULL(SUM(Amount),0) AS Amount FROM ClienterWithdrawForm ( NOLOCK) WHERE ClienterId=@CID AND (Status=1 OR Status=2)");
             var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@CID", cId);
             var obj = DbHelper.ExecuteScalar(SuperMan_Write, sql, parm);
