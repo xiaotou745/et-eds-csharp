@@ -132,7 +132,7 @@
         $('#yesBtn').click(function() {
             PayOutOk();
         });
-        $('#yesBtn').attr('disabled', true);//设置disabled属性为true，按钮不可用
+        $('#yesBtn').hide();//设置disabled属性为true，按钮不可用
         //关闭弹层
         //$('.J_closebox').click(function () {
         //    ClearInfo();
@@ -150,11 +150,22 @@
             alert("请输入时间范围!");
             return false;
         }
+        if (txtOptTimeStart != "" &&txtOptTimeEnd != "") {
+            if (CheckTime(txtOptTimeStart, txtOptTimeEnd)) {
+                alert("开始时间不能大于结束时间");
+                return false;
+            }
+        }
         var url = "/Imprest/PostDaoChuImprestPayment?ClienterPhoneNo=" + clienterPhoneNo + "&OptDateStart=" + txtOptTimeStart + "&OptDateEnd=" + txtOptTimeEnd + "&OptType=2";
         window.location.href = url;
         return true;
     }
-
+    //验证时间大小
+    function CheckTime(d1, d2) {
+        var d11 = new Date(d1.replace(/\-/g, '/'));
+        var d22 = new Date(d2.replace(/\-/g, '/'));
+        return d1 > d2;
+    }
     //查询骑士电话
     function CheckClienterPhone(phoneNum) {
         if (!phoneReg.test(phoneNum)) {
@@ -174,7 +185,7 @@
                 if (result.length < 1 || result.Status == 0) {
                     alert('骑士不存在或当前骑士不可提现');
                 } else if (result.Status == 1) {
-                    $('#yesBtn').attr('disabled', false);
+                    $('#yesBtn').show();
                     FillInfo(result);
                 }
             }
@@ -226,6 +237,10 @@
             $('#Tip').text('备注不能为空');
             return;
         }
+        if (remark.length >50) {
+            $('#Tip').text('备注不能超过50个字符');
+            return;
+        }
         var parmodel = {
             ClienterId: clienterID,
             WithdrawPrice: withdrawPrice,
@@ -264,7 +279,7 @@
         $('#remark').val('');
         $('#Tip').text('');
         $('#clienterInfoDiv').hide();
-        $('#yesBtn').attr('disabled', true);
+        $('#yesBtn').hide();
         //隐藏充值窗
         //$('#ImprestPayBox').hide();
         
