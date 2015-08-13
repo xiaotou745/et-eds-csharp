@@ -3794,5 +3794,116 @@ from dbo.clienter as c where Id=@ClienterId";
             dbParameters.AddWithValue("Remark", clienterAllowWithdrawRecord.Remark); //描述
             return DbHelper.ExecuteNonQuery(SuperMan_Write, insertSql, dbParameters) > 0;
         }
+        /// <summary>
+        /// 自动审核拒绝处理
+        /// danny-20150813
+        /// </summary>
+        /// <param name="orderId">订单Id</param>
+        /// <returns></returns>
+        public bool AutoAuditRefuseDeal(int orderId)
+        {
+            const string sql = @"
+update OrderOther
+set  IsJoinWithdraw=@IsJoinWithdraw
+    ,AuditStatus = @Auditstatus
+    ,DeductCommissionReason=@DeductCommissionReason
+    ,DeductCommissionType=@DeductCommissionType
+where orderId=@orderId";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@orderId", orderId);
+            dbParameters.AddWithValue("@IsJoinWithdraw", 1);
+            dbParameters.AddWithValue("@Auditstatus", OrderAuditStatusCommon.Refuse.GetHashCode());
+            dbParameters.AddWithValue("@DeductCommissionType", 1);
+            dbParameters.AddWithValue("@DeductCommissionReason", "未在规定时间段内完成上传小票");
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters) > 0;
+        }
+        /// <summary>
+        /// 订单自动审核拒绝增加除网站外的金额
+        /// danny-20150813
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool OrderAuditRefuseReturnClienter(OrderListModel model)
+        {
+            string sql = string.Format(@" 
+update c
+set    c.AccountBalance=ISNULL(c.AccountBalance, 0)+@Amount
+      ,c.AllowWithdrawPrice=ISNULL(c.AllowWithdrawPrice, 0)+@Amount
+OUTPUT
+  Inserted.Id,
+  -@Amount,
+  @Status,
+  Inserted.AccountBalance,
+  @RecordType,
+  @Operator,
+  getdate(),
+  @WithwardId,
+  @RelationNo,
+  @Remark
+INTO ClienterBalanceRecord
+  (  [ClienterId]
+    ,[Amount]
+    ,[Status]
+    ,[Balance]
+    ,[RecordType]
+    ,[Operator]
+    ,[OperateTime]
+    ,[WithwardId]
+    ,[RelationNo]
+    ,[Remark])
+from clienter c
+where c.Id=@ClienterId;");
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Amount", model.RealOrderCommission);
+            parm.AddWithValue("@Status", ClienterBalanceRecordStatus.Success);
+            parm.AddWithValue("@RecordType", ClienterBalanceRecordRecordType.CancelOrder);
+            parm.AddWithValue("@Operator", "服务");
+            parm.AddWithValue("@WithwardId", model.Id);
+            parm.AddWithValue("@RelationNo", model.OrderNo);
+            parm.AddWithValue("@Remark", "服务自动处理超时未完成订单");
+            parm.AddWithValue("@ClienterId", model.clienterId);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
+        }
+        /// <summary>
+        /// 订单审核拒绝修改订单
+        /// danny-20150813
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool OrderAuditRefuseModifyOrder(OrderListModel model)
+        {
+            string sql = string.Format(@" UPDATE dbo.[order]
+                                             SET    FinishAll = @FinishAll,
+                                                    RealOrderCommission=@RealOrderCommission
+                                            OUTPUT
+                                              Inserted.Id,
+                                              @Price,
+                                              GETDATE(),
+                                              @OptId,
+                                              @OptName,
+                                              Inserted.[Status],
+                                              @Platform,
+                                              @Remark
+                                            INTO dbo.OrderSubsidiesLog
+                                              (OrderId,
+                                              Price,
+                                              InsertTime,
+                                              OptId,
+                                              OptName,
+                                              OrderStatus,
+                                              Platform,
+                                              Remark)
+                                             WHERE  Id = @Id  ");
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Id", model.Id);
+            parm.AddWithValue("@FinishAll", 1);
+            parm.AddWithValue("@RealOrderCommission", model.RealOrderCommission);
+            parm.AddWithValue("@Price", model.RealOrderCommission);
+            parm.AddWithValue("@OptId", 0);
+            parm.AddWithValue("@OptName", "服务");
+            parm.AddWithValue("@Platform", 2);
+            parm.AddWithValue("@Remark", "服务自动处理超时未完成订单");
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
+        }
     }
 }
