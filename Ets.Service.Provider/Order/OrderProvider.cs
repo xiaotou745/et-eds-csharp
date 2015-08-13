@@ -2143,7 +2143,14 @@ namespace Ets.Service.Provider.Order
 
                             }))
                             {
-                                tran.Complete();
+                                if (orderDao.InsertClienterAllowWithdrawRecord(new ClienterAllowWithdrawRecord()
+                                {
+                                    ClienterId = orderListModel.clienterId,
+                                    Amount = 0
+                                }))
+                                {
+                                    tran.Complete();
+                                }
                             }
                         }
                         
