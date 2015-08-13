@@ -7,8 +7,8 @@
     <ProjectGuid>{6C285882-80D3-414E-9D0D-DF54547B200D}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Ets.AutoDealWithward</RootNamespace>
-    <AssemblyName>Ets.AutoDealWithward</AssemblyName>
+    <RootNamespace>Ets.AutoDealOverTimeOrder</RootNamespace>
+    <AssemblyName>Ets.AutoDealOverTimeOrder</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

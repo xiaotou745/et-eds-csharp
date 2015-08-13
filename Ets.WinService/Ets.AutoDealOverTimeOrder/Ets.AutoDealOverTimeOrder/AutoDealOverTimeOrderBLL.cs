@@ -9,7 +9,7 @@ using Ets.Service.IProvider.Pay;
 using Ets.Service.Provider.Pay;
 using ETS.Util;
 
-namespace Ets.AutoDealWithward
+namespace Ets.AutoDealOverTimeOrder
 {
     public class AutoDealOverTimeOrderBLL : Quartz.IJob
     {
