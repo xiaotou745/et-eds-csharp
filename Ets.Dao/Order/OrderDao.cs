@@ -2548,6 +2548,7 @@ select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0}
         a.Id, a.OrderCommission, a.OrderCount,
         ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,
+        a.Amount CpAmount,
         b.Name as BusinessName, b.City as BusinessCity,
         b.Address as BusinessAddress, isnull(a.ReceviceCity, '') as UserCity,
         a.Remark,
@@ -2590,6 +2591,7 @@ declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0} a.Id,a.OrderCommission,a.OrderCount,   
         (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
+        a.Amount CpAmount,
         b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
         ISNULL(a.ReceviceCity,'') as UserCity,ISNULL(a.ReceviceAddress,'附近3公里左右，由商户指定') as UserAddress,
         a.Remark,
@@ -2639,6 +2641,7 @@ select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0}
         a.Id, a.OrderCommission, a.OrderCount,
         ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,
+        a.Amount CpAmount,
         b.Name as BusinessName, b.City as BusinessCity,
         b.Address as BusinessAddress, isnull(a.ReceviceCity, '') as UserCity,
        a.Remark,
@@ -2662,6 +2665,7 @@ select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0}
         a.Id, a.OrderCommission, a.OrderCount,
         ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,
+        a.Amount CpAmount,
         b.Name as BusinessName, b.City as BusinessCity,
         b.Address as BusinessAddress, isnull(a.ReceviceCity, '') as UserCity,
         a.Remark,
@@ -2717,6 +2721,7 @@ declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0} a.Id,a.OrderCommission,a.OrderCount,   
 (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
+a.Amount CpAmount,
 a.Remark,
 b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
 ISNULL(a.ReceviceCity,'') as UserCity,ISNULL(a.ReceviceAddress,'附近3公里左右，由商户指定') as UserAddress,
@@ -2742,6 +2747,7 @@ declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0} a.Id,a.OrderCommission,a.OrderCount,   
 (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
+a.Amount CpAmount,
 a.Remark,
 b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
 ISNULL(a.ReceviceCity,'') as UserCity,ISNULL(a.ReceviceAddress,'附近3公里左右，由商户指定') as UserAddress,
@@ -2797,6 +2803,7 @@ declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0}  a.BusinessId, a.Id,a.OrderCommission,a.OrderCount,   
 (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
+ a.Amount CpAmount,
 a.Remark,
 b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
 ISNULL(a.ReceviceCity,'') as UserCity,ISNULL(a.ReceviceAddress,'附近3公里左右，由商户指定') as UserAddress,
@@ -2861,7 +2868,7 @@ order by a.id desc
                     if (deliveryModel.SettleType == 1)
                     {
                         //订单金额/骑士结算比例值*订单数量
-                        orderCommission = deliveryModel.ClienterSettleRatio == 0 ? 0 : ParseHelper.ToDecimal(dataRow["Amount"]) * deliveryModel.ClienterSettleRatio/100 * ParseHelper.ToInt(dataRow["OrderCount"]);
+                       orderCommission = deliveryModel.ClienterSettleRatio == 0 ? 0 : ParseHelper.ToDecimal(dataRow["CpAmount"]) * deliveryModel.ClienterSettleRatio/100 * ParseHelper.ToInt(dataRow["OrderCount"]);
                     }
                     else if (deliveryModel.SettleType == 2)
                     {
