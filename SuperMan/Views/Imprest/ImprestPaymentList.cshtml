@@ -26,19 +26,17 @@
                 <tr>
                     <td>
                         <span class="">骑士电话: </span>
-                        <input type="text" name="clienterNo" id="clienterNo" />
-                    </td>
-                    <td>
+                        <input type="text" name="clienterPhoneNo" id="clienterPhoneNo" />
                         <span class="">日期: </span>
-                        <input id="txtOptTimeStart" readonly="readonly" type="text" name="OptTimeStart" />
+                        <input id="txtOptTimeStart" readonly="readonly" type="text" name="OptDateStart" />
                         <span class="">到: </span>
-                        <input id="txtOptTimeEnd" readonly="readonly" type="text" name="OptTimeEnd" />
+                        <input id="txtOptTimeEnd" readonly="readonly" type="text" name="OptDateEnd" />
                     </td>
                 </tr>
                 <tr>
                     <td>
                         <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
-                        <input type="button" value="导出" class="searchBtn" id="btnExport" />
+                        <input type="button" value="导出" class="searchBtn" id="btnExport" onclick="return DaoCHu()" />
                         <input type="button" value="备用金支出" class="searchBtn" id="btnPayment" />
                     </td>
                 </tr>
@@ -52,26 +50,22 @@
 </div>
 <script type="text/javascript">
 
-    $(function () {
-        
+    $(document).ready(function () {
+        $('#txtOptTimeStart').datepicker();
+        $('#txtOptTimeEnd').datepicker();
+        window.location.hash = '';
     });
 
     //导出
     function DaoCHu() {
-        var superManPhone = $("#txtSuperManPhone").val();
-        var txtSuperManName = $("#txtSuperManName").val();
-        var txtBusinessPhone = $("#txtBusinessPhone").val();
-        var txtBusinessName = $("#txtBusinessName").val();
-        var txtOrderPubStart = $("#txtOrderPubStart").val();
-        var txtOrderPubEnd = $("#txtOrderPubEnd").val();
-        var businessCity = $("#businessCity").find("option:selected").text();
-        var orderStatus = $("#StatusSelect").find("option:selected").text();
-        var groupId = $("#GroupId").val();
-        if (txtOrderPubStart == "" || txtOrderPubEnd == "") {
+        var clienterPhoneNo = $("#clienterPhoneNo").val();
+        var txtOptTimeStart = $("#txtOptTimeStart").val();
+        var txtOptTimeEnd = $("#txtOptTimeEnd").val();
+        if (txtOptTimeStart == "" || txtOptTimeEnd == "") {
             alert("请输入时间范围!");
-            return;
+            return false;
         }
-        var url = "/Order/PostDaoChuOrder?superManPhone=" + superManPhone + "&superManName=" + txtSuperManName + "&businessPhone=" + txtBusinessPhone + "&businessName=" + txtBusinessName + "&orderStatus=" + orderStatus + "&businessCity=" + businessCity + "&OrderPubStart=" + txtOrderPubStart + "&OrderPubEnd=" + txtOrderPubEnd + "&GroupId=" + groupId;
+        var url = "/Imprest/PostDaoChuImprestPayment?ClienterPhoneNo=" + clienterPhoneNo + "&OptDateStart=" + txtOptTimeStart + "&OptDateEnd=" + txtOptTimeEnd + "&OptType=2";
         window.location.href = url;
         return true;
     }
