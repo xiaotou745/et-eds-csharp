@@ -786,8 +786,8 @@ select @@IDENTITY ";
                                         ,o.[IsPay]
                                         ,o.[Amount]                                        
                                         ,ISNULL(o.OrderCommission,0) OrderCommission
-                                        ,o.[DistribSubsidy]
-                                        ,o.[WebsiteSubsidy]
+                                        ,ISNULL(o.DistribSubsidy,0) DistribSubsidy
+                                        ,ISNULL(o.WebsiteSubsidy,0) WebsiteSubsidy                                   
                                         ,o.[Remark]
                                         ,o.[Status]
                                         ,o.[clienterId]
