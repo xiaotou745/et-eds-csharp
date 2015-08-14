@@ -274,10 +274,6 @@ width: 100%;
             success: function (result) {
                 adminjs.openwinbox('#orderMapShow');//需要先弹层，否则地图第二次加载有问题，且无法显示连线
                 showMap(result);
-            },
-            error: function (b)
-            {
-                alert(b.responseText);
             }
         });
     }
