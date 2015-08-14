@@ -2136,12 +2136,11 @@ namespace Ets.Service.Provider.Order
             var orderAuditStatistical = orderDao.GetOrderAuditStatistical();
             var sbEmail = new StringBuilder("昨日订单审核数据统计：");
             sbEmail.AppendLine("");
-            //OrderAuditStatisticalModel GetOrderAuditStatistical()
             if (orderList == null || orderList.Count == 0)
             {
                 sbEmail.AppendLine("待审核订单数量：【" + orderAuditStatistical.UnAuditQty +"】单");
                 sbEmail.AppendLine("已审核订单数量：【" + orderAuditStatistical.AuditOkQty + "】单");
-                sbEmail.AppendLine("已审核订单数量：【" + orderAuditStatistical.AuditRefuseQty + "】单");
+                sbEmail.AppendLine("审核拒绝订单数量：【" + orderAuditStatistical.AuditRefuseQty + "】单");
                 EmailHelper.SendEmailTo(sbEmail.ToString(), emailSendTo, "订单审核数据统计", copyTo, false);
                 return;
             }
@@ -2152,7 +2151,7 @@ namespace Ets.Service.Provider.Order
             {
                 sbEmail.AppendLine("待审核订单数量：【" + orderAuditStatistical.UnAuditQty + "】单");
                 sbEmail.AppendLine("已审核订单数量：【" + orderAuditStatistical.AuditOkQty + "】单");
-                sbEmail.AppendLine("已审核订单数量：【" + orderAuditStatistical.AuditRefuseQty + "】单");
+                sbEmail.AppendLine("审核拒绝订单数量：【" + orderAuditStatistical.AuditRefuseQty + "】单");
                 EmailHelper.SendEmailTo(sbEmail.ToString(), emailSendTo, "订单审核数据统计", copyTo, false);
                 return;
             }
@@ -2245,7 +2244,7 @@ namespace Ets.Service.Provider.Order
             }
             sbEmail.AppendLine("待审核订单数量：【" + orderAuditStatistical.UnAuditQty + "】单");
             sbEmail.AppendLine("已审核订单数量：【" + orderAuditStatistical.AuditOkQty + "】单");
-            sbEmail.AppendLine("已审核订单数量：【" + orderAuditStatistical.AuditRefuseQty + "】单");
+            sbEmail.AppendLine("审核拒绝订单数量：【" + orderAuditStatistical.AuditRefuseQty + "】单");
             EmailHelper.SendEmailTo(sbEmail.ToString(), emailSendTo, "订单审核数据统计", copyTo, false);
             #endregion
 

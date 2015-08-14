@@ -38,11 +38,6 @@
     <script type="text/javascript" src="~/Scripts/usaArea.js"></script>
     <script type="text/javascript" src="~/Scripts/usaarea.retriever.js"></script>
     <script type="text/javascript" src="~/Scripts/html5shiv-printshiv.js"></script>
-    <script>
-        $(document).ajaxError( function(event, jqXHR, options, errorMsg){
-            alert(errorMsg+";"+options.url + ";" + jqXHR.responseText);
-        });
-    </script>
         </head>
         <body>
             <div class="container-fluid">
@@ -121,6 +116,13 @@
             @*<script type="text/javascript" src="~/Scripts/bootstrap.min.js"></script>*@
             <script type="text/javascript" src="~/Scripts/Layout/Layout.js"></script>
     <script type="text/javascript" src="~/Scripts/jquery.colorbox-min.js"></script>
+            <script>
+                $(document).ajaxError(function (event, jqXHR, options, errorMsg) {
+                    var errorDetail = jqXHR.responseText;
+                    alert(options.url + "调用出错了:" + errorMsg);
+                });
+            </script>
+
     @RenderSection("scripts", false)
 </body>
 </html>
