@@ -784,8 +784,8 @@ select @@IDENTITY ";
                                         ,o.[ReceviceAddress]
                                         ,o.[ActualDoneDate]
                                         ,o.[IsPay]
-                                        ,o.[Amount]
-                                        ,o.[OrderCommission]
+                                        ,o.[Amount]                                        
+                                        ,ISNULL(o.OrderCommission,0) OrderCommission
                                         ,o.[DistribSubsidy]
                                         ,o.[WebsiteSubsidy]
                                         ,o.[Remark]
