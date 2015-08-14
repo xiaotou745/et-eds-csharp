@@ -784,10 +784,10 @@ select @@IDENTITY ";
                                         ,o.[ReceviceAddress]
                                         ,o.[ActualDoneDate]
                                         ,o.[IsPay]
-                                        ,o.[Amount]
-                                        ,o.[OrderCommission]
-                                        ,o.[DistribSubsidy]
-                                        ,o.[WebsiteSubsidy]
+                                        ,o.[Amount]                                        
+                                        ,ISNULL(o.OrderCommission,0) OrderCommission
+                                        ,ISNULL(o.DistribSubsidy,0) DistribSubsidy
+                                        ,ISNULL(o.WebsiteSubsidy,0) WebsiteSubsidy                                   
                                         ,o.[Remark]
                                         ,o.[Status]
                                         ,o.[clienterId]
