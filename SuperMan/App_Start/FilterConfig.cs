@@ -1,4 +1,6 @@
-﻿using System.Web;
+﻿using ETS.Util;
+using SuperMan.App_Start;
+using System.Web;
 using System.Web.Mvc;
 
 namespace SuperMan
@@ -28,7 +30,7 @@ namespace SuperMan
         /// <param name="filterContext">上下文对象  该类继承于ControllerContext</param>
         public override void OnException(ExceptionContext filterContext)
         {
-            ETS.Util.LogHelper.LogWriterFromFilter(filterContext.Exception);
+            ETS.Util.LogHelper.LogWriterFromFilter(filterContext.Exception, UserContext.Current.Id, UserContext.Current.Name);
         }
     }
 }

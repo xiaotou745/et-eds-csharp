@@ -1343,7 +1343,11 @@ namespace Ets.Service.Provider.Order
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 var orderModel = orderDao.GetOrderByIdWithNolock(orderOptionModel.OrderId);
-
+                if (orderModel==null)
+                {
+                    dealResultInfo.DealMsg = "订单不存在，不能审核拒绝！";
+                    return dealResultInfo;
+                }
                 #region 点击浏览器后退按钮
 
                 if (orderModel.IsJoinWithdraw == 1)//订单已分账

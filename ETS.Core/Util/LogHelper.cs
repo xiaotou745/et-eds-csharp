@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Script.Serialization;
 
-
 namespace ETS.Util
 {
     public class LogHelper
@@ -205,12 +204,13 @@ namespace ETS.Util
         /// 捕获全局异常
         /// </summary>
         /// <param name="error"></param>
-        public static void LogWriterFromFilter(Exception error)
+        public static void LogWriterFromFilter(Exception error, int userId = 0, string userName="")
         {
             try
             {
                 string logstr = "\r\n-----------------start----------------------\r\n";
                 logstr = logstr + DateTime.Now.ToString() + "\r\n";
+                logstr += "操作人:" + userName + "(" + userId + ")\r\n";
                 //异常发生地址
                 logstr = logstr + "异常发生地址:" + HttpContext.Current.Request.Url.AbsoluteUri.ToString() + "\r\n";
                 logstr = logstr + "请求类型:" + HttpContext.Current.Request.RequestType.ToString() + "\r\n";
