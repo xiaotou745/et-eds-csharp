@@ -134,11 +134,17 @@
 
         return true;
     }
-    function lockButton() {
-        document.getElementById("batchAuditPass").disabled = true;
-        document.getElementById("batchAuditCancel").disabled = true;
-        document.getElementById("btnSearch").disabled = true;
-        $("a").attr('disabled', "true");
+    function lockButton(islock) {
+        document.getElementById("batchAuditPass").disabled = islock;
+        document.getElementById("batchAuditCancel").disabled = islock;
+        document.getElementById("btnSearch").disabled = islock;
+        if (islock) {
+            $("a").attr('disabled', "true");
+        }
+        else {
+            $("a").removeAttr('disabled');
+        }
+       
     }
         function batchAuditPass()
         {
@@ -155,7 +161,7 @@
             if (!window.confirm("确认批量审核通过？")) {
                 return;
             }
-            lockButton();
+            lockButton(true);
             $("#opTipMsg").html("正在执行....");
 
             var url = "/Order/BatchAuditOK";
@@ -167,6 +173,10 @@
                 success: function (result) {
                     alert(result.Message);
                     window.location.href = "/Order/OrderAudit";
+                },
+                error: function (d) {
+                    lockButton(false);
+                    $("#opTipMsg").html("");
                 }
             });
         }
@@ -214,6 +224,11 @@
                     alert(result.Message);
                     adminjs.closewinbox('.add-openbox');
                     window.location.href = "/Order/OrderAudit";
+                },
+                error: function (d) {
+                    document.getElementById("btnSaveBatchReason").disabled = false;
+                    document.getElementById("btnBatchReasionCancel").disabled = false;
+                    $("#batchCancelTipMsg").html("");
                 }
             });
         }
@@ -221,7 +236,7 @@
             if (!window.confirm("是否审核通过？")) {
                 return;
             }
-            lockButton();
+            lockButton(true);
             $("#opTipMsg").html("正在执行....");
             var paramaters = { "orderId": orderId };
             var url = "/Order/AuditOK";
@@ -236,6 +251,10 @@
                         alert(result.Message);
                     }
                     window.location.href = "/Order/OrderAudit";
+                },
+                error: function (d) {
+                    lockButton(false);
+                    $("#opTipMsg").html("");
                 }
             });
         }
@@ -272,6 +291,11 @@
                         }
                         adminjs.closewinbox('.add-openbox');
                         window.location.href = "/Order/OrderAudit";
+                    },
+                    error: function (d) {
+                        document.getElementById("btnSaveDeductWebSubsidy").disabled = false;
+                        document.getElementById("btnReasionCancel").disabled = false;
+                        $("#cancelTipMsg").html("");
                     }
                 });
             }
