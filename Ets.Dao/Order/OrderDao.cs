@@ -2853,7 +2853,7 @@ update OrderOther
 where orderid=@orderid; 
 insert into dbo.OrderSubsidiesLog ( Price, InsertTime, OptName, Remark,
                                      OrderId, OptId, OrderStatus, Platform )
-select OrderCommission,getdate(),@ClienterTrueName,'确认已取货',Id,4,@clienterId,@Platform from dbo.[order] o(nolock) where id =@orderId   
+select OrderCommission,getdate(),@ClienterTrueName,'确认已取货1',Id,4,@clienterId,@Platform from dbo.[order] o(nolock) where id =@orderId   
 end
             ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
