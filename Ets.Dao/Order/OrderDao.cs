@@ -1091,7 +1091,7 @@ select @ordercommission=case when dc.SettleType=1 then @orderamount*dc.ClienterS
 from DeliveryCompany dc(nolock) 
 where dc.Id=@DeliveryCompanyID
 end
-update [order] set Status=@Status,clienterId=@clienterId,OrderCommission=@ordercommission,DeliveryCompanyID=@DeliveryCompanyID where [order].OrderNo=@OrderNo and status=0
+update [order] set Status=@Status,clienterId=@clienterId,OrderCommission=@ordercommission,DeliveryCompanyID=@DeliveryCompanyID where OrderNo=@OrderNo and status=0 and clienterId is null
 if(@@error<>0 or @@ROWCOUNT=0)
 begin
 	select 1 --更改状态失败
