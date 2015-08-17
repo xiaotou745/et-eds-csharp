@@ -1134,7 +1134,7 @@ select 0
             dbParameters.SetValue("@orderNo", orderNo);
             object executeScalar = DbHelper.ExecuteScalar(SuperMan_Read, selSql, dbParameters);
             return ParseHelper.ToInt(executeScalar, 0);
-        }  
+        }
 
 
 
@@ -1678,14 +1678,14 @@ where   1 = 1 and o.Id = @Id
         /// <param name="Id">订单ID</param>
         /// <returns></returns>
         public OrderChildPayModel GetOrderById(int Id)
-        {        
+        {
             string sql = @"
 SELECT clienterId,min(PayStatus) as PayStatus FROM dbo.[order] o(nolock)
 join dbo.OrderChild oc(nolock) on o.Id= oc.OrderId
  where o.id=@id group by PayStatus,clienterId ";
 
             IDbParameters parms = DbHelper.CreateDbParameters();
-            parms.Add("id", DbType.Int32, 4).Value = Id;          
+            parms.Add("id", DbType.Int32, 4).Value = Id;
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parms);
             if (dt == null || dt.Rows.Count <= 0)
             {
@@ -1736,7 +1736,7 @@ DateDiff(MINUTE,PubDate, GetDate()) in ({0})", IntervalMinute);
             parm.AddWithValue("@OrderId", OrderId);
             parm.AddWithValue("@AdjustAmount", AdjustAmount);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
-        }      
+        }
 
         /// <summary>
         ///添加订单佣金日志
@@ -2824,24 +2824,44 @@ order by a.id desc
             // {
             //     clienterTrueName = c.TrueName;
             // }
-            string updateSql = string.Format(@"
+            //            string updateSql = string.Format(@"
+            //begin 
+            //declare @ClienterTrueName nvarchar(40)
+            //SELECT @ClienterTrueName=TrueName FROM dbo.clienter(nolock) where id = @clienterId;
+            //update dbo.[Order] 
+            //    set Status=4 
+            //output Inserted.Id,GETDATE(),@ClienterTrueName,'确认已取货',Inserted.clienterId,Inserted.[Status],{0} 
+            //into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform]) 
+            //where id=@orderid and Status=2 and clienterId=@clienterId; 
+            //update OrderOther 
+            //    set TakeTime=GETDATE(),TakeLongitude=@TakeLongitude,TakeLatitude=@TakeLatitude 
+            //where orderid=@orderid; 
+            //end ", (int)SuperPlatform.FromClienter);
+            string updateSql = @"
 begin 
 declare @ClienterTrueName nvarchar(40)
 SELECT @ClienterTrueName=TrueName FROM dbo.clienter(nolock) where id = @clienterId;
 update dbo.[Order] 
-    set Status=4 
-output Inserted.Id,GETDATE(),@ClienterTrueName,'确认已取货',Inserted.clienterId,Inserted.[Status],{0} 
-into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform]) 
-where id=@orderid and Status=2 and clienterId=@clienterId; 
+    set Status=4 where id =@orderId and Status=2 and clienterId=@clienterId; 
+ if(@@error<>0 or @@rowcount<>1)--如果到店取货行影响不等于1则返回取货不成功
+ begin 
+   rollback
+   return
+ end
 update OrderOther 
     set TakeTime=GETDATE(),TakeLongitude=@TakeLongitude,TakeLatitude=@TakeLatitude 
 where orderid=@orderid; 
-end ", (int)SuperPlatform.FromClienter);
+insert into dbo.OrderSubsidiesLog ( Price, InsertTime, OptName, Remark,
+                                     OrderId, OptId, OrderStatus, Platform )
+select OrderCommission,getdate(),@ClienterTrueName,'确认已取货',Id,4,@clienterId,@Platform from dbo.[order] o(nolock) where id =@orderId   
+end
+            ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("TakeLongitude", modelPM.longitude);
             dbParameters.AddWithValue("TakeLatitude", modelPM.latitude);
             dbParameters.Add("orderId", DbType.Int32, 4).Value = modelPM.OrderId;
             dbParameters.AddWithValue("clienterId", modelPM.ClienterId);
+            dbParameters.AddWithValue("Platform", SuperPlatform.FromClienter.GetHashCode());
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
         /// <summary>
