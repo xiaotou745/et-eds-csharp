@@ -719,6 +719,10 @@ order by o.Date desc, o.ActiveClienterCount desc";
                 {
                     sbSqlWhere.AppendFormat(" AND Remark!='商家客户端充值'");
                 }
+                else if (queryInfo.RechargeType==3)//充值赠送
+                {
+                    sbSqlWhere.Append(" and Remark!='商家客户端充值' ");
+                }
                 else if (queryInfo.RechargeType == 2)//客户端充值
                 {
                     sbSqlWhere.AppendFormat(" AND Remark='商家客户端充值'");
