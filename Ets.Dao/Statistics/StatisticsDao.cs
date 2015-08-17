@@ -679,7 +679,7 @@ order by o.Date desc, o.ActiveClienterCount desc";
         /// <returns></returns>
         private static string GetQueryWhere(BussinessBalanceQuery queryInfo)
         {
-            var sbSqlWhere = new StringBuilder(" bbr.RecordType=9 and bbr.status=1  ");
+            var sbSqlWhere = new StringBuilder(" bbr.status=1  ");
             if (!string.IsNullOrWhiteSpace(queryInfo.BusinessId))
             {
                 sbSqlWhere.AppendFormat(" AND bbr.BusinessId='{0}' ", queryInfo.BusinessId);
@@ -707,26 +707,31 @@ order by o.Date desc, o.ActiveClienterCount desc";
             }
             if (!string.IsNullOrWhiteSpace(queryInfo.CityId))
             {
-                sbSqlWhere.AppendFormat(" AND CityId='{0}' ", queryInfo.CityId);
+                sbSqlWhere.AppendFormat(" AND CityId={0} ", queryInfo.CityId);
             }
             if (queryInfo.RechargePrice > 0)
             {
-                sbSqlWhere.AppendFormat(" AND Amount>='{0}' ", queryInfo.RechargePrice);
+                sbSqlWhere.AppendFormat(" AND Amount>={0} ", queryInfo.RechargePrice);
             }
             if (queryInfo.RechargeType > 0)
             {
-                if (queryInfo.RechargeType == 1)//系统充值
+                if (queryInfo.RechargeType == 3)//充值赠送
                 {
-                    sbSqlWhere.AppendFormat(" AND Remark!='商家客户端充值'");
+                    sbSqlWhere.Append(" and RecordType=12  ");
                 }
-                else if (queryInfo.RechargeType==3)//充值赠送
+
+                else if (queryInfo.RechargeType == 1)//系统充值
                 {
-                    sbSqlWhere.Append(" and Remark!='商家客户端充值' ");
+                    sbSqlWhere.AppendFormat("and  bbr.RecordType=9 AND Remark!='商家客户端充值'");
                 }
+
                 else if (queryInfo.RechargeType == 2)//客户端充值
                 {
-                    sbSqlWhere.AppendFormat(" AND Remark='商家客户端充值'");
+                    sbSqlWhere.AppendFormat(" and bbr.RecordType=9 AND Remark='商家客户端充值'");
                 }
+            }
+            else {
+                sbSqlWhere.Append("  and bbr.RecordType=9 ");
             }
             return sbSqlWhere.ToString();
         }
