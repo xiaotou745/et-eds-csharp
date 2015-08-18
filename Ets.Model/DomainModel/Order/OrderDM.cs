@@ -231,6 +231,10 @@ namespace Ets.Model.DomainModel.Order
         /// 是否一键发单（0否，1是）
         /// </summary>
         public int OneKeyPubOrder { get; set; }
+        /// <summary>
+        /// 是否投诉 1 已投诉 0 未投诉
+        /// </summary>
+        public int IsComplain { get; set; }
     }
 
     public class OrderChildInfo

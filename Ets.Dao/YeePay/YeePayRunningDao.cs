@@ -65,7 +65,6 @@ namespace Ets.Dao.YeePay
             string tableList = @" dbo.YeePayRunningAccount y (nolock) ";
             string orderByColumn = " y.Id DESC";
             return new PageHelper().GetPages<T>(SuperMan_Read, yeePayRunningCriteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, yeePayRunningCriteria.PageSize, true);
-            return null;
         }
 
         public int Add(YeePayRunningAccountModel yeePayRunningAccountModel)
