@@ -3000,54 +3000,7 @@ where b.Id=@BusinessId;");
             parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@BusinessId", model.businessId);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
-        }
-        /// <summary>
-        /// 订单取消扣除骑士佣金和插入骑士余额流水
-        /// danny-2015051921
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public bool OrderCancelReturnClienter(OrderListModel model)
-        {
-            string sql = string.Format(@" 
-update c
-set    c.AccountBalance=ISNULL(c.AccountBalance, 0)-@Amount
-OUTPUT
-  Inserted.Id,
-  -@Amount,
-  @Status,
-  Inserted.AccountBalance,
-  @RecordType,
-  @Operator,
-  getdate(),
-  @WithwardId,
-  @RelationNo,
-  @Remark
-INTO ClienterBalanceRecord
-  (  [ClienterId]
-    ,[Amount]
-    ,[Status]
-    ,[Balance]
-    ,[RecordType]
-    ,[Operator]
-    ,[OperateTime]
-    ,[WithwardId]
-    ,[RelationNo]
-    ,[Remark])
-from clienter c
-where c.Id=@ClienterId;");
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            //parm.AddWithValue("@Amount", model.OrderCommission);
-            parm.AddWithValue("@Amount", model.RealOrderCommission);
-            parm.AddWithValue("@Status", ClienterBalanceRecordStatus.Success);
-            parm.AddWithValue("@RecordType", ClienterBalanceRecordRecordType.CancelOrder);
-            parm.AddWithValue("@Operator", model.OptUserName);
-            parm.AddWithValue("@WithwardId", model.Id);
-            parm.AddWithValue("@RelationNo", model.OrderNo);
-            parm.AddWithValue("@Remark", model.Remark);
-            parm.AddWithValue("@ClienterId", model.clienterId);
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
-        }
+        }     
         /// <summary>
         /// 获得配送数据列表
         /// </summary>
@@ -3642,46 +3595,7 @@ where   Id = @OrderId and FinishAll = 0";
             parm.AddWithValue("@Remark", "服务自动处理超时未完成订单");
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
-        /// <summary>
-        /// 添加骑士可提现余额流水记录
-        /// danny-20150813
-        /// </summary>
-        /// <param name="clienterAllowWithdrawRecord"></param>
-        /// <returns></returns>
-        public bool InsertClienterAllowWithdrawRecord(ClienterAllowWithdrawRecord clienterAllowWithdrawRecord)
-        {
-            const string insertSql = @"
-insert into ClienterAllowWithdrawRecord
-            (ClienterId
-            ,Amount
-            ,Status
-            ,Balance
-            ,RecordType
-            ,Operator
-            ,WithwardId
-            ,RelationNo
-            ,Remark)
-select   @ClienterId
-        ,@Amount
-        ,@Status
-        ,c.AllowWithdrawPrice
-        ,@RecordType
-        ,@Operator
-        ,@WithwardId
-        ,@RelationNo
-        ,@Remark 
-from dbo.clienter as c where Id=@ClienterId";
-            IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("ClienterId", clienterAllowWithdrawRecord.ClienterId);//骑士id
-            dbParameters.AddWithValue("Amount", clienterAllowWithdrawRecord.Amount);//流水金额
-            dbParameters.AddWithValue("Status", clienterAllowWithdrawRecord.Status); //流水状态(1、交易成功 2、交易中）
-            dbParameters.AddWithValue("RecordType", clienterAllowWithdrawRecord.RecordType); //交易类型(1佣金 2奖励 3提现 4取消订单赔偿 5无效订单扣款)
-            dbParameters.AddWithValue("Operator", clienterAllowWithdrawRecord.Operator); //操作人 
-            dbParameters.AddWithValue("WithwardId", clienterAllowWithdrawRecord.WithwardId); //关联ID
-            dbParameters.AddWithValue("RelationNo", clienterAllowWithdrawRecord.RelationNo); //关联单号
-            dbParameters.AddWithValue("Remark", clienterAllowWithdrawRecord.Remark); //描述
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, insertSql, dbParameters) > 0;
-        }
+
         /// <summary>
         /// 自动审核拒绝处理
         /// danny-20150813
@@ -3704,54 +3618,7 @@ where orderId=@orderId";
             dbParameters.AddWithValue("@DeductCommissionType", 1);
             dbParameters.AddWithValue("@DeductCommissionReason", "未在规定时间段内完成上传小票");
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters) > 0;
-        }
-        /// <summary>
-        /// 订单自动审核拒绝增加除网站外的金额
-        /// danny-20150813
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public bool OrderAuditRefuseReturnClienter(OrderListModel model)
-        {
-            string sql = string.Format(@" 
-update c
-set    c.AccountBalance=ISNULL(c.AccountBalance, 0)+@Amount
-      ,c.AllowWithdrawPrice=ISNULL(c.AllowWithdrawPrice, 0)+@Amount
-OUTPUT
-  Inserted.Id,
-  @Amount,
-  @Status,
-  Inserted.AccountBalance,
-  @RecordType,
-  @Operator,
-  getdate(),
-  @WithwardId,
-  @RelationNo,
-  @Remark
-INTO ClienterBalanceRecord
-  (  [ClienterId]
-    ,[Amount]
-    ,[Status]
-    ,[Balance]
-    ,[RecordType]
-    ,[Operator]
-    ,[OperateTime]
-    ,[WithwardId]
-    ,[RelationNo]
-    ,[Remark])
-from clienter c
-where c.Id=@ClienterId;");
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@Amount", model.RealOrderCommission);
-            parm.AddWithValue("@Status", ClienterBalanceRecordStatus.Success);
-            parm.AddWithValue("@RecordType", ClienterBalanceRecordRecordType.CancelOrder);
-            parm.AddWithValue("@Operator", "服务");
-            parm.AddWithValue("@WithwardId", model.Id);
-            parm.AddWithValue("@RelationNo", model.OrderNo);
-            parm.AddWithValue("@Remark", "服务自动处理超时未完成订单");
-            parm.AddWithValue("@ClienterId", model.clienterId);
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
-        }
+        } 
         /// <summary>
         /// 订单审核拒绝修改订单
         /// danny-20150813
@@ -3819,6 +3686,96 @@ where c.Id=@ClienterId;");
                 return null;
             }
             return MapRows<OrderAuditStatisticalModel>(dt)[0];
+        }
+
+
+        /// <summary>
+        /// 订单自动审核拒绝增加除网站外的金额
+        /// danny-20150813
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool OrderAuditRefuseReturnClienter(OrderListModel model)
+        {
+            string sql = string.Format(@" 
+update c
+set    c.AccountBalance=ISNULL(c.AccountBalance, 0)+@Amount
+      ,c.AllowWithdrawPrice=ISNULL(c.AllowWithdrawPrice, 0)+@Amount
+OUTPUT
+  Inserted.Id,
+  @Amount,
+  @Status,
+  Inserted.AccountBalance,
+  @RecordType,
+  @Operator,
+  getdate(),
+  @WithwardId,
+  @RelationNo,
+  @Remark
+INTO ClienterBalanceRecord
+  (  [ClienterId]
+    ,[Amount]
+    ,[Status]
+    ,[Balance]
+    ,[RecordType]
+    ,[Operator]
+    ,[OperateTime]
+    ,[WithwardId]
+    ,[RelationNo]
+    ,[Remark])
+from clienter c
+where c.Id=@ClienterId;");
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Amount", model.RealOrderCommission);
+            parm.AddWithValue("@Status", ClienterBalanceRecordStatus.Success);
+            parm.AddWithValue("@RecordType", ClienterBalanceRecordRecordType.CancelOrder);
+            parm.AddWithValue("@Operator", "服务");
+            parm.AddWithValue("@WithwardId", model.Id);
+            parm.AddWithValue("@RelationNo", model.OrderNo);
+            parm.AddWithValue("@Remark", "服务自动处理超时未完成订单");
+            parm.AddWithValue("@ClienterId", model.clienterId);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
+        }
+
+        /// <summary>
+        /// 添加骑士可提现余额流水记录
+        /// danny-20150813
+        /// </summary>
+        /// <param name="clienterAllowWithdrawRecord"></param>
+        /// <returns></returns>
+        public bool InsertClienterAllowWithdrawRecord(ClienterAllowWithdrawRecord clienterAllowWithdrawRecord)
+        {
+            const string insertSql = @"
+insert into ClienterAllowWithdrawRecord
+            (ClienterId
+            ,Amount
+            ,Status
+            ,Balance
+            ,RecordType
+            ,Operator
+            ,WithwardId
+            ,RelationNo
+            ,Remark)
+select   @ClienterId
+        ,@Amount
+        ,@Status
+        ,c.AllowWithdrawPrice
+        ,@RecordType
+        ,@Operator
+        ,@WithwardId
+        ,@RelationNo
+        ,@Remark 
+from dbo.clienter as c where Id=@ClienterId";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("ClienterId", clienterAllowWithdrawRecord.ClienterId);//骑士id
+            dbParameters.AddWithValue("Amount", clienterAllowWithdrawRecord.Amount);//流水金额
+            dbParameters.AddWithValue("Status", clienterAllowWithdrawRecord.Status); //流水状态(1、交易成功 2、交易中）
+            dbParameters.AddWithValue("RecordType", clienterAllowWithdrawRecord.RecordType); //交易类型(1佣金 2奖励 3提现 4取消订单赔偿 5无效订单扣款)
+            dbParameters.AddWithValue("Operator", clienterAllowWithdrawRecord.Operator); //操作人 
+            dbParameters.AddWithValue("WithwardId", clienterAllowWithdrawRecord.WithwardId); //关联ID
+            dbParameters.AddWithValue("RelationNo", clienterAllowWithdrawRecord.RelationNo); //关联单号
+            dbParameters.AddWithValue("Remark", clienterAllowWithdrawRecord.Remark); //描述
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, insertSql, dbParameters) > 0;
         }
     }
 }
