@@ -21,13 +21,16 @@ namespace Ets.Provider.Tests
 
             //order.GetDetails(6381);
 
-            string strdes = "eds易代送";
+            
+
+            string strdes = "1851867832736B8653D62598A052A7B0CDCA1C3DCDD08C960E28E6FD9A85175D52E0E51C81D";
             string key = "np!u5chin@adm!n1aaaaaaaa";
-            string ss = DESAPP.DES3Encrypt(strdes, key);
+            string ss = DES.Encrypt(strdes);
 
             //string s = DES.Encrypt3DES(strdes);
-            string s = "yDjBQC0opeUZVFp9v90oFO8+UMq1uLfx0BhmF+clDp7cPqK2SCRFLygsY0NT9MhJkZ2PDkkxbo94Hj6z4kE99747R0Bx5pxHgz8JkbaorBs=";
-            string strdecode= DES.Decrypt3DES(s);
+            string s = "/lfIemeoz9p2kCEbvSXpdghyCfdAFH57YKA0xAlX+ju1Gf5f5FxvSUEayTDCfx0Hjej3P2/dxjmeHstRunZchgw2TiFWxZjOx/HYB0beMkY=";
+            //string strdecode= DES.Encrypt(s);
+            string strdecode = DES.Decrypt(s);
             Console.WriteLine();//651554c5
             string sss = DESAPP.DES3Decrypt(ss, key);
 
