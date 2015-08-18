@@ -330,6 +330,7 @@ namespace SuperMan.Controllers
             var reg = iOrderProvider.AuditRefuse(orderOptionModel);
             return Json(new ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.AllowGet);
         }
+
         /// <summary>
         /// 审核通过
         /// 胡灵波
