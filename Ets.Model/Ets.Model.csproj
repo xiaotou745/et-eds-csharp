@@ -66,6 +66,7 @@
     <Compile Include="Common\YeePay\YeePayRecord.cs" />
     <Compile Include="Common\YeePay\YeePayUser.cs" />
     <Compile Include="Common\YeePay\YeePayUserBalanceRecord.cs" />
+    <Compile Include="DataModel\Account\AccountLoginLogModel.cs" />
     <Compile Include="DataModel\Authority\AccountCityRelation.cs" />
     <Compile Include="DataModel\Authority\AccountDcRelation.cs" />
     <Compile Include="DataModel\Business\BusiModifyResultModelDM.cs" />
@@ -286,6 +287,7 @@
     <Compile Include="ParameterModel\Common\OpenCitySearchCriteria.cs" />
     <Compile Include="ParameterModel\Clienter\UploadReceiptModel.cs" />
     <Compile Include="ParameterModel\Clienter\UploadReceiptResultModel.cs" />
+    <Compile Include="ParameterModel\Common\ParamModel.cs" />
     <Compile Include="ParameterModel\Complain\ComplainCriteria.cs" />
     <Compile Include="ParameterModel\Complain\ComplainParameter.cs" />
     <Compile Include="ParameterModel\DeliveryCompany\DoBatchImportClienterPM.cs" />

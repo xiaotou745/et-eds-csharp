@@ -11,7 +11,8 @@ namespace ETS.Security
     public class DES
     {
 		//private const string DES_KEY = "FDAJjjiio&&(*777762&&^J::JK:JDFSAew4554";
-		private const string DES_KEY = "FDSFIojslsk;fjlk;)*(+nmjdsf$#@dsf54641#&*(()";
+        //private const string DES_KEY = "FDSFIojslsk;fjlk;)*(+nmjdsf$#@dsf54641#&*(()";
+        private const string DES_KEY = "f83834a7bc7fb26ae7535c7e651554c5";
 
 
         private static readonly string EncryptionKey = "meydarin";

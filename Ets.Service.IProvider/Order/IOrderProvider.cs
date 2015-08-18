@@ -160,13 +160,7 @@ namespace Ets.Service.IProvider.Order
         /// <param name="orderNo"></param>
         /// <returns></returns>
         OrderListModel GetOrderInfoByOrderNo(string orderNo, int orderId = 0);
-        ///// <summary>
-        ///// 取消订单
-        ///// danny-20150414
-        ///// </summary>
-        ///// <param name="orderOptionModel"></param>
-        ///// <returns></returns>
-        //bool CancelOrderByOrderNo(OrderOptionModel orderOptionModel);
+
         /// <summary>
         /// 取消订单 后台取消
         /// danny-20150521

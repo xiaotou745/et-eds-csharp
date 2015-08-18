@@ -48,6 +48,7 @@ using Ets.Dao.Business;
 using Ets.Model.ParameterModel.WtihdrawRecords;
 using Ets.Model.DataModel.DeliveryCompany;
 using Ets.Dao.DeliveryCompany;
+using Ets.Service.IProvider.Clienter;
 #endregion
 namespace Ets.Service.Provider.Order
 {
@@ -55,7 +56,7 @@ namespace Ets.Service.Provider.Order
     {
         private OrderDao orderDao = new OrderDao();
         private IBusinessProvider iBusinessProvider = new BusinessProvider();
-        private ClienterProvider iClienterProvider = new ClienterProvider();
+        private IClienterProvider iClienterProvider = new ClienterProvider();
         readonly OrderOtherDao orderOtherDao = new OrderOtherDao();
         private ISubsidyProvider iSubsidyProvider = new SubsidyProvider();
         private IBusinessGroupProvider iBusinessGroupProvider = new BusinessGroupProvider();
@@ -382,7 +383,6 @@ namespace Ets.Service.Provider.Order
                                                             Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
                                                             RecordType = BusinessBalanceRecordRecordType.PublishOrder.GetHashCode(),
                                                             Operator = order.BusinessName,
-
                                                             WithwardId = result,
                                                             RelationNo = order.OrderNo,
                                                             Remark = "扣除商家结算费"
@@ -1212,6 +1212,8 @@ namespace Ets.Service.Provider.Order
         /// <summary>
         /// 通过订单号取消订单（新）
         /// danny-20150419
+        /// 修改人：胡灵波
+        /// 2015年8月18日 13:41:07
         /// </summary>
         /// <returns></returns>
         public DealResultInfo CancelOrderByOrderNo(OrderOptionModel orderOptionModel)
@@ -1254,55 +1256,78 @@ namespace Ets.Service.Provider.Order
                     if (orderModel.Status == 1 && orderTaskPayStatus == 2 &&
                         orderModel.HadUploadCount == orderModel.NeedUploadCount) //已完成订单
                     {
-                        //if (!orderDao.OrderCancelReturnClienter(orderModel))
+
+                        //更新骑士余额
+                        iClienterProvider.UpdateCAccountBalance(new ClienterMoneyPM()
+                                                        {
+                                                            ClienterId = orderModel.clienterId,
+                                                            Amount = -orderModel.OrderCommission.Value,
+                                                            Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
+                                                            RecordType = ClienterBalanceRecordRecordType.CancelOrder.GetHashCode(),
+                                                            Operator = orderModel.OptUserName,
+                                                            WithwardId = orderModel.Id,
+                                                            RelationNo = orderModel.OrderNo,
+                                                            Remark = orderModel.Remark
+                                                        });
+
+                        #region 临时
+                        //decimal accountBalance = decimal.Parse(clienterDao.GetUserInfoByUserId(orderModel.clienterId).AccountBalance.ToString());
+                        //decimal allowWithdrawPrice = clienterDao.GetUserInfoByUserId(orderModel.clienterId).AllowWithdrawPrice;
+                        //clienterFinanceDao.ClienterRecharge(new ClienterOptionLog()
+                        //            {
+                        //                RechargeAmount = -orderModel.RealOrderCommission,
+                        //                ClienterId = orderModel.clienterId
+                        //            }
+                        //    );
+
+                        //ClienterBalanceRecord cbrm = new ClienterBalanceRecord()
                         //{
-                        //    dealResultInfo.DealMsg = "扣除骑士佣金失败！";
-                        //    return dealResultInfo;
-                        //}
+                        //    ClienterId = orderModel.clienterId,
+                        //    Amount = -orderModel.RealOrderCommission,
+                        //    Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
+                        //    Balance = accountBalance,
+                        //    RecordType = ClienterBalanceRecordRecordType.BalanceAdjustment.GetHashCode(),
+                        //    Operator = orderModel.OptUserName,
+                        //    WithwardId = orderModel.Id,
+                        //    RelationNo = orderModel.OrderNo,
+                        //    Remark = orderModel.Remark
+                        //};
+                        //clienterBalanceRecordDao.Insert(cbrm);
 
-                        decimal accountBalance = decimal.Parse(clienterDao.GetUserInfoByUserId(orderModel.clienterId).AccountBalance.ToString());
-                        decimal allowWithdrawPrice = clienterDao.GetUserInfoByUserId(orderModel.clienterId).AllowWithdrawPrice;
-
-                        clienterFinanceDao.ClienterRecharge(new ClienterOptionLog()
-                                    {
-                                        RechargeAmount = -orderModel.RealOrderCommission,
-                                        ClienterId = orderModel.clienterId
-                                    }
-                            );
-
-                        ClienterBalanceRecord cbrm = new ClienterBalanceRecord()
-                        {
-                            ClienterId = orderModel.clienterId,
-                            Amount = -orderModel.RealOrderCommission,
-                            Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
-                            Balance = accountBalance,
-                            RecordType = ClienterBalanceRecordRecordType.BalanceAdjustment.GetHashCode(),
-                            Operator = orderModel.OptUserName,
-                            WithwardId = orderModel.Id,
-                            RelationNo = orderModel.OrderNo,
-                            Remark = orderModel.Remark
-                        };
-                        clienterBalanceRecordDao.Insert(cbrm);
-
-                        ClienterAllowWithdrawRecord cawrm = new ClienterAllowWithdrawRecord()
-                        {
-                            ClienterId = orderModel.clienterId,
-                            Amount = -orderModel.RealOrderCommission,
-                            Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(),
-                            Balance = allowWithdrawPrice,
-                            RecordType = ClienterAllowWithdrawRecordType.BalanceAdjustment.GetHashCode(),
-                            Operator = orderModel.OptUserName,
-                            WithwardId = orderModel.Id,
-                            RelationNo = orderModel.OrderNo,
-                            Remark = orderModel.Remark
-                        };
-                        clienterAllowWithdrawRecordDao.Insert(cawrm);
+                        //ClienterAllowWithdrawRecord cawrm = new ClienterAllowWithdrawRecord()
+                        //{
+                        //    ClienterId = orderModel.clienterId,
+                        //    Amount = -orderModel.RealOrderCommission,
+                        //    Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(),
+                        //    Balance = allowWithdrawPrice,
+                        //    RecordType = ClienterAllowWithdrawRecordType.BalanceAdjustment.GetHashCode(),
+                        //    Operator = orderModel.OptUserName,
+                        //    WithwardId = orderModel.Id,
+                        //    RelationNo = orderModel.OrderNo,
+                        //    Remark = orderModel.Remark
+                        //};
+                        //clienterAllowWithdrawRecordDao.Insert(cawrm);
+                        #endregion
                     }
-                    if (!orderDao.OrderCancelReturnBusiness(orderModel))
-                    {
-                        dealResultInfo.DealMsg = "商家应收返回失败！";
-                        return dealResultInfo;
-                    }
+
+                    // 更新商户余额、可提现余额                        
+                    iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
+                                                            {
+                                                                BusinessId = orderModel.businessId,
+                                                                Amount = orderModel.SettleMoney,
+                                                                Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
+                                                                RecordType = BusinessBalanceRecordRecordType.CancelOrder.GetHashCode(),
+                                                                Operator = orderModel.OptUserName,
+                                                                WithwardId = orderModel.Id,
+                                                                RelationNo = orderModel.OrderNo,
+                                                                Remark = orderModel.Remark
+                                                            });
+
+                    //if (!orderDao.OrderCancelReturnBusiness(orderModel))
+                    //{
+                    //    dealResultInfo.DealMsg = "商家应收返回失败！";
+                    //    return dealResultInfo;
+                    //}
                     dealResultInfo.DealFlag = true;
                     dealResultInfo.DealMsg = "订单取消成功！";
                     tran.Complete();
@@ -1365,13 +1390,14 @@ namespace Ets.Service.Provider.Order
                     if (currModel == null)
                     {
                         decimal diffOrderCommission = orderModel.SettleMoney - orderModel.OrderCommission.Value;
+                        decimal disOrderCommission = -diffOrderCommission;
                         //更新骑士余额
                         iClienterProvider.UpdateCAccountBalance(new ClienterMoneyPM()
                                                                 {
                                                                     ClienterId = orderModel.clienterId,
                                                                     Amount = diffOrderCommission,
                                                                     Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
-                                                                    RecordType = ClienterBalanceRecordRecordType.OrderCommission.GetHashCode(),
+                                                                    RecordType = ClienterBalanceRecordRecordType.BalanceAdjustment.GetHashCode(),
                                                                     Operator = orderOptionModel.OptUserName,
                                                                     WithwardId = orderModel.Id,
                                                                     RelationNo = orderModel.OrderNo,
@@ -1380,13 +1406,14 @@ namespace Ets.Service.Provider.Order
                         //更新扣除补贴原因,扣除补贴方式为手动扣除
                         orderOtherDao.UpdateOrderDeductCommissionReason(orderModel.Id, orderOptionModel.OptLog, 2);
 
+                        
                         //更新订单日志
                         orderSubsidiesLogDao.Insert(new OrderSubsidiesLog()
                                                     {
                                                         OrderId = orderModel.Id,
                                                         Price = diffOrderCommission,
                                                         OptName = orderOptionModel.OptUserName,
-                                                        Remark = "扣除" + diffOrderCommission + "元无效订单金额",
+                                                        Remark = "扣除" + disOrderCommission + "元无效订单金额",
                                                         OptId = orderOptionModel.OptUserId,
                                                         OrderStatus = OrderStatusCommon.AuditStatusRefuse.GetHashCode(),
                                                         Platform = SuperPlatform.ManagementBackground.GetHashCode()
@@ -1437,6 +1464,8 @@ namespace Ets.Service.Provider.Order
 
         /// <summary>
         /// 审核通过
+        /// 胡灵波 
+        /// 2015年8月18日 14:07:28
         /// </summary>
         /// <param name="orderOptionModel"></param>
         /// <returns></returns>
@@ -1459,8 +1488,7 @@ namespace Ets.Service.Provider.Order
                 #region 调用老接口 临时用
                 //无效订单
                 if (orderModel.OrderCommission > orderModel.SettleMoney)
-                {
-                    //查询余额流水表中，是否扣除补贴，如果扣除，
+                {                    
                     ClienterBalanceRecord currModel = clienterBalanceRecordDao.GetByOrderId(orderModel.Id);
                     if (currModel != null)
                     {
@@ -1931,24 +1959,18 @@ namespace Ets.Service.Provider.Order
                 //int result = orderDao.CancelOrderStatus(paramodel.OrderNo, OrderStatus.Status3.GetHashCode(), "商家取消订单", OrderStatus.Status0.GetHashCode(), order.SettleMoney);
                 if (result > 0)
                 {
-                    BusinessDao businessDao = new BusinessDao();
-                    businessDao.UpdateForWithdrawC(new UpdateForWithdrawPM()
-                    {
-                        Id = paramodel.BusinessId,
-                        Money = order.SettleMoney
-                    });
-                    BusinessBalanceRecordDao businessBalanceRecordDao = new BusinessBalanceRecordDao();
-                    businessBalanceRecordDao.Insert(new BusinessBalanceRecord()
-                    {
-                        BusinessId = paramodel.BusinessId,//商户Id
-                        Amount = order.SettleMoney,//流水金额  结算金额
-                        Status = (int)BusinessBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
-                        RecordType = (int)BusinessBalanceRecordRecordType.CancelOrder,
-                        Operator = string.Format("商家:{0}", paramodel.BusinessId),
-                        WithwardId = paramodel.OrderId,
-                        RelationNo = paramodel.OrderNo,
-                        Remark = "商户取消订单返回配送费"
-                    });
+                    // 更新商户余额、可提现余额                        
+                    iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
+                                                    {
+                                                        BusinessId = paramodel.BusinessId,//商户Id
+                                                        Amount = order.SettleMoney,//流水金额  结算金额
+                                                        Status = BusinessBalanceRecordStatus.Success.GetHashCode(), //流水状态(1、交易成功 2、交易中）
+                                                        RecordType = BusinessBalanceRecordRecordType.CancelOrder.GetHashCode(),
+                                                        Operator = string.Format("商家:{0}", paramodel.BusinessId),
+                                                        WithwardId = paramodel.OrderId,
+                                                        RelationNo = paramodel.OrderNo,
+                                                        Remark = "商户取消订单返回配送费"
+                                                    });
                     tran.Complete();
                 }
                 else

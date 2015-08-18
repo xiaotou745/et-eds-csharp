@@ -700,6 +700,7 @@
     <Content Include="Views\Imprest\ImprestPaymentList.cshtml" />
     <Content Include="Views\Imprest\DoImprestPaymentList.cshtml" />
     <Content Include="Views\Imprest\ImprestRecharge.cshtml" />
+    <Content Include="Views\Account\ChangePassword.cshtml" />
     <Content Include="Views\Complain\Complain.cshtml" />
     <Content Include="Views\Complain\_ComplainList.cshtml" />
   </ItemGroup>

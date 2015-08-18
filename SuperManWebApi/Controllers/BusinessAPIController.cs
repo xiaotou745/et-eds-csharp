@@ -27,6 +27,7 @@ using Ets.Model.DomainModel.Area;
 using Ets.Model.DomainModel.Order;
 using Ets.Model.ParameterModel.Sms;
 using ETS.Util;
+using Ets.Model.ParameterModel.Common;
 
 namespace SuperManWebApi.Controllers
 {
@@ -54,7 +55,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="model"></param>
         /// <returns></returns>        
         [HttpPost]
-        public ResultModel<BusiLoginResultModel> PostLogin_B(LoginModel model)
+        public ResultModel<BusiLoginResultModel> PostLogin_B(ParamModel model)//LoginModel
         {
             return new BusinessProvider().PostLogin_B(model);
         }
