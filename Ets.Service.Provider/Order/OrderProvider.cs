@@ -48,6 +48,7 @@ using Ets.Dao.Business;
 using Ets.Model.ParameterModel.WtihdrawRecords;
 using Ets.Model.DataModel.DeliveryCompany;
 using Ets.Dao.DeliveryCompany;
+using Ets.Service.IProvider.Clienter;
 #endregion
 namespace Ets.Service.Provider.Order
 {
@@ -55,7 +56,7 @@ namespace Ets.Service.Provider.Order
     {
         private OrderDao orderDao = new OrderDao();
         private IBusinessProvider iBusinessProvider = new BusinessProvider();
-        private ClienterProvider iClienterProvider = new ClienterProvider();
+        private IClienterProvider iClienterProvider = new ClienterProvider();
         readonly OrderOtherDao orderOtherDao = new OrderOtherDao();
         private ISubsidyProvider iSubsidyProvider = new SubsidyProvider();
         private IBusinessGroupProvider iBusinessGroupProvider = new BusinessGroupProvider();
@@ -1957,24 +1958,18 @@ namespace Ets.Service.Provider.Order
                 //int result = orderDao.CancelOrderStatus(paramodel.OrderNo, OrderStatus.Status3.GetHashCode(), "商家取消订单", OrderStatus.Status0.GetHashCode(), order.SettleMoney);
                 if (result > 0)
                 {
-                    BusinessDao businessDao = new BusinessDao();
-                    businessDao.UpdateForWithdrawC(new UpdateForWithdrawPM()
-                    {
-                        Id = paramodel.BusinessId,
-                        Money = order.SettleMoney
-                    });
-                    BusinessBalanceRecordDao businessBalanceRecordDao = new BusinessBalanceRecordDao();
-                    businessBalanceRecordDao.Insert(new BusinessBalanceRecord()
-                    {
-                        BusinessId = paramodel.BusinessId,//商户Id
-                        Amount = order.SettleMoney,//流水金额  结算金额
-                        Status = (int)BusinessBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
-                        RecordType = (int)BusinessBalanceRecordRecordType.CancelOrder,
-                        Operator = string.Format("商家:{0}", paramodel.BusinessId),
-                        WithwardId = paramodel.OrderId,
-                        RelationNo = paramodel.OrderNo,
-                        Remark = "商户取消订单返回配送费"
-                    });
+                    // 更新商户余额、可提现余额                        
+                    iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
+                                                    {
+                                                        BusinessId = paramodel.BusinessId,//商户Id
+                                                        Amount = order.SettleMoney,//流水金额  结算金额
+                                                        Status = BusinessBalanceRecordStatus.Success.GetHashCode(), //流水状态(1、交易成功 2、交易中）
+                                                        RecordType = BusinessBalanceRecordRecordType.CancelOrder.GetHashCode(),
+                                                        Operator = string.Format("商家:{0}", paramodel.BusinessId),
+                                                        WithwardId = paramodel.OrderId,
+                                                        RelationNo = paramodel.OrderNo,
+                                                        Remark = "商户取消订单返回配送费"
+                                                    });
                     tran.Complete();
                 }
                 else

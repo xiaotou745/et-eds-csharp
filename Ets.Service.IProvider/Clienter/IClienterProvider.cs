@@ -264,5 +264,32 @@ namespace Ets.Service.IProvider.Clienter
         /// <returns></returns>
         DealResultInfo ModifyClienterDetail(ClienterDetailModel model);
 
+        /// <summary>
+        /// 更新骑士余额
+        /// 胡灵波
+        /// 2015年8月13日 09:53:33
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="myOrderInfo"></param>
+        void UpdateCAccountBalance(ClienterMoneyPM clienterMoneyPM);
+
+        /// <summary>
+        /// 更新骑士可提现余额
+        /// 胡灵波
+        /// 2015年8月13日 10:38:31
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="myOrderInfo"></param>
+        void UpdateCAllowWithdrawPrice(ClienterMoneyPM clienterMoneyPM);
+
+        /// <summary>
+        /// 更新骑士余额、可提现余额      
+        /// 胡灵波
+        /// 2015年8月13日 18:11:23
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="myOrderInfo"></param>
+        void UpdateCBalanceAndWithdraw(ClienterMoneyPM clienterMoneyPM);   
+
     }
 }
