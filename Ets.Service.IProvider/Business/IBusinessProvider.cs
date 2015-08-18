@@ -9,6 +9,7 @@ using ETS.Enums;
 using Ets.Model.DataModel.Group;
 using Ets.Model.ParameterModel.User;
 using Ets.Model.ParameterModel.Order;
+using Ets.Model.ParameterModel.Common;
 
 namespace Ets.Service.IProvider.Business
 {
@@ -73,7 +74,7 @@ namespace Ets.Service.IProvider.Business
         /// </summary>
         /// <param name="model">用户名，密码对象</param>
         /// <returns>登录后返回实体对象</returns>
-        ResultModel<BusiLoginResultModel> PostLogin_B(LoginModel model);
+        ResultModel<BusiLoginResultModel> PostLogin_B(ParamModel model);
         /// <summary>
         /// 根据商户Id获取商户信息  
         /// </summary>

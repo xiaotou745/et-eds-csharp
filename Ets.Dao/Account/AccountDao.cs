@@ -109,5 +109,48 @@ WHERE aam.AccoutId=@AccountId";
             return MapRows<AuthorityMenuModel>(dt);
         }
 
+
+        /// <summary>
+        /// 验证旧密码
+        /// </summary>
+        /// <param name="AccountId"></param>
+        /// <param name="oldpwd"></param>
+        /// <returns></returns>
+        public bool ChcekPassword(int AccountId, string oldpwd)
+        {
+            string sql = @"
+SELECT AccoutId,MenuId,ParId,MenuName,Url FROM dbo.AuthorityAccountMenuSet  aam (nolock)
+JOIN AuthorityMenuClass amc(nolock) ON aam.MenuId = amc.Id
+WHERE aam.AccoutId=@AccountId";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("AccountId", DbType.Int32, 4).Value = AccountId;
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            if (dt == null || dt.Rows.Count <= 0)
+            {
+               // return null;
+            }
+            return false;
+        }
+        /// <summary>
+        /// 更新密码
+        /// </summary>
+        /// <param name="AccountId"></param>
+        /// <param name="newpwd"></param>
+        /// <returns></returns>
+        public bool UpdatePassword(int AccountId, string newpwd)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// 密码是否过期
+        /// </summary>
+        /// <param name="AccountId"></param>
+        /// <returns></returns>
+        public bool PasswordTime(int AccountId)
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }

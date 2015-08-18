@@ -699,6 +699,7 @@
     <Content Include="Views\Imprest\ImprestPaymentList.cshtml" />
     <Content Include="Views\Imprest\DoImprestPaymentList.cshtml" />
     <Content Include="Views\Imprest\ImprestRecharge.cshtml" />
+    <Content Include="Views\Account\ChangePassword.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

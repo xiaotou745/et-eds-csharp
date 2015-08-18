@@ -102,7 +102,7 @@ namespace Ets.Service.Provider.Finance
                                   OpenProvinceCode = clienterFinanceAccount.OpenProvinceCode,//省份代码
                                   HandCharge = Convert.ToInt32(globalConfig.WithdrawCommission),//手续费
                                   HandChargeOutlay = model.WithdrawPrice > Convert.ToInt32(globalConfig.ClienterWithdrawCommissionAccordingMoney) ? HandChargeOutlay.EDaiSong : HandChargeOutlay.Private,//手续费支出方
-                                  PhoneNo = clienterFinanceAccount.CreateBy, //手机号
+                                  PhoneNo = clienter.PhoneNo, //手机号 //PhoneNo = clienterFinanceAccount.CreateBy, //手机号
                                   HandChargeThreshold = Convert.ToInt32(globalConfig.ClienterWithdrawCommissionAccordingMoney)//手续费阈值
                               });             
 
@@ -175,7 +175,8 @@ namespace Ets.Service.Provider.Finance
             if (string.IsNullOrEmpty(clienterFinanceAccount.IDCard) || !Regex.IsMatch(clienterFinanceAccount.IDCard, Config.IDCARD_REG, RegexOptions.IgnoreCase) ||
                 string.IsNullOrEmpty(clienterFinanceAccount.OpenCity) || string.IsNullOrEmpty(clienterFinanceAccount.OpenProvince) ||
                 string.IsNullOrEmpty(clienterFinanceAccount.OpenBank) || string.IsNullOrEmpty(clienterFinanceAccount.OpenSubBank) ||
-                string.IsNullOrEmpty(clienterFinanceAccount.OpenSubBank) || !Regex.IsMatch(clienterFinanceAccount.OpenSubBank, Config.OPEN_SUB_BANK_REG))
+                string.IsNullOrEmpty(clienterFinanceAccount.OpenSubBank) || !Regex.IsMatch(clienterFinanceAccount.OpenSubBank, Config.OPEN_SUB_BANK_REG)
+                )
             {
                 return FinanceWithdrawC.BankInfoError;
             }

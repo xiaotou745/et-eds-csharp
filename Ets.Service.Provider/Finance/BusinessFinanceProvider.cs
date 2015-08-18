@@ -106,7 +106,7 @@ namespace Ets.Service.Provider.Finance
                     #region 商户提现
                     long withwardId = _businessWithdrawFormDao.Insert(new BusinessWithdrawForm()
                     {
-                        WithwardNo = withwardNo,//单号 规则待定
+                        WithwardNo = withwardNo,//单号
                         BusinessId = withdrawBpm.BusinessId,//商户Id
                         BalancePrice = business.BalancePrice,//提现前商户余额
                         AllowWithdrawPrice = business.AllowWithdrawPrice,//提现前商户可提现金额
