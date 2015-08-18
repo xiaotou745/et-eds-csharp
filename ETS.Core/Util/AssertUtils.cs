@@ -165,19 +165,6 @@ namespace ETS.Util
         #endregion
 
        
-        public static string GetMacString()
-        {
-            string strMac = "";
-            NetworkInterface[] interfaces = NetworkInterface.GetAllNetworkInterfaces();
-            foreach (NetworkInterface ni in interfaces)
-            {
-                if (ni.OperationalStatus == OperationalStatus.Up)
-                {
-                    strMac += ni.GetPhysicalAddress().ToString() + "|";
-                }
-            }
-            //return strMac.Split('|');
-            return strMac;
-        }
+  
     }
 }

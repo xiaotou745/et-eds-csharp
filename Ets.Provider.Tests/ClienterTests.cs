@@ -24,7 +24,8 @@ namespace Ets.Provider.Tests
             string strdes = "eds易代送";
             //string s = DES.Encrypt3DES(strdes);
             string s = "2YtqwPeCw15xxIHhs4Zu+9TjY3UR55Q0ZHkrvneEOnjO59tnaqz2S2HYGJgR186hJPOBI3HF1riH6wBQH7zntRecWq/RRAt8vl7hF+Y5QD8=";
-            string strdecode= DES.Decrypt3DES(s);
+            //string strdecode= DES.Decrypt3DES(s);
+            Console.WriteLine(DESAPP.DES3Decrypt(s, "f83834a7bc7fb26ae7535c7e"));//651554c5
 
             
 

@@ -14,6 +14,7 @@ using Ets.Service.Provider.Account;
 using LoginModel = Ets.Model.ParameterModel.Authority.LoginModel;
 using ETS.Util;
 using Ets.Model.DataModel.Account;
+using System.Text.RegularExpressions;
 
 namespace SuperMan.Controllers
 {
@@ -37,7 +38,16 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         public ActionResult LogOff()
         {
+            string loginInfo=CookieHelper.ReadCookie(SystemConst.cookieName);
+            AccountLoginLogModel logModel = new AccountLoginLogModel()
+            {
+                LoginName = ParseHelper.ToString(Regex.Match( loginInfo, "\"LoginName\":\"(.*?)\",\"GroupId\"").Groups[1].Value),
+                LoginType = 1,
+                Remark = "退出登录"
+            };
             _authenticationService.SignOut();
+            iaccountLoginLogProvider.Insert(logModel);
+
             return RedirectToAction("Login", "Account");
         }
 
@@ -123,17 +133,13 @@ namespace SuperMan.Controllers
                 //default:
                 //    return Json(new ResultModel(false, "密码不正确"));
             }
-
             AccountLoginLogModel logModel = new AccountLoginLogModel()
             {
-                Browser = Request.UserAgent,
-                Ip = DnsUtils.HostIp,
                 LoginName = model.UserName,
                 LoginType = returnStatus.GetHashCode(),
-                Mac = AssertUtils.GetMacString(),
                 Remark = returnMsg
-
             };
+          
             iaccountLoginLogProvider.Insert(logModel);
             return Json(new ResultModel(returnStatus, returnMsg));
         }
