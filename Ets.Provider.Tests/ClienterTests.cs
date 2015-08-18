@@ -18,16 +18,22 @@ namespace Ets.Provider.Tests
         public void ClienterTest()
         {
             //ClienterProvider order = new ClienterProvider();
-          
+
             //order.GetDetails(6381);
 
-            string strdes = "eds易代送";
-            //string s = DES.Encrypt3DES(strdes);
-            string s = "2YtqwPeCw15xxIHhs4Zu+9TjY3UR55Q0ZHkrvneEOnjO59tnaqz2S2HYGJgR186hJPOBI3HF1riH6wBQH7zntRecWq/RRAt8vl7hF+Y5QD8=";
-            //string strdecode= DES.Decrypt3DES(s);
-            Console.WriteLine(DESAPP.DES3Decrypt(s, "f83834a7bc7fb26ae7535c7e"));//651554c5
-
             
+
+            string strdes = "1851867832736B8653D62598A052A7B0CDCA1C3DCDD08C960E28E6FD9A85175D52E0E51C81D";
+            string key = "np!u5chin@adm!n1aaaaaaaa";
+            string ss = DES.Encrypt(strdes);
+
+            //string s = DES.Encrypt3DES(strdes);
+            string s = "/lfIemeoz9p2kCEbvSXpdghyCfdAFH57YKA0xAlX+ju1Gf5f5FxvSUEayTDCfx0Hjej3P2/dxjmeHstRunZchgw2TiFWxZjOx/HYB0beMkY=";
+            //string strdecode= DES.Encrypt(s);
+            string strdecode = DES.Decrypt(s);
+            Console.WriteLine();//651554c5
+            string sss = DESAPP.DES3Decrypt(ss, key);
+
 
         }
 

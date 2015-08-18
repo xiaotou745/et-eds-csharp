@@ -420,11 +420,11 @@ namespace Ets.Service.Provider.Business
         /// </summary>
         /// <param name="model">用户名，密码对象</param>
         /// <returns>登录后返回实体对象</returns>
-        public ResultModel<BusiLoginResultModel> PostLogin_B(ParamModel parModel)
+        public ResultModel<BusiLoginResultModel> PostLogin_B(LoginModel model)
         {
             try
             {
-                LoginModel model = JsonHelper.JsonConvertToObject<LoginModel>(DES.Decrypt3DES(parModel.data));
+                //LoginModel model = JsonHelper.JsonConvertToObject<LoginModel>(DES.Decrypt3DES(parModel.data));
                 var redis = new RedisCache();
                 string key = string.Concat(RedissCacheKey.LoginCount_B, model.phoneNo);
                 int excuteCount = redis.Get<int>(key);
