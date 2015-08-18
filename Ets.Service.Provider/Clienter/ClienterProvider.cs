@@ -693,11 +693,12 @@ namespace Ets.Service.Provider.Clienter
                 //更新商家金额
                 UpdateBusinessMoney(myOrderInfo);
                 //更新骑士金额
-                UpdateClienterMoney(myOrderInfo);
-                //写入骑士完成坐标                 
-                orderOtherDao.UpdateComplete(parModel);              
-
-                tran.Complete();
+                if (UpdateClienterMoney(myOrderInfo))
+                {
+                    //写入骑士完成坐标                 
+                    orderOtherDao.UpdateComplete(parModel);
+                    tran.Complete();
+                }
             }
             //异步回调第三方，推送通知
             Task.Factory.StartNew(() =>
@@ -711,7 +712,7 @@ namespace Ets.Service.Provider.Clienter
 
             model.IsModifyTicket = myOrderInfo.HadUploadCount >= myOrderInfo.OrderCount ? true : false;//是否允许修改小票     
             model.FinishOrderStatus = FinishOrderStatus.Success;
-            return model;        
+            return model;
         }
 
         public ClienterModel GetUserInfoByUserId(int UserId)
@@ -788,12 +789,15 @@ namespace Ets.Service.Provider.Clienter
                 if (orderOther == null) return null;
 
                 //上传成功后， 判断 订单 创建时间在 2015-4-18 00：00 之前的订单不在增加佣金
-                string date = "2015-04-18 00:00:00";             
+                string date = "2015-04-18 00:00:00";
 
                 if (orderOther.OrderStatus == OrderStatus.Status1.GetHashCode() && orderOther.OrderCreateTime > Convert.ToDateTime(date))
                 {
                     //更新骑士金额
-                    UpdateClienterMoney(myOrderInfo);
+                    if (!UpdateClienterMoney(myOrderInfo))
+                    {
+                        return null;
+                    }
                 }
 
                 tran.Complete();
@@ -950,7 +954,7 @@ namespace Ets.Service.Provider.Clienter
         /// <returns></returns>
         public ClienterDM GetDetails(int id)
         {
-            return clienterDao.GetDetails(id);           
+            return clienterDao.GetDetails(id);
         }
 
         /// <summary>
@@ -1071,7 +1075,7 @@ namespace Ets.Service.Provider.Clienter
         public PageInfo<ClienterListModel> GetClienterList(ClienterSearchCriteria criteria)
         {
             return clienterDao.GetClienterList<ClienterListModel>(criteria);
-        }       
+        }
         /// <summary>
         /// 修改骑士详细信息
         /// danny-20150707
@@ -1112,15 +1116,15 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="myOrderInfo"></param>
         /// <param name="uploadReceiptModel"></param>
         /// <param name="orderOther"></param>
-        void UpdateClienterMoney(OrderListModel myOrderInfo)
+        bool UpdateClienterMoney(OrderListModel myOrderInfo)
         {
             if (myOrderInfo.HadUploadCount < myOrderInfo.OrderCount)
             {
-                return;
+                return false;
             }
             if (!CheckOrderPay(myOrderInfo.Id))
             {
-                return;
+                return false;
             }
 
             //物流公司 
@@ -1166,7 +1170,7 @@ namespace Ets.Service.Provider.Clienter
                     UpdateInvalidOrder(myOrderInfo);
                 }
                 else//不需要审核
-                {   
+                {
                     // 更新骑士余额、可提现余额  
                     UpdateCBalanceAndWithdraw(new ClienterMoneyPM()
                                             {
@@ -1185,8 +1189,9 @@ namespace Ets.Service.Provider.Clienter
                     orderOtherDao.UpdateAuditStatus(myOrderInfo.Id, OrderAuditStatusCommon.Through.GetHashCode());
                     //更新骑士无效订单金额
                     UpdateInvalidOrder(myOrderInfo);
-                }             
+                }
             }
+            return true;
         }
 
         /// <summary>
@@ -1198,7 +1203,7 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="isNotRealOrder"></param>
         private void UpdateInvalidOrder(OrderListModel myOrderInfo)
         {
-            string mess = "主单Id:" + myOrderInfo.Id;             
+            string mess = "主单Id:" + myOrderInfo.Id;
 
             decimal realOrderCommission = myOrderInfo.OrderCommission == null ? 0 : myOrderInfo.OrderCommission.Value;
             var deductCommissionReason = "";//无效订单原因
@@ -1238,9 +1243,9 @@ namespace Ets.Service.Provider.Clienter
                                                             WithwardId = myOrderInfo.Id,
                                                             RelationNo = myOrderInfo.OrderNo,
                                                             Remark = "返还商家订单菜品费"
-                                                        });             
-            }            
-        }      
+                                                        });
+            }
+        }
 
         /// <summary>
         /// 更新骑士余额
@@ -1256,7 +1261,7 @@ namespace Ets.Service.Provider.Clienter
                                             {
                                                 Id = clienterMoneyPM.ClienterId,
                                                 Money = clienterMoneyPM.Amount
-                                            } );
+                                            });
 
             //更新骑士余额流水          
             clienterBalanceRecordDao.Insert(new ClienterBalanceRecord()
@@ -1270,7 +1275,7 @@ namespace Ets.Service.Provider.Clienter
                                                 WithwardId = clienterMoneyPM.WithwardId,
                                                 RelationNo = clienterMoneyPM.RelationNo,
                                                 Remark = clienterMoneyPM.Remark
-                                            });        
+                                            });
         }
 
         /// <summary>
@@ -1345,8 +1350,8 @@ namespace Ets.Service.Provider.Clienter
                                                 WithwardId = clienterMoneyPM.WithwardId,
                                                 RelationNo = clienterMoneyPM.RelationNo,
                                                 Remark = clienterMoneyPM.Remark
-                                            } );
-      
+                                            });
+
         }
 
         /// <summary>
@@ -1359,7 +1364,7 @@ namespace Ets.Service.Provider.Clienter
         /// <returns></returns>
         private bool CheckIsNotRealOrder(OrderListModel myOrderInfo, out string reason)
         {
-            OrderMapDetail mapDetail = orderDao.GetOrderMapDetail(myOrderInfo.Id);   
+            OrderMapDetail mapDetail = orderDao.GetOrderMapDetail(myOrderInfo.Id);
             GlobalConfigModel globalSetting = GlobalConfigDao.GlobalConfigGet(0);
             string mess = "";
             mess += "GrabToCompleteDistance" + mapDetail.GrabToCompleteDistance.ToString();
@@ -1437,7 +1442,7 @@ namespace Ets.Service.Provider.Clienter
             }
 
             return 0;
-        }    
+        }
     }
 
 }

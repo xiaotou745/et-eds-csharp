@@ -59,6 +59,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Account\AccountLoginLogProvider.cs" />
     <Compile Include="Account\AccountProvider.cs" />
     <Compile Include="Authority\AuthorityMenuProvider.cs" />
     <Compile Include="Business\BusinessClienterRelationProvider.cs" />

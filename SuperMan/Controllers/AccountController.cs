@@ -13,6 +13,7 @@ using Ets.Service.IProvider.Account;
 using Ets.Service.Provider.Account;
 using LoginModel = Ets.Model.ParameterModel.Authority.LoginModel;
 using ETS.Util;
+using Ets.Model.DataModel.Account;
 
 namespace SuperMan.Controllers
 {
@@ -21,6 +22,7 @@ namespace SuperMan.Controllers
     {
         private IAuthenticationService _authenticationService;
         IAccountProvider iAccountProvider = new AccountProvider();
+        IAccountLoginLogProvider iaccountLoginLogProvider = new AccountLoginLogProvider();
         public AccountController()
         {
             _authenticationService = new AdminAuthenticationService();
@@ -76,6 +78,8 @@ namespace SuperMan.Controllers
                 return Json(new ResultModel(false, "验证码不正确"));
             }
             var loginResult = iAccountProvider.ValidateUser(model.UserName, MD5Helper.MD5(model.Password));
+            bool returnStatus = false;
+            string returnMsg = "密码不正确";
             switch (loginResult)
             {
                 case ETS.Enums.UserLoginResults.Successful:
@@ -104,14 +108,34 @@ namespace SuperMan.Controllers
                     }
                     string menujson = JsonHelper.ToJson(myMenus);
                     CookieHelper.WriteCookie("menulist", menujson, DateTime.Now.AddDays(10));
-                    return Json(new ResultModel(true, "成功"));
+                    //return Json(new ResultModel(true, "成功"));
+                    returnStatus = true;
+                    returnMsg = "成功";
+                    break;
                 case ETS.Enums.UserLoginResults.UserNotExist:
-                    return Json(new ResultModel(false, "用户不存在"));
+                    //return Json(new ResultModel(false, "用户不存在"));
+                    returnMsg = "用户不存在";
+                    break;
                 case ETS.Enums.UserLoginResults.AccountClosed:
-                    return Json(new ResultModel(false, "用户已经锁定"));
-                default:
-                    return Json(new ResultModel(false, "密码不正确")); ;
+                    //return Json(new ResultModel(false, "用户已经锁定"));
+                    returnMsg = "密码不正确";
+                    break;
+                //default:
+                //    return Json(new ResultModel(false, "密码不正确"));
             }
+
+            AccountLoginLogModel logModel = new AccountLoginLogModel()
+            {
+                Browser = Request.UserAgent,
+                Ip = DnsUtils.HostIp,
+                LoginName = model.UserName,
+                LoginType = returnStatus.GetHashCode(),
+                Mac = AssertUtils.GetMacString(),
+                Remark = returnMsg
+
+            };
+            iaccountLoginLogProvider.Insert(logModel);
+            return Json(new ResultModel(returnStatus, returnMsg));
         }
 
         /// <summary>
