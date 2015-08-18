@@ -31,7 +31,7 @@
                         <td>@item.BussinessName</td>
                         <td>@item.CityName</td>
                         <td>@item.ClienterName</td>
-                        <td>@item.ComplainType</td>
+                        <td>@ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.ComplainEnum)item.ComplainType).GetType(), (ETS.Enums.ComplainEnum)item.ComplainType).Text</td>
                         <td>@item.CreateTime</td>
                         <td title=@item.Reason>@(item.Reason.Length > 20 ? item.Reason.Substring(0, 20) + "..." : item.Reason)</td>
                     </tr>
