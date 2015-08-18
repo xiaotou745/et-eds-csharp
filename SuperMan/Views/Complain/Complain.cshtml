@@ -25,7 +25,7 @@
                     <td>
                         <span class="">投诉类型: </span>
                         @Html.DropDownList("ComplainType", new SelectList(EnumExtenstion.GetEnumItems(typeof (ComplainTypeEnum)), "Value", "Text"), "全部", new {@class = "selectw", style = "width:157px"})
-                        <span class="">日期: </span><input/>
+                        <span class="">日期: </span>
                         <input id="ComplainStartTime" name="ComplainStartTime" class="Wdate" type="text" onfocus=" WdatePicker({ maxDate: '#F{$dp.$D(\'ComplainEndTime\')||\'%y-%M-%d\'}', dateFmt: 'yyyy-MM-dd 00:00:00' }) " />到
                         <input id="ComplainEndTime" name="ComplainEndTime" class="Wdate" type="text" onfocus=" WdatePicker({ minDate: '#F{$dp.$D(\'ComplainStartTime\')}', dateFmt: 'yyyy-MM-dd 23:59:59' }) " />
                     </td>

@@ -12,6 +12,7 @@
             <th>商家名称</th>
             <th>城市</th>
             <th>骑士姓名</th>
+            <th>投诉类型</th>
             <th>投诉时间</th>
             <th>投诉原因</th> 
         </tr>
@@ -30,6 +31,7 @@
                         <td>@item.BussinessName</td>
                         <td>@item.CityName</td>
                         <td>@item.ClienterName</td>
+                        <td>@item.ComplainType</td>
                         <td>@item.CreateTime</td>
                         <td title=@item.Reason>@(item.Reason.Length > 20 ? item.Reason.Substring(0, 20) + "..." : item.Reason)</td>
                     </tr>

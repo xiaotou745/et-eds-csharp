@@ -107,23 +107,23 @@
     //    error: function () { }
     //});
 
-    $.ajax({
-        type: 'POST',
-        dataType: 'json',
-        url: '/Order/Complete',
-        data: {
-            "userId": 3231,
-            "orderId": 145167,
-            "orderNo": "2092150813155518704",
-            "pickupCode": "",
-            "version": "1.0",
-            "longitude":0.201,
-            "latitude":0.202            
-        },
-        success: function (data) {
-            console.log(data);
-        }
-    });
+    //$.ajax({
+    //    type: 'POST',
+    //    dataType: 'json',
+    //    url: '/Order/Complete',
+    //    data: {
+    //        "userId": 3231,
+    //        "orderId": 145167,
+    //        "orderNo": "2092150813155518704",
+    //        "pickupCode": "",
+    //        "version": "1.0",
+    //        "longitude":0.201,
+    //        "latitude":0.202            
+    //    },
+    //    success: function (data) {
+    //        console.log(data);
+    //    }
+    //});
 
     //$.ajax({
     //    type: 'get',
@@ -859,6 +859,26 @@
     //        data: {
     //            "ClienterId": "114",
     //            "version": "123"
+    //        },
+    //        success: function (data) {
+    //            console.log(data);
+    //        },
+    //        error: function () { }
+    //    });
+    //});
+
+
+    //$(function () {
+    //    $.ajax({
+    //        type: 'POST',
+    //        dataType: 'json',
+    //        url: '/Complain/ClienterComplainBusiness',
+    //        data: {
+    //            "ComplainId": "114",
+    //            "ComplainedId":15,
+    //            "OrderId": "1",
+    //            "OrderNo": "260150818153830890",
+    //            "Reason":"jfsods"
     //        },
     //        success: function (data) {
     //            console.log(data);

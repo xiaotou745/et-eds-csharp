@@ -12,7 +12,9 @@ namespace ETS.Enums
         [DisplayText("您的反馈已发送，我们会尽快核实处理")]
         Success = 1,
         [DisplayText("投诉失败")]
-        Fail = 0
+        Fail = 0,
+        [DisplayText("已被投诉，请耐心等待处理")]
+        HadComplain = 2
     }
 
     public enum ComplainTypeEnum

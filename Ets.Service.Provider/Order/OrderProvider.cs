@@ -1710,6 +1710,7 @@ namespace Ets.Service.Provider.Order
             }
             #endregion
 
+            orderDM.IsComplain = order.IsComplain;
             orderDM.Id = order.Id;
             orderDM.OrderNo = order.OrderNo;
             orderDM.OriginalOrderNo = order.OriginalOrderNo;
