@@ -20,5 +20,6 @@ namespace Ets.Provider.Tests
           
             order.GetDetails(6381);
         }
+
     }
 }

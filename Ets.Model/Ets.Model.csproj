@@ -284,6 +284,7 @@
     <Compile Include="ParameterModel\Common\OpenCitySearchCriteria.cs" />
     <Compile Include="ParameterModel\Clienter\UploadReceiptModel.cs" />
     <Compile Include="ParameterModel\Clienter\UploadReceiptResultModel.cs" />
+    <Compile Include="ParameterModel\Common\ParamModel.cs" />
     <Compile Include="ParameterModel\DeliveryCompany\DoBatchImportClienterPM.cs" />
     <Compile Include="ParameterModel\DeliveryCompany\DeliveryCompanyCriteria.cs" />
     <Compile Include="ParameterModel\Finance\BankCriteria.cs" />
