@@ -2142,9 +2142,10 @@ namespace Ets.Service.Provider.Order
             sbEmail.AppendLine("");
             if (orderList == null || orderList.Count == 0)
             {
-                sbEmail.AppendLine("待审核订单数量：【" + orderAuditStatistical.UnAuditQty +"】单");
-                sbEmail.AppendLine("已审核订单数量：【" + orderAuditStatistical.AuditOkQty + "】单");
-                sbEmail.AppendLine("审核拒绝订单数量：【" + orderAuditStatistical.AuditRefuseQty + "】单");
+                sbEmail.AppendLine("未完成任务量：【" + orderAuditStatistical.UnFinishTaskQty + "】个（订单量：【" + orderAuditStatistical.UnFinishOrderQty + "】单）");
+                sbEmail.AppendLine("待审核订单量：【" + orderAuditStatistical.UnAuditTaskQty + "】个（订单量：【" + orderAuditStatistical.UnAuditOrderQty + "】单）");
+                sbEmail.AppendLine("已审核订单量：【" + orderAuditStatistical.AuditOkTaskQty + "】个（订单数量：【" + orderAuditStatistical.AuditOkOrderQty + "】单）");
+                sbEmail.AppendLine("审核拒绝订单量：【" + orderAuditStatistical.AuditRefuseTaskQty + "】个（订单数量：【" + orderAuditStatistical.AuditRefuseOrderQty + "】单）");
                 EmailHelper.SendEmailTo(sbEmail.ToString(), emailSendTo, "订单审核数据统计", copyTo, false);
                 return;
             }
@@ -2153,9 +2154,10 @@ namespace Ets.Service.Provider.Order
             orderList = orderList.Where(t => !(t.MealsSettleMode == 1 && t.IsPay == false)).ToList();
             if (orderList.Count == 0)
             {
-                sbEmail.AppendLine("待审核订单数量：【" + orderAuditStatistical.UnAuditQty + "】单");
-                sbEmail.AppendLine("已审核订单数量：【" + orderAuditStatistical.AuditOkQty + "】单");
-                sbEmail.AppendLine("审核拒绝订单数量：【" + orderAuditStatistical.AuditRefuseQty + "】单");
+                sbEmail.AppendLine("未完成任务量：【" + orderAuditStatistical.UnFinishTaskQty + "】个（订单量：【" + orderAuditStatistical.UnFinishOrderQty + "】单）");
+                sbEmail.AppendLine("待审核订单量：【" + orderAuditStatistical.UnAuditTaskQty + "】个（订单量：【" + orderAuditStatistical.UnAuditOrderQty + "】单）");
+                sbEmail.AppendLine("已审核订单量：【" + orderAuditStatistical.AuditOkTaskQty + "】个（订单数量：【" + orderAuditStatistical.AuditOkOrderQty + "】单）");
+                sbEmail.AppendLine("审核拒绝订单量：【" + orderAuditStatistical.AuditRefuseTaskQty + "】个（订单数量：【" + orderAuditStatistical.AuditRefuseOrderQty + "】单）");
                 EmailHelper.SendEmailTo(sbEmail.ToString(), emailSendTo, "订单审核数据统计", copyTo, false);
                 return;
             }
@@ -2238,7 +2240,8 @@ namespace Ets.Service.Provider.Order
                                 {
                                     orderDao.AutoAuditRefuseDeal(orderListModel.Id);
                                     tran.Complete();
-                                    orderAuditStatistical.AuditRefuseQty++;
+                                    orderAuditStatistical.AuditRefuseTaskQty++;
+                                    orderAuditStatistical.AuditRefuseOrderQty += orderListModel.OrderCount;
                                 }
                             }
                         }
@@ -2246,9 +2249,10 @@ namespace Ets.Service.Provider.Order
                     }
                 }
             }
-            sbEmail.AppendLine("待审核订单数量：【" + orderAuditStatistical.UnAuditQty + "】单");
-            sbEmail.AppendLine("已审核订单数量：【" + orderAuditStatistical.AuditOkQty + "】单");
-            sbEmail.AppendLine("审核拒绝订单数量：【" + orderAuditStatistical.AuditRefuseQty + "】单");
+            sbEmail.AppendLine("未完成任务量：【" + orderAuditStatistical.UnFinishTaskQty + "】个（订单量：【" + orderAuditStatistical.UnFinishOrderQty + "】单）");
+            sbEmail.AppendLine("待审核订单量：【" + orderAuditStatistical.UnAuditTaskQty + "】个（订单量：【" + orderAuditStatistical.UnAuditOrderQty + "】单）");
+            sbEmail.AppendLine("已审核订单量：【" + orderAuditStatistical.AuditOkTaskQty + "】个（订单数量：【" + orderAuditStatistical.AuditOkOrderQty + "】单）");
+            sbEmail.AppendLine("审核拒绝订单量：【" + orderAuditStatistical.AuditRefuseTaskQty + "】个（订单数量：【" + orderAuditStatistical.AuditRefuseOrderQty + "】单）");
             EmailHelper.SendEmailTo(sbEmail.ToString(), emailSendTo, "订单审核数据统计", copyTo, false);
             #endregion
 

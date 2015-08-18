@@ -3579,6 +3579,7 @@ where   Id = @OrderId and FinishAll = 0";
                                         ,o.[OrderCommission]
                                         ,o.[IsPay]
                                         ,o.FinishAll
+                                        ,o.[OrderCount]
                                         ,ISNULL(o.MealsSettleMode,0) MealsSettleMode
                                         ,ISNULL(oo.IsJoinWithdraw,0) IsJoinWithdraw
                                     FROM [order] o WITH ( NOLOCK )
@@ -3634,7 +3635,7 @@ where   Id = @OrderId and FinishAll = 0";
             parm.AddWithValue("@Id", model.Id);
             parm.AddWithValue("@Status", model.Status);
             parm.AddWithValue("@OldStatus", model.OldStatus);
-            parm.AddWithValue("@Price", model.OrderCommission);
+            parm.AddWithValue("@Price", model.OrderCommission??0);
             parm.AddWithValue("@OptId", 0);
             parm.AddWithValue("@OptName", "服务");
             parm.AddWithValue("@Platform", 2);
@@ -3799,9 +3800,14 @@ where c.Id=@ClienterId;");
         /// <returns></returns>
         public OrderAuditStatisticalModel GetOrderAuditStatistical()
         {
-            string sql = @" SELECT  ISNULL(COUNT(CASE when oo.AuditStatus=0 AND  o.FinishAll=1 THEN oo.Id END),0) UnAuditQty,
-									ISNULL(COUNT(CASE when oo.AuditStatus=1 THEN oo.Id END),0) AuditOkQty,
-									ISNULL(COUNT(CASE when oo.AuditStatus=2 THEN oo.Id END),0) AuditRefuseQty
+            string sql = @" SELECT  ISNULL(COUNT(CASE when oo.AuditStatus=0 AND  o.FinishAll=1 THEN o.Id END),0) UnAuditTaskQty,
+		                            ISNULL(SUM(CASE when oo.AuditStatus=0 AND  o.FinishAll=1 THEN o.OrderCount END),0) UnAuditOrderQty,
+		                            ISNULL(COUNT(CASE when oo.AuditStatus=0 AND  o.FinishAll=0 THEN o.Id END),0) UnFinishTaskQty,
+		                            ISNULL(SUM(CASE when oo.AuditStatus=0 AND  o.FinishAll=0 THEN o.OrderCount END),0) UnFinishOrderQty,
+		                            ISNULL(COUNT(CASE when oo.AuditStatus=1 THEN o.Id END),0) AuditOkTaskQty,
+		                            ISNULL(SUM(CASE when oo.AuditStatus=1 THEN o.OrderCount END),0) AuditOkOrderQty,
+		                            ISNULL(COUNT(CASE when oo.AuditStatus=2 THEN o.Id END),0) AuditRefuseTaskQty,
+		                            ISNULL(SUM(CASE when oo.AuditStatus=2 THEN o.OrderCount END),0) AuditRefuseOrderQty
                             FROM [order] o WITH(NOLOCK)
                             JOIN dbo.OrderOther oo WITH(NOLOCK) ON oo.OrderId=o.Id
                             WHERE o.PubDate BETWEEN DATEADD(HOUR,-24,Convert(DateTime,Convert(Varchar(10),GetDate(),120))) 
