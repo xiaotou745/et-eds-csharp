@@ -27,7 +27,7 @@ namespace Ets.Service.Provider.Complain
             //    return ResultModel<object>.Conclude(ComplainEnum.HadComplain);
             //} 
             int result = _complainDao.Insert(complainModel);
-            if (result == 1)
+            if (result >0 )
             {
                 return ResultModel<object>.Conclude(ComplainEnum.Success);
             }
