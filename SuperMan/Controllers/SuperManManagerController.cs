@@ -210,25 +210,7 @@ namespace SuperMan.Controllers
             var pagedList = new SubsidyProvider().GetCrossShopListByCid(UserId);
             ViewBag.pagedList = pagedList;
             return View();
-        }
-
-        ///// <summary>
-        ///// 查看骑士详细信息
-        ///// danny-20150513
-        ///// </summary>
-        ///// <param name="clienterId">骑士Id</param>
-        ///// <returns></returns>
-        //public ActionResult ClienterDetail(string clienterId)
-        //{
-
-        //    var clienterWithdrawFormModel = cliterProvider.GetClienterDetailById(clienterId);
-        //    var criteria = new ClienterBalanceRecordSerchCriteria()
-        //    {
-        //        ClienterId = Convert.ToInt32(clienterId)
-        //    };
-        //    ViewBag.clienterBalanceRecord = iClienterFinanceProvider.GetClienterBalanceRecordList(criteria);
-        //    return View(clienterWithdrawFormModel);
-        //}
+        }   
 
         /// <summary>
         /// 查看骑士详细信息

@@ -26,7 +26,9 @@ using ETS.Transaction;
 using ETS.Transaction.Common;
 using ETS.Util;
 using ETS.Data.PageData;
-
+using Ets.Service.IProvider.Clienter;
+using Ets.Service.Provider.Clienter;
+using Ets.Model.ParameterModel.Order;
 namespace Ets.Service.Provider.Finance
 {
     public class ClienterFinanceProvider : IClienterFinanceProvider
@@ -52,6 +54,8 @@ namespace Ets.Service.Provider.Finance
         /// </summary>
         private readonly ClienterFinanceAccountDao _clienterFinanceAccountDao = new ClienterFinanceAccountDao();
         ClienterFinanceDao clienterFinanceDao = new ClienterFinanceDao();
+
+        private IClienterProvider iClienterProvider = new ClienterProvider();
         #endregion
 
         #region 骑士提现功能  add by caoheyang 20150509
@@ -73,15 +77,9 @@ namespace Ets.Service.Provider.Finance
                     return ResultModel<object>.Conclude(checkbool);
                 }
                 else
-                {
-                    _clienterDao.UpdateCBalanceAndWithdraw(new UpdateForWithdrawPM
-                    {
-                        Id = model.ClienterId,
-                        Money = -model.WithdrawPrice
-                    }); //更新骑士表的余额，可提现余额
+                {                 
                     string withwardNo = Helper.generateOrderCode(model.ClienterId);
-                    GlobalConfigModel globalConfig = GlobalConfigDao.GlobalConfigGet(0);
-                    #region 骑士提现
+                    GlobalConfigModel globalConfig = GlobalConfigDao.GlobalConfigGet(0);                  
                     long withwardId = _clienterWithdrawFormDao.Insert(new ClienterWithdrawForm()
                               {
                                   WithwardNo = withwardNo,//单号 规则待定
@@ -106,45 +104,30 @@ namespace Ets.Service.Provider.Finance
                                   HandChargeOutlay = model.WithdrawPrice > Convert.ToInt32(globalConfig.ClienterWithdrawCommissionAccordingMoney) ? HandChargeOutlay.EDaiSong : HandChargeOutlay.Private,//手续费支出方
                                   PhoneNo = clienterFinanceAccount.CreateBy, //手机号
                                   HandChargeThreshold = Convert.ToInt32(globalConfig.ClienterWithdrawCommissionAccordingMoney)//手续费阈值
-                              });
-                    #endregion
-
-                    #region 骑士余额流水操作 更新骑士表的余额，可提现余额
-                    _clienterBalanceRecordDao.Insert(new ClienterBalanceRecord()
-                            {
-                                ClienterId = model.ClienterId,//骑士Id(Clienter表）
-                                Amount = -model.WithdrawPrice,//流水金额
-                                Status = (int)ClienterBalanceRecordStatus.Tradeing, //流水状态(1、交易成功 2、交易中）
-                                RecordType = (int)ClienterBalanceRecordRecordType.WithdrawApply,
-                                Operator = clienter.TrueName,
-                                WithwardId = withwardId,
-                                RelationNo = withwardNo,
-                                Remark = "骑士提现"
-                            });
-
-                    clienterAllowWithdrawRecordDao.Insert(new ClienterAllowWithdrawRecord()
-                    {
-                        ClienterId = model.ClienterId,//骑士Id(Clienter表）
-                        Amount = -model.WithdrawPrice,//流水金额
-                        Status = (int)ClienterAllowWithdrawRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
-                        RecordType = (int)ClienterAllowWithdrawRecordType.WithdrawApply,
-                        Operator = clienter.TrueName,
-                        WithwardId = withwardId,
-                        RelationNo = withwardNo,
-                        Remark = "骑士提现"
-                    });
-                    #endregion
-
-                    #region 骑士提现记录
+                              });             
 
                     _clienterWithdrawLogDao.Insert(new ClienterWithdrawLog()
-                    {
-                        WithwardId = withwardId,
-                        Status = (int)ClienterWithdrawFormStatus.WaitAllow,//待审核
-                        Remark = "骑士发起提现操作",
-                        Operator = clienter.TrueName
-                    }); //更新骑士表的余额，可提现余额 
-                    #endregion
+                                                {
+                                                    WithwardId = withwardId,
+                                                    Status = (int)ClienterWithdrawFormStatus.WaitAllow,//待审核
+                                                    Remark = "骑士发起提现操作",
+                                                    Operator = clienter.TrueName
+                                                });
+                 
+
+                    //更新骑士余额、可提现余额  
+                    iClienterProvider.UpdateCBalanceAndWithdraw(new ClienterMoneyPM()
+                                                            {
+                                                                ClienterId = model.ClienterId,//骑士Id(Clienter表）
+                                                                Amount = -model.WithdrawPrice,//流水金额
+                                                                Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(), //流水状态(1、交易成功 2、交易中）
+                                                                RecordType = ClienterAllowWithdrawRecordType.WithdrawApply.GetHashCode(),
+                                                                Operator = clienter.TrueName,
+                                                                WithwardId = withwardId,
+                                                                RelationNo = withwardNo,
+                                                                Remark = "骑士提现"
+                                                            });
+
                     tran.Complete();
                 }
                 return ResultModel<object>.Conclude(FinanceWithdrawC.Success); ;
@@ -996,35 +979,20 @@ namespace Ets.Service.Provider.Finance
             {
                 clienterFinanceDao.ClienterRecharge(model);
 
-                ClienterBalanceRecord cbrm = new ClienterBalanceRecord()
-                {
-                    ClienterId = model.ClienterId,
-                    Amount = model.RechargeAmount,
-                    Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
-                    Balance = amount,
-                    RecordType = ClienterBalanceRecordRecordType.BalanceAdjustment.GetHashCode(),
-                    Operator = model.OptName,
-                    WithwardId = 0,
-                    RelationNo = "",
-                    Remark = model.Remark
-                };
-                _clienterBalanceRecordDao.Insert(cbrm);
 
-                ClienterAllowWithdrawRecord cawrm = new ClienterAllowWithdrawRecord()
-                {
-                    ClienterId = model.ClienterId,
-                    Amount = model.RechargeAmount,
-                    Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(),
-                    Balance = allowWithdrawPrice,
-                    RecordType = ClienterAllowWithdrawRecordType.BalanceAdjustment.GetHashCode(),
-                    Operator = model.OptName,
-                    WithwardId = 0,
-                    RelationNo = "",
-                    Remark = model.Remark
-                };
-                clienterAllowWithdrawRecordDao.Insert(cawrm);
+                //更新骑士余额、可提现余额  
+                iClienterProvider.UpdateCBalanceAndWithdraw(new ClienterMoneyPM()
+                                                            {
+                                                                ClienterId = model.ClienterId,
+                                                                Amount = model.RechargeAmount,
+                                                                Status = ClienterBalanceRecordStatus.Success.GetHashCode(),                  
+                                                                RecordType = ClienterBalanceRecordRecordType.BalanceAdjustment.GetHashCode(),
+                                                                Operator = model.OptName,
+                                                                WithwardId = 0,
+                                                                RelationNo = "",
+                                                                Remark = model.Remark
+                                                            });
 
-                
                 tran.Complete();
             }
 
