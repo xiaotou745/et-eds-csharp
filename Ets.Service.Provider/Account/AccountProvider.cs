@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ETS.Util;
 
 namespace Ets.Service.Provider.Account
 {
@@ -38,7 +39,8 @@ namespace Ets.Service.Provider.Account
         /// <returns></returns>
         public bool ChcekPassword(int AccountId, string oldpwd)
         {
-            throw new NotImplementedException();
+            oldpwd = MD5Helper.MD5(oldpwd);
+            return accountDao.ChcekPassword(AccountId, oldpwd);
         }
         /// <summary>
         /// 更新密码
@@ -48,7 +50,8 @@ namespace Ets.Service.Provider.Account
         /// <returns></returns>
         public bool UpdatePassword(int AccountId, string newpwd)
         {
-            throw new NotImplementedException();
+            newpwd = MD5Helper.MD5(newpwd);
+            return accountDao.UpdatePassword(AccountId, newpwd);
         }
 
         /// <summary>
