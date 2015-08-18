@@ -1,0 +1,48 @@
+﻿
+@model ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Complain.ComplainDomain>
+
+@using ETS.Util
+@using Webdiyer.WebControls.Mvc
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+    <thead>
+        <tr class="tdbg">
+            <th width="5%">投诉Id</th>
+            <th>订单号</th>
+            <th>商家名称</th>
+            <th>城市</th>
+            <th>骑士姓名</th>
+            <th>投诉时间</th>
+            <th>投诉原因</th> 
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            if (Model != null && Model.Records.Count > 0)
+            {
+                var i = 0;
+                foreach (var item in Model.Records)
+                {
+                    i++;
+                    <tr id="@item.Id">
+                        <td>@item.Id</td>
+                        <td>@item.OrderNo</td>
+                        <td>@item.BussinessName</td>
+                        <td>@item.CityName</td>
+                        <td>@item.ClienterName</td>
+                        <td>@item.CreateTime</td>
+                        <td title=@item.Reason>@(item.Reason.Length > 20 ? item.Reason.Substring(0, 20) + "..." : item.Reason)</td>
+                    </tr>
+                }
+            }
+        }
+    <tbody>
+
+</table>
+@{
+    if (Model != null)
+    {
+        ViewBag.ActionName = "PostComplain";
+        @Html.Partial("~/views/shared/PagerControl.cshtml", Model)
+    }
+}

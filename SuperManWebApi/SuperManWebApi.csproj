@@ -227,6 +227,7 @@
     <Compile Include="Controllers\ClienterAPIController.cs" />
     <Compile Include="Controllers\ClienterController.cs" />
     <Compile Include="Controllers\CommonController.cs" />
+    <Compile Include="Controllers\ComplainController.cs" />
     <Compile Include="Controllers\MessageController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\FinanceController.cs" />
@@ -346,6 +347,7 @@
     <Folder Include="Content\app\" />
     <Folder Include="Views\Bank\" />
     <Folder Include="Views\Common\" />
+    <Folder Include="Views\Complain\" />
     <Folder Include="Views\Download\" />
   </ItemGroup>
   <ItemGroup>

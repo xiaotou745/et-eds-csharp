@@ -86,6 +86,7 @@
     <Compile Include="DataModel\Clienter\ClienterPicModel.cs" />
     <Compile Include="DataModel\Clienter\CrossShopStatisticLogModel.cs" />
     <Compile Include="DataModel\Common\ExportSqlManage.cs" />
+    <Compile Include="DataModel\Complain\ComplainModel.cs" />
     <Compile Include="DataModel\DeliveryCompany\DeliveryCompanyModel.cs" />
     <Compile Include="DataModel\Finance\ClienterAllowWithdrawRecord.cs" />
     <Compile Include="DataModel\Finance\ImprestBalanceRecord.cs" />
@@ -121,6 +122,7 @@
     <Compile Include="DomainModel\Business\BusinessExpressRelationModel.cs" />
     <Compile Include="DomainModel\Clienter\ClienterUpdateModel.cs" />
     <Compile Include="DomainModel\Common\APPVersionModel.cs" />
+    <Compile Include="DomainModel\Complain\ComplainDomain.cs" />
     <Compile Include="DomainModel\DeliveryCompany\BatchImportClienterExcelDM.cs" />
     <Compile Include="DomainModel\Area\DMAreaCodeInfo.cs" />
     <Compile Include="DomainModel\Authority\AccountCityRelationModel.cs" />
@@ -284,6 +286,8 @@
     <Compile Include="ParameterModel\Common\OpenCitySearchCriteria.cs" />
     <Compile Include="ParameterModel\Clienter\UploadReceiptModel.cs" />
     <Compile Include="ParameterModel\Clienter\UploadReceiptResultModel.cs" />
+    <Compile Include="ParameterModel\Complain\ComplainCriteria.cs" />
+    <Compile Include="ParameterModel\Complain\ComplainParameter.cs" />
     <Compile Include="ParameterModel\DeliveryCompany\DoBatchImportClienterPM.cs" />
     <Compile Include="ParameterModel\DeliveryCompany\DeliveryCompanyCriteria.cs" />
     <Compile Include="ParameterModel\Finance\BankCriteria.cs" />

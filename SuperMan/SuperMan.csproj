@@ -215,6 +215,7 @@
     <Compile Include="Controllers\AuthorityManagerController.cs" />
     <Compile Include="Controllers\BusinessController.cs" />
     <Compile Include="Controllers\BusinessManagerController.cs" />
+    <Compile Include="Controllers\ComplainController.cs" />
     <Compile Include="Controllers\DataManagerController.cs" />
     <Compile Include="Controllers\DeliveryCompanyController.cs" />
     <Compile Include="Controllers\DeliveryManagerController.cs" />
@@ -699,6 +700,8 @@
     <Content Include="Views\Imprest\ImprestPaymentList.cshtml" />
     <Content Include="Views\Imprest\DoImprestPaymentList.cshtml" />
     <Content Include="Views\Imprest\ImprestRecharge.cshtml" />
+    <Content Include="Views\Complain\Complain.cshtml" />
+    <Content Include="Views\Complain\_ComplainList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
