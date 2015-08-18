@@ -29,5 +29,36 @@ namespace Ets.Service.Provider.Account
         {
             return accountDao.GetAuth(AccountId);
         }
+
+        /// <summary>
+        /// 验证旧密码
+        /// </summary>
+        /// <param name="AccountId"></param>
+        /// <param name="oldpwd"></param>
+        /// <returns></returns>
+        public bool ChcekPassword(int AccountId, string oldpwd)
+        {
+            throw new NotImplementedException();
+        }
+        /// <summary>
+        /// 更新密码
+        /// </summary>
+        /// <param name="AccountId"></param>
+        /// <param name="newpwd"></param>
+        /// <returns></returns>
+        public bool UpdatePassword(int AccountId, string newpwd)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// 密码是否过期
+        /// </summary>
+        /// <param name="AccountId"></param>
+        /// <returns></returns>
+        public bool PasswordTime(int AccountId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
