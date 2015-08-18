@@ -1,0 +1,66 @@
+USE [superman]
+GO
+
+create table [dbo].[Complain](
+	[Id] [int] identity(1,1) not null,
+	[ComplainId] [int] not null,
+	[ComplainedId] [int] not null,
+	[Reason] [nvarchar](1000) not null,
+	[OrderNo] [nvarchar](45) not null,
+	[OrderId] [int] not null,
+	[CreateTime] [datetime] not null,
+	[ComplainType] [int] not null,
+ constraint [PK_BusinessReportClienter] primary key clustered 
+(
+	[Id] asc
+)with (pad_index  = off, statistics_norecompute  = off, ignore_dup_key = off, allow_row_locks  = on, allow_page_locks  = on) on [PRIMARY]
+) on [PRIMARY]
+
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'主键' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Complain', @level2type=N'COLUMN',@level2name=N'Id'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'举报人Id' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Complain', @level2type=N'COLUMN',@level2name=N'ComplainId'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'被举报人Id' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Complain', @level2type=N'COLUMN',@level2name=N'ComplainedId'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'举报原因' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Complain', @level2type=N'COLUMN',@level2name=N'Reason'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'订单号' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Complain', @level2type=N'COLUMN',@level2name=N'OrderNo'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'订单Id' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Complain', @level2type=N'COLUMN',@level2name=N'OrderId'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'创建时间' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Complain', @level2type=N'COLUMN',@level2name=N'CreateTime'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'1骑士投诉商户2商户投诉骑士' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Complain', @level2type=N'COLUMN',@level2name=N'ComplainType'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'商户举报骑士' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Complain'
+go
+
+alter table [dbo].[Complain] add  constraint [DF_BusinessReportClienter_ReportBusiId]  default ((0)) for [ComplainId]
+go
+
+alter table [dbo].[Complain] add  constraint [DF_BusinessReportClienter_ReportedClienterId]  default ((0)) for [ComplainedId]
+go
+
+alter table [dbo].[Complain] add  constraint [DF_BusinessReportClienter_Reason]  default ('') for [Reason]
+go
+
+alter table [dbo].[Complain] add  constraint [DF_BusinessReportClienter_OrderId]  default ((0)) for [OrderId]
+go
+
+alter table [dbo].[Complain] add  constraint [DF_BusinessReportClienter_CreateTime]  default (getdate()) for [CreateTime]
+go
+
+alter table [dbo].[Complain] add  constraint [DF_Complain_ComplainType]  default ((0)) for [ComplainType]
+go
+
+

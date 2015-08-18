@@ -20,8 +20,16 @@ namespace Ets.Service.IProvider.Order
     {
         /// <summary>
         /// 更新已提现
+        /// 胡灵波
+        /// 2015年8月18日 18:00:29
         /// </summary>
         /// <param name="orderId"></param>
         void UpdateIsJoinWithdraw(int orderId);
+
+        /// <summary>
+        /// 更新取消时间
+        /// 胡灵波
+        /// 2015年8月18日 17:57:11
+        bool UpdateCancelTime(int orderId);
     }
 }

@@ -26,11 +26,13 @@ namespace Ets.Dao.Order
         { }
 
         /// <summary>
-        /// 更新一条记录
+        /// 更新抢单记录
+        /// 胡灵波
+        /// 2015年8月18日 17:47:35
         /// </summary>
         public void UpdateGrab(string orderNo, float grabLongitude, float grabLatitude)
         {
-            const string UPDATE_SQL = @"
+            const string updateSql = @"
 update OrderOther 
 set GrabTime=GETDATE(), GrabLongitude=@GrabLongitude,GrabLatitude=@GrabLatitude where orderid=(
 select id from dbo.[order](nolock) where OrderNo=@OrderNo
@@ -39,20 +41,20 @@ select id from dbo.[order](nolock) where OrderNo=@OrderNo
             dbParameters.AddWithValue("@GrabLongitude", grabLongitude);
             dbParameters.AddWithValue("@grabLatitude", grabLatitude);
             dbParameters.AddWithValue("@orderNo", orderNo);
-            DbHelper.ExecuteNonQuery(SuperMan_Write, UPDATE_SQL, dbParameters);
+            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
 
         /// <summary>
-        /// 更新一条记录
-        /// </summary>
-        /// <UpdateBy>hulingbo</UpdateBy>
-        /// <UpdateTime>20150701</UpdateTime>
+        /// 更新完成记录
+        /// 胡灵波
+        /// 2015年8月18日 17:47:58
+        /// </summary>   
         /// <param name="orderNo"></param>
         /// <param name="completeLongitude"></param>
         /// <param name="completeLatitude"></param>
         public void UpdateComplete(OrderCompleteModel parModel)
         {
-            const string UPDATE_SQL = @"
+            const string updateSql = @"
 update OrderOther 
 set CompleteLongitude=@CompleteLongitude,CompleteLatitude=@CompleteLatitude where orderid=(
 select id from dbo.[order] where OrderNo=@OrderNo
@@ -61,7 +63,7 @@ select id from dbo.[order] where OrderNo=@OrderNo
             dbParameters.AddWithValue("@CompleteLongitude", parModel.Longitude);
             dbParameters.AddWithValue("@CompleteLatitude", parModel.Latitude);
             dbParameters.AddWithValue("@orderNo", parModel.orderNo);
-            DbHelper.ExecuteNonQuery(SuperMan_Write, UPDATE_SQL, dbParameters);
+            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
 
         /// <summary>
@@ -72,12 +74,12 @@ select id from dbo.[order] where OrderNo=@OrderNo
         /// <param name="orderId"></param>
         public void UpdateJoinWithdraw(int orderId)
         {
-            const string UPDATE_SQL = @"
+            const string updateSql = @"
 update OrderOther set IsJoinWithdraw=1 where orderId=@orderId";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@orderId", orderId);
-            DbHelper.ExecuteNonQuery(SuperMan_Write, UPDATE_SQL, dbParameters);
+            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
         /// <summary>
         /// 更新审核状态
@@ -88,54 +90,60 @@ update OrderOther set IsJoinWithdraw=1 where orderId=@orderId";
         /// <param name="auditstatus"></param>
         public void UpdateAuditStatus(int orderId, int auditstatus)
         {
-            string sql = @"update dbo.OrderOther set auditstatus = @auditstatus where OrderId=@orderId";
+            string updateSql = @"update dbo.OrderOther set auditstatus = @auditstatus where OrderId=@orderId";
             IDbParameters parm = DbHelper.CreateDbParameters("orderId", DbType.Int32, 4, orderId);
             parm.AddWithValue("@auditstatus", auditstatus);
-            DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm);
+            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, parm);
         }
         /// <summary>
         /// 更新订单是否无效的标记
         /// zhaohailong20150706
+        /// 修改人：胡灵波
+        /// 2015年8月18日 17:54:54
         /// </summary>
         /// <param name="orderId"></param>
         /// <param name="DeductCommissionReason">扣除订单补贴原因(如果需要扣除补贴需要此信息)</param>
-        public void UpdateOrderIsReal(int orderId, string deductCommissionReason)
+        public void UpdateOrderIsReal(int orderId, string deductCommissionReason,int deductCommissionType)
         {
-            const string UPDATE_SQL = @"
-                                        update OrderOther 
-                                        set IsNotRealOrder=1,
-                                        DeductCommissionReason=@DeductCommissionReason,
-                                        DeductCommissionType=1
-                                        where orderid=@orderId
-                                        ";
-            IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("@orderId", orderId);
-            dbParameters.AddWithValue("@DeductCommissionReason", deductCommissionReason);
-            DbHelper.ExecuteNonQuery(SuperMan_Write, UPDATE_SQL, dbParameters);
-        }
+//            const string UPDATE_SQL = @"
+//                                        update OrderOther 
+//                                        set IsNotRealOrder=1,
+//                                        DeductCommissionReason=@DeductCommissionReason,
+//                                        DeductCommissionType=1
+//                                        where orderid=@orderId
+//                                        ";
+//            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+//            dbParameters.AddWithValue("@orderId", orderId);
+//            dbParameters.AddWithValue("@DeductCommissionReason", deductCommissionReason);
+//            DbHelper.ExecuteNonQuery(SuperMan_Write, UPDATE_SQL, dbParameters);
 
-        /// <summary>
-        /// 更新订单扣除补贴原因
-        /// 彭宜20150803
-        /// </summary>
-        /// <param name="orderId"></param>
-        /// <param name="deductCommissionReason">扣除订单补贴原因</param>
-        /// <param name="deductCommissionType">扣除订单补贴方式   1 自动扣除    2手动扣除</param>
-        public void UpdateOrderDeductCommissionReason(int orderId, string deductCommissionReason, int deductCommissionType)
-        {
-            const string UPDATE_SQL = @"
-                                        update OrderOther 
-                                        set DeductCommissionReason=@DeductCommissionReason,
-                                        DeductCommissionType=@DeductCommissionType
-                                        where orderid=@orderId
-                                        ";
+            const string updateSql = @"
+update OrderOther 
+set IsNotRealOrder=1, DeductCommissionReason=@DeductCommissionReason,
+DeductCommissionType=@DeductCommissionType
+where orderid=@orderId";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@orderId", orderId);
             dbParameters.AddWithValue("@DeductCommissionReason", deductCommissionReason);
             dbParameters.AddWithValue("@DeductCommissionType", deductCommissionType);
-            DbHelper.ExecuteNonQuery(SuperMan_Write, UPDATE_SQL, dbParameters);
+            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
 
+        /// <summary>
+        /// 更新取消时间
+        /// 胡灵波
+        /// 2015年8月18日 17:57:11
+        /// </summary>
+        /// <param name="orderId"></param>
+        public bool UpdateCancelTime(int orderId)
+        {
+            const string updateSql = @"
+update OrderOther set CancelTime=getdate() where orderId=@orderId";
 
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@orderId", orderId);            
+
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters) > 0 ? true : false;
+        }
     }
 }
