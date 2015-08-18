@@ -23,6 +23,9 @@ using Ets.Model.DataModel.Finance;
 using ETS.Enums;
 using Ets.Dao.User;
 using Ets.Dao.Business;
+using Ets.Service.IProvider.Clienter;
+using Ets.Service.Provider.Clienter;
+using Ets.Model.ParameterModel.Order;
 namespace Ets.Service.Provider.Subsidy
 {
 
@@ -31,6 +34,7 @@ namespace Ets.Service.Provider.Subsidy
         private SubsidyDao subsidyDao = new SubsidyDao(); 
         private BusinessDao businessDao = new BusinessDao();
         private readonly ClienterBalanceRecordDao clienterBalanceRecordDao = new ClienterBalanceRecordDao();
+        private IClienterProvider iClienterProvider = new ClienterProvider();
 
         /// <summary>
         /// 获取补贴设置  集团可选。
@@ -71,7 +75,9 @@ namespace Ets.Service.Provider.Subsidy
         /// <summary>
         /// 跨店补贴
         /// 徐鹏程
-        /// 20150414
+        /// 修改人：胡灵波
+        /// 2015年8月18日 17:33:01
+        
         /// </summary>
         public bool CrossShop(List<GlobalConfigSubsidies> SubsidiesList)
         {
@@ -126,24 +132,39 @@ namespace Ets.Service.Provider.Subsidy
                 };
                 #endregion
 
-                ClienterBalanceRecord cbrm = new ClienterBalanceRecord()
-                {
-                    ClienterId = withdraw.UserId,
-                    Amount = withdraw.Amount,  //奖励的金额
-                    Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
-                    Balance = withdraw.Balance + withdraw.Amount ,  //奖励后的金额
-                    RecordType = ClienterBalanceRecordRecordType.SystemReward.GetHashCode(),
-                    Operator = "系统服务",
-                    RelationNo = "",
-                    Remark = "跨店骑士奖励"
-                };
+                //ClienterBalanceRecord cbrm = new ClienterBalanceRecord()
+                //{
+                //    ClienterId = withdraw.UserId,
+                //    Amount = withdraw.Amount,  //奖励的金额
+                //    Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
+                //    Balance = withdraw.Balance + withdraw.Amount ,  //奖励后的金额
+                //    RecordType = ClienterBalanceRecordRecordType.SystemReward.GetHashCode(),
+                //    Operator = "系统服务",
+                //    RelationNo = "",
+                //    Remark = "跨店骑士奖励"
+                //};
                 
                 using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
                 {
                     //修改records表增加记录作废，改为 新表ClienterBalanceRecord
                     // withdrawRecordsDao.AddRecords(withdraw);
-                    clienterBalanceRecordDao.Insert(cbrm); 
-                    clienterDao.UpdateAccountBalanceAndWithdraw(withdraw);//更改用户金额
+                    //clienterBalanceRecordDao.Insert(cbrm); 
+                    //clienterDao.UpdateAccountBalanceAndWithdraw(withdraw);//更改用户金额
+
+                    // 更新骑士余额、可提现余额  
+                    iClienterProvider.UpdateCBalanceAndWithdraw(new ClienterMoneyPM()
+                    {
+                        ClienterId = withdraw.UserId,
+                        Amount = withdraw.Amount,  //奖励的金额
+                        Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
+                        Balance = withdraw.Balance + withdraw.Amount,  //奖励后的金额
+                        RecordType = ClienterBalanceRecordRecordType.SystemReward.GetHashCode(),
+                        Operator = "系统服务",
+                        RelationNo = "",
+                        Remark = "跨店骑士奖励"
+                    });
+
+
                     subsidyDao.InsertCrossShopLog(crossShopModel);
                     tran.Complete();
                 }

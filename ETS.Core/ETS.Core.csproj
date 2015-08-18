@@ -94,6 +94,7 @@
     <Compile Include="Enums\AccountEnum.cs" />
     <Compile Include="Enums\ApiOrderEnum.cs" />
     <Compile Include="Enums\ClienterEnum.cs" />
+    <Compile Include="Enums\ComplainEnum.cs" />
     <Compile Include="Enums\EnumStatusType.cs" />
     <Compile Include="Enums\FinanceEnums.cs" />
     <Compile Include="Enums\GroupEnum.cs" />

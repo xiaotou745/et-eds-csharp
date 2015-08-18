@@ -161,6 +161,24 @@ namespace SuperMan.Controllers
             return new FileContentResult(bytes, "image/jpeg"); ;
         }
 
+        /// <summary>
+        /// 顶部修改密码
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        /// <summary>
+        /// 修改密码
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult PostChangePassword()
+        {
+            return View();
+        }
+
 
     }
 }

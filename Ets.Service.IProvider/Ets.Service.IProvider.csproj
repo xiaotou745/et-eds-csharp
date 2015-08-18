@@ -54,6 +54,7 @@
     <Compile Include="Common\IHomeCountProvider.cs" />
     <Compile Include="Common\ITokenProvider.cs" />
     <Compile Include="Common\IServicePhone.cs" />
+    <Compile Include="Complain\IComplainProvider.cs" />
     <Compile Include="DeliveryCompany\IDeliveryCompanyProvider.cs" />
     <Compile Include="DeliveryManager\IDeliveryManagerProvider.cs" />
     <Compile Include="Distribution\IDistributionProvider.cs" />

@@ -823,30 +823,7 @@ namespace Ets.Service.Provider.Clienter
         private bool CheckOrderPay(int orderId)
         {
             return orderDao.UpdateFinishAll(orderId);
-        }
-
-        ///// <summary>
-        ///// 删除小票
-        ///// wc
-        ///// </summary>
-        ///// <param name="uploadReceiptModel"></param>
-        ///// <returns></returns>
-        //public OrderOther DeleteReceipt(UploadReceiptModel uploadReceiptModel)
-        //{
-        //    var orderOther = clienterDao.DeleteReceipt(uploadReceiptModel);
-
-        //    return orderOther;
-        //}
-        ///// <summary>
-        ///// 新增小票信息
-        ///// wc
-        ///// </summary>
-        ///// <param name="uploadReceiptModel"></param>
-        ///// <returns></returns>
-        //public OrderOther InsertReceiptInfo(UploadReceiptModel uploadReceiptModel)
-        //{
-        //    return clienterDao.InsertReceiptInfo(uploadReceiptModel);
-        //}
+        }   
 
         /// <summary>
         /// 根据订单Id获取小票信息

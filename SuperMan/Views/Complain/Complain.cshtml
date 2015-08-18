@@ -1,0 +1,61 @@
+﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Complain.ComplainDomain>
+@using ETS.Enums
+@using ETS.Extension
+@using Webdiyer.WebControls.Mvc;
+@{
+    ViewBag.Title = "Complain";
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+}
+<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet"/>
+<script src="~/Content/My97DatePicker/WdatePicker.js"></script>
+<script src="~/Scripts/jquery-2.1.1.js"></script>
+<script src="~/Scripts/jquery-ui-1.8.20.js"></script>
+<script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script> 
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置：投诉管理 > 投诉管理
+    </h2>
+    @using (Ajax.BeginForm("PostComplain", new RouteValueDictionary { { "pageindex", "" } },
+        new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
+        new RouteValueDictionary { { "id", "searchForm" } }))
+    {
+        <div class="SearchMd">
+            <table border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td>
+                        <span class="">投诉类型: </span>
+                        @Html.DropDownList("ComplainType", new SelectList(EnumExtenstion.GetEnumItems(typeof (ComplainTypeEnum)), "Value", "Text"), "全部", new {@class = "selectw", style = "width:157px"})
+                        <span class="">日期: </span>
+                        <input id="ComplainStartTime" name="ComplainStartTime" class="Wdate" type="text" onfocus=" WdatePicker({ maxDate: '#F{$dp.$D(\'ComplainEndTime\')||\'%y-%M-%d\'}', dateFmt: 'yyyy-MM-dd 00:00:00' }) " />到
+                        <input id="ComplainEndTime" name="ComplainEndTime" class="Wdate" type="text" onfocus=" WdatePicker({ minDate: '#F{$dp.$D(\'ComplainStartTime\')}', dateFmt: 'yyyy-MM-dd 23:59:59' }) " />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="">订单号: </span>
+                        <input type="text" id="OrderNo" name="OrderNo" value="" />
+                        <span class="">城市筛选: </span>
+                        @Html.DropDownList("CityId", new SelectList(ViewBag.openCityList.Result.AreaModels, "Code", "Name"), "全部城市", new {style = "width:155px"})
+                        <input type="submit" value="查询" class="searchBtn" id="btnSearch"/>&nbsp;&nbsp;
+                    </td>
+                </tr>
+            </table>
+        </div>
+    }
+    <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <div class="bd clearfix" id="dataList">
+        @Html.Partial("_ComplainList", Model)
+    </div>
+</div>
+ 
+<script>
+    var adminjs = new adminglass(); //实例化后台类
+    
+    //关闭弹层
+    $('.J_closebox').click(function () {
+        adminjs.closewinbox('.add-openbox');
+        return false;
+    });
+</script>
+
+<script src="~/Scripts/mvcpager.js"></script>

@@ -20,5 +20,10 @@ namespace Ets.Service.IProvider.Account
         UserLoginResults ValidateUser(string userName, string password);
 
         IList<AuthorityMenuModel> GetAuth(int AccountId);
+        bool ChcekPassword(int AccountId,string oldpwd);
+
+        bool UpdatePassword(int AccountId, string newpwd);
+
+        bool PasswordTime(int AccountId);
     }
 }

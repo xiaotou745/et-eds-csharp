@@ -109,5 +109,62 @@ WHERE aam.AccoutId=@AccountId";
             return MapRows<AuthorityMenuModel>(dt);
         }
 
+
+        /// <summary>
+        /// 验证旧密码
+        /// </summary>
+        /// <param name="AccountId"></param>
+        /// <param name="oldpwd"></param>
+        /// <returns></returns>
+        public bool ChcekPassword(int AccountId, string oldpwd)
+        {
+            string sql = @"
+SELECT COUNT(1) FROM  dbo.account AS a (NOLOCK)
+WHERE Id=@ID AND Password=@Pwd";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("@ID", DbType.Int32, 4).Value = AccountId;
+            parm.Add("@Pwd", DbType.String).Value = oldpwd;
+            var obj = DbHelper.ExecuteScalar(SuperMan_Read,sql,parm);
+            return Convert.ToInt32(obj)>0;
+        }
+        /// <summary>
+        /// 更新密码
+        /// </summary>
+        /// <param name="AccountId"></param>
+        /// <param name="newpwd"></param>
+        /// <returns></returns>
+        public bool UpdatePassword(int AccountId, string newpwd)
+        {
+            string sql = @"
+UPDATE dbo.account SET [Password]=@PWD,LastChangeTime=GETDATE()
+WHERE id=@ID";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("@ID", DbType.Int32, 4).Value = AccountId;
+            parm.Add("@PWD", DbType.String).Value = newpwd;
+            var obj = DbHelper.ExecuteScalar(SuperMan_Read, sql, parm);
+            return Convert.ToInt32(obj) > 0;
+        }
+
+        /// <summary>
+        /// 密码是否过期
+        /// </summary>
+        /// <param name="AccountId"></param>
+        /// <returns></returns>
+        public bool PasswordTime(int AccountId)
+        {
+            string sql = @"
+SELECT LastChangeTime FROM  dbo.account AS a (nolock) WHERE a.id=@ID";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("@ID", DbType.Int32, 4).Value = AccountId;
+            var obj = DbHelper.ExecuteScalar(SuperMan_Read, sql, parm);
+            DateTime dtime = Convert.ToDateTime(obj);
+            var ts = DateTime.Now - dtime;
+            if (ts.Days >= 30)
+            {
+                return true;
+            }
+            return false;
+        }
+
     }
 }
