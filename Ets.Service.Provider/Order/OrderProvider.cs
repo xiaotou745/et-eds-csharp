@@ -1251,12 +1251,12 @@ namespace Ets.Service.Provider.Order
                 }
                 #endregion
 
-                if (orderDao.CancelOrder(orderModel, orderOptionModel))
-                {
+                if (orderDao.CancelOrder(orderModel, orderOptionModel) 
+                    && orderOtherDao.UpdateCancelTime(orderModel.Id))
+                {                   
                     if (orderModel.Status == 1 && orderTaskPayStatus == 2 &&
                         orderModel.HadUploadCount == orderModel.NeedUploadCount) //已完成订单
                     {
-
                         //更新骑士余额
                         iClienterProvider.UpdateCAccountBalance(new ClienterMoneyPM()
                                                         {
@@ -1404,7 +1404,7 @@ namespace Ets.Service.Provider.Order
                                                                     Remark = "异常原因"
                                                                 });
                         //更新扣除补贴原因,扣除补贴方式为手动扣除
-                        orderOtherDao.UpdateOrderDeductCommissionReason(orderModel.Id, orderOptionModel.OptLog, 2);
+                        orderOtherDao.UpdateOrderIsReal(orderModel.Id, orderOptionModel.OptLog, 2);
 
                         
                         //更新订单日志
@@ -1956,8 +1956,9 @@ namespace Ets.Service.Provider.Order
                 }
                 CancelOrderModel comModel = new CancelOrderModel() { OrderNo = paramodel.OrderNo, OrderStatus = OrderStatus.Status3.GetHashCode(), Remark = "商家取消订单", Status = OrderStatus.Status0.GetHashCode(), Price = order.SettleMoney, OrderCancelFrom = SuperPlatform.FromBusiness.GetHashCode(), OrderCancelName = order.BusinessName };
                 int result = orderDao.CancelOrderStatus(comModel);
+                bool blCancelTime = orderOtherDao.UpdateCancelTime(paramodel.OrderId);
                 //int result = orderDao.CancelOrderStatus(paramodel.OrderNo, OrderStatus.Status3.GetHashCode(), "商家取消订单", OrderStatus.Status0.GetHashCode(), order.SettleMoney);
-                if (result > 0)
+                if (result > 0 && blCancelTime)
                 {
                     // 更新商户余额、可提现余额                        
                     iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
