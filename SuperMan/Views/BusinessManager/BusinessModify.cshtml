@@ -138,6 +138,13 @@
                     <label>否</label>
                 </div>
                 <div class="control-group">
+                    <label style="margin-left: 48px">是否可以现金支付：</label>
+                    <input id="rIsAllowCashPayY" name="rIsAllowCashPay" type="radio" value="1" @(Model.IsAllowCashPay == 1 ? "checked" : "")>
+                    <label>是</label>
+                    <input id="rIsAllowCashPayN" name="rIsAllowCashPay" type="radio" value="0" style="margin-left: 30px" @(Model.IsAllowCashPay == 0 ? "checked" : "")>
+                    <label>否</label>
+                </div>
+                <div class="control-group">
                     <label>使用雇主任务时间限制：</label>
                     <input id="rIsEmployerTaskY" name="rIsEmployerTask" type="radio" value="1" @(Model.IsEmployerTask == 1 ? "checked" : "")>
                     <label>是</label>
@@ -495,6 +502,7 @@
         var hidGroupId = $('#hidGroupId').val();
         var oneKeyPubOrder = $('input[name="rOneKeyPubOrder"]:checked').val();
         var IsEmployerTask = $('input[name="rIsEmployerTask"]:checked').val();
+        var isAllowCashPay = $('input[name="rIsAllowCashPay"]:checked').val();
         var isAllowOverdraft = $('input[name="rBalanceAllowOverDraft"]:checked').val();
         var recomPhone = $('#recomPhone').val(); //推荐人账户
 
@@ -637,6 +645,7 @@
             "IsEmployerTask": IsEmployerTask,
             "isAllowOverdraft": isAllowOverdraft,
             "RecommendPhone": recomPhone,
+            "IsAllowCashPay": isAllowCashPay,
             "IsOrderChecked":$('#OrderChecked input[name="IsCheckOrder"]:checked ').val()
         };
         var url = "/BusinessManager/ModifyBusinessDetail";

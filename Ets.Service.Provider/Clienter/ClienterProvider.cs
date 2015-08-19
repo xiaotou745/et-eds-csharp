@@ -726,7 +726,6 @@ namespace Ets.Service.Provider.Clienter
         /// 骑士配送统计
         /// danny-20150408
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="criteria"></param>
         /// <returns></returns>
         public PageInfo<BusinessesDistributionModel> GetClienterDistributionStatisticalInfo(OrderSearchCriteria criteria)
@@ -1316,7 +1315,8 @@ namespace Ets.Service.Provider.Clienter
         {
             if (!(bool)myOrderInfo.IsPay && myOrderInfo.MealsSettleMode == MealsSettleMode.LineOn.GetHashCode())
             {
-                // 更新商户余额、可提现余额                        
+                // 更新商户余额、可提现余额       
+                 
                 iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
                                                         {
                                                             BusinessId = myOrderInfo.businessId,

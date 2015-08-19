@@ -62,14 +62,18 @@ namespace Ets.Service.Provider.Pay
         /// </summary>
         /// <param name="model"></param>       
         public ResultModel<PayResultModel> CreatePay(Model.ParameterModel.AliPay.PayModel model)
-        {
+        { 
             LogHelper.LogWriter("=============支付请求数据：", model);
-            PayStatusModel payStatusModel = orderChildDao.GetPayStatus(model.orderId, model.childId);
+            PayStatusModel payStatusModel = orderChildDao.GetPayStatus(model.orderId, model.childId); 
             if (payStatusModel == null)
             {
                 string err = string.Concat("订单不存在,主订单号：", model.orderId, ",子订单号:", model.childId);
                 LogHelper.LogWriter(err);
                 return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
+            }
+            if (payStatusModel.PayStatus == PayStatusEnum.HadPay.GetHashCode())  //已经支付的话，直接返回支付成功
+            {
+                return ResultModel<PayResultModel>.Conclude(AliPayStatus.success);
             }
             //所属产品_主订单号_子订单号_支付方式
             string orderNo = string.Concat(model.productId, "_", model.orderId, "_", model.childId, "_", model.payStyle);
@@ -88,34 +92,21 @@ namespace Ets.Service.Provider.Pay
                 //微信支付
                 LogHelper.LogWriter("=============微信支付：");
                 return CreateWxPayOrder(orderNo, payStatusModel.TotalPrice, model.orderId, model.payStyle);
-            }
-            if (model.payType == PayTypeEnum.CashPay.GetHashCode())
-            {
-                //现金支付
-                LogHelper.LogWriter("=============现金支付：");
-                return UpdateCashOrder(orderNo, payStatusModel.TotalPrice, model.orderId, model.payStyle);
-            }
+            }  
             return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
         }
 
-        #region 现金支付
-        /// <summary>
-        /// 现金支付
-        /// </summary>
-        /// <param name="orderNo"></param>
-        /// <param name="totalPrice"></param>
-        /// <param name="orderId"></param>
-        /// <param name="payStyle"></param>
-        /// <returns></returns>
-        private ResultModel<PayResultModel> UpdateCashOrder(string orderNo, decimal totalPrice, int orderId, int payStyle)
-        {
-            //支付方式-主订单ID-子订单ID
-            PayResultModel resultModel = new PayResultModel();
+        
 
-            resultModel.orderNo = orderNo;//订单号
-            resultModel.payAmount = totalPrice;//总金额，没乘以100的值
-            resultModel.payType = PayTypeEnum.CashPay.GetHashCode();
-            return ResultModel<PayResultModel>.Conclude(AliPayStatus.success, resultModel);
+        #region 现金支付
+        public ResultModel<PayResultModel> CashPay(PayModel model)
+        {
+            int result = orderChildDao.UpdateChildStatusFromCashOrder(model);
+            if (result > 0)
+            {
+                ResultModel<PayResultModel>.Conclude(AliPayStatus.success);
+            }
+            return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
         }
         #endregion
 
