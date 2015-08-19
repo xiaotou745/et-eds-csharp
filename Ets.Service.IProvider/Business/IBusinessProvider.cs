@@ -410,9 +410,7 @@ namespace Ets.Service.IProvider.Business
         /// 更新商家余额、可提现余额     
         /// 胡灵波
         /// 2015年8月13日 16:41:11
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="myOrderInfo"></par
+        /// </summary> 
         void UpdateBBalanceAndWithdraw(BusinessMoneyPM businessMoneyPM);
     }
 }

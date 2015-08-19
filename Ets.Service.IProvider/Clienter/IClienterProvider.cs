@@ -124,10 +124,7 @@ namespace Ets.Service.IProvider.Clienter
         /// wc 
         /// 修改人：胡灵波
         /// 2015年8月13日 18:13:55
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="orderNo"></param>
-        /// <param name="pickupCode">取货码 可空</param>
+        /// </summary> 
         /// <returns></returns>
         FinishOrderResultModel FinishOrder(OrderCompleteModel parModel);
 

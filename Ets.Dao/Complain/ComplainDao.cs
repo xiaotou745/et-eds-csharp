@@ -18,6 +18,12 @@ namespace Ets.Dao.Complain
 {
     public class ComplainDao : DaoBase
     {
+        /// <summary>
+        /// 投诉 新增一条记录
+        /// wc
+        /// </summary>
+        /// <param name="complainModel"></param>
+        /// <returns></returns>
         public int Insert(ComplainModel complainModel)
         {
             const string insertSql = @"
@@ -46,7 +52,12 @@ values  ( @ComplainId ,
             object result = DbHelper.ExecuteNonQuery(SuperMan_Write, insertSql, dbParameters);
             return ParseHelper.ToInt(result, -1);
         }
-
+        /// <summary>
+        /// 获取投诉数据 wc
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="complainCriteria"></param>
+        /// <returns></returns>
         public PageInfo<T> Get<T>(ComplainCriteria complainCriteria)
         { 
             string columnList = @" 
@@ -91,6 +102,7 @@ values  ( @ComplainId ,
         }
         /// <summary>
         /// 该订单是否被投诉过
+        /// wc
         /// </summary>
         /// <param name="complainModel"></param>
         /// <returns></returns>

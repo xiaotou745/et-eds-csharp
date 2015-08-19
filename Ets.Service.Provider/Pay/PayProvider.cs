@@ -53,6 +53,7 @@ namespace Ets.Service.Provider.Pay
         private ClienterFinanceProvider clienterFinanceProvider = new ClienterFinanceProvider();
         private readonly BusinessFinanceAccountDao businessFinanceAccountDao = new BusinessFinanceAccountDao();
         private readonly ClienterFinanceAccountDao clienterFinanceAccountDao = new ClienterFinanceAccountDao();
+        private readonly OrderDao orderDao = new OrderDao();
         #region 生成支付宝、微信二维码订单
 
         /// <summary>
@@ -70,6 +71,10 @@ namespace Ets.Service.Provider.Pay
                 string err = string.Concat("订单不存在,主订单号：", model.orderId, ",子订单号:", model.childId);
                 LogHelper.LogWriter(err);
                 return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
+            }
+            if (payStatusModel.PayStatus == PayStatusEnum.HadPay.GetHashCode())  //已经支付的话，直接返回支付成功
+            {
+                return ResultModel<PayResultModel>.Conclude(AliPayStatus.success);
             }
             //所属产品_主订单号_子订单号_支付方式
             string orderNo = string.Concat(model.productId, "_", model.orderId, "_", model.childId, "_", model.payStyle);
@@ -89,33 +94,26 @@ namespace Ets.Service.Provider.Pay
                 LogHelper.LogWriter("=============微信支付：");
                 return CreateWxPayOrder(orderNo, payStatusModel.TotalPrice, model.orderId, model.payStyle);
             }
-            if (model.payType == PayTypeEnum.CashPay.GetHashCode())
-            {
-                //现金支付
-                LogHelper.LogWriter("=============现金支付：");
-                return UpdateCashOrder(orderNo, payStatusModel.TotalPrice, model.orderId, model.payStyle);
-            }
             return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
         }
 
+
+
         #region 现金支付
         /// <summary>
-        /// 现金支付
+        /// 现金支付 wc
         /// </summary>
-        /// <param name="orderNo"></param>
-        /// <param name="totalPrice"></param>
-        /// <param name="orderId"></param>
-        /// <param name="payStyle"></param>
+        /// <param name="model"></param>
         /// <returns></returns>
-        private ResultModel<PayResultModel> UpdateCashOrder(string orderNo, decimal totalPrice, int orderId, int payStyle)
+        public ResultModel<PayResultModel> CashPay(PayModel model)
         {
-            //支付方式-主订单ID-子订单ID
-            PayResultModel resultModel = new PayResultModel();
-
-            resultModel.orderNo = orderNo;//订单号
-            resultModel.payAmount = totalPrice;//总金额，没乘以100的值
-            resultModel.payType = PayTypeEnum.CashPay.GetHashCode();
-            return ResultModel<PayResultModel>.Conclude(AliPayStatus.success, resultModel);
+            var orderInfo = orderDao.GetByOrderId(model.orderId);
+            int result = orderChildDao.UpdateChildStatusFromCashOrder(model, orderInfo.ClienterName);
+            if (result > 0)
+            {
+                ResultModel<PayResultModel>.Conclude(AliPayStatus.success);
+            }
+            return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
         }
         #endregion
 
@@ -479,13 +477,13 @@ namespace Ets.Service.Provider.Pay
                         PayStatus = 1,
                         PayType = PayTypeEnum.WeiXin.GetHashCode()
                     };
-                   string msg= BusinessRechargeSusess(businessRechargeModel);
-                   if (msg.Equals("success"))
-                   {
+                    string msg = BusinessRechargeSusess(businessRechargeModel);
+                    if (msg.Equals("success"))
+                    {
                         HttpContext.Current.Response.Write("<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>");
                         HttpContext.Current.Response.End();
                         return;
-                   }
+                    }
                 }
                 #endregion
 
@@ -1151,7 +1149,7 @@ namespace Ets.Service.Provider.Pay
                 EmailHelper.SendEmailTo(sbEmail.ToString(), emailSendTo, "易宝自动对账", copyTo, false);
             }
             #endregion
-        } 
+        }
 
         /// <summary>
         ///自动处理提款申请单（原确认打款逻辑）

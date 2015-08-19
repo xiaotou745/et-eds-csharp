@@ -22,7 +22,13 @@ namespace Ets.Service.IProvider.Pay
         /// </summary>
         /// <param name="model"></param>
         ResultModel<PayResultModel> CreatePay(PayModel model);
-
+        /// <summary>
+        /// 现金支付 wc
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        ResultModel<PayResultModel> CashPay(PayModel model);
+         
         /// <summary>
         /// 确认订单
         /// 窦海超
