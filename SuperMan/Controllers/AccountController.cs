@@ -7,7 +7,7 @@ using Ets.Model.Common;
 using Ets.Model.ParameterModel.Authority;
 using Ets.Service.Provider.Authority;
 using ETS.Util;
-
+using SuperMan.App_Start;
 using SuperMan.Authority;
 using Ets.Service.IProvider.Account;
 using Ets.Service.Provider.Account;
@@ -176,7 +176,39 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         public ActionResult PostChangePassword()
         {
-            return View();
+            string oldpwd = HttpContext.Request.Form["oldpwd"];
+            string newpwd = HttpContext.Request.Form["newpwd"];
+            if (string.IsNullOrWhiteSpace(oldpwd) || string.IsNullOrWhiteSpace(newpwd))
+            {
+                return Content("0");
+            }
+            int uid = UserContext.Current.Id;
+            if (!iAccountProvider.ChcekPassword(uid, oldpwd))
+            {
+                return Content("0");
+            }
+            if (iAccountProvider.UpdatePassword(uid, newpwd))
+            {
+                return Content("1");
+            }
+            return Content("0");
+        }
+
+        /// <summary>
+        /// 验证旧密码
+        /// </summary>
+        /// <returns></returns>
+        public ContentResult PostCheckPassword()
+        {
+            string oldpwd = HttpContext.Request.Form["oldpwd"];
+            int uid = UserContext.Current.Id;
+            if (string.IsNullOrWhiteSpace(oldpwd))
+                return Content("0");
+            if (iAccountProvider.ChcekPassword(uid, oldpwd))
+            {
+                return Content("1");
+            }
+            return Content("0");
         }
 
 

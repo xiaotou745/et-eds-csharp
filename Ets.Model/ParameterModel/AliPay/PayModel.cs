@@ -9,7 +9,7 @@ namespace Ets.Model.ParameterModel.AliPay
     public class PayModel
     {
         /// <summary>
-        /// 支付方式 1:支付宝;2微信,3网银
+        /// 支付方式 1:支付宝;2微信,3网银,6现金支付
         /// </summary>
         public int payType { get; set; }
 

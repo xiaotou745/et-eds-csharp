@@ -35,6 +35,7 @@ using Ets.Dao.Business;
 using Config = ETS.Config;
 using ETS.Library.Pay.WxPay;
 using System.Web;
+using Ets.Model.ParameterModel.AliPay;
 
 namespace Ets.Service.Provider.Pay
 {
@@ -87,11 +88,36 @@ namespace Ets.Service.Provider.Pay
                 //微信支付
                 LogHelper.LogWriter("=============微信支付：");
                 return CreateWxPayOrder(orderNo, payStatusModel.TotalPrice, model.orderId, model.payStyle);
-
+            }
+            if (model.payType == PayTypeEnum.CashPay.GetHashCode())
+            {
+                //现金支付
+                LogHelper.LogWriter("=============现金支付：");
+                return UpdateCashOrder(orderNo, payStatusModel.TotalPrice, model.orderId, model.payStyle);
             }
             return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
         }
 
+        #region 现金支付
+        /// <summary>
+        /// 现金支付
+        /// </summary>
+        /// <param name="orderNo"></param>
+        /// <param name="totalPrice"></param>
+        /// <param name="orderId"></param>
+        /// <param name="payStyle"></param>
+        /// <returns></returns>
+        private ResultModel<PayResultModel> UpdateCashOrder(string orderNo, decimal totalPrice, int orderId, int payStyle)
+        {
+            //支付方式-主订单ID-子订单ID
+            PayResultModel resultModel = new PayResultModel();
+
+            resultModel.orderNo = orderNo;//订单号
+            resultModel.payAmount = totalPrice;//总金额，没乘以100的值
+            resultModel.payType = PayTypeEnum.CashPay.GetHashCode();
+            return ResultModel<PayResultModel>.Conclude(AliPayStatus.success, resultModel);
+        }
+        #endregion
 
         /// <summary>
         /// 完成订单后发送jpush消息 
@@ -1125,7 +1151,8 @@ namespace Ets.Service.Provider.Pay
                 EmailHelper.SendEmailTo(sbEmail.ToString(), emailSendTo, "易宝自动对账", copyTo, false);
             }
             #endregion
-        }
+        } 
+
         /// <summary>
         ///自动处理提款申请单（原确认打款逻辑）
         /// danny-20150804
