@@ -132,4 +132,13 @@ namespace ETS.Enums
         [DisplayText("验证码错误")]
         CheckCodeError
     }
+    public enum SetReceivePushStatus
+    {
+        [DisplayText("设置成功")]
+        Success=1,
+        [DisplayText("设置失败")]
+        Failed=2,
+        [DisplayText("参数错误")]
+        ParError=3,
+    }
 }

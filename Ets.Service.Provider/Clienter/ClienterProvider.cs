@@ -1420,6 +1420,16 @@ namespace Ets.Service.Provider.Clienter
 
             return 0;
         }
+
+        /// <summary>
+        /// 设置骑士是否接受推送
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool SetReceivePush(ClienterReceivePushModel model)
+        {
+            return clienterDao.SetReceivePush(model);
+        }
     }
 
 }

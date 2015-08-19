@@ -1732,5 +1732,20 @@ where  Id=@Id ";
         }
 
         #endregion
+        /// <summary>
+        /// 设置修改骑士是否接受推送
+        /// 茹化肖
+        /// 2015年8月19日17:01:03
+        /// </summary>
+        /// <returns></returns>
+        public  bool SetReceivePush(ClienterReceivePushModel model)
+        {
+            string sql = @"UPDATE dbo.clienter SET IsReceivePush=@IsReceivePush
+WHERE id=@ID";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("@IsReceivePush", DbType.Int32).Value = model.IsReceive;
+            parm.Add("@ID", DbType.Int32).Value = model.ClienterId;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
+        }
     }
 }
