@@ -41,7 +41,7 @@ namespace Ets.Provider.Tests
             //string dss = DESAPP.Decrypt_AES(ess);
             //string ess = AESHelper.AESEncrypt(ss, pwd);
             //string dss = AESHelper.AESDecrypt(ess, pwd);
-            AESApp.CheckAES(ss,"asd");
+            //AESApp.CheckAES(ss,"asd");
             string ess = AESApp.AesEncrypt(ss);
             string dss = AESApp.AesDecrypt(ess);
             string s = MD5Helper.MD5("123456");

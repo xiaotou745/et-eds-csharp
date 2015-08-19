@@ -58,6 +58,7 @@ namespace ETS.Security
         {
             try
             {
+
                 string key = AES_KEY;
                 byte[] cipherText = Convert.FromBase64String(str);
                 AesCryptoServiceProvider aes = new AesCryptoServiceProvider();
@@ -87,20 +88,16 @@ namespace ETS.Security
         /// <param name="key">去掉1 3 6内容再MD5</param>
         /// <param name="val">客户端传过来key去掉1 3 6的值</param>
         /// <returns></returns>
-        public static bool CheckAES(string key, string val)
-        {
-            key = key.Length >= 6 ? key.Remove(5,1) : key;
-            key = key.Length >= 3 ? key.Remove(2,1) : key;
-            key = key.Length >= 1 ? key.Remove(0,1) : key;
-            if (string.IsNullOrEmpty(key) || string.IsNullOrEmpty(val))
-            {
-                return false;
-            }
-            if (MD5Helper.MD5(key) == val)
-            {
-                return true;
-            }
-            return false;
-        }
+        //public static string GetAESKey(string key)
+        //{
+        //    key = key.Length >= 6 ? key.Remove(5,1) : key;
+        //    key = key.Length >= 3 ? key.Remove(2,1) : key;
+        //    key = key.Length >= 1 ? key.Remove(0,1) : key;
+        //    if (string.IsNullOrEmpty(key))
+        //    {
+        //        return string.Empty;
+        //    }
+        //    return MD5Helper.MD5(key);
+        //}
     }
 }

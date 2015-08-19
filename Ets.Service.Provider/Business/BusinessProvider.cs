@@ -262,7 +262,7 @@ namespace Ets.Service.Provider.Business
             {
                 returnEnum = BusinessRegisterStatus.PasswordEmpty;//密码非空验证 
             }
-            else if (string.IsNullOrEmpty(code) || code != model.verifyCode) //验证码正确性验证
+            else if (string.IsNullOrEmpty(code) || code.ToLower() != model.verifyCode.ToLower()) //验证码正确性验证
             {
                 returnEnum = BusinessRegisterStatus.IncorrectCheckCode; //判断验证法录入是否正确
             }
@@ -420,25 +420,25 @@ namespace Ets.Service.Provider.Business
         /// </summary>
         /// <param name="model">用户名，密码对象</param>
         /// <returns>登录后返回实体对象</returns>
-        public ResultModel<BusiLoginResultModel> PostLogin_B(LoginModel model)
+        public ResultModel<string> PostLogin_B(ParamModel parModel)
         {
             try
             {
-                //LoginModel model = JsonHelper.JsonConvertToObject<LoginModel>(AESApp.AesDecrypt(parModel.data));
+                LoginModel model = JsonHelper.JsonConvertToObject<LoginModel>(AESApp.AesDecrypt(parModel.data));
                 var redis = new RedisCache();
                 string key = string.Concat(RedissCacheKey.LoginCount_B, model.phoneNo);
                 int excuteCount = redis.Get<int>(key);
                 if (excuteCount >= 10)
                 {
-                    return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.CountError);
+                    return ResultModel<string>.Conclude(LoginModelStatus.CountError);
                 }
                 redis.Set(key, excuteCount + 1, new TimeSpan(0, 5, 0));
 
                 BusiLoginResultModel resultMode = new BusiLoginResultModel();
                 DataTable dt = businessDao.LoginSql(model);
-                if (dt == null || dt.Rows.Count <= 0)// || !AESApp.CheckAES(model.phoneNo, model.aesPhoneNo)
+                if (dt == null || dt.Rows.Count <= 0)
                 {
-                    return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential, resultMode);//string.Empty);
+                    return ResultModel<string>.Conclude(LoginModelStatus.InvalidCredential,string.Empty);
                 }
                 DataRow row = dt.Rows[0];
 
@@ -473,12 +473,12 @@ namespace Ets.Service.Provider.Business
                     Appkey = row["Appkey"].ToString()
                 });
                 resultMode.Token = token;
-                //string resultStr = AESApp.AesDecrypt(JsonHelper.JsonConvertToString(resultMode));
-                return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.Success, resultMode);//BusiLoginResultModel
+                string resultStr = AESApp.AesDecrypt(JsonHelper.JsonConvertToString(resultMode));
+                return ResultModel<string>.Conclude(LoginModelStatus.Success, resultStr);//BusiLoginResultModel
             }
             catch (Exception ex)
             {
-                return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential);
+                return ResultModel<string>.Conclude(LoginModelStatus.InvalidCredential);
                 throw;
             }
         }
@@ -585,7 +585,7 @@ namespace Ets.Service.Provider.Business
             }
 
             var code = redis.Get<string>(RedissCacheKey.CheckCodeFindPwd_B + model.phoneNumber);
-            if (string.IsNullOrEmpty(code) || code != model.checkCode) //验证码正确性验证
+            if (string.IsNullOrEmpty(code) || code.ToLower() != model.checkCode.ToLower()) //验证码正确性验证
             { return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeWrong); }
 
             var business = businessDao.GetBusinessByPhoneNo(model.phoneNumber);
@@ -843,7 +843,8 @@ namespace Ets.Service.Provider.Business
                 //账号不存在 
                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.NotExists);
             }
-            string randomCode = new Random().Next(1000).ToString("D4");
+            //string randomCode = new Random().Next(1000).ToString("D4");
+            string randomCode = Helper.GenCode(6);
             var msg = string.Format(Config.SmsContentFindPassword, randomCode, SystemConst.MessageBusiness);
             try
             {
@@ -878,7 +879,8 @@ namespace Ets.Service.Provider.Business
             {
                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.InvlidPhoneNumber);
             }
-            string randomCode = new Random().Next(1000).ToString("D4");  //生成短信验证码
+            //string randomCode = new Random().Next(1000).ToString("D4");  //生成短信验证码
+            string randomCode = Helper.GenCode(6);
             var msg = string.Format(Config.SmsContentCheckCode, randomCode, SystemConst.MessageBusiness);  //获取提示用语信息
             try
             {

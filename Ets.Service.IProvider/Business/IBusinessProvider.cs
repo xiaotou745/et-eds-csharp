@@ -74,7 +74,7 @@ namespace Ets.Service.IProvider.Business
         /// </summary>
         /// <param name="model">用户名，密码对象</param>
         /// <returns>登录后返回实体对象</returns>
-        ResultModel<BusiLoginResultModel> PostLogin_B(LoginModel model);//BusiLoginResultModel
+        ResultModel<string> PostLogin_B(ParamModel model);//BusiLoginResultModel
         /// <summary>
         /// 根据商户Id获取商户信息  
         /// </summary>

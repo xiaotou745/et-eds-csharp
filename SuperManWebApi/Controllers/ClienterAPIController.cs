@@ -55,14 +55,11 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>        
-        //public ResultModel<string> PostLogin_C(ParamModel model)//LoginCPM  ClienterLoginResultModel
-        //{
-        //    return new ClienterProvider().PostLogin_C(model);
-        //}
-        public ResultModel<ClienterLoginResultModel> PostLogin_C(LoginCPM model)//LoginCPM  ClienterLoginResultModel
+        public ResultModel<string> PostLogin_C(ParamModel model)//LoginCPM  ClienterLoginResultModel
         {
             return new ClienterProvider().PostLogin_C(model);
         }
+    
         /// <summary>
         /// C端上传图片
         /// </summary>
@@ -180,7 +177,7 @@ namespace SuperManWebApi.Controllers
 
             var code = redis.Get<string>(RedissCacheKey.PostForgetPwd_C + model.phoneNo);
             //start 需要验证 验证码是否正确
-            if (string.IsNullOrEmpty(code) || code != model.checkCode)
+            if (string.IsNullOrEmpty(code) || code.ToLower() != model.checkCode.ToLower())
             {
                 return ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeWrong);
             }
@@ -280,7 +277,8 @@ namespace SuperManWebApi.Controllers
             {
                 return SimpleResultModel.Conclude(SendCheckCodeStatus.InvlidPhoneNumber);
             }
-            var randomCode = new Random().Next(1000).ToString("D4");
+            //var randomCode = new Random().Next(1000).ToString("D4");
+            string randomCode = Helper.GenCode(6);
             string msg = string.Empty;
             string key = "";
             bool checkUser = iClienterProvider.CheckClienterExistPhone(PhoneNumber);

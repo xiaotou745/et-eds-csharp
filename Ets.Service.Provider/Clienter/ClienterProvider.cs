@@ -208,24 +208,24 @@ namespace Ets.Service.Provider.Clienter
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public ResultModel<ClienterLoginResultModel> PostLogin_C(LoginCPM model)
+        public ResultModel<string> PostLogin_C(ParamModel parModel)
         {
             try
             {
-                //LoginCPM model = JsonHelper.JsonConvertToObject<LoginCPM>(AESApp.AesDecrypt(parModel.data));
+                LoginCPM model = JsonHelper.JsonConvertToObject<LoginCPM>(AESApp.AesDecrypt(parModel.data));
                 var redis = new RedisCache();
                 string key = string.Concat(RedissCacheKey.LoginCount_C, model.phoneNo);
                 int excuteCount = redis.Get<int>(key);
                 if (excuteCount >= 10)
                 {
-                    return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.CountError);
+                    return ResultModel<string>.Conclude(LoginModelStatus.CountError);
                 }
                 redis.Set(key, excuteCount + 1, new TimeSpan(0, 5, 0));
 
                 ClienterLoginResultModel resultModel = clienterDao.PostLogin_CSql(model);
-                if (resultModel == null)// || !AESApp.CheckAES(model.phoneNo, model.aesPhoneNo)
+                if (resultModel == null)
                 {
-                    return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential);
+                    return ResultModel<string>.Conclude(LoginModelStatus.InvalidCredential);
                 }
                 if (resultModel.DeliveryCompanyId > 0)
                 {
@@ -243,12 +243,12 @@ namespace Ets.Service.Provider.Clienter
                        Appkey = resultModel.Appkey.ToString()
                    });
                 resultModel.Token = token;
-                //string resultStr = AESApp.AesDecrypt(JsonHelper.JsonConvertToString(resultModel));
-                return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.Success, resultModel);
+                string resultStr = AESApp.AesDecrypt(JsonHelper.JsonConvertToString(resultModel));
+                return ResultModel<string>.Conclude(LoginModelStatus.Success, resultStr);
             }
             catch (Exception ex)
             {
-                return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential);
+                return ResultModel<string>.Conclude(LoginModelStatus.InvalidCredential);
                 throw;
             }
         }
@@ -294,7 +294,7 @@ namespace Ets.Service.Provider.Clienter
             //获取验证码
             var codekey = string.Concat(RedissCacheKey.ChangePasswordCheckCode_C, model.phoneNo);
             var codevalue = redis.Get<string>(codekey);
-            if (string.IsNullOrWhiteSpace(model.checkCode) || codevalue == null || model.checkCode != codevalue)
+            if (string.IsNullOrWhiteSpace(model.checkCode) || codevalue == null || model.checkCode.ToLower() != codevalue.ToLower())
             {
                 return ResultModel<ClienterModifyPwdResultModel>.Conclude(ModifyPwdStatus.CheckCodeError);
             }
@@ -363,7 +363,7 @@ namespace Ets.Service.Provider.Clienter
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PhoneNumberRegistered);
             if (string.IsNullOrEmpty(model.passWord)) //密码非空验证
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.PasswordEmpty);
-            if (string.IsNullOrEmpty(code) || model.verifyCode != code) //判断验码法录入是否正确
+            if (string.IsNullOrEmpty(code) || model.verifyCode.ToLower() != code.ToLower()) //判断验码法录入是否正确
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.IncorrectCheckCode);
             if (string.IsNullOrEmpty(model.timespan)) //判断时间戳是否为空
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.TimespanEmpty);
