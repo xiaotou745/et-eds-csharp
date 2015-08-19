@@ -179,13 +179,6 @@ namespace Ets.Service.IProvider.Clienter
         OrderOther GetReceipt(int orderId);
 
         /// <summary>
-        /// 根据订单Id获取小票信息
-        /// </summary>
-        /// <param name="orderId"></param>
-        /// <returns></returns>
-        order GetOrderInfoByOrderId(int orderId);
-
-        /// <summary>
         ///  C端抢单
         ///  窦海超
         ///  2015年5月6日 20:40:56

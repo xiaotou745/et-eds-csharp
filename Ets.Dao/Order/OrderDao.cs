@@ -1770,37 +1770,6 @@ DateDiff(MINUTE,PubDate, GetDate()) in ({0})", IntervalMinute);
         }
 
         /// <summary>
-        /// 根据订单id获取订单信息 和 小票相关
-        /// wc
-        /// </summary>
-        /// <param name="orderId"></param>
-        /// <returns></returns>
-        public order GetOrderInfoByOrderId(int orderId)
-        {
-            string sql = @"
-select  o.Id ,
-        o.[Status] ,
-        ISNULL(oo.HadUploadCount, 0) HadUploadCount,
-        o.OrderCount
-from    dbo.[order] o ( nolock )
-        left join dbo.OrderOther oo ( nolock ) on o.Id = oo.OrderId
-where   o.Id = @orderId;
-";
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.Add("@orderId", SqlDbType.NVarChar);
-            parm.SetValue("@orderId", orderId);
-            var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
-            var list = ConvertDataTableList<order>(dt);
-            if (list != null && list.Count > 0)
-            {
-                return list[0];
-            }
-            else
-            {
-                return null;
-            }
-        }
-        /// <summary>
         /// 修改骑士收入
         /// danny-20150414
         /// </summary>
@@ -3281,43 +3250,7 @@ where   Id = @OrderId and FinishAll = 0";
             dbParameters.AddWithValue("@realOrderCommission", realOrderCommission);
             dbParameters.AddWithValue("@OrderId", orderId);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
-        }
-
-        /// <summary>
-        /// 记录扣除网站补贴日志
-        ///  zhaohailong20150706
-        /// </summary>
-        /// <param name="orderId"></param>
-        /// <param name="price"></param>
-        /// <returns></returns>
-        public bool InsertNotRealOrderLog(int orderId, decimal price)
-        {
-            string sql =
-                @"INSERT INTO OrderSubsidiesLog
-                                (Price
-                                ,OrderId
-                                ,InsertTime
-                                ,OptName
-                                ,Remark
-                                ,OrderStatus
-                                ,Platform 
-                                )
-                     VALUES
-                                (@Price
-                                ,@OrderId
-                                ,Getdate()
-                                ,'admin'
-                                ,@Remark
-                                ,1
-                                ,3);";
-            string remark = string.Format("扣除网站补贴{0}元", price);
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@Price", price);
-            parm.AddWithValue("@OrderId", orderId);
-            parm.AddWithValue("@Remark", remark);
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
-
-        }
+        }      
 
         /// <summary>
         /// 骑士目前是否有未完成的订单
@@ -3688,7 +3621,6 @@ where orderId=@orderId";
             return MapRows<OrderAuditStatisticalModel>(dt)[0];
         }
 
-
         /// <summary>
         /// 订单自动审核拒绝增加除网站外的金额
         /// danny-20150813
@@ -3776,6 +3708,35 @@ from dbo.clienter as c where Id=@ClienterId";
             dbParameters.AddWithValue("RelationNo", clienterAllowWithdrawRecord.RelationNo); //关联单号
             dbParameters.AddWithValue("Remark", clienterAllowWithdrawRecord.Remark); //描述
             return DbHelper.ExecuteNonQuery(SuperMan_Write, insertSql, dbParameters) > 0;
+        }
+
+
+        /// <summary>
+        /// 获取FinishAll状态错误的订单
+        /// 胡灵波
+        /// 2015年8月19日 18:49:05
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        public IList<order> GetFinallErrByClienterId(int clienterId)
+        {
+            IList<order> list = new List<order>();
+            
+            string querysql = @"
+select o.id,o.OrderCount,ISNULL(oo.HadUploadCount, 0) HadUploadCount        
+from    dbo.[order] o ( nolock )
+        left join dbo.OrderOther oo ( nolock ) on o.Id = oo.OrderId
+where   o.clienterId = @clienterId  and o.Status=1 and oo.HadUploadCount>=o.OrderCount
+and FinishAll=0 ";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@clienterId", clienterId);  
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
+            if (DataTableHelper.CheckDt(dt))
+            {
+                list = DataTableHelper.ConvertDataTableList<order>(dt);
+            }
+            return list;
         }
     }
 }
