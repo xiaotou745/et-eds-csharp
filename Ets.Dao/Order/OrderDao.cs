@@ -3779,5 +3779,10 @@ from dbo.clienter as c where Id=@ClienterId";
             dbParameters.AddWithValue("Remark", clienterAllowWithdrawRecord.Remark); //描述
             return DbHelper.ExecuteNonQuery(SuperMan_Write, insertSql, dbParameters) > 0;
         }
+
+        public List<OrderChild> GetOrderChild(string orderNo)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -264,7 +264,7 @@ namespace Ets.Model.DomainModel.Order
         /// </summary>
         public int? PayStyle { get; set; }
         /// <summary>
-        /// 支付类型(1 支付宝 2 微信 3 网银)
+        /// 支付类型(1 支付宝 2 微信 3 网银 6现金支付)
         /// </summary>
         public int? PayType { get; set; }
         /// <summary>

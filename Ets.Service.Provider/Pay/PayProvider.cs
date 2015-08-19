@@ -53,6 +53,7 @@ namespace Ets.Service.Provider.Pay
         private ClienterFinanceProvider clienterFinanceProvider = new ClienterFinanceProvider();
         private readonly BusinessFinanceAccountDao businessFinanceAccountDao = new BusinessFinanceAccountDao();
         private readonly ClienterFinanceAccountDao clienterFinanceAccountDao = new ClienterFinanceAccountDao();
+        private readonly OrderDao orderDao = new OrderDao();
         #region 生成支付宝、微信二维码订单
 
         /// <summary>
@@ -62,9 +63,9 @@ namespace Ets.Service.Provider.Pay
         /// </summary>
         /// <param name="model"></param>       
         public ResultModel<PayResultModel> CreatePay(Model.ParameterModel.AliPay.PayModel model)
-        { 
+        {
             LogHelper.LogWriter("=============支付请求数据：", model);
-            PayStatusModel payStatusModel = orderChildDao.GetPayStatus(model.orderId, model.childId); 
+            PayStatusModel payStatusModel = orderChildDao.GetPayStatus(model.orderId, model.childId);
             if (payStatusModel == null)
             {
                 string err = string.Concat("订单不存在,主订单号：", model.orderId, ",子订单号:", model.childId);
@@ -92,16 +93,22 @@ namespace Ets.Service.Provider.Pay
                 //微信支付
                 LogHelper.LogWriter("=============微信支付：");
                 return CreateWxPayOrder(orderNo, payStatusModel.TotalPrice, model.orderId, model.payStyle);
-            }  
+            }
             return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
         }
 
-        
+
 
         #region 现金支付
+        /// <summary>
+        /// 现金支付 wc
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public ResultModel<PayResultModel> CashPay(PayModel model)
         {
-            int result = orderChildDao.UpdateChildStatusFromCashOrder(model);
+            var orderInfo = orderDao.GetByOrderId(model.orderId);
+            int result = orderChildDao.UpdateChildStatusFromCashOrder(model, orderInfo.ClienterName);
             if (result > 0)
             {
                 ResultModel<PayResultModel>.Conclude(AliPayStatus.success);
@@ -470,13 +477,13 @@ namespace Ets.Service.Provider.Pay
                         PayStatus = 1,
                         PayType = PayTypeEnum.WeiXin.GetHashCode()
                     };
-                   string msg= BusinessRechargeSusess(businessRechargeModel);
-                   if (msg.Equals("success"))
-                   {
+                    string msg = BusinessRechargeSusess(businessRechargeModel);
+                    if (msg.Equals("success"))
+                    {
                         HttpContext.Current.Response.Write("<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>");
                         HttpContext.Current.Response.End();
                         return;
-                   }
+                    }
                 }
                 #endregion
 
@@ -1142,7 +1149,7 @@ namespace Ets.Service.Provider.Pay
                 EmailHelper.SendEmailTo(sbEmail.ToString(), emailSendTo, "易宝自动对账", copyTo, false);
             }
             #endregion
-        } 
+        }
 
         /// <summary>
         ///自动处理提款申请单（原确认打款逻辑）

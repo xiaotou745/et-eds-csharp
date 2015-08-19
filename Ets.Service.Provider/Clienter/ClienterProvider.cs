@@ -1315,22 +1315,37 @@ namespace Ets.Service.Provider.Clienter
         {
             if (!(bool)myOrderInfo.IsPay && myOrderInfo.MealsSettleMode == MealsSettleMode.LineOn.GetHashCode())
             {
-                // 更新商户余额、可提现余额       
-                 
-                iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
-                                                        {
-                                                            BusinessId = myOrderInfo.businessId,
-                                                            Amount = myOrderInfo.BusinessReceivable,
-                                                            Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
-                                                            RecordType = BusinessBalanceRecordRecordType.PublishOrder.GetHashCode(),
-                                                            Operator = myOrderInfo.ClienterName,
-                                                            WithwardId = myOrderInfo.Id,
-                                                            RelationNo = myOrderInfo.OrderNo,
-                                                            Remark = "返还商家订单菜品费"
-                                                        });
+                // 更新商户余额、可提现余额     
+                BusinessMoneyPM businessMoneyPm = new BusinessMoneyPM()
+                {
+                    BusinessId = myOrderInfo.businessId,
+                    Amount = myOrderInfo.BusinessReceivable,
+                    Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
+                    RecordType = BusinessBalanceRecordRecordType.PublishOrder.GetHashCode(),
+                    Operator = myOrderInfo.ClienterName,
+                    WithwardId = myOrderInfo.Id,
+                    RelationNo = myOrderInfo.OrderNo,
+                    Remark = "返还商家订单菜品费"
+                };
+
+                #region 当有现金支付的子订单时，商家余额增加金额 = 商户应收-现金支付的子订单金额  wc修改
+
+                //获取该订单信息
+                List<OrderChildInfo> orderChildInfos = orderChildDao.GetByOrderId(myOrderInfo.Id);
+                List<OrderChildInfo> cashChildInfos =
+                    orderChildInfos.Where(t => t.PayType == PayTypeEnum.CashPay.GetHashCode()).ToList();
+                if (cashChildInfos.Count > 0)
+                {
+                    decimal goodPrice = cashChildInfos.Sum(t => t.GoodPrice);
+                    businessMoneyPm.Amount = businessMoneyPm.Amount - goodPrice;
+                }
+
+                #endregion
+
+                iBusinessProvider.UpdateBBalanceAndWithdraw(businessMoneyPm);
             }
         }
-
+         
         /// <summary>
         /// 判断当前订单是否为无效订单
         /// zhaohailong20150706

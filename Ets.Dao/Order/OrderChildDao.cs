@@ -417,19 +417,27 @@ where   oc.OrderId = @OrderId and ChildId=@ChildId ";
             return ParseHelper.ToBool(DbHelper.ExecuteScalar(SuperMan_Write, querySql, dbParameters), false);
         }
 
-        public int UpdateChildStatusFromCashOrder(PayModel model)
+        /// <summary>
+        /// 现金支付更新状态
+        /// wc
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="payBy"></param>
+        /// <returns></returns>
+        public int UpdateChildStatusFromCashOrder(PayModel model,string payBy)
         {
             string sql = @"
 update  OrderChild
 set     PayType = @PayType ,
         PayStyle = @PayStyle ,
-        PayStatus = @PayStatus ,PayTime=getdate() 
+        PayStatus = @PayStatus ,PayTime=getdate(),PayBy=@PayBy,PayPrice=GoodPrice 
 where   OrderId = @OrderId
         and ChildId = @ChildId
         and PayStatus = @BefPayStatus";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("PayType", DbType.Int32, 4).Value = PayTypeEnum.CashPay.GetHashCode();//现金支付
             parm.Add("PayStyle", DbType.Int32, 4).Value = PayStyleEnum.BuyerPay.GetHashCode();//用户支付 
+            parm.Add("PayBy", DbType.String).Value = payBy; 
             parm.Add("OrderId", SqlDbType.Int, 4).Value = model.orderId;
             parm.Add("ChildId", SqlDbType.Int, 4).Value = model.childId;
             parm.Add("PayStatus", SqlDbType.Int, 4).Value = PayStatusEnum.HadPay.GetHashCode();  //已支付
