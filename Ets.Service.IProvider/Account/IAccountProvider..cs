@@ -24,6 +24,6 @@ namespace Ets.Service.IProvider.Account
 
         bool UpdatePassword(int AccountId, string newpwd);
 
-        bool PasswordTime(int AccountId);
+        int PasswordTime(int AccountId);
     }
 }

@@ -141,7 +141,7 @@ WHERE id=@ID";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@ID", DbType.Int32, 4).Value = AccountId;
             parm.Add("@PWD", DbType.String).Value = newpwd;
-            var obj = DbHelper.ExecuteScalar(SuperMan_Read, sql, parm);
+            var obj = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm);
             return Convert.ToInt32(obj) > 0;
         }
 
@@ -150,7 +150,7 @@ WHERE id=@ID";
         /// </summary>
         /// <param name="AccountId"></param>
         /// <returns></returns>
-        public bool PasswordTime(int AccountId)
+        public int PasswordTime(int AccountId)
         {
             string sql = @"
 SELECT LastChangeTime FROM  dbo.account AS a (nolock) WHERE a.id=@ID";
@@ -161,9 +161,9 @@ SELECT LastChangeTime FROM  dbo.account AS a (nolock) WHERE a.id=@ID";
             var ts = DateTime.Now - dtime;
             if (ts.Days >= 30)
             {
-                return true;
+                return 1;
             }
-            return false;
+            return 0;
         }
 
     }

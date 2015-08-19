@@ -54,8 +54,13 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>        
+        //[HttpPost]
+        //public ResultModel<string> PostLogin_B(ParamModel model)//LoginModel ParamModel BusiLoginResultModel
+        //{
+        //    return new BusinessProvider().PostLogin_B(model);
+        //}
         [HttpPost]
-        public ResultModel<BusiLoginResultModel> PostLogin_B(LoginModel model)//LoginModel ParamModel
+        public ResultModel<BusiLoginResultModel> PostLogin_B(LoginModel model) 
         {
             return new BusinessProvider().PostLogin_B(model);
         }
