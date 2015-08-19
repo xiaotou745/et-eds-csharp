@@ -487,5 +487,24 @@ namespace SuperManWebApi.Controllers
             return ResultModel<ListOrderDetailModel>.Conclude(GetOrdersStatus.FailedGetOrders, model);
         }
 
+        /// <summary>
+        /// 设置是否开启接受推送
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Token]
+        public ResultModel<object> SetReceivePush(ClienterReceivePushModel model)
+        {
+            if (model == null||model.ClienterId<1)
+            {
+                return ResultModel<object>.Conclude(SetReceivePushStatus.ParError);
+            }
+            if (iClienterProvider.SetReceivePush(model))
+            {
+                return ResultModel<object>.Conclude(SetReceivePushStatus.Success);
+            }
+            return ResultModel<object>.Conclude(SetReceivePushStatus.Failed);
+        }
+
     }
 }
