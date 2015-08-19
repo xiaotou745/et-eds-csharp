@@ -1398,7 +1398,7 @@ namespace Ets.Service.Provider.Order
                                                                     ClienterId = orderModel.clienterId,
                                                                     Amount = diffOrderCommission,
                                                                     Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
-                                                                    RecordType = ClienterBalanceRecordRecordType.BalanceAdjustment.GetHashCode(),
+                                                                    RecordType = ClienterBalanceRecordRecordType.Abnormal.GetHashCode(),
                                                                     Operator = orderOptionModel.OptUserName,
                                                                     WithwardId = orderModel.Id,
                                                                     RelationNo = orderModel.OrderNo,
