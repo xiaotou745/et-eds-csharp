@@ -164,8 +164,7 @@ namespace Ets.Model.DomainModel.Order
         /// 总配送费
         /// </summary>
         public decimal TotalDistribSubsidy { get; set; }
-
-
+         
         /// <summary>
         /// 配送员姓名
         /// </summary>
@@ -231,6 +230,14 @@ namespace Ets.Model.DomainModel.Order
         /// 是否一键发单（0否，1是）
         /// </summary>
         public int OneKeyPubOrder { get; set; }
+        /// <summary>
+        /// 是否投诉 1 已投诉 0 未投诉
+        /// </summary>
+        public int IsComplain { get; set; }
+        /// <summary>
+        /// 是否允许现金支付 1允许 0不允许
+        /// </summary>
+        public int IsAllowCashPay { get; set; }
     }
 
     public class OrderChildInfo

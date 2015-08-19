@@ -693,12 +693,11 @@ namespace Ets.Service.Provider.Clienter
                 //更新商家金额
                 UpdateBusinessMoney(myOrderInfo);
                 //更新骑士金额
-                if (UpdateClienterMoney(myOrderInfo))
-                {
-                    //写入骑士完成坐标                 
-                    orderOtherDao.UpdateComplete(parModel);
-                    tran.Complete();
-                }
+                UpdateClienterMoney(myOrderInfo);
+                //写入骑士完成坐标                 
+                orderOtherDao.UpdateComplete(parModel);              
+
+                tran.Complete();
             }
             //异步回调第三方，推送通知
             Task.Factory.StartNew(() =>
@@ -712,7 +711,7 @@ namespace Ets.Service.Provider.Clienter
 
             model.IsModifyTicket = myOrderInfo.HadUploadCount >= myOrderInfo.OrderCount ? true : false;//是否允许修改小票     
             model.FinishOrderStatus = FinishOrderStatus.Success;
-            return model;
+            return model;        
         }
 
         public ClienterModel GetUserInfoByUserId(int UserId)
@@ -789,15 +788,12 @@ namespace Ets.Service.Provider.Clienter
                 if (orderOther == null) return null;
 
                 //上传成功后， 判断 订单 创建时间在 2015-4-18 00：00 之前的订单不在增加佣金
-                string date = "2015-04-18 00:00:00";
+                string date = "2015-04-18 00:00:00";             
 
                 if (orderOther.OrderStatus == OrderStatus.Status1.GetHashCode() && orderOther.OrderCreateTime > Convert.ToDateTime(date))
                 {
                     //更新骑士金额
-                    if (!UpdateClienterMoney(myOrderInfo))
-                    {
-                        return null;
-                    }
+                    UpdateClienterMoney(myOrderInfo);
                 }
 
                 tran.Complete();
@@ -931,7 +927,7 @@ namespace Ets.Service.Provider.Clienter
         /// <returns></returns>
         public ClienterDM GetDetails(int id)
         {
-            return clienterDao.GetDetails(id);
+            return clienterDao.GetDetails(id);           
         }
 
         /// <summary>
@@ -1052,7 +1048,7 @@ namespace Ets.Service.Provider.Clienter
         public PageInfo<ClienterListModel> GetClienterList(ClienterSearchCriteria criteria)
         {
             return clienterDao.GetClienterList<ClienterListModel>(criteria);
-        }
+        }       
         /// <summary>
         /// 修改骑士详细信息
         /// danny-20150707
@@ -1084,6 +1080,114 @@ namespace Ets.Service.Provider.Clienter
             return dealResultInfo;
         }
 
+        /// <summary>
+        /// 更新骑士余额
+        /// 胡灵波
+        /// 2015年8月13日 09:53:33
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="myOrderInfo"></param>
+        public void UpdateCAccountBalance(ClienterMoneyPM clienterMoneyPM)
+        {
+            //更新骑士余额
+            clienterDao.UpdateCAccountBalance(new UpdateForWithdrawPM()
+            {
+                Id = clienterMoneyPM.ClienterId,
+                Money = clienterMoneyPM.Amount
+            });
+
+            //更新骑士余额流水          
+            clienterBalanceRecordDao.Insert(new ClienterBalanceRecord()
+            {
+                ClienterId = clienterMoneyPM.ClienterId,
+                Amount = clienterMoneyPM.Amount,
+                Status = clienterMoneyPM.Status,
+                Balance = clienterMoneyPM.Balance,
+                RecordType = clienterMoneyPM.RecordType,
+                Operator = clienterMoneyPM.Operator,
+                WithwardId = clienterMoneyPM.WithwardId,
+                RelationNo = clienterMoneyPM.RelationNo,
+                Remark = clienterMoneyPM.Remark
+            });
+        }
+
+        /// <summary>
+        /// 更新骑士可提现余额
+        /// 胡灵波
+        /// 2015年8月13日 10:38:31
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="myOrderInfo"></param>
+        public void UpdateCAllowWithdrawPrice(ClienterMoneyPM clienterMoneyPM)
+        {
+            //更新骑士余额
+            clienterDao.UpdateCAllowWithdrawPrice(new UpdateForWithdrawPM()
+            {
+                Id = clienterMoneyPM.ClienterId,
+                Money = clienterMoneyPM.Amount
+            });
+
+            //更新骑士可提现流水          
+            clienterAllowWithdrawRecordDao.Insert(new ClienterAllowWithdrawRecord()
+            {
+                ClienterId = clienterMoneyPM.ClienterId,
+                Amount = clienterMoneyPM.Amount,
+                Status = clienterMoneyPM.Status,
+                Balance = clienterMoneyPM.Balance,
+                RecordType = clienterMoneyPM.RecordType,
+                Operator = clienterMoneyPM.Operator,
+                WithwardId = clienterMoneyPM.WithwardId,
+                RelationNo = clienterMoneyPM.RelationNo,
+                Remark = clienterMoneyPM.Remark
+            });
+        }
+
+        /// <summary>
+        /// 更新骑士余额、可提现余额      
+        /// 胡灵波
+        /// 2015年8月13日 18:11:23
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="myOrderInfo"></param>
+        public void UpdateCBalanceAndWithdraw(ClienterMoneyPM clienterMoneyPM)
+        {
+            //更新骑士余额
+            clienterDao.UpdateCBalanceAndWithdraw(new UpdateForWithdrawPM()
+            {
+                Id = clienterMoneyPM.ClienterId,
+                Money = clienterMoneyPM.Amount
+            });
+
+            //更新骑士余额流水          
+            clienterBalanceRecordDao.Insert(new ClienterBalanceRecord()
+            {
+                ClienterId = clienterMoneyPM.ClienterId,
+                Amount = clienterMoneyPM.Amount,
+                Status = clienterMoneyPM.Status,
+                Balance = clienterMoneyPM.Balance,
+                RecordType = clienterMoneyPM.RecordType,
+                Operator = clienterMoneyPM.Operator,
+                WithwardId = clienterMoneyPM.WithwardId,
+                RelationNo = clienterMoneyPM.RelationNo,
+                Remark = clienterMoneyPM.Remark
+            });
+            //更新骑士可提现流水          
+            clienterAllowWithdrawRecordDao.Insert(new ClienterAllowWithdrawRecord()
+            {
+                ClienterId = clienterMoneyPM.ClienterId,
+                Amount = clienterMoneyPM.Amount,
+                Status = clienterMoneyPM.Status,
+                Balance = clienterMoneyPM.Balance,
+                RecordType = clienterMoneyPM.RecordType,
+                Operator = clienterMoneyPM.Operator,
+                WithwardId = clienterMoneyPM.WithwardId,
+                RelationNo = clienterMoneyPM.RelationNo,
+                Remark = clienterMoneyPM.Remark
+            });
+
+        }
+
+
         #region  用户自定义方法 金额
         /// <summary>
         /// 更新骑士金额
@@ -1093,15 +1197,15 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="myOrderInfo"></param>
         /// <param name="uploadReceiptModel"></param>
         /// <param name="orderOther"></param>
-        bool UpdateClienterMoney(OrderListModel myOrderInfo)
+        void UpdateClienterMoney(OrderListModel myOrderInfo)
         {
             if (myOrderInfo.HadUploadCount < myOrderInfo.OrderCount)
             {
-                return false;
+                return;
             }
             if (!CheckOrderPay(myOrderInfo.Id))
             {
-                return false;
+                return;
             }
 
             //物流公司 
@@ -1147,7 +1251,7 @@ namespace Ets.Service.Provider.Clienter
                     UpdateInvalidOrder(myOrderInfo);
                 }
                 else//不需要审核
-                {
+                {   
                     // 更新骑士余额、可提现余额  
                     UpdateCBalanceAndWithdraw(new ClienterMoneyPM()
                                             {
@@ -1166,9 +1270,8 @@ namespace Ets.Service.Provider.Clienter
                     orderOtherDao.UpdateAuditStatus(myOrderInfo.Id, OrderAuditStatusCommon.Through.GetHashCode());
                     //更新骑士无效订单金额
                     UpdateInvalidOrder(myOrderInfo);
-                }
+                }             
             }
-            return true;
         }
 
         /// <summary>
@@ -1180,7 +1283,7 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="isNotRealOrder"></param>
         private void UpdateInvalidOrder(OrderListModel myOrderInfo)
         {
-            string mess = "主单Id:" + myOrderInfo.Id;
+            string mess = "主单Id:" + myOrderInfo.Id;             
 
             decimal realOrderCommission = myOrderInfo.OrderCommission == null ? 0 : myOrderInfo.OrderCommission.Value;
             var deductCommissionReason = "";//无效订单原因
@@ -1195,7 +1298,7 @@ namespace Ets.Service.Provider.Clienter
                 //更新无效订单佣金
                 orderDao.UpdateOrderRealOrderCommission(myOrderInfo.Id.ToString(), realOrderCommission);
                 //更新无效订单(状态，原因)
-                orderOtherDao.UpdateOrderIsReal(myOrderInfo.Id, deductCommissionReason);
+                orderOtherDao.UpdateOrderIsReal(myOrderInfo.Id, deductCommissionReason,1);
             }
         }
         /// <summary>
@@ -1220,116 +1323,9 @@ namespace Ets.Service.Provider.Clienter
                                                             WithwardId = myOrderInfo.Id,
                                                             RelationNo = myOrderInfo.OrderNo,
                                                             Remark = "返还商家订单菜品费"
-                                                        });
-            }
-        }
-
-        /// <summary>
-        /// 更新骑士余额
-        /// 胡灵波
-        /// 2015年8月13日 09:53:33
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="myOrderInfo"></param>
-        public void UpdateCAccountBalance(ClienterMoneyPM clienterMoneyPM)
-        {
-            //更新骑士余额
-            clienterDao.UpdateCAccountBalance(new UpdateForWithdrawPM()
-                                            {
-                                                Id = clienterMoneyPM.ClienterId,
-                                                Money = clienterMoneyPM.Amount
-                                            });
-
-            //更新骑士余额流水          
-            clienterBalanceRecordDao.Insert(new ClienterBalanceRecord()
-                                            {
-                                                ClienterId = clienterMoneyPM.ClienterId,
-                                                Amount = clienterMoneyPM.Amount,
-                                                Status = clienterMoneyPM.Status,
-                                                Balance = clienterMoneyPM.Balance,
-                                                RecordType = clienterMoneyPM.RecordType,
-                                                Operator = clienterMoneyPM.Operator,
-                                                WithwardId = clienterMoneyPM.WithwardId,
-                                                RelationNo = clienterMoneyPM.RelationNo,
-                                                Remark = clienterMoneyPM.Remark
-                                            });
-        }
-
-        /// <summary>
-        /// 更新骑士可提现余额
-        /// 胡灵波
-        /// 2015年8月13日 10:38:31
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="myOrderInfo"></param>
-        public void UpdateCAllowWithdrawPrice(ClienterMoneyPM clienterMoneyPM)
-        {
-            //更新骑士余额
-            clienterDao.UpdateCAllowWithdrawPrice(new UpdateForWithdrawPM()
-                                            {
-                                                Id = clienterMoneyPM.ClienterId,
-                                                Money = clienterMoneyPM.Amount
-                                            });
-
-            //更新骑士可提现流水          
-            clienterAllowWithdrawRecordDao.Insert(new ClienterAllowWithdrawRecord()
-                                            {
-                                                ClienterId = clienterMoneyPM.ClienterId,
-                                                Amount = clienterMoneyPM.Amount,
-                                                Status = clienterMoneyPM.Status,
-                                                Balance = clienterMoneyPM.Balance,
-                                                RecordType = clienterMoneyPM.RecordType,
-                                                Operator = clienterMoneyPM.Operator,
-                                                WithwardId = clienterMoneyPM.WithwardId,
-                                                RelationNo = clienterMoneyPM.RelationNo,
-                                                Remark = clienterMoneyPM.Remark
-                                            });
-        }
-
-        /// <summary>
-        /// 更新骑士余额、可提现余额      
-        /// 胡灵波
-        /// 2015年8月13日 18:11:23
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="myOrderInfo"></param>
-        public void UpdateCBalanceAndWithdraw(ClienterMoneyPM clienterMoneyPM)
-        {
-            //更新骑士余额
-            clienterDao.UpdateCBalanceAndWithdraw(new UpdateForWithdrawPM()
-                                                {
-                                                    Id = clienterMoneyPM.ClienterId,
-                                                    Money = clienterMoneyPM.Amount
-                                                });
-
-            //更新骑士余额流水          
-            clienterBalanceRecordDao.Insert(new ClienterBalanceRecord()
-                                            {
-                                                ClienterId = clienterMoneyPM.ClienterId,
-                                                Amount = clienterMoneyPM.Amount,
-                                                Status = clienterMoneyPM.Status,
-                                                Balance = clienterMoneyPM.Balance,
-                                                RecordType = clienterMoneyPM.RecordType,
-                                                Operator = clienterMoneyPM.Operator,
-                                                WithwardId = clienterMoneyPM.WithwardId,
-                                                RelationNo = clienterMoneyPM.RelationNo,
-                                                Remark = clienterMoneyPM.Remark
-                                            });
-            //更新骑士可提现流水          
-            clienterAllowWithdrawRecordDao.Insert(new ClienterAllowWithdrawRecord()
-                                            {
-                                                ClienterId = clienterMoneyPM.ClienterId,
-                                                Amount = clienterMoneyPM.Amount,
-                                                Status = clienterMoneyPM.Status,
-                                                Balance = clienterMoneyPM.Balance,
-                                                RecordType = clienterMoneyPM.RecordType,
-                                                Operator = clienterMoneyPM.Operator,
-                                                WithwardId = clienterMoneyPM.WithwardId,
-                                                RelationNo = clienterMoneyPM.RelationNo,
-                                                Remark = clienterMoneyPM.Remark
-                                            });
-
-        }
+                                                        });             
+            }            
+        }      
 
         /// <summary>
         /// 判断当前订单是否为无效订单
@@ -1341,7 +1337,7 @@ namespace Ets.Service.Provider.Clienter
         /// <returns></returns>
         private bool CheckIsNotRealOrder(OrderListModel myOrderInfo, out string reason)
         {
-            OrderMapDetail mapDetail = orderDao.GetOrderMapDetail(myOrderInfo.Id);
+            OrderMapDetail mapDetail = orderDao.GetOrderMapDetail(myOrderInfo.Id);   
             GlobalConfigModel globalSetting = GlobalConfigDao.GlobalConfigGet(0);
             string mess = "";
             mess += "GrabToCompleteDistance" + mapDetail.GrabToCompleteDistance.ToString();
@@ -1419,7 +1415,7 @@ namespace Ets.Service.Provider.Clienter
             }
 
             return 0;
-        }
+        }    
     }
 
 }

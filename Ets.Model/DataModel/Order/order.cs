@@ -238,6 +238,13 @@ namespace Ets.Model.DataModel.Order
         /// 物流公司ID
         /// </summary>
         public int DeliveryCompanyID { get; set; }
-
+        /// <summary>
+        /// 是否投诉 1 已投诉 0 未投诉
+        /// </summary>
+        public int IsComplain { get; set; }
+        /// <summary>
+        /// 是否允许现金支付 1允许 0不允许
+        /// </summary>
+        public int IsAllowCashPay { get; set; }
     }
 }
