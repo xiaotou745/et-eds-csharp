@@ -111,6 +111,6 @@ namespace Ets.Service.IProvider.Pay
         /// 易宝自动对账
         /// danny-20150730
         /// </summary>
-        void YeePayReconciliation();
+        void YeePayReconciliation(); 
     }
 }
