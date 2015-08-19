@@ -44,6 +44,8 @@ using Ets.Dao.GlobalConfig;
 using ETS.NoSql.RedisCache;
 using Ets.Service.IProvider.Business;
 using Ets.Service.Provider.Business;
+using Ets.Model.ParameterModel.Common;
+using ETS.Security;
 namespace Ets.Service.Provider.Clienter
 {
     public class ClienterProvider : IClienterProvider
@@ -206,23 +208,24 @@ namespace Ets.Service.Provider.Clienter
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public ResultModel<ClienterLoginResultModel> PostLogin_C(Model.ParameterModel.Clienter.LoginCPM model)
+        public ResultModel<string> PostLogin_C(ParamModel parModel)
         {
             try
             {
+                LoginCPM model = JsonHelper.JsonConvertToObject<LoginCPM>(AESApp.AesDecrypt(parModel.data));
                 var redis = new RedisCache();
                 string key = string.Concat(RedissCacheKey.LoginCount_C, model.phoneNo);
                 int excuteCount = redis.Get<int>(key);
                 if (excuteCount >= 10)
                 {
-                    return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.CountError);
+                    return ResultModel<string>.Conclude(LoginModelStatus.CountError);
                 }
                 redis.Set(key, excuteCount + 1, new TimeSpan(0, 5, 0));
 
                 ClienterLoginResultModel resultModel = clienterDao.PostLogin_CSql(model);
-                if (resultModel == null)
+                if (resultModel == null || !AESApp.CheckAES(model.phoneNo, model.aesPhoneNo))
                 {
-                    return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential);
+                    return ResultModel<string>.Conclude(LoginModelStatus.InvalidCredential);
                 }
                 if (resultModel.DeliveryCompanyId > 0)
                 {
@@ -240,11 +243,12 @@ namespace Ets.Service.Provider.Clienter
                        Appkey = resultModel.Appkey.ToString()
                    });
                 resultModel.Token = token;
-                return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.Success, resultModel);
+                string resultStr = AESApp.AesDecrypt(JsonHelper.JsonConvertToString(resultModel));
+                return ResultModel<string>.Conclude(LoginModelStatus.Success, resultStr);
             }
             catch (Exception ex)
             {
-                return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential);
+                return ResultModel<string>.Conclude(LoginModelStatus.InvalidCredential);
                 throw;
             }
         }
@@ -695,7 +699,7 @@ namespace Ets.Service.Provider.Clienter
                 //更新骑士金额
                 UpdateClienterMoney(myOrderInfo);
                 //写入骑士完成坐标                 
-                orderOtherDao.UpdateComplete(parModel);              
+                orderOtherDao.UpdateComplete(parModel);
 
                 tran.Complete();
             }
@@ -711,7 +715,7 @@ namespace Ets.Service.Provider.Clienter
 
             model.IsModifyTicket = myOrderInfo.HadUploadCount >= myOrderInfo.OrderCount ? true : false;//是否允许修改小票     
             model.FinishOrderStatus = FinishOrderStatus.Success;
-            return model;        
+            return model;
         }
 
         public ClienterModel GetUserInfoByUserId(int UserId)
@@ -788,7 +792,7 @@ namespace Ets.Service.Provider.Clienter
                 if (orderOther == null) return null;
 
                 //上传成功后， 判断 订单 创建时间在 2015-4-18 00：00 之前的订单不在增加佣金
-                string date = "2015-04-18 00:00:00";             
+                string date = "2015-04-18 00:00:00";
 
                 if (orderOther.OrderStatus == OrderStatus.Status1.GetHashCode() && orderOther.OrderCreateTime > Convert.ToDateTime(date))
                 {
@@ -819,7 +823,7 @@ namespace Ets.Service.Provider.Clienter
         private bool CheckOrderPay(int orderId)
         {
             return orderDao.UpdateFinishAll(orderId);
-        }   
+        }
 
         /// <summary>
         /// 根据订单Id获取小票信息
@@ -927,7 +931,7 @@ namespace Ets.Service.Provider.Clienter
         /// <returns></returns>
         public ClienterDM GetDetails(int id)
         {
-            return clienterDao.GetDetails(id);           
+            return clienterDao.GetDetails(id);
         }
 
         /// <summary>
@@ -1048,7 +1052,7 @@ namespace Ets.Service.Provider.Clienter
         public PageInfo<ClienterListModel> GetClienterList(ClienterSearchCriteria criteria)
         {
             return clienterDao.GetClienterList<ClienterListModel>(criteria);
-        }       
+        }
         /// <summary>
         /// 修改骑士详细信息
         /// danny-20150707
@@ -1251,7 +1255,7 @@ namespace Ets.Service.Provider.Clienter
                     UpdateInvalidOrder(myOrderInfo);
                 }
                 else//不需要审核
-                {   
+                {
                     // 更新骑士余额、可提现余额  
                     UpdateCBalanceAndWithdraw(new ClienterMoneyPM()
                                             {
@@ -1270,7 +1274,7 @@ namespace Ets.Service.Provider.Clienter
                     orderOtherDao.UpdateAuditStatus(myOrderInfo.Id, OrderAuditStatusCommon.Through.GetHashCode());
                     //更新骑士无效订单金额
                     UpdateInvalidOrder(myOrderInfo);
-                }             
+                }
             }
         }
 
@@ -1283,7 +1287,7 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="isNotRealOrder"></param>
         private void UpdateInvalidOrder(OrderListModel myOrderInfo)
         {
-            string mess = "主单Id:" + myOrderInfo.Id;             
+            string mess = "主单Id:" + myOrderInfo.Id;
 
             decimal realOrderCommission = myOrderInfo.OrderCommission == null ? 0 : myOrderInfo.OrderCommission.Value;
             var deductCommissionReason = "";//无效订单原因
@@ -1298,7 +1302,7 @@ namespace Ets.Service.Provider.Clienter
                 //更新无效订单佣金
                 orderDao.UpdateOrderRealOrderCommission(myOrderInfo.Id.ToString(), realOrderCommission);
                 //更新无效订单(状态，原因)
-                orderOtherDao.UpdateOrderIsReal(myOrderInfo.Id, deductCommissionReason,1);
+                orderOtherDao.UpdateOrderIsReal(myOrderInfo.Id, deductCommissionReason, 1);
             }
         }
         /// <summary>
@@ -1323,9 +1327,9 @@ namespace Ets.Service.Provider.Clienter
                                                             WithwardId = myOrderInfo.Id,
                                                             RelationNo = myOrderInfo.OrderNo,
                                                             Remark = "返还商家订单菜品费"
-                                                        });             
-            }            
-        }      
+                                                        });
+            }
+        }
 
         /// <summary>
         /// 判断当前订单是否为无效订单
@@ -1337,7 +1341,7 @@ namespace Ets.Service.Provider.Clienter
         /// <returns></returns>
         private bool CheckIsNotRealOrder(OrderListModel myOrderInfo, out string reason)
         {
-            OrderMapDetail mapDetail = orderDao.GetOrderMapDetail(myOrderInfo.Id);   
+            OrderMapDetail mapDetail = orderDao.GetOrderMapDetail(myOrderInfo.Id);
             GlobalConfigModel globalSetting = GlobalConfigDao.GlobalConfigGet(0);
             string mess = "";
             mess += "GrabToCompleteDistance" + mapDetail.GrabToCompleteDistance.ToString();
@@ -1415,7 +1419,7 @@ namespace Ets.Service.Provider.Clienter
             }
 
             return 0;
-        }    
+        }
     }
 
 }

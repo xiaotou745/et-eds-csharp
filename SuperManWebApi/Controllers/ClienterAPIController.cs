@@ -30,6 +30,7 @@ using Ets.Model.ParameterModel.WtihdrawRecords;
 using ETS.Validator;
 using Ets.Model.ParameterModel.Sms;
 using Ets.Model.ParameterModel.Order;
+using Ets.Model.ParameterModel.Common;
 namespace SuperManWebApi.Controllers
 {
     public class ClienterAPIController : ApiController
@@ -54,7 +55,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>        
-        public ResultModel<ClienterLoginResultModel> PostLogin_C(LoginCPM model)
+        public ResultModel<string> PostLogin_C(ParamModel model)//LoginCPM  ClienterLoginResultModel
         {
             return new ClienterProvider().PostLogin_C(model);
         }
