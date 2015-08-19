@@ -208,7 +208,7 @@ namespace Ets.Service.Provider.Clienter
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public ResultModel<string> PostLogin_C(ParamModel parModel)
+        public ResultModel<ClienterLoginResultModel> PostLogin_C(ParamModel parModel)
         {
             try
             {
@@ -218,14 +218,14 @@ namespace Ets.Service.Provider.Clienter
                 int excuteCount = redis.Get<int>(key);
                 if (excuteCount >= 10)
                 {
-                    return ResultModel<string>.Conclude(LoginModelStatus.CountError);
+                    return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.CountError);
                 }
                 redis.Set(key, excuteCount + 1, new TimeSpan(0, 5, 0));
 
                 ClienterLoginResultModel resultModel = clienterDao.PostLogin_CSql(model);
                 if (resultModel == null)
                 {
-                    return ResultModel<string>.Conclude(LoginModelStatus.InvalidCredential);
+                    return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential);
                 }
                 if (resultModel.DeliveryCompanyId > 0)
                 {
@@ -243,12 +243,12 @@ namespace Ets.Service.Provider.Clienter
                        Appkey = resultModel.Appkey.ToString()
                    });
                 resultModel.Token = token;
-                string resultStr = AESApp.AesDecrypt(JsonHelper.JsonConvertToString(resultModel));
-                return ResultModel<string>.Conclude(LoginModelStatus.Success, resultStr);
+                //string resultStr = AESApp.AesDecrypt(JsonHelper.JsonConvertToString(resultModel));
+                return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.Success, resultModel);
             }
             catch (Exception ex)
             {
-                return ResultModel<string>.Conclude(LoginModelStatus.InvalidCredential);
+                return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential);
                 throw;
             }
         }
@@ -276,8 +276,9 @@ namespace Ets.Service.Provider.Clienter
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public ResultModel<ClienterModifyPwdResultModel> PostForgetPwd_C(Ets.Model.DataModel.Clienter.ModifyPwdInfoModel model)
+        public ResultModel<ClienterModifyPwdResultModel> PostForgetPwd_C(ParamModel parModel)//ClienterModifyPwdResultModel
         {
+            ModifyPwdInfoModel model = JsonHelper.JsonConvertToObject<ModifyPwdInfoModel>(AESApp.AesDecrypt(parModel.data));
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             string key = string.Concat(RedissCacheKey.ChangePasswordCount_C, model.phoneNo);
             int excuteCount = redis.Get<int>(key);
@@ -344,8 +345,9 @@ namespace Ets.Service.Provider.Clienter
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public ResultModel<ClientRegisterResultModel> PostRegisterInfo_C(ClientRegisterInfoModel model)
+        public ResultModel<ClientRegisterResultModel> PostRegisterInfo_C(ParamModel parModel)//ClientRegisterInfoModel
         {
+            ClientRegisterInfoModel model = JsonHelper.ToObject<ClientRegisterInfoModel>(AESApp.AesDecrypt(parModel.data));
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             string key = string.Concat(RedissCacheKey.RegisterCount_C, model.phoneNo);
             int excuteCount = redis.Get<int>(key);
@@ -418,6 +420,7 @@ namespace Ets.Service.Provider.Clienter
             });
             resultModel.Appkey = appkey;
             resultModel.Token = token;
+            //string resultStr = JsonHelper.ToJson(resultModel);
             if (id > 0)
             {
                 return ResultModel<ClientRegisterResultModel>.Conclude(CustomerRegisterStatus.Success, resultModel);

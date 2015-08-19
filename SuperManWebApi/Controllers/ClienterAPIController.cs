@@ -45,7 +45,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="model"></param>
         /// <returns></returns>        
         [HttpPost]
-        public ResultModel<ClientRegisterResultModel> PostRegisterInfo_C(ClientRegisterInfoModel model)
+        public ResultModel<ClientRegisterResultModel> PostRegisterInfo_C(ParamModel model)
         {
             return iClienterProvider.PostRegisterInfo_C(model);
         }
@@ -55,7 +55,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>        
-        public ResultModel<string> PostLogin_C(ParamModel model)//LoginCPM  ClienterLoginResultModel
+        public ResultModel<ClienterLoginResultModel> PostLogin_C(ParamModel model)//LoginCPM  ClienterLoginResultModel
         {
             return new ClienterProvider().PostLogin_C(model);
         }
@@ -141,9 +141,8 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>        
         [HttpPost]
         [Token]
-        public ResultModel<ClienterModifyPwdResultModel> PostModifyPwd_C(ModifyPwdInfoModel model)
+        public ResultModel<ClienterModifyPwdResultModel> PostModifyPwd_C(ParamModel model)//ClienterModifyPwdResultModel ModifyPwdInfoModel
         {
-
             ClienterProvider cliProvider = new ClienterProvider();
             return cliProvider.PostForgetPwd_C(model);
         }
@@ -155,8 +154,9 @@ namespace SuperManWebApi.Controllers
         /// <param name="newPassword"></param>
         /// <returns></returns>        
         [HttpPost]
-        public ResultModel<ClienterModifyPwdResultModel> PostForgetPwd_C(ForgetPwdInfoModel model)
+        public ResultModel<ClienterModifyPwdResultModel> PostForgetPwd_C(ParamModel ParaModel)//ForgetPwdInfoModel
         {
+            ForgetPwdInfoModel model = JsonHelper.JsonConvertToObject<ForgetPwdInfoModel>(ETS.Security.AESApp.AesDecrypt(ParaModel.data));
             if (string.IsNullOrEmpty(model.password))
             {
                 return ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.NewPwdEmpty);

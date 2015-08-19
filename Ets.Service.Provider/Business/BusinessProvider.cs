@@ -420,7 +420,7 @@ namespace Ets.Service.Provider.Business
         /// </summary>
         /// <param name="model">用户名，密码对象</param>
         /// <returns>登录后返回实体对象</returns>
-        public ResultModel<string> PostLogin_B(ParamModel parModel)
+        public ResultModel<BusiLoginResultModel> PostLogin_B(ParamModel parModel)
         {
             try
             {
@@ -430,7 +430,7 @@ namespace Ets.Service.Provider.Business
                 int excuteCount = redis.Get<int>(key);
                 if (excuteCount >= 10)
                 {
-                    return ResultModel<string>.Conclude(LoginModelStatus.CountError);
+                    return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.CountError);
                 }
                 redis.Set(key, excuteCount + 1, new TimeSpan(0, 5, 0));
 
@@ -438,7 +438,7 @@ namespace Ets.Service.Provider.Business
                 DataTable dt = businessDao.LoginSql(model);
                 if (dt == null || dt.Rows.Count <= 0)
                 {
-                    return ResultModel<string>.Conclude(LoginModelStatus.InvalidCredential,string.Empty);
+                    return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential, resultMode);
                 }
                 DataRow row = dt.Rows[0];
 
@@ -473,12 +473,12 @@ namespace Ets.Service.Provider.Business
                     Appkey = row["Appkey"].ToString()
                 });
                 resultMode.Token = token;
-                string resultStr = AESApp.AesDecrypt(JsonHelper.JsonConvertToString(resultMode));
-                return ResultModel<string>.Conclude(LoginModelStatus.Success, resultStr);//BusiLoginResultModel
+                //string resultStr = AESApp.AesDecrypt(JsonHelper.JsonConvertToString(resultMode));
+                return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.Success, resultMode);//BusiLoginResultModel
             }
             catch (Exception ex)
             {
-                return ResultModel<string>.Conclude(LoginModelStatus.InvalidCredential);
+                return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential);
                 throw;
             }
         }
