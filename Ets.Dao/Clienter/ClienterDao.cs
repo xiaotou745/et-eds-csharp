@@ -235,7 +235,7 @@ where   c.PhoneNo = @PhoneNo
             return list[0];
         }
 
-     
+
         /// <summary>
         /// 根据用户ID更新密码
         /// </summary>
@@ -378,7 +378,7 @@ SELECT PhoneNo AS Phone,0 AS PemType FROM clienter(NOLOCK) WHERE Status=1
         /// <param name="model"></param>
         /// <param name="timespan">时间戳</param>
         /// <returns></returns>
-        public int AddClienter(clienter model,string timespan)
+        public int AddClienter(clienter model, string timespan)
         {
             string sql = @"INSERT INTO clienter
                            ([PhoneNo]
@@ -434,7 +434,7 @@ select  count(1)
 from  dbo.[clienter]  
 where Timespan=@Timespan and phoneNo=@phoneNo;";
             IDbParameters dbSelectParameters = DbHelper.CreateDbParameters();
-            dbSelectParameters.Add("phoneNo", DbType.String,20).Value=model.phoneNo;
+            dbSelectParameters.Add("phoneNo", DbType.String, 20).Value = model.phoneNo;
             dbSelectParameters.Add("Timespan", DbType.String, 50).Value = model.timespan;
             object executeScalar = DbHelper.ExecuteScalar(SuperMan_Write, querysql, dbSelectParameters);
             isExist = ParseHelper.ToInt(executeScalar, 0) > 0;
@@ -795,7 +795,7 @@ where  OrderId=@OrderId ";
                 return null;
             }
             var ooList = MapRows<OrderOther>(dt);
-            return ooList[0]; 
+            return ooList[0];
         }
         /// <summary>
         /// 删除小票信息OrderChild表
@@ -1006,7 +1006,7 @@ where  Id=@Id ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Id", model.Id);
             dbParameters.AddWithValue("WithdrawPrice", model.Money);
-            var  num=DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+            var num = DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
 
 
@@ -1028,19 +1028,19 @@ where  Id=@Id ";
             ClienterDM clienterDM = new ClienterDM();
 
             #region 骑士表
-//            string queryClienterSql = @"
-//select  Id,PhoneNo,LoginName,recommendPhone,Password,TrueName,IDCard,PicWithHandUrl,PicUrl,Status,
-//AccountBalance,InsertTime,InviteCode,City,CityId,GroupId,HealthCardID,InternalDepart,ProvinceCode
-//,AreaCode,CityCode,Province,BussinessID,WorkStatus,AllowWithdrawPrice,HasWithdrawPrice
-//from  clienter (nolock) 
-//where Id=@Id";
+            //            string queryClienterSql = @"
+            //select  Id,PhoneNo,LoginName,recommendPhone,Password,TrueName,IDCard,PicWithHandUrl,PicUrl,Status,
+            //AccountBalance,InsertTime,InviteCode,City,CityId,GroupId,HealthCardID,InternalDepart,ProvinceCode
+            //,AreaCode,CityCode,Province,BussinessID,WorkStatus,AllowWithdrawPrice,HasWithdrawPrice
+            //from  clienter (nolock) 
+            //where Id=@Id";
             string queryClienterSql = @"
-select  c.Id,PhoneNo,LoginName,recommendPhone,Password,TrueName,IDCard,PicWithHandUrl,PicUrl,Status,
+select  c.Id,PhoneNo,LoginName,recommendPhone,TrueName,IDCard,PicWithHandUrl,PicUrl,Status,
 AccountBalance,InsertTime,InviteCode,City,CityId,GroupId,HealthCardID,InternalDepart,ProvinceCode
 ,AreaCode,CityCode,Province,BussinessID,WorkStatus,AllowWithdrawPrice,HasWithdrawPrice,
 (case when (select count(1) from dbo.ClienterMessage cm(nolock) where cm.ClienterId=c.id and cm.IsRead=0)=0 then 0 else 1 end) HasMessage,
 --(case when dc.SettleType=1 and ClienterSettleRatio>0 or dc.SettleType=2 and dc.ClienterFixMoney>0 then 1 else 0 end) IsDisplayDeliveryMoney
-isnull(dc.IsShowAccount,1) IsShowAccount
+isnull(dc.IsShowAccount,1) IsShowAccount,IsReceivePush
 from  dbo.clienter c (nolock) 
 left join dbo.DeliveryCompany dc(nolock) on c.DeliveryCompanyId=dc.Id
 where c.Id=@Id";
@@ -1065,7 +1065,9 @@ where ClienterId=@ClienterId  and IsEnable=1";
                 bf.Id = ParseHelper.ToInt(dataRow["Id"]);
                 bf.ClienterId = ParseHelper.ToInt(dataRow["ClienterId"]);
                 bf.TrueName = dataRow["TrueName"].ToString();
-                bf.AccountNo = ETS.Security.DES.Decrypt(dataRow["AccountNo"].ToString());
+                //这里写的有点绕，存到库里已经是加密的
+                //但是后来因为安全问题，所以传给APP的时候又加了一层aes的加密方式
+                bf.AccountNo = ETS.Security.AESApp.AesEncrypt(ETS.Security.DES.Decrypt(dataRow["AccountNo"].ToString()));
                 bf.IsEnable = ParseHelper.ToBool(dataRow["IsEnable"]);
                 bf.AccountType = ParseHelper.ToInt(dataRow["AccountType"]);
                 bf.BelongType = ParseHelper.ToInt(dataRow["BelongType"]);
@@ -1143,7 +1145,7 @@ where  id = @id";
                 result.PhoneNo = dataReader["PhoneNo"].ToString();
                 result.LoginName = dataReader["LoginName"].ToString();
                 result.recommendPhone = dataReader["recommendPhone"].ToString();
-                result.Password = dataReader["Password"].ToString();
+                //result.Password = dataReader["Password"].ToString();
                 result.TrueName = dataReader["TrueName"].ToString();
                 result.IDCard = dataReader["IDCard"].ToString();
                 if (dataReader["PicWithHandUrl"] != null && dataReader["PicWithHandUrl"].ToString() != "")
@@ -1199,13 +1201,22 @@ where  id = @id";
                 {
                     result.HasWithdrawPrice = decimal.Parse(obj.ToString());
                 }
-
+                obj = dataReader["IsShowAccount"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.IsShowAccount = ParseHelper.ToInt(obj.ToString());
+                }
+                obj = dataReader["IsReceivePush"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.IsReceivePush = ParseHelper.ToInt(obj.ToString());
+                }
 
                 return result;
             }
         }
 
-        #endregion    
+        #endregion
 
         /// <summary>
         /// 获取骑士用户名
@@ -1422,7 +1433,7 @@ where Id=@Id ";
         /// <param name="optId">操作人id</param>
         /// <param name="optName">操作人名</param>
         /// <returns></returns>
-        public int DeliveryCompanyInsertClienter(clienter model,int optId, string optName)
+        public int DeliveryCompanyInsertClienter(clienter model, int optId, string optName)
         {
             const string insertSql = @"
 insert into clienter(PhoneNo,Password,TrueName,IDCard,
@@ -1453,7 +1464,7 @@ SELECT IDENT_CURRENT('clienter')"
             dbParameters.AddWithValue("DeliveryCompanyId", model.DeliveryCompanyId);
             return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters));
         }
-		/// <summary>
+        /// <summary>
         /// 修改骑士详细信息
         /// danny-20150707
         /// </summary>
@@ -1467,7 +1478,7 @@ SELECT IDENT_CURRENT('clienter')"
                             SET IDCard=@IDCard,
                                 TrueName=@TrueName,
                                 DeliveryCompanyId=@DeliveryCompanyId,recommendPhone=@recommendPhone ";
-		     
+
             sql += @" OUTPUT
                         Inserted.Id,
                         @OptId,
@@ -1486,7 +1497,7 @@ SELECT IDENT_CURRENT('clienter')"
                         Platform,
                         Remark)
                         WHERE  Id = @Id;";
-           
+
             parm.AddWithValue("@IDCard", model.IDCard);
             parm.AddWithValue("@TrueName", model.TrueName);
             parm.AddWithValue("@DeliveryCompanyId", model.DeliveryCompanyId);
@@ -1555,7 +1566,7 @@ where  Id=@Id ";
             dbParameters.AddWithValue("@Money", model.Money);
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
-    
+
         /// <summary>
         /// 更新用户余额
         /// 窦海超
@@ -1682,7 +1693,7 @@ WHERE c.Id = @ClienterId  ";
         /// 2015年8月19日17:01:03
         /// </summary>
         /// <returns></returns>
-        public  bool SetReceivePush(ClienterReceivePushModel model)
+        public bool SetReceivePush(ClienterReceivePushModel model)
         {
             string sql = @"UPDATE dbo.clienter SET IsReceivePush=@IsReceivePush
 WHERE id=@ID";
