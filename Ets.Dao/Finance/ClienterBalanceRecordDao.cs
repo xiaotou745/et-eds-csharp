@@ -114,7 +114,9 @@ from  ClienterBalanceRecord (nolock)" + condition;
         {
             IList<FinanceRecordsDM> models = new List<FinanceRecordsDM>();
             const string querysql = @"
-select  Id,ClienterId as UserId,Amount,Status,Balance,RecordType,Operator,OperateTime,WithwardId,RelationNo,Remark,
+select  Id,ClienterId as UserId,Amount,Status,Balance,RecordType,Operator,OperateTime,WithwardId,RelationNo,
+case RecordType when 11 then substring(Remark,1,8)
+ else '' end  as  Remark,
 substring(convert(varchar(100),OperateTime,24),1,5) as TimeInfo,
 case convert(varchar(100), OperateTime, 23) 
 	when convert(varchar(100), getdate(), 23) then '今日'

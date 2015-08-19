@@ -1257,7 +1257,8 @@ namespace Ets.Service.Provider.Pay
                                 WithdrawId = item.WithwardId,
                                 Ledgerno = item.YeepayKey,
                                 SourceLedgerno = "",
-                                Amount = amount.ToString()
+                                Amount = amount.ToString(),
+                                IsTryAgain = string.IsNullOrEmpty(item.PayFailedReason)?0:1
                             });
                             if (regTransfer.code != "1")
                             {
@@ -1296,7 +1297,8 @@ namespace Ets.Service.Provider.Pay
                                 WithdrawId = ParseHelper.ToInt(item.WithwardId),
                                 Ledgerno = item.YeepayKey,
                                 App = APP.B,
-                                Amount = amount.ToString()
+                                Amount = amount.ToString(),
+                                IsTryAgain = string.IsNullOrEmpty(item.PayFailedReason)?0:1
                             });
                             if (regCash.code != "1")
                             {
@@ -1425,7 +1427,8 @@ namespace Ets.Service.Provider.Pay
                                 WithdrawId = item.WithwardId,
                                 Ledgerno = item.YeepayKey,
                                 SourceLedgerno = "",
-                                Amount = amount.ToString()
+                                Amount = amount.ToString(),
+                                IsTryAgain = string.IsNullOrEmpty(item.PayFailedReason) ? 0 : 1
                             });
                             if (regTransfer.code != "1")
                             {
@@ -1464,7 +1467,8 @@ namespace Ets.Service.Provider.Pay
                                 WithdrawId = ParseHelper.ToInt(item.WithwardId),
                                 Ledgerno = item.YeepayKey,
                                 App = APP.C,
-                                Amount = amount.ToString()
+                                Amount = amount.ToString(),
+                                IsTryAgain = string.IsNullOrEmpty(item.PayFailedReason) ? 0 : 1
                             });
                             if (regCash.code != "1")
                             {

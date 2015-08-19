@@ -168,5 +168,10 @@ namespace ETS.Const
         /// </summary>
         public const string Ets_Recharge_Lock = "Ets_Recharge_Lock_{0}";
 
+        /// <summary>
+        /// 上次订单推送服务执行时间
+        /// </summary>
+        public const string LastOrderPushTime = "LastOrderPushTime";
+
     }
 }

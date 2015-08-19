@@ -912,6 +912,7 @@ SELECT     bwf.BusinessId
           ,bwf.DealCount
           ,bwf.Id WithwardId
           ,bwf.WithwardNo WithwardNo
+          ,bwf.PayFailedReason
   FROM BusinessWithdrawForm bwf with(nolock)
   JOIN BusinessFinanceAccount bfa with(nolock) ON bfa.BusinessId=bwf.BusinessId and bwf.Status=@bwfStatus and bwf.DealStatus=@DealStatus
   LEFT JOIN ( SELECT tblypu.UserId,tblypu.Ledgerno,tblypu.BankName,tblypu.BankAccountNumber,tblypu.BalanceRecord,tblypu.YeeBalance

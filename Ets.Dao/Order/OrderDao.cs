@@ -3742,5 +3742,101 @@ and FinishAll=0 ";
             }
             return list;
         }
+        /// <summary>
+        /// 获取推送订单详情
+        /// danny-20150818
+        /// </summary>
+        /// <param name="lastOrderPushTime">上次的推送时间</param>
+        /// <returns></returns>
+        public IList<OrderListModel> GetPushOrderList(string lastOrderPushTime)
+        {
+            string sql = @"
+SELECT  o.Id,
+		o.OrderNo,
+		o.businessId,
+		oo.PubLatitude,
+		oo.PubLongitude
+FROM dbo.[order] o WITH(NOLOCK)
+JOIN dbo.OrderOther oo(NOLOCK) ON o.Id=oo.OrderId
+WHERE o.[Status]=0 AND o.PubDate>=@LastOrderPushTime;
+";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("@LastOrderPushTime", SqlDbType.NVarChar).Value = lastOrderPushTime;
+            var dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                return null;
+            }
+            return  ConvertDataTableList<OrderListModel>(dt);
+            
+        }
+        /// <summary>
+        /// 添加订单推送记录
+        /// danny-20150819
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool InsertOrderPushRecord(OrderPushRecord model)
+        {
+            const string insertSql = @"
+INSERT INTO [OrderPushRecord]
+           ([OrderId]
+           ,[ClienterIdList]
+           ,[TaskType]
+           ,[PushCount]
+           ,[ClienterCount])
+     VALUES
+           (@OrderId
+           ,@ClienterIdList
+           ,@TaskType
+           ,@PushCount
+           ,@ClienterCount);";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@OrderId", model.OrderId);
+            dbParameters.AddWithValue("@ClienterIdList", model.ClienterIdList);
+            dbParameters.AddWithValue("@TaskType", model.TaskType); 
+            dbParameters.AddWithValue("@ClienterCount", model.ClienterCount);
+            dbParameters.AddWithValue("@PushCount", model.PushCount); 
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, insertSql, dbParameters) > 0;
+        }
+
+        /// <summary>
+        /// 编辑订单推送记录
+        /// danny-20150819
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool EditOrderPushRecord(OrderPushRecord model)
+        {
+            string updateSql = @"
+MERGE INTO OrderPushRecord opr
+	USING(values(@OrderId,@TaskType)) AS oprNew(OrderId,TaskType)
+		ON opr.OrderId=oprNew.OrderId AND  opr.TaskType=oprNew.TaskType
+	WHEN MATCHED 
+	THEN UPDATE 
+		 SET opr.PushCount=opr.PushCount+1,
+             opr.ClienterCount=opr.ClienterCount+@ClienterCount,
+             opr.PushTime=getdate(),
+             opr.ClienterIdList=opr.ClienterIdList+'/'+@ClienterIdList
+	WHEN NOT MATCHED 
+		  THEN INSERT ( [OrderId]
+                       ,[ClienterIdList]
+                       ,[TaskType]
+                       ,[PushCount]
+                       ,[ClienterCount])
+                 VALUES
+                       (@OrderId
+                       ,@ClienterIdList
+                       ,@TaskType
+                       ,@PushCount
+                       ,@ClienterCount);";
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@OrderId", model.OrderId);
+            parm.AddWithValue("@ClienterIdList", model.ClienterIdList);
+            parm.AddWithValue("@TaskType", model.TaskType);
+            parm.AddWithValue("@ClienterCount", model.ClienterCount);
+            parm.AddWithValue("@PushCount", model.PushCount);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, parm) > 0;
+        }
     }
 }

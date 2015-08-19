@@ -10,6 +10,7 @@ using Ets.Model.DataModel.Business;
 using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.Finance;
 using Ets.Model.DataModel.Order;
+using Ets.Model.DomainModel.Business;
 using Ets.Model.DomainModel.Clienter;
 using Ets.Model.DomainModel.Order;
 using Ets.Model.ParameterModel.Business;
@@ -1369,7 +1370,7 @@ namespace Ets.Service.Provider.Order
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 var orderModel = orderDao.GetOrderByIdWithNolock(orderOptionModel.OrderId);
-                if (orderModel==null)
+                if (orderModel == null)
                 {
                     dealResultInfo.DealMsg = "订单不存在，不能审核拒绝！";
                     return dealResultInfo;
@@ -1398,7 +1399,7 @@ namespace Ets.Service.Provider.Order
                                                                     ClienterId = orderModel.clienterId,
                                                                     Amount = diffOrderCommission,
                                                                     Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
-                                                                    RecordType = ClienterBalanceRecordRecordType.BalanceAdjustment.GetHashCode(),
+                                                                    RecordType = ClienterBalanceRecordRecordType.Abnormal.GetHashCode(),
                                                                     Operator = orderOptionModel.OptUserName,
                                                                     WithwardId = orderModel.Id,
                                                                     RelationNo = orderModel.OrderNo,
@@ -2171,9 +2172,9 @@ namespace Ets.Service.Provider.Order
             if (orderList == null || orderList.Count == 0)
             {
                 sbEmail.AppendLine("未完成任务量：【" + orderAuditStatistical.UnFinishTaskQty + "】个（订单量：【" + orderAuditStatistical.UnFinishOrderQty + "】单）");
-                sbEmail.AppendLine("待审核订单量：【" + orderAuditStatistical.UnAuditTaskQty + "】个（订单量：【" + orderAuditStatistical.UnAuditOrderQty + "】单）");
-                sbEmail.AppendLine("已审核订单量：【" + orderAuditStatistical.AuditOkTaskQty + "】个（订单数量：【" + orderAuditStatistical.AuditOkOrderQty + "】单）");
-                sbEmail.AppendLine("审核拒绝订单量：【" + orderAuditStatistical.AuditRefuseTaskQty + "】个（订单数量：【" + orderAuditStatistical.AuditRefuseOrderQty + "】单）");
+                sbEmail.AppendLine("待审核任务量：【" + orderAuditStatistical.UnAuditTaskQty + "】个（订单量：【" + orderAuditStatistical.UnAuditOrderQty + "】单）");
+                sbEmail.AppendLine("已审核任务量：【" + orderAuditStatistical.AuditOkTaskQty + "】个（订单量：【" + orderAuditStatistical.AuditOkOrderQty + "】单）");
+                sbEmail.AppendLine("审核拒绝任务量：【" + orderAuditStatistical.AuditRefuseTaskQty + "】个（订单量：【" + orderAuditStatistical.AuditRefuseOrderQty + "】单）");
                 EmailHelper.SendEmailTo(sbEmail.ToString(), emailSendTo, "订单审核数据统计", copyTo, false);
                 return;
             }
@@ -2183,9 +2184,9 @@ namespace Ets.Service.Provider.Order
             if (orderList.Count == 0)
             {
                 sbEmail.AppendLine("未完成任务量：【" + orderAuditStatistical.UnFinishTaskQty + "】个（订单量：【" + orderAuditStatistical.UnFinishOrderQty + "】单）");
-                sbEmail.AppendLine("待审核订单量：【" + orderAuditStatistical.UnAuditTaskQty + "】个（订单量：【" + orderAuditStatistical.UnAuditOrderQty + "】单）");
-                sbEmail.AppendLine("已审核订单量：【" + orderAuditStatistical.AuditOkTaskQty + "】个（订单数量：【" + orderAuditStatistical.AuditOkOrderQty + "】单）");
-                sbEmail.AppendLine("审核拒绝订单量：【" + orderAuditStatistical.AuditRefuseTaskQty + "】个（订单数量：【" + orderAuditStatistical.AuditRefuseOrderQty + "】单）");
+                sbEmail.AppendLine("待审核任务量：【" + orderAuditStatistical.UnAuditTaskQty + "】个（订单量：【" + orderAuditStatistical.UnAuditOrderQty + "】单）");
+                sbEmail.AppendLine("已审核任务量：【" + orderAuditStatistical.AuditOkTaskQty + "】个（订单量：【" + orderAuditStatistical.AuditOkOrderQty + "】单）");
+                sbEmail.AppendLine("审核拒绝任务量：【" + orderAuditStatistical.AuditRefuseTaskQty + "】个（订单量：【" + orderAuditStatistical.AuditRefuseOrderQty + "】单）");
                 EmailHelper.SendEmailTo(sbEmail.ToString(), emailSendTo, "订单审核数据统计", copyTo, false);
                 return;
             }
@@ -2231,19 +2232,19 @@ namespace Ets.Service.Provider.Order
 
             #region 处理已完成未完成小票上传的订单
             var halfFinishOrderList = orderList.Where(t => t.Status == 1).ToList();
-            
+
             if (halfFinishOrderList.Count > 0)
             {
                 foreach (var orderListModel in halfFinishOrderList)
                 {
                     using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
                     {
-                        decimal realOrderCommission = ParseHelper.ToDecimal(orderListModel.SettleMoney) >ParseHelper.ToDecimal(orderListModel.OrderCommission)
-                            ? ParseHelper.ToDecimal(orderListModel.OrderCommission): ParseHelper.ToDecimal(orderListModel.SettleMoney);
+                        decimal realOrderCommission = ParseHelper.ToDecimal(orderListModel.SettleMoney) > ParseHelper.ToDecimal(orderListModel.OrderCommission)
+                            ? ParseHelper.ToDecimal(orderListModel.OrderCommission) : ParseHelper.ToDecimal(orderListModel.SettleMoney);
                         if (orderDao.OrderAuditRefuseModifyOrder(new OrderListModel()
                         {
                             Id = orderListModel.Id,
-                            RealOrderCommission = realOrderCommission 
+                            RealOrderCommission = realOrderCommission
                         }))
                         {
                             if (orderDao.OrderAuditRefuseReturnClienter(new OrderListModel()
@@ -2278,12 +2279,140 @@ namespace Ets.Service.Provider.Order
                 }
             }
             sbEmail.AppendLine("未完成任务量：【" + orderAuditStatistical.UnFinishTaskQty + "】个（订单量：【" + orderAuditStatistical.UnFinishOrderQty + "】单）");
-            sbEmail.AppendLine("待审核订单量：【" + orderAuditStatistical.UnAuditTaskQty + "】个（订单量：【" + orderAuditStatistical.UnAuditOrderQty + "】单）");
-            sbEmail.AppendLine("已审核订单量：【" + orderAuditStatistical.AuditOkTaskQty + "】个（订单数量：【" + orderAuditStatistical.AuditOkOrderQty + "】单）");
-            sbEmail.AppendLine("审核拒绝订单量：【" + orderAuditStatistical.AuditRefuseTaskQty + "】个（订单数量：【" + orderAuditStatistical.AuditRefuseOrderQty + "】单）");
+            sbEmail.AppendLine("待审核任务量：【" + orderAuditStatistical.UnAuditTaskQty + "】个（订单量：【" + orderAuditStatistical.UnAuditOrderQty + "】单）");
+            sbEmail.AppendLine("已审核任务量：【" + orderAuditStatistical.AuditOkTaskQty + "】个（订单量：【" + orderAuditStatistical.AuditOkOrderQty + "】单）");
+            sbEmail.AppendLine("审核拒绝任务量：【" + orderAuditStatistical.AuditRefuseTaskQty + "】个（订单量：【" + orderAuditStatistical.AuditRefuseOrderQty + "】单）");
             EmailHelper.SendEmailTo(sbEmail.ToString(), emailSendTo, "订单审核数据统计", copyTo, false);
             #endregion
 
+        }
+        /// <summary>
+        /// 自动推送订单提醒
+        /// danny-20150819
+        /// </summary>
+        public void AutoPushOrder()
+        {
+            #region 对象声明及初始化
+
+            var listClienterId=new List<int>();//骑士Id集合
+            string pushRadius = GlobalConfigDao.GlobalConfigGet(0).PushRadius;//推送距离半径
+
+            #region 在Redis中记录推送时间供下次查询用
+            string key = RedissCacheKey.LastOrderPushTime;
+            var redis = new ETS.NoSql.RedisCache.RedisCache();
+            var lastOrderPushTime = redis.Get<string>(key);
+            if (string.IsNullOrEmpty(lastOrderPushTime))
+            {
+                lastOrderPushTime = DateTime.Now.ToString();
+            }
+            redis.Set(key,DateTime.Now.ToString());
+            #endregion
+
+            var orderList = orderDao.GetPushOrderList(lastOrderPushTime);
+
+            if (orderList == null || orderList.Count == 0)
+            {
+                return;
+            }
+            #endregion
+
+            #region 分类获取对应满足条件的骑士
+            foreach (var order in orderList)
+            {
+                #region 店内骑士推送
+                string strClienterId = "";
+                int clienterCount = 0;
+                var listbcRel = _businessDao.GetBusinessClienterRelationList(order.businessId);
+                if (listbcRel != null && listbcRel.Count > 0)//有店内骑士
+                {
+                    foreach (var bcRel in listbcRel)
+                    {
+                        listClienterId.Add(bcRel.ClienterId);
+                        strClienterId += bcRel.ClienterId + ",";
+                        clienterCount++;
+                    }
+                    orderDao.EditOrderPushRecord(new OrderPushRecord()
+                    {
+                        OrderId = order.Id,
+                        ClienterIdList = string.IsNullOrEmpty(strClienterId) ? "" : strClienterId.TrimEnd(','),
+                        TaskType = 1,
+                        PushCount = 1,
+                        ClienterCount = clienterCount
+                    });
+                    continue;
+                }
+                #endregion
+
+                #region 物流公司骑士推送
+                var listbeRel = _businessDao.GetExpressClienterList(new BusinessExpressRelationModel()
+                {
+                    BusinessId = order.businessId,
+                    Latitude = order.PubLatitude,
+                    Longitude = order.PubLongitude,
+                    PushRadius = pushRadius
+                });
+                if (listbeRel != null && listbeRel.Count > 0)//有物流公司骑士
+                {
+                    foreach (var beRel in listbeRel)
+                    {
+                        listClienterId.Add(beRel.ClienterId);
+                        strClienterId += beRel.ClienterId + ",";
+                        clienterCount++;
+                    }
+                }
+                #endregion
+
+                #region 众包骑士推送
+                var listprc = clienterDao.GetPushRadiusClienterList(new BusinessExpressRelationModel()
+                {
+                    Latitude = order.PubLatitude,
+                    Longitude = order.PubLongitude,
+                    PushRadius = pushRadius
+                });
+                if (listprc != null && listprc.Count > 0)
+                {
+                    foreach (var prc in listprc)
+                    {
+                        listClienterId.Add(prc.Id);
+                        strClienterId += prc.Id + ",";
+                        clienterCount++;
+                    }
+                }
+                orderDao.EditOrderPushRecord(new OrderPushRecord()
+                {
+                    OrderId = order.Id,
+                    ClienterIdList = string.IsNullOrEmpty(strClienterId) ? "" : strClienterId.TrimEnd(','),
+                    TaskType = 0,
+                    PushCount = 1,
+                    ClienterCount = clienterCount
+                });
+                #endregion
+            }
+            if (listClienterId.Count == 0)
+            {
+                return;
+            }
+            #endregion
+
+            #region 循环向满足条件的骑士推送订单提醒
+            listClienterId = listClienterId.Distinct().ToList();//对骑士Id进行去重
+
+            foreach (var clienterId in listClienterId)
+            {
+                Task.Factory.StartNew(() =>
+                {
+                    Push.PushMessage(new JPushModel()
+                    {
+                        Title = "订单提醒",
+                        Alert = "您有新订单了，请点击查看！",
+                        City = string.Empty,
+                        Content = string.Empty,
+                        RegistrationId = "C_" + clienterId,
+                        TagId = 1,
+                    });
+                });
+            }
+            #endregion
         }
 
     }
