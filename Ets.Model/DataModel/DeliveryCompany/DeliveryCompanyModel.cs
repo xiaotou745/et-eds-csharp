@@ -101,6 +101,11 @@ namespace Ets.Model.DataModel.DeliveryCompany
         /// 是否显示骑士金额 0隐藏 1显示
         /// </summary>
         public int IsDisplay { get; set; }
+
+        /// <summary>
+        /// 是否显示记账模块 0不显示，默认1显示
+        /// </summary>
+        public int IsShowAccount { get; set; }
     }
 
 }

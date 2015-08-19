@@ -11,8 +11,7 @@ using Ets.Model.Common;
 using Ets.Model.DataModel.Complain;
 using Ets.Model.ParameterModel.Complain;
 using Ets.Service.IProvider.Complain;
-using Ets.Service.Provider.Complain;
-using SuperManWebApi.App_Start.Filters;  
+using Ets.Service.Provider.Complain; 
 
 namespace SuperManWebApi.Controllers
 {

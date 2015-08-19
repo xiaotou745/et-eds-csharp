@@ -23,15 +23,16 @@
             <table border="0" cellspacing="0" cellpadding="0">
                 <tr>
                     <td>
-                        <span class="">投诉类型: </span>
-                        @Html.DropDownList("ComplainType", new SelectList(EnumExtenstion.GetEnumItems(typeof (ComplainTypeEnum)), "Value", "Text"), "全部", new {@class = "selectw", style = "width:157px"})
                         <span class="">日期: </span>
                         <input id="ComplainStartTime" name="ComplainStartTime" class="Wdate" type="text" onfocus=" WdatePicker({ maxDate: '#F{$dp.$D(\'ComplainEndTime\')||\'%y-%M-%d\'}', dateFmt: 'yyyy-MM-dd 00:00:00' }) " />到
-                        <input id="ComplainEndTime" name="ComplainEndTime" class="Wdate" type="text" onfocus=" WdatePicker({ minDate: '#F{$dp.$D(\'ComplainStartTime\')}', dateFmt: 'yyyy-MM-dd 23:59:59' }) " />
+                        <input id="ComplainEndTime" name="ComplainEndTime" class="Wdate" type="text" onfocus=" WdatePicker({ minDate: '#F{$dp.$D(\'ComplainStartTime\')}', dateFmt: 'yyyy-MM-dd 23:59:59' }) "/>
+                        <span class="">骑士姓名: </span><input id="ClienterName" name="ClienterName" />
+                        <span class="">商家名称: </span><input id="BusinessName" name="BusinessName" />
                     </td>
                 </tr>
                 <tr>
-                    <td>
+                    <td><span class="">投诉类型: </span>
+@Html.DropDownList("ComplainType", new SelectList(EnumExtenstion.GetEnumItems(typeof(ComplainTypeEnum)), "Value", "Text"), "全部", new { @class = "selectw", style = "width:157px" })
                         <span class="">订单号: </span>
                         <input type="text" id="OrderNo" name="OrderNo" value="" />
                         <span class="">城市筛选: </span>

@@ -562,7 +562,7 @@ order by a.id desc
                                 b.OneKeyPubOrder,
                                 b.IsAllowOverdraft,
                                 b.IsEmployerTask,
-                                b.IsOrderChecked                                 
+                                b.IsOrderChecked,b.IsAllowCashPay                                  
                                 FROM dbo.business as b WITH(NOLOCK)
                                 left join BusinessGroup on b.BusinessGroupId=BusinessGroup.Id
                                 WHERE b.Id = @busiId";
@@ -1287,7 +1287,7 @@ select SCOPE_IDENTITY() as id;
         /// <returns></returns>
         public BussinessStatusModel GetUserStatus(int userid)
         {
-            string sql = @"select  Id as userid,[status] as status,OneKeyPubOrder,IsAllowOverdraft,BalancePrice from dbo.business with(nolock) WHERE id=@id ";
+            string sql = @"select  Id as userid,[status] as status,OneKeyPubOrder,IsAllowOverdraft,BalancePrice,IsAllowCashPay from dbo.business with(nolock) WHERE id=@id ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@id", userid);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
@@ -1824,7 +1824,7 @@ SELECT   b.Id ,
          b.IsAllowOverdraft,
          b.IsEmployerTask,
          ISNULL(b.RecommendPhone,'') AS RecommendPhone,
-         b.IsOrderChecked 
+         b.IsOrderChecked ,b.IsAllowCashPay 
 FROM business b WITH(NOLOCK) 
 	Left join BusinessFinanceAccount bfa WITH(NOLOCK) ON b.Id=bfa.BusinessId AND bfa.IsEnable=1
     Left join [group] g WITH(NOLOCK) on g.Id=b.GroupId 
@@ -1930,7 +1930,7 @@ ORDER BY btr.Id;";
                                 IsOrderChecked=@IsOrderChecked,
                                 RecommendPhone=@RecommendPhone,
                                 BusinessCommission=@BusinessCommission,
-                                CommissionFixValue=@CommissionFixValue                                 
+                                CommissionFixValue=@CommissionFixValue,IsAllowCashPay=@IsAllowCashPay                                  
                                            ";
             if (model.GroupId > 0)
             {
@@ -1984,6 +1984,7 @@ ORDER BY btr.Id;";
             parm.Add("@IsAllowOverdraft", DbType.Int16).Value = model.IsAllowOverdraft;
             parm.Add("@RecommendPhone", DbType.String).Value = model.RecommendPhone ?? ""; //推荐人手机号 
             parm.Add("@IsOrderChecked", DbType.Int32).Value = model.IsOrderChecked;
+            parm.Add("@IsAllowCashPay", DbType.Int32).Value = model.IsAllowCashPay;
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
         /// <summary>
@@ -2078,6 +2079,10 @@ ORDER BY btr.Id;";
                 if (brm.RecommendPhone != model.RecommendPhone)
                 {
                     remark.AppendFormat("推荐人手机号原值:{0},修改为{1};", brm.RecommendPhone, model.RecommendPhone);
+                }
+                if (brm.IsAllowCashPay != model.IsAllowCashPay)
+                {
+                    remark.AppendFormat("是否允许现金支付原值:{0},修改为{1};", brm.IsAllowCashPay, model.IsAllowCashPay);
                 }
             }
             return remark.ToString();

@@ -282,6 +282,7 @@ namespace Ets.Service.Provider.Order
                 to.MealsSettleMode = business.MealsSettleMode;
                 to.OneKeyPubOrder = business.OneKeyPubOrder;
                 to.IsOrderChecked = business.IsOrderChecked;
+                to.IsAllowCashPay = business.IsAllowCashPay;
             }
             if (ConfigSettings.Instance.IsGroupPush)
             {

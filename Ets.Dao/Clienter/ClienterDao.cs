@@ -1038,8 +1038,9 @@ where  Id=@Id ";
 select  c.Id,PhoneNo,LoginName,recommendPhone,Password,TrueName,IDCard,PicWithHandUrl,PicUrl,Status,
 AccountBalance,InsertTime,InviteCode,City,CityId,GroupId,HealthCardID,InternalDepart,ProvinceCode
 ,AreaCode,CityCode,Province,BussinessID,WorkStatus,AllowWithdrawPrice,HasWithdrawPrice,
-(case when (select count(1) from dbo.ClienterMessage cm(nolock) where cm.ClienterId=c.id and cm.IsRead=0)=0 then 0 else 1 end) HasMessage
+(case when (select count(1) from dbo.ClienterMessage cm(nolock) where cm.ClienterId=c.id and cm.IsRead=0)=0 then 0 else 1 end) HasMessage,
 --(case when dc.SettleType=1 and ClienterSettleRatio>0 or dc.SettleType=2 and dc.ClienterFixMoney>0 then 1 else 0 end) IsDisplayDeliveryMoney
+isnull(dc.IsShowAccount,1) IsShowAccount
 from  dbo.clienter c (nolock) 
 left join dbo.DeliveryCompany dc(nolock) on c.DeliveryCompanyId=dc.Id
 where c.Id=@Id";
@@ -1675,5 +1676,20 @@ WHERE c.Id = @ClienterId  ";
             return null;
         }
 
+        /// <summary>
+        /// 设置修改骑士是否接受推送
+        /// 茹化肖
+        /// 2015年8月19日17:01:03
+        /// </summary>
+        /// <returns></returns>
+        public  bool SetReceivePush(ClienterReceivePushModel model)
+        {
+            string sql = @"UPDATE dbo.clienter SET IsReceivePush=@IsReceivePush
+WHERE id=@ID";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("@IsReceivePush", DbType.Int32).Value = model.IsReceive;
+            parm.Add("@ID", DbType.Int32).Value = model.ClienterId;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
+        }
     }
 }

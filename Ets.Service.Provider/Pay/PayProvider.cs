@@ -35,6 +35,7 @@ using Ets.Dao.Business;
 using Config = ETS.Config;
 using ETS.Library.Pay.WxPay;
 using System.Web;
+using Ets.Model.ParameterModel.AliPay;
 
 namespace Ets.Service.Provider.Pay
 {
@@ -52,6 +53,7 @@ namespace Ets.Service.Provider.Pay
         private ClienterFinanceProvider clienterFinanceProvider = new ClienterFinanceProvider();
         private readonly BusinessFinanceAccountDao businessFinanceAccountDao = new BusinessFinanceAccountDao();
         private readonly ClienterFinanceAccountDao clienterFinanceAccountDao = new ClienterFinanceAccountDao();
+        private readonly OrderDao orderDao = new OrderDao();
         #region 生成支付宝、微信二维码订单
 
         /// <summary>
@@ -70,6 +72,10 @@ namespace Ets.Service.Provider.Pay
                 LogHelper.LogWriter(err);
                 return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
             }
+            if (payStatusModel.PayStatus == PayStatusEnum.HadPay.GetHashCode())  //已经支付的话，直接返回支付成功
+            {
+                return ResultModel<PayResultModel>.Conclude(AliPayStatus.success);
+            }
             //所属产品_主订单号_子订单号_支付方式
             string orderNo = string.Concat(model.productId, "_", model.orderId, "_", model.childId, "_", model.payStyle);
             if (model.payType == PayTypeEnum.ZhiFuBao.GetHashCode())
@@ -87,11 +93,29 @@ namespace Ets.Service.Provider.Pay
                 //微信支付
                 LogHelper.LogWriter("=============微信支付：");
                 return CreateWxPayOrder(orderNo, payStatusModel.TotalPrice, model.orderId, model.payStyle);
-
             }
             return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
         }
 
+
+
+        #region 现金支付
+        /// <summary>
+        /// 现金支付 wc
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public ResultModel<PayResultModel> CashPay(PayModel model)
+        {
+            var orderInfo = orderDao.GetByOrderId(model.orderId);
+            int result = orderChildDao.UpdateChildStatusFromCashOrder(model, orderInfo.ClienterName);
+            if (result > 0)
+            {
+                ResultModel<PayResultModel>.Conclude(AliPayStatus.success);
+            }
+            return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
+        }
+        #endregion
 
         /// <summary>
         /// 完成订单后发送jpush消息 
@@ -453,13 +477,13 @@ namespace Ets.Service.Provider.Pay
                         PayStatus = 1,
                         PayType = PayTypeEnum.WeiXin.GetHashCode()
                     };
-                   string msg= BusinessRechargeSusess(businessRechargeModel);
-                   if (msg.Equals("success"))
-                   {
+                    string msg = BusinessRechargeSusess(businessRechargeModel);
+                    if (msg.Equals("success"))
+                    {
                         HttpContext.Current.Response.Write("<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>");
                         HttpContext.Current.Response.End();
                         return;
-                   }
+                    }
                 }
                 #endregion
 
@@ -1126,6 +1150,7 @@ namespace Ets.Service.Provider.Pay
             }
             #endregion
         }
+
         /// <summary>
         ///自动处理提款申请单（原确认打款逻辑）
         /// danny-20150804

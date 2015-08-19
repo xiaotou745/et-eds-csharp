@@ -14,7 +14,7 @@ namespace Ets.Model.Common.AliPay
         public string aliQRCode { get; set; }
 
         /// <summary>
-        /// 支付方式：1：支付宝；2微信
+        /// 支付方式：1：支付宝；2微信，6现金支付
         /// </summary>
         public int payType { get; set; }
 

@@ -74,7 +74,7 @@ namespace Ets.Service.IProvider.Business
         /// </summary>
         /// <param name="model">用户名，密码对象</param>
         /// <returns>登录后返回实体对象</returns>
-        ResultModel<BusiLoginResultModel> PostLogin_B(ParamModel model);
+        ResultModel<BusiLoginResultModel> PostLogin_B(LoginModel model);//BusiLoginResultModel
         /// <summary>
         /// 根据商户Id获取商户信息  
         /// </summary>
@@ -410,9 +410,7 @@ namespace Ets.Service.IProvider.Business
         /// 更新商家余额、可提现余额     
         /// 胡灵波
         /// 2015年8月13日 16:41:11
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="myOrderInfo"></par
+        /// </summary> 
         void UpdateBBalanceAndWithdraw(BusinessMoneyPM businessMoneyPM);
     }
 }

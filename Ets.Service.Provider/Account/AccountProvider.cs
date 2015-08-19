@@ -59,9 +59,9 @@ namespace Ets.Service.Provider.Account
         /// </summary>
         /// <param name="AccountId"></param>
         /// <returns></returns>
-        public bool PasswordTime(int AccountId)
+        public int PasswordTime(int AccountId)
         {
-            throw new NotImplementedException();
+            return accountDao.PasswordTime(AccountId);
         }
     }
 }

@@ -426,8 +426,8 @@ values( @OrderId,  @ChildId,@TotalPrice,@GoodPrice,@DeliveryPrice,@CreateBy,
         public int CreateToSqlAddOrderOther(int businessId, int orderId)
         {
             const string insertOtherSql = @"
-insert into OrderOther(OrderId,NeedUploadCount,HadUploadCount,PubLongitude,PubLatitude)
-select @OrderId,1,0,b.Longitude,b.Latitude 
+insert into OrderOther(OrderId,NeedUploadCount,HadUploadCount,PubLongitude,PubLatitude,IsAllowCashPay)
+select @OrderId,1,0,b.Longitude,b.Latitude,b.IsAllowCashPay 
 from dbo.business as b where b.Id=@BusinessId
 select @@IDENTITY ";
             IDbParameters dbOtherParameters = DbHelper.CreateDbParameters();
@@ -2174,8 +2174,8 @@ select @@identity";
 
             #region 写子OrderOther表
             const string insertOtherSql = @"
-insert into OrderOther(OrderId,NeedUploadCount,HadUploadCount,PubLongitude,PubLatitude,OneKeyPubOrder,IsOrderChecked)
-values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude,@OneKeyPubOrder,@IsOrderChecked)";
+insert into OrderOther(OrderId,NeedUploadCount,HadUploadCount,PubLongitude,PubLatitude,OneKeyPubOrder,IsOrderChecked,IsAllowCashPay)
+values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude,@OneKeyPubOrder,@IsOrderChecked,@IsAllowCashPay)";
             IDbParameters dbOtherParameters = DbHelper.CreateDbParameters();
             dbOtherParameters.AddWithValue("@OrderId", orderId); //商户ID
             dbOtherParameters.AddWithValue("@NeedUploadCount", order.OrderCount); //需上传数量
@@ -2183,6 +2183,8 @@ values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude,@OneKeyPubOrder,@I
             dbOtherParameters.AddWithValue("@PubLatitude", order.PubLatitude);
             dbOtherParameters.AddWithValue("@OneKeyPubOrder", order.OneKeyPubOrder);
             dbOtherParameters.Add("@IsOrderChecked", DbType.Int32).Value = order.IsOrderChecked;
+            dbOtherParameters.Add("@IsAllowCashPay", DbType.Int32).Value = order.IsAllowCashPay;
+
             DbHelper.ExecuteScalar(SuperMan_Write, insertOtherSql, dbOtherParameters);
             #endregion
 
@@ -2285,7 +2287,7 @@ select  o.Id,o.OrderNo,o.PickUpAddress,o.PubDate,o.ReceviceName,o.RecevicePhoneN
     o.CommissionFormulaMode,o.Adjustment,o.BusinessCommission,o.SettleMoney,o.DealCount,o.PickupCode,o.OtherCancelReason,o.CommissionType,
     o.CommissionFixValue,o.BusinessGroupId,o.TimeSpan,o.Invoice,o.DeliveryCompanyID,
     isnull(o.DistribSubsidy,0)*isnull(o.OrderCount,0) as TotalDistribSubsidy,(o.Amount+isnull(o.DistribSubsidy,0)*isnull(o.OrderCount,0)) as TotalAmount,
-    o.MealsSettleMode,o.IsComplain,
+    o.MealsSettleMode,o.IsComplain,b.IsAllowCashPay,
     b.[City] BusinessCity,b.Name BusinessName,b.PhoneNo BusinessPhone ,b.PhoneNo2 BusinessPhone2,b.Address BusinessAddress ,b.GroupId, b.Landline,
     b.Longitude, b.Latitude,REPLACE(b.City,'市','') AS pickUpCity,
     oo.NeedUploadCount,oo.HadUploadCount,oo.GrabTime,
@@ -3709,8 +3711,10 @@ from dbo.clienter as c where Id=@ClienterId";
             dbParameters.AddWithValue("Remark", clienterAllowWithdrawRecord.Remark); //描述
             return DbHelper.ExecuteNonQuery(SuperMan_Write, insertSql, dbParameters) > 0;
         }
-
-
+        public List<OrderChild> GetOrderChild(string orderNo)
+        {
+            throw new NotImplementedException();
+        }
         /// <summary>
         /// 获取FinishAll状态错误的订单
         /// 胡灵波

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -100,6 +101,6 @@ namespace Ets.Model.DataModel.Business
         /// </summary>
         public int IsOrderChecked { get; set; }
 
-
+        public int IsAllowCashPay { get; set; }
     }
 }

@@ -16,7 +16,8 @@ namespace Ets.Model.ParameterModel.Complain
         public string ComplainStartTime { get; set; }
 
         public string ComplainEndTime { get; set; }
-
+        public string ClienterName { get; set; }
+        public string BusinessName { get; set; }
         /// <summary>
         /// 城市id
         /// </summary>

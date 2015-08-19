@@ -47,6 +47,17 @@ namespace SuperManWebApi.Controllers
             return payProvider.CreatePay(model);
         }
 
+        /// <summary>
+        /// 现金支付
+        /// wc
+        /// </summary>
+        [Token]
+        public ResultModel<PayResultModel> CashPay(PayModel model)//
+        {
+            return payProvider.CashPay(model);
+        }
+
+
         [HttpGet]
         public ResultModel<BusinessRechargeResultModel> BusinessRechargeTest()
         {

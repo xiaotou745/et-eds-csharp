@@ -30,6 +30,7 @@ using Ets.Model.ParameterModel.WtihdrawRecords;
 using ETS.Validator;
 using Ets.Model.ParameterModel.Sms;
 using Ets.Model.ParameterModel.Order;
+using Ets.Model.ParameterModel.Common;
 namespace SuperManWebApi.Controllers
 {
     public class ClienterAPIController : ApiController
@@ -54,7 +55,11 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>        
-        public ResultModel<ClienterLoginResultModel> PostLogin_C(LoginCPM model)
+        //public ResultModel<string> PostLogin_C(ParamModel model)//LoginCPM  ClienterLoginResultModel
+        //{
+        //    return new ClienterProvider().PostLogin_C(model);
+        //}
+        public ResultModel<ClienterLoginResultModel> PostLogin_C(LoginCPM model)//LoginCPM  ClienterLoginResultModel
         {
             return new ClienterProvider().PostLogin_C(model);
         }
@@ -480,6 +485,25 @@ namespace SuperManWebApi.Controllers
                 return ResultModel<ListOrderDetailModel>.Conclude(GetOrdersStatus.Success, model);
             }
             return ResultModel<ListOrderDetailModel>.Conclude(GetOrdersStatus.FailedGetOrders, model);
+        }
+
+        /// <summary>
+        /// 设置是否开启接受推送
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Token]
+        public ResultModel<object> SetReceivePush(ClienterReceivePushModel model)
+        {
+            if (model == null||model.ClienterId<1)
+            {
+                return ResultModel<object>.Conclude(SetReceivePushStatus.ParError);
+            }
+            if (iClienterProvider.SetReceivePush(model))
+            {
+                return ResultModel<object>.Conclude(SetReceivePushStatus.Success);
+            }
+            return ResultModel<object>.Conclude(SetReceivePushStatus.Failed);
         }
 
     }

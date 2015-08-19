@@ -420,11 +420,11 @@ namespace Ets.Service.Provider.Business
         /// </summary>
         /// <param name="model">用户名，密码对象</param>
         /// <returns>登录后返回实体对象</returns>
-        public ResultModel<BusiLoginResultModel> PostLogin_B(ParamModel parModel)
+        public ResultModel<BusiLoginResultModel> PostLogin_B(LoginModel model)
         {
             try
             {
-                LoginModel model = JsonHelper.JsonConvertToObject<LoginModel>(DES.Decrypt3DES(parModel.data));
+                //LoginModel model = JsonHelper.JsonConvertToObject<LoginModel>(AESApp.AesDecrypt(parModel.data));
                 var redis = new RedisCache();
                 string key = string.Concat(RedissCacheKey.LoginCount_B, model.phoneNo);
                 int excuteCount = redis.Get<int>(key);
@@ -436,9 +436,9 @@ namespace Ets.Service.Provider.Business
 
                 BusiLoginResultModel resultMode = new BusiLoginResultModel();
                 DataTable dt = businessDao.LoginSql(model);
-                if (dt == null || dt.Rows.Count <= 0)
+                if (dt == null || dt.Rows.Count <= 0)// || !AESApp.CheckAES(model.phoneNo, model.aesPhoneNo)
                 {
-                    return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential, resultMode);
+                    return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential, resultMode);//string.Empty);
                 }
                 DataRow row = dt.Rows[0];
 
@@ -473,7 +473,8 @@ namespace Ets.Service.Provider.Business
                     Appkey = row["Appkey"].ToString()
                 });
                 resultMode.Token = token;
-                return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.Success, resultMode);
+                //string resultStr = AESApp.AesDecrypt(JsonHelper.JsonConvertToString(resultMode));
+                return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.Success, resultMode);//BusiLoginResultModel
             }
             catch (Exception ex)
             {

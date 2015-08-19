@@ -15,19 +15,22 @@ using ETS.Enums;
 
 namespace Ets.Service.Provider.Complain
 {
+    /// <summary>
+    /// 投诉相关
+    /// wc
+    /// </summary>
     public class ComplainProvider : IComplainProvider
     {
         readonly ComplainDao _complainDao = new ComplainDao(); 
-
+        /// <summary>
+        /// 投诉wc
+        /// </summary>
+        /// <param name="complainModel"></param>
+        /// <returns></returns>
         public ResultModel<object> Complain(ComplainModel complainModel)
-        {
-            //int hadComplain = _complainDao.HadComplain(complainModel);
-            //if (hadComplain > 0)
-            //{
-            //    return ResultModel<object>.Conclude(ComplainEnum.HadComplain);
-            //} 
+        { 
             int result = _complainDao.Insert(complainModel);
-            if (result == 1)
+            if (result >0 )
             {
                 return ResultModel<object>.Conclude(ComplainEnum.Success);
             }
@@ -36,6 +39,11 @@ namespace Ets.Service.Provider.Complain
                 return ResultModel<object>.Conclude(ComplainEnum.Fail);
             }
         }
+        /// <summary>
+        /// 获取投诉数据wc
+        /// </summary>
+        /// <param name="complainCriteria"></param>
+        /// <returns></returns>
         public PageInfo<ComplainDomain> Get(ComplainCriteria complainCriteria)
         {
             return _complainDao.Get<ComplainDomain>(complainCriteria);

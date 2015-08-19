@@ -13,8 +13,17 @@ namespace Ets.Service.IProvider.Complain
 {
     public interface IComplainProvider
     {
+        /// <summary>
+        /// 投诉wc
+        /// </summary>
+        /// <param name="ccb"></param>
+        /// <returns></returns>
         ResultModel<object> Complain(ComplainModel ccb);
-
+        /// <summary>
+        /// 获取投诉数据wc
+        /// </summary>
+        /// <param name="complainCriteria"></param>
+        /// <returns></returns>
         PageInfo<ComplainDomain> Get(ComplainCriteria complainCriteria); 
     }
 }

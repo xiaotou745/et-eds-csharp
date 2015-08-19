@@ -164,8 +164,7 @@ namespace Ets.Model.DomainModel.Order
         /// 总配送费
         /// </summary>
         public decimal TotalDistribSubsidy { get; set; }
-
-
+         
         /// <summary>
         /// 配送员姓名
         /// </summary>
@@ -235,6 +234,10 @@ namespace Ets.Model.DomainModel.Order
         /// 是否投诉 1 已投诉 0 未投诉
         /// </summary>
         public int IsComplain { get; set; }
+        /// <summary>
+        /// 是否允许现金支付 1允许 0不允许
+        /// </summary>
+        public int IsAllowCashPay { get; set; }
     }
 
     public class OrderChildInfo
@@ -261,7 +264,7 @@ namespace Ets.Model.DomainModel.Order
         /// </summary>
         public int? PayStyle { get; set; }
         /// <summary>
-        /// 支付类型(1 支付宝 2 微信 3 网银)
+        /// 支付类型(1 支付宝 2 微信 3 网银 6现金支付)
         /// </summary>
         public int? PayType { get; set; }
         /// <summary>

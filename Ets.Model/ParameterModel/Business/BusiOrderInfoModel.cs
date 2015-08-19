@@ -91,6 +91,6 @@ namespace Ets.Model.ParameterModel.Business
         /// <summary>
         /// 商户发单纬度
         /// </summary>
-        public double PubLatitude { get; set; }  
+        public double PubLatitude { get; set; } 
     }
 }

@@ -18,7 +18,7 @@ namespace Ets.Model.DomainModel.Business
         /// </summary>
         public string AccountNo { get; set; }
         /// <summary>
-        /// 账号类型：(1网银 2支付宝 3微信 4财付通 5百度钱包）
+        /// 账号类型：(1网银 2支付宝 3微信 4财付通 5百度钱包 6现金支付）
         /// </summary>
         public int AccountType { get; set; }
         /// <summary>

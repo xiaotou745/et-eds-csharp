@@ -18,6 +18,12 @@ namespace Ets.Dao.Complain
 {
     public class ComplainDao : DaoBase
     {
+        /// <summary>
+        /// 投诉 新增一条记录
+        /// wc
+        /// </summary>
+        /// <param name="complainModel"></param>
+        /// <returns></returns>
         public int Insert(ComplainModel complainModel)
         {
             const string insertSql = @"
@@ -46,11 +52,16 @@ values  ( @ComplainId ,
             object result = DbHelper.ExecuteNonQuery(SuperMan_Write, insertSql, dbParameters);
             return ParseHelper.ToInt(result, -1);
         }
-
+        /// <summary>
+        /// 获取投诉数据 wc
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="complainCriteria"></param>
+        /// <returns></returns>
         public PageInfo<T> Get<T>(ComplainCriteria complainCriteria)
         { 
             string columnList = @" 
-        cp.Reason ,
+        cp.Id,cp.OrderNo,cp.Reason ,
         cp.CreateTime ,
         cp.ComplainType ,
         b.Name BussinessName ,
@@ -74,15 +85,24 @@ values  ( @ComplainId ,
             {
                 sbSqlWhere.AppendFormat(" and cp.CreateTime > '{0}' and cp.CreateTime < '{1}' ", complainCriteria.ComplainStartTime, complainCriteria.ComplainEndTime);
             }
+            if (!string.IsNullOrWhiteSpace(complainCriteria.ClienterName))
+            {
+                sbSqlWhere.AppendFormat(" and c.TrueName like '%{0}%' ", complainCriteria.ClienterName);
+            }
+            if (!string.IsNullOrWhiteSpace(complainCriteria.BusinessName))
+            {
+                sbSqlWhere.AppendFormat(" and b.Name like '%{0}%' ", complainCriteria.BusinessName);
+            }
             string tableList = @" dbo.Complain cp ( nolock )
         join dbo.[order] o ( nolock ) on cp.OrderId = o.Id
         join dbo.business b ( nolock ) on o.businessId = b.Id
         join dbo.clienter c ( nolock ) on o.clienterId = c.Id ";
-            string orderByColumn = " cp.Id DESC";
+            string orderByColumn = " cp.Id ASC";
             return new PageHelper().GetPages<T>(SuperMan_Read, complainCriteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, complainCriteria.PageSize, true);
         }
         /// <summary>
         /// 该订单是否被投诉过
+        /// wc
         /// </summary>
         /// <param name="complainModel"></param>
         /// <returns></returns>

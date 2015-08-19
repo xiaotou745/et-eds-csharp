@@ -558,7 +558,7 @@ namespace ETS.Enums
         [DisplayText("用户支付")]
         BuyerPay = 1,
         [DisplayText("骑士支付")]
-        ClienterPay = 2
+        ClienterPay = 2 
     }
     /// <summary>
     /// 支付类型
@@ -575,7 +575,9 @@ namespace ETS.Enums
         [DisplayText("财付通")]
         CaiFuTong = 4,
         [DisplayText("百度钱包")]
-        BaiDuQinBao = 5
+        BaiDuQinBao = 5,
+        [DisplayText("现金支付")]
+        CashPay = 6
     }
     /// <summary>
     /// 支付状态

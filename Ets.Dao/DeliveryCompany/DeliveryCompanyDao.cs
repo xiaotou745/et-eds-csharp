@@ -134,8 +134,8 @@ select @@IDENTITY ";
                 dbParameters.Add("@DeliveryCompanyRatio", DbType.Decimal).Value = 0;
             }
             dbParameters.Add("@CreateName", DbType.String).Value = deliveryCompanyModel.CreateName;
-            int deliveryCompanyID=ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters));
-            if (deliveryCompanyID>0)
+            int deliveryCompanyID = ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters));
+            if (deliveryCompanyID > 0)
             {
                 UpdateRedis(deliveryCompanyID);
             }
@@ -144,12 +144,13 @@ select @@IDENTITY ";
 
         public int Modify(DeliveryCompanyModel deliveryCompanyModel)
         {
-           StringBuilder upSql = new StringBuilder(@"
+            StringBuilder upSql = new StringBuilder(@"
 update  dbo.DeliveryCompany
  set     DeliveryCompanyName = @DeliveryCompanyName ,
         -- IsEnable = @IsEnable ,
         SettleType = @SettleType ,
         ModifyName = @ModifyName ,
+        IsShowAccount=@IsShowAccount,
         ModifyTime = getdate() ");
 
             if (deliveryCompanyModel.SettleType == 1)
@@ -164,32 +165,32 @@ update  dbo.DeliveryCompany
                 deliveryCompanyModel.DeliveryCompanySettleMoney = deliveryCompanyModel.DeliveryCompanySettle;
                 upSql.Append(@" ,ClienterFixMoney = @ClienterFixMoney,DeliveryCompanySettleMoney = @DeliveryCompanySettleMoney ");
             }
-            
+
             upSql.Append(@" ,IsDisplay = @IsDisplay ");
             upSql.Append(
                 @" output Deleted.Id,Deleted.DeliveryCompanyName,Deleted.IsEnable,Deleted.SettleType,Deleted.ClienterFixMoney,Deleted.ClienterSettleRatio,
-        Deleted.DeliveryCompanySettleMoney,Deleted.BusinessQuantity,Deleted.ClienterQuantity,Deleted.IsDisplay,@ModifyName,getdate()
-        into dbo.DeliveryCompanyLog(DeliveryCompanyId,DeliveryCompanyName,IsEnable,SettleType,ClienterFixMoney,ClienterSettleRatio,DeliveryCompanySettleMoney,BusinessQuantity,ClienterQuantity,IsDisplay,ModifyName,ModifyTime) ");
+        Deleted.DeliveryCompanySettleMoney,Deleted.BusinessQuantity,Deleted.ClienterQuantity,Deleted.IsDisplay,@ModifyName,getdate(),Deleted.IsShowAccount
+        into dbo.DeliveryCompanyLog(DeliveryCompanyId,DeliveryCompanyName,IsEnable,SettleType,ClienterFixMoney,ClienterSettleRatio,DeliveryCompanySettleMoney,BusinessQuantity,ClienterQuantity,IsDisplay,ModifyName,ModifyTime,IsShowAccount) ");
             upSql.Append(@" where   Id = @Id; ");
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-
+            dbParameters.Add("@IsShowAccount", DbType.Int32, 4).Value = deliveryCompanyModel.IsShowAccount;
             dbParameters.Add("@Id", DbType.Int32).Value = deliveryCompanyModel.Id;
             dbParameters.Add("@DeliveryCompanyName", DbType.String).Value = deliveryCompanyModel.DeliveryCompanyName;
             dbParameters.Add("@SettleType", DbType.Int16).Value = deliveryCompanyModel.SettleType;
             dbParameters.Add("@IsDisplay", DbType.Int16).Value = deliveryCompanyModel.IsDisplay;
-           // dbParameters.Add("@IsEnable", DbType.Int16).Value = deliveryCompanyModel.IsEnable;
+            // dbParameters.Add("@IsEnable", DbType.Int16).Value = deliveryCompanyModel.IsEnable;
             if (deliveryCompanyModel.SettleType == 1)
             {
                 dbParameters.Add("@ClienterSettleRatio", DbType.Decimal).Value = deliveryCompanyModel.ClienterSettle;
-                dbParameters.Add("@DeliveryCompanyRatio", DbType.Decimal).Value = deliveryCompanyModel.DeliveryCompanySettle; 
+                dbParameters.Add("@DeliveryCompanyRatio", DbType.Decimal).Value = deliveryCompanyModel.DeliveryCompanySettle;
             }
             else
             {
                 dbParameters.Add("@ClienterFixMoney", DbType.Decimal).Value = deliveryCompanyModel.ClienterSettle;
-                dbParameters.Add("@DeliveryCompanySettleMoney", DbType.Decimal).Value = deliveryCompanyModel.DeliveryCompanySettle; 
+                dbParameters.Add("@DeliveryCompanySettleMoney", DbType.Decimal).Value = deliveryCompanyModel.DeliveryCompanySettle;
             }
             dbParameters.Add("@ModifyName", DbType.String).Value = deliveryCompanyModel.ModifyName;
-            int result= ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, upSql.ToString(), dbParameters));
+            int result = ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, upSql.ToString(), dbParameters));
             if (result > 0)
             {
                 UpdateRedis(deliveryCompanyModel.Id);
@@ -214,7 +215,8 @@ update  dbo.DeliveryCompany
         CreateTime ,
         CreateName ,
         ModifyName ,
-        ModifyTime
+        ModifyTime,
+        IsShowAccount
    FROM dbo.[DeliveryCompany] WITH(NOLOCK) where Id = @Id";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("@Id", DbType.Int16).Value = Id;
@@ -246,11 +248,11 @@ update  dbo.DeliveryCompany
         ModifyTime
    FROM dbo.[DeliveryCompany] WITH(NOLOCK) where DeliveryCompanyName = @DeliveryCompanyName";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.Add("@DeliveryCompanyName", DbType.String).Value = deliveryCompanyName; 
+            dbParameters.Add("@DeliveryCompanyName", DbType.String).Value = deliveryCompanyName;
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, dbParameters);
             if (dt == null || dt.Rows.Count <= 0)
                 return null;
-            return MapRows<DeliveryCompanyModel>(dt)[0]; 
+            return MapRows<DeliveryCompanyModel>(dt)[0];
         }
 
         /// <summary>
@@ -268,7 +270,7 @@ update  dbo.DeliveryCompany
                 return model;
             }
             model = GetDeliveryCompanyByClienterIDFromDB(clienterID);
-            if (model==null)
+            if (model == null)
             {
                 model = new DeliveryCompanyModel();
             }
@@ -296,7 +298,7 @@ update  dbo.DeliveryCompany
                                     JOIN DeliveryCompany b ( NOLOCK ) ON c.DeliveryCompanyId = b.Id
                             WHERE   c.id = @clienterID";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.Add("@clienterID",DbType.Int32).Value= clienterID;
+            dbParameters.Add("@clienterID", DbType.Int32).Value = clienterID;
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, dbParameters);
             if (dt == null || dt.Rows.Count <= 0)
                 return null;

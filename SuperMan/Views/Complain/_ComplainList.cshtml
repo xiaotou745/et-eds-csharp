@@ -4,7 +4,7 @@
 @using ETS.Util
 @using Webdiyer.WebControls.Mvc
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+<table width="100%" border="1" cellspacing="0" cellpadding="0" class="tbstyle">
     <thead>
         <tr class="tdbg">
             <th width="5%">投诉Id</th>
@@ -31,7 +31,7 @@
                         <td>@item.BussinessName</td>
                         <td>@item.CityName</td>
                         <td>@item.ClienterName</td>
-                        <td>@item.ComplainType</td>
+                        <td>@ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.ComplainTypeEnum)item.ComplainType).GetType(), (ETS.Enums.ComplainTypeEnum)item.ComplainType).Text</td>
                         <td>@item.CreateTime</td>
                         <td title=@item.Reason>@(item.Reason.Length > 20 ? item.Reason.Substring(0, 20) + "..." : item.Reason)</td>
                     </tr>

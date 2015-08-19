@@ -396,7 +396,7 @@ namespace SuperManWebApi.Controllers
             if (!iBusinessProvider.HaveQualification(model.userId))//验证该商户有无发布订单资格 
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.HadCancelQualification);
-            }
+            }　
             int orderChileCount = model.listOrderChlid.Count;
             if (orderChileCount >= 16 || orderChileCount <= 0)
             {
