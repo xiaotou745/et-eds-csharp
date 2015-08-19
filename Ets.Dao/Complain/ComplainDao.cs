@@ -74,6 +74,14 @@ values  ( @ComplainId ,
             {
                 sbSqlWhere.AppendFormat(" and cp.CreateTime > '{0}' and cp.CreateTime < '{1}' ", complainCriteria.ComplainStartTime, complainCriteria.ComplainEndTime);
             }
+            if (!string.IsNullOrWhiteSpace(complainCriteria.ClienterName))
+            {
+                sbSqlWhere.AppendFormat(" and c.TrueName like '%{0}%' ", complainCriteria.ClienterName);
+            }
+            if (!string.IsNullOrWhiteSpace(complainCriteria.BusinessName))
+            {
+                sbSqlWhere.AppendFormat(" and b.Name like '%{0}%' ", complainCriteria.BusinessName);
+            }
             string tableList = @" dbo.Complain cp ( nolock )
         join dbo.[order] o ( nolock ) on cp.OrderId = o.Id
         join dbo.business b ( nolock ) on o.businessId = b.Id
