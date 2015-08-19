@@ -34,15 +34,16 @@ namespace Ets.Provider.Tests
             //string strdecode = DES.Decrypt(s);
             //Console.WriteLine();//651554c5
             //string sss = DESAPP.DES3Decrypt(ss, key);
-            string ss = "易代送";
+            string ss = "13426401627";
             string pwd = "np!u5chin@adm!n1aaaaaaaa";
             string vi = "np!u5chin@adm!n1aaaaaaaa";
             //string ess = DESAPP.Encrypt_AES(ss);
             //string dss = DESAPP.Decrypt_AES(ess);
             //string ess = AESHelper.AESEncrypt(ss, pwd);
             //string dss = AESHelper.AESDecrypt(ess, pwd);
-            //string ess = Security.AesEncrypt(ss);
-            //string dss = Security.AesDecrypt(ess);
+            AESApp.CheckAES(ss,"asd");
+            string ess = AESApp.AesEncrypt(ss);
+            string dss = AESApp.AesDecrypt(ess);
             string s = MD5Helper.MD5("123456");
         }
 

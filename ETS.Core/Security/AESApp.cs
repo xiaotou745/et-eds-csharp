@@ -89,9 +89,9 @@ namespace ETS.Security
         /// <returns></returns>
         public static bool CheckAES(string key, string val)
         {
-            key = key.Length >= 6 ? key.Remove(6) : key;
-            key = key.Length >= 3 ? key.Remove(3) : key;
-            key = key.Length >= 1 ? key.Remove(1) : key;
+            key = key.Length >= 6 ? key.Remove(5,1) : key;
+            key = key.Length >= 3 ? key.Remove(2,1) : key;
+            key = key.Length >= 1 ? key.Remove(0,1) : key;
             if (string.IsNullOrEmpty(key) || string.IsNullOrEmpty(val))
             {
                 return false;
