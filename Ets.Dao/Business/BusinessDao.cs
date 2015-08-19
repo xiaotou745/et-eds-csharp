@@ -1543,7 +1543,7 @@ where BusinessId=@BusinessId and IsEnable=1";
                 bf.Id = ParseHelper.ToInt(dataRow["Id"]);
                 bf.BusinessId = ParseHelper.ToInt(dataRow["BusinessId"]);
                 bf.TrueName = dataRow["TrueName"].ToString();
-                bf.AccountNo = ETS.Security.DES.Decrypt(dataRow["AccountNo"].ToString());
+                bf.AccountNo = ETS.Security.AESApp.AesEncrypt(ETS.Security.DES.Decrypt(dataRow["AccountNo"].ToString()));
                 bf.IsEnable = ParseHelper.ToBool(dataRow["IsEnable"]);
                 bf.AccountType = ParseHelper.ToInt(dataRow["AccountType"]);
                 bf.BelongType = ParseHelper.ToInt(dataRow["BelongType"]);

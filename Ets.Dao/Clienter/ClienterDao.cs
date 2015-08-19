@@ -1088,12 +1088,12 @@ where  Id=@Id ";
 //from  clienter (nolock) 
 //where Id=@Id";
             string queryClienterSql = @"
-select  c.Id,PhoneNo,LoginName,recommendPhone,Password,TrueName,IDCard,PicWithHandUrl,PicUrl,Status,
+select  c.Id,PhoneNo,LoginName,recommendPhone,TrueName,IDCard,PicWithHandUrl,PicUrl,Status,
 AccountBalance,InsertTime,InviteCode,City,CityId,GroupId,HealthCardID,InternalDepart,ProvinceCode
 ,AreaCode,CityCode,Province,BussinessID,WorkStatus,AllowWithdrawPrice,HasWithdrawPrice,
 (case when (select count(1) from dbo.ClienterMessage cm(nolock) where cm.ClienterId=c.id and cm.IsRead=0)=0 then 0 else 1 end) HasMessage,
 --(case when dc.SettleType=1 and ClienterSettleRatio>0 or dc.SettleType=2 and dc.ClienterFixMoney>0 then 1 else 0 end) IsDisplayDeliveryMoney
-isnull(dc.IsShowAccount,1) IsShowAccount
+isnull(dc.IsShowAccount,1) IsShowAccount,IsReceivePush
 from  dbo.clienter c (nolock) 
 left join dbo.DeliveryCompany dc(nolock) on c.DeliveryCompanyId=dc.Id
 where c.Id=@Id";
@@ -1118,7 +1118,9 @@ where ClienterId=@ClienterId  and IsEnable=1";
                 bf.Id = ParseHelper.ToInt(dataRow["Id"]);
                 bf.ClienterId = ParseHelper.ToInt(dataRow["ClienterId"]);
                 bf.TrueName = dataRow["TrueName"].ToString();
-                bf.AccountNo = ETS.Security.DES.Decrypt(dataRow["AccountNo"].ToString());
+                //这里写的有点绕，存到库里已经是加密的
+                //但是后来因为安全问题，所以传给APP的时候又加了一层aes的加密方式
+                bf.AccountNo = ETS.Security.AESApp.AesEncrypt(ETS.Security.DES.Decrypt(dataRow["AccountNo"].ToString()));
                 bf.IsEnable = ParseHelper.ToBool(dataRow["IsEnable"]);
                 bf.AccountType = ParseHelper.ToInt(dataRow["AccountType"]);
                 bf.BelongType = ParseHelper.ToInt(dataRow["BelongType"]);
