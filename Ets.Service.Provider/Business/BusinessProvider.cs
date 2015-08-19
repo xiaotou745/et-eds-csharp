@@ -563,8 +563,9 @@ namespace Ets.Service.Provider.Business
         /// <param name="model"></param>
         /// <param name="type">操作类型 默认 0   0代表修改密码  1 代表忘记密码</param>
         /// <returns></returns>
-        public ResultModel<BusiModifyPwdResultModel> PostForgetPwd_B(BusiForgetPwdInfoModel model, int type = 0)
+        public ResultModel<BusiModifyPwdResultModel> PostForgetPwd_B(ParamModel ParModel, int type = 0)
         {
+            BusiForgetPwdInfoModel model = JsonHelper.JsonConvertToObject<BusiForgetPwdInfoModel>(AESApp.AesDecrypt(ParModel.data));
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             string key = string.Concat(RedissCacheKey.ChangePasswordCount_B, model.phoneNumber);
             int excuteCount = redis.Get<int>(key);

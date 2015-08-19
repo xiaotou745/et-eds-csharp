@@ -122,7 +122,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="model"></param>
         /// <returns></returns>        
         [HttpPost]
-        public ResultModel<BusiModifyPwdResultModel> PostForgetPwd_B(BusiForgetPwdInfoModel model)
+        public ResultModel<BusiModifyPwdResultModel> PostForgetPwd_B(ParamModel model)
         {
             return new BusinessProvider().PostForgetPwd_B(model,1);
         }
@@ -134,7 +134,7 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>        
         [HttpPost]
         [Token]
-        public ResultModel<BusiModifyPwdResultModel> ModifyPwd_B(BusiForgetPwdInfoModel model)
+        public ResultModel<BusiModifyPwdResultModel> ModifyPwd_B(ParamModel model)
         {
             return new BusinessProvider().PostForgetPwd_B(model);
         }
