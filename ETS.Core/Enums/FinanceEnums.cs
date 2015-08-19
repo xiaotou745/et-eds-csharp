@@ -190,10 +190,9 @@ namespace ETS.Enums
         [DisplayText("系统赔偿")]
         SystemCompensation = 7,
         /// <summary>
-        /// 余额调整
-        /// 修改为异常订单
+        /// 余额调整        
         /// </summary>
-        [DisplayText("异常订单")]
+        [DisplayText("余额调整")]
         BalanceAdjustment = 8,
         /// <summary>
         /// 手续费
@@ -204,7 +203,12 @@ namespace ETS.Enums
         /// 现金提现
         /// </summary>
         [DisplayText("现金提现")]
-        CashWithdraw = 10
+        CashWithdraw = 10,
+        /// <summary>
+        /// 异常订单
+        /// </summary>
+        [DisplayText("异常订单")]
+        Abnormal = 11
     }
 
     public enum ClienterAllowWithdrawRecordType
@@ -558,7 +562,7 @@ namespace ETS.Enums
         [DisplayText("用户支付")]
         BuyerPay = 1,
         [DisplayText("骑士支付")]
-        ClienterPay = 2
+        ClienterPay = 2 
     }
     /// <summary>
     /// 支付类型
@@ -575,7 +579,9 @@ namespace ETS.Enums
         [DisplayText("财付通")]
         CaiFuTong = 4,
         [DisplayText("百度钱包")]
-        BaiDuQinBao = 5
+        BaiDuQinBao = 5,
+        [DisplayText("现金支付")]
+        CashPay = 6
     }
     /// <summary>
     /// 支付状态

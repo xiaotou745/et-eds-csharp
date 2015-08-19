@@ -1,0 +1,7 @@
+ use superman
+ go
+alter table dbo.business
+add IsAllowCashPay int not null default 0
+go 
+ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'是否允许现金支付1允许0不允许，默认0' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'business', @level2type=N'COLUMN',@level2name=N'IsAllowCashPay'
+GO

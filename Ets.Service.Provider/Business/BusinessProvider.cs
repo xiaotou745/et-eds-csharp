@@ -36,6 +36,8 @@ using Ets.Model.DomainModel.Business;
 using Ets.Model.ParameterModel.Finance;
 using Ets.Dao.Finance;
 using Ets.Model.DataModel.Finance;
+using Ets.Model.ParameterModel.Common;
+using ETS.Security;
 namespace Ets.Service.Provider.Business
 {
 
@@ -238,8 +240,9 @@ namespace Ets.Service.Provider.Business
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public ResultModel<BusiRegisterResultModel> PostRegisterInfo_B(RegisterInfoPM model)
+        public ResultModel<BusiRegisterResultModel> PostRegisterInfo_B(ParamModel ParModel)
         {
+            RegisterInfoPM model = JsonHelper.JsonConvertToObject<RegisterInfoPM>(AESApp.AesDecrypt(ParModel.data));
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             string key = string.Concat(RedissCacheKey.RegisterCount_B, model.phoneNo);
             int excuteCount = redis.Get<int>(key);
@@ -260,7 +263,7 @@ namespace Ets.Service.Provider.Business
             {
                 returnEnum = BusinessRegisterStatus.PasswordEmpty;//密码非空验证 
             }
-            else if (string.IsNullOrEmpty(code) || code != model.verifyCode) //验证码正确性验证
+            else if (string.IsNullOrEmpty(code) || code.ToLower() != model.verifyCode.ToLower()) //验证码正确性验证
             {
                 returnEnum = BusinessRegisterStatus.IncorrectCheckCode; //判断验证法录入是否正确
             }
@@ -285,14 +288,14 @@ namespace Ets.Service.Provider.Business
             {
                 return ResultModel<BusiRegisterResultModel>.Conclude(returnEnum);
             }
-            
-            string appkey = Guid.NewGuid().ToString(); 
+
+            string appkey = Guid.NewGuid().ToString();
             model.Appkey = appkey;
             int userid = businessDao.Insert(model);
 
             string token = iTokenProvider.GetToken(new TokenModel()
                         {
-                            Ssid=model.Ssid,
+                            Ssid = model.Ssid,
                             Appkey = appkey
                         });
             BusiRegisterResultModel resultModel = new BusiRegisterResultModel()
@@ -418,10 +421,11 @@ namespace Ets.Service.Provider.Business
         /// </summary>
         /// <param name="model">用户名，密码对象</param>
         /// <returns>登录后返回实体对象</returns>
-        public ResultModel<BusiLoginResultModel> PostLogin_B(LoginModel model)
+        public ResultModel<BusiLoginResultModel> PostLogin_B(ParamModel parModel)
         {
             try
             {
+                LoginModel model = JsonHelper.JsonConvertToObject<LoginModel>(AESApp.AesDecrypt(parModel.data));
                 var redis = new RedisCache();
                 string key = string.Concat(RedissCacheKey.LoginCount_B, model.phoneNo);
                 int excuteCount = redis.Get<int>(key);
@@ -470,7 +474,8 @@ namespace Ets.Service.Provider.Business
                     Appkey = row["Appkey"].ToString()
                 });
                 resultMode.Token = token;
-                return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.Success, resultMode);
+                //string resultStr = AESApp.AesDecrypt(JsonHelper.JsonConvertToString(resultMode));
+                return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.Success, resultMode);//BusiLoginResultModel
             }
             catch (Exception ex)
             {
@@ -559,8 +564,9 @@ namespace Ets.Service.Provider.Business
         /// <param name="model"></param>
         /// <param name="type">操作类型 默认 0   0代表修改密码  1 代表忘记密码</param>
         /// <returns></returns>
-        public ResultModel<BusiModifyPwdResultModel> PostForgetPwd_B(BusiForgetPwdInfoModel model,int type=0)
+        public ResultModel<BusiModifyPwdResultModel> PostForgetPwd_B(ParamModel ParModel, int type = 0)
         {
+            BusiForgetPwdInfoModel model = JsonHelper.JsonConvertToObject<BusiForgetPwdInfoModel>(AESApp.AesDecrypt(ParModel.data));
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             string key = string.Concat(RedissCacheKey.ChangePasswordCount_B, model.phoneNumber);
             int excuteCount = redis.Get<int>(key);
@@ -579,9 +585,9 @@ namespace Ets.Service.Provider.Business
             {
                 return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeIsEmpty);
             }
-            
+
             var code = redis.Get<string>(RedissCacheKey.CheckCodeFindPwd_B + model.phoneNumber);
-            if (string.IsNullOrEmpty(code) || code != model.checkCode) //验证码正确性验证
+            if (string.IsNullOrEmpty(code) || code.ToLower() != model.checkCode.ToLower()) //验证码正确性验证
             { return ResultModel<BusiModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeWrong); }
 
             var business = businessDao.GetBusinessByPhoneNo(model.phoneNumber);
@@ -839,7 +845,8 @@ namespace Ets.Service.Provider.Business
                 //账号不存在 
                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.NotExists);
             }
-            string randomCode = new Random().Next(1000).ToString("D4");
+            //string randomCode = new Random().Next(1000).ToString("D4");
+            string randomCode = Helper.GenCode(6);
             var msg = string.Format(Config.SmsContentFindPassword, randomCode, SystemConst.MessageBusiness);
             try
             {
@@ -874,7 +881,8 @@ namespace Ets.Service.Provider.Business
             {
                 return Ets.Model.Common.SimpleResultModel.Conclude(ETS.Enums.SendCheckCodeStatus.InvlidPhoneNumber);
             }
-            string randomCode = new Random().Next(1000).ToString("D4");  //生成短信验证码
+            //string randomCode = new Random().Next(1000).ToString("D4");  //生成短信验证码
+            string randomCode = Helper.GenCode(6);
             var msg = string.Format(Config.SmsContentCheckCode, randomCode, SystemConst.MessageBusiness);  //获取提示用语信息
             try
             {
@@ -1153,8 +1161,8 @@ namespace Ets.Service.Provider.Business
         {
             var busiInfo = businessDao.GetDistribSubsidy(id);
             var result = new BusiDistribSubsidyResultModel { DistribSubsidy = busiInfo.DistribSubsidy };
-            result.OrderBalance = amount*busiInfo.BusinessCommission/100 + (busiInfo.CommissionFixValue +
-                                   busiInfo.DistribSubsidy ?? 0m)*orderChildCount;
+            result.OrderBalance = amount * busiInfo.BusinessCommission / 100 + (busiInfo.CommissionFixValue +
+                                   busiInfo.DistribSubsidy ?? 0m) * orderChildCount;
             //剩余余额(商家余额 –当前任务结算金额)
             result.RemainBalance = busiInfo.BalancePrice - result.OrderBalance;
             return result;
@@ -1495,7 +1503,7 @@ namespace Ets.Service.Provider.Business
         {
             try
             {
-                long id = businessDao.InsertLocation(model.BusinessId, model.Latitude, model.Latitude,model.Platform);
+                long id = businessDao.InsertLocation(model.BusinessId, model.Latitude, model.Latitude, model.Platform);
                 return ResultModel<object>.Conclude(SystemState.Success,
                     new { PushTime = GlobalConfigDao.GlobalConfigGet(0).BusinessUploadTimeInterval });
             }
@@ -1523,19 +1531,19 @@ namespace Ets.Service.Provider.Business
                 Id = businessMoneyPM.BusinessId,
                 Money = businessMoneyPM.Amount
             });
-            
+
             //更新商户余额流水          
             businessBalanceRecordDao.Insert(new BusinessBalanceRecord()
             {
                 BusinessId = businessMoneyPM.BusinessId,
                 Amount = businessMoneyPM.Amount,
-                Status = businessMoneyPM.Status,               
+                Status = businessMoneyPM.Status,
                 RecordType = businessMoneyPM.RecordType,
                 Operator = businessMoneyPM.Operator,
                 WithwardId = businessMoneyPM.WithwardId,
                 RelationNo = businessMoneyPM.RelationNo,
-                Remark = businessMoneyPM.Remark              
-            });          
+                Remark = businessMoneyPM.Remark
+            });
         }
     }
 }

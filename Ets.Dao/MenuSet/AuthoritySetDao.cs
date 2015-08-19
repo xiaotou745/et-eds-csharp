@@ -792,11 +792,11 @@ WHERE acr.AccountId=@AccountId and acr.IsEnable=1;";
             {
                 if (model.Status >= 0)
                 {
-                    sql += " ,Password=@Password";
+                    sql += " ,Password=@Password,LastChangeTime=GETDATE()";
                 }
                 else
                 {
-                    sql += " Password=@Password";
+                    sql += " Password=@Password,LastChangeTime=GETDATE()";
                 }
             }
             sql += " where Id=@Id;";

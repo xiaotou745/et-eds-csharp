@@ -8,9 +8,11 @@ namespace Ets.Model.ParameterModel.Finance
 {
     /// <summary>
     ///  骑士余额流水表 查询实体类 
-    /// add by caoheyang 20150509
+    ///  胡灵波
+    ///  2015年8月19日 15:23:43
     /// </summary>
     public class ClienterBalanceRecordPM
     {
+        public int ClienterId { get; set; }        
     }
 }

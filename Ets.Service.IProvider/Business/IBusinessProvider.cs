@@ -9,6 +9,7 @@ using ETS.Enums;
 using Ets.Model.DataModel.Group;
 using Ets.Model.ParameterModel.User;
 using Ets.Model.ParameterModel.Order;
+using Ets.Model.ParameterModel.Common;
 
 namespace Ets.Service.IProvider.Business
 {
@@ -64,7 +65,7 @@ namespace Ets.Service.IProvider.Business
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        ResultModel<BusiRegisterResultModel> PostRegisterInfo_B(RegisterInfoPM model);
+        ResultModel<BusiRegisterResultModel> PostRegisterInfo_B(ParamModel model);//RegisterInfoPM
 
         /// <summary>
         /// B端登录
@@ -73,7 +74,7 @@ namespace Ets.Service.IProvider.Business
         /// </summary>
         /// <param name="model">用户名，密码对象</param>
         /// <returns>登录后返回实体对象</returns>
-        ResultModel<BusiLoginResultModel> PostLogin_B(LoginModel model);
+        ResultModel<BusiLoginResultModel> PostLogin_B(ParamModel model);//BusiLoginResultModel
         /// <summary>
         /// 根据商户Id获取商户信息  
         /// </summary>
@@ -123,7 +124,7 @@ namespace Ets.Service.IProvider.Business
         /// <param name="model"></param>
         /// <param name="type">操作类型 默认 0   0代表修改密码  1 代表忘记密码</param>
         /// <returns></returns>
-        ResultModel<BusiModifyPwdResultModel> PostForgetPwd_B(BusiForgetPwdInfoModel model, int type = 0);
+        ResultModel<BusiModifyPwdResultModel> PostForgetPwd_B(ParamModel model, int type = 0);
 
         /// <summary>
         /// 获取商户端的统计数量
@@ -409,9 +410,7 @@ namespace Ets.Service.IProvider.Business
         /// 更新商家余额、可提现余额     
         /// 胡灵波
         /// 2015年8月13日 16:41:11
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="myOrderInfo"></par
+        /// </summary> 
         void UpdateBBalanceAndWithdraw(BusinessMoneyPM businessMoneyPM);
     }
 }

@@ -7,12 +7,14 @@ using Ets.Model.Common;
 using Ets.Model.ParameterModel.Authority;
 using Ets.Service.Provider.Authority;
 using ETS.Util;
-
+using SuperMan.App_Start;
 using SuperMan.Authority;
 using Ets.Service.IProvider.Account;
 using Ets.Service.Provider.Account;
 using LoginModel = Ets.Model.ParameterModel.Authority.LoginModel;
 using ETS.Util;
+using Ets.Model.DataModel.Account;
+using System.Text.RegularExpressions;
 
 namespace SuperMan.Controllers
 {
@@ -21,6 +23,7 @@ namespace SuperMan.Controllers
     {
         private IAuthenticationService _authenticationService;
         IAccountProvider iAccountProvider = new AccountProvider();
+        IAccountLoginLogProvider iaccountLoginLogProvider = new AccountLoginLogProvider();
         public AccountController()
         {
             _authenticationService = new AdminAuthenticationService();
@@ -35,7 +38,16 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         public ActionResult LogOff()
         {
+            string loginInfo=CookieHelper.ReadCookie(SystemConst.cookieName);
+            AccountLoginLogModel logModel = new AccountLoginLogModel()
+            {
+                LoginName = ParseHelper.ToString(Regex.Match( loginInfo, "\"LoginName\":\"(.*?)\",\"GroupId\"").Groups[1].Value),
+                LoginType = 1,
+                Remark = "退出登录"
+            };
             _authenticationService.SignOut();
+            iaccountLoginLogProvider.Insert(logModel);
+
             return RedirectToAction("Login", "Account");
         }
 
@@ -76,6 +88,8 @@ namespace SuperMan.Controllers
                 return Json(new ResultModel(false, "验证码不正确"));
             }
             var loginResult = iAccountProvider.ValidateUser(model.UserName, MD5Helper.MD5(model.Password));
+            bool returnStatus = false;
+            string returnMsg = "密码不正确";
             switch (loginResult)
             {
                 case ETS.Enums.UserLoginResults.Successful:
@@ -104,14 +118,30 @@ namespace SuperMan.Controllers
                     }
                     string menujson = JsonHelper.ToJson(myMenus);
                     CookieHelper.WriteCookie("menulist", menujson, DateTime.Now.AddDays(10));
-                    return Json(new ResultModel(true, "成功"));
+                    //return Json(new ResultModel(true, "成功"));
+                    returnStatus = true;
+                    returnMsg = "成功";
+                    break;
                 case ETS.Enums.UserLoginResults.UserNotExist:
-                    return Json(new ResultModel(false, "用户不存在"));
+                    //return Json(new ResultModel(false, "用户不存在"));
+                    returnMsg = "用户不存在";
+                    break;
                 case ETS.Enums.UserLoginResults.AccountClosed:
-                    return Json(new ResultModel(false, "用户已经锁定"));
-                default:
-                    return Json(new ResultModel(false, "密码不正确")); ;
+                    //return Json(new ResultModel(false, "用户已经锁定"));
+                    returnMsg = "密码不正确";
+                    break;
+                //default:
+                //    return Json(new ResultModel(false, "密码不正确"));
             }
+            AccountLoginLogModel logModel = new AccountLoginLogModel()
+            {
+                LoginName = model.UserName,
+                LoginType = returnStatus.GetHashCode(),
+                Remark = returnMsg
+            };
+          
+            iaccountLoginLogProvider.Insert(logModel);
+            return Json(new ResultModel(returnStatus, returnMsg));
         }
 
         /// <summary>
@@ -129,6 +159,56 @@ namespace SuperMan.Controllers
             //缓存key放入cookie里存储 
             CookieHelper.WriteCookie("Cookie_Verification", cachekey, DateTime.Now.AddMinutes(5));
             return new FileContentResult(bytes, "image/jpeg"); ;
+        }
+
+        /// <summary>
+        /// 顶部修改密码
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        /// <summary>
+        /// 修改密码
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult PostChangePassword()
+        {
+            string oldpwd = HttpContext.Request.Form["oldpwd"];
+            string newpwd = HttpContext.Request.Form["newpwd"];
+            if (string.IsNullOrWhiteSpace(oldpwd) || string.IsNullOrWhiteSpace(newpwd))
+            {
+                return Content("0");
+            }
+            int uid = UserContext.Current.Id;
+            if (!iAccountProvider.ChcekPassword(uid, oldpwd))
+            {
+                return Content("0");
+            }
+            if (iAccountProvider.UpdatePassword(uid, newpwd))
+            {
+                return Content("1");
+            }
+            return Content("0");
+        }
+
+        /// <summary>
+        /// 验证旧密码
+        /// </summary>
+        /// <returns></returns>
+        public ContentResult PostCheckPassword()
+        {
+            string oldpwd = HttpContext.Request.Form["oldpwd"];
+            int uid = UserContext.Current.Id;
+            if (string.IsNullOrWhiteSpace(oldpwd))
+                return Content("0");
+            if (iAccountProvider.ChcekPassword(uid, oldpwd))
+            {
+                return Content("1");
+            }
+            return Content("0");
         }
 
 

@@ -235,7 +235,7 @@ where   c.PhoneNo = @PhoneNo
             return list[0];
         }
 
-     
+
         /// <summary>
         /// 根据用户ID更新密码
         /// </summary>
@@ -378,7 +378,7 @@ SELECT PhoneNo AS Phone,0 AS PemType FROM clienter(NOLOCK) WHERE Status=1
         /// <param name="model"></param>
         /// <param name="timespan">时间戳</param>
         /// <returns></returns>
-        public int AddClienter(clienter model,string timespan)
+        public int AddClienter(clienter model, string timespan)
         {
             string sql = @"INSERT INTO clienter
                            ([PhoneNo]
@@ -434,7 +434,7 @@ select  count(1)
 from  dbo.[clienter]  
 where Timespan=@Timespan and phoneNo=@phoneNo;";
             IDbParameters dbSelectParameters = DbHelper.CreateDbParameters();
-            dbSelectParameters.Add("phoneNo", DbType.String,20).Value=model.phoneNo;
+            dbSelectParameters.Add("phoneNo", DbType.String, 20).Value = model.phoneNo;
             dbSelectParameters.Add("Timespan", DbType.String, 50).Value = model.timespan;
             object executeScalar = DbHelper.ExecuteScalar(SuperMan_Write, querysql, dbSelectParameters);
             isExist = ParseHelper.ToInt(executeScalar, 0) > 0;
@@ -752,60 +752,7 @@ where c.Id=@clienterId ";
             orderOther.OrderStatus = oo.OrderStatus;
             orderOther.OrderCreateTime = oo.OrderCreateTime;
             return orderOther;
-        }
-
-        /// <summary>
-        /// 增加一条小票信息
-        /// wc
-        /// </summary>
-        /// <param name="uploadReceiptModel"></param>
-        /// <returns></returns>
-        public OrderOther InsertReceiptInfo(UploadReceiptModel uploadReceiptModel)
-        {
-            OrderOther oo = new OrderOther();
-            ///TODO output?
-            StringBuilder sql = new StringBuilder(@"
-insert into dbo.OrderOther
-    ( OrderId ,
-        NeedUploadCount ,
-        ReceiptPic ,
-        HadUploadCount
-    )
-output Inserted.Id,Inserted.OrderId,Inserted.NeedUploadCount,Inserted.ReceiptPic,Inserted.HadUploadCount
-values ( @OrderId ,
-        @NeedUploadCount , 
-        @ReceiptPic ,
-        @HadUploadCount 
-);");
-            sql.Append(@"
-update  dbo.OrderChild
-set     HasUploadTicket = 1,
-        TicketUrl = @ReceiptPic
-where   OrderId = @OrderId
-        and ChildId = @OrderChildId;
-");
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.Add("@OrderId", SqlDbType.Int).Value = uploadReceiptModel.OrderId;
-            parm.Add("@NeedUploadCount", SqlDbType.Int).Value = uploadReceiptModel.NeedUploadCount;
-            parm.Add("@HadUploadCount", SqlDbType.Int).Value = uploadReceiptModel.HadUploadCount;
-            parm.Add("@ReceiptPic", SqlDbType.VarChar).Value = uploadReceiptModel.ReceiptPic;
-            parm.Add("@OrderChildId", SqlDbType.Int).Value = uploadReceiptModel.OrderChildId;
-            try
-            {
-                DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql.ToString(), parm);
-                var ooList = MapRows<OrderOther>(dt);
-                if (ooList != null && ooList.Count == 1)
-                {
-                    return ooList[0];
-                }
-            }
-            catch (Exception ex)
-            {
-                //LogHelper.LogWriter("插入orderOther表异常：", new { ex = ex });
-                throw ex;
-            }
-            return oo;
-        }
+        }   
 
         /// <summary>
         /// 添加小票信息
@@ -848,7 +795,7 @@ where  OrderId=@OrderId ";
                 return null;
             }
             var ooList = MapRows<OrderOther>(dt);
-            return ooList[0]; 
+            return ooList[0];
         }
         /// <summary>
         /// 删除小票信息OrderChild表
@@ -1059,7 +1006,7 @@ where  Id=@Id ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Id", model.Id);
             dbParameters.AddWithValue("WithdrawPrice", model.Money);
-            var  num=DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+            var num = DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
 
 
@@ -1081,18 +1028,19 @@ where  Id=@Id ";
             ClienterDM clienterDM = new ClienterDM();
 
             #region 骑士表
-//            string queryClienterSql = @"
-//select  Id,PhoneNo,LoginName,recommendPhone,Password,TrueName,IDCard,PicWithHandUrl,PicUrl,Status,
-//AccountBalance,InsertTime,InviteCode,City,CityId,GroupId,HealthCardID,InternalDepart,ProvinceCode
-//,AreaCode,CityCode,Province,BussinessID,WorkStatus,AllowWithdrawPrice,HasWithdrawPrice
-//from  clienter (nolock) 
-//where Id=@Id";
+            //            string queryClienterSql = @"
+            //select  Id,PhoneNo,LoginName,recommendPhone,Password,TrueName,IDCard,PicWithHandUrl,PicUrl,Status,
+            //AccountBalance,InsertTime,InviteCode,City,CityId,GroupId,HealthCardID,InternalDepart,ProvinceCode
+            //,AreaCode,CityCode,Province,BussinessID,WorkStatus,AllowWithdrawPrice,HasWithdrawPrice
+            //from  clienter (nolock) 
+            //where Id=@Id";
             string queryClienterSql = @"
-select  c.Id,PhoneNo,LoginName,recommendPhone,Password,TrueName,IDCard,PicWithHandUrl,PicUrl,Status,
+select  c.Id,PhoneNo,LoginName,recommendPhone,TrueName,IDCard,PicWithHandUrl,PicUrl,Status,
 AccountBalance,InsertTime,InviteCode,City,CityId,GroupId,HealthCardID,InternalDepart,ProvinceCode
 ,AreaCode,CityCode,Province,BussinessID,WorkStatus,AllowWithdrawPrice,HasWithdrawPrice,
-(case when (select count(1) from dbo.ClienterMessage cm(nolock) where cm.ClienterId=c.id and cm.IsRead=0)=0 then 0 else 1 end) HasMessage
+(case when (select count(1) from dbo.ClienterMessage cm(nolock) where cm.ClienterId=c.id and cm.IsRead=0)=0 then 0 else 1 end) HasMessage,
 --(case when dc.SettleType=1 and ClienterSettleRatio>0 or dc.SettleType=2 and dc.ClienterFixMoney>0 then 1 else 0 end) IsDisplayDeliveryMoney
+isnull(dc.IsShowAccount,1) IsShowAccount,IsReceivePush
 from  dbo.clienter c (nolock) 
 left join dbo.DeliveryCompany dc(nolock) on c.DeliveryCompanyId=dc.Id
 where c.Id=@Id";
@@ -1117,7 +1065,9 @@ where ClienterId=@ClienterId  and IsEnable=1";
                 bf.Id = ParseHelper.ToInt(dataRow["Id"]);
                 bf.ClienterId = ParseHelper.ToInt(dataRow["ClienterId"]);
                 bf.TrueName = dataRow["TrueName"].ToString();
-                bf.AccountNo = ETS.Security.DES.Decrypt(dataRow["AccountNo"].ToString());
+                //这里写的有点绕，存到库里已经是加密的
+                //但是后来因为安全问题，所以传给APP的时候又加了一层aes的加密方式
+                bf.AccountNo = ETS.Security.AESApp.AesEncrypt(ETS.Security.DES.Decrypt(dataRow["AccountNo"].ToString()));
                 bf.IsEnable = ParseHelper.ToBool(dataRow["IsEnable"]);
                 bf.AccountType = ParseHelper.ToInt(dataRow["AccountType"]);
                 bf.BelongType = ParseHelper.ToInt(dataRow["BelongType"]);
@@ -1174,55 +1124,7 @@ where  id = @id";
 
             return isExist;
         }
-        /// <summary>
-        /// 获取骑士详细信息
-        /// danny-20150513
-        /// </summary>
-        /// <param name="clienterId">骑士Id</param>
-        /// <returns></returns>
-        public ClienterDetailModel GetClienterDetailById(string clienterId)
-        {
-            string selSql = @" 
-SELECT   c.[Id],
-         c.[PhoneNo],
-         c.[LoginName],
-         c.[recommendPhone],
-         c.[Password],
-         c.[TrueName],
-         c.[IDCard],
-         c.[PicWithHandUrl],
-         c.[PicUrl],
-         c.[Status],
-         c.[AccountBalance],
-         c.[InsertTime],
-         c.[InviteCode],
-         c.[City],
-         c.[CityId],
-         c.[GroupId],
-         c.[HealthCardID],
-         c.[InternalDepart],
-         c.[ProvinceCode],
-         c.[AreaCode],
-         c.[CityCode],
-         c.[Province],
-         c.[BussinessID],
-         c.[WorkStatus], 
-         c.DeliveryCompanyId,
-         cfa.TrueName AccountName,
-         cfa.AccountNo,
-         cfa.AccountType,
-         cfa.OpenBank,
-         cfa.OpenSubBank
-FROM clienter c WITH(NOLOCK) 
-	Left join ClienterFinanceAccount cfa WITH(NOLOCK) ON c.Id=cfa.ClienterId AND cfa.IsEnable=1
-WHERE c.Id = @ClienterId  ";
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@ClienterId", clienterId);
-            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, selSql, parm));
-            if (dt != null && dt.Rows.Count > 0)
-                return DataTableHelper.ConvertDataTableList<ClienterDetailModel>(dt)[0];
-            return null;
-        }
+
 
         #region  Nested type: ClienterRowMapper
 
@@ -1243,7 +1145,7 @@ WHERE c.Id = @ClienterId  ";
                 result.PhoneNo = dataReader["PhoneNo"].ToString();
                 result.LoginName = dataReader["LoginName"].ToString();
                 result.recommendPhone = dataReader["recommendPhone"].ToString();
-                result.Password = dataReader["Password"].ToString();
+                //result.Password = dataReader["Password"].ToString();
                 result.TrueName = dataReader["TrueName"].ToString();
                 result.IDCard = dataReader["IDCard"].ToString();
                 if (dataReader["PicWithHandUrl"] != null && dataReader["PicWithHandUrl"].ToString() != "")
@@ -1299,13 +1201,22 @@ WHERE c.Id = @ClienterId  ";
                 {
                     result.HasWithdrawPrice = decimal.Parse(obj.ToString());
                 }
-
+                obj = dataReader["IsShowAccount"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.IsShowAccount = ParseHelper.ToInt(obj.ToString());
+                }
+                obj = dataReader["IsReceivePush"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.IsReceivePush = ParseHelper.ToInt(obj.ToString());
+                }
 
                 return result;
             }
         }
 
-        #endregion    
+        #endregion
 
         /// <summary>
         /// 获取骑士用户名
@@ -1434,22 +1345,6 @@ where  phoneNo = @phoneNo and TrueName=@TrueName ";
         }
 
         /// <summary>
-        /// 获取骑士电话号码
-        /// </summary>
-        /// <UpdateBy>hulingbo</UpdateBy>
-        /// <UpdateTime>20150617</UpdateTime>
-        /// <param name="sentStatus"></param>
-        /// <returns></returns>
-        public DataTable GetPhoneNoList(string pushCity)
-        {
-            string querysql = @"  
-select id, PhoneNo from dbo.clienter(nolock) 
-where  cityid in(" + pushCity + ")";
-
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, querysql);
-            return dt;
-        }
-        /// <summary>
         /// 查询一个骑士绑定的商家中，是否有任何一个开启了IsEmployerTask
         /// </summary>
         /// <param name="UserId"></param>
@@ -1538,7 +1433,7 @@ where Id=@Id ";
         /// <param name="optId">操作人id</param>
         /// <param name="optName">操作人名</param>
         /// <returns></returns>
-        public int DeliveryCompanyInsertClienter(clienter model,int optId, string optName)
+        public int DeliveryCompanyInsertClienter(clienter model, int optId, string optName)
         {
             const string insertSql = @"
 insert into clienter(PhoneNo,Password,TrueName,IDCard,
@@ -1569,7 +1464,7 @@ SELECT IDENT_CURRENT('clienter')"
             dbParameters.AddWithValue("DeliveryCompanyId", model.DeliveryCompanyId);
             return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters));
         }
-		/// <summary>
+        /// <summary>
         /// 修改骑士详细信息
         /// danny-20150707
         /// </summary>
@@ -1583,7 +1478,7 @@ SELECT IDENT_CURRENT('clienter')"
                             SET IDCard=@IDCard,
                                 TrueName=@TrueName,
                                 DeliveryCompanyId=@DeliveryCompanyId,recommendPhone=@recommendPhone ";
-		     
+
             sql += @" OUTPUT
                         Inserted.Id,
                         @OptId,
@@ -1602,7 +1497,7 @@ SELECT IDENT_CURRENT('clienter')"
                         Platform,
                         Remark)
                         WHERE  Id = @Id;";
-           
+
             parm.AddWithValue("@IDCard", model.IDCard);
             parm.AddWithValue("@TrueName", model.TrueName);
             parm.AddWithValue("@DeliveryCompanyId", model.DeliveryCompanyId);
@@ -1610,21 +1505,10 @@ SELECT IDENT_CURRENT('clienter')"
             parm.AddWithValue("@OptId", model.OptUserId);
             parm.AddWithValue("@OptName", model.OptUserName);
             parm.AddWithValue("@Platform", 3);
-            parm.Add("@recommendPhone", DbType.String).Value = model.recommendPhone??"";
-            //parm.AddWithValue("@Remark", model.Remark);
+            parm.Add("@recommendPhone", DbType.String).Value = model.recommendPhone??"";            
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
-
-        /// <summary>
-        /// 获取骑士图片   add by pengyi 20150709  仅限工具使用
-        /// </summary>
-        public IList<ClienterPicModel> GetClienterPics()
-        {
-            var sql = @"select c.Id,c.PicUrl,c.PicWithHandUrl from [clienter](nolock) as c where c.PicUrl is not null or c.PicWithHandUrl is not null";
-            var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql));
-            var list = ConvertDataTableList<ClienterPicModel>(dt);
-            return list;
-        }
+   
 
         #region 更新骑士余额 可提现
         /// <summary>
@@ -1682,7 +1566,7 @@ where  Id=@Id ";
             dbParameters.AddWithValue("@Money", model.Money);
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
-    
+
         /// <summary>
         /// 更新用户余额
         /// 窦海超
@@ -1705,29 +1589,102 @@ where  Id=@Id ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Money", Money);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
-        }        
+        }               
+
+        #endregion
 
         /// <summary>
-        /// 更新用户余额以及可提现金额
-        /// 窦海超
-        /// 2015年3月23日 12:47:54
+        /// 获取所有已审核通过的用户Id
+        /// 胡灵波
+        /// 2015年8月19日 11:51:56
         /// </summary>
+        /// <param></param>
         /// <returns></returns>
-        public bool UpdateAccountBalanceAndWithdraw(WithdrawRecordsModel model)
-        {
-            ClienterModel cliterModel = GetUserInfoByUserId(model.UserId);//获取当前用户余额
-            decimal balance = ParseHelper.ToDecimal(cliterModel.AccountBalance, 0);
-            decimal Money = balance + model.Amount;
-            if (Money < 0)//如果提现金额大于当前余额则不能提现
+        public IList<ClienterModel> QueryIdList()
+        {              
+            IList<ClienterModel> models = new List<ClienterModel>();
+            string querysql = @"
+select  Id,TrueName,PhoneNo
+from  clienter (nolock) where Status=1 order by id  ";
+
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql));
+            if (DataTableHelper.CheckDt(dt))
             {
-                return false;
+                models = DataTableHelper.ConvertDataTableList<ClienterModel>(dt);
             }
-            model.Balance = balance;
-            string sql = @"update dbo.clienter set AccountBalance = @Money , AllowWithdrawPrice=AllowWithdrawPrice+@AllowWithdrawPrice WHERE id=" + model.UserId;
+            return models;
+        }
+
+        /// <summary>
+        /// 获取骑士详细信息
+        /// 注：可以扩展获取其它clienter表相关数据
+        /// 胡灵波
+        /// 2015年8月19日 14:31:35
+        /// </summary>
+        /// <param name="clienterId">骑士Id</param>
+        /// <returns></returns>
+        public ClienterModel GetClienterById(int id)
+        {
+            string querysql = @" 
+select AccountBalance, AllowWithdrawPrice
+from clienter c WITH(NOLOCK) 
+WHERE Id = @id  ";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@id", id);
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
+            if (dt != null && dt.Rows.Count > 0)
+                return DataTableHelper.ConvertDataTableList<ClienterModel>(dt)[0];
+            return null;
+        }
+
+        /// <summary>
+        /// 获取骑士详细信息
+        /// danny-20150513
+        /// </summary>
+        /// <param name="clienterId">骑士Id</param>
+        /// <returns></returns>
+        public ClienterDetailModel GetClienterDetailById(string clienterId)
+        {
+            string selSql = @" 
+SELECT   c.[Id],
+         c.[PhoneNo],
+         c.[LoginName],
+         c.[recommendPhone],
+         c.[Password],
+         c.[TrueName],
+         c.[IDCard],
+         c.[PicWithHandUrl],
+         c.[PicUrl],
+         c.[Status],
+         c.[AccountBalance],
+         c.[InsertTime],
+         c.[InviteCode],
+         c.[City],
+         c.[CityId],
+         c.[GroupId],
+         c.[HealthCardID],
+         c.[InternalDepart],
+         c.[ProvinceCode],
+         c.[AreaCode],
+         c.[CityCode],
+         c.[Province],
+         c.[BussinessID],
+         c.[WorkStatus], 
+         c.DeliveryCompanyId,
+         cfa.TrueName AccountName,
+         cfa.AccountNo,
+         cfa.AccountType,
+         cfa.OpenBank,
+         cfa.OpenSubBank
+FROM clienter c WITH(NOLOCK) 
+	Left join ClienterFinanceAccount cfa WITH(NOLOCK) ON c.Id=cfa.ClienterId AND cfa.IsEnable=1
+WHERE c.Id = @ClienterId  ";
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@Money", Money);
-            parm.Add("AllowWithdrawPrice", DbType.Decimal, 18).Value = model.Amount;
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+            parm.AddWithValue("@ClienterId", clienterId);
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, selSql, parm));
+            if (dt != null && dt.Rows.Count > 0)
+                return DataTableHelper.ConvertDataTableList<ClienterDetailModel>(dt)[0];
+            return null;
         }
         /// <summary>
         /// 获取指定距离内的骑士列表
@@ -1763,6 +1720,20 @@ WHERE c.Status=1
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             return MapRows<clienter>(dt);
         }
-        #endregion
+        /// <summary>
+        /// 设置修改骑士是否接受推送
+        /// 茹化肖
+        /// 2015年8月19日17:01:03
+        /// </summary>
+        /// <returns></returns>
+        public bool SetReceivePush(ClienterReceivePushModel model)
+        {
+            string sql = @"UPDATE dbo.clienter SET IsReceivePush=@IsReceivePush
+WHERE id=@ID";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("@IsReceivePush", DbType.Int32).Value = model.IsReceive;
+            parm.Add("@ID", DbType.Int32).Value = model.ClienterId;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
+        }
     }
 }

@@ -309,10 +309,10 @@ namespace SuperMan.Controllers
         }
 
         /// <summary>
+        /// 审核拒绝
         /// 彭宜
         /// 修改人：胡灵波
-        /// 2015年8月3日 11:32:55
-        /// 扣除网站补贴
+        /// 2015年8月3日 11:32:55        
         /// </summary>
         /// <param name="OrderNo"></param>
         /// <param name="OrderOptionLog"></param>
@@ -330,6 +330,7 @@ namespace SuperMan.Controllers
             var reg = iOrderProvider.AuditRefuse(orderOptionModel);
             return Json(new ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.AllowGet);
         }
+
         /// <summary>
         /// 审核通过
         /// 胡灵波
@@ -348,17 +349,6 @@ namespace SuperMan.Controllers
             };
             var reg = iOrderProvider.AuditOK(orderOptionModel);
             return Json(new ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.AllowGet);
-        }
-
-        private bool IsShowAuditBtn(OrderListModel orderModel)
-        {
-            //只有在已完成订单并且已上传完小票的情况下显示该按钮
-            if (orderModel != null && /*已完成*/ orderModel.FinishAll == 1 && /*订单未分账*/ orderModel.IsJoinWithdraw == 0
-                &&  orderModel.IsEnable == 1)
-            {
-                return true;
-            }
-            return false;
         }
         /// <summary>
         /// 财务管理-订单审核管理
@@ -488,7 +478,21 @@ namespace SuperMan.Controllers
                 }
             }
             return Json(new ResultModel(true, totalMsg), JsonRequestBehavior.AllowGet);
-           
+
         }
+
+        #region 用户自定义方法
+
+        private bool IsShowAuditBtn(OrderListModel orderModel)
+        {
+            //只有在已完成订单并且已上传完小票的情况下显示该按钮
+            if (orderModel != null && /*已完成*/ orderModel.FinishAll == 1 && /*订单未分账*/ orderModel.IsJoinWithdraw == 0
+                && orderModel.IsEnable == 1)
+            {
+                return true;
+            }
+            return false;
+        }
+        #endregion
     }
 }

@@ -125,9 +125,14 @@ namespace Ets.Model.DomainModel.Clienter
         public bool HasMessage { get; set; }
 
         /// <summary>
-        /// 是否显示物流公司金额0不显示，1显示
+        /// 是否显示记账模块0不显示，默认1显示
         /// </summary>
-        //public int IsDisplayDeliveryMoney { get; set; }
+        public int IsShowAccount { get; set; }
+
+        /// <summary>
+        /// 是否接收推送消息 0不接收 默认1接收
+        /// </summary>
+        public int IsReceivePush { get; set; }
 
     }
 }

@@ -25,13 +25,5 @@ namespace Ets.Service.IProvider.WtihdrawRecords
         /// <returns></returns>
         NewPagedList<IncomeModel> GetMyIncomeList(MyIncomeSearchCriteria criteria);
 
-        ///// <summary>
-        ///// 增加一条流水记录
-        ///// 平扬 
-        ///// 2015.3.23
-        ///// </summary>
-        ///// <param name="model"></param>
-        ///// <returns></returns>
-        //bool AddRecords(WithdrawRecordsModel model); 
     }
 }

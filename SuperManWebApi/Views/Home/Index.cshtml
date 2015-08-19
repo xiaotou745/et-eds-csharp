@@ -107,23 +107,23 @@
     //    error: function () { }
     //});
 
-    $.ajax({
-        type: 'POST',
-        dataType: 'json',
-        url: '/Order/Complete',
-        data: {
-            "userId": 3231,
-            "orderId": 145167,
-            "orderNo": "2092150813155518704",
-            "pickupCode": "",
-            "version": "1.0",
-            "longitude":0.201,
-            "latitude":0.202            
-        },
-        success: function (data) {
-            console.log(data);
-        }
-    });
+    //$.ajax({
+    //    type: 'POST',
+    //    dataType: 'json',
+    //    url: '/Order/Complete',
+    //    data: {
+    //        "userId": 3231,
+    //        "orderId": 145167,
+    //        "orderNo": "2092150813155518704",
+    //        "pickupCode": "",
+    //        "version": "1.0",
+    //        "longitude":0.201,
+    //        "latitude":0.202            
+    //    },
+    //    success: function (data) {
+    //        console.log(data);
+    //    }
+    //});
 
     //$.ajax({
     //    type: 'get',
@@ -291,8 +291,8 @@
     //    dataType: 'json',
     //    url: '/BusinessAPI/PostLogin_B',
     //    data: {
-    //        "phoneNo": "13811247642",
-    //        "passWord": "123456"
+    //        "phoneNo": "13520474920",
+    //        "passWord": "12857C64F38CC7F60FCE8D0FACBFFC83"
     //    },
     //    success: function (data) {
     //        console.log(data);
@@ -859,6 +859,26 @@
     //        data: {
     //            "ClienterId": "114",
     //            "version": "123"
+    //        },
+    //        success: function (data) {
+    //            console.log(data);
+    //        },
+    //        error: function () { }
+    //    });
+    //});
+
+
+    //$(function () {
+    //    $.ajax({
+    //        type: 'POST',
+    //        dataType: 'json',
+    //        url: '/Complain/BusinessComplainClienter',
+    //        data: {
+    //            "ComplainId": 260,
+    //            "ComplainedId":130,
+    //            "OrderId": "3",
+    //            "OrderNo": "260150818191251827",
+    //            "Reason":"行行行行行行"
     //        },
     //        success: function (data) {
     //            console.log(data);

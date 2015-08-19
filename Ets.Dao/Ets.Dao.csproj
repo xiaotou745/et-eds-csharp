@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Account\AccountDao.cs" />
+    <Compile Include="Account\AccountLoginLogDao.cs" />
     <Compile Include="Business\BusinessClienterRelationDao.cs" />
     <Compile Include="Clienter\CrossShopStatisticLogDao.cs" />
     <Compile Include="Clienter\ClienterDao.cs" />
@@ -57,6 +58,7 @@
     <Compile Include="Common\TokenDao.cs" />
     <Compile Include="Common\YeePay\YeePayRecordDao.cs" />
     <Compile Include="Common\YeePay\YeePayUserDao.cs" />
+    <Compile Include="Complain\ComplainDao.cs" />
     <Compile Include="DaoBase.cs" />
     <Compile Include="DeliveryCompany\DeliveryCompanyDao.cs" />
     <Compile Include="DeliveryManager\DeliveryManagerDao.cs" />

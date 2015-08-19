@@ -59,6 +59,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Account\AccountLoginLogProvider.cs" />
     <Compile Include="Account\AccountProvider.cs" />
     <Compile Include="Authority\AuthorityMenuProvider.cs" />
     <Compile Include="Business\BusinessClienterRelationProvider.cs" />
@@ -78,6 +79,7 @@
     <Compile Include="Common\HomeCountProvider.cs" />
     <Compile Include="Common\ServicePhone.cs" />
     <Compile Include="Common\TestUserProvider.cs" />
+    <Compile Include="Complain\ComplainProvider.cs" />
     <Compile Include="DeliveryCompany\DeliveryCompanyProvider.cs" />
     <Compile Include="DeliveryManager\DeliveryManagerProvider.cs" />
     <Compile Include="Finance\BusinessBalanceRecordProvider.cs" />

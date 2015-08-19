@@ -8,6 +8,7 @@ using ETS.Data.PageData;
 using Ets.Model.DomainModel.Business;
 using Ets.Model.ParameterModel.Order;
 using Ets.Model.DomainModel.Order;
+using Ets.Model.ParameterModel.Common;
 
 namespace Ets.Service.IProvider.Clienter
 {
@@ -34,7 +35,7 @@ namespace Ets.Service.IProvider.Clienter
         /// </summary>
         /// <param name="model">用户名称，用户密码</param>
         /// <returns>用户信息</returns>
-        ResultModel<ClienterLoginResultModel> PostLogin_C(LoginCPM model);
+        ResultModel<ClienterLoginResultModel> PostLogin_C(ParamModel model);//LoginCPM
 
         /// <summary>
         /// 获取当前配送员的流水信息
@@ -52,7 +53,7 @@ namespace Ets.Service.IProvider.Clienter
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        ResultModel<ClienterModifyPwdResultModel> PostForgetPwd_C(Ets.Model.DataModel.Clienter.ModifyPwdInfoModel model);
+        ResultModel<ClienterModifyPwdResultModel> PostForgetPwd_C(ParamModel model);
         /// <summary>
         /// 判断 骑士端 手机号 是否注册过
         /// wc
@@ -73,7 +74,7 @@ namespace Ets.Service.IProvider.Clienter
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        ResultModel<ClientRegisterResultModel> PostRegisterInfo_C(ClientRegisterInfoModel model);
+        ResultModel<ClientRegisterResultModel> PostRegisterInfo_C(ParamModel model);//ClientRegisterResultModel  ClientRegisterInfoModel
         /// <summary>
         /// 抢单 平扬 2015.3.30
         /// </summary>
@@ -123,10 +124,7 @@ namespace Ets.Service.IProvider.Clienter
         /// wc 
         /// 修改人：胡灵波
         /// 2015年8月13日 18:13:55
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="orderNo"></param>
-        /// <param name="pickupCode">取货码 可空</param>
+        /// </summary> 
         /// <returns></returns>
         FinishOrderResultModel FinishOrder(OrderCompleteModel parModel);
 
@@ -177,13 +175,6 @@ namespace Ets.Service.IProvider.Clienter
         /// <param name="uploadReceiptModel"></param>
         /// <returns></returns>
         OrderOther GetReceipt(int orderId);
-
-        /// <summary>
-        /// 根据订单Id获取小票信息
-        /// </summary>
-        /// <param name="orderId"></param>
-        /// <returns></returns>
-        order GetOrderInfoByOrderId(int orderId);
 
         /// <summary>
         ///  C端抢单
@@ -263,6 +254,41 @@ namespace Ets.Service.IProvider.Clienter
         /// <param name="model"></param>
         /// <returns></returns>
         DealResultInfo ModifyClienterDetail(ClienterDetailModel model);
+
+        /// <summary>
+        /// 更新骑士余额
+        /// 胡灵波
+        /// 2015年8月13日 09:53:33
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="myOrderInfo"></param>
+        void UpdateCAccountBalance(ClienterMoneyPM clienterMoneyPM);
+
+        /// <summary>
+        /// 更新骑士可提现余额
+        /// 胡灵波
+        /// 2015年8月13日 10:38:31
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="myOrderInfo"></param>
+        void UpdateCAllowWithdrawPrice(ClienterMoneyPM clienterMoneyPM);
+
+        /// <summary>
+        /// 更新骑士余额、可提现余额      
+        /// 胡灵波
+        /// 2015年8月13日 18:11:23
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="myOrderInfo"></param>
+        void UpdateCBalanceAndWithdraw(ClienterMoneyPM clienterMoneyPM);
+        /// <summary>
+        /// 设置骑士是否接受推送     
+        /// 茹化肖
+        /// 2015年8月19日16:48:30
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="myOrderInfo"></param>
+        bool SetReceivePush(ClienterReceivePushModel model);
 
     }
 }

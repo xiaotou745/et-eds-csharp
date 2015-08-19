@@ -66,6 +66,7 @@
     <Compile Include="Common\YeePay\YeePayRecord.cs" />
     <Compile Include="Common\YeePay\YeePayUser.cs" />
     <Compile Include="Common\YeePay\YeePayUserBalanceRecord.cs" />
+    <Compile Include="DataModel\Account\AccountLoginLogModel.cs" />
     <Compile Include="DataModel\Authority\AccountCityRelation.cs" />
     <Compile Include="DataModel\Authority\AccountDcRelation.cs" />
     <Compile Include="DataModel\Business\BusiModifyResultModelDM.cs" />
@@ -80,12 +81,14 @@
     <Compile Include="DataModel\Business\BusinessRechargeModel.cs" />
     <Compile Include="DataModel\Business\BusinessThirdRelationModel.cs" />
     <Compile Include="DataModel\Business\ClienterBindOptionLog.cs" />
+    <Compile Include="DataModel\Clienter\CilenterPushDateModel.cs" />
     <Compile Include="DataModel\Clienter\ClienterOptionLog.cs" />
     <Compile Include="DataModel\Clienter\ClienterCrossShopLogModel.cs" />
     <Compile Include="DataModel\Clienter\ClienterLocation.cs" />
     <Compile Include="DataModel\Clienter\ClienterPicModel.cs" />
     <Compile Include="DataModel\Clienter\CrossShopStatisticLogModel.cs" />
     <Compile Include="DataModel\Common\ExportSqlManage.cs" />
+    <Compile Include="DataModel\Complain\ComplainModel.cs" />
     <Compile Include="DataModel\DeliveryCompany\DeliveryCompanyModel.cs" />
     <Compile Include="DataModel\Finance\ClienterAllowWithdrawRecord.cs" />
     <Compile Include="DataModel\Finance\ImprestBalanceRecord.cs" />
@@ -122,6 +125,7 @@
     <Compile Include="DomainModel\Business\BusinessExpressRelationModel.cs" />
     <Compile Include="DomainModel\Clienter\ClienterUpdateModel.cs" />
     <Compile Include="DomainModel\Common\APPVersionModel.cs" />
+    <Compile Include="DomainModel\Complain\ComplainDomain.cs" />
     <Compile Include="DomainModel\DeliveryCompany\BatchImportClienterExcelDM.cs" />
     <Compile Include="DomainModel\Area\DMAreaCodeInfo.cs" />
     <Compile Include="DomainModel\Authority\AccountCityRelationModel.cs" />
@@ -269,6 +273,7 @@
     <Compile Include="ParameterModel\Business\UpdateBusinessInfoBPM.cs" />
     <Compile Include="ParameterModel\Business\BusinessMoneyPM.cs" />
     <Compile Include="ParameterModel\Clienter\ClienterMoneyPM.cs" />
+    <Compile Include="ParameterModel\Clienter\ClienterReceivePushModel.cs" />
     <Compile Include="ParameterModel\Clienter\ClienterRecordsPM.cs" />
     <Compile Include="ParameterModel\Clienter\ClienterPM.cs" />
     <Compile Include="ParameterModel\Clienter\ChangeWorkStatusPM.cs" />
@@ -285,6 +290,9 @@
     <Compile Include="ParameterModel\Common\OpenCitySearchCriteria.cs" />
     <Compile Include="ParameterModel\Clienter\UploadReceiptModel.cs" />
     <Compile Include="ParameterModel\Clienter\UploadReceiptResultModel.cs" />
+    <Compile Include="ParameterModel\Common\ParamModel.cs" />
+    <Compile Include="ParameterModel\Complain\ComplainCriteria.cs" />
+    <Compile Include="ParameterModel\Complain\ComplainParameter.cs" />
     <Compile Include="ParameterModel\DeliveryCompany\DoBatchImportClienterPM.cs" />
     <Compile Include="ParameterModel\DeliveryCompany\DeliveryCompanyCriteria.cs" />
     <Compile Include="ParameterModel\Finance\BankCriteria.cs" />
@@ -297,6 +305,7 @@
     <Compile Include="ParameterModel\Finance\CardModifyPM.cs" />
     <Compile Include="ParameterModel\Finance\CardModifyBPM.cs" />
     <Compile Include="ParameterModel\Finance\CardModifyCPM.cs" />
+    <Compile Include="ParameterModel\Finance\ClienterAllowWithdrawRecordPM.cs" />
     <Compile Include="ParameterModel\Finance\ClienterBalanceRecordPM.cs" />
     <Compile Include="ParameterModel\Finance\ClienterBalanceRecordSerchCriteria.cs" />
     <Compile Include="ParameterModel\Finance\ClienterFinanceAccountPM.cs" />

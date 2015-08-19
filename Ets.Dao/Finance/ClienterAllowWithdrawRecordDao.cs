@@ -48,6 +48,52 @@ select @@IDENTITY";
             return ParseHelper.ToLong(result);
         }
 
+        /// <summary>
+        /// 查询对象
+        /// </summary>
+        public IList<ClienterAllowWithdrawRecord> Query(ClienterAllowWithdrawRecordPM clienterAllowWithdrawRecordPM)
+        {
+            string condition = BindQueryCriteria(clienterAllowWithdrawRecordPM);
+            IList<ClienterAllowWithdrawRecord> models = new List<ClienterAllowWithdrawRecord>();
+            string querysql = @"
+select  Id,ClienterId,Amount,Status,Balance,RecordType,Operator,OperateTime,WithwardId,RelationNo,Remark,IsEnable
+from  ClienterAllowWithdrawRecord (nolock)" + condition;
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql));
+            if (DataTableHelper.CheckDt(dt))
+            {
+                models = DataTableHelper.ConvertDataTableList<ClienterAllowWithdrawRecord>(dt);
+            }
+            return models;
+        }
+
+
+        #region  Other Members
+
+        /// <summary>
+        /// 构造查询条件
+        /// </summary>
+        public static string BindQueryCriteria(ClienterAllowWithdrawRecordPM clienterAllowWithdrawRecordPM)
+        {
+            var stringBuilder = new StringBuilder(" where 1=1 ");
+            if (clienterAllowWithdrawRecordPM == null)
+            {
+                return stringBuilder.ToString();
+            }
+
+            //TODO:在此加入查询条件构建代码
+            if (clienterAllowWithdrawRecordPM.ClienterId > 0)
+            {
+                stringBuilder.Append(" and ClienterId=" + clienterAllowWithdrawRecordPM.ClienterId);
+            }
+
+            stringBuilder.Append(" order by id ");
+
+            return stringBuilder.ToString();
+        }
+
+        #endregion
+
+
     }
 }
 

@@ -12,6 +12,10 @@ namespace Ets.Model.ParameterModel.Business
     public class LoginModel
     {
         /// <summary>
+        /// MD5加密后的手机号
+        /// </summary>
+        //public string aesPhoneNo { get; set; }
+        /// <summary>
         /// 登录手机号
         /// </summary>
         public string phoneNo { get; set; }

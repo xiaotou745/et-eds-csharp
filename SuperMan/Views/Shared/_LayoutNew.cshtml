@@ -4,102 +4,119 @@
 @using ETS.Util
 @using SuperMan.App_Start
 @using Ets.Service.IProvider.AuthorityMenu;
+@using Ets.Service.Provider.Account
 @{
     Layout = null;
     IAuthorityMenuProvider iauthority = new AuthorityMenuProvider();
     List<AuthorityMenuModel> menus = iauthority.GetAllMenuList(); //所有菜单权限
     IList<AuthorityMenuModel> mymenus = new Ets.Service.Provider.Account.AccountProvider().GetAuth(UserContext.Current.Id);
+    int pwdtime = new Ets.Service.Provider.Account.AccountProvider().PasswordTime(UserContext.Current.Id);
 }
 <!DOCTYPE html>
 
 <html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>管理后台</title>
-    <link href="~/Content/fromwangying/admin.css" rel="stylesheet" />
-    <link href="~/Content/css/bootstrap.css" rel="stylesheet" />
-    <link href="~/Content/css/font-awesome.min.css" rel="stylesheet" />
-    <link href="~/Content/pager.css" rel="stylesheet" />
-    @Styles.Render("~/css")
-    <link rel="shortcut icon" type="image/ico" href="/favicon.ico">
-    @RenderSection("styles", false)
-    <script type="text/javascript" src="/Scripts/jquery-1.11.1.min.js"></script>
-    <script type="text/javascript" src="/Scripts/common/admin.js"></script>
-    <script src="~/Scripts/bootstrap.min.js"></script>
-    <script src="~/Scripts/bootbox.js"></script>
-    <script type="text/javascript" src="~/Scripts/common/webExpress.js"></script>
-    <script type="text/javascript" src="~/Scripts/common/usa.js"></script>
-    <script type="text/javascript" src="~/Scripts/common/Pager.js"></script>
-    <script type="text/javascript" src="~/Scripts/common/NewPager.js"></script>
-    <script type="text/javascript" src="~/Scripts/common/webExpress.utility.js"></script>
-    <script type="text/javascript" src="~/Scripts/common/webExpress.utility.ajax.js"></script>
-    <script type="text/javascript" src="~/Scripts/usaArea.js"></script>
-    <script type="text/javascript" src="~/Scripts/usaarea.retriever.js"></script>
-    <script type="text/javascript" src="~/Scripts/html5shiv-printshiv.js"></script>
-        </head>
+    <head lang="en">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>管理后台</title>
+        <link href="~/Content/fromwangying/admin.css" rel="stylesheet" />
+        <link href="~/Content/css/bootstrap.css" rel="stylesheet" />
+        <link href="~/Content/css/font-awesome.min.css" rel="stylesheet" />
+        <link href="~/Content/pager.css" rel="stylesheet" />
+        @Styles.Render("~/css")
+        <link rel="shortcut icon" type="image/ico" href="/favicon.ico">
+        @RenderSection("styles", false)
+        <script type="text/javascript" src="/Scripts/jquery-1.11.1.min.js"></script>
+        <script type="text/javascript" src="/Scripts/common/admin.js"></script>
+        <script src="~/Scripts/bootstrap.min.js"></script>
+        <script src="~/Scripts/bootbox.js"></script>
+        <script type="text/javascript" src="~/Scripts/common/webExpress.js"></script>
+        <script type="text/javascript" src="~/Scripts/common/usa.js"></script>
+        <script type="text/javascript" src="~/Scripts/common/Pager.js"></script>
+        <script type="text/javascript" src="~/Scripts/common/NewPager.js"></script>
+        <script type="text/javascript" src="~/Scripts/common/webExpress.utility.js"></script>
+        <script type="text/javascript" src="~/Scripts/common/webExpress.utility.ajax.js"></script>
+        <script type="text/javascript" src="~/Scripts/usaArea.js"></script>
+        <script type="text/javascript" src="~/Scripts/usaarea.retriever.js"></script>
+        <script type="text/javascript" src="~/Scripts/html5shiv-printshiv.js"></script>
+    </head>
         <body>
             <div class="container-fluid">
                 <header class="hd clearfix">
                     <div class="logo">
                         <div class="toptitle">
                             e代送管理后台
+                            <input type="hidden" id="pwdtime" value="@pwdtime" />
+                            <script>
+                                var falgIndex = $('#pwdtime').val();
+                                // console.log(falg);
+                                var urlIndex = window.location.href;
+                                //console.log(url);
+                                //console.log(url.indexOf("ChangePassword"));
+
+                                //需要修改密码且当前页不是密码修改页
+                                if ((falgIndex == 1 || falgIndex == '1') && (urlIndex.indexOf("ChangePassword") == -1)) {
+                                    alert('您的密码已超过密码策略有效期(30天),将跳转密码修改页面修改密码!');
+                                    window.location.href = "/Account/ChangePassword";
+                                }
+                            </script>
+
                         </div>
                     </div>
                     <div class="loginInfo" style="width: 460px;">
-                        您好： <strong>@UserContext.Current.Name</strong>，欢迎使用<span class="line">|</span><a href="/Account/LogOff" class="importMsg">退出</a>
+                        您好： <strong>@UserContext.Current.Name</strong>，欢迎使用<span class="line">|</span><a href="/Account/LogOff" class="importMsg">退出</a>|<a href="/Account/ChangePassword" class="importMsg">修改密码</a>
                     </div>
                 </header>
                 <div class="main-container">
                     <div class="sidebar">
                         <ul class="nav nav-list">
                             @if (SuperMan.App_Start.UserContext.Current.HasAuthority(50))
-                    {
-                        <li>
+                            {
+                                <li>
                                     <a href="/HomeCount/Index">
                                         <i class="homeicon"></i>
                                         <span class="menu-text">后台首页</span>
                                     </a>
                                 </li>
-                    }
-                            @{
-                        if (menus != null)
-                        {
-                            List<AuthorityMenuModel> partMenus = (from m in menus where m.ParId == 0 select m).ToList();
-                            foreach (var pMenu in partMenus)
-                            {
-                                if (mymenus==null)
-                                {
-                                    continue;
-                                }
-                                List<AuthorityMenuModel> childMenus = (from m in mymenus where m.ParId == pMenu.Id && pMenu.IsButton == false select m).ToList();
-                                if (childMenus.Count<=0)
-                                {
-                                    continue;
-                                }
-                                <li>
-                                          <a class="dropdown-toggle" href="javascript:void(0);">
-                                              <i class="skuicon"></i>
-                                              <span class="menu-text">@pMenu.MenuName</span>
-                                              <b class="arrow icon-angle-down"></b>
-                                          </a>
-                                          <ul class="submenu">
-                                              @{
-
-                                          if (childMenus!=null && childMenus.Count > 0)
-                                          {
-                                              foreach(var cMenu in childMenus)
-                                              {
-                                                  <li><a href="@cMenu.Url" data-url-def="#">@cMenu.MenuName</a></li>
-                                              }
-                                          }
-}
-                                          </ul> </li>
                             }
-                        }
+                            @{
+                                if (menus != null)
+                                {
+                                    List<AuthorityMenuModel> partMenus = (from m in menus where m.ParId == 0 select m).ToList();
+                                    foreach (var pMenu in partMenus)
+                                    {
+                                        if (mymenus==null)
+                                        {
+                                            continue;
+                                        }
+                                        List<AuthorityMenuModel> childMenus = (from m in mymenus where m.ParId == pMenu.Id && pMenu.IsButton == false select m).ToList();
+                                        if (childMenus.Count<=0)
+                                        {
+                                            continue;
+                                        }
+                                        <li>
+                                            <a class="dropdown-toggle" href="javascript:void(0);">
+                                                <i class="skuicon"></i>
+                                                <span class="menu-text">@pMenu.MenuName</span>
+                                                <b class="arrow icon-angle-down"></b>
+                                            </a>
+                                            <ul class="submenu">
+                                                @{
 
-                    }
+                                                    if (childMenus!=null && childMenus.Count > 0)
+                                                    {
+                                                        foreach(var cMenu in childMenus)
+                                                        {
+                                                            <li><a href="@cMenu.Url" data-url-def="#">@cMenu.MenuName</a></li>
+                                                        }
+                                                    }
+                                                }
+                                            </ul> </li>
+                                    }
+                                }
+
+                            }
                         </ul>
                         <div id="sidebar-collapse" class="sidebar-collapse">
                             <i data-icon2="icon-double-angle-right" data-icon1="icon-double-angle-left" class="icon-double-angle-left"></i>

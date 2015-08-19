@@ -32,5 +32,9 @@ namespace Ets.Model.ParameterModel.Business
         /// 商户余额
         /// </summary>
         public decimal BalancePrice { get; set; }
+        /// <summary>
+        /// 是否允许现金支付 1允许 0不允许
+        /// </summary>
+        public int IsAllowCashPay { get; set; }
     }
 }
