@@ -5,7 +5,7 @@ ALTER TABLE dbo.account ADD LastChangeTime DATETIME NOT NULL DEFAULT ('2015-07-0
 go 
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description',
-  @value=N'订单是否需要审核 0不需要 1 需要 默认1' ,
+  @value=N'密码最后修改时间' ,
   @level0type=N'SCHEMA',
   @level0name=N'dbo', 
   @level1type=N'TABLE',
