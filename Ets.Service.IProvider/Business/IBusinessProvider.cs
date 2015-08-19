@@ -65,7 +65,7 @@ namespace Ets.Service.IProvider.Business
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        ResultModel<BusiRegisterResultModel> PostRegisterInfo_B(RegisterInfoPM model);
+        ResultModel<BusiRegisterResultModel> PostRegisterInfo_B(ParamModel model);//RegisterInfoPM
 
         /// <summary>
         /// B端登录

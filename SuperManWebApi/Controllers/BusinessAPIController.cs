@@ -43,7 +43,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="model">注册用户基本数据信息</param>
         /// <returns></returns>        
         [HttpPost]
-        public ResultModel<BusiRegisterResultModel> PostRegisterInfo_B(RegisterInfoPM model)
+        public ResultModel<BusiRegisterResultModel> PostRegisterInfo_B(ParamModel model)
         {
             BusinessProvider bprovider = new BusinessProvider();
             return bprovider.PostRegisterInfo_B(model);

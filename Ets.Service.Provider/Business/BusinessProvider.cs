@@ -240,8 +240,9 @@ namespace Ets.Service.Provider.Business
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public ResultModel<BusiRegisterResultModel> PostRegisterInfo_B(RegisterInfoPM model)
+        public ResultModel<BusiRegisterResultModel> PostRegisterInfo_B(ParamModel ParModel)
         {
+            RegisterInfoPM model = JsonHelper.JsonConvertToObject<RegisterInfoPM>(AESApp.AesDecrypt(ParModel.data));
             var redis = new ETS.NoSql.RedisCache.RedisCache();
             string key = string.Concat(RedissCacheKey.RegisterCount_B, model.phoneNo);
             int excuteCount = redis.Get<int>(key);

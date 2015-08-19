@@ -157,7 +157,7 @@ namespace ETS.Util
             int i;
             for (i = 0; i < num; i++)
             {
-                code += str.Substring(rd.Next(0, str.Length), 1);
+                code += str.Substring(rd.Next(0, str.Length-1), 1);
             }
             return code;
         }
