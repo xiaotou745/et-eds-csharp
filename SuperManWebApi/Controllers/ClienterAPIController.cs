@@ -55,7 +55,11 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>        
-        public ResultModel<string> PostLogin_C(ParamModel model)//LoginCPM  ClienterLoginResultModel
+        //public ResultModel<string> PostLogin_C(ParamModel model)//LoginCPM  ClienterLoginResultModel
+        //{
+        //    return new ClienterProvider().PostLogin_C(model);
+        //}
+        public ResultModel<ClienterLoginResultModel> PostLogin_C(LoginCPM model)//LoginCPM  ClienterLoginResultModel
         {
             return new ClienterProvider().PostLogin_C(model);
         }

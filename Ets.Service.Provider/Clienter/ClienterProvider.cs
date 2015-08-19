@@ -208,24 +208,24 @@ namespace Ets.Service.Provider.Clienter
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public ResultModel<string> PostLogin_C(ParamModel parModel)
+        public ResultModel<ClienterLoginResultModel> PostLogin_C(LoginCPM model)
         {
             try
             {
-                LoginCPM model = JsonHelper.JsonConvertToObject<LoginCPM>(AESApp.AesDecrypt(parModel.data));
+                //LoginCPM model = JsonHelper.JsonConvertToObject<LoginCPM>(AESApp.AesDecrypt(parModel.data));
                 var redis = new RedisCache();
                 string key = string.Concat(RedissCacheKey.LoginCount_C, model.phoneNo);
                 int excuteCount = redis.Get<int>(key);
                 if (excuteCount >= 10)
                 {
-                    return ResultModel<string>.Conclude(LoginModelStatus.CountError);
+                    return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.CountError);
                 }
                 redis.Set(key, excuteCount + 1, new TimeSpan(0, 5, 0));
 
                 ClienterLoginResultModel resultModel = clienterDao.PostLogin_CSql(model);
-                if (resultModel == null || !AESApp.CheckAES(model.phoneNo, model.aesPhoneNo))
+                if (resultModel == null)// || !AESApp.CheckAES(model.phoneNo, model.aesPhoneNo)
                 {
-                    return ResultModel<string>.Conclude(LoginModelStatus.InvalidCredential);
+                    return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential);
                 }
                 if (resultModel.DeliveryCompanyId > 0)
                 {
@@ -243,12 +243,12 @@ namespace Ets.Service.Provider.Clienter
                        Appkey = resultModel.Appkey.ToString()
                    });
                 resultModel.Token = token;
-                string resultStr = AESApp.AesDecrypt(JsonHelper.JsonConvertToString(resultModel));
-                return ResultModel<string>.Conclude(LoginModelStatus.Success, resultStr);
+                //string resultStr = AESApp.AesDecrypt(JsonHelper.JsonConvertToString(resultModel));
+                return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.Success, resultModel);
             }
             catch (Exception ex)
             {
-                return ResultModel<string>.Conclude(LoginModelStatus.InvalidCredential);
+                return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.InvalidCredential);
                 throw;
             }
         }
