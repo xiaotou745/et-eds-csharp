@@ -888,6 +888,7 @@ SELECT cwf.[ClienterId]
       ,cwf.DealCount
       ,cwf.Id WithwardId
       ,cwf.WithwardNo WithwardNo
+      ,cwf.PayFailedReason
   FROM ClienterWithdrawForm cwf with(nolock)
   JOIN dbo.ClienterFinanceAccount cfa WITH(NOLOCK) ON cfa.ClienterId=cwf.ClienterId and cwf.Status=@cwfStatus and cwf.DealStatus=@DealStatus
   LEFT JOIN ( SELECT tblypu.UserId,tblypu.Ledgerno,tblypu.BankName,tblypu.BankAccountNumber,tblypu.BalanceRecord,tblypu.YeeBalance

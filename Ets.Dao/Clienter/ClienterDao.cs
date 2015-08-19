@@ -1729,7 +1729,40 @@ where  Id=@Id ";
             parm.Add("AllowWithdrawPrice", DbType.Decimal, 18).Value = model.Amount;
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
-
+        /// <summary>
+        /// 获取指定距离内的骑士列表
+        /// danny-20150819
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public IList<clienter> GetPushRadiusClienterList(BusinessExpressRelationModel model)
+        {
+            string sql = @"  
+SELECT c.PhoneNo
+      ,c.TrueName
+      ,c.Id
+FROM ( SELECT cl.ClienterId
+			 ,cl.CreateTime
+			 ,cl.Latitude
+			 ,cl.Longitude
+	   FROM (
+			   SELECT ClienterId,MAX(ID) ID
+			   FROM ClienterLocation  WITH(NOLOCK)
+			   WHERE CreateTime>DATEADD(MINUTE,-10,GetDate())
+			   GROUP BY ClienterId) tbl
+	  JOIN ClienterLocation  cl WITH(NOLOCK) ON cl.ID = tbl.ID) tblcl
+JOIN clienter c WITH(NOLOCK) ON c.Id=tblcl.ClienterId
+WHERE c.Status=1 
+	AND c.WorkStatus=1
+    AND ISNULL(c.DeliveryCompanyId,0)=0
+	AND  geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tblcl.Latitude,tblcl.Longitude,4326))<=@PushRadius;";
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Latitude", model.Latitude);
+            parm.AddWithValue("@Longitude", model.Longitude);
+            parm.AddWithValue("@PushRadius", ParseHelper.ToInt(model.PushRadius) * 1000);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            return MapRows<clienter>(dt);
+        }
         #endregion
     }
 }

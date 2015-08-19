@@ -98,6 +98,7 @@
     <Compile Include="DataModel\Order\OrderChildFinishModel.cs" />
     <Compile Include="DataModel\Order\OrderChildPayModel.cs" />
     <Compile Include="DataModel\Order\OrderMapDetail.cs" />
+    <Compile Include="DataModel\Order\OrderPushRecord.cs" />
     <Compile Include="DataModel\Order\PayStatusModel.cs" />
     <Compile Include="DataModel\Order\ReceviceAddress.cs" />
     <Compile Include="DataModel\Strategy\StrategyModel.cs" />
