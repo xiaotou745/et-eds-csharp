@@ -1438,8 +1438,11 @@ namespace Ets.Service.Provider.Order
                                                                 RelationNo = orderModel.OrderNo,
                                                                 Remark = "管理后台审核拒绝加可提现"
                                                             });
+
                 //更新订单真实佣金
                 orderDao.UpdateOrderRealOrderCommission(orderModel.Id.ToString(), realOrderCommission);
+                //更新无效订单(状态，原因)
+                orderOtherDao.UpdateOrderIsReal(orderModel.Id, orderOptionModel.OptLog, 2);
                 //更新已提现状态
                 orderOtherDao.UpdateJoinWithdraw(orderModel.Id);
                 //更新审核状态

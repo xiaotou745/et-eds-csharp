@@ -46,6 +46,7 @@ using Ets.Service.IProvider.Business;
 using Ets.Service.Provider.Business;
 using Ets.Model.ParameterModel.Common;
 using ETS.Security;
+using ETS;
 namespace Ets.Service.Provider.Clienter
 {
     public class ClienterProvider : IClienterProvider
@@ -840,18 +841,6 @@ namespace Ets.Service.Provider.Clienter
         }
 
         /// <summary>
-        /// 根据订单id获取订单信息 和 小票相关
-        /// 王超
-        /// 2015年5月6日 20:40:05
-        /// </summary>
-        /// <param name="orderId"></param>
-        /// <returns></returns>
-        public order GetOrderInfoByOrderId(int orderId)
-        {
-            return orderDao.GetOrderInfoByOrderId(orderId);
-        }
-
-        /// <summary>
         ///  C端抢单
         ///  窦海超
         ///  2015年5月6日 20:40:56
@@ -1086,6 +1075,7 @@ namespace Ets.Service.Provider.Clienter
             return dealResultInfo;
         }
 
+        #region 更新其实余额、可提现余额
         /// <summary>
         /// 更新骑士余额
         /// 胡灵波
@@ -1192,8 +1182,8 @@ namespace Ets.Service.Provider.Clienter
             });
 
         }
-
-
+        #endregion    
+        
         #region  用户自定义方法 金额
         /// <summary>
         /// 更新骑士金额
@@ -1405,6 +1395,154 @@ namespace Ets.Service.Provider.Clienter
         }
         #endregion
 
+        #region 用户自定义方法  骑士账号错误信息
+          /// <summary>
+        /// 获取获取骑士账号错误信息
+        /// 胡灵波
+        /// 2015年8月19日 13:18:10
+        /// </summary>
+        public void GetAccountErr()
+        {
+            var emailSendTo = Config.ConfigKey("EmailSendTo");
+            var copyTo = Config.ConfigKey("CopyTo");
+            var sbEmail = new StringBuilder("异常数据：");
+
+       
+            IList<ClienterModel> clienterList = clienterDao.QueryIdList();                  
+            for (int k = 0; k < 10; k++)
+            {
+                int id = clienterList[k].Id;
+                string trueName = clienterList[k].TrueName;
+                string phoneNo = clienterList[k].PhoneNo;
+
+                //获取骑士账号错误信息
+                StringBuilder sbClienterErr = GetClienterErr(id);
+                //获取骑士余额流水错误信息
+                StringBuilder sbCBalanceRecordErr = GetCBalanceRecordErr(id);
+                //获取骑士可提现余额流水错误信息
+                StringBuilder sbCAWthdrawRecordErr = GetCAWthdrawRecordErr(id);
+                //获取FinishAll错误的订单
+                StringBuilder sbFinishAllErr = GetFinishAllErr(id);                
+                if (sbClienterErr.Length > 0 ||
+                    sbCBalanceRecordErr.Length > 0 ||
+                    sbCAWthdrawRecordErr.Length > 0 ||
+                    sbFinishAllErr.Length>0
+                    )
+                {
+                    sbEmail.AppendLine("当前骑士Id:" + id.ToString() + " 真实姓名：" + trueName + " 联系电话：" + phoneNo);
+                    sbEmail.Append(sbClienterErr);
+                    sbEmail.Append(sbCBalanceRecordErr);
+                    sbEmail.Append(sbCAWthdrawRecordErr);
+                    sbEmail.Append(sbFinishAllErr);
+                    sbEmail.AppendLine("");
+                }
+            }
+
+            EmailHelper.SendEmailTo(sbEmail.ToString(), emailSendTo, "订单审核数据统计", copyTo, false);           
+            
+        }
+
+        /// <summary>
+        /// 获取骑士账号错误信息
+        /// 胡灵波
+        /// 2015年8月19日 15:59:10
+        /// </summary>
+        /// <param name="clienterId"></param>
+        /// <returns></returns>
+        private StringBuilder GetClienterErr(int clienterId)
+        {
+            StringBuilder strErr = new StringBuilder("");
+            ClienterModel clienterModel = clienterDao.GetClienterById(clienterId);
+            decimal accountBalance = clienterModel.AccountBalance == null ? 0 : clienterModel.AccountBalance.Value;
+            decimal allowWithdrawPrice = clienterModel.AllowWithdrawPrice;
+            if (accountBalance < 0)
+            {
+                strErr.AppendLine("账户余额<0：" + accountBalance);
+            }
+            if (allowWithdrawPrice < 0)
+            {
+                strErr.AppendLine("可提现余额<0：" + allowWithdrawPrice);
+            }
+            if (allowWithdrawPrice > accountBalance)
+            {
+                strErr.AppendLine("可提现余额>提现余额：" + allowWithdrawPrice);
+            }
+
+            return strErr;
+        }
+
+       /// <summary>
+        /// 获取骑士余额流水错误信息
+        /// 胡灵波
+        /// 2015年8月19日 15:59:52
+       /// </summary>
+       /// <param name="clienterId"></param>
+       /// <returns></returns>
+        private StringBuilder GetCBalanceRecordErr(int clienterId)
+        {
+            StringBuilder strErr = new StringBuilder(""); 
+            IList<ClienterBalanceRecord> clienterBalanceRecordList= clienterBalanceRecordDao.Query(new ClienterBalanceRecordPM() { ClienterId = clienterId });
+            for (int i = 0; i < clienterBalanceRecordList.Count-1; i++)     
+            {
+                long id = clienterBalanceRecordList[i].Id;
+                decimal balance = clienterBalanceRecordList[i].Balance+clienterBalanceRecordList[i + 1].Amount;                
+                decimal balance2 = clienterBalanceRecordList[i+1].Balance;
+                if (balance != balance2)
+                {
+                    strErr.AppendLine("骑士余额表id:" + id + " 骑士余额：" + balance + " != 骑士余额:"+balance2);
+                    return strErr;
+                }
+            }
+
+            return strErr;
+        }
+
+        /// <summary>
+        /// 获取骑士可提现余额流水错误信息
+        /// 胡灵波
+        /// 2015年8月19日 15:59:52
+        /// </summary>
+        /// <param name="clienterId"></param>
+        /// <returns></returns>
+        private StringBuilder GetCAWthdrawRecordErr(int clienterId)
+        {
+            StringBuilder strErr = new StringBuilder("");
+            IList<ClienterAllowWithdrawRecord> clienterBalanceRecordList = clienterAllowWithdrawRecordDao.Query(new ClienterAllowWithdrawRecordPM() { ClienterId = clienterId });
+            for (int i = 0; i < clienterBalanceRecordList.Count - 1; i++)
+            {
+                long id = clienterBalanceRecordList[i].Id;
+                decimal balance = clienterBalanceRecordList[i].Balance + clienterBalanceRecordList[i + 1].Amount;
+                decimal balance2 = clienterBalanceRecordList[i + 1].Balance;
+                if (balance != balance2)
+                {
+                    strErr.AppendLine("骑士可提现余额id:" + id + " 骑士可提现余额：" + balance + " != 骑士可提现余额:" + balance2);
+                    return strErr;
+                }
+            }
+
+            return strErr;
+        }
+
+        /// <summary>
+        /// 获取FinishAll错误的订单
+        /// </summary>
+        /// <param name="clienterId"></param>
+        /// <returns></returns>
+        private StringBuilder GetFinishAllErr(int clienterId)
+        {
+            StringBuilder strErr = new StringBuilder("");
+            IList<order> orderList= orderDao.GetFinallErrByClienterId(clienterId);
+            for (int i = 0; i < orderList.Count;i++ )
+            {
+                int id = orderList[i].Id;
+                strErr.AppendLine("订单表id:" + id + "已完成且上传完小票FinishAll=0");
+            }
+            return strErr;
+        }
+        #endregion
+
+        #region 用户自定义方法
+
         /// <summary>
         /// 判断给定骑士是否只显示雇主任务
         /// </summary>
@@ -1439,7 +1577,7 @@ namespace Ets.Service.Provider.Clienter
             return 0;
         }
 
-        /// <summary>
+        #endregion
         /// 设置骑士是否接受推送
         /// </summary>
         /// <param name="model"></param>

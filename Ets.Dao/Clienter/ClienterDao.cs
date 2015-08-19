@@ -752,60 +752,7 @@ where c.Id=@clienterId ";
             orderOther.OrderStatus = oo.OrderStatus;
             orderOther.OrderCreateTime = oo.OrderCreateTime;
             return orderOther;
-        }
-
-        /// <summary>
-        /// 增加一条小票信息
-        /// wc
-        /// </summary>
-        /// <param name="uploadReceiptModel"></param>
-        /// <returns></returns>
-        public OrderOther InsertReceiptInfo(UploadReceiptModel uploadReceiptModel)
-        {
-            OrderOther oo = new OrderOther();
-            ///TODO output?
-            StringBuilder sql = new StringBuilder(@"
-insert into dbo.OrderOther
-    ( OrderId ,
-        NeedUploadCount ,
-        ReceiptPic ,
-        HadUploadCount
-    )
-output Inserted.Id,Inserted.OrderId,Inserted.NeedUploadCount,Inserted.ReceiptPic,Inserted.HadUploadCount
-values ( @OrderId ,
-        @NeedUploadCount , 
-        @ReceiptPic ,
-        @HadUploadCount 
-);");
-            sql.Append(@"
-update  dbo.OrderChild
-set     HasUploadTicket = 1,
-        TicketUrl = @ReceiptPic
-where   OrderId = @OrderId
-        and ChildId = @OrderChildId;
-");
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.Add("@OrderId", SqlDbType.Int).Value = uploadReceiptModel.OrderId;
-            parm.Add("@NeedUploadCount", SqlDbType.Int).Value = uploadReceiptModel.NeedUploadCount;
-            parm.Add("@HadUploadCount", SqlDbType.Int).Value = uploadReceiptModel.HadUploadCount;
-            parm.Add("@ReceiptPic", SqlDbType.VarChar).Value = uploadReceiptModel.ReceiptPic;
-            parm.Add("@OrderChildId", SqlDbType.Int).Value = uploadReceiptModel.OrderChildId;
-            try
-            {
-                DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql.ToString(), parm);
-                var ooList = MapRows<OrderOther>(dt);
-                if (ooList != null && ooList.Count == 1)
-                {
-                    return ooList[0];
-                }
-            }
-            catch (Exception ex)
-            {
-                //LogHelper.LogWriter("插入orderOther表异常：", new { ex = ex });
-                throw ex;
-            }
-            return oo;
-        }
+        }   
 
         /// <summary>
         /// 添加小票信息
@@ -1177,55 +1124,7 @@ where  id = @id";
 
             return isExist;
         }
-        /// <summary>
-        /// 获取骑士详细信息
-        /// danny-20150513
-        /// </summary>
-        /// <param name="clienterId">骑士Id</param>
-        /// <returns></returns>
-        public ClienterDetailModel GetClienterDetailById(string clienterId)
-        {
-            string selSql = @" 
-SELECT   c.[Id],
-         c.[PhoneNo],
-         c.[LoginName],
-         c.[recommendPhone],
-         c.[Password],
-         c.[TrueName],
-         c.[IDCard],
-         c.[PicWithHandUrl],
-         c.[PicUrl],
-         c.[Status],
-         c.[AccountBalance],
-         c.[InsertTime],
-         c.[InviteCode],
-         c.[City],
-         c.[CityId],
-         c.[GroupId],
-         c.[HealthCardID],
-         c.[InternalDepart],
-         c.[ProvinceCode],
-         c.[AreaCode],
-         c.[CityCode],
-         c.[Province],
-         c.[BussinessID],
-         c.[WorkStatus], 
-         c.DeliveryCompanyId,
-         cfa.TrueName AccountName,
-         cfa.AccountNo,
-         cfa.AccountType,
-         cfa.OpenBank,
-         cfa.OpenSubBank
-FROM clienter c WITH(NOLOCK) 
-	Left join ClienterFinanceAccount cfa WITH(NOLOCK) ON c.Id=cfa.ClienterId AND cfa.IsEnable=1
-WHERE c.Id = @ClienterId  ";
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@ClienterId", clienterId);
-            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, selSql, parm));
-            if (dt != null && dt.Rows.Count > 0)
-                return DataTableHelper.ConvertDataTableList<ClienterDetailModel>(dt)[0];
-            return null;
-        }
+
 
         #region  Nested type: ClienterRowMapper
 
@@ -1446,22 +1345,6 @@ where  phoneNo = @phoneNo and TrueName=@TrueName ";
         }
 
         /// <summary>
-        /// 获取骑士电话号码
-        /// </summary>
-        /// <UpdateBy>hulingbo</UpdateBy>
-        /// <UpdateTime>20150617</UpdateTime>
-        /// <param name="sentStatus"></param>
-        /// <returns></returns>
-        public DataTable GetPhoneNoList(string pushCity)
-        {
-            string querysql = @"  
-select id, PhoneNo from dbo.clienter(nolock) 
-where  cityid in(" + pushCity + ")";
-
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, querysql);
-            return dt;
-        }
-        /// <summary>
         /// 查询一个骑士绑定的商家中，是否有任何一个开启了IsEmployerTask
         /// </summary>
         /// <param name="UserId"></param>
@@ -1622,21 +1505,10 @@ SELECT IDENT_CURRENT('clienter')"
             parm.AddWithValue("@OptId", model.OptUserId);
             parm.AddWithValue("@OptName", model.OptUserName);
             parm.AddWithValue("@Platform", 3);
-            parm.Add("@recommendPhone", DbType.String).Value = model.recommendPhone ?? "";
-            //parm.AddWithValue("@Remark", model.Remark);
+            parm.Add("@recommendPhone", DbType.String).Value = model.recommendPhone??"";            
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
-
-        /// <summary>
-        /// 获取骑士图片   add by pengyi 20150709  仅限工具使用
-        /// </summary>
-        public IList<ClienterPicModel> GetClienterPics()
-        {
-            var sql = @"select c.Id,c.PicUrl,c.PicWithHandUrl from [clienter](nolock) as c where c.PicUrl is not null or c.PicWithHandUrl is not null";
-            var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql));
-            var list = ConvertDataTableList<ClienterPicModel>(dt);
-            return list;
-        }
+   
 
         #region 更新骑士余额 可提现
         /// <summary>
@@ -1717,32 +1589,104 @@ where  Id=@Id ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Money", Money);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+        }               
+
+        #endregion
+
+        /// <summary>
+        /// 获取所有已审核通过的用户Id
+        /// 胡灵波
+        /// 2015年8月19日 11:51:56
+        /// </summary>
+        /// <param></param>
+        /// <returns></returns>
+        public IList<ClienterModel> QueryIdList()
+        {              
+            IList<ClienterModel> models = new List<ClienterModel>();
+            string querysql = @"
+select  Id,TrueName,PhoneNo
+from  clienter (nolock) where Status=1 order by id  ";
+
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql));
+            if (DataTableHelper.CheckDt(dt))
+            {
+                models = DataTableHelper.ConvertDataTableList<ClienterModel>(dt);
+            }
+            return models;
         }
 
         /// <summary>
-        /// 更新用户余额以及可提现金额
-        /// 窦海超
-        /// 2015年3月23日 12:47:54
+        /// 获取骑士详细信息
+        /// 注：可以扩展获取其它clienter表相关数据
+        /// 胡灵波
+        /// 2015年8月19日 14:31:35
         /// </summary>
+        /// <param name="clienterId">骑士Id</param>
         /// <returns></returns>
-        public bool UpdateAccountBalanceAndWithdraw(WithdrawRecordsModel model)
+        public ClienterModel GetClienterById(int id)
         {
-            ClienterModel cliterModel = GetUserInfoByUserId(model.UserId);//获取当前用户余额
-            decimal balance = ParseHelper.ToDecimal(cliterModel.AccountBalance, 0);
-            decimal Money = balance + model.Amount;
-            if (Money < 0)//如果提现金额大于当前余额则不能提现
-            {
-                return false;
-            }
-            model.Balance = balance;
-            string sql = @"update dbo.clienter set AccountBalance = @Money , AllowWithdrawPrice=AllowWithdrawPrice+@AllowWithdrawPrice WHERE id=" + model.UserId;
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@Money", Money);
-            parm.Add("AllowWithdrawPrice", DbType.Decimal, 18).Value = model.Amount;
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
+            string querysql = @" 
+select AccountBalance, AllowWithdrawPrice
+from clienter c WITH(NOLOCK) 
+WHERE Id = @id  ";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@id", id);
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
+            if (dt != null && dt.Rows.Count > 0)
+                return DataTableHelper.ConvertDataTableList<ClienterModel>(dt)[0];
+            return null;
         }
 
-        #endregion
+        /// <summary>
+        /// 获取骑士详细信息
+        /// danny-20150513
+        /// </summary>
+        /// <param name="clienterId">骑士Id</param>
+        /// <returns></returns>
+        public ClienterDetailModel GetClienterDetailById(string clienterId)
+        {
+            string selSql = @" 
+SELECT   c.[Id],
+         c.[PhoneNo],
+         c.[LoginName],
+         c.[recommendPhone],
+         c.[Password],
+         c.[TrueName],
+         c.[IDCard],
+         c.[PicWithHandUrl],
+         c.[PicUrl],
+         c.[Status],
+         c.[AccountBalance],
+         c.[InsertTime],
+         c.[InviteCode],
+         c.[City],
+         c.[CityId],
+         c.[GroupId],
+         c.[HealthCardID],
+         c.[InternalDepart],
+         c.[ProvinceCode],
+         c.[AreaCode],
+         c.[CityCode],
+         c.[Province],
+         c.[BussinessID],
+         c.[WorkStatus], 
+         c.DeliveryCompanyId,
+         cfa.TrueName AccountName,
+         cfa.AccountNo,
+         cfa.AccountType,
+         cfa.OpenBank,
+         cfa.OpenSubBank
+FROM clienter c WITH(NOLOCK) 
+	Left join ClienterFinanceAccount cfa WITH(NOLOCK) ON c.Id=cfa.ClienterId AND cfa.IsEnable=1
+WHERE c.Id = @ClienterId  ";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@ClienterId", clienterId);
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, selSql, parm));
+            if (dt != null && dt.Rows.Count > 0)
+                return DataTableHelper.ConvertDataTableList<ClienterDetailModel>(dt)[0];
+            return null;
+        }
+
         /// <summary>
         /// 设置修改骑士是否接受推送
         /// 茹化肖

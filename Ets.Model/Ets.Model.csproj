@@ -304,6 +304,7 @@
     <Compile Include="ParameterModel\Finance\CardModifyPM.cs" />
     <Compile Include="ParameterModel\Finance\CardModifyBPM.cs" />
     <Compile Include="ParameterModel\Finance\CardModifyCPM.cs" />
+    <Compile Include="ParameterModel\Finance\ClienterAllowWithdrawRecordPM.cs" />
     <Compile Include="ParameterModel\Finance\ClienterBalanceRecordPM.cs" />
     <Compile Include="ParameterModel\Finance\ClienterBalanceRecordSerchCriteria.cs" />
     <Compile Include="ParameterModel\Finance\ClienterFinanceAccountPM.cs" />
