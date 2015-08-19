@@ -12,6 +12,10 @@ namespace Ets.Model.ParameterModel.Clienter
     public class LoginCPM
     {
         /// <summary>
+        /// 手机号md5
+        /// </summary>
+        public string aesPhoneNo { get; set; }
+        /// <summary>
         /// 登录手机号
         /// </summary>
         public string phoneNo { get; set; }

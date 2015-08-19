@@ -8,6 +8,7 @@ using ETS.Data.PageData;
 using Ets.Model.DomainModel.Business;
 using Ets.Model.ParameterModel.Order;
 using Ets.Model.DomainModel.Order;
+using Ets.Model.ParameterModel.Common;
 
 namespace Ets.Service.IProvider.Clienter
 {
@@ -34,7 +35,7 @@ namespace Ets.Service.IProvider.Clienter
         /// </summary>
         /// <param name="model">用户名称，用户密码</param>
         /// <returns>用户信息</returns>
-        ResultModel<ClienterLoginResultModel> PostLogin_C(LoginCPM model);
+        ResultModel<ClienterLoginResultModel> PostLogin_C(LoginCPM model);//LoginCPM
 
         /// <summary>
         /// 获取当前配送员的流水信息
