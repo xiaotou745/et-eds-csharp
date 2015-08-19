@@ -81,6 +81,7 @@
     <Compile Include="DataModel\Business\BusinessRechargeModel.cs" />
     <Compile Include="DataModel\Business\BusinessThirdRelationModel.cs" />
     <Compile Include="DataModel\Business\ClienterBindOptionLog.cs" />
+    <Compile Include="DataModel\Clienter\CilenterPushDateModel.cs" />
     <Compile Include="DataModel\Clienter\ClienterOptionLog.cs" />
     <Compile Include="DataModel\Clienter\ClienterCrossShopLogModel.cs" />
     <Compile Include="DataModel\Clienter\ClienterLocation.cs" />
@@ -271,6 +272,7 @@
     <Compile Include="ParameterModel\Business\UpdateBusinessInfoBPM.cs" />
     <Compile Include="ParameterModel\Business\BusinessMoneyPM.cs" />
     <Compile Include="ParameterModel\Clienter\ClienterMoneyPM.cs" />
+    <Compile Include="ParameterModel\Clienter\ClienterReceivePushModel.cs" />
     <Compile Include="ParameterModel\Clienter\ClienterRecordsPM.cs" />
     <Compile Include="ParameterModel\Clienter\ClienterPM.cs" />
     <Compile Include="ParameterModel\Clienter\ChangeWorkStatusPM.cs" />

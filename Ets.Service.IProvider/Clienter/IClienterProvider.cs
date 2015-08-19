@@ -290,7 +290,15 @@ namespace Ets.Service.IProvider.Clienter
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="myOrderInfo"></param>
-        void UpdateCBalanceAndWithdraw(ClienterMoneyPM clienterMoneyPM);   
+        void UpdateCBalanceAndWithdraw(ClienterMoneyPM clienterMoneyPM);
+        /// <summary>
+        /// 设置骑士是否接受推送     
+        /// 茹化肖
+        /// 2015年8月19日16:48:30
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="myOrderInfo"></param>
+        bool SetReceivePush(ClienterReceivePushModel model);
 
     }
 }
