@@ -19,10 +19,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ets.Service.IProvider", "..
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ets.Service.Provider", "..\..\Ets.Service.Provider\Ets.Service.Provider.csproj", "{61C59E53-67C8-44FE-B0AD-1E9025D7E568}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ets.Provider.Tests", "..\..\Ets.Provider.Tests\Ets.Provider.Tests.csproj", "{990E16D5-7356-4EAC-9059-D5A676296AA5}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cn.jpush.api", "C:\Users\haichao\Desktop\jpush-api-csharp-client-3.0.5\jpush-api-csharp-client-3.0.5\cn.jpush.api\cn.jpush.api.csproj", "{E281D457-F259-4F0B-8608-16C81D8AE97B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,14 +57,6 @@ Global
 		{61C59E53-67C8-44FE-B0AD-1E9025D7E568}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{61C59E53-67C8-44FE-B0AD-1E9025D7E568}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{61C59E53-67C8-44FE-B0AD-1E9025D7E568}.Release|Any CPU.Build.0 = Release|Any CPU
-		{990E16D5-7356-4EAC-9059-D5A676296AA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{990E16D5-7356-4EAC-9059-D5A676296AA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{990E16D5-7356-4EAC-9059-D5A676296AA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{990E16D5-7356-4EAC-9059-D5A676296AA5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E281D457-F259-4F0B-8608-16C81D8AE97B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E281D457-F259-4F0B-8608-16C81D8AE97B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E281D457-F259-4F0B-8608-16C81D8AE97B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E281D457-F259-4F0B-8608-16C81D8AE97B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -77,9 +77,9 @@ namespace Ets.Service.Provider.Finance
                     return ResultModel<object>.Conclude(checkbool);
                 }
                 else
-                {                 
+                {
                     string withwardNo = Helper.generateOrderCode(model.ClienterId);
-                    GlobalConfigModel globalConfig = GlobalConfigDao.GlobalConfigGet(0);                  
+                    GlobalConfigModel globalConfig = GlobalConfigDao.GlobalConfigGet(0);
                     long withwardId = _clienterWithdrawFormDao.Insert(new ClienterWithdrawForm()
                               {
                                   WithwardNo = withwardNo,//单号 规则待定
@@ -104,7 +104,7 @@ namespace Ets.Service.Provider.Finance
                                   HandChargeOutlay = model.WithdrawPrice > Convert.ToInt32(globalConfig.ClienterWithdrawCommissionAccordingMoney) ? HandChargeOutlay.EDaiSong : HandChargeOutlay.Private,//手续费支出方
                                   PhoneNo = clienter.PhoneNo, //手机号 //PhoneNo = clienterFinanceAccount.CreateBy, //手机号
                                   HandChargeThreshold = Convert.ToInt32(globalConfig.ClienterWithdrawCommissionAccordingMoney)//手续费阈值
-                              });             
+                              });
 
                     _clienterWithdrawLogDao.Insert(new ClienterWithdrawLog()
                                                 {
@@ -113,7 +113,7 @@ namespace Ets.Service.Provider.Finance
                                                     Remark = "骑士发起提现操作",
                                                     Operator = clienter.TrueName
                                                 });
-                 
+
 
                     //更新骑士余额、可提现余额  
                     iClienterProvider.UpdateCBalanceAndWithdraw(new ClienterMoneyPM()
@@ -213,7 +213,7 @@ namespace Ets.Service.Provider.Finance
                 {
                     return ResultModel<object>.Conclude(FinanceCardBindC.TrueNameNoMatch);
                 }
-                if (cardBindCpm.IDCard.Trim() != c.IDCard.Trim()) 
+                if (cardBindCpm.IDCard.Trim() != c.IDCard.Trim())
                 {
                     return ResultModel<object>.Conclude(FinanceCardBindC.IDCardNoMatch);
                 }
@@ -567,15 +567,15 @@ namespace Ets.Service.Provider.Finance
             }
             model.IsCallBack = 0;
             //历史单据走之前逻辑
-            if ((cliFinanceAccount.WithdrawTime < ParseHelper.ToDatetime(Config.WithdrawTime))||(cliFinanceAccount.WithdrawStatus==ClienterWithdrawFormStatus.Paying.GetHashCode()))
+            if ((cliFinanceAccount.WithdrawTime < ParseHelper.ToDatetime(Config.WithdrawTime)) || (cliFinanceAccount.WithdrawStatus == ClienterWithdrawFormStatus.Paying.GetHashCode()))
             {
                 model.Status = ClienterWithdrawFormStatus.Success.GetHashCode();
-                model.OldStatus =cliFinanceAccount.WithdrawStatus==ClienterWithdrawFormStatus.Paying.GetHashCode()?ClienterWithdrawFormStatus.Paying.GetHashCode():ClienterWithdrawFormStatus.Allow.GetHashCode();
+                model.OldStatus = cliFinanceAccount.WithdrawStatus == ClienterWithdrawFormStatus.Paying.GetHashCode() ? ClienterWithdrawFormStatus.Paying.GetHashCode() : ClienterWithdrawFormStatus.Allow.GetHashCode();
                 dealResultInfo.DealFlag = ClienterWithdrawPayOk(model);
                 dealResultInfo.DealMsg = dealResultInfo.DealFlag ? "打款成功！" : "打款失败！";
                 return dealResultInfo;
             }
-             #endregion
+            #endregion
 
             #region 回写数据库返回结果对象
             if (!clienterFinanceDao.ClienterWithdrawPayOk(model))
@@ -655,6 +655,7 @@ namespace Ets.Service.Provider.Finance
             {
                 return reg;
             }
+            /*  //服务已自动回转此处停用
             IPayProvider payProvider = new PayProvider();
             TransferReturnModel tempmodel = payProvider.TransferAccountsYee(new YeeTransferParameter()
             {
@@ -664,58 +665,55 @@ namespace Ets.Service.Provider.Finance
                 SourceLedgerno = callback.ledgerno,
                 Amount = (ParseHelper.ToDecimal(callback.amount) - withdraw.HandCharge).ToString()
             });
-            //Transfer transfer = new Transfer();
-            //TransferReturnModel tempmodel = transfer.TransferAccounts("",
-            //    (ParseHelper.ToDecimal(callback.amount) - withdraw.HandCharge).ToString(), callback.ledgerno);
             if (tempmodel.code == "1") //易宝子账户到主账户打款 成功
+            {*/
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+                if (clienterFinanceDao.ClienterWithdrawReturn(model) && clienterFinanceDao.ClienterClienterAllowWithdrawRecordReturn(model)
+                    && clienterFinanceDao.ClienterWithdrawPayFailed(model)
+                    && clienterFinanceDao.ModifyClienterBalanceRecordStatus(model.WithwardId.ToString())
+                    && clienterFinanceDao.ModifyClienterAmountInfo(model.WithwardId.ToString()))
                 {
-                    if (clienterFinanceDao.ClienterWithdrawReturn(model) && clienterFinanceDao.ClienterClienterAllowWithdrawRecordReturn(model)
-                        && clienterFinanceDao.ClienterWithdrawPayFailed(model)
-                        && clienterFinanceDao.ModifyClienterBalanceRecordStatus(model.WithwardId.ToString())
-                        && clienterFinanceDao.ModifyClienterAmountInfo(model.WithwardId.ToString()))
+                    _clienterDao.UpdateCBalanceAndWithdraw(new UpdateForWithdrawPM
                     {
-                        _clienterDao.UpdateCBalanceAndWithdraw(new UpdateForWithdrawPM
+                        Id = withdraw.ClienterId,
+                        Money = -withdraw.HandCharge
+                    }); //更新骑士表的余额，可提现余额
+                    if (withdraw.HandChargeOutlay == 0) //个人支出手续费  增加手续费扣款记录流水 
+                    {
+                        _clienterBalanceRecordDao.Insert(new ClienterBalanceRecord()
                         {
-                            Id = withdraw.ClienterId,
-                            Money = -withdraw.HandCharge
-                        }); //更新骑士表的余额，可提现余额
-                        if (withdraw.HandChargeOutlay == 0) //个人支出手续费  增加手续费扣款记录流水 
-                        {
-                            _clienterBalanceRecordDao.Insert(new ClienterBalanceRecord()
-                            {
-                                ClienterId = withdraw.ClienterId, //骑士Id(Clienter表）
-                                Amount = -withdraw.HandCharge, //流水金额
-                                Status = (int)ClienterBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
-                                RecordType = (int)ClienterBalanceRecordRecordType.ProcedureFee,
-                                Operator = "易宝系统回调",
-                                WithwardId = withdraw.Id,
-                                RelationNo = withdraw.WithwardNo,
-                                Remark = "易宝提现失败扣除手续费"
-                            });
+                            ClienterId = withdraw.ClienterId, //骑士Id(Clienter表）
+                            Amount = -withdraw.HandCharge, //流水金额
+                            Status = (int)ClienterBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
+                            RecordType = (int)ClienterBalanceRecordRecordType.ProcedureFee,
+                            Operator = "易宝系统回调",
+                            WithwardId = withdraw.Id,
+                            RelationNo = withdraw.WithwardNo,
+                            Remark = "易宝提现失败扣除手续费"
+                        });
 
-                            clienterAllowWithdrawRecordDao.Insert(new ClienterAllowWithdrawRecord()
-                            {
-                                ClienterId = withdraw.ClienterId, //骑士Id(Clienter表）
-                                Amount = -withdraw.HandCharge, //流水金额
-                                Status = (int)ClienterAllowWithdrawRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
-                                RecordType = (int)ClienterAllowWithdrawRecordType.ProcedureFee,
-                                Operator = "易宝系统回调",
-                                WithwardId = withdraw.Id,
-                                RelationNo = withdraw.WithwardNo,
-                                Remark = "易宝提现失败扣除手续费"
-                            });
-                        }
-                        reg = true;
-                        tran.Complete();
+                        clienterAllowWithdrawRecordDao.Insert(new ClienterAllowWithdrawRecord()
+                        {
+                            ClienterId = withdraw.ClienterId, //骑士Id(Clienter表）
+                            Amount = -withdraw.HandCharge, //流水金额
+                            Status = (int)ClienterAllowWithdrawRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
+                            RecordType = (int)ClienterAllowWithdrawRecordType.ProcedureFee,
+                            Operator = "易宝系统回调",
+                            WithwardId = withdraw.Id,
+                            RelationNo = withdraw.WithwardNo,
+                            Remark = "易宝提现失败扣除手续费"
+                        });
                     }
+                    reg = true;
+                    tran.Complete();
                 }
             }
-            else
-            {
-                LogHelper.LogWriterString("易宝子账户到主账户打款导致失败，提现单号为:" + model.WithwardId);
-            }
+            //}
+            //else
+            //{
+            //    LogHelper.LogWriterString("易宝子账户到主账户打款导致失败，提现单号为:" + model.WithwardId);
+            //}
             return reg;
         }
         /// <summary>
@@ -836,7 +834,7 @@ namespace Ets.Service.Provider.Finance
         /// <returns></returns>
         public bool ClienterRecharge(ClienterOptionLog model)
         {
-            decimal amount =_clienterDao.GetUserStatus(model.ClienterId).amount;
+            decimal amount = _clienterDao.GetUserStatus(model.ClienterId).amount;
             decimal allowWithdrawPrice = _clienterDao.GetUserStatus(model.ClienterId).AllowWithdrawPrice;
 
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
@@ -849,7 +847,7 @@ namespace Ets.Service.Provider.Finance
                                                             {
                                                                 ClienterId = model.ClienterId,
                                                                 Amount = model.RechargeAmount,
-                                                                Status = ClienterBalanceRecordStatus.Success.GetHashCode(),                  
+                                                                Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
                                                                 RecordType = ClienterBalanceRecordRecordType.BalanceAdjustment.GetHashCode(),
                                                                 Operator = model.OptName,
                                                                 WithwardId = 0,
