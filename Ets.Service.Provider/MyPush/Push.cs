@@ -123,13 +123,13 @@ namespace Ets.Service.Provider.MyPush
                         Audience audience = null;
                         if (model.PushType == 0)
                         {
-                            //0：标签,因为一个应用只能有一个标签，现有支付已经使用，其它应用请使用别名
+                            //0：别名,因为一个应用只能有一个别名，现有支付已经使用，其它应用请使用别名
                             audience = Audience.s_alias(model.RegistrationId);
                             model.ContentKey = "Content";
                         }
                         if (model.PushType == 1)
                         {
-                            //1：别名
+                            //1：标签
                             audience = Audience.s_tag(model.RegistrationId);
                         }
                         PushPayload pushPayload = new PushPayload();
@@ -170,15 +170,22 @@ namespace Ets.Service.Provider.MyPush
             }
         }
 
+        /// <summary>
+        /// 推送目标，要推送两个APP
+        /// 窦海超 
+        /// 2015年8月20日 17:36:27
+        /// </summary>
+        /// <param name="tagId"></param>
+        /// <returns></returns>
         public static Dictionary<string, string> GetJPushKey(int tagId)
         {
             Dictionary<string, string> jPushKey = new Dictionary<string, string>();
-            if (tagId == 0)
+            if (tagId == 0)  //给骑士
             {
                 jPushKey.Add("dce902893245e99461b9a5c8", "fdc95d37d67c9472ad4e0e96");
                 jPushKey.Add("53ee4401ba14b10f32dc4bcf", "2671f78e5291d889b85fadc0");
             }
-            else if (tagId == 1)
+            else if (tagId == 1)//给商家 
             {
                 jPushKey.Add("d794d51f2ffaf5de42001c4b", "03f956afaaeb086481aa3b7c");
                 jPushKey.Add("3eefb643c42edab57671b328", "ec9306e3ac366c65a2e5a9cd");

@@ -120,7 +120,7 @@ namespace Ets.Service.Provider.Finance
                                                             {
                                                                 ClienterId = model.ClienterId,//骑士Id(Clienter表）
                                                                 Amount = -model.WithdrawPrice,//流水金额
-                                                                Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(), //流水状态(1、交易成功 2、交易中）
+                                                                Status = ClienterAllowWithdrawRecordStatus.Tradeing.GetHashCode(), //流水状态(1、交易成功 2、交易中）
                                                                 RecordType = ClienterAllowWithdrawRecordType.WithdrawApply.GetHashCode(),
                                                                 Operator = clienter.TrueName,
                                                                 WithwardId = withwardId,

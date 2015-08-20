@@ -51,10 +51,9 @@ namespace Ets.Provider.Tests
             {
                 Title = "订单提醒",
                 Alert = "您有新订单了，请点击查看！",
-                City = string.Empty,
-                Content = string.Empty,
                 RegistrationId = "C_3237",
-                TagId = 1,
+                TagId = 0,
+                PushType = 1
             });
         }
 
