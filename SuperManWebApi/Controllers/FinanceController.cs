@@ -94,7 +94,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="cardBindBpm">参数实体</param>
         /// <returns></returns>
         [HttpPost]
-        [Token]
+        //[Token]
         public ResultModel<object> CardBindB([FromBody]CardBindBPM cardBindBpm)
         {
             return iBusinessFinanceAccountProvider.CardBindB(cardBindBpm);
@@ -105,7 +105,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="cardModifyBpm">参数实体</param>
         /// <returns></returns>
-        [Token]
+        //[Token]
         [HttpPost]
         public ResultModel<object> CardModifyB([FromBody]CardModifyBPM cardModifyBpm)
         {

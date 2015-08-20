@@ -77,13 +77,13 @@ namespace Ets.Model.ParameterModel.Finance
         /// <summary>
         /// 创建人
         /// </summary>
-        [Required(ErrorMessage = "创建人不能为空")]
+        //[Required(ErrorMessage = "创建人不能为空")]
         public string CreateBy { get; set; }
 
         /// <summary>
         /// 版本
         /// </summary>
-        [Required(ErrorMessage = "版本号不能为空")]
+        //[Required(ErrorMessage = "版本号不能为空")]
         public string Version { get; set; }
     }
 }
