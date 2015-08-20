@@ -701,13 +701,10 @@ namespace Ets.Service.Provider.Clienter
                 //更新商家金额
                 UpdateBusinessMoney(myOrderInfo);
                 //更新骑士金额
-                bool blUpdateClienterMoney = UpdateClienterMoney(myOrderInfo);
-                if (blUpdateClienterMoney)
-                {
-                    //写入骑士完成坐标                 
-                    orderOtherDao.UpdateComplete(parModel);
-                    tran.Complete();
-                }
+                UpdateClienterMoney(myOrderInfo);               
+                //写入骑士完成坐标                 
+                orderOtherDao.UpdateComplete(parModel);
+                tran.Complete();
             }
             //异步回调第三方，推送通知
             Task.Factory.StartNew(() =>
@@ -1195,15 +1192,15 @@ namespace Ets.Service.Provider.Clienter
         /// <param name="myOrderInfo"></param>
         /// <param name="uploadReceiptModel"></param>
         /// <param name="orderOther"></param>
-        bool UpdateClienterMoney(OrderListModel myOrderInfo)
+        void UpdateClienterMoney(OrderListModel myOrderInfo)
         {
             if (myOrderInfo.HadUploadCount < myOrderInfo.OrderCount)
             {
-                return false;
+                return;
             }
             if (!CheckOrderPay(myOrderInfo.Id))
             {
-                return false;
+                return;
             }
 
             //物流公司 
@@ -1269,9 +1266,7 @@ namespace Ets.Service.Provider.Clienter
                     //更新骑士无效订单金额
                     UpdateInvalidOrder(myOrderInfo);
                 }
-            }
-
-            return true;
+            }     
         }
 
         /// <summary>
