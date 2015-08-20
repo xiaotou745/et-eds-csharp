@@ -489,6 +489,8 @@ namespace SuperManWebApi.Controllers
 
         /// <summary>
         /// 设置是否开启接受推送
+        /// 茹化肖
+        /// 2015年8月19日18:05:41
         /// </summary>
         /// <returns></returns>
         [HttpPost]
