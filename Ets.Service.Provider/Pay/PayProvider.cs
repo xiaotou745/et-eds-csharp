@@ -770,7 +770,9 @@ namespace Ets.Service.Provider.Pay
                         Remark = "易宝提现打款成功" + model.desc,
                         OldStatus = BusinessWithdrawFormStatus.Paying.GetHashCode(),
                         Status = BusinessWithdrawFormStatus.Success.GetHashCode(),
-                        WithwardId = withwardId
+                        WithwardId = withwardId,
+                        IsCallBack = 1,
+                        CallBackRequestId = model.cashrequestid
                     });
                 }
                 else if (yeePayRecordDbModel.UserType == UserTypeYee.Clienter.GetHashCode()) //C端逻辑
@@ -781,7 +783,9 @@ namespace Ets.Service.Provider.Pay
                         Remark = "易宝提现打款成功" + model.desc,
                         Status = ClienterWithdrawFormStatus.Success.GetHashCode(),
                         OldStatus = ClienterWithdrawFormStatus.Paying.GetHashCode(),
-                        WithwardId = withwardId
+                        WithwardId = withwardId,
+                        IsCallBack = 1,
+                        CallBackRequestId = model.cashrequestid
                     });
                 }
             }
@@ -796,7 +800,9 @@ namespace Ets.Service.Provider.Pay
                         Status = BusinessWithdrawFormStatus.Error.GetHashCode(),
                         OldStatus = BusinessWithdrawFormStatus.Paying.GetHashCode(),
                         WithwardId = withwardId,
-                        PayFailedReason = ""
+                        PayFailedReason = "",
+                        IsCallBack = 1,
+                        CallBackRequestId = model.cashrequestid
                     }, model); //商户提现失败
                 }
                 else if (yeePayRecordDbModel.UserType == UserTypeYee.Clienter.GetHashCode()) //C端逻辑
@@ -808,7 +814,9 @@ namespace Ets.Service.Provider.Pay
                         Status = ClienterWithdrawFormStatus.Error.GetHashCode(),
                         OldStatus = ClienterWithdrawFormStatus.Paying.GetHashCode(),
                         WithwardId = withwardId,
-                        PayFailedReason = ""
+                        PayFailedReason = "",
+                        IsCallBack = 1,
+                        CallBackRequestId = model.cashrequestid
                     }, model);
                 }
             }
@@ -1180,7 +1188,8 @@ namespace Ets.Service.Provider.Pay
                                 Operator = "自动处理提现服务",
                                 Remark = "处理次数超限",
                                 PayFailedReason = "处理次数超限",
-                                WithwardId = item.WithwardId
+                                WithwardId = item.WithwardId,
+                                IsCallBack = 0
                             });
                             EmailHelper.SendEmailTo("商户提现单自动处理提现次数超限，单号为【" + item.WithwardNo + "】", emailSendTo, "自动处理商户提现单异常", copyTo, false);
                             continue;
@@ -1350,7 +1359,8 @@ namespace Ets.Service.Provider.Pay
                                 Operator = "自动处理提现服务",
                                 Remark = "处理次数超限",
                                 PayFailedReason = "处理次数超限",
-                                WithwardId = item.WithwardId
+                                WithwardId = item.WithwardId,
+                                IsCallBack = 0
                             });
                             EmailHelper.SendEmailTo("骑士提现单自动处理提现次数超限，单号为【" + item.WithwardNo + "】", emailSendTo, "自动处理骑士提现单异常", copyTo, false);
                             continue;

@@ -1407,8 +1407,8 @@ namespace Ets.Service.Provider.Clienter
             var copyTo = Config.ConfigKey("CopyTo");
             StringBuilder sbEmail = new StringBuilder("");
 
-            IList<ClienterModel> clienterList = clienterDao.QueryIdList();                  
-            for (int k = 0; k < 10; k++)
+            IList<ClienterModel> clienterList = clienterDao.QueryIdList();
+            for (int k = 0; k < clienterList.Count; k++)
             {
                 int id = clienterList[k].Id;
                 string trueName = clienterList[k].TrueName;
