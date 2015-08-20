@@ -49,8 +49,8 @@ namespace Ets.Model.Common
 
         /// <summary>
         /// 发送消息类型
-        /// 0：标签
-        /// 1：别名
+        /// 0：别名
+        /// 1：标签
         /// </summary>
         public int PushType { get; set; }
 
