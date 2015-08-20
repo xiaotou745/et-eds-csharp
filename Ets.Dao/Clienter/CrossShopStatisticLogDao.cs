@@ -104,9 +104,9 @@ namespace Ets.Dao.Clienter
 
         /// <summary>
         /// 判断是否存在指定日期的统计信息
+        /// 使用SuperMan_Write串
         /// 胡灵波
-        /// 2015年4月24日 17:31:17
-        /// SuperMan_Write 临时
+        /// 2015年4月24日 17:31:17        
         /// </summary>
         /// <param name="statisticalTime">指定日期</param>
         /// <returns></returns>

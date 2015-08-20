@@ -68,5 +68,9 @@ namespace ETS.Pay.YeePay
         /// 请求易宝接口回调地址 不需要方法调用方传,调用方内部赋值
         /// </summary>
         public string CallbackUrl { get; set; }
+        /// <summary>
+        /// 是否为重试
+        /// </summary>
+        public int IsTryAgain { get; set; }
     }
 }

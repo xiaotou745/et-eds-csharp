@@ -43,7 +43,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="model">注册用户基本数据信息</param>
         /// <returns></returns>        
         [HttpPost]
-        public ResultModel<BusiRegisterResultModel> PostRegisterInfo_B(RegisterInfoPM model)
+        public ResultModel<BusiRegisterResultModel> PostRegisterInfo_B(ParamModel model)
         {
             BusinessProvider bprovider = new BusinessProvider();
             return bprovider.PostRegisterInfo_B(model);
@@ -54,16 +54,12 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>        
-        //[HttpPost]
-        //public ResultModel<string> PostLogin_B(ParamModel model)//LoginModel ParamModel BusiLoginResultModel
-        //{
-        //    return new BusinessProvider().PostLogin_B(model);
-        //}
         [HttpPost]
-        public ResultModel<BusiLoginResultModel> PostLogin_B(LoginModel model) 
+        public ResultModel<BusiLoginResultModel> PostLogin_B(ParamModel model)//LoginModel ParamModel BusiLoginResultModel
         {
             return new BusinessProvider().PostLogin_B(model);
         }
+       
 
         /// <summary>
         /// 验证图片(审核)
@@ -126,7 +122,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="model"></param>
         /// <returns></returns>        
         [HttpPost]
-        public ResultModel<BusiModifyPwdResultModel> PostForgetPwd_B(BusiForgetPwdInfoModel model)
+        public ResultModel<BusiModifyPwdResultModel> PostForgetPwd_B(ParamModel model)
         {
             return new BusinessProvider().PostForgetPwd_B(model,1);
         }
@@ -138,7 +134,7 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>        
         [HttpPost]
         [Token]
-        public ResultModel<BusiModifyPwdResultModel> ModifyPwd_B(BusiForgetPwdInfoModel model)
+        public ResultModel<BusiModifyPwdResultModel> ModifyPwd_B(ParamModel model)
         {
             return new BusinessProvider().PostForgetPwd_B(model);
         }

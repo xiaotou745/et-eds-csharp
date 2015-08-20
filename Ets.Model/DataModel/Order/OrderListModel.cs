@@ -366,5 +366,13 @@ namespace Ets.Model.DataModel.Order
         /// 原订单状态
         /// </summary>
         public byte? OldStatus { get; set; }
+        /// <summary>
+        /// 商户发单地址经度
+        /// </summary>
+        public double PubLongitude { get; set; }
+        /// <summary>
+        /// 商户发单地址纬度
+        /// </summary>
+        public double PubLatitude { get; set; }
     }
 }

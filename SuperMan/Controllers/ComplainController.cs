@@ -18,7 +18,8 @@ namespace SuperMan.Controllers
     {
         private readonly IAreaProvider areaProvider = new AreaProvider();
         /// <summary>
-        /// 获取数据
+        /// 获取投诉数据
+        /// wc
         /// </summary>
         /// <returns></returns>
         public ActionResult Complain()
@@ -31,7 +32,8 @@ namespace SuperMan.Controllers
             return View(list);
         }
         /// <summary>
-        /// 获取数据 分页
+        /// 获取投诉数据 分页
+        /// wc
         /// </summary>
         /// <param name="pageindex"></param>
         /// <returns></returns>
@@ -44,7 +46,6 @@ namespace SuperMan.Controllers
             ViewBag.openCityList = areaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(userType));
             var list = new ComplainProvider().Get(complainCriteria);
             return PartialView("_ComplainList", list);
-        }
-
+        } 
     }
 }

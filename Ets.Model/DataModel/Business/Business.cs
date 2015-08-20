@@ -164,6 +164,10 @@ namespace Ets.Model.DataModel.Business
         ///  是否雇主任务
         /// </summary>
         public int IsEmployerTask { get; set; }
+        /// <summary>
+        /// 是否允许现金支付
+        /// </summary>
+        public int IsAllowCashPay { get; set; }
     }
 
 }

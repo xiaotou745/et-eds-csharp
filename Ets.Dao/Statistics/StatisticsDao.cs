@@ -731,7 +731,7 @@ order by o.Date desc, o.ActiveClienterCount desc";
                 }
             }
             else {
-                sbSqlWhere.Append("  and bbr.RecordType=9 ");
+                sbSqlWhere.Append("  and (bbr.RecordType=9 or RecordType=12) ");
             }
             return sbSqlWhere.ToString();
         }
