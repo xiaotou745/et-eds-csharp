@@ -1417,7 +1417,7 @@ namespace Ets.Service.Provider.Order
                                                         OptName = orderOptionModel.OptUserName,
                                                         Remark = "扣除" + disOrderCommission + "元无效订单金额",
                                                         OptId = orderOptionModel.OptUserId,
-                                                        OrderStatus = OrderStatusCommon.AuditStatusRefuse.GetHashCode(),
+                                                        OrderStatus = OrderOperationCommon.AuditStatusRefuse.GetHashCode(),
                                                         Platform = SuperPlatform.ManagementBackground.GetHashCode()
                                                     });
                     }
@@ -1456,7 +1456,7 @@ namespace Ets.Service.Provider.Order
                                                 OptName = orderOptionModel.OptUserName,
                                                 Remark = "增加" + realOrderCommission + "元可提现金额",
                                                 OptId = orderOptionModel.OptUserId,
-                                                OrderStatus = OrderStatusCommon.AuditStatusRefuse.GetHashCode(),
+                                                OrderStatus = OrderOperationCommon.AuditStatusRefuse.GetHashCode(),
                                                 Platform = SuperPlatform.ManagementBackground.GetHashCode()
                                             });
 
@@ -1535,7 +1535,7 @@ namespace Ets.Service.Provider.Order
                                                         OptName = orderOptionModel.OptUserName,
                                                         Remark = "审核通过，无效订单返还网站补贴" + (-currModel.Amount) + "元",
                                                         OptId = orderOptionModel.OptUserId,
-                                                        OrderStatus = OrderStatusCommon.AuditStatusOk.GetHashCode(),
+                                                        OrderStatus = OrderOperationCommon.AuditStatusOk.GetHashCode(),
                                                         Platform = SuperPlatform.ManagementBackground.GetHashCode()
                                                     });
 
@@ -1568,7 +1568,7 @@ namespace Ets.Service.Provider.Order
                                                 OptName = orderOptionModel.OptUserName,
                                                 Remark = "审核通过，增加" + orderModel.OrderCommission + "元可提现金额",
                                                 OptId = orderOptionModel.OptUserId,
-                                                OrderStatus = OrderStatusCommon.AuditStatusOk.GetHashCode(),
+                                                OrderStatus = OrderOperationCommon.AuditStatusOk.GetHashCode(),
                                                 Platform = SuperPlatform.ManagementBackground.GetHashCode()
                                             });
 
