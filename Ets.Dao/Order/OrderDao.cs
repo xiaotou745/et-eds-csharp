@@ -3722,20 +3722,18 @@ from dbo.clienter as c where Id=@ClienterId";
         /// </summary>
         /// <param name="orderId"></param>
         /// <returns></returns>
-        public IList<order> GetFinallErrByClienterId(int clienterId)
+        public IList<order> GetFinallErrByClienterId()
         {
             IList<order> list = new List<order>();
             
             string querysql = @"
-select o.id,o.OrderCount,ISNULL(oo.HadUploadCount, 0) HadUploadCount        
+select o.Id,o.OrderCount,ISNULL(oo.HadUploadCount, 0) HadUploadCount        
 from    dbo.[order] o ( nolock )
         left join dbo.OrderOther oo ( nolock ) on o.Id = oo.OrderId
-where   o.clienterId = @clienterId  and o.Status=1 and oo.HadUploadCount>=o.OrderCount
+where   o.Status=1 and oo.HadUploadCount>=o.OrderCount
 and FinishAll=0 ";
-
-            IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("@clienterId", clienterId);  
-            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
+      
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql));
             if (DataTableHelper.CheckDt(dt))
             {
                 list = DataTableHelper.ConvertDataTableList<order>(dt);
