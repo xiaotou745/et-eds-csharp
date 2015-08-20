@@ -26,7 +26,7 @@ namespace Ets.GetAccountErr
                 return;
             }
             threadSafe = false;
-            Thread.Sleep(10000);
+            
             try
             {
                 var order = new OrderProvider();

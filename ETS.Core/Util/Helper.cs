@@ -150,7 +150,7 @@ namespace ETS.Util
         /// <returns></returns>
         public static string GenCode(int num)
         {
-            string str = "123456789abcdefghkmnpqrstwxy";
+            string str = "123456789abc";//defghkmnpqrstwxy
             char[] chastr = str.ToCharArray();
             string code = "";
             Random rd = new Random();
