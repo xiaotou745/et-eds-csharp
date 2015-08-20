@@ -1743,6 +1743,7 @@ namespace Ets.Service.Provider.Order
             }
             #endregion
 
+            orderDM.IsAllowCashPay = order.IsAllowCashPay;
             orderDM.IsComplain = order.IsComplain;
             orderDM.Id = order.Id;
             orderDM.OrderNo = order.OrderNo;
