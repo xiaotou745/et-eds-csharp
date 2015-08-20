@@ -61,7 +61,7 @@ values  ( @ComplainId ,
         public PageInfo<T> Get<T>(ComplainCriteria complainCriteria)
         { 
             string columnList = @" 
-        cp.Id,cp.OrderNo,cp.Reason ,
+        cp.Id,cp.OrderNo,cp.Reason ,cp.OrderId,
         cp.CreateTime ,
         cp.ComplainType ,
         b.Name BussinessName ,
