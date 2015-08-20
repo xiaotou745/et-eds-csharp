@@ -13,6 +13,7 @@ using ETS.Extension;
 using Ets.Model.DomainModel.Finance;
 using ETS.Util;
 using Ets.Model.ParameterModel.Finance;
+using ETS.Data.Generic;
 #endregion
 
 namespace Ets.Dao.Finance
@@ -112,11 +113,36 @@ from  ClienterBalanceRecord (nolock)" + condition;
         /// <returns></returns>
         public IList<FinanceRecordsDM> GetByClienterId(int clienterId)
         {
+//            IList<FinanceRecordsDM> models = new List<FinanceRecordsDM>();
+//            const string querysql = @"
+//select  Id,ClienterId as UserId,Amount,Status,Balance,RecordType,Operator,OperateTime,WithwardId,RelationNo,
+//case RecordType when 11 then substring(Remark,1,8)
+// else '' end  as  Remark,
+//substring(convert(varchar(100),OperateTime,24),1,5) as TimeInfo,
+//case convert(varchar(100), OperateTime, 23) 
+//	when convert(varchar(100), getdate(), 23) then '今日'
+//    else substring(convert(varchar(100), OperateTime, 23),6,5) end
+//as DateInfo,
+//case substring(convert(varchar(100), OperateTime, 23),1,7) 
+//	when substring(convert(varchar(100), getdate(), 23),1,7)  then '本月'
+//    else convert(varchar(4),datepart(Year,OperateTime))+'年'+convert(varchar(4),datepart(month,OperateTime)) +'月' end
+//as MonthInfo
+//from  ClienterBalanceRecord (nolock)
+//where  ClienterId=@ClienterId  and IsEnable=1
+//order by Id desc";
+//            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+//            dbParameters.AddWithValue("ClienterId", clienterId);
+//            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
+//            if (DataTableHelper.CheckDt(dt))
+//            {
+//                models = DataTableHelper.ConvertDataTableList<FinanceRecordsDM>(dt);
+//            }
+//            return models;
+
             IList<FinanceRecordsDM> models = new List<FinanceRecordsDM>();
             const string querysql = @"
 select  Id,ClienterId as UserId,Amount,Status,Balance,RecordType,Operator,OperateTime,WithwardId,RelationNo,
-case RecordType when 11 then substring(Remark,1,8)
- else '' end  as  Remark,
+Remark,
 substring(convert(varchar(100),OperateTime,24),1,5) as TimeInfo,
 case convert(varchar(100), OperateTime, 23) 
 	when convert(varchar(100), getdate(), 23) then '今日'
@@ -132,12 +158,104 @@ order by Id desc";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("ClienterId", clienterId);
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
-            if (DataTableHelper.CheckDt(dt))
+
+            foreach (DataRow dataReader in dt.Rows)
             {
-                models = DataTableHelper.ConvertDataTableList<FinanceRecordsDM>(dt);
+                FinanceRecordsDM result = new FinanceRecordsDM();
+                
+                object obj;
+                obj = dataReader["Id"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.Id = long.Parse(obj.ToString());
+                }
+                obj = dataReader["UserId"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.UserId = int.Parse(obj.ToString());
+                }
+                obj = dataReader["Amount"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.Amount = decimal.Parse(obj.ToString());
+                }
+                obj = dataReader["Status"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.Status = int.Parse(obj.ToString());
+                }
+
+                obj = dataReader["Balance"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.Balance = decimal.Parse(obj.ToString());
+                }
+                obj = dataReader["RecordType"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.RecordType = int.Parse(obj.ToString());
+                }
+
+                result.Operator = dataReader["Operator"].ToString();
+                obj = dataReader["OperateTime"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.OperateTime = DateTime.Parse(obj.ToString());
+                }
+                obj = dataReader["WithwardId"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.WithwardId = long.Parse(obj.ToString());
+                }
+                result.RelationNo = dataReader["RelationNo"].ToString();
+
+                obj = dataReader["Remark"].ToString();
+                if (obj != null && obj != DBNull.Value)
+                {
+                    if (result.RecordType == 11)//审核拒绝
+                    {
+                        if (obj.ToString().Length > 8)
+                        {
+                            result.Remark = obj.ToString().Substring(0, 8)+"...";
+                        }
+                        else
+                        {
+                            result.Remark = obj.ToString();
+                        }
+                    }
+                    else
+                    {
+                        result.Remark = "";
+                    }
+                }
+
+                obj = dataReader["TimeInfo"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.TimeInfo = obj.ToString();
+                }
+
+                obj = dataReader["DateInfo"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.DateInfo = obj.ToString();
+                }
+
+                obj = dataReader["MonthInfo"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.MonthInfo = obj.ToString();
+                }
+                models.Add(result);
             }
-            return models;
+
+
+            return models;            
+           
         }
+
+		#endregion
+
 
         /// <summary>
         /// 根据ID获取对象
@@ -188,7 +306,6 @@ where  WithwardId=@Id and Remark='无效订单'";
             return model;
         }
 
-        #endregion
 
         #region  Other Members
 
