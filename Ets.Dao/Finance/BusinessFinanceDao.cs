@@ -4,13 +4,10 @@ using Ets.Model.DataModel.Finance;
 using Ets.Model.DomainModel.Finance;
 using Ets.Model.ParameterModel.Finance;
 using ETS.Dao;
-using ETS.Data.Core;
 using ETS.Data.PageData;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
-using Ets.Dao.Order;
-using Ets.Model.DataModel.Order;
 using ETS.Util;
 
 namespace Ets.Dao.Finance
@@ -119,9 +116,9 @@ select bwf.Id,
        bwf.IDCard
 from BusinessWithdrawForm bwf with(nolock)
   join business b with(nolock) on bwf.BusinessId=b.Id and bwf.Id=@Id  ";
-            IDbParameters parm = DbHelper.CreateDbParameters();
+            var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Id", withwardId);
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            var dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             if (dt == null || dt.Rows.Count <= 0)
             {
                 return null;
@@ -140,7 +137,7 @@ from BusinessWithdrawForm bwf with(nolock)
             string sql = @"  
  select count(1)  FROM  dbo.BusinessWithdrawForm a (nolock)
         where a.[Status] in(1,2,20) and a.BusinessId = @businessId ";
-            IDbParameters parm = DbHelper.CreateDbParameters();
+            var parm = DbHelper.CreateDbParameters();
             parm.Add("@businessId", DbType.Int32).Value = businessId;
             var count = DbHelper.ExecuteScalar(SuperMan_Read, sql, parm); 
             return ParseHelper.ToInt(count, 0);
@@ -165,11 +162,12 @@ SELECT [Id]
 FROM BusinessWithdrawLog bwl with(nolock)
 WHERE WithwardId=@Id
 ORDER BY Id;";
-            IDbParameters parm = DbHelper.CreateDbParameters();
+            var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Id", withwardId);
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            var dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             return MapRows<BusinessWithdrawLog>(dt);
         }
+
         /// <summary>
         /// 审核商户提现申请单
         /// danny-20150511
@@ -179,7 +177,7 @@ ORDER BY Id;";
         public bool BusinessWithdrawAudit(BusinessWithdrawLog model)
         {
             //只更新待审状态的数据
-            string sql = string.Format(@" 
+            string sql = @" 
 UPDATE BusinessWithdrawForm
  SET    [Status] = @Status,
 		Auditor=@Operator,
@@ -196,15 +194,15 @@ INTO BusinessWithdrawLog
   [Remark],
   [Operator],
   [OperatTime])
- WHERE  Id = @Id and [Status]=1");
-
-            IDbParameters parm = DbHelper.CreateDbParameters();
+ WHERE  Id = @Id and [Status]=1";
+            var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Status", model.Status);
             parm.AddWithValue("@Operator", model.Operator);
             parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@Id", model.WithwardId);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
+
         /// <summary>
         /// 商户提现申请单确认打款
         /// danny-20150511
@@ -213,11 +211,19 @@ INTO BusinessWithdrawLog
         /// <returns></returns>
         public bool BusinessWithdrawPayOk(BusinessWithdrawLog model)
         {
+            #region 添加易宝回调处理
+            var sqlAppend = "";
+            if (model.IsCallBack > 0)
+            {
+                sqlAppend += ",CallBackTime=getdate(),CallBackRequestId=@CallBackRequestId ";
+            }
+            #endregion
             string sql = string.Format(@" 
 UPDATE BusinessWithdrawForm
  SET    [Status] = @Status,
 		Payer=@Operator,
 		PayTime=getdate()
+        {0}
 OUTPUT
   Inserted.Id,
   Inserted.[Status],
@@ -230,16 +236,17 @@ INTO BusinessWithdrawLog
   [Remark],
   [Operator],
   [OperatTime])
- WHERE  Id = @Id AND [Status]=@OldStatus");
-
-            IDbParameters parm = DbHelper.CreateDbParameters();
+ WHERE  Id = @Id AND [Status]=@OldStatus",sqlAppend);
+            var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Status", model.Status);
             parm.AddWithValue("@OldStatus", model.OldStatus);
             parm.AddWithValue("@Operator", model.Operator);
             parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@Id", model.WithwardId);
+            parm.AddWithValue("@CallBackRequestId", model.CallBackRequestId);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
+
         /// <summary>
         /// 商户提现申请单确认打款处理成功
         /// danny-20150804
@@ -248,7 +255,7 @@ INTO BusinessWithdrawLog
         /// <returns></returns>
         public bool BusinessWithdrawPayDealOk(BusinessWithdrawLog model)
         {
-            string sql = string.Format(@" 
+            string sql = @" 
 UPDATE BusinessWithdrawForm
  SET    [DealStatus] = @DealStatus,
 		Payer=@Operator,
@@ -265,15 +272,15 @@ INTO BusinessWithdrawLog
   [Remark],
   [Operator],
   [OperatTime])
- WHERE  Id = @Id ");
-
-            IDbParameters parm = DbHelper.CreateDbParameters();
+ WHERE  Id = @Id ";
+            var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@DealStatus", model.DealStatus);
             parm.AddWithValue("@Operator", model.Operator);
             parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@Id", model.WithwardId);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
+
         /// <summary>
         /// 商户提现申请单审核拒绝
         /// danny-20150511
@@ -282,7 +289,7 @@ INTO BusinessWithdrawLog
         /// <returns></returns>
         public bool BusinessWithdrawAuditRefuse(BusinessWithdrawLogModel model)
         {
-            string sql = string.Format(@" 
+            string sql = @" 
 UPDATE BusinessWithdrawForm
  SET    [Status] = @Status,
 		Auditor=@Operator,
@@ -300,8 +307,8 @@ INTO BusinessWithdrawLog
   [Remark],
   [Operator],
   [OperatTime])
- WHERE  Id = @Id and [Status]=1");
-            IDbParameters parm = DbHelper.CreateDbParameters();
+ WHERE  Id = @Id and [Status]=1";
+            var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Status", model.Status);
             parm.AddWithValue("@Operator", model.Operator);
             parm.AddWithValue("@Remark", model.Remark);
@@ -318,10 +325,18 @@ INTO BusinessWithdrawLog
         /// <returns></returns>
         public bool BusinessWithdrawPayFailed(BusinessWithdrawLogModel model)
         {
+            #region 添加易宝回调处理
+            var sqlAppend = "";
+            if (model.IsCallBack > 0)
+            {
+                sqlAppend += ",CallBackTime=getdate(),CallBackRequestId=@CallBackRequestId ";
+            }
+            #endregion
             string sql = string.Format(@" 
 UPDATE BusinessWithdrawForm
  SET    [Status] = @Status,
         PayFailedReason=ISNULL(PayFailedReason,'')+@PayFailedReason+' '
+        {0}
 OUTPUT
   Inserted.Id,
   Inserted.[Status],
@@ -334,16 +349,17 @@ INTO BusinessWithdrawLog
   [Remark],
   [Operator],
   [OperatTime])
- WHERE  Id = @Id AND [Status] IN(2,20,4) ");
-            IDbParameters parm = DbHelper.CreateDbParameters();
+ WHERE  Id = @Id AND [Status] IN(2,20,4) ",sqlAppend);
+            var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Status", model.Status);
-            //parm.AddWithValue("@OldStatus", model.OldStatus);
             parm.AddWithValue("@Operator", model.Operator);
             parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@PayFailedReason", model.PayFailedReason);
             parm.AddWithValue("@Id", model.WithwardId);
+            parm.AddWithValue("@CallBackRequestId", model.CallBackRequestId);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
+
         /// <summary>
         /// 修改商户提现申请单打款失败原因
         /// danny-20150804
@@ -352,7 +368,7 @@ INTO BusinessWithdrawLog
         /// <returns></returns>
         public bool ModifyBusinessWithdrawPayFailedReason(BusinessWithdrawLogModel model)
         {
-            string sql = string.Format(@" 
+            string sql =@" 
 UPDATE BusinessWithdrawForm
  SET    PayFailedReason=ISNULL(PayFailedReason,'')+@PayFailedReason+' '
 OUTPUT
@@ -367,14 +383,15 @@ INTO BusinessWithdrawLog
   [Remark],
   [Operator],
   [OperatTime])
- WHERE  Id = @Id  ");
-            IDbParameters parm = DbHelper.CreateDbParameters();
+ WHERE  Id = @Id  ";
+            var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Operator", model.Operator);
             parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@PayFailedReason", model.PayFailedReason);
             parm.AddWithValue("@Id", model.WithwardId);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
+
         /// <summary>
         /// 修改商家提款流水状态
         /// danny-20150511
@@ -383,11 +400,11 @@ INTO BusinessWithdrawLog
         /// <returns></returns>
         public bool ModifyBusinessBalanceRecordStatus(string withwardId)
         {
-            string sql = string.Format(@" 
+            string sql = @" 
 UPDATE BusinessBalanceRecord
  SET    [Status] = @Status
- WHERE  WithwardId = @WithwardId AND [Status]=2;");
-            IDbParameters parm = DbHelper.CreateDbParameters();
+ WHERE  WithwardId = @WithwardId AND [Status]=2;";
+            var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@WithwardId", withwardId);
             parm.AddWithValue("@Status", BusinessBalanceRecordStatus.Success.GetHashCode());
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
@@ -401,7 +418,7 @@ UPDATE BusinessBalanceRecord
         /// <returns></returns>
         public bool BusinessWithdrawReturn(BusinessWithdrawLogModel model)
         {
-            string sql = string.Format(@" 
+            string sql = @" 
 insert into BusinessBalanceRecord
             ([BusinessId]
            ,[Amount]
@@ -425,8 +442,8 @@ select      bbr.[BusinessId]
            ,@Remark
  from BusinessBalanceRecord bbr (nolock)
     join business b (nolock) on b.Id=bbr.BusinessId
- where bbr.WithwardId=@WithwardId and bbr.Status=@Status and bbr.RecordType=@RecordType;");
-            IDbParameters parm = DbHelper.CreateDbParameters();
+ where bbr.WithwardId=@WithwardId and bbr.Status=@Status and bbr.RecordType=@RecordType;";
+            var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Operator", model.Operator);
             parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@WithwardId", model.WithwardId);
@@ -445,17 +462,18 @@ select      bbr.[BusinessId]
         /// <returns></returns>
         public bool ModifyBusinessAmountInfo(string withwardId)
         {
-            string sql = string.Format(@" 
+            string sql = @" 
 update b
 set    b.BalancePrice=ISNULL(b.BalancePrice, 0)+ISNULL(bwf.Amount,0),
        b.AllowWithdrawPrice=ISNULL(b.AllowWithdrawPrice,0)+ISNULL(bwf.Amount,0)
 from business b
 join [BusinessWithdrawForm] bwf on b.Id=bwf.BusinessId
-where bwf.Id=@WithwardId;");
-            IDbParameters parm = DbHelper.CreateDbParameters();
+where bwf.Id=@WithwardId;";
+            var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@WithwardId", withwardId);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
+
         /// <summary>
         /// 商户提现打款确认后修改商户表累计提款金额
         /// danny-20150511
@@ -464,16 +482,17 @@ where bwf.Id=@WithwardId;");
         /// <returns></returns>
         public bool ModifyBusinessTotalAmount(string withwardId)
         {
-            string sql = string.Format(@" 
+            string sql = @" 
 update b
 set    b.HasWithdrawPrice=ISNULL(b.HasWithdrawPrice, 0)+ISNULL(bwf.Amount,0)
 from business b
 join [BusinessWithdrawForm] bwf on b.Id=bwf.BusinessId
-where bwf.Id=@WithwardId;");
-            IDbParameters parm = DbHelper.CreateDbParameters();
+where bwf.Id=@WithwardId;";
+            var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@WithwardId", withwardId);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
+
         /// <summary>
         /// 获取商户提款收支记录列表
         /// danny-20150512
@@ -513,7 +532,7 @@ WHERE BusinessId=@BusinessId ";
                 sql+=@" AND CONVERT(CHAR(10),bbr.OperateTime,120)<=CONVERT(CHAR(10),@OperateTimeEnd,120)";
             }
             sql+=" ORDER BY bbr.Id DESC";
-            IDbParameters parm = DbHelper.CreateDbParameters();
+            var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@BusinessId", criteria.BusinessId);
             parm.AddWithValue("@RecordType", criteria.RecordType);
             parm.AddWithValue("@RelationNo", criteria.RelationNo);
@@ -569,7 +588,7 @@ where 1=1";
             {
                 sql+=" AND CONVERT(CHAR(10),bwf.WithdrawTime,120)<=CONVERT(CHAR(10),@WithdrawDateEnd,120)";
             }
-            IDbParameters parm = DbHelper.CreateDbParameters();
+            var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@BusinessName", criteria.BusinessName);
             parm.AddWithValue("@BusinessPhoneNo", criteria.BusinessPhoneNo);
             parm.AddWithValue("@WithwardNo", criteria.WithwardNo);
@@ -577,9 +596,10 @@ where 1=1";
             parm.AddWithValue("@WithdrawDateEnd", criteria.WithdrawDateEnd);
             parm.AddWithValue("@WithdrawStatus", criteria.WithdrawStatus);
             parm.AddWithValue("@BusinessCity", criteria.BusinessCity);
-            DataTable dt =DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            var dt =DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             return MapRows<BusinessWithdrawFormModel>(dt);
         }
+
         /// <summary>
         /// 获取要导出的商户提款收支记录列表
         /// danny-20150512
@@ -622,23 +642,16 @@ WHERE bbr.BusinessId=@BusinessId ";
                 sql += @" AND CONVERT(CHAR(10),bbr.OperateTime,120)<=CONVERT(CHAR(10),@OperateTimeEnd,120)";
             }
             sql += " ORDER BY bbr.Id DESC";
-            IDbParameters parm = DbHelper.CreateDbParameters();
+            var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@BusinessId", criteria.BusinessId);
             parm.AddWithValue("@RecordType", criteria.RecordType);
             parm.AddWithValue("@RelationNo", criteria.RelationNo);
             parm.AddWithValue("@OperateTimeStart", criteria.OperateTimeStart);
             parm.AddWithValue("@OperateTimeEnd", criteria.OperateTimeEnd);
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            var dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             return MapRows<BusinessBalanceRecordModel>(dt);
         }
 
-
-        public decimal GetBusiBalance(string orderNo)
-        {
-            OrderDao orderDao = new OrderDao();
-             
-            return 0m;
-        }
         /// <summary>
         /// 商户充值增加商家余额可提现和插入商家余额流水
         /// danny-20150526
@@ -647,7 +660,7 @@ WHERE bbr.BusinessId=@BusinessId ";
         /// <returns></returns>
         public bool BusinessRecharge(BusinessRechargeLog model)
         {
-            string sql = string.Format(@" 
+            string sql = @" 
 update b
 set    b.BalancePrice=ISNULL(b.BalancePrice, 0)+@Amount,
        b.AllowWithdrawPrice=ISNULL(b.AllowWithdrawPrice,0)+@Amount
@@ -690,9 +703,7 @@ values  (
         @Operator,
         getdate(),
         '' );
-");
-
-
+";
             var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Amount", model.RechargeAmount);
             parm.AddWithValue("@Status", BusinessBalanceRecordStatus.Success);
@@ -702,6 +713,7 @@ values  (
             parm.AddWithValue("@BusinessId", model.BusinessId);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
+
         /// <summary>
         /// 获取商户提款收支记录列表分页版
         /// danny-20150604
@@ -746,6 +758,7 @@ values  (
             string orderByColumn = " bbr.Id DESC";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
         }
+
         /// <summary>
         /// 根据单号查询充值详情
         /// </summary>
@@ -771,59 +784,14 @@ values  (
                 ";
             var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@OrderNo", orderNo);
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            var dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             if (dt == null || dt.Rows.Count <= 0)
             {
                 return null;
             }
             return MapRows<BusinessRechargeDetail>(dt)[0];
         }
-//        /// <summary>
-//        /// 根据申请单Id获取商家金融账号信息
-//        /// danny-20150716
-//        /// </summary>
-//        /// <param name="withwardId">提款单Id</param>
-//        /// <returns></returns>
-//        public BusinessFinanceAccountModel GetBusinessFinanceAccount(string withwardId)
-//        {
-//            string sql = @"  
-//SELECT bfa.[Id]
-//      ,bfa.[BusinessId]
-//      ,bfa.[TrueName]
-//      ,bfa.[AccountNo]
-//      ,bfa.[IsEnable]
-//      ,bfa.[AccountType]
-//      ,bfa.[BelongType]
-//      ,bfa.[OpenBank]
-//      ,bfa.[OpenSubBank]
-//      ,bfa.[CreateBy]
-//      ,bfa.[CreateTime]
-//      ,bfa.[UpdateBy]
-//      ,bfa.[UpdateTime]
-//      ,bfa.[IDCard]
-//      ,bfa.[OpenProvince]
-//      ,bfa.[OpenCity]
-//      ,bfa.[YeepayKey]
-//      ,bfa.[YeepayStatus]
-//      ,bwf.IDCard BusiIDCard
-//      ,b.PhoneNo
-//      ,bwf.Amount
-//      ,bwf.HandChargeThreshold
-//      ,bwf.HandCharge
-//      ,bwf.HandChargeOutlay
-//      ,bwf.WithdrawTime
-//  FROM [BusinessFinanceAccount] bfa with(nolock)
-//  join BusinessWithdrawForm bwf with(nolock) on bwf.BusinessId=bfa.BusinessId and bwf.Id=@withwardId 
-//  join business b with(nolock) on b.id=bfa.BusinessId";
-//            IDbParameters parm = DbHelper.CreateDbParameters();
-//            parm.AddWithValue("@withwardId", withwardId);
-//            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
-//            if (dt == null || dt.Rows.Count <= 0)
-//            {
-//                return null;
-//            }
-//            return MapRows<BusinessFinanceAccountModel>(dt)[0];
-//        }
+
         /// <summary>
         /// 根据申请单Id获取商家金融账号信息
         /// danny-20150716
@@ -870,15 +838,16 @@ SELECT     bwf.BusinessId
 		 ON ypu.UserId=bwf.BusinessId  
         AND ypu.BankAccountNumber=bwf.AccountNo 
         AND ypu.BankName=bwf.OpenBank";
-            IDbParameters parm = DbHelper.CreateDbParameters();
+            var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@withwardId", withwardId);
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            var dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             if (dt == null || dt.Rows.Count <= 0)
             {
                 return null;
             }
             return MapRows<BusinessFinanceAccountModel>(dt)[0];
         }
+
         /// <summary>
         /// 获取状态为打款中的商户提款申请单（待自动服务处理）
         /// danny-20150804
@@ -912,6 +881,7 @@ SELECT     bwf.BusinessId
           ,bwf.DealCount
           ,bwf.Id WithwardId
           ,bwf.WithwardNo WithwardNo
+          ,bwf.PayFailedReason
   FROM BusinessWithdrawForm bwf with(nolock)
   JOIN BusinessFinanceAccount bfa with(nolock) ON bfa.BusinessId=bwf.BusinessId and bwf.Status=@bwfStatus and bwf.DealStatus=@DealStatus
   LEFT JOIN ( SELECT tblypu.UserId,tblypu.Ledgerno,tblypu.BankName,tblypu.BankAccountNumber,tblypu.BalanceRecord,tblypu.YeeBalance
@@ -927,16 +897,17 @@ SELECT     bwf.BusinessId
 		 ON ypu.UserId=bwf.BusinessId  
         AND ypu.BankAccountNumber=bwf.AccountNo 
         AND ypu.BankName=bwf.OpenBank";
-            IDbParameters parm = DbHelper.CreateDbParameters();
+            var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@bwfStatus", BusinessWithdrawFormStatus.Paying.GetHashCode());
             parm.AddWithValue("@DealStatus", BusinessWithdrawFormDealStatus.Dealing.GetHashCode());
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            var dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             if (dt == null || dt.Rows.Count <= 0)
             {
                 return null;
             }
             return MapRows<BusinessFinanceAccountModel>(dt);
         }
+
         /// <summary>
         ///  修改商户提现单处理次数
         /// danny-20150804
@@ -945,11 +916,11 @@ SELECT     bwf.BusinessId
         /// <returns></returns>
         public int ModifyBusinessWithdrawDealCount(long withwardId)
         {
-            string sql = string.Format(@" 
+            string sql = @" 
 update BusinessWithdrawForm
 set    DealCount=DealCount+1
 output Inserted.DealCount
-where Id=@WithwardId;");
+where Id=@WithwardId;";
             var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@WithwardId", withwardId);
             return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm));

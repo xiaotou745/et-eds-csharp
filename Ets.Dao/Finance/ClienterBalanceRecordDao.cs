@@ -114,7 +114,9 @@ from  ClienterBalanceRecord (nolock)" + condition;
         {
             IList<FinanceRecordsDM> models = new List<FinanceRecordsDM>();
             const string querysql = @"
-select  Id,ClienterId as UserId,Amount,Status,Balance,RecordType,Operator,OperateTime,WithwardId,RelationNo,Remark,
+select  Id,ClienterId as UserId,Amount,Status,Balance,RecordType,Operator,OperateTime,WithwardId,RelationNo,
+case RecordType when 11 then substring(Remark,1,8)
+ else '' end  as  Remark,
 substring(convert(varchar(100),OperateTime,24),1,5) as TimeInfo,
 case convert(varchar(100), OperateTime, 23) 
 	when convert(varchar(100), getdate(), 23) then '今日'
@@ -195,14 +197,20 @@ where  WithwardId=@Id and Remark='无效订单'";
         /// </summary>
         /// <param name="clienterBalanceRecordPm">参数实体</param>
         /// <returns></returns>
-        public static string BindQueryCriteria(ClienterBalanceRecordPM clienterBalanceRecordPm)
+        public static string BindQueryCriteria(ClienterBalanceRecordPM clienterBalanceRecordPM)
         {
             var stringBuilder = new StringBuilder(" where 1=1 ");
-            if (clienterBalanceRecordPm == null)
+            if (clienterBalanceRecordPM == null)
             {
                 return stringBuilder.ToString();
             }
             //TODO:在此加入查询条件构建代码
+            if (clienterBalanceRecordPM.ClienterId > 0)
+            {
+                stringBuilder.Append(" and ClienterId=" + clienterBalanceRecordPM.ClienterId);
+            }
+
+            stringBuilder.Append(" order by id ");
 
             return stringBuilder.ToString();
         }

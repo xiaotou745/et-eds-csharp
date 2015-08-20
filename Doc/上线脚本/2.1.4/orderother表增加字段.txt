@@ -9,3 +9,11 @@
     @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'OrderOther',
     @level2type = N'COLUMN', @level2name = N'IsAllowCashPay';
 go
+
+
+
+--新加列 取消时间
+--胡灵波 
+--2015年8月20日 11:35:15 
+  alter table dbo.OrderOther  add CancelTime datetime ;
+go

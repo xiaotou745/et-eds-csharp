@@ -13,6 +13,8 @@ using Ets.Model.DataModel.Business;
 using SuperManWebApi.Providers;
 using Ets.Service.IProvider.Business;
 using Ets.Service.Provider.Business;
+using Ets.Model.ParameterModel.Common;
+using ETS.Security;
 namespace SuperManWebApi.Controllers
 {
     /// <summary>
@@ -47,8 +49,9 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>        
         [HttpPost]
         [Token]
-        public ResultModel<BusinessDM> Get(BussinessPM model)
+        public ResultModel<BusinessDM> Get(ParamModel ParModel)
         {
+            BussinessPM model = JsonHelper.JsonConvertToObject<BussinessPM>(AESApp.AesDecrypt(ParModel.data));
             #region 验证
             var version = model.Version;
             if (string.IsNullOrWhiteSpace(version)) //版本号 

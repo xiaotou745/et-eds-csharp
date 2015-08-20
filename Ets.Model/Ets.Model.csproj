@@ -101,6 +101,7 @@
     <Compile Include="DataModel\Order\OrderChildFinishModel.cs" />
     <Compile Include="DataModel\Order\OrderChildPayModel.cs" />
     <Compile Include="DataModel\Order\OrderMapDetail.cs" />
+    <Compile Include="DataModel\Order\OrderPushRecord.cs" />
     <Compile Include="DataModel\Order\PayStatusModel.cs" />
     <Compile Include="DataModel\Order\ReceviceAddress.cs" />
     <Compile Include="DataModel\Strategy\StrategyModel.cs" />
@@ -304,6 +305,7 @@
     <Compile Include="ParameterModel\Finance\CardModifyPM.cs" />
     <Compile Include="ParameterModel\Finance\CardModifyBPM.cs" />
     <Compile Include="ParameterModel\Finance\CardModifyCPM.cs" />
+    <Compile Include="ParameterModel\Finance\ClienterAllowWithdrawRecordPM.cs" />
     <Compile Include="ParameterModel\Finance\ClienterBalanceRecordPM.cs" />
     <Compile Include="ParameterModel\Finance\ClienterBalanceRecordSerchCriteria.cs" />
     <Compile Include="ParameterModel\Finance\ClienterFinanceAccountPM.cs" />

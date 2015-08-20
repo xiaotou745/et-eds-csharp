@@ -519,7 +519,7 @@ select @@IDENTITY ";
                                     ,o.[ReceviceName]
                                     ,o.[RecevicePhoneNo]
                                     ,o.[ReceviceAddress]
-                                    ,isnull(o.[ActualDoneDate],'') as ActualDoneDate
+                                    ,o.[ActualDoneDate]
                                     ,isnull(o.[IsPay],0) as IsPay
                                     ,isnull(o.[Amount],0) as Amount
                                     ,isnull(o.[OrderCommission],0) as OrderCommission
@@ -1769,37 +1769,6 @@ DateDiff(MINUTE,PubDate, GetDate()) in ({0})", IntervalMinute);
 
         }
 
-        /// <summary>
-        /// 根据订单id获取订单信息 和 小票相关
-        /// wc
-        /// </summary>
-        /// <param name="orderId"></param>
-        /// <returns></returns>
-        public order GetOrderInfoByOrderId(int orderId)
-        {
-            string sql = @"
-select  o.Id ,
-        o.[Status] ,
-        ISNULL(oo.HadUploadCount, 0) HadUploadCount,
-        o.OrderCount
-from    dbo.[order] o ( nolock )
-        left join dbo.OrderOther oo ( nolock ) on o.Id = oo.OrderId
-where   o.Id = @orderId;
-";
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.Add("@orderId", SqlDbType.NVarChar);
-            parm.SetValue("@orderId", orderId);
-            var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
-            var list = ConvertDataTableList<order>(dt);
-            if (list != null && list.Count > 0)
-            {
-                return list[0];
-            }
-            else
-            {
-                return null;
-            }
-        }
         /// <summary>
         /// 修改骑士收入
         /// danny-20150414
@@ -3283,43 +3252,7 @@ where   Id = @OrderId and FinishAll = 0";
             dbParameters.AddWithValue("@realOrderCommission", realOrderCommission);
             dbParameters.AddWithValue("@OrderId", orderId);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
-        }
-
-        /// <summary>
-        /// 记录扣除网站补贴日志
-        ///  zhaohailong20150706
-        /// </summary>
-        /// <param name="orderId"></param>
-        /// <param name="price"></param>
-        /// <returns></returns>
-        public bool InsertNotRealOrderLog(int orderId, decimal price)
-        {
-            string sql =
-                @"INSERT INTO OrderSubsidiesLog
-                                (Price
-                                ,OrderId
-                                ,InsertTime
-                                ,OptName
-                                ,Remark
-                                ,OrderStatus
-                                ,Platform 
-                                )
-                     VALUES
-                                (@Price
-                                ,@OrderId
-                                ,Getdate()
-                                ,'admin'
-                                ,@Remark
-                                ,1
-                                ,3);";
-            string remark = string.Format("扣除网站补贴{0}元", price);
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@Price", price);
-            parm.AddWithValue("@OrderId", orderId);
-            parm.AddWithValue("@Remark", remark);
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
-
-        }
+        }      
 
         /// <summary>
         /// 骑士目前是否有未完成的订单
@@ -3690,7 +3623,6 @@ where orderId=@orderId";
             return MapRows<OrderAuditStatisticalModel>(dt)[0];
         }
 
-
         /// <summary>
         /// 订单自动审核拒绝增加除网站外的金额
         /// danny-20150813
@@ -3779,10 +3711,132 @@ from dbo.clienter as c where Id=@ClienterId";
             dbParameters.AddWithValue("Remark", clienterAllowWithdrawRecord.Remark); //描述
             return DbHelper.ExecuteNonQuery(SuperMan_Write, insertSql, dbParameters) > 0;
         }
-
         public List<OrderChild> GetOrderChild(string orderNo)
         {
             throw new NotImplementedException();
+        }
+        /// <summary>
+        /// 获取FinishAll状态错误的订单
+        /// 胡灵波
+        /// 2015年8月19日 18:49:05
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        public IList<order> GetFinallErrByClienterId(int clienterId)
+        {
+            IList<order> list = new List<order>();
+            
+            string querysql = @"
+select o.id,o.OrderCount,ISNULL(oo.HadUploadCount, 0) HadUploadCount        
+from    dbo.[order] o ( nolock )
+        left join dbo.OrderOther oo ( nolock ) on o.Id = oo.OrderId
+where   o.clienterId = @clienterId  and o.Status=1 and oo.HadUploadCount>=o.OrderCount
+and FinishAll=0 ";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@clienterId", clienterId);  
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
+            if (DataTableHelper.CheckDt(dt))
+            {
+                list = DataTableHelper.ConvertDataTableList<order>(dt);
+            }
+            return list;
+        }
+        /// <summary>
+        /// 获取推送订单详情
+        /// danny-20150818
+        /// </summary>
+        /// <param name="lastOrderPushTime">上次的推送时间</param>
+        /// <returns></returns>
+        public IList<OrderListModel> GetPushOrderList(string lastOrderPushTime)
+        {
+            string sql = @"
+SELECT  o.Id,
+		o.OrderNo,
+		o.businessId,
+		oo.PubLatitude,
+		oo.PubLongitude
+FROM dbo.[order] o WITH(NOLOCK)
+JOIN dbo.OrderOther oo(NOLOCK) ON o.Id=oo.OrderId
+WHERE o.[Status]=0 AND o.PubDate>=@LastOrderPushTime;
+";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("@LastOrderPushTime", SqlDbType.NVarChar).Value = lastOrderPushTime;
+            var dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                return null;
+            }
+            return  ConvertDataTableList<OrderListModel>(dt);
+            
+        }
+        /// <summary>
+        /// 添加订单推送记录
+        /// danny-20150819
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool InsertOrderPushRecord(OrderPushRecord model)
+        {
+            const string insertSql = @"
+INSERT INTO [OrderPushRecord]
+           ([OrderId]
+           ,[ClienterIdList]
+           ,[TaskType]
+           ,[PushCount]
+           ,[ClienterCount])
+     VALUES
+           (@OrderId
+           ,@ClienterIdList
+           ,@TaskType
+           ,@PushCount
+           ,@ClienterCount);";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@OrderId", model.OrderId);
+            dbParameters.AddWithValue("@ClienterIdList", model.ClienterIdList);
+            dbParameters.AddWithValue("@TaskType", model.TaskType); 
+            dbParameters.AddWithValue("@ClienterCount", model.ClienterCount);
+            dbParameters.AddWithValue("@PushCount", model.PushCount); 
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, insertSql, dbParameters) > 0;
+        }
+
+        /// <summary>
+        /// 编辑订单推送记录
+        /// danny-20150819
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool EditOrderPushRecord(OrderPushRecord model)
+        {
+            string updateSql = @"
+MERGE INTO OrderPushRecord opr
+	USING(values(@OrderId,@TaskType)) AS oprNew(OrderId,TaskType)
+		ON opr.OrderId=oprNew.OrderId AND  opr.TaskType=oprNew.TaskType
+	WHEN MATCHED 
+	THEN UPDATE 
+		 SET opr.PushCount=opr.PushCount+1,
+             opr.ClienterCount=opr.ClienterCount+@ClienterCount,
+             opr.PushTime=getdate(),
+             opr.ClienterIdList=opr.ClienterIdList+'/'+@ClienterIdList
+	WHEN NOT MATCHED 
+		  THEN INSERT ( [OrderId]
+                       ,[ClienterIdList]
+                       ,[TaskType]
+                       ,[PushCount]
+                       ,[ClienterCount])
+                 VALUES
+                       (@OrderId
+                       ,@ClienterIdList
+                       ,@TaskType
+                       ,@PushCount
+                       ,@ClienterCount);";
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@OrderId", model.OrderId);
+            parm.AddWithValue("@ClienterIdList", model.ClienterIdList);
+            parm.AddWithValue("@TaskType", model.TaskType);
+            parm.AddWithValue("@ClienterCount", model.ClienterCount);
+            parm.AddWithValue("@PushCount", model.PushCount);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, parm) > 0;
         }
     }
 }

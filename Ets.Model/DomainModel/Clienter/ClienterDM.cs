@@ -129,5 +129,10 @@ namespace Ets.Model.DomainModel.Clienter
         /// </summary>
         public int IsShowAccount { get; set; }
 
+        /// <summary>
+        /// 是否接收推送消息 0不接收 默认1接收
+        /// </summary>
+        public int IsReceivePush { get; set; }
+
     }
 }

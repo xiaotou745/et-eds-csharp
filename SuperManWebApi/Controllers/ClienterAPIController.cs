@@ -45,7 +45,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="model"></param>
         /// <returns></returns>        
         [HttpPost]
-        public ResultModel<ClientRegisterResultModel> PostRegisterInfo_C(ClientRegisterInfoModel model)
+        public ResultModel<ClientRegisterResultModel> PostRegisterInfo_C(ParamModel model)
         {
             return iClienterProvider.PostRegisterInfo_C(model);
         }
@@ -55,14 +55,11 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>        
-        //public ResultModel<string> PostLogin_C(ParamModel model)//LoginCPM  ClienterLoginResultModel
-        //{
-        //    return new ClienterProvider().PostLogin_C(model);
-        //}
-        public ResultModel<ClienterLoginResultModel> PostLogin_C(LoginCPM model)//LoginCPM  ClienterLoginResultModel
+        public ResultModel<ClienterLoginResultModel> PostLogin_C(ParamModel model)//LoginCPM  ClienterLoginResultModel
         {
             return new ClienterProvider().PostLogin_C(model);
         }
+    
         /// <summary>
         /// C端上传图片
         /// </summary>
@@ -144,9 +141,8 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>        
         [HttpPost]
         [Token]
-        public ResultModel<ClienterModifyPwdResultModel> PostModifyPwd_C(ModifyPwdInfoModel model)
+        public ResultModel<ClienterModifyPwdResultModel> PostModifyPwd_C(ParamModel model)//ClienterModifyPwdResultModel ModifyPwdInfoModel
         {
-
             ClienterProvider cliProvider = new ClienterProvider();
             return cliProvider.PostForgetPwd_C(model);
         }
@@ -158,8 +154,9 @@ namespace SuperManWebApi.Controllers
         /// <param name="newPassword"></param>
         /// <returns></returns>        
         [HttpPost]
-        public ResultModel<ClienterModifyPwdResultModel> PostForgetPwd_C(ForgetPwdInfoModel model)
+        public ResultModel<ClienterModifyPwdResultModel> PostForgetPwd_C(ParamModel ParaModel)//ForgetPwdInfoModel
         {
+            ForgetPwdInfoModel model = JsonHelper.JsonConvertToObject<ForgetPwdInfoModel>(ETS.Security.AESApp.AesDecrypt(ParaModel.data));
             if (string.IsNullOrEmpty(model.password))
             {
                 return ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.NewPwdEmpty);
@@ -180,7 +177,7 @@ namespace SuperManWebApi.Controllers
 
             var code = redis.Get<string>(RedissCacheKey.PostForgetPwd_C + model.phoneNo);
             //start 需要验证 验证码是否正确
-            if (string.IsNullOrEmpty(code) || code != model.checkCode)
+            if (string.IsNullOrEmpty(code) || code.ToLower() != model.checkCode.ToLower())
             {
                 return ResultModel<ClienterModifyPwdResultModel>.Conclude(ForgetPwdStatus.checkCodeWrong);
             }
@@ -280,7 +277,8 @@ namespace SuperManWebApi.Controllers
             {
                 return SimpleResultModel.Conclude(SendCheckCodeStatus.InvlidPhoneNumber);
             }
-            var randomCode = new Random().Next(1000).ToString("D4");
+            //var randomCode = new Random().Next(1000).ToString("D4");
+            string randomCode = Helper.GenCode(6);
             string msg = string.Empty;
             string key = "";
             bool checkUser = iClienterProvider.CheckClienterExistPhone(PhoneNumber);
@@ -489,6 +487,8 @@ namespace SuperManWebApi.Controllers
 
         /// <summary>
         /// 设置是否开启接受推送
+        /// 茹化肖
+        /// 2015年8月19日18:05:41
         /// </summary>
         /// <returns></returns>
         [HttpPost]

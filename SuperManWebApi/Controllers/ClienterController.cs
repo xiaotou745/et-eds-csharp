@@ -18,6 +18,8 @@ using Ets.Service.Provider.Clienter;
 using Ets.Service.IProvider.Clienter;
 using ETS.Enums;
 using SuperManWebApi.App_Start.Filters;
+using Ets.Model.ParameterModel.Common;
+using ETS.Security;
 
 namespace SuperManWebApi.Controllers
 {
@@ -54,8 +56,9 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>        
         [HttpPost]
         [Token]
-        public ResultModel<ClienterDM> Get(ClienterPM model)
+        public ResultModel<ClienterDM> Get(ParamModel ParModel)
         {
+            ClienterPM model = JsonHelper.JsonConvertToObject<ClienterPM>(AESApp.AesDecrypt(ParModel.data));
             #region 验证
             var version = model.Version;
             if (string.IsNullOrWhiteSpace(version)) //版本号 
@@ -74,7 +77,7 @@ namespace SuperManWebApi.Controllers
             try
             {
                 ClienterDM clienterDM = clienterProvider.GetDetails(model.ClienterId);
-             
+
                 return Ets.Model.Common.ResultModel<ClienterDM>.Conclude(GetClienterStatus.Success, clienterDM);
             }
             catch (Exception ex)

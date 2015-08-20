@@ -35,7 +35,7 @@ namespace Ets.Service.IProvider.Clienter
         /// </summary>
         /// <param name="model">用户名称，用户密码</param>
         /// <returns>用户信息</returns>
-        ResultModel<ClienterLoginResultModel> PostLogin_C(LoginCPM model);//LoginCPM
+        ResultModel<ClienterLoginResultModel> PostLogin_C(ParamModel model);//LoginCPM
 
         /// <summary>
         /// 获取当前配送员的流水信息
@@ -53,7 +53,7 @@ namespace Ets.Service.IProvider.Clienter
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        ResultModel<ClienterModifyPwdResultModel> PostForgetPwd_C(Ets.Model.DataModel.Clienter.ModifyPwdInfoModel model);
+        ResultModel<ClienterModifyPwdResultModel> PostForgetPwd_C(ParamModel model);
         /// <summary>
         /// 判断 骑士端 手机号 是否注册过
         /// wc
@@ -74,7 +74,7 @@ namespace Ets.Service.IProvider.Clienter
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        ResultModel<ClientRegisterResultModel> PostRegisterInfo_C(ClientRegisterInfoModel model);
+        ResultModel<ClientRegisterResultModel> PostRegisterInfo_C(ParamModel model);//ClientRegisterResultModel  ClientRegisterInfoModel
         /// <summary>
         /// 抢单 平扬 2015.3.30
         /// </summary>
@@ -175,13 +175,6 @@ namespace Ets.Service.IProvider.Clienter
         /// <param name="uploadReceiptModel"></param>
         /// <returns></returns>
         OrderOther GetReceipt(int orderId);
-
-        /// <summary>
-        /// 根据订单Id获取小票信息
-        /// </summary>
-        /// <param name="orderId"></param>
-        /// <returns></returns>
-        order GetOrderInfoByOrderId(int orderId);
 
         /// <summary>
         ///  C端抢单

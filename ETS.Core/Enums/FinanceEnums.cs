@@ -190,10 +190,9 @@ namespace ETS.Enums
         [DisplayText("系统赔偿")]
         SystemCompensation = 7,
         /// <summary>
-        /// 余额调整
-        /// 修改为异常订单
+        /// 余额调整        
         /// </summary>
-        [DisplayText("异常订单")]
+        [DisplayText("余额调整")]
         BalanceAdjustment = 8,
         /// <summary>
         /// 手续费
@@ -204,7 +203,12 @@ namespace ETS.Enums
         /// 现金提现
         /// </summary>
         [DisplayText("现金提现")]
-        CashWithdraw = 10
+        CashWithdraw = 10,
+        /// <summary>
+        /// 异常订单
+        /// </summary>
+        [DisplayText("异常订单")]
+        Abnormal = 11
     }
 
     public enum ClienterAllowWithdrawRecordType

@@ -57,5 +57,12 @@ namespace ETS.Pay.YeePay
         /// 请求号 在主帐号下唯一 MAX(50 ) 不需要方法调用方传,调用方内部赋值
         /// </summary>
         public string RequestId { get; set; }
+
+        /// <summary>
+        /// 是否为重试
+        /// </summary>
+        public int IsTryAgain { get; set; }
+
+
     }
 }
