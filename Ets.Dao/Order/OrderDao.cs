@@ -2287,7 +2287,7 @@ select  o.Id,o.OrderNo,o.PickUpAddress,o.PubDate,o.ReceviceName,o.RecevicePhoneN
     o.CommissionFormulaMode,o.Adjustment,o.BusinessCommission,o.SettleMoney,o.DealCount,o.PickupCode,o.OtherCancelReason,o.CommissionType,
     o.CommissionFixValue,o.BusinessGroupId,o.TimeSpan,o.Invoice,o.DeliveryCompanyID,
     isnull(o.DistribSubsidy,0)*isnull(o.OrderCount,0) as TotalDistribSubsidy,(o.Amount+isnull(o.DistribSubsidy,0)*isnull(o.OrderCount,0)) as TotalAmount,
-    o.MealsSettleMode,o.IsComplain,b.IsAllowCashPay,
+    o.MealsSettleMode,o.IsComplain,oo.IsAllowCashPay,
     b.[City] BusinessCity,b.Name BusinessName,b.PhoneNo BusinessPhone ,b.PhoneNo2 BusinessPhone2,b.Address BusinessAddress ,b.GroupId, b.Landline,
     b.Longitude, b.Latitude,REPLACE(b.City,'市','') AS pickUpCity,
     oo.NeedUploadCount,oo.HadUploadCount,oo.GrabTime,
@@ -3722,20 +3722,18 @@ from dbo.clienter as c where Id=@ClienterId";
         /// </summary>
         /// <param name="orderId"></param>
         /// <returns></returns>
-        public IList<order> GetFinallErrByClienterId(int clienterId)
+        public IList<order> GetFinallErrByClienterId()
         {
             IList<order> list = new List<order>();
             
             string querysql = @"
-select o.id,o.OrderCount,ISNULL(oo.HadUploadCount, 0) HadUploadCount        
+select o.Id,o.OrderCount,ISNULL(oo.HadUploadCount, 0) HadUploadCount        
 from    dbo.[order] o ( nolock )
         left join dbo.OrderOther oo ( nolock ) on o.Id = oo.OrderId
-where   o.clienterId = @clienterId  and o.Status=1 and oo.HadUploadCount>=o.OrderCount
+where   o.Status=1 and oo.HadUploadCount>=o.OrderCount
 and FinishAll=0 ";
-
-            IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("@clienterId", clienterId);  
-            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
+      
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql));
             if (DataTableHelper.CheckDt(dt))
             {
                 list = DataTableHelper.ConvertDataTableList<order>(dt);

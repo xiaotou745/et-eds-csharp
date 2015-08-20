@@ -1407,8 +1407,8 @@ namespace Ets.Service.Provider.Clienter
             var copyTo = Config.ConfigKey("CopyTo");
             StringBuilder sbEmail = new StringBuilder("");
 
-            IList<ClienterModel> clienterList = clienterDao.QueryIdList();                  
-            for (int k = 0; k < 10; k++)
+            IList<ClienterModel> clienterList = clienterDao.QueryIdList();
+            for (int k = 0; k < clienterList.Count; k++)
             {
                 int id = clienterList[k].Id;
                 string trueName = clienterList[k].TrueName;
@@ -1419,25 +1419,28 @@ namespace Ets.Service.Provider.Clienter
                 //获取骑士余额流水错误信息
                 StringBuilder sbCBalanceRecordErr = GetCBalanceRecordErr(id);
                 //获取骑士可提现余额流水错误信息
-                StringBuilder sbCAWthdrawRecordErr = GetCAWthdrawRecordErr(id);
-                //获取FinishAll错误的订单
-                StringBuilder sbFinishAllErr = GetFinishAllErr(id);                
+                StringBuilder sbCAWthdrawRecordErr = GetCAWthdrawRecordErr(id);            
+                           
                 if (sbClienterErr.Length > 0 ||
                     sbCBalanceRecordErr.Length > 0 ||
-                    sbCAWthdrawRecordErr.Length > 0 ||
-                    sbFinishAllErr.Length>0
+                    sbCAWthdrawRecordErr.Length > 0                    
                     )
-                {
-                    sbEmail.AppendLine("异常数据：");
+                {                   
                     sbEmail.AppendLine("当前骑士Id:" + id.ToString() + " 真实姓名：" + trueName + " 联系电话：" + phoneNo);
                     sbEmail.Append(sbClienterErr);
                     sbEmail.Append(sbCBalanceRecordErr);
-                    sbEmail.Append(sbCAWthdrawRecordErr);
-                    sbEmail.Append(sbFinishAllErr);
+                    sbEmail.Append(sbCAWthdrawRecordErr);                    
                     sbEmail.AppendLine("");
-                }                  
-
+                }                 
             }
+
+            //获取FinishAll错误的订单
+            StringBuilder sbFinishAllErr = GetFinishAllErr();
+            if (sbFinishAllErr.Length > 0)
+            {
+                sbEmail.Append(sbFinishAllErr);
+            }
+
             if (sbEmail.Length > 0)
                 EmailHelper.SendEmailTo(sbEmail.ToString(), emailSendTo, "骑士异常金额", copyTo, false);    
 
@@ -1466,7 +1469,7 @@ namespace Ets.Service.Provider.Clienter
             }
             if (allowWithdrawPrice > accountBalance)
             {
-                strErr.AppendLine("可提现余额>提现余额：" + allowWithdrawPrice);
+                strErr.AppendLine("可提现余额>提现余额：" + allowWithdrawPrice + "," + accountBalance);
             }
 
             return strErr;
@@ -1529,14 +1532,14 @@ namespace Ets.Service.Provider.Clienter
         /// </summary>
         /// <param name="clienterId"></param>
         /// <returns></returns>
-        private StringBuilder GetFinishAllErr(int clienterId)
+        private StringBuilder GetFinishAllErr( )
         {
             StringBuilder strErr = new StringBuilder("");
-            IList<order> orderList= orderDao.GetFinallErrByClienterId(clienterId);
+            IList<order> orderList= orderDao.GetFinallErrByClienterId();
             for (int i = 0; i < orderList.Count;i++ )
             {
                 int id = orderList[i].Id;
-                strErr.AppendLine("订单表id:" + id + "已完成且上传完小票FinishAll=0");
+                strErr.AppendLine("订单表id:" + id + " 已完成且上传完小票FinishAll=0");
             }
             return strErr;
         }
