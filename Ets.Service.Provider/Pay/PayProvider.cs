@@ -974,6 +974,7 @@ namespace Ets.Service.Provider.Pay
                 UserType = model.UserType
             };
         }
+
         /// <summary>
         /// 易宝自动对账
         /// danny-20150730
@@ -1512,6 +1513,7 @@ namespace Ets.Service.Provider.Pay
             });
             #endregion
         }
+
         /// <summary>
         /// 商户易宝账户注册失败
         /// danny-20150804
@@ -1547,6 +1549,7 @@ namespace Ets.Service.Provider.Pay
                 }
             }
         }
+
         /// <summary>
         /// 骑士易宝账户注册失败
         /// danny-20150804
@@ -1615,6 +1618,7 @@ namespace Ets.Service.Provider.Pay
             }
             return reg;
         }
+
         /// <summary>
         /// 商户易宝提现成功
         /// danny-20150804
@@ -1657,6 +1661,7 @@ namespace Ets.Service.Provider.Pay
             }
             return reg;
         }
+
         /// <summary>
         /// 骑士易宝提现成功
         /// danny-20150805
@@ -1699,6 +1704,7 @@ namespace Ets.Service.Provider.Pay
             }
             return reg;
         }
+
         #endregion
     }
 }

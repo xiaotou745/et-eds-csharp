@@ -2305,7 +2305,8 @@ namespace Ets.Service.Provider.Order
             {
                 lastOrderPushTime = DateTime.Now.ToString();
             }
-            redis.Set(key,DateTime.Now.ToString());
+            redis.Set(key,DateTime.Now.AddDays(-3).ToString());
+            lastOrderPushTime = redis.Get<string>(key);
             #endregion
 
             var orderList = orderDao.GetPushOrderList(lastOrderPushTime);

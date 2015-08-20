@@ -32,6 +32,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Newtonsoft.Json.6.0.6.17820\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="NLog">
       <HintPath>..\..\..\lib\NLog.dll</HintPath>
     </Reference>
@@ -70,7 +74,9 @@
     <None Include="App.config" />
     <None Include="Nlog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
+    <None Include="packages.config" />
     <None Include="quartz.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -83,6 +89,10 @@
     <ProjectReference Include="..\..\..\ETS.Data\ETS.Data.csproj">
       <Project>{be8b43e2-df1e-4bfd-b4ef-63e3e0f53ea2}</Project>
       <Name>ETS.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Ets.Model\Ets.Model.csproj">
+      <Project>{b9d2361d-7e2c-45ba-89ec-4eca1bf7c456}</Project>
+      <Name>Ets.Model</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Ets.Service.IProvider\Ets.Service.IProvider.csproj">
       <Project>{73ff8127-9703-4d8c-bd1c-4190a926a5ba}</Project>
