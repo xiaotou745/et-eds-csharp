@@ -701,10 +701,9 @@ namespace Ets.Service.Provider.Clienter
                 //更新商家金额
                 UpdateBusinessMoney(myOrderInfo);
                 //更新骑士金额
-                UpdateClienterMoney(myOrderInfo);
+                UpdateClienterMoney(myOrderInfo);               
                 //写入骑士完成坐标                 
                 orderOtherDao.UpdateComplete(parModel);
-
                 tran.Complete();
             }
             //异步回调第三方，推送通知
@@ -1267,7 +1266,7 @@ namespace Ets.Service.Provider.Clienter
                     //更新骑士无效订单金额
                     UpdateInvalidOrder(myOrderInfo);
                 }
-            }
+            }     
         }
 
         /// <summary>

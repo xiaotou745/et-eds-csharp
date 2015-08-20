@@ -495,6 +495,7 @@ namespace SuperManWebApi.Controllers
         [Token]
         public ResultModel<object> SetReceivePush(ClienterReceivePushModel model)
         {
+            LogHelper.LogWriter("修改原值",new {model = model});
             if (model == null||model.ClienterId<1)
             {
                 return ResultModel<object>.Conclude(SetReceivePushStatus.ParError);
