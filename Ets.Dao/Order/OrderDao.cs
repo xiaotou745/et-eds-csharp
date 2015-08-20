@@ -3102,9 +3102,9 @@ where b.Id=@BusinessId;");
             }
             if (!string.IsNullOrWhiteSpace(model.City))
             {
-                dataSql += " and oth.ReceviceCity=@ReceiveCity";
-                notTopSql += " and oth.ReceviceCity=@ReceiveCity";
-                countSql += " and oth.ReceviceCity=@ReceiveCity";
+                dataSql += " and o.ReceviceCity=@ReceiveCity";
+                notTopSql += " and o.ReceviceCity=@ReceiveCity";
+                countSql += " and o.ReceviceCity=@ReceiveCity";
                 parm.Add("ReceiveCity", DbType.String, 45).Value = model.City;
             }
             dataSql += " order by oth.id desc";
