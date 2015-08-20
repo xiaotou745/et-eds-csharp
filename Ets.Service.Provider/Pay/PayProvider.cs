@@ -111,7 +111,7 @@ namespace Ets.Service.Provider.Pay
             int result = orderChildDao.UpdateChildStatusFromCashOrder(model, orderInfo.ClienterName);
             if (result > 0)
             {
-                ResultModel<PayResultModel>.Conclude(AliPayStatus.success);
+               return ResultModel<PayResultModel>.Conclude(AliPayStatus.success);
             }
             return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
         }
