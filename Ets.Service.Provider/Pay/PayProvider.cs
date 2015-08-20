@@ -111,7 +111,7 @@ namespace Ets.Service.Provider.Pay
             int result = orderChildDao.UpdateChildStatusFromCashOrder(model, orderInfo.ClienterName);
             if (result > 0)
             {
-                ResultModel<PayResultModel>.Conclude(AliPayStatus.success);
+               return ResultModel<PayResultModel>.Conclude(AliPayStatus.success);
             }
             return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
         }
@@ -835,12 +835,9 @@ namespace Ets.Service.Provider.Pay
         /// <param name="para"></param>
         public RegisterReturnModel RegisterYee(YeeRegisterParameter para)
         {
-            Register regisiter = new Register();
-            RegisterReturnModel retunModel = regisiter.RegSubaccount(para);
-            if (retunModel != null && retunModel.code == "1")  //易宝返回成功 记录所有当前请求相关的数据
-            {
-                new YeePayUserDao().Insert(TranslateRegisterYeeModel(para));
-            }
+            var regisiter = new Register();
+            var retunModel = regisiter.RegSubaccount(para);
+            new YeePayUserDao().Insert(TranslateRegisterYeeModel(para));
             return retunModel;
         }
 
@@ -886,12 +883,9 @@ namespace Ets.Service.Provider.Pay
         /// <returns></returns>
         public TransferReturnModel CashTransferYee(YeeCashTransferParameter model)
         {
-            Transfer transfer = new Transfer();
-            TransferReturnModel retunModel = transfer.CashTransfer(ref model);
-            if (retunModel != null && retunModel.code == "1")  //易宝返回成功 记录所有当前请求相关的数据
-            {
-                new YeePayRecordDao().Insert(CashTransferYeeModel(model, retunModel));
-            }
+            var transfer = new Transfer();
+            var retunModel = transfer.CashTransfer(ref model);
+            new YeePayRecordDao().Insert(CashTransferYeeModel(model, retunModel));
             return retunModel;
         }
 
@@ -929,12 +923,9 @@ namespace Ets.Service.Provider.Pay
         /// <param name="para"></param>
         public TransferReturnModel TransferAccountsYee(YeeTransferParameter para)
         {
-            Transfer transfer = new Transfer();
-            TransferReturnModel retunModel = transfer.TransferAccounts(ref para);
-            if (retunModel != null && retunModel.code == "1")  //易宝返回成功 记录所有当前请求相关的数据
-            {
-                new YeePayRecordDao().Insert(TransferYeeModel(para, retunModel));
-            }
+            var transfer = new Transfer();
+            var retunModel = transfer.TransferAccounts(ref para);
+            new YeePayRecordDao().Insert(TransferYeeModel(para, retunModel));
             return retunModel;
         }
 
@@ -974,6 +965,7 @@ namespace Ets.Service.Provider.Pay
                 UserType = model.UserType
             };
         }
+
         /// <summary>
         /// 易宝自动对账
         /// danny-20150730
@@ -1512,6 +1504,7 @@ namespace Ets.Service.Provider.Pay
             });
             #endregion
         }
+
         /// <summary>
         /// 商户易宝账户注册失败
         /// danny-20150804
@@ -1547,6 +1540,7 @@ namespace Ets.Service.Provider.Pay
                 }
             }
         }
+
         /// <summary>
         /// 骑士易宝账户注册失败
         /// danny-20150804
@@ -1615,6 +1609,7 @@ namespace Ets.Service.Provider.Pay
             }
             return reg;
         }
+
         /// <summary>
         /// 商户易宝提现成功
         /// danny-20150804
@@ -1657,6 +1652,7 @@ namespace Ets.Service.Provider.Pay
             }
             return reg;
         }
+
         /// <summary>
         /// 骑士易宝提现成功
         /// danny-20150805
@@ -1699,6 +1695,7 @@ namespace Ets.Service.Provider.Pay
             }
             return reg;
         }
+
         #endregion
     }
 }
