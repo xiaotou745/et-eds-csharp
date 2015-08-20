@@ -278,6 +278,8 @@ namespace ETS.Enums
         DataError = 109,
         [DisplayText("订单Id为空")]
         OrderIdEmpty = 110,
+        [DisplayText("订单已完成或已取消")]
+        OrderHadCancelOrComplete = 111,
         [DisplayText("亲，您完成的太快了！")]
         TooQuickly = 501
 

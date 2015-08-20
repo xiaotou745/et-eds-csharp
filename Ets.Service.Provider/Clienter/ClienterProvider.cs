@@ -695,7 +695,7 @@ namespace Ets.Service.Provider.Clienter
                 var upresult = orderDao.FinishOrderStatus(myOrderInfo);
                 if (upresult <= 0)
                 {
-                    model.FinishOrderStatus = FinishOrderStatus.OrderHadCancel;
+                    model.FinishOrderStatus = FinishOrderStatus.OrderHadCancelOrComplete;
                     return model;
                 }
                 //更新商家金额
