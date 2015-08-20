@@ -218,8 +218,8 @@ namespace SuperMan.Controllers
                 Status = ClienterWithdrawFormStatus.Error.GetHashCode(),
                 OldStatus = ClienterWithdrawFormStatus.Allow.GetHashCode(),
                 WithwardId = Convert.ToInt64(withwardId),
-                PayFailedReason = payFailedReason
-
+                PayFailedReason = payFailedReason,
+                IsCallBack = 0
             };
             var reg = iClienterFinanceProvider.ClienterWithdrawPayFailed(clienterWithdrawLog);
             return Json(new ResultModel(reg, reg ? "打款失败操作提交成功！" : "打款失败操作提交失败！"), JsonRequestBehavior.DenyGet);

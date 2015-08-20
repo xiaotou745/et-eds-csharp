@@ -46,6 +46,14 @@ namespace Ets.Model.DataModel.Finance
         /// 处理状态（0：待处理 1：已处理）
         /// </summary>
         public int DealStatus { get; set; }
+        /// <summary>
+        /// 是否为回调（0：否 1：是）
+        /// </summary>
+        public int IsCallBack { get; set; }
+        /// <summary>
+        /// 回调请求Id
+        /// </summary>
+        public string CallBackRequestId { get; set; }
     }
 
 }
