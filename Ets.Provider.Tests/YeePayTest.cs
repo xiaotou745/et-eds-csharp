@@ -82,6 +82,18 @@ namespace Ets.Provider.Tests
             });//账户余额
         }
 
+        /// <summary>
+        /// 查询余额
+        /// </summary>
+        [Test]
+        public void QueryCashStatusYee()
+        {
+            var result = new PayProvider().QueryCashStatusYee(new YeeQueryCashStatusParameter()
+            {
+                CashrequestId = "C-t11406-"
+            });//账户余额
+        }
+
 
         /// <summary>
         /// 转账
@@ -100,28 +112,9 @@ namespace Ets.Provider.Tests
             });
         }
 
-        /// <summary>
-        /// 查询余额
-        /// </summary>
-        [Test]
-        public void QueryCashStatusYee()
-        {
-            BusinessWithdrawLogModel bwm = new BusinessWithdrawLogModel()
-            {
-                Operator = "ad",
-                Remark = "易宝提现打款失败，danyuanceshi",
-                Status = BusinessWithdrawFormStatus.Error.GetHashCode(),
-                OldStatus = BusinessWithdrawFormStatus.Paying.GetHashCode(),
-                WithwardId = 224,
-                PayFailedReason = "",
-                IsCallBack = 1,
-                CallBackRequestId = "1"
-            };
-            CashTransferCallback  ctcb = new CashTransferCallback();
 
 
-            var result = new BusinessFinanceProvider().BusinessWithdrawPayFailed( bwm,ctcb);//账户余额
-        }
+     
      
     }
 }
