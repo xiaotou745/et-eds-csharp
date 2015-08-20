@@ -1,7 +1,0 @@
- use superman
- go
-alter table dbo.[order]
-add IsComplain int not null default 0
-go 
- EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'是否被投诉过1已投诉0未投诉，默认0' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'order', @level2type=N'COLUMN',@level2name=N'IsComplain'
-GO
