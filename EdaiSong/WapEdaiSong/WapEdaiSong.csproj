@@ -145,6 +145,7 @@
     <Content Include="Content\img\help\5tu.png" />
     <Content Include="Content\img\help\6tu.png" />
     <Content Include="Content\img\help\7tu.png" />
+    <Content Include="Content\img\help\8tu.png" />
     <Content Include="Content\img\help\img_01.jpg" />
     <Content Include="Content\img\help\img_02.jpg" />
     <Content Include="Content\img\help\img_03.jpg" />
@@ -169,6 +170,7 @@
     <Content Include="htmls\android\help4.html" />
     <Content Include="htmls\android\help5.html" />
     <Content Include="htmls\android\help6.html" />
+    <Content Include="htmls\android\help8.html" />
     <Content Include="htmls\android\help7.html" />
     <Content Include="htmls\help1.html" />
     <Content Include="htmls\help2.html" />

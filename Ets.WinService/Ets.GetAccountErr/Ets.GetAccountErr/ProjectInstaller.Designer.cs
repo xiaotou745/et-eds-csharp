@@ -39,7 +39,7 @@
             // 
             // serviceInstaller1
             // 
-            this.serviceInstaller1.Description = "自动处理超时未完成订单";
+            this.serviceInstaller1.Description = "自动处理异常订单";
             this.serviceInstaller1.DisplayName = "Ets.GetAccountErr";
             this.serviceInstaller1.ServiceName = "Ets.GetAccountErr";
             // 

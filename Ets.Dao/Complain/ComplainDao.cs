@@ -61,7 +61,7 @@ values  ( @ComplainId ,
         public PageInfo<T> Get<T>(ComplainCriteria complainCriteria)
         { 
             string columnList = @" 
-        cp.Id,cp.OrderNo,cp.Reason ,
+        cp.Id,cp.OrderNo,cp.Reason ,cp.OrderId,
         cp.CreateTime ,
         cp.ComplainType ,
         b.Name BussinessName ,
@@ -97,7 +97,7 @@ values  ( @ComplainId ,
         join dbo.[order] o ( nolock ) on cp.OrderId = o.Id
         join dbo.business b ( nolock ) on o.businessId = b.Id
         join dbo.clienter c ( nolock ) on o.clienterId = c.Id ";
-            string orderByColumn = " cp.Id ASC";
+            string orderByColumn = " cp.Id DESC";
             return new PageHelper().GetPages<T>(SuperMan_Read, complainCriteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, complainCriteria.PageSize, true);
         }
         /// <summary>
