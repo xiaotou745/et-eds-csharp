@@ -1405,9 +1405,8 @@ namespace Ets.Service.Provider.Clienter
         {
             var emailSendTo = Config.ConfigKey("EmailSendTo");
             var copyTo = Config.ConfigKey("CopyTo");
-            var sbEmail = new StringBuilder("异常数据：");
+            StringBuilder sbEmail = new StringBuilder("");
 
-       
             IList<ClienterModel> clienterList = clienterDao.QueryIdList();                  
             for (int k = 0; k < 10; k++)
             {
@@ -1429,17 +1428,19 @@ namespace Ets.Service.Provider.Clienter
                     sbFinishAllErr.Length>0
                     )
                 {
+                    sbEmail.AppendLine("异常数据：");
                     sbEmail.AppendLine("当前骑士Id:" + id.ToString() + " 真实姓名：" + trueName + " 联系电话：" + phoneNo);
                     sbEmail.Append(sbClienterErr);
                     sbEmail.Append(sbCBalanceRecordErr);
                     sbEmail.Append(sbCAWthdrawRecordErr);
                     sbEmail.Append(sbFinishAllErr);
                     sbEmail.AppendLine("");
-                }
-            }
+                }                  
 
-            EmailHelper.SendEmailTo(sbEmail.ToString(), emailSendTo, "订单审核数据统计", copyTo, false);           
-            
+            }
+            if (sbEmail.Length > 0)
+                EmailHelper.SendEmailTo(sbEmail.ToString(), emailSendTo, "骑士异常金额", copyTo, false);    
+
         }
 
         /// <summary>

@@ -519,7 +519,7 @@ select @@IDENTITY ";
                                     ,o.[ReceviceName]
                                     ,o.[RecevicePhoneNo]
                                     ,o.[ReceviceAddress]
-                                    ,isnull(o.[ActualDoneDate],'') as ActualDoneDate
+                                    ,o.[ActualDoneDate]
                                     ,isnull(o.[IsPay],0) as IsPay
                                     ,isnull(o.[Amount],0) as Amount
                                     ,isnull(o.[OrderCommission],0) as OrderCommission
