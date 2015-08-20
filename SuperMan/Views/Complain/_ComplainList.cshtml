@@ -26,8 +26,8 @@
                 {
                     i++;
                     <tr id="@item.Id">
-                        <td>@item.Id</td>
-                        <td>@item.OrderNo</td>
+                        <td>@i</td>
+                        <td><a href="/Order/OrderDetail?OrderNo=@item.OrderNo&OrderId=@item.OrderId ">@item.OrderNo</a></td>
                         <td>@item.BussinessName</td>
                         <td>@item.CityName</td>
                         <td>@item.ClienterName</td>
