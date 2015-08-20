@@ -63,6 +63,18 @@ namespace ETS.Pay.YeePay
             }
         }
 
+        private static string queryCashStatusUrl = "https://o2o.yeepay.com/zgt-api/api/queryCashTransfer";
+        /// <summary>
+        /// 易宝支付 查看提现单状态
+        /// </summary>
+        public static string QueryCashStatusUrl
+        {
+            get
+            {
+                return queryCashStatusUrl;
+            }
+        }
+
         private static string transferAccountsUrl = "https://o2o.yeepay.com/zgt-api/api/transfer";
         /// <summary>
         /// 易宝支付 转账接口地址

@@ -169,7 +169,7 @@ namespace Ets.Service.Provider.Finance
                 if (redis.Get<int>(key) == 1)
                 {
                     return ResultModel<object>.Conclude(WithdrawCreateB.Warn);
-                    
+
                 }
                 redis.Set(key, 1, new TimeSpan(0, 1, 0));
             }
@@ -363,13 +363,13 @@ namespace Ets.Service.Provider.Finance
                 dealResultInfo.DealMsg = "获取提现单信息失败！";
                 return dealResultInfo;
             }
-            
+
             model.IsCallBack = 0;
             //历史单据走之前逻辑
-            if ((busiFinanceAccount.WithdrawTime < ParseHelper.ToDatetime(Config.WithdrawTime)) || (busiFinanceAccount.WithdrawStatus==BusinessWithdrawFormStatus.Paying.GetHashCode()))
+            if ((busiFinanceAccount.WithdrawTime < ParseHelper.ToDatetime(Config.WithdrawTime)) || (busiFinanceAccount.WithdrawStatus == BusinessWithdrawFormStatus.Paying.GetHashCode()))
             {
                 model.Status = BusinessWithdrawFormStatus.Success.GetHashCode();
-                model.OldStatus =busiFinanceAccount.WithdrawStatus==BusinessWithdrawFormStatus.Paying.GetHashCode()?BusinessWithdrawFormStatus.Paying.GetHashCode(): BusinessWithdrawFormStatus.Allow.GetHashCode();
+                model.OldStatus = busiFinanceAccount.WithdrawStatus == BusinessWithdrawFormStatus.Paying.GetHashCode() ? BusinessWithdrawFormStatus.Paying.GetHashCode() : BusinessWithdrawFormStatus.Allow.GetHashCode();
                 dealResultInfo.DealFlag = BusinessWithdrawPayOk(model);
                 dealResultInfo.DealMsg = dealResultInfo.DealFlag ? "打款成功！" : "打款失败！";
                 return dealResultInfo;
@@ -481,53 +481,54 @@ namespace Ets.Service.Provider.Finance
             {
                 return false;
             }
-            IPayProvider payProvider = new PayProvider();
-            TransferReturnModel tempmodel = payProvider.TransferAccountsYee(new YeeTransferParameter()
-            {
-                UserType = UserTypeYee.Business.GetHashCode(),
-                WithdrawId = model.WithwardId,
-                Ledgerno = "",
-                SourceLedgerno = callback.ledgerno,
-                Amount = (ParseHelper.ToDecimal(callback.amount) - withdraw.HandCharge).ToString()
-            });
+            //服务已自动回转此处停用
+            //IPayProvider payProvider = new PayProvider();
+            //TransferReturnModel tempmodel = payProvider.TransferAccountsYee(new YeeTransferParameter()
+            //{
+            //    UserType = UserTypeYee.Business.GetHashCode(),
+            //    WithdrawId = model.WithwardId,
+            //    Ledgerno = "",
+            //    SourceLedgerno = callback.ledgerno,
+            //    Amount = (ParseHelper.ToDecimal(callback.amount) - withdraw.HandCharge).ToString()
+            //});
 
-            if (tempmodel.code == "1") //易宝子账户到主账户打款 成功
+            //if (tempmodel.code == "1") //易宝子账户到主账户打款 成功
+            //{
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+                if (businessFinanceDao.BusinessWithdrawReturn(model) //提现返现
+                    && businessFinanceDao.BusinessWithdrawPayFailed(model) //更新打款失败
+                    && businessFinanceDao.ModifyBusinessBalanceRecordStatus(model.WithwardId.ToString()) //修改流水 
+                    && businessFinanceDao.ModifyBusinessAmountInfo(model.WithwardId.ToString())) //提现单
                 {
-                    if (businessFinanceDao.BusinessWithdrawReturn(model) //提现返现
-                        && businessFinanceDao.BusinessWithdrawPayFailed(model) //更新打款失败
-                        && businessFinanceDao.ModifyBusinessBalanceRecordStatus(model.WithwardId.ToString()) //修改流水 
-                        && businessFinanceDao.ModifyBusinessAmountInfo(model.WithwardId.ToString())) //提现单
+                    if (withdraw.HandChargeOutlay == 0) //个人支出手续费  增加手续费扣款记录流水 
                     {
-                        if (withdraw.HandChargeOutlay == 0) //个人支出手续费  增加手续费扣款记录流水 
+                        _businessDao.UpdateForWithdrawC(new UpdateForWithdrawPM()
                         {
-                            _businessDao.UpdateForWithdrawC(new UpdateForWithdrawPM()
-                            {
-                                Id = withdraw.BusinessId,
-                                Money = -withdraw.HandCharge
-                            }); //更新商户表的余额，可提现余额
-                            _businessBalanceRecordDao.Insert(new BusinessBalanceRecord()
-                            {
-                                BusinessId = withdraw.BusinessId, //商户Id
-                                Amount = -withdraw.HandCharge, //手续费金额
-                                Status = (int)BusinessBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
-                                RecordType = (int)BusinessBalanceRecordRecordType.ProcedureFee,
-                                Operator = "易宝系统回调",
-                                WithwardId = withdraw.Id,
-                                RelationNo = withdraw.WithwardNo,
-                                Remark = "易宝提现失败扣除手续费",
-                            });
-                        }
-                        reg = true;
-                        tran.Complete();
+                            Id = withdraw.BusinessId,
+                            Money = -withdraw.HandCharge
+                        }); //更新商户表的余额，可提现余额
+                        _businessBalanceRecordDao.Insert(new BusinessBalanceRecord()
+                        {
+                            BusinessId = withdraw.BusinessId, //商户Id
+                            Amount = -withdraw.HandCharge, //手续费金额
+                            Status = (int)BusinessBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
+                            RecordType = (int)BusinessBalanceRecordRecordType.ProcedureFee,
+                            Operator = "易宝系统回调",
+                            WithwardId = withdraw.Id,
+                            RelationNo = withdraw.WithwardNo,
+                            Remark = "易宝提现失败扣除手续费",
+                        });
                     }
+                    reg = true;
+                    tran.Complete();
                 }
             }
-            else
-            {
-                LogHelper.LogWriterString("易宝子账户到主账户打款导致失败，提现单号为:" + model.WithwardId);
-            }
+            //}
+            //else
+            //{
+            //    LogHelper.LogWriterString("易宝子账户到主账户打款导致失败，提现单号为:" + model.WithwardId);
+            //}
             return reg;
         }
 
@@ -644,14 +645,14 @@ namespace Ets.Service.Provider.Finance
                 if (model.RechargeType == 1)
                 {
                     //充值
-                  reslult=businessFinanceDao.BusinessRecharge(new BusinessRechargeLog()
-                    {
-                        BusinessId = model.BusinessId,
-                        OptName = model.OptName,
-                        RechargeAmount = model.RechargeAmount,
-                        RechargeType = model.RechargeType,
-                        Remark = model.Remark
-                    });
+                    reslult = businessFinanceDao.BusinessRecharge(new BusinessRechargeLog()
+                      {
+                          BusinessId = model.BusinessId,
+                          OptName = model.OptName,
+                          RechargeAmount = model.RechargeAmount,
+                          RechargeType = model.RechargeType,
+                          Remark = model.Remark
+                      });
                 }
                 if (model.RechargeType == 2)
                 {
@@ -668,22 +669,22 @@ namespace Ets.Service.Provider.Finance
                 if (model.RechargeType == 3)
                 {
                     //充值加赠送
-                   bool temp1= businessFinanceDao.BusinessRecharge(new BusinessRechargeLog()
-                    {
-                        BusinessId = model.BusinessId,
-                        OptName = model.OptName,
-                        RechargeAmount = model.RechargeAmount,
-                        RechargeType = 1,
-                        Remark = model.Remark
-                    });
-                     bool temp2=businessFinanceDao.BusinessRecharge(new BusinessRechargeLog()
-                    {
-                        BusinessId = model.BusinessId,
-                        OptName = model.OptName,
-                        RechargeAmount = model.RechargeAmountFree,
-                        RechargeType = 2,
-                        Remark = model.Remark + "(赠送)"
-                    });
+                    bool temp1 = businessFinanceDao.BusinessRecharge(new BusinessRechargeLog()
+                     {
+                         BusinessId = model.BusinessId,
+                         OptName = model.OptName,
+                         RechargeAmount = model.RechargeAmount,
+                         RechargeType = 1,
+                         Remark = model.Remark
+                     });
+                    bool temp2 = businessFinanceDao.BusinessRecharge(new BusinessRechargeLog()
+                   {
+                       BusinessId = model.BusinessId,
+                       OptName = model.OptName,
+                       RechargeAmount = model.RechargeAmountFree,
+                       RechargeType = 2,
+                       Remark = model.Remark + "(赠送)"
+                   });
                     reslult = temp1 && temp2;
                 }
                 #endregion

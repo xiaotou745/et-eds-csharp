@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using System.Text;
 using Common.Logging;
 using ETS;
+using ETS.Enums;
+using Ets.Model.Common.YeePay;
 using Ets.Model.DataModel.Finance;
+using Ets.Model.DomainModel.Finance;
 using ETS.Pay.YeePay;
+using Ets.Service.Provider.Finance;
 using Ets.Service.Provider.Pay;
 using ETS.Util;
 using Letao.Util;
@@ -94,6 +98,29 @@ namespace Ets.Provider.Tests
                 SourceLedgerno = "",
                 Amount="2"
             });
+        }
+
+        /// <summary>
+        /// 查询余额
+        /// </summary>
+        [Test]
+        public void QueryCashStatusYee()
+        {
+            BusinessWithdrawLogModel bwm = new BusinessWithdrawLogModel()
+            {
+                Operator = "ad",
+                Remark = "易宝提现打款失败，danyuanceshi",
+                Status = BusinessWithdrawFormStatus.Error.GetHashCode(),
+                OldStatus = BusinessWithdrawFormStatus.Paying.GetHashCode(),
+                WithwardId = 224,
+                PayFailedReason = "",
+                IsCallBack = 1,
+                CallBackRequestId = "1"
+            };
+            CashTransferCallback  ctcb = new CashTransferCallback();
+
+
+            var result = new BusinessFinanceProvider().BusinessWithdrawPayFailed( bwm,ctcb);//账户余额
         }
      
     }

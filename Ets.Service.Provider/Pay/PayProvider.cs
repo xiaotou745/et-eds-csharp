@@ -47,6 +47,7 @@ namespace Ets.Service.Provider.Pay
         private IClienterFinanceProvider iClienterFinanceProvider = new ClienterFinanceProvider();
         private YeePayRecordDao yeePayRecordDao = new YeePayRecordDao();
         private QueryBalance queryBalance = new QueryBalance();
+        private QueryCashStatus queryCashStatus = new QueryCashStatus();
         private ClienterFinanceDao clienterFinanceDao = new ClienterFinanceDao();
         private BusinessFinanceDao businessFinanceDao = new BusinessFinanceDao();
         private BusinessFinanceProvider businessFinanceProvider = new BusinessFinanceProvider();
@@ -734,6 +735,7 @@ namespace Ets.Service.Provider.Pay
 
         public bool YeePayCashTransferCallback(string data)
         {
+
             bool result = false;
             string username = "易宝提现回调";
             CashTransferCallback model = JsonHelper.JsonConvertToObject<CashTransferCallback>(ResponseYeePay.OutRes(data, true));
@@ -928,12 +930,30 @@ namespace Ets.Service.Provider.Pay
             new YeePayRecordDao().Insert(TransferYeeModel(para, retunModel));
             return retunModel;
         }
-
+        /// <summary>
+        /// 余额查询
+        /// danny-20150820
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public QueryBalanceReturnModel QueryBalanceYee(YeeQueryBalanceParameter model)
         {
             model.CustomerNumber = KeyConfig.YeepayAccountId;//商户编号 
             model.HmacKey = KeyConfig.YeepayHmac;//密钥 
             return queryBalance.GetBalance(model);
+        }
+
+        /// <summary>
+        /// 余额查询
+        /// danny-20150820
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public QueryCashStatusReturnModel QueryCashStatusYee(YeeQueryCashStatusParameter model)
+        {
+            model.CustomerNumber = KeyConfig.YeepayAccountId;//商户编号 
+            model.HmacKey = KeyConfig.YeepayHmac;//密钥 
+            return queryCashStatus.GetCashStatus(model);
         }
 
         /// <summary>

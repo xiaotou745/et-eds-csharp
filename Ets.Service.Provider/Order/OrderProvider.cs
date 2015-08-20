@@ -2306,8 +2306,7 @@ namespace Ets.Service.Provider.Order
             {
                 lastOrderPushTime = DateTime.Now.ToString();
             }
-            redis.Set(key,DateTime.Now.AddDays(-3).ToString());
-            lastOrderPushTime = redis.Get<string>(key);
+            redis.Set(key, value: DateTime.Now.ToString());
             #endregion
 
             var orderList = orderDao.GetPushOrderList(lastOrderPushTime);
@@ -2341,6 +2340,7 @@ namespace Ets.Service.Provider.Order
                         PushCount = 1,
                         ClienterCount = clienterCount
                     });
+                    LogHelper.LogWriter("订单【" + order.Id + "】已推送给骑士【" + (string.IsNullOrEmpty(strClienterId) ? "" : strClienterId.TrimEnd(','))+"】");
                     continue;
                 }
                 #endregion
@@ -2388,6 +2388,7 @@ namespace Ets.Service.Provider.Order
                     PushCount = 1,
                     ClienterCount = clienterCount
                 });
+                LogHelper.LogWriter("订单【" + order.Id + "】已推送给骑士【" + (string.IsNullOrEmpty(strClienterId) ? "" : strClienterId.TrimEnd(',')) + "】");
                 #endregion
             }
             if (listClienterId.Count == 0)
@@ -2410,7 +2411,8 @@ namespace Ets.Service.Provider.Order
                         City = string.Empty,
                         Content = string.Empty,
                         RegistrationId = "C_" + clienterId,
-                        TagId = 1,
+                        TagId = 0,
+                        PushType = 1
                     });
                 });
             }
