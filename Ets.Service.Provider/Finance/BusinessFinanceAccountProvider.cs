@@ -64,6 +64,12 @@ namespace Ets.Service.Provider.Finance
             {
                 return ResultModel<object>.Conclude(checkbool);
             }
+
+            //这里其实是多查了一次数据库，主要是为了CreateBy.
+            //由于上线当天版本已经稳定，所以没让APP去改版.
+            //下次再次修改本接口时需要让APP把店铺名称传过来参数为CreateBy
+            Ets.Model.DataModel.Business.BusListResultModel businessModel = _businessDao.GetBusiness(cardBindBpm.BusinessId);
+
             #endregion
             var id = 0;
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
@@ -80,8 +86,8 @@ namespace Ets.Service.Provider.Finance
                     BelongType = cardBindBpm.BelongType, //账号类别  0 个人账户 1 公司账户  
                     OpenBank = cardBindBpm.OpenBank, //开户行
                     OpenSubBank = cardBindBpm.OpenSubBank, //开户支行
-                    CreateBy = cardBindBpm.CreateBy, //创建人  当前登录人
-                    UpdateBy = cardBindBpm.CreateBy, //新增时最后修改人与新增人一致  当前登录人
+                    CreateBy = businessModel.Name, //创建人  当前登录人
+                    UpdateBy = businessModel.Name, //cardBindBpm.CreateBy 新增时最后修改人与新增人一致  当前登录人
                     OpenCity = cardBindBpm.OpenCity, //开户行
                     OpenProvince = cardBindBpm.OpenProvince, //开户市
                     IDCard = cardBindBpm.IDCard ?? "", //身份证
@@ -246,9 +252,9 @@ namespace Ets.Service.Provider.Finance
                 return FinanceCardModifyB.BelongTypeError;
             }
 
-            if (cardModifyBpm.BelongType == (int) BusinessFinanceAccountBelongType.Conpany)
+            if (cardModifyBpm.BelongType == (int)BusinessFinanceAccountBelongType.Conpany)
             {
-                if (string.IsNullOrWhiteSpace(cardModifyBpm.IDCard) || cardModifyBpm.IDCard.Trim().Length <15)
+                if (string.IsNullOrWhiteSpace(cardModifyBpm.IDCard) || cardModifyBpm.IDCard.Trim().Length < 15)
                 {
                     return FinanceCardModifyB.BusinessLicenceError;
                 }
