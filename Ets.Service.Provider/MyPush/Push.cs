@@ -123,13 +123,13 @@ namespace Ets.Service.Provider.MyPush
                         Audience audience = null;
                         if (model.PushType == 0)
                         {
-                            //0：标签,因为一个应用只能有一个标签，现有支付已经使用，其它应用请使用别名
+                            //0：别名,因为一个应用只能有一个别名，现有支付已经使用，其它应用请使用别名
                             audience = Audience.s_alias(model.RegistrationId);
                             model.ContentKey = "Content";
                         }
                         if (model.PushType == 1)
                         {
-                            //1：别名
+                            //1：标签
                             audience = Audience.s_tag(model.RegistrationId);
                         }
                         PushPayload pushPayload = new PushPayload();
