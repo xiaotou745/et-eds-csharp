@@ -835,12 +835,9 @@ namespace Ets.Service.Provider.Pay
         /// <param name="para"></param>
         public RegisterReturnModel RegisterYee(YeeRegisterParameter para)
         {
-            Register regisiter = new Register();
-            RegisterReturnModel retunModel = regisiter.RegSubaccount(para);
-            if (retunModel != null && retunModel.code == "1")  //易宝返回成功 记录所有当前请求相关的数据
-            {
-                new YeePayUserDao().Insert(TranslateRegisterYeeModel(para));
-            }
+            var regisiter = new Register();
+            var retunModel = regisiter.RegSubaccount(para);
+            new YeePayUserDao().Insert(TranslateRegisterYeeModel(para));
             return retunModel;
         }
 
@@ -886,12 +883,9 @@ namespace Ets.Service.Provider.Pay
         /// <returns></returns>
         public TransferReturnModel CashTransferYee(YeeCashTransferParameter model)
         {
-            Transfer transfer = new Transfer();
-            TransferReturnModel retunModel = transfer.CashTransfer(ref model);
-            if (retunModel != null && retunModel.code == "1")  //易宝返回成功 记录所有当前请求相关的数据
-            {
-                new YeePayRecordDao().Insert(CashTransferYeeModel(model, retunModel));
-            }
+            var transfer = new Transfer();
+            var retunModel = transfer.CashTransfer(ref model);
+            new YeePayRecordDao().Insert(CashTransferYeeModel(model, retunModel));
             return retunModel;
         }
 
@@ -929,12 +923,9 @@ namespace Ets.Service.Provider.Pay
         /// <param name="para"></param>
         public TransferReturnModel TransferAccountsYee(YeeTransferParameter para)
         {
-            Transfer transfer = new Transfer();
-            TransferReturnModel retunModel = transfer.TransferAccounts(ref para);
-            if (retunModel != null && retunModel.code == "1")  //易宝返回成功 记录所有当前请求相关的数据
-            {
-                new YeePayRecordDao().Insert(TransferYeeModel(para, retunModel));
-            }
+            var transfer = new Transfer();
+            var retunModel = transfer.TransferAccounts(ref para);
+            new YeePayRecordDao().Insert(TransferYeeModel(para, retunModel));
             return retunModel;
         }
 
