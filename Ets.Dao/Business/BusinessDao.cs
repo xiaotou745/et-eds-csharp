@@ -2609,6 +2609,80 @@ where  Id=@Id ";
             dbParameters.AddWithValue("Money", model.Money);
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
+        /// <summary>
+        /// 获取商户和骑士关系列表
+        /// danny-20150818
+        /// </summary>
+        /// <param name="businessId"></param>
+        /// <returns></returns>
+        public IList<BusinessClienterRelationModel> GetBusinessClienterRelationList(int businessId)
+        {
+            string sql = @"  
+SELECT bcr.[Id]
+      ,bcr.[BusinessId]
+      ,bcr.[ClienterId]
+      ,bcr.[IsEnable]
+      ,bcr.[CreateBy]
+      ,bcr.[CreateTime]
+      ,bcr.[UpdateBy]
+      ,bcr.[UpdateTime]
+      ,bcr.[IsBind]
+      ,c.PhoneNo
+      ,c.TrueName ClienterName
+FROM [BusinessClienterRelation] bcr WITH(NOLOCK)
+JOIN dbo.clienter c WITH(NOLOCK) ON bcr.ClienterId=c.Id
+WHERE bcr.IsEnable=1 
+    AND c.IsBind=1 
+    AND c.[Status]=1 
+    AND c.WorkStatus=1
+    AND bcr.BusinessId=@BusinessId;";
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@BusinessId", businessId);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            return MapRows<BusinessClienterRelationModel>(dt);
+        }
+        /// <summary>
+        /// 获取快递公司骑士列表
+        /// danny-20150819
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public IList<BusinessExpressRelationModel> GetExpressClienterList(BusinessExpressRelationModel model)
+        {
+            string sql = @"  
+SELECT ber.[Id]
+      ,ber.[BusinessId]
+      ,ber.[ExpressId]
+      ,ber.[IsEnable]
+      ,ber.[CreateBy]
+      ,ber.[CreateTime]
+      ,ber.[UpdateBy]
+      ,ber.[UpdateTime]
+      ,c.PhoneNo
+      ,c.TrueName 
+      ,c.Id ClienterId
+FROM BusinessExpressRelation ber with(nolock) 
+ JOIN dbo.clienter c WITH(NOLOCK) ON ber.ExpressId=c.DeliveryCompanyId AND ber.IsEnable=1 AND c.[Status]=1 AND c.WorkStatus=1 AND ber.BusinessId=@BusinessId
+ JOIN( SELECT cl.ClienterId
+			 ,cl.CreateTime
+			 ,cl.Latitude
+			 ,cl.Longitude
+	   FROM (
+			   SELECT ClienterId,MAX(ID) ID
+			   FROM ClienterLocation  WITH(NOLOCK)
+			   WHERE CreateTime>DATEADD(MINUTE,-10,GetDate())
+			   GROUP BY ClienterId) tbl
+	  JOIN ClienterLocation  cl WITH(NOLOCK) ON cl.ID = tbl.ID) tblcl ON tblcl.ClienterId = c.Id
+WHERE  geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tblcl.Latitude,tblcl.Longitude,4326))<=@PushRadius;";
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@BusinessId", model.BusinessId);
+            parm.AddWithValue("@Latitude", model.Latitude);
+            parm.AddWithValue("@Longitude", model.Longitude);
+            parm.AddWithValue("@PushRadius", ParseHelper.ToInt(model.PushRadius) * 1000);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            return MapRows<BusinessExpressRelationModel>(dt);
+        }
+        
 
     }
 }

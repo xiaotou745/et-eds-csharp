@@ -153,9 +153,10 @@ namespace SuperMan.Controllers
                 }
 
             }
-            
+            Response.Write("<script>alert('您需要导出的数据为空，请重新选择筛选条件');window.history.go(-1);</script>");
             //return PartialView("_PartialOrderList", pagedList);
-            return File(new byte[0]{}, "application/msexcel", "无数据.xls");
+            //return File(new byte[0]{}, "application/msexcel", "无数据.xls");
+            return null;
         }
 
 

@@ -61,6 +61,10 @@ namespace Ets.Model.DomainModel.Finance
         /// 提现单状态（1待审核 2 审核通过 3打款完成 20打款中 -1审核拒绝 -2 打款失败 4 打款异常）
         /// </summary>
         public int WithdrawStatus { get; set; }
+        /// <summary>
+        /// 提现失败原因
+        /// </summary>
+        public string PayFailedReason { get; set; }
         
         
     }

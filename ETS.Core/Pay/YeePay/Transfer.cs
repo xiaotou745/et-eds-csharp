@@ -28,6 +28,10 @@ namespace ETS.Pay.YeePay
 
             string requestid = string.Concat(tit, "-z", para.WithdrawId, "-",
                 string.IsNullOrWhiteSpace(para.Ledgerno) ? "zi" : "zhu", "-", Config.WithdrawType);// +"-" + TimeHelper.GetTimeStamp(false);
+            if (para.IsTryAgain > 0)
+            {
+                requestid += "-r";
+            }
             //商户编号
             string customernumber = KeyConfig.YeepayAccountId;
             //密钥   
@@ -85,6 +89,10 @@ namespace ETS.Pay.YeePay
         {
             //string requestid = para.App.ToString() + "-" + para.WithdrawId + "-"+ Config.WithdrawType;// + TimeHelper.GetTimeStamp(false);
             string requestid = string.Concat(para.App.ToString(), "-t", para.WithdrawId, "-", Config.WithdrawType);// +"-" + TimeHelper.GetTimeStamp(false);
+            if (para.IsTryAgain > 0)
+            {
+                requestid += "-r";
+            }
             //商户编号   
             string customernumber = KeyConfig.YeepayAccountId;
             //密钥   
