@@ -37,7 +37,7 @@ namespace SuperManWebApi.Controllers
                 ComplainedId = complainParameter.ComplainedId,
                 OrderId =  complainParameter.OrderId,
                 OrderNo = complainParameter.OrderNo,
-                Reason = complainParameter.Reason,
+                Reason = complainParameter.Reason.Replace(System.Environment.NewLine,""),
                 ComplainType = ComplainTypeEnum.ClienterComplain.GetHashCode()
             };
             return iComplainProvider.Complain(complainModel);
