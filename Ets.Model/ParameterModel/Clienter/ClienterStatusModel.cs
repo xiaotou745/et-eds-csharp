@@ -54,6 +54,10 @@ namespace Ets.Model.ParameterModel.Clienter
         /// 超人状态 0上班  1下班 默认为0
         /// </summary>
         public int WorkStatus { get; set; }
+        /// <summary>
+        /// 骑士是否接受推送 1 接口 0 不接受 默认1
+        /// </summary>
+        public int IsReceivePush { get; set; }
 
         /// <summary>
         /// 物流公司是否显示原金额1:显示,0不显示
