@@ -141,7 +141,7 @@ namespace Ets.Service.Provider.Order
                             Degree degree1 = new Degree(degree.longitude, degree.latitude);   //超人当前的经纬度
                             Degree degree2 = new Degree(from.BusiLongitude.Value, from.BusiLatitude.Value); ; //商户经纬度
                             var res = ParseHelper.ToDouble(CoordDispose.GetDistanceGoogle(degree1, degree2));
-                            resultModel.distance = res < 1000 ? (Math.Round(res).ToString() + "米") : ((res / 1000).ToString("f2") + "公里");
+                            resultModel.distance = res < 1000 ? (Math.Round(res).ToString() + "米") : ((res / 1000).ToString("f2") + "km");
                             resultModel.distance_OrderBy = res;
                         }
                         if (from.ReceviceLongitude != null && from.ReceviceLatitude != null
@@ -150,7 +150,7 @@ namespace Ets.Service.Provider.Order
                             Degree degree1 = new Degree(from.BusiLongitude.Value, from.BusiLatitude.Value);  //商户经纬度
                             Degree degree2 = new Degree(from.ReceviceLongitude.Value, from.ReceviceLatitude.Value);  //收货人经纬度
                             var res = ParseHelper.ToDouble(CoordDispose.GetDistanceGoogle(degree1, degree2));
-                            resultModel.distanceB2R = res < 1000 ? (Math.Round(res).ToString() + "米") : ((res / 1000).ToString("f2") + "公里");
+                            resultModel.distanceB2R = res < 1000 ? (Math.Round(res).ToString() + "米") : ((res / 1000).ToString("f2") + "km");
                         }
                         else
                             resultModel.distanceB2R = "--";
@@ -233,7 +233,7 @@ namespace Ets.Service.Provider.Order
                             Degree degree1 = new Degree(degree.longitude, degree.latitude);   //超人当前的经纬度
                             Degree degree2 = new Degree(from.BusiLongitude.Value, from.BusiLatitude.Value); ; //商户经纬度
                             var res = ParseHelper.ToDouble(CoordDispose.GetDistanceGoogle(degree1, degree2));
-                            resultModel.distance = res < 1000 ? (Math.Round(res).ToString() + "米") : ((res / 1000).ToString("f2") + "公里");
+                            resultModel.distance = res < 1000 ? (Math.Round(res).ToString() + "米") : ((res / 1000).ToString("f2") + "km");
                             resultModel.distance_OrderBy = res;
                         }
                         if (from.ReceviceLongitude != null && from.ReceviceLatitude != null
@@ -242,7 +242,7 @@ namespace Ets.Service.Provider.Order
                             Degree degree1 = new Degree(from.BusiLongitude.Value, from.BusiLatitude.Value);  //商户经纬度
                             Degree degree2 = new Degree(from.ReceviceLongitude.Value, from.ReceviceLatitude.Value);  //收货人经纬度
                             var res = ParseHelper.ToDouble(CoordDispose.GetDistanceGoogle(degree1, degree2));
-                            resultModel.distanceB2R = res < 1000 ? (Math.Round(res).ToString() + "米") : ((res / 1000).ToString("f2") + "公里");
+                            resultModel.distanceB2R = res < 1000 ? (Math.Round(res).ToString() + "米") : ((res / 1000).ToString("f2") + "km");
                         }
                         else
                             resultModel.distanceB2R = "--";
@@ -1848,7 +1848,7 @@ namespace Ets.Service.Provider.Order
                     Degree degree1 = new Degree(modelPM.longitude, modelPM.latitude);   //超人当前的经纬度
                     Degree degree2 = new Degree(order.Longitude.Value, order.Latitude.Value); //商户经纬度
                     var res = ParseHelper.ToDouble(CoordDispose.GetDistanceGoogle(degree1, degree2));
-                    orderDM.distance = res < 1000 ? (Math.Round(res).ToString() + "米") : ((res / 1000).ToString("f2") + "公里");
+                    orderDM.distance = res < 1000 ? (Math.Round(res).ToString() + "米") : ((res / 1000).ToString("f2") + "km");
                     orderDM.distance_OrderBy = res;
                 }
                 if (order.businessId > 0 && order.ReceviceLongitude != null && order.ReceviceLatitude != null
@@ -1857,7 +1857,7 @@ namespace Ets.Service.Provider.Order
                     Degree degree1 = new Degree(order.Longitude.Value, order.Latitude.Value);  //商户经纬度
                     Degree degree2 = new Degree(order.ReceviceLongitude.Value, order.ReceviceLatitude.Value);  //收货人经纬度
                     var res = ParseHelper.ToDouble(CoordDispose.GetDistanceGoogle(degree1, degree2));
-                    orderDM.distanceB2R = res < 1000 ? (Math.Round(res).ToString() + "米") : ((res / 1000).ToString("f2") + "公里");
+                    orderDM.distanceB2R = res < 1000 ? (Math.Round(res).ToString() + "米") : ((res / 1000).ToString("f2") + "km");
                 }
                 else
                     orderDM.distanceB2R = "--";
