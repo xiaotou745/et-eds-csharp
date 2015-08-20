@@ -86,8 +86,8 @@ namespace Ets.Service.Provider.Finance
                     BelongType = cardBindBpm.BelongType, //账号类别  0 个人账户 1 公司账户  
                     OpenBank = cardBindBpm.OpenBank, //开户行
                     OpenSubBank = cardBindBpm.OpenSubBank, //开户支行
-                    CreateBy = businessModel.Name, //创建人  当前登录人
-                    UpdateBy = businessModel.Name, //cardBindBpm.CreateBy 新增时最后修改人与新增人一致  当前登录人
+                    CreateBy = businessModel.PhoneNo, //创建人  当前登录人
+                    UpdateBy = businessModel.PhoneNo, //cardBindBpm.CreateBy 新增时最后修改人与新增人一致  当前登录人
                     OpenCity = cardBindBpm.OpenCity, //开户行
                     OpenProvince = cardBindBpm.OpenProvince, //开户市
                     IDCard = cardBindBpm.IDCard ?? "", //身份证
