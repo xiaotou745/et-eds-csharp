@@ -1403,7 +1403,7 @@ namespace Ets.Service.Provider.Order
                                                                     Operator = orderOptionModel.OptUserName,
                                                                     WithwardId = orderModel.Id,
                                                                     RelationNo = orderModel.OrderNo,
-                                                                    Remark = "异常原因"
+                                                                    Remark = orderOptionModel.OptLog
                                                                 });
                         //更新扣除补贴原因,扣除补贴方式为手动扣除
                         orderOtherDao.UpdateOrderIsReal(orderModel.Id, orderOptionModel.OptLog, 2);

@@ -26,7 +26,7 @@
         <group>GetAccountErrTriggerGroup</group>
         <job-name>GetAccountErrBLL</job-name>
         <job-group>GetAccountErrGroup</job-group>
-        <cron-expression>0/30 * * * * ?</cron-expression>
+        <cron-expression>0 0 12 * * ?</cron-expression>
       </cron>
     </trigger>
   
