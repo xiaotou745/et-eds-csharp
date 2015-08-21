@@ -115,7 +115,7 @@ select bwf.Id,
        bwf.BelongType,
        bwf.IDCard
 from BusinessWithdrawForm bwf with(nolock)
-  join business b with(nolock) on bwf.BusinessId=b.Id and bwf.Id=@Id  ";
+  join business b with(nolock) on bwf.BusinessId=b.Id and bwf.Id=@Id;"; 
             var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Id", withwardId);
             var dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);

@@ -299,7 +299,7 @@ namespace Ets.Service.Provider.Finance
         /// 获取商户提款单操作日志
         /// danny-20150511
         /// </summary>
-        /// <param name="withwardId">提款单Id</param>
+        /// <param name="withwardId">提现单Id</param>
         /// <returns></returns>
         public IList<BusinessWithdrawLog> GetBusinessWithdrawOptionLog(string withwardId)
         {

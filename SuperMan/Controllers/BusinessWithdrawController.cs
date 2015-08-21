@@ -18,6 +18,9 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using Ets.Service.IProvider.Pay;
+using Ets.Service.Provider.Pay;
+using ETS.Pay.YeePay;
 
 namespace SuperMan.Controllers
 {
@@ -25,6 +28,8 @@ namespace SuperMan.Controllers
     {
         readonly IAreaProvider iAreaProvider = new AreaProvider();
         readonly IBusinessFinanceProvider iBusinessFinanceProvider=new BusinessFinanceProvider();
+
+        private readonly IPayProvider iPayProvider = new PayProvider();
         /// <summary>
         /// 加载默认商户提款单列表
         /// danny-20150511
@@ -80,8 +85,19 @@ namespace SuperMan.Controllers
         public ActionResult BusinessWithdrawDetail(string withwardId)
         {
             var businessWithdrawFormModel = iBusinessFinanceProvider.GetBusinessWithdrawListById(withwardId);
+            var requestId= iPayProvider.GetRequestId(ParseHelper.ToLong(withwardId));
+            businessWithdrawFormModel.RequestId = requestId;
             ViewBag.businessWithdrawOptionLog = iBusinessFinanceProvider.GetBusinessWithdrawOptionLog(withwardId);
             return View(businessWithdrawFormModel);
+        }
+
+        public ContentResult QueryCashStatusYee(string requestId)
+        {
+            QueryCashStatusReturnModel queryCashStatusReturnModel = iPayProvider.QueryCashStatusYee(new YeeQueryCashStatusParameter()
+            {
+                CashrequestId = requestId
+            });
+            return new ContentResult { Content = Newtonsoft.Json.JsonConvert.SerializeObject(queryCashStatusReturnModel) }; 
         }
         /// <summary>
         /// 审核商户提款申请单通过

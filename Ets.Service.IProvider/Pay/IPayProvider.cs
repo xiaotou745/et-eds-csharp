@@ -88,6 +88,7 @@ namespace Ets.Service.IProvider.Pay
         /// <returns></returns>
         void BusinessRechargeWxNotify();
 
+        QueryCashStatusReturnModel QueryCashStatusYee(YeeQueryCashStatusParameter model);
         /// <summary>
         /// 易宝转账回调接口
         /// </summary>
@@ -117,6 +118,14 @@ namespace Ets.Service.IProvider.Pay
         /// 易宝自动对账
         /// danny-20150730
         /// </summary>
-        void YeePayReconciliation(); 
+        void YeePayReconciliation();
+
+        /// <summary>
+        /// 根据提现Id获取易宝RequestId
+        /// wc
+        /// </summary>
+        /// <param name="withdrawId"></param>
+        /// <returns></returns>
+        string GetRequestId(long withdrawId);
     }
 }

@@ -14,12 +14,16 @@ using System.Text;
 using System.Web.Mvc;
 using Ets.Model.Common;
 using System.Collections.Generic;
+using Ets.Service.IProvider.Pay;
+using ETS.Pay.YeePay;
+
 namespace SuperMan.Controllers
 {
     public class ClienterWithdrawController : BaseController
     {
         readonly IAreaProvider iAreaProvider = new AreaProvider();
         IClienterFinanceProvider iClienterFinanceProvider = new ClienterFinanceProvider();
+        IPayProvider iPayProvider = new PayProvider();
         // GET: ClienterWithdraw
         /// <summary>
         /// 加载默认骑士提款单列表
@@ -63,9 +67,20 @@ namespace SuperMan.Controllers
         public ActionResult ClienterWithdrawDetail(string withwardId)
         {
             var clienterWithdrawFormModel = iClienterFinanceProvider.GetClienterWithdrawListById(withwardId);
+            var requestId = iPayProvider.GetRequestId(ParseHelper.ToLong(withwardId));
+            clienterWithdrawFormModel.RequestId = requestId;
             ViewBag.clienterWithdrawOptionLog = iClienterFinanceProvider.GetClienterWithdrawOptionLog(withwardId);
             return View(clienterWithdrawFormModel);
         }
+        public ContentResult QueryCashStatusYee(string requestId)
+        {
+            QueryCashStatusReturnModel queryCashStatusReturnModel = iPayProvider.QueryCashStatusYee(new YeeQueryCashStatusParameter()
+            {
+                CashrequestId = requestId
+            });
+            return new ContentResult { Content = Newtonsoft.Json.JsonConvert.SerializeObject(queryCashStatusReturnModel) };
+        }
+
         /// <summary>
         /// 审核骑士提款申请单通过
         /// danny-20150513

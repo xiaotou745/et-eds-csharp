@@ -1716,6 +1716,16 @@ namespace Ets.Service.Provider.Pay
             return reg;
         }
 
+        /// <summary>
+        /// 根据提现Id获取易宝RequestId
+        /// </summary>
+        /// <param name="withdrawId"></param>
+        /// <returns></returns>
+        public string GetRequestId(long withdrawId)
+        {
+            return yeePayRecordDao.GetRequestId(withdrawId);
+        }
+
         #endregion
     }
 }

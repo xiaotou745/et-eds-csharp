@@ -226,6 +226,21 @@ WHERE (bwf.[Status]=@StatusPaying
             var list = ConvertDataTableList<BusinessWithdrawFormModel>(dt);
             return list;
         }
-
+        /// <summary>
+        /// 获取易宝提现请求Id requestIdss
+        /// wc
+        /// </summary>
+        /// <param name="withdrawId"></param>
+        /// <returns></returns>
+        public string GetRequestId(long withdrawId)
+        {
+            string sql = @"
+SELECT RequestId FROM dbo.YeePayRecord (nolock)
+where TransferType = 1 and WithdrawId = @WithdrawId;";
+            var parm = DbHelper.CreateDbParameters();
+            parm.Add("WithdrawId", DbType.Int64).Value = withdrawId; 
+            var requestId = DbHelper.ExecuteScalar(SuperMan_Read, sql, parm);
+            return  ParseHelper.ToString(requestId);
+        }
     }
 }

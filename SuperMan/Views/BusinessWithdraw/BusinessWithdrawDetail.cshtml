@@ -7,13 +7,13 @@
 <script src="~/Scripts/jquery-1.8.2.js"></script>
 <script src="~/Scripts/jquery-ui-1.8.20.js"></script>
 <script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
-<div style="width:1000px">
+<div style="width: 1000px">
     <h2 class="crumbs">
         您所在位置：财务管理 > 商户提款管理 > 商户提款详情
     </h2>
-    <table class="tbstyle222" border="0" style="font-size:14px;font-weight:bold;line-height:300%;width:900px ">
+    <table class="tbstyle222" border="0" style="font-size: 14px; font-weight: bold; line-height: 300%; width: 900px">
         <tr class="trclass">
-            <td style="font-size:16px;">本次提款：<font color="red">￥@ParseHelper.ToSplitByPercentile(false, Model.Amount)</font></td>
+            <td style="font-size: 16px;">本次提款：<font color="red">￥@ParseHelper.ToSplitByPercentile(false, Model.Amount)</font></td>
             <td></td>
             <td></td>
             <td></td>
@@ -25,7 +25,7 @@
             <td></td>
         </tr>
         <tr class="trclass">
-            <td>提款状态：@ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.BusinessWithdrawFormStatus)Model.Status).GetType(), (ETS.Enums.BusinessWithdrawFormStatus)Model.Status).Text</td>
+            <td>提款状态：@ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.BusinessWithdrawFormStatus) Model.Status).GetType(), (ETS.Enums.BusinessWithdrawFormStatus) Model.Status).Text</td>
             <td>申请时间：@Model.WithdrawTime</td>
             <td></td>
             <td></td>
@@ -44,7 +44,7 @@
         </tr>
         <tr class="trclass">
             <td>开户省份：@Model.OpenProvince</td>
-            <td>开户城市：@Model.OpenCity</td> 
+            <td>开户城市：@Model.OpenCity</td>
         </tr>
         <tr class="trclass">
             <td>身份证号/营业执照：@Model.IDCard</td>
@@ -61,66 +61,98 @@
                 {
                     <td>账户类型：</td>
                 }
-}
+            }
         </tr>
     </table>
     @if (Model.Status == 1)
     {
         <div class="SearchMd">
-            <input type="button" value="审核通过" class="searchBtn" id="btnAuditOk" />
-            <input type="button" value="拒    绝" class="searchBtn" id="btnAuditRefuse" />
+            <input type="button" value="审核通过" class="searchBtn" id="btnAuditOk"/>
+            <input type="button" value="拒    绝" class="searchBtn" id="btnAuditRefuse"/>
         </div>
     }
-    <div style="float:left;width:900px;padding-top:30px" class="control-group">
+    @if (!string.IsNullOrEmpty(Model.RequestId))
+    {
+        <div>
+            <input type="hidden" id="requestId" value="@Model.RequestId" />
+            <input type="button" id="selRequestIdInfo" value="查询提现状态" />
+        </div>
+    }
+    <div style="float: left; width: 900px; padding-top: 30px" class="control-group">
         <table border="0" cellspacing="0" cellpadding="0" class="tbstyle" width="900">
             <thead>
-                <tr class="tdbg">
-                    <th>操作时间</th>
-                    <th>操作类型</th>
-                    <th>操作人</th>
-                    <th>操作描述</th>
+            <tr class="tdbg">
+            <th>操作时间</th>
+            <th>操作类型</th>
+            <th>操作人</th>
+            <th>操作描述</th>
             </thead>
             <tbody>
-                @{
-                    var orderOptionLogList = ViewBag.businessWithdrawOptionLog as List<Ets.Model.DataModel.Finance.BusinessWithdrawLog>;
-                    var i = 0;
-                    foreach (var item in orderOptionLogList)
-                    {
-                        i++;
-                        <tr id="@item.Id">
-                            <td>@item.OperatTime</td>
-                            <td>@ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.BusinessWithdrawFormStatus)item.Status).GetType(), (ETS.Enums.BusinessWithdrawFormStatus)item.Status).Text</td>
-                            <td>@item.Operator</td>
-                            <td>@item.Remark</td>
-                        </tr>
-                    }
+            @{
+                var orderOptionLogList = ViewBag.businessWithdrawOptionLog as List<Ets.Model.DataModel.Finance.BusinessWithdrawLog>;
+                var i = 0;
+                foreach (var item in orderOptionLogList)
+                {
+                    i++;
+                    <tr id="@item.Id">
+                        <td>@item.OperatTime</td>
+                        <td>@ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.BusinessWithdrawFormStatus) item.Status).GetType(), (ETS.Enums.BusinessWithdrawFormStatus) item.Status).Text</td>
+                        <td>@item.Operator</td>
+                        <td>@item.Remark</td>
+                    </tr>
                 }
+            }
             </tbody>
         </table>
     </div>
-</div>
-@*审核拒绝弹框*@
-<div class="selectSupplierDish">
-    <div class="add-openbox add-form" id="WithdrawAuditRefuseShow" style="width:480px">
+</div> 
+<div class="selectYeePayInfo">
+    <div class="add-openbox add-form" id="WithdrawSelYeePay" style="width: 480px">
+        <h3>查询提现状态</h3>
         <fieldset>
             <div class="control-group">
-                <div style="width:480px;font-size:16px"><center><label id="refusedes"></label></center></div>
-                <div class="controls" style="width:480px">
-                    <div style="width:75px">拒绝原因:</div>
-                    <div style="width:480px">
-                        <textarea cols="60" rows="5" id="txtWithdrawAuditRefuse"></textarea>
-                        <p class="help-block"></p>
-                    </div>
-                </div>
+                <span>提现金额：</span><label id="tixianjine"></label><br/>
+                <span>返回码：</span><label id="fanhuima"></label><br/>
+                <span>提现状态：</span><label id="tixianzhuangtai"></label><br/>
+                <span>银行卡后四位：</span><label id="yinhangkahousiwei"></label><br/>
+                <span>提现状态描述：</span><label id="tixianzhuangtaidesc"></label>
             </div>
         </fieldset>
         <p class="btnbox">
-            <input value="确认" type="button" id="btnWithdrawAuditRefuse" class="yesBtn" />
-            <input value="关闭" type="button" class="J_closebox qxBtn" />
+            <input value="确认" type="button" id="btnWithdrawAuditRefuse1" class="yesBtn"/>
+            <input value="关闭" type="button" class="J_closebox qxBtn"/>
         </p>
     </div>
 </div>
+@*审核拒绝弹框*@
+    <div class="selectSupplierDish">
+        <div class="add-openbox add-form" id="WithdrawAuditRefuseShow" style="width:480px">
+            <fieldset>
+                <div class="control-group">
+                    <div style="width:480px;font-size:16px"><center><label id="refusedes"></label></center></div>
+                    <div class="controls" style="width:480px">
+                        <div style="width:75px">拒绝原因:</div>
+                        <div style="width:480px">
+                            <textarea cols="60" rows="5" id="txtWithdrawAuditRefuse"></textarea>
+                            <p class="help-block"></p>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+            <p class="btnbox">
+                <input value="确认" type="button" id="btnWithdrawAuditRefuse" class="yesBtn" />
+                <input value="关闭" type="button" class="J_closebox qxBtn" />
+            </p>
+        </div>
+    </div>
 <script type="text/javascript">
+    $(function() {
+        $("#tixianjine").text('');
+        $("#fanhuima").text('');
+        $("#tixianzhuangtai").text('');
+        $("#yinhangkahousiwei").text('');
+        $("#tixianzhuangtaidesc").text('');
+    });
     var adminjs = new adminglass(); //实例化后台类
     ///审核通过
     $("#btnAuditOk").click(function () {
@@ -143,7 +175,30 @@
                 }
             }
         });
+    });
 
+    $("#selRequestIdInfo").click(function () {
+        var requestId = $('#requestId').val();
+        var paramaters = { "requestId": requestId };
+        var url = "/BusinessWithdraw/QueryCashStatusYee";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                if (result != null) {
+                    var jsonstr = $.parseJSON(result);
+                    $("#tixianjine").text(jsonstr.amount);
+                    $("#fanhuima").text(jsonstr.code);
+                    $("#tixianzhuangtai").text(jsonstr.status);
+                    $("#yinhangkahousiwei").text(jsonstr.lastno);
+                    $("#tixianzhuangtaidesc").text(jsonstr.desc);
+                    adminjs.openwinbox('#WithdrawSelYeePay');
+                } else {
+                    alert('error');
+                }
+            }
+        });
     });
     //审核拒绝弹框
     $("#btnAuditRefuse").click(function () {

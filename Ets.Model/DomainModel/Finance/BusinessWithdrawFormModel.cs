@@ -42,8 +42,11 @@ namespace Ets.Model.DomainModel.Finance
         /// 超时时间（单位为：天）
         /// </summary>
         public int DateDiff { get; set; }
-        
-        
+
+        /// <summary>
+        /// 易宝RquestId
+        /// </summary>
+        public string RequestId { get; set; }
 
     }
 }
