@@ -1086,7 +1086,7 @@ namespace Ets.Service.Provider.Order
             to.CommissionFixValue = ParseHelper.ToDecimal(business.CommissionFixValue); //固定金额     
             to.BusinessGroupId = business.BusinessGroupId;
             to.MealsSettleMode = business.MealsSettleMode;
-
+            to.IsAllowCashPay = business.IsAllowCashPay;//是否允许现金支付
 
 
             to.SongCanDate = from.SongCanDate; //送餐时间
@@ -1149,6 +1149,7 @@ namespace Ets.Service.Provider.Order
                 to.BusinessReceivable = Decimal.Round(ParseHelper.ToDecimal(to.Amount) +
                                ParseHelper.ToDecimal(to.DistribSubsidy) * ParseHelper.ToInt(to.OrderCount), 2);
             }
+
             return to;
         }
 
