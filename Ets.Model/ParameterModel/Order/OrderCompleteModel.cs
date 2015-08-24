@@ -22,6 +22,10 @@ namespace Ets.Model.ParameterModel.Order
         /// 暂时没用到，需要让C端APP传值 
         /// </summary>
         public int orderId { get; set; }
+        /// <summary>
+        /// 是否及时上传坐标
+        /// </summary>
+        public int IsTimely { get; set; }
 
     }
 }

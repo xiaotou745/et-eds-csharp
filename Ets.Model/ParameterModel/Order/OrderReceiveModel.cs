@@ -27,5 +27,9 @@ namespace Ets.Model.ParameterModel.Order
         /// </summary>
         public int DeliveryCompanyID { get; set; }
 
+        /// <summary>
+        /// 是否及时上传坐标
+        /// </summary>
+        public int IsTimely { get; set; }
     }
 }

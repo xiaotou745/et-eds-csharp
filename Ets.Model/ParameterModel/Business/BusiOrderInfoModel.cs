@@ -92,5 +92,10 @@ namespace Ets.Model.ParameterModel.Business
         /// 商户发单纬度
         /// </summary>
         public double PubLatitude { get; set; } 
+
+        /// <summary>
+        /// 是否及时上传坐标
+        /// </summary>
+        public int IsTimely { get; set; }
     }
 }

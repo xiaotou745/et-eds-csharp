@@ -246,5 +246,9 @@ namespace Ets.Model.DataModel.Order
         /// 是否允许现金支付 1允许 0不允许
         /// </summary>
         public int IsAllowCashPay { get; set; }
+        /// <summary>
+        /// 是否及时上传坐标
+        /// </summary>
+        public int IsPubDateTimely { get; set; }
     }
 }

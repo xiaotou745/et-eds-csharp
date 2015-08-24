@@ -992,8 +992,14 @@ namespace Ets.Service.Provider.Clienter
                 //异步回调第三方，推送通知
                 Task.Factory.StartNew(() =>
                 {
-                    //写入骑士抢单坐标
-                    orderOtherDao.UpdateGrab(parmodel.orderNo, parmodel.Longitude, parmodel.Latitude);
+                    //更新骑士抢单记录
+                    orderOtherDao.UpdateGrab(new OrderCompleteModel
+                                            {
+                                                orderNo=parmodel.orderNo,
+                                                Longitude=parmodel.Longitude,
+                                                Latitude=parmodel.Latitude,
+                                                IsTimely=parmodel.IsTimely
+                                            } );
                     new OrderProvider().AsyncOrderStatus(parmodel.orderNo);//同步第三方订单
                     Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", parmodel.businessId.ToString(), string.Empty);
                 });

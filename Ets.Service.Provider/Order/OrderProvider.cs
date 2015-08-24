@@ -309,6 +309,7 @@ namespace Ets.Service.Provider.Order
             to.ReceviceLatitude = busiOrderInfoModel.laitude;
             to.PubLongitude = busiOrderInfoModel.PubLongitude;//商户发单经度
             to.PubLatitude = busiOrderInfoModel.PubLatitude;
+            to.IsPubDateTimely = busiOrderInfoModel.IsTimely;
 
 
             //必须写to.DistribSubsidy ，防止bussiness为空情况
@@ -1920,15 +1921,13 @@ namespace Ets.Service.Provider.Order
         }
 
         /// <summary>
-        /// 更新取货坐标
+        /// 更新取货信息
         /// </summary>
         /// <UpdateBy>hulingbo</UpdateBy>
         /// <UpdateTime>20150701</UpdateTime>
         /// <param name="modelPM"></param>
         public void UpdateTake(OrderPM modelPM)
-        {
-            //float takeLongitude = (float)modelPM.longitude;
-            //float takeLatitude = (float)modelPM.latitude;
+        {         
             orderDao.UpdateTake(modelPM);
         }
 
