@@ -52,6 +52,7 @@
     <Compile Include="Common\DealResultInfo.cs" />
     <Compile Include="Common\GlobalConfig.cs" />
     <Compile Include="Common\HomeCountTitleModel.cs" />
+    <Compile Include="Common\HttpModel.cs" />
     <Compile Include="Common\ImageCommon.cs" />
     <Compile Include="Common\JPushModel.cs" />
     <Compile Include="Common\ListParaBase.cs" />
