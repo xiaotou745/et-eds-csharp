@@ -125,7 +125,7 @@ namespace Ets.Service.Provider.Finance
                                                                 Operator = clienter.TrueName,
                                                                 WithwardId = withwardId,
                                                                 RelationNo = withwardNo,
-                                                                Remark = "骑士提现"
+                                                                Remark = "骑士哥哥要提现工资啦！领完工资去哪里搓去呢？"
                                                             });
 
                     tran.Complete();

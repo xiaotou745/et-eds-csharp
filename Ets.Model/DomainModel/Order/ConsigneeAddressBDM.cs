@@ -27,6 +27,10 @@ namespace Ets.Model.DomainModel.Order
         /// 订单发布日期
         /// </summary>
         public string PubDate { get; set; }
+        /// <summary>
+        /// 用户姓名
+        /// </summary>
+        public string UserName { get; set; }
 
     }
 }

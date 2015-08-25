@@ -20,5 +20,7 @@ namespace Ets.Service.IProvider.Clienter
         /// </summary>
         /// <returns></returns>
         ResultModel<object> InsertLocaltion(ClienterPushLocaltionPM model);
+
+        IList<Location> GetLocationsByTime(DateTime start, DateTime end, int clienterId);
     }
 }

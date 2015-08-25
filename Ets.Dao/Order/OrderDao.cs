@@ -1347,7 +1347,7 @@ where   o.[Status] <> 3
             }
             else if (criteria.searchType == 3)//本月
             {
-                sbtbl.Append("   o.PubDate between dateadd(day,-30,getdate()) and getdate() ");
+                sbtbl.Append(" and   o.PubDate between dateadd(day,-30,getdate()) and getdate() ");
             }
             sbtbl.Append(" group by b.district ) tbl ");
             string columnList = @"  tbl.district
@@ -2174,8 +2174,8 @@ select @@identity";
 
             #region 写子OrderOther表
             const string insertOtherSql = @"
-insert into OrderOther(OrderId,NeedUploadCount,HadUploadCount,PubLongitude,PubLatitude,OneKeyPubOrder,IsOrderChecked,IsAllowCashPay)
-values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude,@OneKeyPubOrder,@IsOrderChecked,@IsAllowCashPay)";
+insert into OrderOther(OrderId,NeedUploadCount,HadUploadCount,PubLongitude,PubLatitude,OneKeyPubOrder,IsOrderChecked,IsAllowCashPay,IsPubDateTimely)
+values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude,@OneKeyPubOrder,@IsOrderChecked,@IsAllowCashPay,@IsPubDateTimely)";
             IDbParameters dbOtherParameters = DbHelper.CreateDbParameters();
             dbOtherParameters.AddWithValue("@OrderId", orderId); //商户ID
             dbOtherParameters.AddWithValue("@NeedUploadCount", order.OrderCount); //需上传数量
@@ -2184,6 +2184,7 @@ values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude,@OneKeyPubOrder,@I
             dbOtherParameters.AddWithValue("@OneKeyPubOrder", order.OneKeyPubOrder);
             dbOtherParameters.Add("@IsOrderChecked", DbType.Int32).Value = order.IsOrderChecked;
             dbOtherParameters.Add("@IsAllowCashPay", DbType.Int32).Value = order.IsAllowCashPay;
+            dbOtherParameters.Add("@IsPubDateTimely", DbType.Int32).Value = order.IsPubDateTimely;
 
             DbHelper.ExecuteScalar(SuperMan_Write, insertOtherSql, dbOtherParameters);
             #endregion
@@ -2820,7 +2821,7 @@ update dbo.[Order]
    return
  end
 update OrderOther 
-    set TakeTime=GETDATE(),TakeLongitude=@TakeLongitude,TakeLatitude=@TakeLatitude 
+    set TakeTime=GETDATE(),TakeLongitude=@TakeLongitude,TakeLatitude=@TakeLatitude,IsTakeTimely=@IsTakeTimely 
 where orderid=@orderid; 
 insert into dbo.OrderSubsidiesLog ( Price, InsertTime, OptName, Remark,
                                      OrderId, OptId, OrderStatus, Platform )
@@ -2828,9 +2829,10 @@ select OrderCommission,getdate(),@ClienterTrueName,'确认已取货',Id,@cliente
 end
             ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("orderId", DbType.Int32, 4).Value = modelPM.OrderId;
             dbParameters.AddWithValue("TakeLongitude", modelPM.longitude);
             dbParameters.AddWithValue("TakeLatitude", modelPM.latitude);
-            dbParameters.Add("orderId", DbType.Int32, 4).Value = modelPM.OrderId;
+            dbParameters.AddWithValue("IsTakeTimely", modelPM.IsTimely);            
             dbParameters.AddWithValue("clienterId", modelPM.ClienterId);
             dbParameters.AddWithValue("Platform", SuperPlatform.FromClienter.GetHashCode());
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
@@ -3194,7 +3196,12 @@ where   Id = @OrderId and FinishAll = 0";
                                                 WHEN 0 THEN -1
                                                 ELSE ord.GrabToCompleteDistance
                                             END
-                                    END AS GrabToCompleteDistance
+                                    END AS GrabToCompleteDistance,
+                                    ISNULL(ord.IsPubDateTimely, 0),
+                                    ISNULL(ord.IsGrabTimely, 0),
+                                    ISNULL(ord.IsTakeTimely, 0),
+                                    ISNULL(ord.IsCompleteTimely, 0),
+                                    ISNULL(ab.clienterId, 0)
                             FROM  [order] (NOLOCK) ab  
                                     JOIN OrderOther (NOLOCK) ord ON ord.OrderId = ab.Id
                                     JOIN business (NOLOCK) c ON c.id = ab.businessId 
@@ -3662,7 +3669,7 @@ where c.Id=@ClienterId;");
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Amount", model.RealOrderCommission);
             parm.AddWithValue("@Status", ClienterBalanceRecordStatus.Success);
-            parm.AddWithValue("@RecordType", ClienterBalanceRecordRecordType.CancelOrder);
+            parm.AddWithValue("@RecordType", ClienterBalanceRecordRecordType.OrderCommission);
             parm.AddWithValue("@Operator", "服务");
             parm.AddWithValue("@WithwardId", model.Id);
             parm.AddWithValue("@RelationNo", model.OrderNo);

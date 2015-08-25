@@ -917,11 +917,16 @@ namespace Ets.Service.Provider.Clienter
         /// </summary>
         /// <UpdateBy>hulingbo</UpdateBy>
         /// <UpdateTime>20150511</UpdateTime>
+        /// <UpdateBy>danny</UpdateBy>
+        /// <UpdateTime>20150824</UpdateTime>
         /// <param name="id">骑士id</param>
         /// <returns></returns>
         public ClienterDM GetDetails(int id)
         {
-            return clienterDao.GetDetails(id);
+            var model = clienterDao.GetDetails(id);
+            model.HasMessage = new ClienterMessageDao().HasMessage(id);
+            return model;
+
         }
 
         /// <summary>
@@ -992,8 +997,14 @@ namespace Ets.Service.Provider.Clienter
                 //异步回调第三方，推送通知
                 Task.Factory.StartNew(() =>
                 {
-                    //写入骑士抢单坐标
-                    orderOtherDao.UpdateGrab(parmodel.orderNo, parmodel.Longitude, parmodel.Latitude);
+                    //更新骑士抢单记录
+                    orderOtherDao.UpdateGrab(new OrderCompleteModel
+                                            {
+                                                orderNo=parmodel.orderNo,
+                                                Longitude=parmodel.Longitude,
+                                                Latitude=parmodel.Latitude,
+                                                IsTimely=parmodel.IsTimely
+                                            } );
                     new OrderProvider().AsyncOrderStatus(parmodel.orderNo);//同步第三方订单
                     Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", parmodel.businessId.ToString(), string.Empty);
                 });
@@ -1217,7 +1228,7 @@ namespace Ets.Service.Provider.Clienter
                                             Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士" : myOrderInfo.ClienterName,
                                             WithwardId = myOrderInfo.Id,
                                             RelationNo = myOrderInfo.OrderNo,
-                                            Remark = "物流公司,骑士完成订单"
+                                            Remark = "骑士哥哥，不能稀里糊涂的，基本佣金+平台补贴就是你的订单佣金哦！"
                                         });
                 //将订单标记为加入已提现
                 orderOtherDao.UpdateJoinWithdraw(myOrderInfo.Id);
@@ -1240,7 +1251,7 @@ namespace Ets.Service.Provider.Clienter
                                                 Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士" : myOrderInfo.ClienterName,
                                                 WithwardId = myOrderInfo.Id,
                                                 RelationNo = myOrderInfo.OrderNo,
-                                                Remark = "骑士完成订单"
+                                                Remark = "骑士哥哥，不能稀里糊涂的，基本佣金+平台补贴就是你的订单佣金哦！"
                                             });
                     //更新骑士无效订单金额
                     UpdateInvalidOrder(myOrderInfo);
@@ -1257,7 +1268,7 @@ namespace Ets.Service.Provider.Clienter
                                                 Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士" : myOrderInfo.ClienterName,
                                                 WithwardId = myOrderInfo.Id,
                                                 RelationNo = myOrderInfo.OrderNo,
-                                                Remark = "骑士完成订单" + (myOrderInfo.IsOrderChecked == 0 ? "(订单不需审核)" : "")
+                                                Remark = "骑士哥哥，不能稀里糊涂的，基本佣金+平台补贴就是你的订单佣金哦！"
                                             });
                     //将订单标记为加入已提现
                     orderOtherDao.UpdateJoinWithdraw(myOrderInfo.Id);
@@ -1313,11 +1324,11 @@ namespace Ets.Service.Provider.Clienter
                     BusinessId = myOrderInfo.businessId,
                     Amount = myOrderInfo.BusinessReceivable,
                     Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
-                    RecordType = BusinessBalanceRecordRecordType.PublishOrder.GetHashCode(),
+                    RecordType = BusinessBalanceRecordRecordType.OrderMeals.GetHashCode(),
                     Operator = myOrderInfo.ClienterName,
                     WithwardId = myOrderInfo.Id,
                     RelationNo = myOrderInfo.OrderNo,
-                    Remark = "返还商家订单菜品费"
+                    Remark = "土豪，返还商家订单菜品费"
                 };
 
                 #region 当有现金支付的子订单时，商家余额增加金额 = 商户应收-现金支付的子订单金额  wc修改

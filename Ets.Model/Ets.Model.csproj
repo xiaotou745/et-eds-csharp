@@ -52,9 +52,11 @@
     <Compile Include="Common\DealResultInfo.cs" />
     <Compile Include="Common\GlobalConfig.cs" />
     <Compile Include="Common\HomeCountTitleModel.cs" />
+    <Compile Include="Common\HttpModel.cs" />
     <Compile Include="Common\ImageCommon.cs" />
     <Compile Include="Common\JPushModel.cs" />
     <Compile Include="Common\ListParaBase.cs" />
+    <Compile Include="Common\Location.cs" />
     <Compile Include="Common\OpenCityModel.cs" />
     <Compile Include="Common\OrderCountManageList.cs" />
     <Compile Include="Common\PagedList.cs" />
@@ -306,6 +308,7 @@
     <Compile Include="ParameterModel\Finance\CardModifyBPM.cs" />
     <Compile Include="ParameterModel\Finance\CardModifyCPM.cs" />
     <Compile Include="ParameterModel\Finance\ClienterAllowWithdrawRecordPM.cs" />
+    <Compile Include="ParameterModel\Finance\BusinessBalanceRecordPM.cs" />
     <Compile Include="ParameterModel\Finance\ClienterBalanceRecordPM.cs" />
     <Compile Include="ParameterModel\Finance\ClienterBalanceRecordSerchCriteria.cs" />
     <Compile Include="ParameterModel\Finance\ClienterFinanceAccountPM.cs" />

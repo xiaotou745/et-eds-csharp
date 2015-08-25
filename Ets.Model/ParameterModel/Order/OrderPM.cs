@@ -42,5 +42,10 @@ namespace Ets.Model.ParameterModel.Order
         /// 物流公司ID 
         /// </summary>
         public int DeliveryCompanyID { get; set; }
+
+        /// <summary>
+        /// 是否及时上传坐标
+        /// </summary>
+        public int IsTimely { get; set; }
     }
 }

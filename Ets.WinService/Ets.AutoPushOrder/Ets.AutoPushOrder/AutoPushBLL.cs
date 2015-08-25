@@ -23,7 +23,7 @@ namespace Ets.AutoPushOrder
                 return;
             }
             threadSafe = false;
-            Thread.Sleep(10000);
+            //Thread.Sleep(10000);
             try
             {
                 var iOrderProvider = new OrderProvider();
