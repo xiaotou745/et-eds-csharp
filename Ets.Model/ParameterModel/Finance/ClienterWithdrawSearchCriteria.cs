@@ -40,5 +40,9 @@ namespace Ets.Model.ParameterModel.Finance
         /// 商户城市
         /// </summary>
         public string businessCity { get; set; }
+        /// <summary>
+        /// 提现、审核、提款日期类型
+        /// </summary>
+        public int ClientWithdrawDate { get; set; }
     }
 }

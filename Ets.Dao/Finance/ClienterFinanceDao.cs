@@ -63,14 +63,18 @@ namespace Ets.Dao.Finance
             {
                 sbSqlWhere.AppendFormat(" AND C.City='{0}' ", criteria.businessCity.Trim());
             }
-            if (!string.IsNullOrWhiteSpace(criteria.WithdrawDateStart))
+            if (criteria.ClientWithdrawDate > 0)
             {
-                sbSqlWhere.AppendFormat(" AND CONVERT(CHAR(10),cwf.WithdrawTime,120)>=CONVERT(CHAR(10),'{0}',120) ", criteria.WithdrawDateStart.Trim());
+                if (!string.IsNullOrWhiteSpace(criteria.WithdrawDateStart))
+                {
+                    sbSqlWhere.AppendFormat(" AND CONVERT(CHAR(10),cwf.{0},120)>=CONVERT(CHAR(10),'{1}',120) ", (((ClientWithdrawType)criteria.ClientWithdrawDate).ToString()), criteria.WithdrawDateStart.Trim());
+                }
+                if (!string.IsNullOrWhiteSpace(criteria.WithdrawDateEnd))
+                {
+                    sbSqlWhere.AppendFormat(" AND CONVERT(CHAR(10),cwf.{0},120)<=CONVERT(CHAR(10),'{1}',120) ", (((ClientWithdrawType)criteria.ClientWithdrawDate).ToString()), criteria.WithdrawDateEnd.Trim());
+                }
             }
-            if (!string.IsNullOrWhiteSpace(criteria.WithdrawDateEnd))
-            {
-                sbSqlWhere.AppendFormat(" AND CONVERT(CHAR(10),cwf.WithdrawTime,120)<=CONVERT(CHAR(10),'{0}',120) ", criteria.WithdrawDateEnd.Trim());
-            }
+
             if (!string.IsNullOrEmpty(criteria.AuthorityCityNameListStr) && criteria.UserType != 0)
             {
                 sbSqlWhere.AppendFormat(" AND C.City IN ({0}) ", criteria.AuthorityCityNameListStr.Trim());
@@ -313,7 +317,7 @@ INTO ClienterWithdrawLog
         /// <returns></returns>
         public bool ModifyClienterWithdrawPayFailedReason(ClienterWithdrawLogModel model)
         {
-            string sql =@" 
+            string sql = @" 
 UPDATE ClienterWithdrawForm
  SET    PayFailedReason=ISNULL(PayFailedReason,'')+@PayFailedReason+' '
 OUTPUT
@@ -465,7 +469,7 @@ select      cbr.[ClienterId]
             //           ,@Remark
             // from ClienterAllowWithdrawRecord cbr (nolock)
             //    join clienter c (nolock) on c.Id=cbr.ClienterId
-                        // where cbr.WithwardId=@WithwardId and cbr.Status=@Status and cbr.RecordType=@RecordType;");
+            // where cbr.WithwardId=@WithwardId and cbr.Status=@Status and cbr.RecordType=@RecordType;");
             #endregion
             string sql = string.Format(@" 
 insert into ClienterAllowWithdrawRecord
