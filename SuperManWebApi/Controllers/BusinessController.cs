@@ -49,7 +49,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="model">商户参数</param>
         /// <returns></returns>        
         [HttpPost]
-        [Token]
+        //[Token]
         public ResultModel<BusinessDM> Get(ParamModel ParModel)
         {
             BussinessPM model = JsonHelper.JsonConvertToObject<BussinessPM>(AESApp.AesDecrypt(ParModel.data));
