@@ -29,7 +29,7 @@ namespace Ets.Dao.Order
         {
             IList<ConsigneeAddressBDM> models = new List<ConsigneeAddressBDM>();
             const string querysql = @"
-select  Id ,PhoneNo,Address,CONVERT(varchar(100),PubDate, 120) as PubDate
+select  Id ,PhoneNo,Address,CONVERT(varchar(100),PubDate, 120) as PubDate,UserName
 from    dbo.ReceviceAddress
 where   PubDate > @PubDate
         and BusinessId = @BusinessId";
@@ -74,22 +74,26 @@ SELECT  ODataNew.PhoneNo ,
         ODataNew.Address ,
         ODataNew.businessId ,
         ODataNew.PubDate ,
+        ODataNew.UserName,
         CASE WHEN ODataNew.PubDate != RA2.PubDate THEN 1 ELSE 0 END AS Falg
 INTO    #TempAdress
 FROM    ( SELECT    OData.RecevicePhoneNo AS PhoneNo ,
                     ISNULL(OData.ReceviceAddress,'') AS [Address] ,
                     OData.BusinessId ,
-                    OData.PubDate
+                    OData.PubDate,
+                    OData.UserName
           FROM      ( SELECT    RecevicePhoneNo ,
                                 ReceviceAddress ,
                                 businessId ,
-                                MAX(o.PubDate) AS PubDate
+                                MAX(o.PubDate) AS PubDate,
+                                ReceviceName UserName
                       FROM      dbo.[order] o ( NOLOCK )
                       WHERE     o.PubDate > @BeginDate
                                 AND ISNULL(RecevicePhoneNo, '') != ''
                       GROUP BY  businessId ,
                                 RecevicePhoneNo ,
-                                ReceviceAddress
+                                ReceviceAddress,
+                                ReceviceName
                     ) AS OData
                     LEFT JOIN dbo.ReceviceAddress RA ( NOLOCK ) ON OData.businessId = RA.BusinessId
                                                               AND OData.RecevicePhoneNo = RA.PhoneNo
@@ -105,12 +109,14 @@ INSERT  INTO dbo.ReceviceAddress
         ( PhoneNo ,
           [Address] ,
           Businessid ,
-          PubDate
+          PubDate,
+          UserName
         )
         SELECT  PhoneNo ,
                 isnull([Address],''),
                 Businessid ,
-                PubDate
+                PubDate,
+                UserName
         FROM    #TempAdress
         WHERE   #TempAdress.Falg = 0
 UPDATE  dbo.ReceviceAddress
