@@ -14,6 +14,7 @@ using Ets.Model.DomainModel.Finance;
 using ETS.Util;
 using Ets.Model.ParameterModel.Finance;
 using ETS.Data.Generic;
+using ETS.Enums;
 #endregion
 
 namespace Ets.Dao.Finance
@@ -113,32 +114,6 @@ from  ClienterBalanceRecord (nolock)" + condition;
         /// <returns></returns>
         public IList<FinanceRecordsDM> GetByClienterId(int clienterId)
         {
-//            IList<FinanceRecordsDM> models = new List<FinanceRecordsDM>();
-//            const string querysql = @"
-//select  Id,ClienterId as UserId,Amount,Status,Balance,RecordType,Operator,OperateTime,WithwardId,RelationNo,
-//case RecordType when 11 then substring(Remark,1,8)
-// else '' end  as  Remark,
-//substring(convert(varchar(100),OperateTime,24),1,5) as TimeInfo,
-//case convert(varchar(100), OperateTime, 23) 
-//	when convert(varchar(100), getdate(), 23) then '今日'
-//    else substring(convert(varchar(100), OperateTime, 23),6,5) end
-//as DateInfo,
-//case substring(convert(varchar(100), OperateTime, 23),1,7) 
-//	when substring(convert(varchar(100), getdate(), 23),1,7)  then '本月'
-//    else convert(varchar(4),datepart(Year,OperateTime))+'年'+convert(varchar(4),datepart(month,OperateTime)) +'月' end
-//as MonthInfo
-//from  ClienterBalanceRecord (nolock)
-//where  ClienterId=@ClienterId  and IsEnable=1
-//order by Id desc";
-//            IDbParameters dbParameters = DbHelper.CreateDbParameters();
-//            dbParameters.AddWithValue("ClienterId", clienterId);
-//            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
-//            if (DataTableHelper.CheckDt(dt))
-//            {
-//                models = DataTableHelper.ConvertDataTableList<FinanceRecordsDM>(dt);
-//            }
-//            return models;
-
             IList<FinanceRecordsDM> models = new List<FinanceRecordsDM>();
             const string querysql = @"
 select  Id,ClienterId as UserId,Amount,Status,Balance,RecordType,Operator,OperateTime,WithwardId,RelationNo,
@@ -193,14 +168,19 @@ order by Id desc";
                 obj = dataReader["RecordType"];
                 if (obj != null && obj != DBNull.Value)
                 {
-                    result.RecordType = int.Parse(obj.ToString());
+                    int recordType=int.Parse(obj.ToString());
+                    result.RecordType = recordType;                   
+
+                    Enum status=(ClienterBalanceRecordRecordType)recordType;
+                    result.RecordTypeDescription=   EnumExtenstion.GetEnumItem(status.GetType(), status).Text;                        
                 }
 
                 result.Operator = dataReader["Operator"].ToString();
                 obj = dataReader["OperateTime"];
                 if (obj != null && obj != DBNull.Value)
                 {
-                    result.OperateTime = DateTime.Parse(obj.ToString());
+                    System.Globalization.DateTimeFormatInfo myDTFI = new System.Globalization.CultureInfo("zh-cn", false).DateTimeFormat;
+                    result.OperateTime = DateTime.Parse(obj.ToString(), myDTFI);
                 }
                 obj = dataReader["WithwardId"];
                 if (obj != null && obj != DBNull.Value)
@@ -212,8 +192,8 @@ order by Id desc";
                 obj = dataReader["Remark"].ToString();
                 if (obj != null && obj != DBNull.Value)
                 {
-                    if (result.RecordType == 11)//审核拒绝
-                    {
+                    //if (result.RecordType == 11)//审核拒绝
+                    //{
                         if (obj.ToString().Length > 8)
                         {
                             result.Remark = obj.ToString().Substring(0, 8)+"...";
@@ -222,11 +202,11 @@ order by Id desc";
                         {
                             result.Remark = obj.ToString();
                         }
-                    }
-                    else
-                    {
-                        result.Remark = "";
-                    }
+                    //}
+                    //else
+                    //{
+                    //    result.Remark = "";
+                    //}
                 }
 
                 obj = dataReader["TimeInfo"];
