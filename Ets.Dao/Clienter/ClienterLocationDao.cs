@@ -10,6 +10,7 @@ using ETS.Data.Core;
 using ETS.Data.PageData;
 using Ets.Model.Common;
 using Ets.Model.DataModel.Clienter;
+using Ets.Model.DomainModel.Order;
 using Ets.Model.DomainModel.Statistics;
 using ETS.Util;
 
@@ -64,6 +65,20 @@ join clienter (Nolock) c on cl.ClienterId=c.Id ", DateTime.Now.AddMinutes(-Parse
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, strSql+where);
             return MapRows<AppActiveInfo>(dt);
         }
+
+        /// <summary>
+        /// 获得实时坐标
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <param name="clienterId"></param>
+        /// <returns></returns>
+        public IList<Location> GetLocationsByTime(DateTime start, DateTime end,int clienterId)
+        {
+            string strSql = string.Format("select Longitude,Latitude from ClienterLocation (Nolock) where clienterId={0} and CreateTime>='{1}' and CreateTime<='{2}'", clienterId, start, end);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, strSql);
+            return MapRows<Location>(dt);
+        } 
 
         #endregion
 

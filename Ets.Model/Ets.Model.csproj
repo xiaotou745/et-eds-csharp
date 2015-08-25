@@ -55,6 +55,7 @@
     <Compile Include="Common\ImageCommon.cs" />
     <Compile Include="Common\JPushModel.cs" />
     <Compile Include="Common\ListParaBase.cs" />
+    <Compile Include="Common\Location.cs" />
     <Compile Include="Common\OpenCityModel.cs" />
     <Compile Include="Common\OrderCountManageList.cs" />
     <Compile Include="Common\PagedList.cs" />

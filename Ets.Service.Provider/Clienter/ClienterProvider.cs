@@ -917,11 +917,16 @@ namespace Ets.Service.Provider.Clienter
         /// </summary>
         /// <UpdateBy>hulingbo</UpdateBy>
         /// <UpdateTime>20150511</UpdateTime>
+        /// <UpdateBy>danny</UpdateBy>
+        /// <UpdateTime>20150824</UpdateTime>
         /// <param name="id">骑士id</param>
         /// <returns></returns>
         public ClienterDM GetDetails(int id)
         {
-            return clienterDao.GetDetails(id);
+            var model = clienterDao.GetDetails(id);
+            model.HasMessage = new ClienterMessageDao().HasMessage(id);
+            return model;
+
         }
 
         /// <summary>

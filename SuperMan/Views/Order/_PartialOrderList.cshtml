@@ -297,37 +297,48 @@ width: 100%;
             //map.centerAndZoom(new BMap.Point(116.404, 39.915), 16);
             map.enableScrollWheelZoom();
 
-            var polyline = new BMap.Polyline([
+            var points = [];
+            for (var i = 0; i < jsonstr.Locations.length; i++) {
+                points.push(new BMap.Point(jsonstr.Locations[i].Longitude, jsonstr.Locations[i].Latitude));
+            }
+            var polyline = new BMap.Polyline(points, { strokeColor: "red", strokeWeight: 2, strokeOpacity: 0.5 });   //创建折线
+
+            /*var polyline = new BMap.Polyline([
                 new BMap.Point(jsonstr.PubLongitude, jsonstr.PubLatitude),
                 new BMap.Point(jsonstr.GrabLongitude, jsonstr.GrabLatitude),
                 new BMap.Point(jsonstr.TakeLongitude, jsonstr.TakeLatitude),
                 new BMap.Point(jsonstr.CompleteLongitude, jsonstr.CompleteLatitude)
-            ], { strokeColor: "red", strokeWeight: 2, strokeOpacity: 0.5 });   //创建折线
+            ], { strokeColor: "red", strokeWeight: 2, strokeOpacity: 0.5 });   //创建折线*/
             map.addOverlay(polyline);   //增加折线
+
+            var isPubDateTimely = jsonstr.IsPubDateTimely != 0;
+            var isGrabTimely = jsonstr.IsGrabTimely != 0;
+            var isTakeTimely = jsonstr.IsTakeTimely != 0;
+            var isCompleteTimely = jsonstr.IsCompleteTimely != 0;
 
             //发单
             var marker = new BMap.Marker(new BMap.Point(jsonstr.PubLongitude, jsonstr.PubLatitude)); // 创建点
             map.addOverlay(marker);
-            var label = new BMap.Label("发单时间-" + jsonstr.PubDate, { offset: new BMap.Size(-165, -10) });
+            var label = new BMap.Label("发单时间-" + jsonstr.PubDate + (!isPubDateTimely?",非实时":""), { offset: new BMap.Size(-200, -10) });
             marker.setLabel(label);
 
             //抢单
             var marker1 = new BMap.Marker(new BMap.Point(jsonstr.GrabLongitude, jsonstr.GrabLatitude)); // 创建点
             map.addOverlay(marker1);
-            var label = new BMap.Label("抢单时间-" + jsonstr.GrabTime, { offset: new BMap.Size(20, -10) });
+            var label = new BMap.Label("抢单时间-" + jsonstr.GrabTime + (!isGrabTimely ? ",非实时" : ""), { offset: new BMap.Size(20, -10) });
             marker1.setLabel(label);
 
             //取货
             var marker2 = new BMap.Marker(new BMap.Point(jsonstr.TakeLongitude, jsonstr.TakeLatitude)); // 创建点
             map.addOverlay(marker2);
-            var label = new BMap.Label("取货时间-" + jsonstr.TakeTime, { offset: new BMap.Size(20, 20) });
+            var label = new BMap.Label("取货时间-" + jsonstr.TakeTime + (!isTakeTimely ? ",非实时" : ""), { offset: new BMap.Size(20, 20) });
             marker2.setLabel(label);
 
 
             //完成
             var marker3 = new BMap.Marker(new BMap.Point(jsonstr.CompleteLongitude, jsonstr.CompleteLatitude)); // 创建点
             map.addOverlay(marker3);
-            var label = new BMap.Label("完成时间-" + jsonstr.ActualDoneDate, { offset: new BMap.Size(-165, 20) });
+            var label = new BMap.Label("完成时间-" + jsonstr.ActualDoneDate + (!isCompleteTimely ? ",非实时" : ""), { offset: new BMap.Size(-200, 20) });
             marker3.setLabel(label);
         }
     }

@@ -66,6 +66,7 @@ namespace Ets.Service.Provider.Order
         ClienterBalanceRecordDao clienterBalanceRecordDao = new ClienterBalanceRecordDao();
         ClienterAllowWithdrawRecordDao clienterAllowWithdrawRecordDao = new ClienterAllowWithdrawRecordDao();
         OrderSubsidiesLogDao orderSubsidiesLogDao = new OrderSubsidiesLogDao();
+        IClienterLocationProvider clienterLocationProvider = new ClienterLocationProvider();
 
         private readonly BusinessBalanceRecordDao _businessBalanceRecordDao = new BusinessBalanceRecordDao();
         ClienterFinanceDao clienterFinanceDao = new ClienterFinanceDao();
@@ -1086,7 +1087,7 @@ namespace Ets.Service.Provider.Order
             to.CommissionFixValue = ParseHelper.ToDecimal(business.CommissionFixValue); //固定金额     
             to.BusinessGroupId = business.BusinessGroupId;
             to.MealsSettleMode = business.MealsSettleMode;
-
+            to.IsAllowCashPay = business.IsAllowCashPay;//是否允许现金支付
 
 
             to.SongCanDate = from.SongCanDate; //送餐时间
@@ -1149,6 +1150,7 @@ namespace Ets.Service.Provider.Order
                 to.BusinessReceivable = Decimal.Round(ParseHelper.ToDecimal(to.Amount) +
                                ParseHelper.ToDecimal(to.DistribSubsidy) * ParseHelper.ToInt(to.OrderCount), 2);
             }
+
             return to;
         }
 
@@ -2063,22 +2065,40 @@ namespace Ets.Service.Provider.Order
             OrderMapDetail detail = orderDao.GetOrderMapDetail(orderID);
             if (detail != null)
             {
+                DateTime startTime = DateTime.MinValue;
+                DateTime endTime = DateTime.MinValue;
                 DateTime d = DateTime.Parse("1900-01-01");
                 if (DateTime.Parse(detail.PubDate) == d)
                 {
                     detail.PubDate = "暂无";
                 }
+                else
+                {
+                    startTime = DateTime.Parse(detail.PubDate);
+                }
                 if (DateTime.Parse(detail.GrabTime) == d)
                 {
                     detail.GrabTime = "暂无";
+                }
+                else
+                {
+                    endTime = DateTime.Parse(detail.GrabTime);
+                }
+                if (DateTime.Parse(detail.TakeTime) == d)
+                {
+                    detail.TakeTime = "暂无";
+                }
+                else
+                {
+                    endTime = DateTime.Parse(detail.TakeTime);
                 }
                 if (DateTime.Parse(detail.ActualDoneDate) == d)
                 {
                     detail.ActualDoneDate = "暂无";
                 }
-                if (DateTime.Parse(detail.TakeTime) == d)
+                else
                 {
-                    detail.TakeTime = "暂无";
+                    endTime = DateTime.Parse(detail.ActualDoneDate);
                 }
                 #region 如果抢单，取货，完成地点的经度或纬度为0，则其经纬度都取发单经纬度
                 if (detail.GrabLatitude == 0 || detail.GrabLongitude == 0)
@@ -2096,6 +2116,14 @@ namespace Ets.Service.Provider.Order
                     detail.CompleteLongitude = detail.PubLongitude;
                     detail.CompleteLatitude = detail.PubLatitude;
                 }
+
+                //开始时间小于结束时间才获取实时坐标 add by pengyi 20150825
+                if (startTime < endTime)
+                {
+                    detail.Locations = clienterLocationProvider.GetLocationsByTime(startTime, endTime, detail.ClienterId);
+                }
+                if (detail.Locations == null )
+                    detail.Locations = new List<Location>();
                 #endregion
             }
             return detail;
