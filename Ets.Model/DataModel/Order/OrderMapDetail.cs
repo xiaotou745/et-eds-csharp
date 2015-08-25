@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Ets.Model.Common;
 
 namespace Ets.Model.DataModel.Order
 {
@@ -65,5 +66,30 @@ namespace Ets.Model.DataModel.Order
         /// 抢单和完成点之间的距离
         /// </summary>
         public double GrabToCompleteDistance { get; set; }
+
+        /// <summary>
+        /// 发单坐标是否是实时坐标 add by pengyi 20150825
+        /// </summary>
+        public int IsPubDateTimely { get; set; }
+        /// <summary>
+        /// 抢单坐标是否是实时坐标 add by pengyi 20150825
+        /// </summary>
+        public int IsGrabTimely { get; set; }
+        /// <summary>
+        /// 取货坐标是否是实时坐标 add by pengyi 20150825
+        /// </summary>
+        public int IsTakeTimely { get; set; }
+        /// <summary>
+        /// 完成坐标是否是实时坐标 add by pengyi 20150825
+        /// </summary>
+        public int IsCompleteTimely { get; set; }
+        /// <summary>
+        /// 骑士Id add by pengyi 20150825
+        /// </summary>
+        public int ClienterId { get; set; }
+        /// <summary>
+        /// 订单实时坐标 add by pengyi 20150825
+        /// </summary>
+        public IList<Location> Locations { get; set; } 
     }
 }
