@@ -24,7 +24,7 @@ namespace ETS.Library.Pay.WxPay
         public const string APPID = "wxbb8fb40942327ec6";
         public const string MCHID = "1264102901";
         public const string KEY = "10852AFB8F4044D88F5A24E978BBC053";
-        public const string APPSECRET = "418b142c469725f8487d169b3b5d5c3e";
+        public const string APPSECRET = "c0cb93c7fb3f7322326b0c853f0cba46";
 
         //=======【证书路径设置】===================================== 
         /* 证书路径,注意应该填写绝对路径（仅退款、撤销订单时需要）
