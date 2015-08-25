@@ -120,6 +120,17 @@ namespace Ets.Service.Provider.Finance
                         OpenBank = businessFinanceAccount.OpenBank,//开户行
                         OpenSubBank = businessFinanceAccount.OpenSubBank //开户支行
                     });
+                    #endregion        
+
+                    #region 商户提现记录
+
+                    _businessWithdrawLogDao.Insert(new BusinessWithdrawLog()
+                    {
+                        WithwardId = withwardId,
+                        Status = (int)BusinessWithdrawFormStatus.WaitAllow,//待审核
+                        Remark = "商户发起提现操作",
+                        Operator = business.Name,
+                    }); //更新商户表的余额，可提现余额 
                     #endregion
 
                     #region 商户余额流水操作 更新骑士表的余额，可提现余额
@@ -132,19 +143,8 @@ namespace Ets.Service.Provider.Finance
                         Operator = business.Name,
                         WithwardId = withwardId,
                         RelationNo = withwardNo,
-                        Remark = "商户提现"
+                        Remark = "土豪欧巴，提款后记得充值哦"
                     });
-                    #endregion
-
-                    #region 商户提现记录
-
-                    _businessWithdrawLogDao.Insert(new BusinessWithdrawLog()
-                    {
-                        WithwardId = withwardId,
-                        Status = (int)BusinessWithdrawFormStatus.WaitAllow,//待审核
-                        Remark = "商户发起提现操作",
-                        Operator = business.Name,
-                    }); //更新商户表的余额，可提现余额 
                     #endregion
                     tran.Complete();
                 }
@@ -428,7 +428,11 @@ namespace Ets.Service.Provider.Finance
                 {
                     if (businessFinanceDao.BusinessWithdrawAuditRefuse(model))
                     {
-                        if (businessFinanceDao.ModifyBusinessBalanceRecordStatus(model.WithwardId.ToString()))
+                        //if (businessFinanceDao.ModifyBusinessBalanceRecordStatus(model.WithwardId.ToString()))
+                        if (_businessBalanceRecordDao.UpdateStatusAndRemark(new BusinessBalanceRecord() {
+                                        Remark = model.Remark,
+                                        WithwardId = model.WithwardId
+                                    }))
                         {
                             if (businessFinanceDao.ModifyBusinessAmountInfo(model.WithwardId.ToString()))
                             {

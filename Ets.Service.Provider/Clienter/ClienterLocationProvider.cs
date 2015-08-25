@@ -42,7 +42,7 @@ namespace Ets.Service.Provider.Clienter
             {
                 LogHelper.LogWriterFromFilter(ex);
                 return ResultModel<object>.Conclude(SystemState.SystemError,
-                      new { PushTime = 0});
+                      new { PushTime = 0 });
             }
 
         }
@@ -75,6 +75,22 @@ namespace Ets.Service.Provider.Clienter
             return hasUnFinishedOrder
                 ? int.Parse(GlobalConfigDao.GlobalConfigGet(0).HasUnFinishedOrderUploadTimeInterval)
                 : int.Parse(GlobalConfigDao.GlobalConfigGet(0).AllFinishedOrderUploadTimeInterval);
+        }
+
+        /// <summary>
+        /// 获得实时坐标 add by pengyi 20150825
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <param name="clienterId"></param>
+        /// <returns></returns>
+        public IList<Location> GetLocationsByTime(DateTime start, DateTime end, int clienterId)
+        {
+            if (end < start)
+            {
+                return null;
+            }
+            return clienterLocationDao.GetLocationsByTime(start, end, clienterId);
         }
     }
 

@@ -38,7 +38,8 @@ namespace SuperManWebApi.Controllers
         public ResultModel<object> Records(BussinessRecordsPM model)
         {
             return iBusinessBalanceRecordProvider.GetRecords(model.BusinessId);
-        }
+        }               
+ 
 
         /// <summary>
         /// 获取商户详情       

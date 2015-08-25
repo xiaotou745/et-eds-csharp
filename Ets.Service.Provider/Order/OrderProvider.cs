@@ -66,6 +66,7 @@ namespace Ets.Service.Provider.Order
         ClienterBalanceRecordDao clienterBalanceRecordDao = new ClienterBalanceRecordDao();
         ClienterAllowWithdrawRecordDao clienterAllowWithdrawRecordDao = new ClienterAllowWithdrawRecordDao();
         OrderSubsidiesLogDao orderSubsidiesLogDao = new OrderSubsidiesLogDao();
+        IClienterLocationProvider clienterLocationProvider = new ClienterLocationProvider();
 
         private readonly BusinessBalanceRecordDao _businessBalanceRecordDao = new BusinessBalanceRecordDao();
         ClienterFinanceDao clienterFinanceDao = new ClienterFinanceDao();
@@ -388,7 +389,7 @@ namespace Ets.Service.Provider.Order
                                                             Operator = order.BusinessName,
                                                             WithwardId = result,
                                                             RelationNo = order.OrderNo,
-                                                            Remark = "扣除商家结算费"
+                                                            Remark = "土豪欧巴！你又卖出一份餐，棒棒哒~"
                                                         });
 
                 if (order.Adjustment > 0)
@@ -1273,45 +1274,7 @@ namespace Ets.Service.Provider.Order
                                                             RelationNo = orderModel.OrderNo,
                                                             Remark = orderModel.Remark
                                                         });
-
-                        #region 临时
-                        //decimal accountBalance = decimal.Parse(clienterDao.GetUserInfoByUserId(orderModel.clienterId).AccountBalance.ToString());
-                        //decimal allowWithdrawPrice = clienterDao.GetUserInfoByUserId(orderModel.clienterId).AllowWithdrawPrice;
-                        //clienterFinanceDao.ClienterRecharge(new ClienterOptionLog()
-                        //            {
-                        //                RechargeAmount = -orderModel.RealOrderCommission,
-                        //                ClienterId = orderModel.clienterId
-                        //            }
-                        //    );
-
-                        //ClienterBalanceRecord cbrm = new ClienterBalanceRecord()
-                        //{
-                        //    ClienterId = orderModel.clienterId,
-                        //    Amount = -orderModel.RealOrderCommission,
-                        //    Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
-                        //    Balance = accountBalance,
-                        //    RecordType = ClienterBalanceRecordRecordType.BalanceAdjustment.GetHashCode(),
-                        //    Operator = orderModel.OptUserName,
-                        //    WithwardId = orderModel.Id,
-                        //    RelationNo = orderModel.OrderNo,
-                        //    Remark = orderModel.Remark
-                        //};
-                        //clienterBalanceRecordDao.Insert(cbrm);
-
-                        //ClienterAllowWithdrawRecord cawrm = new ClienterAllowWithdrawRecord()
-                        //{
-                        //    ClienterId = orderModel.clienterId,
-                        //    Amount = -orderModel.RealOrderCommission,
-                        //    Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(),
-                        //    Balance = allowWithdrawPrice,
-                        //    RecordType = ClienterAllowWithdrawRecordType.BalanceAdjustment.GetHashCode(),
-                        //    Operator = orderModel.OptUserName,
-                        //    WithwardId = orderModel.Id,
-                        //    RelationNo = orderModel.OrderNo,
-                        //    Remark = orderModel.Remark
-                        //};
-                        //clienterAllowWithdrawRecordDao.Insert(cawrm);
-                        #endregion
+                   
                     }
 
                     // 更新商户余额、可提现余额                        
@@ -1326,12 +1289,7 @@ namespace Ets.Service.Provider.Order
                                                                 RelationNo = orderModel.OrderNo,
                                                                 Remark = orderModel.Remark
                                                             });
-
-                    //if (!orderDao.OrderCancelReturnBusiness(orderModel))
-                    //{
-                    //    dealResultInfo.DealMsg = "商家应收返回失败！";
-                    //    return dealResultInfo;
-                    //}
+       
                     dealResultInfo.DealFlag = true;
                     dealResultInfo.DealMsg = "订单取消成功！";
                     tran.Complete();
@@ -2107,22 +2065,40 @@ namespace Ets.Service.Provider.Order
             OrderMapDetail detail = orderDao.GetOrderMapDetail(orderID);
             if (detail != null)
             {
+                DateTime startTime = DateTime.MinValue;
+                DateTime endTime = DateTime.MinValue;
                 DateTime d = DateTime.Parse("1900-01-01");
                 if (DateTime.Parse(detail.PubDate) == d)
                 {
                     detail.PubDate = "暂无";
                 }
+                else
+                {
+                    startTime = DateTime.Parse(detail.PubDate);
+                }
                 if (DateTime.Parse(detail.GrabTime) == d)
                 {
                     detail.GrabTime = "暂无";
+                }
+                else
+                {
+                    endTime = DateTime.Parse(detail.GrabTime);
+                }
+                if (DateTime.Parse(detail.TakeTime) == d)
+                {
+                    detail.TakeTime = "暂无";
+                }
+                else
+                {
+                    endTime = DateTime.Parse(detail.TakeTime);
                 }
                 if (DateTime.Parse(detail.ActualDoneDate) == d)
                 {
                     detail.ActualDoneDate = "暂无";
                 }
-                if (DateTime.Parse(detail.TakeTime) == d)
+                else
                 {
-                    detail.TakeTime = "暂无";
+                    endTime = DateTime.Parse(detail.ActualDoneDate);
                 }
                 #region 如果抢单，取货，完成地点的经度或纬度为0，则其经纬度都取发单经纬度
                 if (detail.GrabLatitude == 0 || detail.GrabLongitude == 0)
@@ -2140,6 +2116,14 @@ namespace Ets.Service.Provider.Order
                     detail.CompleteLongitude = detail.PubLongitude;
                     detail.CompleteLatitude = detail.PubLatitude;
                 }
+
+                //开始时间小于结束时间才获取实时坐标 add by pengyi 20150825
+                if (startTime < endTime)
+                {
+                    detail.Locations = clienterLocationProvider.GetLocationsByTime(startTime, endTime, detail.ClienterId);
+                }
+                if (detail.Locations == null )
+                    detail.Locations = new List<Location>();
                 #endregion
             }
             return detail;
