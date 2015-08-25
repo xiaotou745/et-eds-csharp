@@ -170,9 +170,12 @@ namespace SuperManWebApi.Controllers
         public void YeePayCashTransferCallback()
         {
             string data = HttpContext.Current.Request["data"];
-            payProvider.YeePayCashTransferCallback(data);
-            HttpContext.Current.Response.Write("SUCCESS");
-            HttpContext.Current.Response.End();
+            ETS.Util.LogHelper.LogWriter(DateTime.Now + "易宝回调：" + data);
+            if (payProvider.YeePayCashTransferCallback(data))//如果返回值是成功
+            {
+                HttpContext.Current.Response.Write("SUCCESS");
+                HttpContext.Current.Response.End();
+            }
         }
     }
 }

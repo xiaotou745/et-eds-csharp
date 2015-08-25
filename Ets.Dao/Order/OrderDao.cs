@@ -1347,7 +1347,7 @@ where   o.[Status] <> 3
             }
             else if (criteria.searchType == 3)//本月
             {
-                sbtbl.Append("   o.PubDate between dateadd(day,-30,getdate()) and getdate() ");
+                sbtbl.Append(" AND   o.PubDate between dateadd(day,-30,getdate()) and getdate() ");
             }
             sbtbl.Append(" group by b.district ) tbl ");
             string columnList = @"  tbl.district
