@@ -21,9 +21,9 @@ namespace ETS.Library.Pay.WxPay
         //public const string KEY = "567F0FBC31FC4366AF187E0AF2D0E9B2";
         //public const string APPSECRET = "1937e6b47786c86fac37303f97d5ed91";
 
-        public const string APPID = "wx2d0d0ceebc6b6f82";
-        public const string MCHID = "1232303902";
-        public const string KEY = "f90ad1f9f591a3c08793cae51d7d5248";
+        public const string APPID = "wxbb8fb40942327ec6";
+        public const string MCHID = "1264102901";
+        public const string KEY = "10852AFB8F4044D88F5A24E978BBC053";
         public const string APPSECRET = "418b142c469725f8487d169b3b5d5c3e";
 
         //=======【证书路径设置】===================================== 
