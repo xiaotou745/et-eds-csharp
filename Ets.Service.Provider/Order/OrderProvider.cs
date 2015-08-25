@@ -389,7 +389,7 @@ namespace Ets.Service.Provider.Order
                                                             Operator = order.BusinessName,
                                                             WithwardId = result,
                                                             RelationNo = order.OrderNo,
-                                                            Remark = "扣除商家结算费"
+                                                            Remark = "土豪欧巴！你又卖出一份餐，棒棒哒~"
                                                         });
 
                 if (order.Adjustment > 0)
@@ -1274,45 +1274,7 @@ namespace Ets.Service.Provider.Order
                                                             RelationNo = orderModel.OrderNo,
                                                             Remark = orderModel.Remark
                                                         });
-
-                        #region 临时
-                        //decimal accountBalance = decimal.Parse(clienterDao.GetUserInfoByUserId(orderModel.clienterId).AccountBalance.ToString());
-                        //decimal allowWithdrawPrice = clienterDao.GetUserInfoByUserId(orderModel.clienterId).AllowWithdrawPrice;
-                        //clienterFinanceDao.ClienterRecharge(new ClienterOptionLog()
-                        //            {
-                        //                RechargeAmount = -orderModel.RealOrderCommission,
-                        //                ClienterId = orderModel.clienterId
-                        //            }
-                        //    );
-
-                        //ClienterBalanceRecord cbrm = new ClienterBalanceRecord()
-                        //{
-                        //    ClienterId = orderModel.clienterId,
-                        //    Amount = -orderModel.RealOrderCommission,
-                        //    Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
-                        //    Balance = accountBalance,
-                        //    RecordType = ClienterBalanceRecordRecordType.BalanceAdjustment.GetHashCode(),
-                        //    Operator = orderModel.OptUserName,
-                        //    WithwardId = orderModel.Id,
-                        //    RelationNo = orderModel.OrderNo,
-                        //    Remark = orderModel.Remark
-                        //};
-                        //clienterBalanceRecordDao.Insert(cbrm);
-
-                        //ClienterAllowWithdrawRecord cawrm = new ClienterAllowWithdrawRecord()
-                        //{
-                        //    ClienterId = orderModel.clienterId,
-                        //    Amount = -orderModel.RealOrderCommission,
-                        //    Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(),
-                        //    Balance = allowWithdrawPrice,
-                        //    RecordType = ClienterAllowWithdrawRecordType.BalanceAdjustment.GetHashCode(),
-                        //    Operator = orderModel.OptUserName,
-                        //    WithwardId = orderModel.Id,
-                        //    RelationNo = orderModel.OrderNo,
-                        //    Remark = orderModel.Remark
-                        //};
-                        //clienterAllowWithdrawRecordDao.Insert(cawrm);
-                        #endregion
+                   
                     }
 
                     // 更新商户余额、可提现余额                        
@@ -1327,12 +1289,7 @@ namespace Ets.Service.Provider.Order
                                                                 RelationNo = orderModel.OrderNo,
                                                                 Remark = orderModel.Remark
                                                             });
-
-                    //if (!orderDao.OrderCancelReturnBusiness(orderModel))
-                    //{
-                    //    dealResultInfo.DealMsg = "商家应收返回失败！";
-                    //    return dealResultInfo;
-                    //}
+       
                     dealResultInfo.DealFlag = true;
                     dealResultInfo.DealMsg = "订单取消成功！";
                     tran.Complete();

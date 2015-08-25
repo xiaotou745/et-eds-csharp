@@ -75,7 +75,7 @@ join clienter (Nolock) c on cl.ClienterId=c.Id ", DateTime.Now.AddMinutes(-Parse
         /// <returns></returns>
         public IList<Location> GetLocationsByTime(DateTime start, DateTime end,int clienterId)
         {
-            string strSql = string.Format("select Longitude,Latitude from ClienterLocation where clienterId={0} and CreateTime>='{1}' and CreateTime<='{2}'", clienterId, start, end);
+            string strSql = string.Format("select Longitude,Latitude from ClienterLocation (Nolock) where clienterId={0} and CreateTime>='{1}' and CreateTime<='{2}'", clienterId, start, end);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, strSql);
             return MapRows<Location>(dt);
         } 

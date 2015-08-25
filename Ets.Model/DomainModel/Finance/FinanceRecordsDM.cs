@@ -47,6 +47,12 @@ namespace Ets.Model.DomainModel.Finance
         public int RecordType { get; set; }
 
         /// <summary>
+        /// 交易类型描述
+        /// </summary>
+        public string RecordTypeDescription { get; set; }        
+
+
+        /// <summary>
         /// 交易类型(1订单餐费 2配送费 3提现 4充值)
         /// </summary>
         public string RecordTypeStr { get; set; }
