@@ -141,4 +141,14 @@ namespace ETS.Enums
         [DisplayText("参数错误")]
         ParError=3,
     }
+
+    public enum ClientWithdrawType
+    {
+        [DisplayText("提现日期")]
+        WithdrawTime = 1,
+        [DisplayText("审核日期")]
+        AuditTime = 2,
+        [DisplayText("打款日期")]
+        PayTime = 3
+    }
 }
