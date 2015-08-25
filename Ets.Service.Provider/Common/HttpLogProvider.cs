@@ -32,7 +32,7 @@ namespace Ets.Service.Provider.Common
             var model = new HttpModel();
             model.Url = request.Url.AbsoluteUri;
             model.Htype = 1;//请求
-            model.RequestBody = FomartRequestBody(request);
+            model.RequestBody = FormatRequestBody(request);
             model.Status = 1;
             dao.LogRequestInfo(model);
         }
@@ -49,20 +49,28 @@ namespace Ets.Service.Provider.Common
             var model = new HttpModel();
             model.Url = request.Url.AbsoluteUri;
             model.Htype = 2;
-            model.ResponseType = 1;
-            model.Msg = FomartReponseBody(response);
+            //model.ResponseType = 1;
+            model.ResponseBody = FormatReponseBody(response);
             model.Status = 1;
             dao.LogRequestInfo(model);
         }
         /// <summary>
-        /// 记录第三方请求信息
+        /// 记录第三方请求信息(HTTP调用第三方)
         /// </summary>
         /// <param name="model"></param>
         public void LogThirdPartyInfo(HttpWebRequest request,HttpWebResponse response)
         {
             var model = new HttpModel();
-            model.Htype = 3;
-            model.ResponseType = 1;
+            model.ReuqestPlatForm = 4;
+            dao.LogRequestInfo(model);
+        }
+        /// <summary>
+        /// 记录第三方请求信息(第三方回调)
+        /// </summary>
+        /// <param name="model"></param>
+        public void LogThirdPartyInfo(HttpModel model)
+        {
+            model.ReuqestPlatForm = 4;
             dao.LogRequestInfo(model);
         }
 
@@ -71,7 +79,7 @@ namespace Ets.Service.Provider.Common
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public string FomartRequestBody(System.Web.HttpRequest request)
+        public string FormatRequestBody(System.Web.HttpRequest request)
         {
             if (request == null)
                 return "";
@@ -94,7 +102,7 @@ namespace Ets.Service.Provider.Common
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public string FomartReponseBody(System.Web.HttpResponse response)
+        public string FormatReponseBody(System.Web.HttpResponse response)
         {
             if (response == null)
                 return "";
