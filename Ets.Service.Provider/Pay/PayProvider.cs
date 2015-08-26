@@ -877,9 +877,9 @@ namespace Ets.Service.Provider.Pay
         {
             var regisiter = new Register();
             HttpModel httpModel = new HttpModel();
-            var retunModel = regisiter.RegSubaccount(para,out httpModel);
-            httpDao.LogThirdPartyInfo(httpModel);
-            new YeePayUserDao().Insert(TranslateRegisterYeeModel(para));
+            var retunModel = regisiter.RegSubaccount(para);
+            //httpDao.LogThirdPartyInfo(httpModel);
+            //new YeePayUserDao().Insert(TranslateRegisterYeeModel(para));
             return retunModel;
         }
 
@@ -926,9 +926,9 @@ namespace Ets.Service.Provider.Pay
         public TransferReturnModel CashTransferYee(YeeCashTransferParameter model)
         {
             var transfer = new Transfer();
-            HttpModel httpModel = new HttpModel();
-            var retunModel = transfer.CashTransfer(ref model,out httpModel);
-            httpDao.LogThirdPartyInfo(httpModel);
+           // HttpModel httpModel = new HttpModel();
+            var retunModel = transfer.CashTransfer(ref model);
+           // httpDao.LogThirdPartyInfo(httpModel);
             new YeePayRecordDao().Insert(CashTransferYeeModel(model, retunModel));
             return retunModel;
         }
@@ -971,8 +971,9 @@ namespace Ets.Service.Provider.Pay
         {
             var transfer = new Transfer();
             HttpModel httpModel = new HttpModel();
-            var retunModel = transfer.TransferAccounts(ref para, out httpModel);
-            httpDao.LogThirdPartyInfo(httpModel);
+            var retunModel = transfer.TransferAccounts(ref para);
+            //var retunModel = transfer.TransferAccounts(ref para, out httpModel);
+            //httpDao.LogThirdPartyInfo(httpModel);
             new YeePayRecordDao().Insert(TransferYeeModel(para, retunModel));
             return retunModel;
         }
@@ -987,8 +988,9 @@ namespace Ets.Service.Provider.Pay
             model.CustomerNumber = KeyConfig.YeepayAccountId;//商户编号 
             model.HmacKey = KeyConfig.YeepayHmac;//密钥 
             HttpModel httpModel=new HttpModel();
-            var result= queryBalance.GetBalance(model, out httpModel);
-            httpDao.LogThirdPartyInfo(httpModel);
+            var result = queryBalance.GetBalance(model);
+           // var result= queryBalance.GetBalance(model, out httpModel);
+           // httpDao.LogThirdPartyInfo(httpModel);
             return result;
         }
 
@@ -1003,9 +1005,10 @@ namespace Ets.Service.Provider.Pay
         {
             model.CustomerNumber = KeyConfig.YeepayAccountId;//商户编号 
             model.HmacKey = KeyConfig.YeepayHmac;//密钥 
-            HttpModel httpModel = new HttpModel();
-            var result= queryCashStatus.GetCashStatus(model, out httpModel);
-            httpDao.LogThirdPartyInfo(httpModel);
+            var result= queryCashStatus.GetCashStatus(model);
+            //HttpModel httpModel = new HttpModel();
+            //var result= queryCashStatus.GetCashStatus(model, out httpModel);
+            //httpDao.LogThirdPartyInfo(httpModel);
             return result;
         }
 
