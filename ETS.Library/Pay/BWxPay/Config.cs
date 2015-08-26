@@ -19,7 +19,12 @@ namespace ETS.Library.Pay.BWxPay
         public const string APPID = "wxbb8fb40942327ec6";
         public const string MCHID = "1264102901";
         public const string KEY = "567f0fbc31fc4366af187e0af2d0e9b2";
-        public const string APPSECRET = "";
+        public const string APPSECRET = "c0cb93c7fb3f7322326b0c853f0cba46";
+
+        //public const string APPID = "wx2428e34e0e7dc6ef";
+        //public const string MCHID = "1233410002";
+        //public const string KEY = "e10adc3849ba56abbe56e056f20f883e";
+        //public const string APPSECRET = "51c56b886b5be869567dd389b3e5d1d6";
 
         //=======【证书路径设置】===================================== 
         /* 证书路径,注意应该填写绝对路径（仅退款、撤销订单时需要）
@@ -37,6 +42,7 @@ namespace ETS.Library.Pay.BWxPay
         //=======【商户系统后台机器IP】===================================== 
         /* 此参数可手动配置也可在程序中自动获取
         */
+        //public const string IP = "59.151.43.221";
         public const string IP = "8.8.8.8";
 
 

@@ -416,7 +416,7 @@ namespace Ets.Service.Provider.Pay
                 string prepayId = string.Empty;
                 string code_url = nativePay.GetPayUrl(orderNo, model.payAmount * 100, "E代送商家充值", Config.WXBusinessRecharge, out prepayId);
                 resultModel.prepayId = prepayId;
-                resultModel.notifyUrl = ETS.Config.WXBusinessRecharge;
+                resultModel.notifyUrl = code_url;//ETS.Config.WXBusinessRecharge;
             }
             else
             {

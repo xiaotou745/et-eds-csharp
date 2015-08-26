@@ -152,9 +152,9 @@ namespace ETS.Library.Pay.BWxPay
                 request.Method = "GET";
 
                 //设置代理
-                WebProxy proxy = new WebProxy();
-                proxy.Address = new Uri(WxPayConfig.PROXY_URL);
-                request.Proxy = proxy;
+                //WebProxy proxy = new WebProxy();
+                //proxy.Address = new Uri(WxPayConfig.PROXY_URL);
+                //request.Proxy = proxy;
 
                 //获取服务器返回
                 response = (HttpWebResponse)request.GetResponse();
