@@ -191,22 +191,17 @@ order by Id desc";
                 obj = dataReader["Remark"].ToString();
                 if (obj != null && obj != DBNull.Value)
                 {
-                    //if (result.RecordType == 11)//审核拒绝
-                    //{
-                        if (obj.ToString().Length > 8)
-                        {
-                            result.Remark = obj.ToString().Substring(0, 8)+"...";
-                        }
-                        else
-                        {
-                            result.Remark = obj.ToString();
-                        }
-                    //}
-                    //else
-                    //{
-                    //    result.Remark = "";
-                    //}
-                }
+                    result.Remark = obj.ToString();
+
+                    if (obj.ToString().Length > 8)
+                    {
+                        result.RemarkDescription = obj.ToString().Substring(0, 8) + "...";
+                    }
+                    else
+                    {
+                        result.RemarkDescription = obj.ToString();
+                    }     
+               }
 
                 obj = dataReader["TimeInfo"];
                 if (obj != null && obj != DBNull.Value)

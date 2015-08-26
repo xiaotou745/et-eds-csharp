@@ -81,6 +81,7 @@ namespace Ets.Model.DomainModel.Finance
         /// 描述
         /// </summary>
         public string Remark { get; set; }
+        public string RemarkDescription { get; set; }
 
         /// <summary>
         /// 时间信息小时分  eg 15:32
