@@ -1,4 +1,5 @@
-﻿using Ets.Model.Common;
+﻿using Ets.Dao.Common;
+using Ets.Model.Common;
 using Ets.Model.ParameterModel.Order;
 using Ets.Service.IProvider.OpenApi;
 using Ets.Service.Provider.OpenApi;
@@ -60,9 +61,23 @@ namespace Ets.Service.Provider.OpenApi
             string url = ConfigurationManager.AppSettings["WanDaAsyncStatus"];
             if (url == null)
                 return OrderApiStatusType.SystemError;
-            string  json= HTTPHelper.HttpPost(url, "app_key=" + app_key + "&sign=" + GetSign(ts) + "&method=POST&ts=" + ts + "&orderId=" + paramodel.fields.OriginalOrderNo + "&status=" + status + "&statusDesc=" + statusDesc +
-                "&syncTime=" + ts + "&operatorId=9999&operator=" + clienterName + "&logisticsNo=" +
-                 paramodel.fields.order_no + "&action=takeoutsync");
+            var reqpar = "app_key=" + app_key + "&sign=" + GetSign(ts) + "&method=POST&ts=" + ts + "&orderId=" +
+                         paramodel.fields.OriginalOrderNo + "&status=" + status + "&statusDesc=" + statusDesc +
+                         "&syncTime=" + ts + "&operatorId=9999&operator=" + clienterName + "&logisticsNo=" +
+                         paramodel.fields.order_no + "&action=takeoutsync";
+            string json = HTTPHelper.HttpPost(url, reqpar);
+            HttpModel httpModel = new HttpModel()
+            {
+                Url = url,
+                Htype = HtypeEnum.ReqType.GetHashCode(),
+                RequestBody = reqpar,
+                ResponseBody = json,
+                ReuqestPlatForm = RequestPlatFormEnum.WebApiPlat.GetHashCode(),
+                ReuqestMethod = "Ets.Service.Provider.OpenApi.WanDaGroup.AsyncStatus",
+                Status = 1,
+                Remark = "调用万达:同步订单状态"
+            };
+            new HttpDao().LogThirdPartyInfo(httpModel);
             if (string.IsNullOrWhiteSpace(json))
                 return OrderApiStatusType.ParaError;
             else if (json == "null")

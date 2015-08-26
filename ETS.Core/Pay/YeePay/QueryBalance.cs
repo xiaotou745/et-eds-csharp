@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Web.Script.Serialization;
+using ETS.Enums;
 using Ets.Model.Common;
 using ETS.Util;
 
@@ -74,7 +75,7 @@ namespace ETS.Pay.YeePay
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public QueryBalanceReturnModel GetBalance(YeeQueryBalanceParameter model,HttpModel httpmodel)
+        public QueryBalanceReturnModel GetBalance(YeeQueryBalanceParameter model,out HttpModel httpmodel)
         {
 
             var js = new JavaScriptSerializer();
@@ -99,13 +100,17 @@ namespace ETS.Pay.YeePay
             var datas = "customernumber=" + model.CustomerNumber + "&data=" + data;
 
             var result = HTTPHelper.HttpPost(KeyConfig.QueryBalanceUrl, datas, null);
-            httpmodel.Url = KeyConfig.QueryBalanceUrl;
-            httpmodel.Htype = 1;
-            httpmodel.RequestBody = datas;
-            httpmodel.ResponseBody = result;
-            httpmodel.ReuqestMethod = System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.FullName + System.Reflection.MethodBase.GetCurrentMethod().Name;
-            httpmodel.Status = 1;
-            httpmodel.Remark = "易宝账户余额查询";
+            httpmodel = new HttpModel
+            {
+                Url = KeyConfig.QueryBalanceUrl,
+                Htype = HtypeEnum.ReqType.GetHashCode(),
+                RequestBody = dataJsonString,
+                ResponseBody = result,
+                ReuqestPlatForm = RequestPlatFormEnum.EdsManagePlat.GetHashCode(),
+                ReuqestMethod = "ETS.Pay.YeePay.QueryBalance.GetBalance",
+                Status = 1,
+                Remark = "易宝账户余额查询"
+            };
             return JsonHelper.JsonConvertToObject<QueryBalanceReturnModel>(ResponseYeePay.OutRes(result));
         }
     }

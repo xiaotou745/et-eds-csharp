@@ -1302,17 +1302,10 @@ namespace Ets.Service.Provider.Clienter
             {
                 //获取无效订单佣金
                 realOrderCommission = realOrderCommission > myOrderInfo.SettleMoney ? myOrderInfo.SettleMoney : realOrderCommission;
-                ////更新无效订单佣金
-                //orderDao.UpdateOrderRealOrderCommission(myOrderInfo.Id.ToString(), realOrderCommission);
-                ////更新无效订单(状态，原因)
-                //orderOtherDao.UpdateOrderIsReal(myOrderInfo.Id, deductCommissionReason, 1);
-
-                //OrderOtherPM orderOtherPM = new OrderOtherPM();
-                //orderOtherPM.OrderId = myOrderInfo.Id;
-                //orderOtherPM.RealOrderCommission = realOrderCommission;
-                //orderOtherPM.DeductCommissionReason = deductCommissionReason;
-                //orderOtherPM.DeductCommissionType = 1;
-                //iOrderProvider.UpdateOrderIsReal(orderOtherPM);                
+                //更新无效订单佣金
+                orderDao.UpdateOrderRealOrderCommission(myOrderInfo.Id.ToString(), realOrderCommission);
+                //更新无效订单(状态，原因)
+                orderOtherDao.UpdateOrderIsReal(myOrderInfo.Id, deductCommissionReason, 1);
             }
         }
         /// <summary>

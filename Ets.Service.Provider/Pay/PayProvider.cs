@@ -1,4 +1,5 @@
 ﻿using ETS.Const;
+using Ets.Dao.Common;
 using Ets.Dao.Common.YeePay;
 using Ets.Model.Common.YeePay;
 using Ets.Model.DomainModel.Finance;
@@ -55,6 +56,7 @@ namespace Ets.Service.Provider.Pay
         private readonly BusinessFinanceAccountDao businessFinanceAccountDao = new BusinessFinanceAccountDao();
         private readonly ClienterFinanceAccountDao clienterFinanceAccountDao = new ClienterFinanceAccountDao();
         private readonly OrderDao orderDao = new OrderDao();
+        private  readonly HttpDao httpDao=new HttpDao();
         #region 生成支付宝、微信二维码订单
 
         /// <summary>
@@ -867,12 +869,16 @@ namespace Ets.Service.Provider.Pay
 
         /// <summary> 
         /// 注册易宝子账户 add by caoheyang 20150722
+        /// 茹化肖 修改
+        /// 2015年8月26日10:24:35
         /// </summary>
         /// <param name="para"></param>
         public RegisterReturnModel RegisterYee(YeeRegisterParameter para)
         {
             var regisiter = new Register();
-            var retunModel = regisiter.RegSubaccount(para);
+            HttpModel httpModel = new HttpModel();
+            var retunModel = regisiter.RegSubaccount(para,out httpModel);
+            httpDao.LogThirdPartyInfo(httpModel);
             new YeePayUserDao().Insert(TranslateRegisterYeeModel(para));
             return retunModel;
         }
@@ -920,7 +926,9 @@ namespace Ets.Service.Provider.Pay
         public TransferReturnModel CashTransferYee(YeeCashTransferParameter model)
         {
             var transfer = new Transfer();
-            var retunModel = transfer.CashTransfer(ref model);
+            HttpModel httpModel = new HttpModel();
+            var retunModel = transfer.CashTransfer(ref model,out httpModel);
+            httpDao.LogThirdPartyInfo(httpModel);
             new YeePayRecordDao().Insert(CashTransferYeeModel(model, retunModel));
             return retunModel;
         }
@@ -955,12 +963,16 @@ namespace Ets.Service.Provider.Pay
 
         /// <summary> 
         /// 易宝转账 add by caoheyang 20150722
+        /// 茹化肖 修改
+        /// 2015年8月26日10:37:47
         /// </summary> 
         /// <param name="para"></param>
         public TransferReturnModel TransferAccountsYee(YeeTransferParameter para)
         {
             var transfer = new Transfer();
-            var retunModel = transfer.TransferAccounts(ref para);
+            HttpModel httpModel = new HttpModel();
+            var retunModel = transfer.TransferAccounts(ref para, out httpModel);
+            httpDao.LogThirdPartyInfo(httpModel);
             new YeePayRecordDao().Insert(TransferYeeModel(para, retunModel));
             return retunModel;
         }
@@ -974,12 +986,16 @@ namespace Ets.Service.Provider.Pay
         {
             model.CustomerNumber = KeyConfig.YeepayAccountId;//商户编号 
             model.HmacKey = KeyConfig.YeepayHmac;//密钥 
-            return queryBalance.GetBalance(model);
+            HttpModel httpModel=new HttpModel();
+            var result= queryBalance.GetBalance(model, out httpModel);
+            httpDao.LogThirdPartyInfo(httpModel);
+            return result;
         }
 
         /// <summary>
-        /// 余额查询
-        /// danny-20150820
+        /// 获取提现单状态(易宝)
+        /// 茹化肖
+        /// 2015年8月26日10:13:40
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
@@ -987,7 +1003,10 @@ namespace Ets.Service.Provider.Pay
         {
             model.CustomerNumber = KeyConfig.YeepayAccountId;//商户编号 
             model.HmacKey = KeyConfig.YeepayHmac;//密钥 
-            return queryCashStatus.GetCashStatus(model);
+            HttpModel httpModel = new HttpModel();
+            var result= queryCashStatus.GetCashStatus(model, out httpModel);
+            httpDao.LogThirdPartyInfo(httpModel);
+            return result;
         }
 
         /// <summary>
