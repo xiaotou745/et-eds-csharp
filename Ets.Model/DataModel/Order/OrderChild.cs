@@ -41,11 +41,11 @@ namespace Ets.Model.DataModel.Order
         /// <summary>
         /// 支付方式(1 用户支付 2 骑士代付)
         /// </summary>
-        public int? PayStyle { get; set; }
+        public int PayStyle { get; set; }
         /// <summary>
         /// 支付类型(1 支付宝 2 微信 3 网银)
         /// </summary>
-        public int? PayType { get; set; }
+        public int PayType { get; set; }
         /// <summary>
         /// 支付状态(1待支付 2 已支付)
         /// </summary>
