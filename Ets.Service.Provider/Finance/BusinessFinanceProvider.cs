@@ -470,11 +470,13 @@ namespace Ets.Service.Provider.Finance
         /// <summary>
         /// 易宝打款失败回调处理逻辑 
         /// add by caoheyang  20150716
+        /// 
+        /// 窦海超把方法名改了，以前是重载
+        /// 2015年8月26日 20:16:45
         /// </summary>
         /// <param name="model"></param>
-        ///  <param name="callback"></param>
         /// <returns></returns>
-        public bool BusinessWithdrawPayFailed(BusinessWithdrawLogModel model, CashTransferCallback callback)
+        public bool BusinessWithdrawPayFailedForCallBack(BusinessWithdrawLogModel model)
         {
             bool reg = false;
             var withdraw = _businessWithdrawFormDao.GetById(model.WithwardId);  //提现单
@@ -483,19 +485,6 @@ namespace Ets.Service.Provider.Finance
             {
                 return false;
             }
-            //服务已自动回转此处停用
-            //IPayProvider payProvider = new PayProvider();
-            //TransferReturnModel tempmodel = payProvider.TransferAccountsYee(new YeeTransferParameter()
-            //{
-            //    UserType = UserTypeYee.Business.GetHashCode(),
-            //    WithdrawId = model.WithwardId,
-            //    Ledgerno = "",
-            //    SourceLedgerno = callback.ledgerno,
-            //    Amount = (ParseHelper.ToDecimal(callback.amount) - withdraw.HandCharge).ToString()
-            //});
-
-            //if (tempmodel.code == "1") //易宝子账户到主账户打款 成功
-            //{
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 if (businessFinanceDao.BusinessWithdrawReturn(model) //提现返现
@@ -526,11 +515,6 @@ namespace Ets.Service.Provider.Finance
                     tran.Complete();
                 }
             }
-            //}
-            //else
-            //{
-            //    LogHelper.LogWriterString("易宝子账户到主账户打款导致失败，提现单号为:" + model.WithwardId);
-            //}
             return reg;
         }
 

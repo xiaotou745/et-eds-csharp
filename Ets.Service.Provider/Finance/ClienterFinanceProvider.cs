@@ -644,9 +644,8 @@ namespace Ets.Service.Provider.Finance
         /// add by caoheyang  20150716
         /// </summary>
         /// <param name="model"></param>
-        ///  <param name="callback"></param>
         /// <returns></returns>
-        public bool ClienterWithdrawPayFailed(ClienterWithdrawLogModel model, CashTransferCallback callback)
+        public bool ClienterWithdrawPayFailedForCallBack(ClienterWithdrawLogModel model)
         {
             bool reg = false;
             var withdraw = _clienterWithdrawFormDao.GetById(model.WithwardId);
@@ -655,18 +654,7 @@ namespace Ets.Service.Provider.Finance
             {
                 return reg;
             }
-            /*  //服务已自动回转此处停用
-            IPayProvider payProvider = new PayProvider();
-            TransferReturnModel tempmodel = payProvider.TransferAccountsYee(new YeeTransferParameter()
-            {
-                UserType = UserTypeYee.Clienter.GetHashCode(),
-                WithdrawId = model.WithwardId,
-                Ledgerno = "",
-                SourceLedgerno = callback.ledgerno,
-                Amount = (ParseHelper.ToDecimal(callback.amount) - withdraw.HandCharge).ToString()
-            });
-            if (tempmodel.code == "1") //易宝子账户到主账户打款 成功
-            {*/
+         
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 if (clienterFinanceDao.ClienterWithdrawReturn(model) && clienterFinanceDao.ClienterClienterAllowWithdrawRecordReturn(model)
