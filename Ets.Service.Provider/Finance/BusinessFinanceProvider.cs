@@ -153,9 +153,7 @@ namespace Ets.Service.Provider.Finance
         }
         /// <summary>
         /// 商户提现功能 后台
-        /// </summary>
-        /// <UpdateBy>hulingbo</UpdateBy>
-        /// <UpdateTime>20150626</UpdateTime>
+        /// </summary>      
         /// <param name="withdrawBBackPM"></param>
         /// <returns></returns>
         public ResultModel<object> WithdrawB(WithdrawBBackPM withdrawBBackPM)
@@ -228,7 +226,7 @@ namespace Ets.Service.Provider.Finance
                     Operator = business.Name,
                     WithwardId = withwardId,
                     RelationNo = withwardNo,
-                    Remark = "商户提现"
+                    Remark = "土豪欧巴，提款后记得充值哦"
                 });
                 #endregion
 
