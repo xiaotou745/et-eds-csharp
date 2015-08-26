@@ -1345,6 +1345,7 @@ namespace Ets.Service.Provider.Order
                 #endregion
 
 
+                OrderOtherPM orderOtherPM = new OrderOtherPM();
                 //如果要扣除的金额大于0， 写流水
                 if (orderModel.OrderCommission > orderModel.SettleMoney)
                 {
@@ -1365,8 +1366,14 @@ namespace Ets.Service.Provider.Order
                                                                     RelationNo = orderModel.OrderNo,
                                                                     Remark = orderOptionModel.OptLog
                                                                 });
-                        //更新扣除补贴原因,扣除补贴方式为手动扣除
-                        orderOtherDao.UpdateOrderIsReal(orderModel.Id, orderOptionModel.OptLog, 2);
+                        ////更新扣除补贴原因,扣除补贴方式为手动扣除
+                        //orderOtherDao.UpdateOrderIsReal(orderModel.Id, orderOptionModel.OptLog, 2);
+                       
+                        orderOtherPM.OrderId = orderModel.Id;
+                        orderOtherPM.RealOrderCommission = disOrderCommission;
+                        orderOtherPM.DeductCommissionReason = orderOptionModel.OptLog;
+                        orderOtherPM.DeductCommissionType = 2;
+                        UpdateOrderIsReal(orderOtherPM);
 
                         
                         //更新订单日志
@@ -1399,11 +1406,20 @@ namespace Ets.Service.Provider.Order
                                                                 RelationNo = orderModel.OrderNo,
                                                                 Remark = "管理后台审核拒绝加可提现"
                                                             });
+                
+                orderOtherPM.OrderId = orderModel.Id;
+                orderOtherPM.RealOrderCommission = realOrderCommission;
+                orderOtherPM.DeductCommissionReason = orderOptionModel.OptLog;
+                orderOtherPM.DeductCommissionType = 2;
+                //更新无效订单
+                UpdateOrderIsReal(orderOtherPM);
 
-                //更新订单真实佣金
-                orderDao.UpdateOrderRealOrderCommission(orderModel.Id.ToString(), realOrderCommission);
-                //更新无效订单(状态，原因)
-                orderOtherDao.UpdateOrderIsReal(orderModel.Id, orderOptionModel.OptLog, 2);
+                ////更新订单真实佣金
+                //orderDao.UpdateOrderRealCommission( orderModel.Id.ToString(), realOrderCommission);
+                ////更新无效订单(状态，原因)
+                //orderOtherDao.UpdateOrderIsReal(orderModel.Id, orderOptionModel.OptLog, 2);
+
+
                 //更新已提现状态
                 orderOtherDao.UpdateJoinWithdraw(orderModel.Id);
                 //更新审核状态
@@ -2402,6 +2418,17 @@ namespace Ets.Service.Provider.Order
             }
             #endregion
         }
+
+        #region 用户自定义方法
+        public void UpdateOrderIsReal(OrderOtherPM orderOtherPM)
+        {
+            //更新订单真实佣金
+            orderDao.UpdateOrderRealCommission(orderOtherPM);
+            //更新无效订单(状态，原因)
+            orderOtherDao.UpdateOrderIsReal(orderOtherPM);
+        }
+
+        #endregion
 
     }
 }
