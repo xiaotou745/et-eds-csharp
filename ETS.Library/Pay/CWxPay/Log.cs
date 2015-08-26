@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Web;
 using System.IO;
 
-namespace ETS.Library.Pay.WxPay
+namespace ETS.Library.Pay.CWxPay
 {
     public class Log
     {

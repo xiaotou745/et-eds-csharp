@@ -34,7 +34,7 @@ using Ets.Model.DataModel.Finance;
 using Ets.Model.ParameterModel.Finance;
 using Ets.Dao.Business;
 using Config = ETS.Config;
-using ETS.Library.Pay.WxPay;
+using ETS.Library.Pay.CWxPay;
 using System.Web;
 using Ets.Model.ParameterModel.AliPay;
 
@@ -362,7 +362,7 @@ namespace Ets.Service.Provider.Pay
                         orderId = orderId,
                         payBy = notify.buyer_email,
                         payStyle = payStyle,
-                        payType = PayTypeEnum.WeiXin.GetHashCode(),
+                        payType = PayTypeEnum.ZhiFuBao.GetHashCode(),
                         originalOrderNo = notify.trade_no,
                     };
 
@@ -412,11 +412,11 @@ namespace Ets.Service.Provider.Pay
             BusinessRechargeResultModel resultModel = new BusinessRechargeResultModel();
             if (model.PayType == PayTypeEnum.WeiXin.GetHashCode())
             {
-                NativePay nativePay = new NativePay();
+                ETS.Library.Pay.BWxPay.NativePay nativePay = new ETS.Library.Pay.BWxPay.NativePay();
                 string prepayId = string.Empty;
                 string code_url = nativePay.GetPayUrl(orderNo, model.payAmount * 100, "E代送商家充值", Config.WXBusinessRecharge, out prepayId);
                 resultModel.prepayId = prepayId;
-                resultModel.notifyUrl = ETS.Config.WXBusinessRecharge;
+                resultModel.notifyUrl = code_url;//ETS.Config.WXBusinessRecharge;
             }
             else
             {
