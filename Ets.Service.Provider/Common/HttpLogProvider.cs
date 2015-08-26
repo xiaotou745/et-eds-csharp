@@ -30,24 +30,7 @@ namespace Ets.Service.Provider.Common
         {
             dao.LogRequestInfo(model);
         }
-        /// <summary>
-        /// 记录响应信息
-        /// </summary>
-        /// <param name="model"></param>
-        public void LogResponseInfo(HttpRequest request,HttpResponse response)
-        {
-            if(response==null)
-                return;
-            if (request == null)
-                return;
-            var model = new HttpModel();
-            model.Url = request.Url.AbsoluteUri;
-            model.Htype = 2;
-            //model.ResponseType = 1;
-            model.ResponseBody = FormatReponseBody(response);
-            model.Status = 1;
-            dao.LogRequestInfo(model);
-        }
+
         /// <summary>
         /// 记录第三方请求信息(HTTP调用第三方)
         /// </summary>
