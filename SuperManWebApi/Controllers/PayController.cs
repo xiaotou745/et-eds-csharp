@@ -194,23 +194,11 @@ namespace SuperManWebApi.Controllers
         {
             string data = HttpContext.Current.Request["data"];
             ETS.Util.LogHelper.LogWriter(DateTime.Now + "易宝回调：" + data);
-            HttpModel httpModel = new HttpModel()
-            {
-                Url = HttpContext.Current.Request.Url.AbsoluteUri,
-                Htype = HtypeEnum.ThridCallback.GetHashCode(),
-                RequestBody = data,
-                ResponseBody = "",
-                ReuqestPlatForm = RequestPlatFormEnum.EdsManagePlat.GetHashCode(),
-                ReuqestMethod = "SuperManWebApi.Controllers.PayController.YeePayCashTransferCallback",
-                Status = 1,
-                Remark = "第三方回调:易宝转账接口回调"
-            };
-            new HttpDao().LogThirdPartyInfo(httpModel);
-            if (payProvider.YeePayCashTransferCallback(data))//如果返回值是成功
-            {
-                HttpContext.Current.Response.Write("SUCCESS");
-                HttpContext.Current.Response.End();
-            }
+            //if (payProvider.YeePayCashTransferCallback(data))//如果返回值是成功
+            //{
+            //    HttpContext.Current.Response.Write("SUCCESS");
+            //    HttpContext.Current.Response.End();
+            //}
         }
     }
 }
