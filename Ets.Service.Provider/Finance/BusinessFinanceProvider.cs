@@ -143,7 +143,7 @@ namespace Ets.Service.Provider.Finance
                         Operator = business.Name,
                         WithwardId = withwardId,
                         RelationNo = withwardNo,
-                        Remark = "土豪欧巴，提款后记得充值哦"
+                        Remark = "提款扣除余额"
                     });
                     #endregion
                     tran.Complete();
@@ -519,7 +519,7 @@ namespace Ets.Service.Provider.Finance
                             Operator = "易宝系统回调",
                             WithwardId = withdraw.Id,
                             RelationNo = withdraw.WithwardNo,
-                            Remark = "易宝提现失败扣除手续费",
+                            Remark = "提款手续费",
                         });
                     }
                     reg = true;

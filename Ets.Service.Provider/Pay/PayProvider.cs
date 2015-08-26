@@ -586,7 +586,7 @@ namespace Ets.Service.Provider.Pay
                 Operator = model.PayBy,
                 RecordType = BusinessBalanceRecordRecordType.Recharge.GetHashCode(),
                 RelationNo = model.OrderNo,
-                Remark = "土豪欧巴，记得要用商家客户端充值",
+                Remark = "商家客户端充值",
                 Status = 1,
                 WithwardId = 0
             };
