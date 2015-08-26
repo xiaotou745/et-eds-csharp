@@ -282,6 +282,13 @@ namespace Ets.Service.IProvider.Order
         /// <param name="orderOptionModel"></param>
         /// <returns></returns>
         DealResultInfo AuditOK(OrderOptionModel orderOptionModel);
-        
+
+        /// <summary>
+        /// 更新无效订单相关信息
+        /// 胡灵波
+        /// 2015年8月25日 16:43:53
+        /// </summary>
+        /// <param name="orderOtherPM"></param>
+        void UpdateOrderIsReal(OrderOtherPM orderOtherPM);
     }
 }

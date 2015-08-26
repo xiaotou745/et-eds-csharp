@@ -77,18 +77,6 @@ namespace SuperManWebApi.Controllers
         #region B端
 
         /// <summary>
-        /// 商户提现功能 add by caoheyang 20150509
-        /// </summary>
-        /// <param name="withdrawBpm">参数实体</param>
-        /// <returns></returns>
-        [Token]
-        [HttpPost]
-        public ResultModel<object> WithdrawB([FromBody]WithdrawBPM withdrawBpm)
-        {
-            return iBusinessFinanceProvider.WithdrawB(withdrawBpm);
-        }
-
-        /// <summary>
         /// 商户绑定银行卡功能 add by caoheyang 20150511
         /// </summary>
         /// <param name="cardBindBpm">参数实体</param>
@@ -130,5 +118,19 @@ namespace SuperManWebApi.Controllers
 
             return area.GetPublicBankCity(bankProvinceCityPM.DataVersion, false);
         }
+
+        #region 停用
+        /// <summary>
+        /// 商户提现功能 add by caoheyang 20150509
+        /// </summary>
+        /// <param name="withdrawBpm">参数实体</param>
+        /// <returns></returns>
+        [Token]
+        [HttpPost]
+        public ResultModel<object> WithdrawB([FromBody]WithdrawBPM withdrawBpm)
+        {
+            return iBusinessFinanceProvider.WithdrawB(withdrawBpm);
+        }
+        #endregion
     }
 }

@@ -1,4 +1,5 @@
-﻿using Ets.Dao.Order;
+﻿using Ets.Dao.Common;
+using Ets.Dao.Order;
 using Ets.Model.Common;
 using Ets.Model.DataModel.Business;
 using Ets.Model.DataModel.Order;
@@ -182,6 +183,18 @@ namespace Ets.Service.Provider.OpenApi
         protected OrderApiStatusType PostDoAsyncStatus(string url, string postdata)
         {
             string json = HTTPHelper.HttpPost(url, postdata, accept: accept);
+            HttpModel httpModel = new HttpModel()
+            {
+                Url = url,
+                Htype = HtypeEnum.ReqType.GetHashCode(),
+                RequestBody = postdata,
+                ResponseBody = json,
+                ReuqestPlatForm = RequestPlatFormEnum.OpenApiPlat.GetHashCode(),
+                ReuqestMethod = "Ets.Service.Provider.OpenApi.MeiTuanGroup.PostDoAsyncStatus",
+                Status = 1,
+                Remark = "调用美团:同步状态"
+            };
+            new HttpDao().LogThirdPartyInfo(httpModel);
             return AsyncStatusInfo(json);
         }
         #endregion

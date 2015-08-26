@@ -125,7 +125,7 @@ namespace Ets.Service.Provider.Finance
                                                                 Operator = clienter.TrueName,
                                                                 WithwardId = withwardId,
                                                                 RelationNo = withwardNo,
-                                                                Remark = "骑士哥哥要提现工资啦！领完工资去哪里搓去呢？"
+                                                                Remark = "提现扣除余额"
                                                             });
 
                     tran.Complete();
@@ -690,7 +690,7 @@ namespace Ets.Service.Provider.Finance
                             Operator = "易宝系统回调",
                             WithwardId = withdraw.Id,
                             RelationNo = withdraw.WithwardNo,
-                            Remark = "易宝提现失败扣除手续费"
+                            Remark = "提现手续费用"
                         });
 
                         clienterAllowWithdrawRecordDao.Insert(new ClienterAllowWithdrawRecord()
@@ -702,7 +702,7 @@ namespace Ets.Service.Provider.Finance
                             Operator = "易宝系统回调",
                             WithwardId = withdraw.Id,
                             RelationNo = withdraw.WithwardNo,
-                            Remark = "易宝提现失败扣除手续费"
+                            Remark = "提现手续费用"
                         });
                     }
                     reg = true;

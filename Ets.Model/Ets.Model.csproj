@@ -341,6 +341,7 @@
     <Compile Include="ParameterModel\Order\OrderChildModel.cs" />
     <Compile Include="ParameterModel\Order\OrderCompleteModel.cs" />
     <Compile Include="ParameterModel\Order\OrderDistributionAnalyze.cs" />
+    <Compile Include="ParameterModel\Order\OrderOtherPM.cs" />
     <Compile Include="ParameterModel\Order\OrderPM.cs" />
     <Compile Include="ParameterModel\Order\OrderChildPM.cs" />
     <Compile Include="ParameterModel\Order\NewPostPublishOrderModel.cs" />

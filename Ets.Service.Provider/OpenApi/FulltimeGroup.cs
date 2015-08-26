@@ -1,4 +1,5 @@
-﻿using Ets.Model.Common;
+﻿using Ets.Dao.Common;
+using Ets.Model.Common;
 using Ets.Model.ParameterModel.Order;
 using Ets.Service.IProvider.OpenApi;
 using Ets.Service.Provider.OpenApi;
@@ -30,6 +31,8 @@ namespace Ets.Service.Provider.OpenApi
         public  string app_secret = ConfigSettings.Instance.FulltimeAppsecret;
         /// <summary>
         /// 回调万达接口同步订单状态  add by caoheyang 20150326
+        /// 茹化肖修改
+        /// 2015年8月26日11:09:56
         /// </summary>
         /// <param name="paramodel"></param>
         /// <returns></returns>
@@ -55,8 +58,23 @@ namespace Ets.Service.Provider.OpenApi
             /// status	int	Y	物流状态，1代表已发货，2代表已签收
             ///send_phone	string	Y/N	配送员电话，物流状态传参是（ststus=1）的时候，配送员电话必须写，如果为（ststus=2）的时候可以不写。
             ///send_name	string	Y/N	配送员姓名，物流状态传参是（ststus=1）的时候，配送员姓名必须写，如果为（ststus=2）的时候可以不写。
-            string json = HTTPHelper.HttpPost(url, "app_key=" + app_key + "&sign=" + GetSign(ts) + "&timestamp=" + ts + "&order_id=" + paramodel.fields.OriginalOrderNo + "&status=" + status + "&v=" + v + "&send_phone="+paramodel.fields.ClienterPhoneNo
-                + "&send_name=" + paramodel.fields.ClienterTrueName);
+            var reqpar = "app_key=" + app_key + "&sign=" + GetSign(ts) + "&timestamp=" + ts + "&order_id=" +
+                         paramodel.fields.OriginalOrderNo + "&status=" + status + "&v=" + v + "&send_phone=" +
+                         paramodel.fields.ClienterPhoneNo
+                         + "&send_name=" + paramodel.fields.ClienterTrueName;
+            string json = HTTPHelper.HttpPost(url, reqpar);
+            HttpModel httpModel = new HttpModel()
+            {
+                Url = url,
+                Htype = HtypeEnum.ReqType.GetHashCode(),
+                RequestBody = reqpar,
+                ResponseBody = json,
+                ReuqestPlatForm = RequestPlatFormEnum.OpenApiPlat.GetHashCode(),
+                ReuqestMethod = "Ets.Service.Provider.OpenApi.FulltimeGroup.AsyncStatus",
+                Status = 1,
+                Remark = "调用全时:同步订单状态"
+            };
+            new HttpDao().LogThirdPartyInfo(httpModel);
             if (string.IsNullOrWhiteSpace(json))
                 return OrderApiStatusType.ParaError;
             else if (json == "null")
