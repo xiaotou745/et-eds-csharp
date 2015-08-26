@@ -124,7 +124,7 @@ namespace SuperMan.Controllers
 
             var pagedList = imprestProvider.GetImprestBalanceRecordList(criteria);
 
-            var buffer = new byte[0] {};
+            var buffer = new byte[0] { };
             Response.ContentType = "application/msexcel";
             Response.Clear();
             Response.BufferOutput = true;
@@ -143,7 +143,7 @@ namespace SuperMan.Controllers
                 byte[] data = Encoding.UTF8.GetBytes(CreateExcel(pagedList));
                 buffer = data;
             }
-            Response.AppendHeader("Content-Disposition", string.Format("attachment;filename={0}",filname));
+            Response.AppendHeader("Content-Disposition", string.Format("attachment;filename={0}", filname));
             Response.BinaryWrite(buffer);
             Response.Flush();
             Response.End();
@@ -156,7 +156,7 @@ namespace SuperMan.Controllers
         /// 茹化肖
         /// </summary>
         /// <returns></returns>
-         [HttpPost]
+        [HttpPost]
         public JsonResult CheckPhoneNum()
         {
             string phonenum = System.Web.HttpContext.Current.Request["PhoneNum"];
@@ -164,53 +164,55 @@ namespace SuperMan.Controllers
             return Json(model);
         }
 
-         /// <summary>
-         /// 支出备用金验证骑士手机号获取信息
-         /// 2015年8月12日16:55:56
-         /// 茹化肖
-         /// </summary>
-         /// <returns></returns>
-         [HttpPost]
-         public JsonResult ClienterWithdrawOk()
-         {
-             ImprestWithdrawModel parModel=new ImprestWithdrawModel();
-             TryUpdateModel(parModel);
-             parModel.OprName = UserContext.Current.Name;
-             ImprestPayoutModel model = imprestProvider.ClienterWithdrawOk(parModel);
-             return Json(model);
-         }
+        /// <summary>
+        /// 支出备用金验证骑士手机号获取信息
+        /// 2015年8月12日16:55:56
+        /// 茹化肖
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult ClienterWithdrawOk()
+        {
+            ImprestWithdrawModel parModel = new ImprestWithdrawModel();
+            TryUpdateModel(parModel);
+            parModel.OprName = UserContext.Current.Name;
+            ImprestPayoutModel model = imprestProvider.ClienterWithdrawOk(parModel);
+            return Json(model);
+        }
 
-         /// <summary>
-         /// 生成excel文件
-         /// 导出字段：骑士姓名、电话、支出金额、日期、操作人、备注
-         /// 彭宜
-         /// </summary>
-         /// <returns></returns>
-         private string CreateExcel(PageInfo<ImprestBalanceRecord> paraModel)
-         {
-             StringBuilder strBuilder = new StringBuilder();
-             strBuilder.AppendLine("<table border=1 cellspacing=0 cellpadding=5 rules=all>");
-             //输出表头.
-             strBuilder.AppendLine("<tr style=\"font-weight: bold; white-space: nowrap;\">");
-             strBuilder.AppendLine("<td>骑士姓名</td>");
-             strBuilder.AppendLine("<td>电话</td>");
-             strBuilder.AppendLine("<td>支出金额</td>");
-             strBuilder.AppendLine("<td>日期</td>");
-             strBuilder.AppendLine("<td>操作人</td>");
-             strBuilder.AppendLine("<td>备注</td>");
-             strBuilder.AppendLine("</tr>");
-             //输出数据.
-             foreach (var record in paraModel.Records)
-             {
-                 strBuilder.AppendLine(string.Format("<tr><td>{0}</td>", record.ClienterName));
-                 strBuilder.AppendLine(string.Format("<td>{0}</td>", record.ClienterPhoneNo));
-                 strBuilder.AppendLine(string.Format("<td>{0}</td>", record.Amount));
-                 strBuilder.AppendLine(string.Format("<td>{0}</td>", record.OptTime));
-                 strBuilder.AppendLine(string.Format("<td>{0}</td>", record.OptName));
-                 strBuilder.AppendLine(string.Format("<td>{0}</td>", record.Remark));
-             }
-             strBuilder.AppendLine("</table>");
-             return strBuilder.ToString();
-         }
+        /// <summary>
+        /// 生成excel文件
+        /// 导出字段：骑士姓名、电话、支出金额、日期、操作人、备注
+        /// 彭宜
+        /// </summary>
+        /// <returns></returns>
+        private string CreateExcel(PageInfo<ImprestBalanceRecord> paraModel)
+        {
+            StringBuilder strBuilder = new StringBuilder();
+            strBuilder.AppendLine("<table border=1 cellspacing=0 cellpadding=5 rules=all>");
+            //输出表头.
+            strBuilder.AppendLine("<tr style=\"font-weight: bold; white-space: nowrap;\">");
+            strBuilder.AppendLine("<td>骑士姓名</td>");
+            strBuilder.AppendLine("<td>电话</td>");
+            strBuilder.AppendLine("<td>支出金额</td>");
+            strBuilder.AppendLine("<td>余额</td>");
+            strBuilder.AppendLine("<td>日期</td>");
+            strBuilder.AppendLine("<td>操作人</td>");
+            strBuilder.AppendLine("<td>备注</td>");
+            strBuilder.AppendLine("</tr>");
+            //输出数据.
+            foreach (var record in paraModel.Records)
+            {
+                strBuilder.AppendLine(string.Format("<tr><td>{0}</td>", record.ClienterName));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", record.ClienterPhoneNo));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", record.Amount));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", record.AfterAmount));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", record.OptTime));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", record.OptName));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", record.Remark));
+            }
+            strBuilder.AppendLine("</table>");
+            return strBuilder.ToString();
+        }
     }
 }
