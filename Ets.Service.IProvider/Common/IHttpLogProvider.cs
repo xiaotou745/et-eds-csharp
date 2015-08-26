@@ -21,7 +21,7 @@ namespace Ets.Service.IProvider.Common
         /// 记录请求数据
         /// </summary>
         /// <param name="model"></param>
-         void LogRequestInfo(HttpRequest request);
+       void LogRequestInfo(HttpModel request);
 
         /// <summary>
         /// 记录响应数据
@@ -34,6 +34,19 @@ namespace Ets.Service.IProvider.Common
         /// </summary>
         /// <param name="model"></param>
          void LogThirdPartyInfo(HttpWebRequest request, HttpWebResponse response);
+       /// <summary>
+       /// 序列化请求中的数据
+       /// </summary>
+       /// <param name="request"></param>
+       /// <returns></returns>
+        string FormatRequestBody(System.Web.HttpRequest request);
+
+        /// <summary>
+        /// 序列化响应中的数据
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        string FormatReponseBody(System.Web.HttpResponse response);
 
     }
 }
