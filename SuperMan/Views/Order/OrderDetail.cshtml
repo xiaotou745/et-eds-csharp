@@ -1,4 +1,5 @@
-﻿@model Ets.Model.DataModel.Order.OrderListModel
+﻿@using ETS.Enums
+@model Ets.Model.DataModel.Order.OrderListModel
 @{
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
 }
@@ -55,6 +56,14 @@
                 <td>骑士姓名：@Model.ClienterTrueName</td>
                 <td>骑士手机：@Model.ClienterPhoneNo</td>
             }
+            @if (!Model.IsPay.Value && Model.MealsSettleMode == 1)
+            {
+                <td>支付来源：线上结算</td>
+            }
+            else
+            {
+                <td>支付来源：线下结算</td>
+            } 
         </tr>
         <tr>
             <td>备注：@Model.Remark</td>
