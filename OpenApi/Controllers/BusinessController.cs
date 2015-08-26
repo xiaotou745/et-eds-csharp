@@ -34,6 +34,8 @@ namespace OpenApi.Controllers
         IAreaProvider iAreaProvider = new AreaProvider();
         /// <summary>
         /// 商户注册
+        /// 茹化肖
+        /// 2015年8月26日12:59:40
         /// </summary>
         /// <returns></returns>
         [HttpPost]
@@ -118,11 +120,11 @@ namespace OpenApi.Controllers
             {
                 HttpModel httpModel = new HttpModel()
                 {
-                    Url = "",
+                    Url = HttpContext.Current.Request.Url.AbsoluteUri,
                     Htype = HtypeEnum.ThridCallback.GetHashCode(),
                     RequestBody = JsonHelper.JsonConvertToString(paramodel),
                     ResponseBody = JsonHelper.JsonConvertToString(addResult),
-                    ReuqestPlatForm = RequestPlatFormEnum.Unknow.GetHashCode(),
+                    ReuqestPlatForm = RequestPlatFormEnum.OpenApiPlat.GetHashCode(),
                     ReuqestMethod = "OpenApi.Controllers.BusinessController.RegisterBusiness",
                     Status = 1,
                     Remark = "第三方商户注册"
@@ -139,6 +141,8 @@ namespace OpenApi.Controllers
 
         /// <summary>
         /// 获取商户状态
+        /// 茹化肖
+        /// 2015年8月26日12:59:49
         /// </summary>
         /// <returns></returns>
         [HttpPost]
@@ -150,11 +154,11 @@ namespace OpenApi.Controllers
             var busi = iBusiProvider.GetBusiness(paramodel.fields.B_OriginalBusiId, paramodel.group);
             HttpModel httpModel = new HttpModel()
             {
-                Url = "",
+                Url = HttpContext.Current.Request.Url.AbsoluteUri,
                 Htype = HtypeEnum.ThridCallback.GetHashCode(),
                 RequestBody = JsonHelper.JsonConvertToString(paramodel),
                 ResponseBody = JsonHelper.JsonConvertToString(busi),
-                ReuqestPlatForm = RequestPlatFormEnum.Unknow.GetHashCode(),
+                ReuqestPlatForm = RequestPlatFormEnum.OpenApiPlat.GetHashCode(),
                 ReuqestMethod = "OpenApi.Controllers.BusinessController.GetBusinessStatus",
                 Status = 1,
                 Remark = "第三方获取商户状态"

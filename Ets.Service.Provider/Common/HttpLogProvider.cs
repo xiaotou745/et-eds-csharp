@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using Ets.Dao.Common;
+using ETS.Enums;
 using Ets.Model.Common;
 using Ets.Service.IProvider.Common;
 using ETS.Util;
@@ -25,15 +26,8 @@ namespace Ets.Service.Provider.Common
         /// 记录请求信息
         /// </summary>
         /// <param name="model"></param>
-        public void LogRequestInfo(HttpRequest request)
+        public void LogRequestInfo(HttpModel model)
         {
-            if(request==null)
-                return;
-            var model = new HttpModel();
-            model.Url = request.Url.AbsoluteUri;
-            model.Htype = 1;//请求
-            model.RequestBody = FormatRequestBody(request);
-            model.Status = 1;
             dao.LogRequestInfo(model);
         }
         /// <summary>
@@ -61,7 +55,7 @@ namespace Ets.Service.Provider.Common
         public void LogThirdPartyInfo(HttpWebRequest request,HttpWebResponse response)
         {
             var model = new HttpModel();
-            model.ReuqestPlatForm = 4;
+           // model.ReuqestPlatForm = 4;
             dao.LogRequestInfo(model);
         }
         /// <summary>
@@ -111,7 +105,7 @@ namespace Ets.Service.Provider.Common
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append("响应数据:");
             stringBuilder.Append("");
-            if (myResponseStream.CanRead == true)
+            if (myResponseStream.CanRead)
             {
                 StreamReader myStreamReader = new StreamReader(myResponseStream, Encoding.GetEncoding("UTF-8"));
                 string retString = myStreamReader.ReadToEnd();

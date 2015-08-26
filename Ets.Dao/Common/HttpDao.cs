@@ -62,7 +62,10 @@ VALUES  ( @Url ,
         /// <param name="model"></param>
         public void LogThirdPartyInfo(HttpModel model)
         {
-            string sql = @"INSERT INTO dbo.HttpLogNew
+            Task.Factory.StartNew(() =>
+            {
+                #region===异步插入数据库
+                string sql = @"INSERT INTO dbo.HttpLogNew
         ( Url ,
           Htype ,
           RequestBody ,
@@ -81,16 +84,18 @@ VALUES  ( @Url ,
           @Status ,
           @Remark 
         )";
-            IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.Add("@Url", DbType.String).Value = model.Url;
-            parm.Add("@Htype", DbType.Int32).Value = model.Htype;
-            parm.Add("@RequestBody", DbType.String).Value = model.RequestBody;
-            parm.Add("@ResponseBody", DbType.String).Value = model.ResponseBody;
-            parm.Add("@ReuqestMethod", DbType.String).Value = model.ReuqestMethod;
-            parm.Add("@ReuqestPlatForm", DbType.Int32).Value = model.ReuqestPlatForm;
-            parm.Add("@Status", DbType.Int32).Value = model.Status;
-            parm.Add("@Remark", DbType.String).Value = model.Remark;
-            DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm);
+                IDbParameters parm = DbHelper.CreateDbParameters();
+                parm.Add("@Url", DbType.String).Value = model.Url;
+                parm.Add("@Htype", DbType.Int32).Value = model.Htype;
+                parm.Add("@RequestBody", DbType.String).Value = model.RequestBody;
+                parm.Add("@ResponseBody", DbType.String).Value = model.ResponseBody;
+                parm.Add("@ReuqestMethod", DbType.String).Value = model.ReuqestMethod;
+                parm.Add("@ReuqestPlatForm", DbType.Int32).Value = model.ReuqestPlatForm;
+                parm.Add("@Status", DbType.Int32).Value = model.Status;
+                parm.Add("@Remark", DbType.String).Value = model.Remark;
+                DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm);
+                #endregion
+            });
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Web;
+using Ets.Dao.Common;
 using Ets.Model.Common;
 using Ets.Model.Common.AliPay;
 using Ets.Model.DomainModel.Business;
@@ -15,6 +16,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using ETS.Util;
 using SuperManWebApi.App_Start.Filters;
 
 namespace SuperManWebApi.Controllers
@@ -164,6 +166,8 @@ namespace SuperManWebApi.Controllers
 
         /// <summary>
         /// 易宝转账回调接口  add by caoheyang  20150715
+        /// 茹化肖修改
+        /// 2015年8月26日13:23:10
         /// </summary>
         [HttpGet]
         [HttpPost]
@@ -171,6 +175,18 @@ namespace SuperManWebApi.Controllers
         {
             string data = HttpContext.Current.Request["data"];
             ETS.Util.LogHelper.LogWriter(DateTime.Now + "易宝回调：" + data);
+            HttpModel httpModel = new HttpModel()
+            {
+                Url = HttpContext.Current.Request.Url.AbsoluteUri,
+                Htype = HtypeEnum.ThridCallback.GetHashCode(),
+                RequestBody = data,
+                ResponseBody = "",
+                ReuqestPlatForm = RequestPlatFormEnum.EdsManagePlat.GetHashCode(),
+                ReuqestMethod = "SuperManWebApi.Controllers.PayController.YeePayCashTransferCallback",
+                Status = 1,
+                Remark = "第三方回调:易宝转账接口回调"
+            };
+            new HttpDao().LogThirdPartyInfo(httpModel);
             if (payProvider.YeePayCashTransferCallback(data))//如果返回值是成功
             {
                 HttpContext.Current.Response.Write("SUCCESS");
