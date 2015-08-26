@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Web;
 
-namespace ETS.Library.Pay.WxPay
+namespace ETS.Library.Pay.BWxPay
 {
     /**
     * 	配置账号信息
@@ -16,15 +16,10 @@ namespace ETS.Library.Pay.WxPay
         * KEY：商户支付密钥，参考开户邮件设置（必须配置）
         * APPSECRET：公众帐号secert（仅JSAPI支付的时候需要配置）
         */
-        //public const string APPID = "wxb89ebba3cec98a8c";
-        //public const string MCHID = "1243442302";
-        //public const string KEY = "567F0FBC31FC4366AF187E0AF2D0E9B2";
-        //public const string APPSECRET = "1937e6b47786c86fac37303f97d5ed91";
-
         public const string APPID = "wxbb8fb40942327ec6";
         public const string MCHID = "1264102901";
-        public const string KEY = "10852AFB8F4044D88F5A24E978BBC053";
-        public const string APPSECRET = "c0cb93c7fb3f7322326b0c853f0cba46";
+        public const string KEY = "567f0fbc31fc4366af187e0af2d0e9b2";
+        public const string APPSECRET = "";
 
         //=======【证书路径设置】===================================== 
         /* 证书路径,注意应该填写绝对路径（仅退款、撤销订单时需要）
@@ -48,7 +43,8 @@ namespace ETS.Library.Pay.WxPay
         //=======【代理服务器设置】===================================
         /* 默认IP和端口号分别为0.0.0.0和0，此时不开启代理（如有需要才设置）
         */
-        public const string PROXY_URL = "http://10.152.18.220:8080";
+        //public const string PROXY_URL = "http://10.152.18.220:8080";
+        public const string PROXY_URL = "http://0.0.0.0:0";
 
         //=======【上报信息配置】===================================
         /* 测速上报等级，0.关闭上报; 1.仅错误时上报; 2.全量上报

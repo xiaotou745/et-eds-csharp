@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Web;
 
-namespace ETS.Library.Pay.WxPay
+namespace ETS.Library.Pay.BWxPay
 {
     public class WxPayException : Exception 
     {
