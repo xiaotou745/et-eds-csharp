@@ -182,13 +182,14 @@ order by OperateTime desc";
                 obj = dataReader["Remark"].ToString();
                 if (obj != null && obj != DBNull.Value)
                 {           
+                    result.Remark = obj.ToString();
                     if (obj.ToString().Length > 8)
                     {
-                        result.Remark = obj.ToString().Substring(0, 8) + "...";
+                        result.RemarkDescription = obj.ToString().Substring(0, 8) + "...";
                     }
                     else
                     {
-                        result.Remark = obj.ToString();
+                        result.RemarkDescription = obj.ToString();
                     }         
                 }
 

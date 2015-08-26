@@ -24,12 +24,6 @@ namespace Ets.Service.IProvider.Common
        void LogRequestInfo(HttpModel request);
 
         /// <summary>
-        /// 记录响应数据
-        /// </summary>
-        /// <param name="model"></param>
-         void LogResponseInfo(HttpRequest request,HttpResponse response);
-
-        /// <summary>
         /// 记录第三方请求及响应
         /// </summary>
         /// <param name="model"></param>

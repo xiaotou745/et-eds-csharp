@@ -493,7 +493,6 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [Token]
-        //[HttpLog]
         public ResultModel<object> SetReceivePush(ClienterReceivePushModel model)
         {
             LogHelper.LogWriter("修改原值",new {model = model});

@@ -1215,7 +1215,16 @@ namespace Ets.Service.Provider.Clienter
                 return;
             }
 
-            decimal amount = myOrderInfo.OrderCommission == null ? 0 : myOrderInfo.OrderCommission.Value;
+            decimal orderCommission = myOrderInfo.OrderCommission == null ? 0 : myOrderInfo.OrderCommission.Value;
+            decimal settleMoney = myOrderInfo.SettleMoney;
+            decimal baseCommission=0;
+            decimal bt=0;
+            if (orderCommission > settleMoney)
+            {
+                bt = orderCommission - settleMoney;
+            }
+            baseCommission=orderCommission-bt;
+
             //物流公司 
             //更新骑士余额、可提现余额, 将订单标记为加入已提现,更新订单审核通过 
             if (myOrderInfo.DeliveryCompanyID > 0)
@@ -1224,13 +1233,13 @@ namespace Ets.Service.Provider.Clienter
                 UpdateCBalanceAndWithdraw(new ClienterMoneyPM()
                                         {
                                             ClienterId = myOrderInfo.clienterId,
-                                            Amount = amount,
+                                            Amount = orderCommission,
                                             Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
                                             RecordType = ClienterBalanceRecordRecordType.OrderCommission.GetHashCode(),
                                             Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士" : myOrderInfo.ClienterName,
                                             WithwardId = myOrderInfo.Id,
                                             RelationNo = myOrderInfo.OrderNo,
-                                            Remark = "佣金" + amount + "元就是你的订单佣金！"
+                                            Remark = "基本佣金"+  baseCommission+ "元+平台补贴"+bt+"元就是你的订单佣金！"
                                         });
                 //将订单标记为加入已提现
                 orderOtherDao.UpdateJoinWithdraw(myOrderInfo.Id);
@@ -1247,13 +1256,13 @@ namespace Ets.Service.Provider.Clienter
                     UpdateCAccountBalance(new ClienterMoneyPM()
                                             {
                                                 ClienterId = myOrderInfo.clienterId,
-                                                Amount = amount,
+                                                Amount = orderCommission,
                                                 Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
                                                 RecordType = ClienterBalanceRecordRecordType.OrderCommission.GetHashCode(),
                                                 Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士" : myOrderInfo.ClienterName,
                                                 WithwardId = myOrderInfo.Id,
                                                 RelationNo = myOrderInfo.OrderNo,
-                                                Remark = "佣金" + amount + "元就是你的订单佣金！"
+                                                Remark = "基本佣金" + baseCommission + "元+平台补贴" + bt + "元就是你的订单佣金！"
                                             });
                     //更新骑士无效订单金额
                     UpdateInvalidOrder(myOrderInfo);
@@ -1264,13 +1273,13 @@ namespace Ets.Service.Provider.Clienter
                     UpdateCBalanceAndWithdraw(new ClienterMoneyPM()
                                             {
                                                 ClienterId = myOrderInfo.clienterId,
-                                                Amount = amount,
+                                                Amount = orderCommission,
                                                 Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
                                                 RecordType = ClienterBalanceRecordRecordType.OrderCommission.GetHashCode(),
                                                 Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士" : myOrderInfo.ClienterName,
                                                 WithwardId = myOrderInfo.Id,
                                                 RelationNo = myOrderInfo.OrderNo,
-                                                Remark = "佣金" + amount + "元就是你的订单佣金！"
+                                                Remark = "基本佣金" + baseCommission + "元+平台补贴" + bt + "元就是你的订单佣金！"
                                             });
                     //将订单标记为加入已提现
                     orderOtherDao.UpdateJoinWithdraw(myOrderInfo.Id);

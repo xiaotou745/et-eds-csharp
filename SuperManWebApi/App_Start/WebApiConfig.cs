@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Web.Http;
 using Microsoft.Owin.Security.OAuth;
 using Newtonsoft.Json.Serialization;
+using SuperManWebApi.App_Start.Filters;
 
 namespace SuperManWebApi
 {
@@ -17,6 +18,7 @@ namespace SuperManWebApi
             config.SuppressDefaultHostAuthentication();
             config.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
             config.Filters.Add(new ApiHandleErrorAttribute());  //注册全局异常过滤器 add by caoheyang 20150206
+            config.Filters.Add(new HttpLogAttribute());//注册全局的请求记录过滤器
             // Web API 路由
             config.MapHttpAttributeRoutes();
 
