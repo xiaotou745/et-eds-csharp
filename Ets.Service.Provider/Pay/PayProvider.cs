@@ -362,7 +362,7 @@ namespace Ets.Service.Provider.Pay
                         orderId = orderId,
                         payBy = notify.buyer_email,
                         payStyle = payStyle,
-                        payType = PayTypeEnum.WeiXin.GetHashCode(),
+                        payType = PayTypeEnum.ZhiFuBao.GetHashCode(),
                         originalOrderNo = notify.trade_no,
                     };
 
