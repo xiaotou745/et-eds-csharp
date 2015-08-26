@@ -63,7 +63,7 @@ namespace Ets.Service.Provider.Clienter
         readonly BusinessBalanceRecordDao businessBalanceRecordDao = new BusinessBalanceRecordDao();
         readonly DeliveryCompanyProvider deliveryCompanyProvider = new DeliveryCompanyProvider();
         readonly IAreaProvider iAreaProvider = new AreaProvider();
-        readonly IOrderProvider iOrderProvider = new OrderProvider();
+        //readonly IOrderProvider iOrderProvider = new OrderProvider();
         readonly IOrderOtherProvider iOrderOtherProvider = new OrderOtherProvider();
         readonly ITokenProvider iTokenProvider = new TokenProvider();
         private IBusinessProvider iBusinessProvider = new BusinessProvider();
@@ -1307,12 +1307,12 @@ namespace Ets.Service.Provider.Clienter
                 ////更新无效订单(状态，原因)
                 //orderOtherDao.UpdateOrderIsReal(myOrderInfo.Id, deductCommissionReason, 1);
 
-                OrderOtherPM orderOtherPM = new OrderOtherPM();
-                orderOtherPM.OrderId = myOrderInfo.Id;
-                orderOtherPM.RealOrderCommission = realOrderCommission;
-                orderOtherPM.DeductCommissionReason = deductCommissionReason;
-                orderOtherPM.DeductCommissionType = 1;
-                iOrderProvider.UpdateOrderIsReal(orderOtherPM);                
+                //OrderOtherPM orderOtherPM = new OrderOtherPM();
+                //orderOtherPM.OrderId = myOrderInfo.Id;
+                //orderOtherPM.RealOrderCommission = realOrderCommission;
+                //orderOtherPM.DeductCommissionReason = deductCommissionReason;
+                //orderOtherPM.DeductCommissionType = 1;
+                //iOrderProvider.UpdateOrderIsReal(orderOtherPM);                
             }
         }
         /// <summary>

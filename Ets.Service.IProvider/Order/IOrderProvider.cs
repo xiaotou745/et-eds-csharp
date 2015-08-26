@@ -289,6 +289,6 @@ namespace Ets.Service.IProvider.Order
         /// 2015年8月25日 16:43:53
         /// </summary>
         /// <param name="orderOtherPM"></param>
-        void UpdateOrderIsReal(OrderOtherPM orderOtherPM);
+        //void UpdateOrderIsReal(OrderOtherPM orderOtherPM);
     }
 }
