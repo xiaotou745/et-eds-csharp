@@ -168,6 +168,14 @@ namespace Ets.Model.Common
         /// </summary>
         public decimal ClientRecharge { get; set; }
         /// <summary>
+        /// 支付宝充值
+        /// </summary>
+        public decimal ZhiFuBaoRecharge { get; set; }
+        /// <summary>
+        /// 微信充值
+        /// </summary>
+        public decimal WeiXinRecharge { get; set; }
+        /// <summary>
         /// 账户收入总计
         /// </summary>
         public decimal allIncomeTotal { get; set; }

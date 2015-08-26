@@ -650,12 +650,13 @@ namespace Ets.Service.Provider.Finance
                 {
                     //充值
                     reslult = businessFinanceDao.BusinessRecharge(new BusinessRechargeLog()
-                      {
+                      { 
                           BusinessId = model.BusinessId,
                           OptName = model.OptName,
                           RechargeAmount = model.RechargeAmount,
                           RechargeType = model.RechargeType,
-                          Remark = model.Remark
+                          Remark = model.Remark,
+                          PayType = 3 //支付方式：1：支付宝；2微信;3后台;4赠送
                       });
                 }
                 if (model.RechargeType == 2)
@@ -667,7 +668,8 @@ namespace Ets.Service.Provider.Finance
                         OptName = model.OptName,
                         RechargeAmount = model.RechargeAmountFree,
                         RechargeType = model.RechargeType,
-                        Remark = model.Remark + "(赠送)"
+                        Remark = model.Remark + "(赠送)",
+                        PayType = 4
                     });
                 }
                 if (model.RechargeType == 3)
@@ -679,7 +681,8 @@ namespace Ets.Service.Provider.Finance
                          OptName = model.OptName,
                          RechargeAmount = model.RechargeAmount,
                          RechargeType = 1,
-                         Remark = model.Remark
+                         Remark = model.Remark,
+                         PayType =3
                      });
                     bool temp2 = businessFinanceDao.BusinessRecharge(new BusinessRechargeLog()
                    {
@@ -687,7 +690,8 @@ namespace Ets.Service.Provider.Finance
                        OptName = model.OptName,
                        RechargeAmount = model.RechargeAmountFree,
                        RechargeType = 2,
-                       Remark = model.Remark + "(赠送)"
+                       Remark = model.Remark + "(赠送)",
+                       PayType = 4
                    });
                     reslult = temp1 && temp2;
                 }

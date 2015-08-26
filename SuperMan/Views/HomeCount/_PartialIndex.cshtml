@@ -72,9 +72,9 @@
                 <td>@ParseHelper.ToSplitByPercentile(false, (item.incomeTotal))@*在线支付(扫码/代付)总计*@
 
                 <td>@ParseHelper.ToSplitByPercentile(false, (item.rechargeTotal.ToString("f2")))@*商户充值总计*@
-                <td>￥@ParseHelper.ToSplitByPercentile(false, (item.rechargeTotal.ToString("f2")))</td>@*客户端充值金额*@
-                <td>￥@ParseHelper.ToSplitByPercentile(false, (item.rechargeTotal.ToString("f2")))</td>@*系统充值金额*@
-                <td>￥@ParseHelper.ToSplitByPercentile(false, (item.rechargeTotal.ToString("f2")))</td>@*系统赠送金额*@
+                <td>￥@ParseHelper.ToSplitByPercentile(false, (item.ClientRecharge.ToString("f2")))</td>@*客户端充值金额*@
+                <td>￥@ParseHelper.ToSplitByPercentile(false, (item.SystemRecharge.ToString("f2")))</td>@*系统充值金额*@
+                <td>￥@ParseHelper.ToSplitByPercentile(false, (item.SystemPresented.ToString("f2")))</td>@*系统赠送金额*@
 
                 <td>
                     @ParseHelper.ToSplitByPercentile(false, (item.incomeTotal + item.rechargeTotal).ToString("f2"))@*账户收入总计*@

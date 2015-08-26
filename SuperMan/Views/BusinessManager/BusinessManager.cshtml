@@ -647,9 +647,9 @@
         if (confirm(tipstr)) {
             var paramaters = {
                 "BusinessId": busiId,
-                "RechargeAmount": busiRechargeAmount,
+                "RechargeAmount": busiRechargeAmount,  //充值金额
                 "Remark": rechargeLog,
-                "RechargeAmountFree": busiRechargeAmountFree,
+                "RechargeAmountFree": busiRechargeAmountFree, //赠送金额
                 "RechargeType": busRechargeType
             };
             var url = "/BusinessManager/BusinessRecharge";
