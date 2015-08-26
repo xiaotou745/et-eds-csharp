@@ -1285,12 +1285,18 @@ declare
 @withdrawClienterPrice decimal(18,2),
 @businessBalance decimal(18,2),
 @withdrawBusinessPrice decimal(18,2),
-@rechargeTotal decimal(18,2)
+@rechargeTotal decimal(18,2),
+@SystemRecharge decimal(18,2),
+@SystemPresented decimal(18,2),
+@ClientRecharge decimal(18,2) 
 set @incomeTotal =convert(decimal(18,2),(select sum(TotalPrice) from dbo.OrderChild oc(nolock) where ThirdPayStatus =1))
 set @withdrawClienterPrice = convert(decimal(18,2),(select isnull( sum(isnull(Amount,0)),0) withPirce FROM dbo.ClienterWithdrawForm(nolock) cwf where Status =3)) 
 set @businessBalance=convert(decimal(18,2),(SELECT sum(BalancePrice) FROM dbo.business b(nolock) where Status=1 ))
 set @withdrawBusinessPrice=convert( decimal(18,2),(SELECT sum(Amount) as withdrawBusinessPrice FROM dbo.BusinessWithdrawForm(nolock) bwf where Status =3 ))
 set @rechargeTotal = (SELECT sum(bbr.payAmount) FROM dbo.BusinessRecharge(nolock) bbr where bbr.PayType in(1,2,3,4)  ) --商户充值总计
+set @SystemRecharge = (SELECT sum(isnull(bbr.payAmount,0)) FROM dbo.BusinessRecharge(nolock) bbr where bbr.PayType =3) 
+set @SystemPresented = (SELECT sum(isnull(bbr.payAmount,0)) FROM dbo.BusinessRecharge(nolock) bbr where bbr.PayType =4) 
+set @ClientRecharge = (SELECT sum(isnull(bbr.payAmount,0)) FROM dbo.BusinessRecharge(nolock) bbr where bbr.PayType in(1,2)) 
 select  ( select    sum(AccountBalance)
           from      dbo.clienter(nolock)
           where     AccountBalance >= 1000
@@ -1305,6 +1311,9 @@ select  ( select    sum(AccountBalance)
         sum(isnull(OrderCommission, 0)) as YfPrice,  --应付金额
         @incomeTotal incomeTotal, --扫码/代付总计
 		isnull(@rechargeTotal,0) rechargeTotal,--商户充值总计
+        @SystemRecharge SystemRecharge,
+        @SystemPresented SystemPresented,
+        @ClientRecharge ClientRecharge,
 		(@incomeTotal+@rechargeTotal) allIncomeTotal, --账户收入总计
 		-2348288.69-(@withdrawClienterPrice) withdrawClienterPrice, --骑士已提现佣金-实付
 		@businessBalance businessBalance,--商家余额总计-应付
