@@ -181,7 +181,7 @@ namespace SuperManWebApi.Controllers
                 Htype = HtypeEnum.ThridCallback.GetHashCode(),
                 RequestBody = data,
                 ResponseBody = "",
-                ReuqestPlatForm = RequestPlatFormEnum.OpenApiPlat.GetHashCode(),
+                ReuqestPlatForm = RequestPlatFormEnum.EdsManagePlat.GetHashCode(),
                 ReuqestMethod = "SuperManWebApi.Controllers.PayController.YeePayCashTransferCallback",
                 Status = 1,
                 Remark = "第三方回调:易宝转账接口回调"
