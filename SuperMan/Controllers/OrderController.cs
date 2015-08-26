@@ -292,7 +292,7 @@ namespace SuperMan.Controllers
             {
                 OptUserId = UserContext.Current.Id,
                 OptUserName = UserContext.Current.Name,
-                OptLog = OrderOptionLog,
+                OptLog ="客服取消"+ OrderOptionLog,
                 OrderId = orderId
             };
             var reg = iOrderProvider.CancelOrderByOrderNo(orderOptionModel);

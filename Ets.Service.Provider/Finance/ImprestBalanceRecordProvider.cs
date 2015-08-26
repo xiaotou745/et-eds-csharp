@@ -193,7 +193,7 @@ namespace Ets.Service.Provider.Finance
                     Operator = parmodel.OprName,
                     WithwardId = withwardId,
                     RelationNo = withwardNo,
-                    Remark = "骑士提现(备用金提现)"
+                    Remark = "现金提现扣除余额"
                 });
                 #endregion
 

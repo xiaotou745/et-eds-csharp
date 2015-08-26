@@ -178,9 +178,8 @@ order by Id desc";
                 result.Operator = dataReader["Operator"].ToString();
                 obj = dataReader["OperateTime"];
                 if (obj != null && obj != DBNull.Value)
-                {
-                    System.Globalization.DateTimeFormatInfo myDTFI = new System.Globalization.CultureInfo("zh-cn", false).DateTimeFormat;
-                    result.OperateTime = DateTime.Parse(obj.ToString(), myDTFI);
+                {            
+                    result.OperateTime = ParseHelper.ToDatetime(obj.ToString(), DateTime.Now).ToString("yyyy-MM-dd HH:mm");
                 }
                 obj = dataReader["WithwardId"];
                 if (obj != null && obj != DBNull.Value)

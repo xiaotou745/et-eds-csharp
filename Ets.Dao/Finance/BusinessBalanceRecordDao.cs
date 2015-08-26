@@ -124,10 +124,7 @@ order by OperateTime desc";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("BusinessId", businessId);
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
-            //if (DataTableHelper.CheckDt(dt))
-            //{
-            //    models = DataTableHelper.ConvertDataTableList<FinanceRecordsDM>(dt);
-            //}
+
             foreach (DataRow dataReader in dt.Rows)
             {
                 FinanceRecordsDM result = new FinanceRecordsDM();
@@ -172,9 +169,8 @@ order by OperateTime desc";
                 result.Operator = dataReader["Operator"].ToString();
                 obj = dataReader["OperateTime"];
                 if (obj != null && obj != DBNull.Value)
-                {
-                    System.Globalization.DateTimeFormatInfo myDTFI = new System.Globalization.CultureInfo("zh-cn", false).DateTimeFormat;
-                    result.OperateTime = DateTime.Parse(obj.ToString(), myDTFI);                    
+                {                  
+                    result.OperateTime = ParseHelper.ToDatetime(obj.ToString(), DateTime.Now).ToString("yyyy-MM-dd HH:mm");
                 }
                 obj = dataReader["WithwardId"];
                 if (obj != null && obj != DBNull.Value)

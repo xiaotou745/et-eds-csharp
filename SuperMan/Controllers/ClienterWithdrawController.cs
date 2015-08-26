@@ -208,7 +208,7 @@ namespace SuperMan.Controllers
             var clienterWithdrawLog = new ClienterWithdrawLogModel()
             {
                 Operator = UserContext.Current.Name,
-                Remark = "骑士提款申请单审核拒绝-" + auditFailedReason,
+                Remark = auditFailedReason,
                 Status = ClienterWithdrawFormStatus.TurnDown.GetHashCode(),
                 WithwardId = Convert.ToInt64(withwardId),
                 AuditFailedReason = auditFailedReason
@@ -229,7 +229,7 @@ namespace SuperMan.Controllers
             var clienterWithdrawLog = new ClienterWithdrawLogModel()
             {
                 Operator = UserContext.Current.Name,
-                Remark = "骑士提款申请单打款失败-" + payFailedReason,
+                Remark =  payFailedReason,
                 Status = ClienterWithdrawFormStatus.Error.GetHashCode(),
                 OldStatus = ClienterWithdrawFormStatus.Allow.GetHashCode(),
                 WithwardId = Convert.ToInt64(withwardId),

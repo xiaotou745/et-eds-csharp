@@ -3247,17 +3247,19 @@ where   Id = @OrderId and FinishAll = 0";
         /// <summary>
         /// 更新订单是真实佣金
         /// zhaohailong20150706
+        /// 修改人：胡灵波
+        /// 2015年8月25日 16:28:18
         /// </summary>
         /// <param name="orderId"></param>
         /// <param name="realOrderCommission"></param>
         /// <returns></returns>
-        public int UpdateOrderRealOrderCommission(string orderId, decimal realOrderCommission)
+        public int UpdateOrderRealCommission(OrderOtherPM  orderOtherPM)
         {
             string sql = @" update [Order] set RealOrderCommission=@realOrderCommission where id=@orderId";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("@realOrderCommission", realOrderCommission);
-            dbParameters.AddWithValue("@OrderId", orderId);
+            dbParameters.AddWithValue("@realOrderCommission", orderOtherPM.RealOrderCommission);
+            dbParameters.AddWithValue("@OrderId", orderOtherPM.OrderId);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
         }      
 

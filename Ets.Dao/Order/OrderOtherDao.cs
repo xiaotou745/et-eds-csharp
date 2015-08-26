@@ -109,7 +109,7 @@ update OrderOther set IsJoinWithdraw=1 where orderId=@orderId";
         /// </summary>
         /// <param name="orderId"></param>
         /// <param name="DeductCommissionReason">扣除订单补贴原因(如果需要扣除补贴需要此信息)</param>
-        public void UpdateOrderIsReal(int orderId, string deductCommissionReason,int deductCommissionType)
+        public void UpdateOrderIsReal(OrderOtherPM  orderOtherPM)
         {
             const string updateSql = @"
 update OrderOther 
@@ -117,9 +117,9 @@ set IsNotRealOrder=1, DeductCommissionReason=@DeductCommissionReason,
 DeductCommissionType=@DeductCommissionType
 where orderid=@orderId";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("@orderId", orderId);
-            dbParameters.AddWithValue("@DeductCommissionReason", deductCommissionReason);
-            dbParameters.AddWithValue("@DeductCommissionType", deductCommissionType);
+            dbParameters.AddWithValue("@orderId", orderOtherPM.OrderId);
+            dbParameters.AddWithValue("@DeductCommissionReason", orderOtherPM.DeductCommissionReason);
+            dbParameters.AddWithValue("@DeductCommissionType", orderOtherPM.DeductCommissionType);
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
 
