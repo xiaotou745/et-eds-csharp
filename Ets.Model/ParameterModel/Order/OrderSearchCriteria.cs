@@ -53,7 +53,6 @@ namespace Ets.Model.ParameterModel.Order
             get { return isNotRealOrder; }
             set { isNotRealOrder = value; }
         }
-
     }
 
     public class OrderByItem<Tentity>

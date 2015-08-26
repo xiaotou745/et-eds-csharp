@@ -141,4 +141,42 @@ namespace ETS.Enums
         [DisplayText("参数错误")]
         ParError=3,
     }
+    /// <summary>
+    /// 提现日期
+    /// </summary>
+    public enum ClientWithdrawType
+    {
+        [DisplayText("提现日期")]
+        WithdrawTime = 1,
+        [DisplayText("审核日期")]
+        AuditTime = 2,
+        [DisplayText("打款日期")]
+        PayTime = 3
+    }
+
+    public enum RefuseReason
+    { 
+        [DisplayText("非本人的银行卡")]
+        NotMe = 1,
+        [DisplayText("已领取现金")]
+        HadGetCash = 2,
+        [DisplayText("本人要求更改银行卡信息")]
+        ModifyCard = 3,
+        [DisplayText("与商户协商，请联系商户")]
+        ContactBusi = 4,
+        [DisplayText("银行卡绑定失败")]
+        BindError = 5,
+        [DisplayText("其它原因")]
+        OtherReason = 6 
+    }
+
+    public enum FailReason
+    {
+        [DisplayText("已领取现金")]
+        HadGetCash = 1,
+        [DisplayText("银行卡信息不全（省市或支行错误）")]
+        InfoNotFull = 2, 
+        [DisplayText("其它原因")]
+        OtherReason = 6
+    }
 }

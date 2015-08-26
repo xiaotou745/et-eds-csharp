@@ -14,102 +14,104 @@
 <script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
 
 
-                                     <div class="zpManage zpSh">
-                                         <h2 class="crumbs">
-                                             您所在位置：财务管理 > 订单审核管理
-                                         </h2>
-                                         @using (Ajax.BeginForm("PostOrderAudit", new RouteValueDictionary { { "pageindex", "" } },
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置：财务管理 > 订单审核管理
+    </h2>
+    @using (Ajax.BeginForm("PostOrderAudit", new RouteValueDictionary { { "pageindex", "" } },
     new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
     new RouteValueDictionary { { "id", "searchForm" } }))
     {
-                                 <div class="SearchMd">
-                                     <table border="0" cellspacing="0" cellpadding="0" style="width:1080px">
-                                         <tr>
-                                             <td>
-                                                 <span class="">发布时间: </span>
-                                                 <input id="txtOrderPubStart" readonly="readonly" type="text" name="OrderPubStart" />
-                                                 <span class="">到: </span>
-                                                 <input id="txtOrderPubEnd" readonly="readonly" type="text" name="OrderPubEnd" />
-                                             </td>
-                                         </tr>
-                                         <tr>
-                                             <td>
-                                                 <span class="">审核状态: </span>
-                                                 @Html.DropDownList("auditStatus", new SelectList(EnumExtenstion.GetEnumItems(typeof(OrderAuditStatusCommon)), "Value", "Text",0), "全部",new { @class = "selectw", style = "width:157px" })
-                                                 <span class="">是否异常订单:</span>
-                                                 <select name="IsNotRealOrder" class="selectw" id="IsNotRealOrder" style="width:143px">
-                                                     <option value="-1" selected="selected">全部</option>
-                                                     <option value="0">否</option>
-                                                     <option value="1">是</option>
-                                                 </select>
-                                               </td>
-                                         </tr>
+        <div class="SearchMd">
+            <table border="0" cellspacing="0" cellpadding="0" style="width:1080px">
+                <tr>
+                    <td>
+                        <span class="">发布时间: </span>
+                        <input id="txtOrderPubStart" readonly="readonly" type="text" name="OrderPubStart" />
+                        <span class="">到: </span>
+                        <input id="txtOrderPubEnd" readonly="readonly" type="text" name="OrderPubEnd" />
+                        <span class="">城市筛选: </span>
+                        @Html.DropDownList("businessCity", new SelectList(ViewBag.openCityList.Result.AreaModels, "Name", "Name"), "--无--", new { style = "width:155px" })
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="">审核状态: </span>
+                        @Html.DropDownList("auditStatus", new SelectList(EnumExtenstion.GetEnumItems(typeof(OrderAuditStatusCommon)), "Value", "Text", 0), "全部", new { @class = "selectw", style = "width:157px" })
+                        <span class="">是否异常订单:</span>
+                        <select name="IsNotRealOrder" class="selectw" id="IsNotRealOrder" style="width:143px">
+                            <option value="-1" selected="selected">全部</option>
+                            <option value="0">否</option>
+                            <option value="1">是</option>
+                        </select>
+                    </td>
+                </tr>
 
-                                         <tr>
-                                             <td>
-                                                 <span class="">骑士姓名: </span>
-                                                 <input id="txtSuperManName" type="text" width="90px" name="superManName" />
+                <tr>
+                    <td>
+                        <span class="">骑士姓名: </span>
+                        <input id="txtSuperManName" type="text" width="90px" name="superManName" />
 
-                                                 <span class="">商户名称: </span>
-                                                 <input id="txtBusinessName" type="text" name="businessName" />
-                                                 <span class="">订单号: </span>
-                                                 <input id="txtOrderNo" type="text" name="orderId" />
-                                                 <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
-@if (SuperMan.App_Start.UserContext.Current.HasAuthority(80))
-{
-                                                 <input type="button" value="批量审核通过" onclick="return batchAuditPass()" class="searchBtn" id="batchAuditPass" />
-                                                 <input type="button" value="批量审核拒绝" onclick="return batchAuditCancel()" class="searchBtn" id="batchAuditCancel" />
-}
-                                                 <span id="opTipMsg" style="color:red"></span>
-                                             </td>
-                                         </tr>
-                                     </table>
-                                 </div>
-    } 
-                                         <div class="add-openbox add-form" id="deductWebSubsidyShow" style="width:500px">
-    <fieldset>
-        <div class="control-group">
-            <input value="" type="hidden" id="cancelID" />
-            <input value="" type="hidden" id="cancelNo" />
-            <label class="control-label" for="deductWebSubsidyReason">扣除网站补贴原因</label>
-            <div class="controls">
-                <textarea cols="45" rows="5" id="deductWebSubsidyReason"></textarea>
-                <p class="help-block"></p>
-            </div>
+                        <span class="">商户名称: </span>
+                        <input id="txtBusinessName" type="text" name="businessName" />
+                        <span class="">订单号: </span>
+                        <input id="txtOrderNo" type="text" name="orderId" />
+                        <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
+                        @if (SuperMan.App_Start.UserContext.Current.HasAuthority(80))
+                        {
+                            <input type="button" value="批量审核通过" onclick="return batchAuditPass()" class="searchBtn" id="batchAuditPass" />
+                            <input type="button" value="批量审核拒绝" onclick="return batchAuditCancel()" class="searchBtn" id="batchAuditCancel" />
+                        }
+                        <span id="opTipMsg" style="color:red"></span>
+                    </td>
+                </tr>
+            </table>
         </div>
-    </fieldset>
-    <p class="btnbox">
-        <input value="确认" type="button" id="btnSaveDeductWebSubsidy" class="yesBtn" />
-        <input value="关闭" type="button" class="J_closebox qxBtn" id="btnReasionCancel" />
-        <span id="cancelTipMsg" style="color:red;"></span>
-    </p>
-</div>
-<div class="add-openbox add-form" id="batchCancelReasion" style="width:500px">
-    <fieldset>
-        <div class="control-group">
-            <label class="control-label" for="batchReason">扣除网站补贴原因</label>
-            <div class="controls">
-                <textarea cols="45" rows="5" id="batchReason"></textarea>
-                <p class="help-block"></p>
+    }
+    <div class="add-openbox add-form" id="deductWebSubsidyShow" style="width:500px">
+        <fieldset>
+            <div class="control-group">
+                <input value="" type="hidden" id="cancelID" />
+                <input value="" type="hidden" id="cancelNo" />
+                <label class="control-label" for="deductWebSubsidyReason">扣除网站补贴原因</label>
+                <div class="controls">
+                    <textarea cols="45" rows="5" id="deductWebSubsidyReason"></textarea>
+                    <p class="help-block"></p>
+                </div>
             </div>
-        </div>
-    </fieldset>
-    <p class="btnbox">
-        <input value="确认" type="button" id="btnSaveBatchReason" class="yesBtn" />
-        <input value="关闭" type="button" class="J_closebox qxBtn" id="btnBatchReasionCancel" />
-        <span id="batchCancelTipMsg" style="color:red;"></span>
-    </p>
-</div>
-                                         <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
-                                         <div class="bd clearfix" id="dataList">
-                                             @Html.Partial("_PartialOrderAuditList", Model)
-                                         </div>
-                                        
-                                         
+        </fieldset>
+        <p class="btnbox">
+            <input value="确认" type="button" id="btnSaveDeductWebSubsidy" class="yesBtn" />
+            <input value="关闭" type="button" class="J_closebox qxBtn" id="btnReasionCancel" />
+            <span id="cancelTipMsg" style="color:red;"></span>
+        </p>
+    </div>
+    <div class="add-openbox add-form" id="batchCancelReasion" style="width:500px">
+        <fieldset>
+            <div class="control-group">
+                <label class="control-label" for="batchReason">扣除网站补贴原因</label>
+                <div class="controls">
+                    <textarea cols="45" rows="5" id="batchReason"></textarea>
+                    <p class="help-block"></p>
+                </div>
+            </div>
+        </fieldset>
+        <p class="btnbox">
+            <input value="确认" type="button" id="btnSaveBatchReason" class="yesBtn" />
+            <input value="关闭" type="button" class="J_closebox qxBtn" id="btnBatchReasionCancel" />
+            <span id="batchCancelTipMsg" style="color:red;"></span>
+        </p>
+    </div>
+    <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <div class="bd clearfix" id="dataList">
+        @Html.Partial("_PartialOrderAuditList", Model)
+    </div>
+
+
 </div>
 <script type="text/javascript">
     var adminjs = new adminglass(); //实例化后台类
-    $(document).ready(function () {        
+    $(document).ready(function () {
         $('#txtOrderPubStart').datepicker();
         $('#txtOrderPubEnd').datepicker();
         window.location.hash = '';
@@ -144,166 +146,165 @@
         else {
             $("a").removeAttr('disabled');
         }
-       
+
     }
-        function batchAuditPass()
-        {
-            var orderIds = "";
-            $("input[name='checkMenus']").each(function (i, o) {
-                if (o.checked) {
-                    orderIds += (o.value + "," + o.id + ";");
-                }
-            });
-            if (orderIds == "") {
-                alert("请选择要批量操作的订单！");
-                return;
+    function batchAuditPass() {
+        var orderIds = "";
+        $("input[name='checkMenus']").each(function (i, o) {
+            if (o.checked) {
+                orderIds += (o.value + "," + o.id + ";");
             }
-            if (!window.confirm("确认批量审核通过？")) {
-                return;
-            }
-            lockButton(true);
-            $("#opTipMsg").html("正在执行....");
+        });
+        if (orderIds == "") {
+            alert("请选择要批量操作的订单！");
+            return;
+        }
+        if (!window.confirm("确认批量审核通过？")) {
+            return;
+        }
+        lockButton(true);
+        $("#opTipMsg").html("正在执行....");
 
-            var url = "/Order/BatchAuditOK";
-            var paramaters = { "orderIds": orderIds };
-            $.ajax({
-                type: 'POST',
-                url: url,
-                data: paramaters,
-                success: function (result) {
-                    alert(result.Message);
-                    window.location.href = "/Order/OrderAudit";
-                },
-                error: function (d) {
-                    lockButton(false);
-                    $("#opTipMsg").html("");
-                }
-            });
+        var url = "/Order/BatchAuditOK";
+        var paramaters = { "orderIds": orderIds };
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                alert(result.Message);
+                window.location.href = "/Order/OrderAudit";
+            },
+            error: function (d) {
+                lockButton(false);
+                $("#opTipMsg").html("");
+            }
+        });
+    }
+    function batchAuditCancel() {
+        var orderIds = "";
+        $("input[name='checkMenus']").each(function (i, o) {
+            if (o.checked) {
+                orderIds += (o.value + "," + o.id + ";");
+            }
+        });
+        if (orderIds == "") {
+            alert("请选择要批量操作的订单！");
+            return;
         }
-        function batchAuditCancel() {
-            var orderIds = "";
-            $("input[name='checkMenus']").each(function (i, o) {
-                if (o.checked) {
-                    orderIds += (o.value + "," + o.id + ";");
-                }
-            });
-            if (orderIds == "") {
-                alert("请选择要批量操作的订单！");
-                return;
-            }
-            adminjs.openwinbox('#batchCancelReasion');
+        adminjs.openwinbox('#batchCancelReasion');
+    }
+    function btnSaveBatchReason() {
+        if (!window.confirm("确认批量审核拒绝？")) {
+            return;
         }
-        function btnSaveBatchReason() {
-            if (!window.confirm("确认批量审核拒绝？")) {
-                return;
+        var remark = $('#batchReason').val();
+        if (remark.trim() == "") {
+            alert("扣除网站补贴原因不能为空！");
+            return false;
+        }
+        var orderIds = "";
+        $("input[name='checkMenus']").each(function (i, o) {
+            if (o.checked) {
+                orderIds += (o.value + "," + o.id + ";");
             }
-            var remark = $('#batchReason').val();
-            if (remark.trim() == "") {
-                alert("扣除网站补贴原因不能为空！");
-                return false;
-            }
-            var orderIds = "";
-            $("input[name='checkMenus']").each(function (i, o) {
-                if (o.checked) {
-                    orderIds += (o.value + "," + o.id + ";");
-                }
-            });
-            document.getElementById("btnSaveBatchReason").disabled = true;
-            document.getElementById("btnBatchReasionCancel").disabled = true;
-            $("#batchCancelTipMsg").html("正在执行....");
+        });
+        document.getElementById("btnSaveBatchReason").disabled = true;
+        document.getElementById("btnBatchReasionCancel").disabled = true;
+        $("#batchCancelTipMsg").html("正在执行....");
 
-            
-            var url = "/Order/BatchAuditCancel";
-            var paramaters = { "orderIds": orderIds, "remark": remark };
-            $.ajax({
-                type: 'POST',
-                url: url,
-                data: paramaters,
-                success: function (result) {
-                    $("#batchCancelTipMsg").html("");
-                    alert(result.Message);
-                    adminjs.closewinbox('.add-openbox');
-                    window.location.href = "/Order/OrderAudit";
-                },
-                error: function (d) {
-                    document.getElementById("btnSaveBatchReason").disabled = false;
-                    document.getElementById("btnBatchReasionCancel").disabled = false;
-                    $("#batchCancelTipMsg").html("");
-                }
-            });
-        }
-        function btnAuditOk(orderId, orderNo) {
-            if (!window.confirm("是否审核通过？")) {
-                return;
+
+        var url = "/Order/BatchAuditCancel";
+        var paramaters = { "orderIds": orderIds, "remark": remark };
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                $("#batchCancelTipMsg").html("");
+                alert(result.Message);
+                adminjs.closewinbox('.add-openbox');
+                window.location.href = "/Order/OrderAudit";
+            },
+            error: function (d) {
+                document.getElementById("btnSaveBatchReason").disabled = false;
+                document.getElementById("btnBatchReasionCancel").disabled = false;
+                $("#batchCancelTipMsg").html("");
             }
-            lockButton(true);
-            $("#opTipMsg").html("正在执行....");
-            var paramaters = { "orderId": orderId };
-            var url = "/Order/AuditOK";
+        });
+    }
+    function btnAuditOk(orderId, orderNo) {
+        if (!window.confirm("是否审核通过？")) {
+            return;
+        }
+        lockButton(true);
+        $("#opTipMsg").html("正在执行....");
+        var paramaters = { "orderId": orderId };
+        var url = "/Order/AuditOK";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert("审核成功！");
+                } else {
+                    alert(result.Message);
+                }
+                window.location.href = "/Order/OrderAudit";
+            },
+            error: function (d) {
+                lockButton(false);
+                $("#opTipMsg").html("");
+            }
+        });
+    }
+    //扣除网站补贴
+    function btnAuditCancel(orderId, orderNo, cancelReason) {
+        $("#cancelID").val(orderId);
+        $("#cancelNo").val(orderNo);
+        $("#deductWebSubsidyReason").text(cancelReason);
+        adminjs.openwinbox('#deductWebSubsidyShow');
+    }
+    function btnSaveDeductWebSubsidy() {
+        var orderNo = $('#cancelNo').val();
+        var orderId = $('#cancelID').val();
+        var orderOptionLog = $('#deductWebSubsidyReason').val();
+        if (orderOptionLog.trim() == "") {
+            alert("扣除网站补贴原因不能为空！");
+            return false;
+        }
+        if (confirm("确定要扣除该订单网站补贴吗？")) {
+            document.getElementById("btnSaveDeductWebSubsidy").disabled = true;
+            document.getElementById("btnReasionCancel").disabled = true;
+            $("#cancelTipMsg").html("正在执行....");
+            var paramaters = { "orderId": orderId, "OrderOptionLog": orderOptionLog };
+            var url = "/Order/AuditRefuse";
             $.ajax({
                 type: 'POST',
                 url: url,
                 data: paramaters,
                 success: function (result) {
                     if (result.IsSuccess) {
-                        alert("审核成功！");
+                        alert(result.Message);
                     } else {
                         alert(result.Message);
                     }
+                    adminjs.closewinbox('.add-openbox');
                     window.location.href = "/Order/OrderAudit";
                 },
                 error: function (d) {
-                    lockButton(false);
-                    $("#opTipMsg").html("");
+                    document.getElementById("btnSaveDeductWebSubsidy").disabled = false;
+                    document.getElementById("btnReasionCancel").disabled = false;
+                    $("#cancelTipMsg").html("");
                 }
             });
         }
-        //扣除网站补贴
-        function btnAuditCancel(orderId, orderNo, cancelReason) {
-            $("#cancelID").val(orderId);
-            $("#cancelNo").val(orderNo);
-            $("#deductWebSubsidyReason").text(cancelReason);
-            adminjs.openwinbox('#deductWebSubsidyShow');
-        }
-        function btnSaveDeductWebSubsidy() {
-            var orderNo = $('#cancelNo').val();
-            var orderId = $('#cancelID').val();
-            var orderOptionLog = $('#deductWebSubsidyReason').val();
-            if (orderOptionLog.trim() == "") {
-                alert("扣除网站补贴原因不能为空！");
-                return false;
-            }
-            if (confirm("确定要扣除该订单网站补贴吗？")) {
-                document.getElementById("btnSaveDeductWebSubsidy").disabled = true;
-                document.getElementById("btnReasionCancel").disabled = true;
-                $("#cancelTipMsg").html("正在执行....");
-                var paramaters = { "orderId": orderId, "OrderOptionLog": orderOptionLog };
-                var url = "/Order/AuditRefuse";
-                $.ajax({
-                    type: 'POST',
-                    url: url,
-                    data: paramaters,
-                    success: function (result) {
-                        if (result.IsSuccess) {
-                            alert(result.Message);
-                        } else {
-                            alert(result.Message);
-                        }
-                        adminjs.closewinbox('.add-openbox');
-                        window.location.href = "/Order/OrderAudit";
-                    },
-                    error: function (d) {
-                        document.getElementById("btnSaveDeductWebSubsidy").disabled = false;
-                        document.getElementById("btnReasionCancel").disabled = false;
-                        $("#cancelTipMsg").html("");
-                    }
-                });
-            }
-            return true;
-        }
-        $('.J_closebox').click(function () {
-            adminjs.closewinbox('.add-openbox');
-            return false;
-        });
+        return true;
+    }
+    $('.J_closebox').click(function () {
+        adminjs.closewinbox('.add-openbox');
+        return false;
+    });
 </script>
 <script src="~/Scripts/mvcpager.js"></script>

@@ -3671,7 +3671,7 @@ where c.Id=@ClienterId;");
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Amount", model.RealOrderCommission);
             parm.AddWithValue("@Status", ClienterBalanceRecordStatus.Success);
-            parm.AddWithValue("@RecordType", ClienterBalanceRecordRecordType.CancelOrder);
+            parm.AddWithValue("@RecordType", ClienterBalanceRecordRecordType.OrderCommission);
             parm.AddWithValue("@Operator", "服务");
             parm.AddWithValue("@WithwardId", model.Id);
             parm.AddWithValue("@RelationNo", model.OrderNo);

@@ -15,6 +15,7 @@
                 <th>骑士姓名</th>
                 <th>电话</th>
                 <th>支出金额</th>
+                <th>余额</th>
                 <th>支出类型</th>
                 <th>日期</th>
                 <th>操作人</th>
@@ -36,6 +37,9 @@
             </td>
             <td>
                 @Model.Records[i].Amount
+            </td>
+            <td>
+                @Model.Records[i].AfterAmount
             </td>
             <td>
                 @(Model.Records[i].OptType==2?"骑士支出":"充值")

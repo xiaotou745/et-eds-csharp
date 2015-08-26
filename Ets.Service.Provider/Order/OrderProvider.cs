@@ -2409,10 +2409,10 @@ namespace Ets.Service.Provider.Order
                         Title = "订单提醒",
                         Alert = "您有新订单了，请点击查看！",
                         City = string.Empty,
-                        Content = string.Empty,
-                        RegistrationId = "C_" + clienterId,
+                        Content = "Order",
+                        RegistrationId = clienterId.ToString(),//"C_" + 
                         TagId = 0,
-                        PushType = 1
+                        PushType = 0
                     });
                 });
             }
