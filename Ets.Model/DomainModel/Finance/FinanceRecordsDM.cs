@@ -65,7 +65,7 @@ namespace Ets.Model.DomainModel.Finance
         /// <summary>
         /// 操作时间
         /// </summary>
-        public DateTime OperateTime { get; set; }
+        public string OperateTime { get; set; }
 
         /// <summary>
         /// 提现单ID
