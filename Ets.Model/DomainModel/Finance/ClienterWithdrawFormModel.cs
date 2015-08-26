@@ -40,5 +40,15 @@ namespace Ets.Model.DomainModel.Finance
         public int DateDiff { get; set; }
 
         public string RequestId { get; set; }
+
+        /// <summary>
+        /// 易宝主账户
+        /// </summary>
+        public string CustomerNumber { get; set; }
+
+        /// <summary>
+        /// 易宝子账户
+        /// </summary>
+        public string Ledgerno { get; set; }
     }
 }
