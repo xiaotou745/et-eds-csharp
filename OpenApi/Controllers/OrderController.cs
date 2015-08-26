@@ -1,4 +1,5 @@
-﻿using Ets.Service.IProvider.Order;
+﻿using Ets.Dao.Common;
+using Ets.Service.IProvider.Order;
 using Ets.Service.Provider.Order;
 using Ets.Service.IProvider.Clienter;
 using Ets.Service.Provider.Clienter;
@@ -48,6 +49,18 @@ namespace OpenApi.Controllers
         {
             paramodel.fields.orderfrom = paramodel.group; //设置订单来源,其实就是订单对应的集团是什么
             int status = new OrderProvider().GetStatus(paramodel.fields.order_no, paramodel.fields.orderfrom);
+            HttpModel httpModel = new HttpModel()
+            {
+                Url = "",
+                Htype = HtypeEnum.ThridCallback.GetHashCode(),
+                RequestBody =JsonHelper.JsonConvertToString(paramodel),
+                ResponseBody = JsonHelper.JsonConvertToString(status),
+                ReuqestPlatForm = RequestPlatFormEnum.Unknow.GetHashCode(),
+                ReuqestMethod = "OpenApi.Controllers.OrderController.GetStatus",
+                Status = 1,
+                Remark = "第三方回调:订单状态查询"
+            };
+            new HttpDao().LogThirdPartyInfo(httpModel);
             return status < 0 ?
             ResultModel<object>.Conclude(OrderApiStatusType.ParaError) :    //订单不存在返回参数错误提示
             ResultModel<object>.Conclude(OrderApiStatusType.Success, new { order_status = status });

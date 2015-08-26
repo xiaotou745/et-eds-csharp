@@ -1,4 +1,5 @@
-﻿using Ets.Service.IProvider.Order;
+﻿using Ets.Dao.Common;
+using Ets.Service.IProvider.Order;
 using Ets.Service.Provider.Order;
 using Ets.Service.IProvider.Clienter;
 using Ets.Service.Provider.Clienter;
@@ -76,6 +77,7 @@ namespace OpenApi.Controllers
                 LogHelper.LogWriter("商户注册---：", new { busid = busi.Id,BusiStatus=BusiStatus.BusiNoPass.GetHashCode() });
 
                 bool upresult = iBusiProvider.UpdateAuditStatus(busi.Id, BusiStatus.BusiNoPass.GetHashCode(), paramodel.fields.Address);
+                
                 //}
                 if (upresult)
                 {
@@ -114,6 +116,18 @@ namespace OpenApi.Controllers
             int addResult = iBusiProvider.AddThirdBusiness(paramodel);
             if (addResult > 0)
             {
+                HttpModel httpModel = new HttpModel()
+                {
+                    Url = "",
+                    Htype = HtypeEnum.ThridCallback.GetHashCode(),
+                    RequestBody = JsonHelper.JsonConvertToString(paramodel),
+                    ResponseBody = JsonHelper.JsonConvertToString(addResult),
+                    ReuqestPlatForm = RequestPlatFormEnum.Unknow.GetHashCode(),
+                    ReuqestMethod = "OpenApi.Controllers.BusinessController.RegisterBusiness",
+                    Status = 1,
+                    Remark = "第三方商户注册"
+                };
+                new HttpDao().LogThirdPartyInfo(httpModel);
                 return ResultModel<object>.Conclude(CustomerRegisterStatus.Success, addResult);
             }
             else
@@ -134,7 +148,18 @@ namespace OpenApi.Controllers
         {
             LogHelper.LogWriter("获取商户状态：", new { Busi = paramodel });
             var busi = iBusiProvider.GetBusiness(paramodel.fields.B_OriginalBusiId, paramodel.group);
-
+            HttpModel httpModel = new HttpModel()
+            {
+                Url = "",
+                Htype = HtypeEnum.ThridCallback.GetHashCode(),
+                RequestBody = JsonHelper.JsonConvertToString(paramodel),
+                ResponseBody = JsonHelper.JsonConvertToString(busi),
+                ReuqestPlatForm = RequestPlatFormEnum.Unknow.GetHashCode(),
+                ReuqestMethod = "OpenApi.Controllers.BusinessController.GetBusinessStatus",
+                Status = 1,
+                Remark = "第三方获取商户状态"
+            };
+            new HttpDao().LogThirdPartyInfo(httpModel);
             if (busi == null)
             {
                 return ResultModel<object>.Conclude(BusiStatus.BusiNoRegiste);
