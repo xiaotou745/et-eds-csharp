@@ -826,8 +826,7 @@ namespace Ets.Service.Provider.Finance
             decimal allowWithdrawPrice = _clienterDao.GetUserStatus(model.ClienterId).AllowWithdrawPrice;
 
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
-            {
-                //clienterFinanceDao.ClienterRecharge(model); 
+            {                
                 //更新骑士余额、可提现余额 
                 iClienterProvider.UpdateCBalanceAndWithdraw(new ClienterMoneyPM()
                                                             {
