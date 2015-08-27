@@ -110,12 +110,12 @@
                                 @ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.PayStatusEnum)curOrderChild.PayStatus).GetType(), (ETS.Enums.PayStatusEnum)curOrderChild.PayStatus).Text}
                         </td>
                         <td>
-                            @if (curOrderChild.PayType != null && curOrderChild.PayType.Value > 0)
+                            @if (curOrderChild.PayType > 0)
                             {
                                 @ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.PayTypeEnum)curOrderChild.PayType).GetType(), (ETS.Enums.PayTypeEnum)curOrderChild.PayType)}
                         </td>
                         <td>
-                            @if (curOrderChild.PayStyle != null && curOrderChild.PayStyle.Value > 0)
+                            @if (curOrderChild.PayStyle > 0)
                             {
                                 @ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.PayStyleEnum)curOrderChild.PayStyle).GetType(), (ETS.Enums.PayStyleEnum)curOrderChild.PayStyle)}
                         </td>
