@@ -58,7 +58,20 @@ namespace SuperManWebApi.Controllers
         [Token]
         public ResultModel<ClienterDM> Get(ParamModel ParModel)
         {
-            ClienterPM model = JsonHelper.JsonConvertToObject<ClienterPM>(AESApp.AesDecrypt(ParModel.data));
+            if (ParModel==null||string.IsNullOrEmpty(ParModel.data))
+            {
+                return ResultModel<ClienterDM>.Conclude(GetClienterStatus.Failed);
+            }
+            string param = AESApp.AesDecrypt(ParModel.data);
+            if (string.IsNullOrEmpty(param))
+            {
+                return ResultModel<ClienterDM>.Conclude(GetClienterStatus.Failed);
+            }
+            ClienterPM model = JsonHelper.JsonConvertToObject<ClienterPM>(param);
+            if (model==null)
+            {
+                return ResultModel<ClienterDM>.Conclude(GetClienterStatus.Failed);
+            }
             #region 验证
             var version = model.Version;
             if (string.IsNullOrWhiteSpace(version)) //版本号 
