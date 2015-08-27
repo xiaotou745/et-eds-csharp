@@ -21,7 +21,7 @@ namespace Ets.Dao.Common
             #region===异步记录数据
             Task.Factory.StartNew(() =>
             {
-                string sql = @"INSERT INTO dbo.HttpLogNew
+                string sql = @"INSERT INTO dbo.HttpLog
         ( Url ,
           Htype ,
           RequestBody ,
@@ -63,7 +63,7 @@ VALUES  ( @Url ,
             Task.Factory.StartNew(() =>
             {
                 #region===异步插入数据库
-                string sql = @"INSERT INTO dbo.HttpLogNew
+                string sql = @"INSERT INTO dbo.HttpLog
         ( Url ,
           Htype ,
           RequestBody ,

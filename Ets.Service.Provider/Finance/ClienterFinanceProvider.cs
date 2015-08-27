@@ -827,10 +827,8 @@ namespace Ets.Service.Provider.Finance
 
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                clienterFinanceDao.ClienterRecharge(model);
-
-
-                //更新骑士余额、可提现余额  
+                //clienterFinanceDao.ClienterRecharge(model); 
+                //更新骑士余额、可提现余额 
                 iClienterProvider.UpdateCBalanceAndWithdraw(new ClienterMoneyPM()
                                                             {
                                                                 ClienterId = model.ClienterId,

@@ -8,9 +8,7 @@
 <script src="~/Scripts/jquery-ui-1.8.20.js"></script>
 <script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
 <div style="width:1000px">
-    @{
-
-
+    @{ 
         var subsidy = "";
         if (Model.Status == 1 || Model.Status == 2 || Model.Status == 3)
         {
@@ -330,6 +328,10 @@
         var orderOptionLog = $('#deductWebSubsidyReason').val();
         if (orderOptionLog.trim() == "") {
             alert("扣除网站补贴原因不能为空！");
+            return false;
+        }
+        if (orderOptionLog.trim().length < 5 || orderOptionLog.trim().length > 50) {
+            alert("请保证输入内容在5到50个字符");
             return false;
         }
         if (confirm("确定要扣除该订单网站补贴吗？")) {
