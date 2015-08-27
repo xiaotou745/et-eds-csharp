@@ -53,7 +53,10 @@
             {
                 <td>骑士姓名：@Model.ClienterTrueName</td>
                 <td>骑士手机：@Model.ClienterPhoneNo</td>
-            }
+            } 
+        </tr>
+        <tr>
+            <td>订单数：@Model.OrderCount</td>
             @if (!Model.IsPay.Value && Model.MealsSettleMode == 1)
             {
                 <td>支付来源：线上结算</td>
@@ -62,12 +65,11 @@
             {
                 <td>支付来源：线下结算</td>
             }
+            <td>订单是否需要审核：@(Model.IsOrderChecked == 1 ? "是" : "否")</td>
+            <td >备注：@Model.Remark</td>
         </tr>
         <tr>
-            <td>备注：@Model.Remark</td>
-            <td>订单数：@Model.OrderCount</td>
-            <td>审核推荐处理：@Model.DeductCommissionReason</td>
-            <td>订单是否需要审核：@(Model.IsOrderChecked == 1 ? "是" : "否")</td>
+            <td colspan="2">审核推荐处理：@Model.DeductCommissionReason</td>
         </tr>
     </table>
     <hr />
