@@ -318,6 +318,14 @@ namespace Ets.Model.DataModel.Order
         /// </summary>
         public decimal SuperManSettleValue { get; set; }
         /// <summary>
+        /// 配送公司结算数值
+        /// </summary>
+        public decimal SettleValueAll { get; set; }
+        /// <summary>
+        /// 骑士结算数值
+        /// </summary>
+        public decimal SuperManSettleValueAll { get; set; }
+        /// <summary>
         /// 取货时间
         /// </summary>
         public DateTime? TakeTime { get; set; }

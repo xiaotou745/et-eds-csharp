@@ -91,6 +91,8 @@ namespace Ets.Dao.DeliveryManager
 		                            ,CASE dc.SettleType WHEN 1 THEN '比例计算' WHEN 2 THEN '固定结算' ELSE '' END AS SettleType--结算类型
 		                            ,CASE DC.SettleType WHEN 1 THEN dc.DeliveryCompanyRatio WHEN 2 THEN DC.DeliveryCompanySettleMoney ELSE 0 END AS SettleValue
 		                            ,CASE DC.SettleType WHEN 1 THEN dc.ClienterSettleRatio WHEN 2 THEN DC.ClienterFixMoney ELSE 0 END AS SuperManSettleValue--骑士固定金额
+		                            ,CASE dc.SettleType WHEN 1 THEN  o.[Amount]*dc.DeliveryCompanyRatio WHEN 2 THEN o.[OrderCount]*DC.DeliveryCompanySettleMoney END  AS SettleValueAll
+		                            ,CASE dc.SettleType WHEN 1 THEN  o.[Amount]*dc.ClienterSettleRatio WHEN 2 THEN o.[OrderCount]*DC.ClienterFixMoney END AS SuperManSettleValueAll
                                     ,oo.IsNotRealOrder
                                     ,oo.GrabTime
                                     ,b.City AS BusinessCity
