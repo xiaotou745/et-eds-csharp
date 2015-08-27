@@ -273,10 +273,8 @@
         if ($("#IsEnable").val().trim() == "0") {
             alert("已删除的订单不能取消！");
             return false;
-        }
-
-        adminjs.openwinbox('#OrderOptionShow');
-
+        } 
+        adminjs.openwinbox('#OrderOptionShow'); 
     });
     //扣除网站补贴
     $("#btnAuditCancel").click(function () {
@@ -299,6 +297,10 @@
         var orderOptionLog = $('#orderOptionLog').val();
         if ($("#orderOptionLog").val().trim() == "") {
             alert("操作描述不能为空！");
+            return false;
+        }
+        if (orderOptionLog.trim().length < 5 || orderOptionLog.trim().length > 50) {
+            alert("请保证输入操作描述内容在5到50个字符");
             return false;
         }
         if (confirm("确定要取消该订单吗？")) {
