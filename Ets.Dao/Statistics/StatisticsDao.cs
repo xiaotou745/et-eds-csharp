@@ -678,26 +678,37 @@ order by o.Date desc, o.ActiveClienterCount desc";
         /// <returns></returns>
         public PageInfo<BusinessBalanceInfo> QueryBusinessBalance(BussinessBalanceQuery queryInfo)
         {
-            string columnList = @"
-                                    bbr.Id
-                                    ,bbr.RelationNo
+//            string columnList = @"
+//                                    bbr.Id
+//                                    ,bbr.RelationNo
+//                                    ,bbr.BusinessId
+//                                    ,b.Name
+//                                    ,b.PhoneNo
+//                                    ,b.Address
+//                                    ,bbr.OperateTime
+//                                    ,bbr.Amount
+//                                    ,bbr.Balance";
+//            string tables = " dbo.BusinessBalanceRecord bbr(nolock) join dbo.business b(nolock) on bbr.BusinessId = b.Id";
+
+            string columnList = @"  bbr.Id
+                                    ,bbr.OrderNo RelationNo
                                     ,bbr.BusinessId
                                     ,b.Name
                                     ,b.PhoneNo
-                                    ,b.Address
-                                    ,bbr.OperateTime
-                                    ,bbr.Amount
-                                    ,bbr.Balance";
-            string tables = " dbo.BusinessBalanceRecord bbr(nolock) join dbo.business b(nolock) on bbr.BusinessId = b.Id";
-            var sbSqlWhere = GetQueryWhere(queryInfo);
+                                    ,b.[Address]
+                                    ,bbr.PayTime OperateTime
+                                    ,bbr.payAmount Amount ";
+            string tables = " dbo.BusinessRecharge bbr(nolock) join dbo.business b(nolock) on bbr.BusinessId = b.Id ";
+
+            var sbSqlWhere = GetQueryRechargeWhere(queryInfo);
 
             //0为充值时间倒序，1为充值金额降序，2为充值金额升序
-            string orderByColumn = " bbr.operatetime desc  ";
+            string orderByColumn = " bbr.PayTime desc  ";
             switch (queryInfo.OrderType)
             {
-                case 1: orderByColumn = " bbr.Amount desc  ";
+                case 1: orderByColumn = " bbr.payAmount desc  ";
                     break;
-                case 2: orderByColumn = " bbr.Amount asc  ";
+                case 2: orderByColumn = " bbr.payAmount asc  ";
                     break;
                 default:
                     break;
@@ -705,6 +716,72 @@ order by o.Date desc, o.ActiveClienterCount desc";
             return new PageHelper().GetPages<BusinessBalanceInfo>(SuperMan_Read, queryInfo.PageIndex, sbSqlWhere,
                 orderByColumn, columnList, tables, ETS.Const.SystemConst.PageSize, true);
         }
+
+        /// <summary>
+        /// 根据查询条件组装过滤的sql语句
+        /// </summary>
+        /// <UpdateBy>wc</UpdateBy> 
+        /// <param name="queryInfo"></param>
+        /// <returns></returns>
+        private static string GetQueryRechargeWhere(BussinessBalanceQuery queryInfo)
+        {
+            var sbSqlWhere = new StringBuilder(" 1=1 ");
+            if (!string.IsNullOrWhiteSpace(queryInfo.BusinessId))
+            {
+                sbSqlWhere.AppendFormat(" AND bbr.BusinessId='{0}' ", queryInfo.BusinessId);
+            }
+            if (!string.IsNullOrWhiteSpace(queryInfo.StartDate))
+            {
+                sbSqlWhere.AppendFormat(" AND bbr.PayTime>='{0}' ", queryInfo.StartDate);
+            }
+            if (!string.IsNullOrWhiteSpace(queryInfo.EndDate))
+            {
+                DateTime finalDt = ParseHelper.ToDatetime(queryInfo.EndDate);
+                if (finalDt != DateTime.MaxValue)
+                {
+                    finalDt = finalDt.AddDays(1);
+                }
+                sbSqlWhere.AppendFormat(" AND bbr.PayTime<='{0}' ", finalDt.ToString("yyyy-MM-dd"));
+            }
+            if (!string.IsNullOrWhiteSpace(queryInfo.Name))
+            {
+                sbSqlWhere.AppendFormat(" AND b.Name='{0}' ", queryInfo.Name);
+            }
+            if (!string.IsNullOrWhiteSpace(queryInfo.PhoneNo))
+            {
+                sbSqlWhere.AppendFormat(" AND b.PhoneNo='{0}' ", queryInfo.PhoneNo);
+            }
+            if (!string.IsNullOrWhiteSpace(queryInfo.CityId))
+            {
+                sbSqlWhere.AppendFormat(" AND b.CityId={0} ", queryInfo.CityId);
+            }
+            if (queryInfo.RechargePrice > 0)
+            {
+                sbSqlWhere.AppendFormat(" AND bbr.payAmount>={0} ", queryInfo.RechargePrice);
+            }
+            if (queryInfo.RechargeType > 0)
+            {
+                if (queryInfo.RechargeType == 3)//充值赠送
+                {
+                    sbSqlWhere.Append(" and bbr.PayType=4 ");
+                } 
+                else if (queryInfo.RechargeType == 1)//系统充值
+                {
+                    sbSqlWhere.AppendFormat("and  bbr.PayType=3 ");
+                }
+
+                else if (queryInfo.RechargeType == 2)//客户端充值
+                {
+                    sbSqlWhere.AppendFormat(" and bbr.PayType in(1,2)");
+                }
+            } 
+            //else
+            //{
+            //    sbSqlWhere.Append("  and bbr.PayType IN(1,2,3,4) ");
+            //}
+            return sbSqlWhere.ToString();
+        }
+
 
         /// <summary>
         /// 根据查询条件组装过滤的sql语句

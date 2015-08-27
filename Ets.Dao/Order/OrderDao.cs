@@ -1403,8 +1403,7 @@ where   o.[Status] <> 3
                                   ,rechargeTotal
                                   ,SystemRecharge
                                   ,SystemPresented
-                                  ,ZhiFuBaoRecharge
-                                  ,WeiXinRecharge
+                                  ,(ZhiFuBaoRecharge+WeiXinRecharge) ClientRecharge 
                                   ,incomeTotal
                                     ";
 
