@@ -230,6 +230,8 @@ namespace SuperMan.Controllers
             strBuilder.AppendLine("<td>结算类型</td>");
             strBuilder.AppendLine("<td>公司结算数值</td>");
             strBuilder.AppendLine("<td>骑士结算数值</td>");
+            strBuilder.AppendLine("<td>公司总结算</td>");
+            strBuilder.AppendLine("<td>骑士总结算</td>");
             strBuilder.AppendLine("<td>订单状态</td>");
             strBuilder.AppendLine("<td>城市</td>");
             strBuilder.AppendLine("<td>是否在线支付</td>");
@@ -254,6 +256,8 @@ namespace SuperMan.Controllers
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.SettleType));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.SettleValue));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.SuperManSettleValue));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.SettleValueAll));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.SuperManSettleValueAll));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", statusView));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.BusinessCity));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.MealsSettleMode==1?"是":"否"));

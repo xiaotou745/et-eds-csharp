@@ -226,8 +226,12 @@ namespace Ets.Service.Provider.Finance
                     Operator = business.Name,
                     WithwardId = withwardId,
                     RelationNo = withwardNo,
+<<<<<<< HEAD
                     //Remark = "土豪欧巴，提款后记得充值哦",
                     Remark = "提款扣除余额"
+=======
+                    Remark = withdrawBBackPM.Remarks
+>>>>>>> 176c3b392a272d15ad5940c55ae734b857f7c455
                 });
                 #endregion
 
@@ -651,8 +655,7 @@ namespace Ets.Service.Provider.Finance
                         OptName = model.OptName,
                         RechargeAmount = model.RechargeAmountFree,
                         RechargeType = model.RechargeType,
-                        Remark = model.Remark + "(赠送)",
-                        PayType = 4
+                        Remark = model.Remark 
                     });
                 }
                 if (model.RechargeType == 3)
@@ -673,8 +676,7 @@ namespace Ets.Service.Provider.Finance
                        OptName = model.OptName,
                        RechargeAmount = model.RechargeAmountFree,
                        RechargeType = 2,
-                       Remark = model.Remark + "(赠送)",
-                       PayType = 4
+                       Remark = model.Remark 
                    });
                     reslult = temp1 && temp2;
                 }
