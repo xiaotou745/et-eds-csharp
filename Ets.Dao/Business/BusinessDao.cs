@@ -2647,6 +2647,7 @@ SELECT bcr.[Id]
 FROM [BusinessClienterRelation] bcr WITH(NOLOCK)
 JOIN dbo.clienter c WITH(NOLOCK) ON bcr.ClienterId=c.Id
 WHERE bcr.IsEnable=1 
+    AND bcr.IsBind=1
     AND c.IsBind=1 
     AND c.[Status]=1 
     AND c.WorkStatus=0

@@ -125,7 +125,8 @@ namespace Ets.Service.Provider.MyPush
                         {
                             //0：别名,因为一个应用只能有一个别名，现有支付已经使用，其它应用请使用别名
                             audience = Audience.s_alias(model.RegistrationId);
-                            model.ContentKey = "Content";
+
+                            model.ContentKey = "Content"; //string.IsNullOrEmpty(model.Content) ? "Content" : model.Content;
                         }
                         if (model.PushType == 1)
                         {
@@ -195,6 +196,56 @@ namespace Ets.Service.Provider.MyPush
                 return null;
             }
             return jPushKey;
+        }
+
+        /// <summary>
+        /// 极光推送方法（不调用API换用ETS.Library）
+        /// danny-20150827
+        /// </summary>
+        /// <param name="model"></param>
+        public static void PushMessageNew(JPushModel model)
+        {
+            try
+            {
+                var jPushKey = GetJPushKey(model.TagId);
+                if (jPushKey == null) return;
+                foreach (var aKeyValue in jPushKey)
+                {
+                    var client = new ETS.Library.JPush.JPushClient(aKeyValue.Key, aKeyValue.Value);
+                    ETS.Library.JPush.push.mode.Audience audience = null;
+                    if (model.PushType == 0)//0：别名,因为一个应用只能有一个别名，现有支付已经使用，其它应用请使用别名
+                    {
+                        audience = ETS.Library.JPush.push.mode.Audience.s_alias(model.RegistrationId);
+                        model.ContentKey = "Content"; //string.IsNullOrEmpty(model.Content) ? "Content" : model.Content;
+                    }
+                    if (model.PushType == 1)//1：标签
+                    {
+                        audience = ETS.Library.JPush.push.mode.Audience.s_tag(model.RegistrationId);
+                    }
+                    var pushPayload = new ETS.Library.JPush.push.mode.PushPayload();
+                    pushPayload.platform = ETS.Library.JPush.push.mode.Platform.android_ios();
+                    pushPayload.audience = audience;
+                    pushPayload.options.apns_production = true;
+                    ETS.Library.JPush.push.mode.Notification notification = new ETS.Library.JPush.push.mode.Notification().setAlert(model.Alert); //不需要写弹出内容
+                    notification.AndroidNotification = new ETS.Library.JPush.push.notification.AndroidNotification().setTitle(model.Title);
+                    notification.IosNotification =
+                        new ETS.Library.JPush.push.notification.IosNotification().setAlert(model.Alert)
+                            .setBadge(1)
+                            .setSound(string.Concat(model.ContentKey, ":", model.Content));
+                    if (!string.IsNullOrEmpty(model.Content))
+                    {
+                        notification.AndroidNotification = new ETS.Library.JPush.push.notification.AndroidNotification().AddExtra(model.ContentKey, model.Content);
+                    }
+                    pushPayload.notification = notification.Check();
+                    var response = client.SendPush(pushPayload);
+                    LogHelper.LogWriter(!response.isResultOK() ? "推送失败" : "推送成功", response.msg_id);
+                }
+            }
+            catch (Exception ex)
+            {
+                var parm = string.Concat("推送异常,参数：tagId", model.TagId, ",RegistrationId:", model.RegistrationId);
+                LogHelper.LogWriter(ex, parm);
+            }
         }
     }
 }

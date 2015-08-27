@@ -1045,6 +1045,8 @@ namespace Ets.Service.Provider.Order
                     order.OrderFromName = "全时";
                 else if (order.OrderFrom == 4)
                     order.OrderFromName = "美团";
+                else if (order.OrderFrom == 99)
+                    order.OrderFromName = "商户web版";
                 var list = orderDao.GetOrderDetail(order_no);
                 mo.order = order;
                 mo.orderDetails = list;
@@ -2293,9 +2295,10 @@ namespace Ets.Service.Provider.Order
         /// </summary>
         public void AutoPushOrder()
         {
+
             #region 对象声明及初始化
 
-            var listClienterId=new List<int>();//骑士Id集合
+            var listClienterId = new List<int>();//骑士Id集合
             string pushRadius = GlobalConfigDao.GlobalConfigGet(0).PushRadius;//推送距离半径
 
             #region 在Redis中记录推送时间供下次查询用
@@ -2340,7 +2343,7 @@ namespace Ets.Service.Provider.Order
                         PushCount = 1,
                         ClienterCount = clienterCount
                     });
-                    LogHelper.LogWriter("订单【" + order.Id + "】已推送给骑士【" + (string.IsNullOrEmpty(strClienterId) ? "" : strClienterId.TrimEnd(','))+"】");
+                    LogHelper.LogWriter("订单【" + order.Id + "】已推送给骑士【" + (string.IsNullOrEmpty(strClienterId) ? "" : strClienterId.TrimEnd(',')) + "】");
                     continue;
                 }
                 #endregion
@@ -2402,21 +2405,23 @@ namespace Ets.Service.Provider.Order
 
             foreach (var clienterId in listClienterId)
             {
-                Task.Factory.StartNew(() =>
-                {
-                    Push.PushMessage(new JPushModel()
+                //Task.Factory.StartNew(() =>
+                //{
+                Push.PushMessageNew(new JPushModel()
                     {
                         Title = "订单提醒",
                         Alert = "您有新订单了，请点击查看！",
                         City = string.Empty,
                         Content = "Order",
-                        RegistrationId = clienterId.ToString(),//"C_" + 
+                        ContentKey = "Content",
+                        RegistrationId = "C_" + clienterId.ToString(),
                         TagId = 0,
-                        PushType = 0
+                        PushType = 1
                     });
-                });
+                //});
             }
             #endregion
+
         }
 
         #region 用户自定义方法

@@ -21,11 +21,11 @@ namespace Ets.Provider.Tests
     [TestFixture]
     public class YeePayTest
     {
-        [Test]
-        public void YeePayCashTransferClienterCallBack()
-        {
-           new PayProvider().YeePayCashTransferClienterCallBack();
-        }
+        //[Test]
+        //public void YeePayCashTransferClienterCallBack()
+        //{
+        //   new PayProvider().YeePayCashTransferClienterCallBack();
+        //}
 
         /// <summary>
         /// 注册

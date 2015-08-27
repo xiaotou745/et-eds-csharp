@@ -7,6 +7,7 @@ using Ets.Service.Provider.Clienter;
 using Ets.Service.Provider.MyPush;
 using Ets.Service.Provider.Order;
 using Ets.Service.Provider.Pay;
+using Ets.Service.IProvider.Order;
 using ETS.Security;
 using ETS.Util;
 using NUnit.Framework;
@@ -60,7 +61,10 @@ namespace Ets.Provider.Tests
             //    TagId = 0,
             //    PushType = 1
             //});
-           
+
+
+            OrderProvider orderProvider=new OrderProvider();
+            orderProvider.AutoPushOrder();
         }
 
     }
