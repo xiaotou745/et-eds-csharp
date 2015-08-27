@@ -876,7 +876,7 @@ namespace Ets.Service.Provider.Pay
         public RegisterReturnModel RegisterYee(YeeRegisterParameter para)
         {
             var regisiter = new Register();
-            HttpModel httpModel = new HttpModel();
+            //HttpModel httpModel = new HttpModel();
             var retunModel = regisiter.RegSubaccount(para);
             //httpDao.LogThirdPartyInfo(httpModel);
             //new YeePayUserDao().Insert(TranslateRegisterYeeModel(para));
@@ -970,7 +970,7 @@ namespace Ets.Service.Provider.Pay
         public TransferReturnModel TransferAccountsYee(YeeTransferParameter para)
         {
             var transfer = new Transfer();
-            HttpModel httpModel = new HttpModel();
+            //HttpModel httpModel = new HttpModel();
             var retunModel = transfer.TransferAccounts(ref para);
             //var retunModel = transfer.TransferAccounts(ref para, out httpModel);
             //httpDao.LogThirdPartyInfo(httpModel);
@@ -987,7 +987,7 @@ namespace Ets.Service.Provider.Pay
         {
             model.CustomerNumber = KeyConfig.YeepayAccountId;//商户编号 
             model.HmacKey = KeyConfig.YeepayHmac;//密钥 
-            HttpModel httpModel=new HttpModel();
+            //HttpModel httpModel=new HttpModel();
             var result = queryBalance.GetBalance(model);
            // var result= queryBalance.GetBalance(model, out httpModel);
            // httpDao.LogThirdPartyInfo(httpModel);
