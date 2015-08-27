@@ -226,12 +226,7 @@ namespace Ets.Service.Provider.Finance
                     Operator = business.Name,
                     WithwardId = withwardId,
                     RelationNo = withwardNo,
-<<<<<<< HEAD
-                    //Remark = "土豪欧巴，提款后记得充值哦",
-                    Remark = "提款扣除余额"
-=======
                     Remark = withdrawBBackPM.Remarks
->>>>>>> 176c3b392a272d15ad5940c55ae734b857f7c455
                 });
                 #endregion
 
