@@ -274,6 +274,10 @@
             alert("扣除网站补贴原因不能为空！");
             return false;
         }
+        if (orderOptionLog.trim().length < 5 || orderOptionLog.trim().length > 50) {
+            alert("请保证输入内容在5到50个字符");
+            return false;
+        }
         if (confirm("确定要扣除该订单网站补贴吗？")) {
             document.getElementById("btnSaveDeductWebSubsidy").disabled = true;
             document.getElementById("btnReasionCancel").disabled = true;
