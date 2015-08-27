@@ -57,8 +57,8 @@ namespace SuperManWebApi.App_Start.Filters
 
            var controllerName = actionExecutedContext.ActionContext.RequestContext.RouteData.Values["controller"].ToString();
            var actionName = actionExecutedContext.ActionContext.RequestContext.RouteData.Values["action"].ToString();
-           dynamic content = actionExecutedContext.Response.Content;
-           var result = content.Value ?? "";
+           dynamic content = actionExecutedContext.Response==null?(dynamic) "":actionExecutedContext.Response.Content;
+           var result = content==""?"":(content.Value ?? "");
            HttpModel httpModel = new HttpModel()
            {
                Url = HttpContext.Current.Request.Url.AbsoluteUri,
