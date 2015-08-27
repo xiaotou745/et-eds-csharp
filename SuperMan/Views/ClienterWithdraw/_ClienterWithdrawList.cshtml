@@ -11,7 +11,9 @@
             <th>骑士姓名</th>
             <th>电话</th>
             <th>账户余额（提款前）</th>
+            <th>账户余额（提款后）</th>
             <th>可提款金额（提款前）</th>
+            <th>可提款金额（提款后）</th>
             <th>提现金额</th>
             <th>状态</th>
             <th>手续费支付方</th>
@@ -45,7 +47,9 @@
                         <td>@item.ClienterName</td>
                         <td>@item.ClienterPhoneNo</td>
                         <td>￥@ParseHelper.ToSplitByPercentile(false, item.BalancePrice)</td>
+                        <td>￥@ParseHelper.ToSplitByPercentile(false, item.BalancePrice-item.Amount)</td>
                         <td>￥@ParseHelper.ToSplitByPercentile(false, item.AllowWithdrawPrice)</td>
+                        <td>￥@ParseHelper.ToSplitByPercentile(false, item.AllowWithdrawPrice-item.Amount)</td>
                         <td style="color:green;font-weight:600">￥@ParseHelper.ToSplitByPercentile(false, item.Amount)</td>
                         <td>@ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.ClienterWithdrawFormStatus)item.Status).GetType(), (ETS.Enums.ClienterWithdrawFormStatus)item.Status).Text</td>
                         <td>@(item.HandChargeOutlay == HandChargeOutlay.Private ? "骑士" : "E代送")</td>
