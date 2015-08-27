@@ -18,7 +18,7 @@ namespace SuperManWebApi
             config.SuppressDefaultHostAuthentication();
             config.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
             config.Filters.Add(new ApiHandleErrorAttribute());  //注册全局异常过滤器 add by caoheyang 20150206
-            config.Filters.Add(new HttpLogAttribute());//注册全局的请求记录过滤器
+            //config.Filters.Add(new HttpLogAttribute());//注册全局的请求记录过滤器 暂时注释掉茹化肖
             // Web API 路由
             config.MapHttpAttributeRoutes();
 

@@ -36,7 +36,7 @@ namespace Ets.Service.Provider.Common
             cacheValue = redis.Get<string>(cacheKey);//获取当前Token值
             redis.Set(cacheKeyOld, cacheValue, new TimeSpan(0, 2,0));//把当前值赋值到旧的Token中
             cacheValue = Helper.GetToken();//生成新的Token
-            redis.Set(cacheKey, cacheValue, new TimeSpan(2, 0, 0));
+            redis.Set(cacheKey, cacheValue, new TimeSpan(0, 10, 0));
             return cacheValue;
         }
     }

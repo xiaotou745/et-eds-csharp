@@ -2221,7 +2221,7 @@ namespace Ets.Service.Provider.Order
                                 OptUserName = "system",
                                 Id = orderListModel.Id,
                                 OrderNo = orderListModel.OrderNo,
-                                Remark = "系统自动处理超时未完成订单",
+                                Remark = "E代送客服处理超时未完成订单",
                                 businessId = orderListModel.businessId
                             }))
                             {
@@ -2267,7 +2267,7 @@ namespace Ets.Service.Provider.Order
                                     Operator = "system",
                                     WithwardId = orderListModel.Id,
                                     RelationNo = orderListModel.OrderNo,
-                                    Remark = "系统自动处理超时未完成订单"
+                                    Remark = "E代送客服处理超时未完成订单"
                                 }))
                                 {
                                     orderDao.AutoAuditRefuseDeal(orderListModel.Id);
