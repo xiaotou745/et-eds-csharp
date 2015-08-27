@@ -161,7 +161,7 @@
         });
     });
     $("#RefuseReason").change(function () {
-        var seleVal = $(this).val(); 
+        var seleVal = $(this).val();
         if (seleVal == 6) {
             $("#reasonDiv").show();
         } else {
@@ -233,17 +233,23 @@
         if ($("#RefuseReason").val().length == 0) {
             alert("请选择拒绝原因！");
             return;
-        } 
+        }
         if (!window.confirm("确认要审核拒绝？")) {
             return;
         }
         var auditFailedReason = $('#txtWithdrawAuditRefuse').val();
-        if ($("#RefuseReason").val() == 6 && auditFailedReason.trim().length == 0) {
-            alert("拒绝原因不能为空！");
-            return;
+        if ($("#RefuseReason").val() == 6) {
+            if (auditFailedReason.trim().length == 0) {
+                alert("拒绝原因不能为空！");
+                return;
+            }
+            if (auditFailedReason.length < 5 || auditFailedReason.length > 20) {
+                alert("请保证输入内容在5到20个字符");
+                return;
+            }
         } else {
-            auditFailedReason = $("#RefuseReason").find('option:selected').text();
-        }
+            auditFailedReason = $("#RefuseReason").find('option:selected').text().trim();
+        } 
         var withwardId = $('#hidWithwardIdAuditRefuse').val();
         var paramaters = { "withwardId": withwardId, "auditFailedReason": auditFailedReason };
         var url = "/ClienterWithdraw/WithdrawAuditRefuse";
@@ -277,12 +283,17 @@
         }
         var payFailedReason = $('#txtWithdrawPayFailed').val();
 
-        if ($("#FailReason").val() == 6 && payFailedReason.trim().length == 0) {
-            alert("打款失败原因不能为空！");
-            return;
+        if ($("#FailReason").val() == 6) {
+            if (payFailedReason.trim().length == 0) {
+                alert("打款失败原因不能为空！");
+                return;
+            } if (payFailedReason.length < 5 || payFailedReason.length > 20) {
+                alert("请保证输入内容在5到20个字符");
+                return;
+            }
         } else {
-            payFailedReason = $("#FailReason").find('option:selected').text();
-        } 
+            payFailedReason = $("#FailReason").find('option:selected').text().trim();
+        }
         var withwardId = $('#hidWithwardIdPayFailed').val();
         var paramaters = { "withwardId": withwardId, "payFailedReason": payFailedReason };
         var url = "/ClienterWithdraw/WithdrawPayFailed";

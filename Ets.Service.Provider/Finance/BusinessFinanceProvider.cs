@@ -470,11 +470,13 @@ namespace Ets.Service.Provider.Finance
         /// <summary>
         /// 易宝打款失败回调处理逻辑 
         /// add by caoheyang  20150716
+        /// 
+        /// 窦海超把方法名改了，以前是重载
+        /// 2015年8月26日 20:16:45
         /// </summary>
         /// <param name="model"></param>
-        ///  <param name="callback"></param>
         /// <returns></returns>
-        public bool BusinessWithdrawPayFailed(BusinessWithdrawLogModel model, CashTransferCallback callback)
+        public bool BusinessWithdrawPayFailedForCallBack(BusinessWithdrawLogModel model)
         {
             bool reg = false;
             var withdraw = _businessWithdrawFormDao.GetById(model.WithwardId);  //提现单
@@ -483,19 +485,6 @@ namespace Ets.Service.Provider.Finance
             {
                 return false;
             }
-            //服务已自动回转此处停用
-            //IPayProvider payProvider = new PayProvider();
-            //TransferReturnModel tempmodel = payProvider.TransferAccountsYee(new YeeTransferParameter()
-            //{
-            //    UserType = UserTypeYee.Business.GetHashCode(),
-            //    WithdrawId = model.WithwardId,
-            //    Ledgerno = "",
-            //    SourceLedgerno = callback.ledgerno,
-            //    Amount = (ParseHelper.ToDecimal(callback.amount) - withdraw.HandCharge).ToString()
-            //});
-
-            //if (tempmodel.code == "1") //易宝子账户到主账户打款 成功
-            //{
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 if (businessFinanceDao.BusinessWithdrawReturn(model) //提现返现
@@ -526,11 +515,6 @@ namespace Ets.Service.Provider.Finance
                     tran.Complete();
                 }
             }
-            //}
-            //else
-            //{
-            //    LogHelper.LogWriterString("易宝子账户到主账户打款导致失败，提现单号为:" + model.WithwardId);
-            //}
             return reg;
         }
 
@@ -648,12 +632,13 @@ namespace Ets.Service.Provider.Finance
                 {
                     //充值
                     reslult = businessFinanceDao.BusinessRecharge(new BusinessRechargeLog()
-                      {
+                      { 
                           BusinessId = model.BusinessId,
                           OptName = model.OptName,
                           RechargeAmount = model.RechargeAmount,
                           RechargeType = model.RechargeType,
-                          Remark = model.Remark
+                          Remark = model.Remark,
+                          PayType = 3 //支付方式：1：支付宝；2微信;3后台;4赠送
                       });
                 }
                 if (model.RechargeType == 2)
@@ -665,7 +650,8 @@ namespace Ets.Service.Provider.Finance
                         OptName = model.OptName,
                         RechargeAmount = model.RechargeAmountFree,
                         RechargeType = model.RechargeType,
-                        Remark = model.Remark + "(赠送)"
+                        Remark = model.Remark + "(赠送)",
+                        PayType = 4
                     });
                 }
                 if (model.RechargeType == 3)
@@ -677,7 +663,8 @@ namespace Ets.Service.Provider.Finance
                          OptName = model.OptName,
                          RechargeAmount = model.RechargeAmount,
                          RechargeType = 1,
-                         Remark = model.Remark
+                         Remark = model.Remark,
+                         PayType =3
                      });
                     bool temp2 = businessFinanceDao.BusinessRecharge(new BusinessRechargeLog()
                    {
@@ -685,7 +672,8 @@ namespace Ets.Service.Provider.Finance
                        OptName = model.OptName,
                        RechargeAmount = model.RechargeAmountFree,
                        RechargeType = 2,
-                       Remark = model.Remark + "(赠送)"
+                       Remark = model.Remark + "(赠送)",
+                       PayType = 4
                    });
                     reslult = temp1 && temp2;
                 }

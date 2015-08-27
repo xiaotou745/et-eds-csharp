@@ -155,7 +155,26 @@ namespace Ets.Model.Common
         /// 商户充值总计
         /// </summary>
         public decimal rechargeTotal { get; set; }
-
+        /// <summary>
+        /// 系统充值
+        /// </summary>
+        public decimal SystemRecharge { get; set; }
+        /// <summary>
+        /// 系统赠送
+        /// </summary>
+        public decimal SystemPresented { get; set; }
+        /// <summary>
+        /// 客户端充值
+        /// </summary>
+        public decimal ClientRecharge { get; set; }
+        /// <summary>
+        /// 支付宝充值
+        /// </summary>
+        public decimal ZhiFuBaoRecharge { get; set; }
+        /// <summary>
+        /// 微信充值
+        /// </summary>
+        public decimal WeiXinRecharge { get; set; }
         /// <summary>
         /// 账户收入总计
         /// </summary>

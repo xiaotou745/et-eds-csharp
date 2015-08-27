@@ -56,16 +56,26 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Pay\WxPay\Config.cs" />
-    <Compile Include="Pay\WxPay\Data.cs" />
-    <Compile Include="Pay\WxPay\Exception.cs" />
-    <Compile Include="Pay\WxPay\HttpService.cs" />
-    <Compile Include="Pay\WxPay\Log.cs" />
-    <Compile Include="Pay\WxPay\NativePay.cs" />
-    <Compile Include="Pay\WxPay\Notify.cs" />
-    <Compile Include="Pay\WxPay\WxNotifyResultModel.cs" />
-    <Compile Include="Pay\WxPay\ResultNotify.cs" />
-    <Compile Include="Pay\WxPay\WxPayApi.cs" />
+    <Compile Include="Pay\CWxPay\Config.cs" />
+    <Compile Include="Pay\CWxPay\Data.cs" />
+    <Compile Include="Pay\CWxPay\Exception.cs" />
+    <Compile Include="Pay\CWxPay\HttpService.cs" />
+    <Compile Include="Pay\CWxPay\Log.cs" />
+    <Compile Include="Pay\CWxPay\NativePay.cs" />
+    <Compile Include="Pay\CWxPay\Notify.cs" />
+    <Compile Include="Pay\CWxPay\ResultNotify.cs" />
+    <Compile Include="Pay\CWxPay\WxNotifyResultModel.cs" />
+    <Compile Include="Pay\CWxPay\WxPayApi.cs" />
+    <Compile Include="Pay\BWxPay\Config.cs" />
+    <Compile Include="Pay\BWxPay\Data.cs" />
+    <Compile Include="Pay\BWxPay\Exception.cs" />
+    <Compile Include="Pay\BWxPay\HttpService.cs" />
+    <Compile Include="Pay\BWxPay\Log.cs" />
+    <Compile Include="Pay\BWxPay\NativePay.cs" />
+    <Compile Include="Pay\BWxPay\Notify.cs" />
+    <Compile Include="Pay\BWxPay\WxNotifyResultModel.cs" />
+    <Compile Include="Pay\BWxPay\ResultNotify.cs" />
+    <Compile Include="Pay\BWxPay\WxPayApi.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

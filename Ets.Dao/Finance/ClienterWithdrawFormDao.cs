@@ -147,8 +147,8 @@ where  Id=@Id ";
  where a.[Status] in(1,2,20) and a.ClienterId=@clienterId";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("@clienterId", DbType.Int32).Value = clienterId;
-            var count = DbHelper.ExecuteScalar(SuperMan_Read, querysql, dbParameters); 
-            return ParseHelper.ToInt(count,0);
+            var count = DbHelper.ExecuteScalar(SuperMan_Read, querysql, dbParameters);
+            return ParseHelper.ToInt(count, 0);
         }
 
 
@@ -170,5 +170,30 @@ where  Id=@Id ";
             return stringBuilder.ToString();
         }
         #endregion
+
+        /// <summary>
+        /// 获取提现中的骑士提现单数据 
+        /// 窦海超 
+        /// 2015年8月26日 18:58:39
+        /// </summary>
+        /// <returns></returns>
+        public IList<Ets.Model.DomainModel.Finance.ClienterWithdrawFormModel> GetClienterWithdrawing()
+        {
+            string sql = @"
+SELECT ypr.RequestId,cwf.Id,cwf.Amount,
+  ypr.Ledgerno,CustomerNumber
+   FROM 
+ dbo.ClienterWithdrawForm cwf (nolock)
+ join dbo.YeePayRecord ypr(nolock) on cwf.Id=ypr.WithdrawId and TransferType=1 and ypr.UserType=0 --骑士
+  where cwf.Status=20 ";
+            DataTable dt= DbHelper.ExecuteDataTable(SuperMan_Read,sql);
+            if (!dt.HasData())
+            {
+                return null;
+            }
+            return MapRows<Ets.Model.DomainModel.Finance.ClienterWithdrawFormModel>(dt);
+        }
+
+     
     }
 }

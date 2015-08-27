@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ETS.Library.Pay.WxPay
+namespace ETS.Library.Pay.CWxPay
 {
     public class WxNotifyResultModel
     {

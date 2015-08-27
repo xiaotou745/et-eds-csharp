@@ -174,7 +174,7 @@ namespace ETS.Enums
     {
         [DisplayText("已领取现金")]
         HadGetCash = 1,
-        [DisplayText("银行卡信息不全（省市或支行错误）")]
+        [DisplayText("银行卡信息不全")]
         InfoNotFull = 2, 
         [DisplayText("其它原因")]
         OtherReason = 6

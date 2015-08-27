@@ -30,6 +30,8 @@ namespace Ets.Model.DomainModel.Finance
         /// 流水状态(1、交易成功 2、交易中）
         /// </summary>
         public int Status { get; set; }
+        public string StatusDescription { get; set; }
+        
 
         /// <summary>
         /// 流水状态(1、交易成功 2、交易中）

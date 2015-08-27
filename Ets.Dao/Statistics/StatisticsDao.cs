@@ -72,10 +72,17 @@ t3 as (
 	 group by convert(char(10),CreateTime ,120)--在线支付(扫码/代付)总计
 ),
 t4 as (
-	select convert(char(10),OperateTime,120) PubDate,
-	 sum(Amount) rechargeTotal from BusinessBalanceRecord(nolock)
-	 where RecordType = 9 and OperateTime between @starttime and @endtime
-	group by convert(char(10),OperateTime ,120) 
+	 select
+                convert(char(10),PayTime,120) PubDate,
+                sum(case when PayType=1 then payAmount else 0 end) ZhiFuBaoRecharge,
+                sum(case when PayType=2 then payAmount else 0 end) WeiXinRecharge,
+                sum(case when PayType=3 then payAmount else 0 end) SystemRecharge,
+                sum(case when PayType=4 then payAmount else 0 end) SystemPresented,
+                (sum(case when PayType=1 then payAmount else 0 end) +
+                sum(case when PayType=2 then payAmount else 0 end) +
+                sum(case when PayType=3 then payAmount else 0 end) +
+                sum(case when PayType=4 then payAmount else 0 end) ) rechargeTotal
+                from BusinessRecharge(nolock) where PayTime between @startime  and @endtime 
 	 --商户充值总计
 ),
 t5 as (
@@ -102,6 +109,10 @@ select
 	min(t2.ActiveBusiness) ActiveBusiness, --活跃商家
 	isnull(min(t3.incomeTotal),0) incomeTotal,--在线支付(扫码/代付)总计
  	isnull( min(t4.rechargeTotal),0) rechargeTotal, --商户充值总计
+    t4.ZhiFuBaoRecharge,
+    t4.WeiXinRecharge,
+    t4.SystemRecharge,
+    t4.SystemPresented,
 	@businessPrice businessBalance, --商户余额总计（应付）
  	isnull( min(t5.withdrawBusinessPrice),0) withdrawBusinessPrice --商户已提款金额（实付）
  from dbo.[order] o (nolock)
@@ -232,6 +243,10 @@ INSERT INTO [dbo].[Statistic]
 ,[rechargeTotal]
 ,[businessBalance]
 ,[withdrawBusinessPrice]
+,SystemRecharge
+,SystemPresented
+,ZhiFuBaoRecharge
+,WeiXinRecharge
 )
 VALUES
 (@InsertTime
@@ -257,6 +272,10 @@ VALUES
 ,@rechargeTotal
 ,@businessBalance
 ,@withdrawBusinessPrice
+,@SystemRecharge
+,@SystemPresented
+,@ZhiFuBaoRecharge
+,@WeiXinRecharge
 )
 ";
             IDbParameters parm = DbHelper.CreateDbParameters();
@@ -288,6 +307,11 @@ VALUES
             parm.Add("rechargeTotal", DbType.Decimal, 18).Value = model.rechargeTotal;
             parm.Add("businessBalance", DbType.Decimal, 18).Value = model.businessBalance;
             parm.Add("withdrawBusinessPrice", DbType.Decimal, 18).Value = model.withdrawBusinessPrice;
+
+            parm.Add("SystemRecharge", DbType.Decimal, 18).Value = model.SystemRecharge;
+            parm.Add("SystemPresented", DbType.Decimal, 18).Value = model.SystemRecharge;
+            parm.Add("ZhiFuBaoRecharge", DbType.Decimal, 18).Value = model.ZhiFuBaoRecharge;
+            parm.Add("WeiXinRecharge", DbType.Decimal, 18).Value = model.WeiXinRecharge;
 
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
 
@@ -450,11 +474,19 @@ declare
                group by convert(char(10), PayTime, 120)
 			),
 		t9
-		 as (
-			select convert(char(10),OperateTime,120) PubDate, 
-			sum(Amount) rechargeTotal
-			from BusinessBalanceRecord(nolock) where RecordType = 9 and  OperateTime  between @startime  and @endtime
-			group by convert(char(10),OperateTime,120)
+		 as ( 
+                select
+                convert(char(10),PayTime,120) PubDate,
+                sum(case when PayType=1 then payAmount else 0 end) ZhiFuBaoRecharge,
+                sum(case when PayType=2 then payAmount else 0 end) WeiXinRecharge,
+                sum(case when PayType=3 then payAmount else 0 end) SystemRecharge,
+                sum(case when PayType=4 then payAmount else 0 end) SystemPresented,
+                (sum(case when PayType=1 then payAmount else 0 end) +
+                sum(case when PayType=2 then payAmount else 0 end) +
+                sum(case when PayType=3 then payAmount else 0 end) +
+                sum(case when PayType=4 then payAmount else 0 end) ) rechargeTotal
+                from BusinessRecharge(nolock) where PayTime between @startime  and @endtime  
+                group by convert(char(10),PayTime,120)
 			 --商户充值总计
 		 )
     select  t.PubDate, isnull(t.RzqsCount, 0) RzqsCount,
@@ -475,6 +507,10 @@ declare
             isnull(t7.userTotal,0) userTotal,
             isnull(t8.clienterTotal,0) clienterTotal,
             isnull(t9.rechargeTotal,0) rechargeTotal,
+            t9.ZhiFuBaoRecharge,
+            t9.WeiXinRecharge,
+            t9.SystemRecharge,
+            t9.SystemPresented,
             (isnull( userTotal,0)+isnull(clienterTotal,0))+isnull(t9.rechargeTotal,0) incomeTotal
     from    t
             left join t2 on t.PubDate = t2.PubDate
