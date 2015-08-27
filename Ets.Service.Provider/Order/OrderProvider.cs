@@ -1045,6 +1045,8 @@ namespace Ets.Service.Provider.Order
                     order.OrderFromName = "全时";
                 else if (order.OrderFrom == 4)
                     order.OrderFromName = "美团";
+                else if (order.OrderFrom == 99)
+                    order.OrderFromName = "商家版后台";
                 var list = orderDao.GetOrderDetail(order_no);
                 mo.order = order;
                 mo.orderDetails = list;
