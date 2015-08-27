@@ -650,7 +650,8 @@ namespace Ets.Service.Provider.Finance
                         OptName = model.OptName,
                         RechargeAmount = model.RechargeAmountFree,
                         RechargeType = model.RechargeType,
-                        Remark = model.Remark 
+                        Remark = model.Remark,
+                        PayType = 4
                     });
                 }
                 if (model.RechargeType == 3)
@@ -671,7 +672,8 @@ namespace Ets.Service.Provider.Finance
                        OptName = model.OptName,
                        RechargeAmount = model.RechargeAmountFree,
                        RechargeType = 2,
-                       Remark = model.Remark 
+                       Remark = model.Remark ,
+                       PayType = 4
                    });
                     reslult = temp1 && temp2;
                 }
