@@ -20,6 +20,7 @@ namespace Ets.AutoDealWithward
         {
             try
             {
+                Thread.Sleep(10000);
                 InitializeComponent();
                 Quartz.ISchedulerFactory schedulerFactory = new StdSchedulerFactory();
                 scheduler = schedulerFactory.GetScheduler();

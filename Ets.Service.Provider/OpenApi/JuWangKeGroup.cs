@@ -1,4 +1,6 @@
-﻿using Ets.Model.ParameterModel.Order;
+﻿using Ets.Dao.Common;
+using Ets.Model.Common;
+using Ets.Model.ParameterModel.Order;
 using Ets.Service.IProvider.OpenApi;
 using ETS.Const;
 using ETS.Enums;
@@ -59,9 +61,21 @@ namespace Ets.Service.Provider.OpenApi
             }else{
                 jkom.KnightName = "";
             }
-
-            string json = HTTPHelper.HttpPost(url, "OrderNumber=" + jkom.OrderNumber + "&OrderStatus=" + jkom.OrderStatus + "&Phone=" + jkom.Phone + "&KnightName=" + jkom.KnightName);
-
+            var reqpar = "OrderNumber=" + jkom.OrderNumber + "&OrderStatus=" + jkom.OrderStatus + "&Phone=" + jkom.Phone +
+                         "&KnightName=" + jkom.KnightName;
+            string json = HTTPHelper.HttpPost(url, reqpar);
+            HttpModel httpModel = new HttpModel()
+            {
+                Url = url,
+                Htype = HtypeEnum.ReqType.GetHashCode(),
+                RequestBody = reqpar,
+                ResponseBody = json,
+                ReuqestPlatForm = RequestPlatFormEnum.OpenApiPlat.GetHashCode(),
+                ReuqestMethod = "Ets.Service.Provider.OpenApi.JuWangKeGroup.AsyncStatus",
+                Status = 1,
+                Remark = "调用聚网客:同步订单状态"
+            };
+            new HttpDao().LogThirdPartyInfo(httpModel);
             LogHelper.LogWriter("调用聚网客接口：", new { model = json });
             if (string.IsNullOrWhiteSpace(json))
                 return OrderApiStatusType.ParaError;

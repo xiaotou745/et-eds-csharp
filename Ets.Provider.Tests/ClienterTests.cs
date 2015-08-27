@@ -1,9 +1,13 @@
 ﻿using Ets.Model.Common;
+using Ets.Model.DomainModel.Business;
+using Ets.Model.ParameterModel.Business;
 using Ets.Model.ParameterModel.Order;
-using Ets.Service.IProvider.Order;
+using Ets.Service.IProvider.Pay;
 using Ets.Service.Provider.Clienter;
 using Ets.Service.Provider.MyPush;
 using Ets.Service.Provider.Order;
+using Ets.Service.Provider.Pay;
+using Ets.Service.IProvider.Order;
 using ETS.Security;
 using ETS.Util;
 using NUnit.Framework;
@@ -18,6 +22,7 @@ namespace Ets.Provider.Tests
     [TestFixture]
     public class ClienterTests
     {
+        IPayProvider payProvider = new PayProvider();
         [Test]
         public void ClienterTest()
         {

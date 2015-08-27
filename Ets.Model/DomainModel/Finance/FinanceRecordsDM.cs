@@ -30,6 +30,8 @@ namespace Ets.Model.DomainModel.Finance
         /// 流水状态(1、交易成功 2、交易中）
         /// </summary>
         public int Status { get; set; }
+        public string StatusDescription { get; set; }
+        
 
         /// <summary>
         /// 流水状态(1、交易成功 2、交易中）
@@ -65,7 +67,7 @@ namespace Ets.Model.DomainModel.Finance
         /// <summary>
         /// 操作时间
         /// </summary>
-        public DateTime OperateTime { get; set; }
+        public string OperateTime { get; set; }
 
         /// <summary>
         /// 提现单ID
@@ -81,6 +83,7 @@ namespace Ets.Model.DomainModel.Finance
         /// 描述
         /// </summary>
         public string Remark { get; set; }
+        public string RemarkDescription { get; set; }
 
         /// <summary>
         /// 时间信息小时分  eg 15:32

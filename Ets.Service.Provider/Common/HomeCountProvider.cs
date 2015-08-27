@@ -135,7 +135,12 @@ namespace Ets.Service.Provider.Common
             model.OneSubsidyOrderCount = currentDateModel.OneSubsidyOrderCount;
             model.TwoSubsidyOrderCount = currentDateModel.TwoSubsidyOrderCount;
             model.ThreeSubsidyOrderCount = currentDateModel.ThreeSubsidyOrderCount;
+
             model.rechargeTotal = currentDateModel.rechargeTotal;
+            model.SystemRecharge = currentDateModel.SystemRecharge;//系统充值
+            model.SystemPresented = currentDateModel.SystemPresented;//系统赠送
+            model.ClientRecharge = currentDateModel.WeiXinRecharge + currentDateModel.ZhiFuBaoRecharge; //客户端充值
+
             model.incomeTotal = currentDateModel.incomeTotal;
             model.userTotal = currentDateModel.userTotal;
             model.clienterTotal = currentDateModel.clienterTotal;

@@ -270,8 +270,7 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         public ActionResult OrderDetail(string orderNo, int orderId)
         {
-            var orderModel = iOrderProvider.GetOrderByNo(orderNo, orderId);
-
+            var orderModel = iOrderProvider.GetOrderByNo(orderNo, orderId); 
             ViewBag.orderOptionLog = iOrderProvider.GetOrderOptionLog(orderId);
             ViewBag.IsShowAuditBtn = IsShowAuditBtn(orderModel);//是否显示审核按钮
             return View(orderModel);
@@ -292,7 +291,7 @@ namespace SuperMan.Controllers
             {
                 OptUserId = UserContext.Current.Id,
                 OptUserName = UserContext.Current.Name,
-                OptLog = OrderOptionLog,
+                OptLog ="客服取消"+ OrderOptionLog,
                 OrderId = orderId
             };
             var reg = iOrderProvider.CancelOrderByOrderNo(orderOptionModel);

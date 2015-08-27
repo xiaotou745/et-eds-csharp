@@ -4,7 +4,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace ETS.Library.Pay.WxPay
+namespace ETS.Library.Pay.BWxPay
 {
     /// <summary>
     /// 支付结果通知回调处理类

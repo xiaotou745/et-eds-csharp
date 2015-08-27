@@ -1,4 +1,5 @@
-﻿@model Ets.Model.DataModel.Order.OrderListModel
+﻿@using ETS.Enums
+@model Ets.Model.DataModel.Order.OrderListModel
 @{
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
 }
@@ -7,9 +8,7 @@
 <script src="~/Scripts/jquery-ui-1.8.20.js"></script>
 <script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
 <div style="width:1000px">
-    @{
-        
-        
+    @{ 
         var subsidy = "";
         if (Model.Status == 1 || Model.Status == 2 || Model.Status == 3)
         {
@@ -55,12 +54,20 @@
                 <td>骑士姓名：@Model.ClienterTrueName</td>
                 <td>骑士手机：@Model.ClienterPhoneNo</td>
             }
+            @if (!Model.IsPay.Value && Model.MealsSettleMode == 1)
+            {
+                <td>支付来源：线上结算</td>
+            }
+            else
+            {
+                <td>支付来源：线下结算</td>
+            }
         </tr>
         <tr>
             <td>备注：@Model.Remark</td>
             <td>订单数：@Model.OrderCount</td>
             <td>审核推荐处理：@Model.DeductCommissionReason</td>
-            <td>订单是否需要审核：@(Model.IsOrderChecked==1?"是":"否")</td>
+            <td>订单是否需要审核：@(Model.IsOrderChecked == 1 ? "是" : "否")</td>
         </tr>
     </table>
     <hr />
@@ -117,28 +124,30 @@
                             @if (curOrderChild.PayStatus > 0)
                             {
                                 @ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.PayStatusEnum)curOrderChild.PayStatus).GetType(), (ETS.Enums.PayStatusEnum)curOrderChild.PayStatus).Text}
-                    </td>
-                    <td>
-                        @if (curOrderChild.PayType!=null && curOrderChild.PayType.Value > 0)
+                        </td>
+                        <td>
+                           @if (curOrderChild.PayType > 0)
+                           {
+                               @ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.PayTypeEnum) curOrderChild.PayType).GetType(), (ETS.Enums.PayTypeEnum) curOrderChild.PayType).Text
+                           }
+                        </td>
+                        <td>
+                            @if (curOrderChild.PayStyle > 0)
+                            {
+                                @ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.PayStyleEnum) curOrderChild.PayStyle).GetType(), (ETS.Enums.PayStyleEnum) curOrderChild.PayStyle).Text
+                            }
+                        </td>
+                        <td></td>
+                        <td></td>
+                        @if (!string.IsNullOrWhiteSpace(bigFileName))
                         {
-                            @ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.PayTypeEnum)curOrderChild.PayType).GetType(), (ETS.Enums.PayTypeEnum)curOrderChild.PayType)}
-                </td>
-                <td>
-                    @if (curOrderChild.PayStyle!=null && curOrderChild.PayStyle.Value > 0)
-                    {
-                        @ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.PayStyleEnum)curOrderChild.PayStyle).GetType(), (ETS.Enums.PayStyleEnum)curOrderChild.PayStyle)}
-            </td>
-            <td></td>
-            <td></td>
-            @if (!string.IsNullOrWhiteSpace(bigFileName))
-            {
-                <td><a href="@bigFileName">查看</a></td>
-            }
-            else
-            {
-                <td></td>
-            }
-        </tr>
+                            <td><a href="@bigFileName">查看</a></td>
+                        }
+                        else
+                        {
+                            <td></td>
+                        }
+                    </tr>
                 }
 
             </tbody>
@@ -213,7 +222,7 @@
                         @if (SuperMan.App_Start.UserContext.Current.HasAuthority(80) && ViewBag.IsShowAuditBtn)
                         {
                             <input type="button" value="审核通过" class="searchBtn" id="btnAuditOk" style="margin-left: 10px;" />
-    <input type="button" value="审核拒绝" class="searchBtn" id="btnAuditCancel" style="margin-left: 10px;" />
+                            <input type="button" value="审核拒绝" class="searchBtn" id="btnAuditCancel" style="margin-left: 10px;" />
                         }
                     </td>
                 </tr>
@@ -237,7 +246,7 @@
             </p>
         </div>
     </div>
-    
+
     <div class="selectSupplierDish">
         <div class="add-openbox add-form" id="deductWebSubsidyShow" style="width:500px">
             <fieldset>
@@ -264,18 +273,16 @@
         if ($("#IsEnable").val().trim() == "0") {
             alert("已删除的订单不能取消！");
             return false;
-        }
-
-        adminjs.openwinbox('#OrderOptionShow');
-
+        } 
+        adminjs.openwinbox('#OrderOptionShow'); 
     });
     //扣除网站补贴
     $("#btnAuditCancel").click(function () {
         if ($("#IsEnable").val().trim() == "0") {
             alert("已删除的订单不取扣除网站补贴！");
             return false;
-        }        
-        
+        }
+
         $("#deductWebSubsidyReason").text($("#hidDeductCommissionReason").val());
         //$("#deductWebSubsidyReason").text(hidDeductCommissionReason.val());
         adminjs.openwinbox('#deductWebSubsidyShow');
@@ -290,6 +297,10 @@
         var orderOptionLog = $('#orderOptionLog').val();
         if ($("#orderOptionLog").val().trim() == "") {
             alert("操作描述不能为空！");
+            return false;
+        }
+        if (orderOptionLog.trim().length < 5 || orderOptionLog.trim().length > 50) {
+            alert("请保证输入操作描述内容在5到50个字符");
             return false;
         }
         if (confirm("确定要取消该订单吗？")) {
@@ -319,6 +330,10 @@
         var orderOptionLog = $('#deductWebSubsidyReason').val();
         if (orderOptionLog.trim() == "") {
             alert("扣除网站补贴原因不能为空！");
+            return false;
+        }
+        if (orderOptionLog.trim().length < 5 || orderOptionLog.trim().length > 50) {
+            alert("请保证输入内容在5到50个字符");
             return false;
         }
         if (confirm("确定要扣除该订单网站补贴吗？")) {
@@ -355,7 +370,7 @@
             type: 'POST',
             url: url,
             data: paramaters,
-            success: function(result) {
+            success: function (result) {
                 if (result.IsSuccess) {
                     alert("审核成功！");
                     window.location.href = "/Order/OrderDetail?orderNo=" + orderNo + "&orderId=" + orderId;

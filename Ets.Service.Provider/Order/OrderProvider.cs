@@ -389,7 +389,7 @@ namespace Ets.Service.Provider.Order
                                                             Operator = order.BusinessName,
                                                             WithwardId = result,
                                                             RelationNo = order.OrderNo,
-                                                            Remark = "土豪欧巴！你又卖出一份餐，棒棒哒~"
+                                                            Remark = "配送费支出金额"
                                                         });
 
                 if (order.Adjustment > 0)
@@ -1045,6 +1045,8 @@ namespace Ets.Service.Provider.Order
                     order.OrderFromName = "全时";
                 else if (order.OrderFrom == 4)
                     order.OrderFromName = "美团";
+                else if (order.OrderFrom == 99)
+                    order.OrderFromName = "商户web版";
                 var list = orderDao.GetOrderDetail(order_no);
                 mo.order = order;
                 mo.orderDetails = list;
@@ -1236,7 +1238,7 @@ namespace Ets.Service.Provider.Order
                     return dealResultInfo;
                 }
                 orderModel.OptUserName = orderOptionModel.OptUserName;
-                orderModel.Remark = "管理后台取消订单：" + orderOptionModel.OptLog;
+                orderModel.Remark =  orderOptionModel.OptLog;
                 var orderTaskPayStatus = orderDao.GetOrderTaskPayStatus(orderModel.Id);
                 #region 订单不可取消
                 if (orderModel.Status == 3)//订单已为取消状态
@@ -1345,6 +1347,7 @@ namespace Ets.Service.Provider.Order
                 #endregion
 
 
+                OrderOtherPM orderOtherPM = new OrderOtherPM();
                 //如果要扣除的金额大于0， 写流水
                 if (orderModel.OrderCommission > orderModel.SettleMoney)
                 {
@@ -1365,8 +1368,14 @@ namespace Ets.Service.Provider.Order
                                                                     RelationNo = orderModel.OrderNo,
                                                                     Remark = orderOptionModel.OptLog
                                                                 });
-                        //更新扣除补贴原因,扣除补贴方式为手动扣除
-                        orderOtherDao.UpdateOrderIsReal(orderModel.Id, orderOptionModel.OptLog, 2);
+                        ////更新扣除补贴原因,扣除补贴方式为手动扣除
+                        //orderOtherDao.UpdateOrderIsReal(orderModel.Id, orderOptionModel.OptLog, 2);
+
+                        orderOtherPM.OrderId = orderModel.Id;
+                        orderOtherPM.RealOrderCommission = disOrderCommission;
+                        orderOtherPM.DeductCommissionReason = orderOptionModel.OptLog;
+                        orderOtherPM.DeductCommissionType = 2;
+                        UpdateOrderIsReal(orderOtherPM);
 
                         
                         //更新订单日志
@@ -1400,10 +1409,19 @@ namespace Ets.Service.Provider.Order
                                                                 Remark = "管理后台审核拒绝加可提现"
                                                             });
 
-                //更新订单真实佣金
-                orderDao.UpdateOrderRealOrderCommission(orderModel.Id.ToString(), realOrderCommission);
-                //更新无效订单(状态，原因)
-                orderOtherDao.UpdateOrderIsReal(orderModel.Id, orderOptionModel.OptLog, 2);
+                orderOtherPM.OrderId = orderModel.Id;
+                orderOtherPM.RealOrderCommission = realOrderCommission;
+                orderOtherPM.DeductCommissionReason = orderOptionModel.OptLog;
+                orderOtherPM.DeductCommissionType = 2;
+                //更新无效订单
+                UpdateOrderIsReal(orderOtherPM);
+
+                ////更新订单真实佣金
+                //orderDao.UpdateOrderRealCommission( orderModel.Id.ToString(), realOrderCommission);
+                ////更新无效订单(状态，原因)
+                //orderOtherDao.UpdateOrderIsReal(orderModel.Id, orderOptionModel.OptLog, 2);
+
+
                 //更新已提现状态
                 orderOtherDao.UpdateJoinWithdraw(orderModel.Id);
                 //更新审核状态
@@ -1918,7 +1936,7 @@ namespace Ets.Service.Provider.Order
                 {
                     return ResultModel<bool>.Conclude(tempresult, false);
                 }
-                CancelOrderModel comModel = new CancelOrderModel() { OrderNo = paramodel.OrderNo, OrderStatus = OrderStatus.Status3.GetHashCode(), Remark = "商家取消订单", Status = OrderStatus.Status0.GetHashCode(), Price = order.SettleMoney, OrderCancelFrom = SuperPlatform.FromBusiness.GetHashCode(), OrderCancelName = order.BusinessName };
+                CancelOrderModel comModel = new CancelOrderModel() { OrderNo = paramodel.OrderNo, OrderStatus = OrderStatus.Status3.GetHashCode(), Remark = "商户取消订单", Status = OrderStatus.Status0.GetHashCode(), Price = order.SettleMoney, OrderCancelFrom = SuperPlatform.FromBusiness.GetHashCode(), OrderCancelName = order.BusinessName };
                 int result = orderDao.CancelOrderStatus(comModel);
                 bool blCancelTime = orderOtherDao.UpdateCancelTime(paramodel.OrderId);
                 //int result = orderDao.CancelOrderStatus(paramodel.OrderNo, OrderStatus.Status3.GetHashCode(), "商家取消订单", OrderStatus.Status0.GetHashCode(), order.SettleMoney);
@@ -1934,7 +1952,7 @@ namespace Ets.Service.Provider.Order
                                                         Operator = string.Format("商家:{0}", paramodel.BusinessId),
                                                         WithwardId = paramodel.OrderId,
                                                         RelationNo = paramodel.OrderNo,
-                                                        Remark = "商户取消订单返回配送费"
+                                                        Remark = "商户取消订单"
                                                     });
                     tran.Complete();
                 }
@@ -2203,7 +2221,7 @@ namespace Ets.Service.Provider.Order
                                 OptUserName = "system",
                                 Id = orderListModel.Id,
                                 OrderNo = orderListModel.OrderNo,
-                                Remark = "程序自动处理超时未完成订单",
+                                Remark = "E代送客服处理超时未完成订单",
                                 businessId = orderListModel.businessId
                             }))
                             {
@@ -2249,7 +2267,7 @@ namespace Ets.Service.Provider.Order
                                     Operator = "system",
                                     WithwardId = orderListModel.Id,
                                     RelationNo = orderListModel.OrderNo,
-                                    Remark = "服务自动处理超时未完成订单"
+                                    Remark = "E代送客服处理超时未完成订单"
                                 }))
                                 {
                                     orderDao.AutoAuditRefuseDeal(orderListModel.Id);
@@ -2405,6 +2423,17 @@ namespace Ets.Service.Provider.Order
             #endregion
 
         }
+
+        #region 用户自定义方法
+        public void UpdateOrderIsReal(OrderOtherPM orderOtherPM)
+        {
+            //更新订单真实佣金
+            orderDao.UpdateOrderRealCommission(orderOtherPM);
+            //更新无效订单(状态，原因)
+            orderOtherDao.UpdateOrderIsReal(orderOtherPM);
+        }
+
+        #endregion
 
     }
 }

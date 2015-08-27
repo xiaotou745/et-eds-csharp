@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using ETS;
 using ETS.Dao;
+using Ets.Dao.Common;
 using ETS.Data;
 using ETS.Data.Core;
 using ETS.Data.PageData;
@@ -629,6 +630,8 @@ order by a.id desc
         /// <summary>
         /// 更新审核状态
         /// danny-20150317
+        /// 茹化肖修改
+        /// 2015年8月26日11:10:29
         /// </summary>
         /// <param name="id"></param>
         /// <param name="enumStatusType"></param>
@@ -663,6 +666,18 @@ order by a.id desc
                     if (busi.GroupId == 1 && busi.OriginalBusiId > 0 && enumStatusType == AuditStatus.Status1)
                     {
                         string str = HTTPHelper.HttpPost(juWangKeBusiAuditUrl, "supplier_id=" + busi.OriginalBusiId);
+                        HttpModel httpModel = new HttpModel()
+                        {
+                            Url = juWangKeBusiAuditUrl,
+                            Htype = HtypeEnum.ReqType.GetHashCode(),
+                            RequestBody = "supplier_id=" + busi.OriginalBusiId,
+                            ResponseBody = str,
+                            ReuqestPlatForm = RequestPlatFormEnum.EdsManagePlat.GetHashCode(),
+                            ReuqestMethod = "Ets.Dao.Business.BusinessDao.UpdateAuditStatus",
+                            Status = 1,
+                            Remark = "更新审核状态:调用聚网客"
+                        };
+                        new HttpDao().LogThirdPartyInfo(httpModel);
                     }
 
                     //HTTPHelper.HttpPost()

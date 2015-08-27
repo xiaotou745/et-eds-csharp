@@ -1,4 +1,5 @@
 ﻿using System.Web;
+using Ets.Dao.Common;
 using Ets.Model.Common;
 using Ets.Model.Common.AliPay;
 using Ets.Model.DomainModel.Business;
@@ -15,6 +16,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using ETS.Util;
 using SuperManWebApi.App_Start.Filters;
 
 namespace SuperManWebApi.Controllers
@@ -22,16 +24,7 @@ namespace SuperManWebApi.Controllers
     public class PayController : ApiController
     {
         readonly IPayProvider payProvider = new PayProvider();
-        /// <summary>
-        /// 生成支付宝订单
-        /// 窦海超
-        /// 2015年5月12日 14:35:05
-        /// </summary>
-        [Token]
-        public ResultModel<PayResultModel> CreatePay(PayModel model)//
-        {
-            return payProvider.CreatePay(model);
-        }
+        #region TestMethod
         [HttpGet]
         public ResultModel<PayResultModel> CreatePayTest(int orderId)
         {
@@ -46,6 +39,34 @@ namespace SuperManWebApi.Controllers
             };
             return payProvider.CreatePay(model);
         }
+
+        [HttpGet]
+        public ResultModel<BusinessRechargeResultModel> CreateRechargeTest()
+        {
+            BusinessRechargeModel model = new BusinessRechargeModel()
+            {
+                Businessid = 1987,
+                payAmount = ETS.Util.ParseHelper.ToDecimal(0.01),
+                PayType = 2,
+                Version = "1.1"
+            };
+            ResultModel<BusinessRechargeResultModel> result = payProvider.BusinessRecharge(model);
+            return result;
+        }
+
+
+        #endregion
+        /// <summary>
+        /// 生成支付宝订单
+        /// 窦海超
+        /// 2015年5月12日 14:35:05
+        /// </summary>
+        [Token]
+        public ResultModel<PayResultModel> CreatePay(PayModel model)//
+        {
+            return payProvider.CreatePay(model);
+        }
+
 
         /// <summary>
         /// 现金支付
@@ -164,6 +185,8 @@ namespace SuperManWebApi.Controllers
 
         /// <summary>
         /// 易宝转账回调接口  add by caoheyang  20150715
+        /// 茹化肖修改
+        /// 2015年8月26日13:23:10
         /// </summary>
         [HttpGet]
         [HttpPost]
@@ -171,11 +194,11 @@ namespace SuperManWebApi.Controllers
         {
             string data = HttpContext.Current.Request["data"];
             ETS.Util.LogHelper.LogWriter(DateTime.Now + "易宝回调：" + data);
-            if (payProvider.YeePayCashTransferCallback(data))//如果返回值是成功
-            {
-                HttpContext.Current.Response.Write("SUCCESS");
-                HttpContext.Current.Response.End();
-            }
+            //if (payProvider.YeePayCashTransferCallback(data))//如果返回值是成功
+            //{
+            //    HttpContext.Current.Response.Write("SUCCESS");
+            //    HttpContext.Current.Response.End();
+            //}
         }
     }
 }

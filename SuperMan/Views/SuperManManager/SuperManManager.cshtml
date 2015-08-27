@@ -41,8 +41,8 @@
                         <span class="">推荐人手机: </span>
                         <input id="recommonPhone" type="text" name="recommonPhone" value="" />
                         <input id="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" name="GroupId" />
-                       
-                        @*<input id="btnAdd" class="searchBtn" type="button" value="新增骑士">*@ 
+
+                        @*<input id="btnAdd" class="searchBtn" type="button" value="新增骑士">*@
                     </td>
                 </tr>
                 <tr>
@@ -52,7 +52,7 @@
                         <span class="">物流公司: </span>
                         @Html.DropDownList("deliveryCompany", new SelectList(ViewBag.deliveryCompanyList, "CompanyId", "CompanyName"), "--无--", new { style = "width:155px" })
                         @*<span>提现时间: </span>
-                        <input id="txtPubStart" readonly="readonly" type="text" name="txtPubStart" />*@  
+                            <input id="txtPubStart" readonly="readonly" type="text" name="txtPubStart" />*@
                         <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
                     </td>
                 </tr>
@@ -68,111 +68,111 @@
 
 <!--新增骑士弹出窗部分  add by caoheyang20140228-->
 @*<div class="selectSupplierDish">
-    <div class="add-openbox add-form" id="AddSuperManShow" style="width:500px">
-        <h2>
-            <p id="statusUnFin">新增骑士</p>
-            <a class="J_closebox x_close"></a>
-        </h2>
-        <form class="form-horizontal" role="form" id="AddSuperManForm" method="post" action="/SuperManManager/AddSuperMan">
-            <fieldset>
-                <div class="control-group">
-                    <label class="control-label" for="TrueName"><span style="color:red;">*</span>姓名</label>
-                    <div class="controls">
-                        <input placeholder="姓名" name="TrueName" id="BoxTrueName" required="required" type="text">
-                        <text id="labBoxTrueName" style="color:red" hidden="hidden">不能为空</text>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label" for="PhoneNo"><span style="color:red;">*</span>电话</label>
-                    <div class="controls">
-                        <input placeholder="电话" name="PhoneNo" id="BoxPhoneNo" required="required" type="text">
-                        <text id="labBoxPhoneNo" style="color:red" hidden="hidden">不能为空</text>
-                    </div>
-                </div>
-
-                <div class="control-group">
-                    <label class="control-label" for="fileUploadHand"><span style="color:red;">*</span>手持照片</label>
-                    <div class="controls">
-                        <input type="file" id="fileUploadHand" required="required" name="files[]" multiple>
-                        <input type="hidden" id="hidHandUpload" />
-                        <text id="labfileuploadHand" style="color:red" hidden="hidden">不能为空</text>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label" for="fileUpload"><span style="color:red;">*</span>照片</label>
-                    <div class="controls">
-                        <input type="file" placeholder="验证照片" required="required" id="fileUpload" name="files[]" multiple>
-                        <input type="hidden" id="hidupload" />
-                        <text id="labfileupload" style="color:red" hidden="hidden">不能为空</text>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label" for="HealthCardID"><span style="color:red;">*</span>健康证ID</label>
-                    <div class="controls">
-                        <input placeholder="健康证ID" name="HealthCardID" id="BoxHealthCardID" required="required" type="text">
-                        <text id="labHealthCardID" style="color:red" hidden="hidden">不能为空</text>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label"><span style="color:red;">*</span>所属城市</label>
-                    <div class="controls">
-                        @Html.DropDownList("ProvinceCode", new SelectList(RegionLogic.regionLogic().GetRegionsByFid(), "Code", "Name"), "--请选择--", new { style = "width:90px", id = "BoxProvinceCode" })
-                        <select name="CityCode" id="BoxCityCode" style="width:103px;">
-                            l
-                            <option>--城市--</option>
-                        </select>
-                        <text id="labBoxCode" style="color:red" hidden="hidden">不能为空</text>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label" for="BussinessID"><span style="color:red;">*</span>所属门店</label>
-                    <div class="controls">
-                        <select name="BussinessID" id="BoxBussinessID" style="width:198px;">
-                            <option value="">--所属门店--</option>
-                        </select>
-                        <text id="labBoxBussinessID" style="color:red" hidden="hidden">不能为空</text>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label" for="InternalDepart">内外部门</label>
-                    <div class="controls">
-                        <input placeholder="内外部门" name="InternalDepart" id="BoxInternalDepart" type="text">
-                    </div>
-
-                </div>
-                @if (ViewBag.txtGroupId > 0)
-                {
-                    <input type="hidden" id="HidGroupID" value="@ViewBag.txtGroupId" />
-                }
-                else
-                {
+        <div class="add-openbox add-form" id="AddSuperManShow" style="width:500px">
+            <h2>
+                <p id="statusUnFin">新增骑士</p>
+                <a class="J_closebox x_close"></a>
+            </h2>
+            <form class="form-horizontal" role="form" id="AddSuperManForm" method="post" action="/SuperManManager/AddSuperMan">
+                <fieldset>
                     <div class="control-group">
-                        <label class="control-label" for="InternalDepart">集团信息</label>
+                        <label class="control-label" for="TrueName"><span style="color:red;">*</span>姓名</label>
                         <div class="controls">
-                            @Html.DropDownList("HidGroupID", new SelectList(GroupLogic.groupLogic().GetGroups(), "Id", "GroupName"), "--无--")
+                            <input placeholder="姓名" name="TrueName" id="BoxTrueName" required="required" type="text">
+                            <text id="labBoxTrueName" style="color:red" hidden="hidden">不能为空</text>
                         </div>
                     </div>
-                }
-                <div class="control-group">
-                    <label class="control-label" for="IDCard">身份证号</label>
-                    <div class="controls">
-                        <input placeholder="身份证号" name="IDCard" id="BoxIDCard" type="text">
+                    <div class="control-group">
+                        <label class="control-label" for="PhoneNo"><span style="color:red;">*</span>电话</label>
+                        <div class="controls">
+                            <input placeholder="电话" name="PhoneNo" id="BoxPhoneNo" required="required" type="text">
+                            <text id="labBoxPhoneNo" style="color:red" hidden="hidden">不能为空</text>
+                        </div>
                     </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label" for="Password">密码</label>
-                    <div class="controls">
-                        <input placeholder="默认edaisong" name="IDCard" id="BoxPassword" type="text" value="edaisong">
+
+                    <div class="control-group">
+                        <label class="control-label" for="fileUploadHand"><span style="color:red;">*</span>手持照片</label>
+                        <div class="controls">
+                            <input type="file" id="fileUploadHand" required="required" name="files[]" multiple>
+                            <input type="hidden" id="hidHandUpload" />
+                            <text id="labfileuploadHand" style="color:red" hidden="hidden">不能为空</text>
+                        </div>
                     </div>
-                </div>
-            </fieldset>
-        </form>
-        <p class="btnbox">
-            <input value="确认" type="button" id="btnSuperConfim" class="yesBtn" />
-            <input value="关闭" type="button" class="J_closebox qxBtn" />
-        </p>
-    </div>
-</div>*@
+                    <div class="control-group">
+                        <label class="control-label" for="fileUpload"><span style="color:red;">*</span>照片</label>
+                        <div class="controls">
+                            <input type="file" placeholder="验证照片" required="required" id="fileUpload" name="files[]" multiple>
+                            <input type="hidden" id="hidupload" />
+                            <text id="labfileupload" style="color:red" hidden="hidden">不能为空</text>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="HealthCardID"><span style="color:red;">*</span>健康证ID</label>
+                        <div class="controls">
+                            <input placeholder="健康证ID" name="HealthCardID" id="BoxHealthCardID" required="required" type="text">
+                            <text id="labHealthCardID" style="color:red" hidden="hidden">不能为空</text>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label"><span style="color:red;">*</span>所属城市</label>
+                        <div class="controls">
+                            @Html.DropDownList("ProvinceCode", new SelectList(RegionLogic.regionLogic().GetRegionsByFid(), "Code", "Name"), "--请选择--", new { style = "width:90px", id = "BoxProvinceCode" })
+                            <select name="CityCode" id="BoxCityCode" style="width:103px;">
+                                l
+                                <option>--城市--</option>
+                            </select>
+                            <text id="labBoxCode" style="color:red" hidden="hidden">不能为空</text>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="BussinessID"><span style="color:red;">*</span>所属门店</label>
+                        <div class="controls">
+                            <select name="BussinessID" id="BoxBussinessID" style="width:198px;">
+                                <option value="">--所属门店--</option>
+                            </select>
+                            <text id="labBoxBussinessID" style="color:red" hidden="hidden">不能为空</text>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="InternalDepart">内外部门</label>
+                        <div class="controls">
+                            <input placeholder="内外部门" name="InternalDepart" id="BoxInternalDepart" type="text">
+                        </div>
+
+                    </div>
+                    @if (ViewBag.txtGroupId > 0)
+                    {
+                        <input type="hidden" id="HidGroupID" value="@ViewBag.txtGroupId" />
+                    }
+                    else
+                    {
+                        <div class="control-group">
+                            <label class="control-label" for="InternalDepart">集团信息</label>
+                            <div class="controls">
+                                @Html.DropDownList("HidGroupID", new SelectList(GroupLogic.groupLogic().GetGroups(), "Id", "GroupName"), "--无--")
+                            </div>
+                        </div>
+                    }
+                    <div class="control-group">
+                        <label class="control-label" for="IDCard">身份证号</label>
+                        <div class="controls">
+                            <input placeholder="身份证号" name="IDCard" id="BoxIDCard" type="text">
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="Password">密码</label>
+                        <div class="controls">
+                            <input placeholder="默认edaisong" name="IDCard" id="BoxPassword" type="text" value="edaisong">
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+            <p class="btnbox">
+                <input value="确认" type="button" id="btnSuperConfim" class="yesBtn" />
+                <input value="关闭" type="button" class="J_closebox qxBtn" />
+            </p>
+        </div>
+    </div>*@
 @*商户充值弹窗*@
 <div>
     <div class="add-openbox add-form" id="ClienterRechargeShow" style="width:500px">
@@ -211,12 +211,12 @@
     var adminjs = new adminglass(); //实例化后台类
     $(function () {
         $('#txtPubStart').datepicker();
-        
+
         $('#hidupload').val(''); //页面加载时清空隐藏域的值。
         $('#hidHandUpload').val(''); //页面加载时清空隐藏域的值。
         $("#fileUpload").val("");
         $("#fileUploadHand").val('');
-  
+
         //手持身份证图片上传
         $("#fileUploadHand").fileupload({
             url: "/UploadTest/Upload",//文件上传地址，当然也可以直接写在input的data-url属性内
@@ -403,7 +403,7 @@
             }
          );
         window.location.hash = '';
-    }) 
+    })
     $('.J_closebox').click(function () {
         adminjs.closewinbox('.add-openbox');
         return false;
@@ -419,18 +419,21 @@
             alert("请输入备注!");
             return;
         }
-
+        if (rechargeLog.length < 5 || rechargeLog.length > 50) {
+            alert("请保证输入备注内容在5到50个字符");
+            return;
+        }
         var decimalFormat = /^(-)?(([1-9]{1}\d*)|([0]{1}))(\.(\d){1,2})?$/;
         if (!decimalFormat.test(clienterRechargeAmount)) {
             alert("请输入正确的金额！");
             return;
         }
-    
+
         if (confirm("确定要为骑士：" + clienterName + "   调整：" + clienterRechargeAmount + "元？")) {
             var paramaters = {
                 "ClienterId": clienterId, "RechargeAmount": clienterRechargeAmount, "Remark": rechargeLog
             };
-            var url = "/SuperManManager/BusinessRecharge";
+            var url = "/SuperManManager/ClienterRecharge";
             $.ajax({
                 type: 'POST',
                 url: url,

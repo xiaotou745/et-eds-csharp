@@ -157,7 +157,11 @@ order by Id desc";
                 obj = dataReader["Status"];
                 if (obj != null && obj != DBNull.Value)
                 {
-                    result.Status = int.Parse(obj.ToString());
+                    int status= int.Parse(obj.ToString());
+                    result.Status = status;
+
+                    Enum enu = (ClienterBalanceRecordStatus)status;
+                    result.StatusDescription = EnumExtenstion.GetEnumItem(enu.GetType(), enu).Text;  
                 }
 
                 obj = dataReader["Balance"];
@@ -169,18 +173,17 @@ order by Id desc";
                 if (obj != null && obj != DBNull.Value)
                 {
                     int recordType=int.Parse(obj.ToString());
-                    result.RecordType = recordType;                   
+                    result.RecordType = recordType;
 
-                    Enum status=(ClienterBalanceRecordRecordType)recordType;
-                    result.RecordTypeDescription=   EnumExtenstion.GetEnumItem(status.GetType(), status).Text;                        
+                    Enum enu = (ClienterBalanceRecordRecordType)recordType;
+                    result.RecordTypeDescription = EnumExtenstion.GetEnumItem(enu.GetType(), enu).Text;                        
                 }
 
                 result.Operator = dataReader["Operator"].ToString();
                 obj = dataReader["OperateTime"];
                 if (obj != null && obj != DBNull.Value)
-                {
-                    System.Globalization.DateTimeFormatInfo myDTFI = new System.Globalization.CultureInfo("zh-cn", false).DateTimeFormat;
-                    result.OperateTime = DateTime.Parse(obj.ToString(), myDTFI);
+                {            
+                    result.OperateTime = ParseHelper.ToDatetime(obj.ToString(), DateTime.Now).ToString("yyyy-MM-dd HH:mm");
                 }
                 obj = dataReader["WithwardId"];
                 if (obj != null && obj != DBNull.Value)
@@ -192,22 +195,17 @@ order by Id desc";
                 obj = dataReader["Remark"].ToString();
                 if (obj != null && obj != DBNull.Value)
                 {
-                    //if (result.RecordType == 11)//审核拒绝
-                    //{
-                        if (obj.ToString().Length > 8)
-                        {
-                            result.Remark = obj.ToString().Substring(0, 8)+"...";
-                        }
-                        else
-                        {
-                            result.Remark = obj.ToString();
-                        }
-                    //}
-                    //else
-                    //{
-                    //    result.Remark = "";
-                    //}
-                }
+                    result.Remark = obj.ToString();
+
+                    if (obj.ToString().Length > 8)
+                    {
+                        result.RemarkDescription = obj.ToString().Substring(0, 8) + "...";
+                    }
+                    else
+                    {
+                        result.RemarkDescription = obj.ToString();
+                    }     
+               }
 
                 obj = dataReader["TimeInfo"];
                 if (obj != null && obj != DBNull.Value)

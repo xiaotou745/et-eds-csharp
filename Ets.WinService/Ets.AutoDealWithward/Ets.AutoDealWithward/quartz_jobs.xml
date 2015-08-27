@@ -26,9 +26,30 @@
         <group>AutoDealTriggerGroup</group>
         <job-name>AutoDealBLL</job-name>
         <job-group>AutoDealGroup</job-group>
-        <cron-expression>* 1/3 * * * ?</cron-expression>
+        <cron-expression>1 1/3 * * * ?</cron-expression>
       </cron>
     </trigger>
-  
+
+    <!--定时导出发送邮件-->
+    <job>
+      <name>CallBackBLL</name>
+      <group>CallBackGroup</group>
+      <description>CallBackService</description>
+      <job-type>Ets.AutoDealWithward.CallBackBLL,Ets.AutoDealWithward</job-type>
+      <durable>true</durable>
+      <recover>false</recover>
+    </job>
+
+    <!--定时导出发送邮件-->
+    <trigger>
+      <cron>
+        <name>CallBackBLLTrigger</name>
+        <group>CallBackTriggerGroup</group>
+        <job-name>CallBackBLL</job-name>
+        <job-group>CallBackGroup</job-group>
+        <cron-expression>1 1 0/3 * * ?</cron-expression>
+      </cron>
+    </trigger>
+    
   </schedule>
 </job-scheduling-data>

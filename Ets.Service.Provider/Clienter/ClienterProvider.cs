@@ -63,6 +63,7 @@ namespace Ets.Service.Provider.Clienter
         readonly BusinessBalanceRecordDao businessBalanceRecordDao = new BusinessBalanceRecordDao();
         readonly DeliveryCompanyProvider deliveryCompanyProvider = new DeliveryCompanyProvider();
         readonly IAreaProvider iAreaProvider = new AreaProvider();
+        //readonly IOrderProvider iOrderProvider = new OrderProvider();
         readonly IOrderOtherProvider iOrderOtherProvider = new OrderOtherProvider();
         readonly ITokenProvider iTokenProvider = new TokenProvider();
         private IBusinessProvider iBusinessProvider = new BusinessProvider();
@@ -1214,21 +1215,31 @@ namespace Ets.Service.Provider.Clienter
                 return;
             }
 
+            decimal orderCommission = myOrderInfo.OrderCommission == null ? 0 : myOrderInfo.OrderCommission.Value;
+            decimal settleMoney = myOrderInfo.SettleMoney;
+            decimal baseCommission=0;
+            decimal bt=0;
+            if (orderCommission > settleMoney)
+            {
+                bt = orderCommission - settleMoney;
+            }
+            baseCommission=orderCommission-bt;
+
             //物流公司 
             //更新骑士余额、可提现余额, 将订单标记为加入已提现,更新订单审核通过 
             if (myOrderInfo.DeliveryCompanyID > 0)
-            {
+            {                
                 // 更新骑士余额、可提现余额  
                 UpdateCBalanceAndWithdraw(new ClienterMoneyPM()
                                         {
                                             ClienterId = myOrderInfo.clienterId,
-                                            Amount = myOrderInfo.OrderCommission == null ? 0 : myOrderInfo.OrderCommission.Value,
+                                            Amount = orderCommission,
                                             Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
                                             RecordType = ClienterBalanceRecordRecordType.OrderCommission.GetHashCode(),
                                             Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士" : myOrderInfo.ClienterName,
                                             WithwardId = myOrderInfo.Id,
                                             RelationNo = myOrderInfo.OrderNo,
-                                            Remark = "骑士哥哥，不能稀里糊涂的，基本佣金+平台补贴就是你的订单佣金哦！"
+                                            Remark = "基本佣金"+  baseCommission+ "元+平台补贴"+bt+"元就是你的订单佣金！"
                                         });
                 //将订单标记为加入已提现
                 orderOtherDao.UpdateJoinWithdraw(myOrderInfo.Id);
@@ -1245,13 +1256,13 @@ namespace Ets.Service.Provider.Clienter
                     UpdateCAccountBalance(new ClienterMoneyPM()
                                             {
                                                 ClienterId = myOrderInfo.clienterId,
-                                                Amount = myOrderInfo.OrderCommission == null ? 0 : myOrderInfo.OrderCommission.Value,
+                                                Amount = orderCommission,
                                                 Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
                                                 RecordType = ClienterBalanceRecordRecordType.OrderCommission.GetHashCode(),
                                                 Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士" : myOrderInfo.ClienterName,
                                                 WithwardId = myOrderInfo.Id,
                                                 RelationNo = myOrderInfo.OrderNo,
-                                                Remark = "骑士哥哥，不能稀里糊涂的，基本佣金+平台补贴就是你的订单佣金哦！"
+                                                Remark = "基本佣金" + baseCommission + "元+平台补贴" + bt + "元就是你的订单佣金！"
                                             });
                     //更新骑士无效订单金额
                     UpdateInvalidOrder(myOrderInfo);
@@ -1262,13 +1273,13 @@ namespace Ets.Service.Provider.Clienter
                     UpdateCBalanceAndWithdraw(new ClienterMoneyPM()
                                             {
                                                 ClienterId = myOrderInfo.clienterId,
-                                                Amount = myOrderInfo.OrderCommission == null ? 0 : myOrderInfo.OrderCommission.Value,
+                                                Amount = orderCommission,
                                                 Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
                                                 RecordType = ClienterBalanceRecordRecordType.OrderCommission.GetHashCode(),
                                                 Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士" : myOrderInfo.ClienterName,
                                                 WithwardId = myOrderInfo.Id,
                                                 RelationNo = myOrderInfo.OrderNo,
-                                                Remark = "骑士哥哥，不能稀里糊涂的，基本佣金+平台补贴就是你的订单佣金哦！"
+                                                Remark = "基本佣金" + baseCommission + "元+平台补贴" + bt + "元就是你的订单佣金！"
                                             });
                     //将订单标记为加入已提现
                     orderOtherDao.UpdateJoinWithdraw(myOrderInfo.Id);
@@ -1301,10 +1312,18 @@ namespace Ets.Service.Provider.Clienter
             {
                 //获取无效订单佣金
                 realOrderCommission = realOrderCommission > myOrderInfo.SettleMoney ? myOrderInfo.SettleMoney : realOrderCommission;
-                //更新无效订单佣金
-                orderDao.UpdateOrderRealOrderCommission(myOrderInfo.Id.ToString(), realOrderCommission);
-                //更新无效订单(状态，原因)
-                orderOtherDao.UpdateOrderIsReal(myOrderInfo.Id, deductCommissionReason, 1);
+                ////更新无效订单佣金
+                //orderDao.UpdateOrderRealOrderCommission(myOrderInfo.Id.ToString(), realOrderCommission);
+                ////更新无效订单(状态，原因)
+                //orderOtherDao.UpdateOrderIsReal(myOrderInfo.Id, deductCommissionReason, 1);
+
+                IOrderProvider iOrderProvider = new OrderProvider();
+                OrderOtherPM orderOtherPM = new OrderOtherPM();
+                orderOtherPM.OrderId = myOrderInfo.Id;
+                orderOtherPM.RealOrderCommission = realOrderCommission;
+                orderOtherPM.DeductCommissionReason = deductCommissionReason;
+                orderOtherPM.DeductCommissionType = 1;
+                iOrderProvider.UpdateOrderIsReal(orderOtherPM);                
             }
         }
         /// <summary>
@@ -1328,7 +1347,7 @@ namespace Ets.Service.Provider.Clienter
                     Operator = myOrderInfo.ClienterName,
                     WithwardId = myOrderInfo.Id,
                     RelationNo = myOrderInfo.OrderNo,
-                    Remark = "土豪，返还商家订单菜品费"
+                    Remark = "返还商家订单菜品费"
                 };
 
                 #region 当有现金支付的子订单时，商家余额增加金额 = 商户应收-现金支付的子订单金额  wc修改
@@ -1377,27 +1396,39 @@ namespace Ets.Service.Provider.Clienter
                 }
             }
 
+            //DateTime actualDoneDate = actualDoneDate = ParseHelper.ToDatetime(mapDetail.ActualDoneDate);
+            //if (!(DateTime.Parse(mapDetail.GrabTime).AddMinutes(5) < actualDoneDate &&
+            //    actualDoneDate < DateTime.Parse(mapDetail.GrabTime).AddMinutes(120)))
+            //{
+            //    sb.Append("完成时间不在5-120分钟内;");
+            //    boolreason = true;
+            //}
             DateTime actualDoneDate = actualDoneDate = ParseHelper.ToDatetime(mapDetail.ActualDoneDate);
-            if (!(DateTime.Parse(mapDetail.GrabTime).AddMinutes(5) < actualDoneDate &&
-                actualDoneDate < DateTime.Parse(mapDetail.GrabTime).AddMinutes(120)))
+            if (actualDoneDate < DateTime.Parse(mapDetail.GrabTime).AddMinutes(5))
             {
-                sb.Append("完成时间不在5-120分钟内;");
+                sb.Append("任务完成时间小于5分钟");
                 boolreason = true;
             }
+            if (actualDoneDate > DateTime.Parse(mapDetail.GrabTime).AddMinutes(120))
+            {
+                sb.Append("任务完成时间大于120分钟");
+                boolreason = true;
+            }
+
 
             int num = orderDao.GetTotalOrderNumByClienterID(myOrderInfo.clienterId, actualDoneDate);
             var orderCountSetting = ParseHelper.ToInt(globalSetting.OrderCountSetting, 50);
             //如果骑士今天已经完成（或完成后，又取消了,不包含当前任务中的订单数量）的订单数量大于配置的值，则当前任务中的所有订单都扣除网站补贴
             if (num > orderCountSetting)
             {
-                sb.AppendFormat("完成订单量超过{0}个;", orderCountSetting);
+                sb.AppendFormat("完成订单超过{0}个;", orderCountSetting);
                 boolreason = true;
             }
 
             DateTime doneDate = ParseHelper.ToDatetime(myOrderInfo.ActualDoneDate, DateTime.Now).AddDays(1);//完成时间加一天
             if (myOrderInfo.Status == OrderStatus.Status1.GetHashCode() && myOrderInfo.ActualDoneDate != null && DateTime.Now >= doneDate)
             {
-                sb.Append("小票上传时间超过24小时;");
+                sb.Append("上传小票不符要求");
                 boolreason = true;
             }
             reason = sb.ToString();

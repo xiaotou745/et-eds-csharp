@@ -297,10 +297,10 @@ update OrderChild set PayStatus=@PayStatus,ThirdPayStatus=@PayStatus,PayStyle=@P
 PayType=@PayType , OriginalOrderNo=@OriginalOrderNo
 where OrderId=@OrderId and ChildId=@ChildId and ThirdPayStatus!=@PayStatus";
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.Add("PayStatus", DbType.Int32, 4).Value = PayStatusEnum.HadPay.GetHashCode();//变为已完成
-            parm.Add("PayStyle", DbType.Int32, 4).Value = model.payStyle;
+            parm.Add("PayStatus", DbType.Int32, 2).Value = PayStatusEnum.HadPay.GetHashCode();//变为已完成
+            parm.Add("PayStyle", DbType.Int16).Value = model.payStyle;
             parm.Add("PayBy", DbType.String, 100).Value = model.payBy;
-            parm.Add("PayType", DbType.Int32, 4).Value = model.payType;
+            parm.Add("PayType", DbType.Int16).Value = model.payType;
             parm.Add("OriginalOrderNo", DbType.String, 265).Value = model.originalOrderNo;
             parm.Add("OrderId", SqlDbType.Int, 4).Value = model.orderId;
             parm.Add("ChildId", SqlDbType.Int, 4).Value = model.orderChildId;
