@@ -30,8 +30,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="jpush-api">
+      <HintPath>..\packages\JPush.NET.1.2.3.27974\lib\jpush-api.dll</HintPath>
+    </Reference>
     <Reference Include="LitJson">
       <HintPath>..\lib\wxpay\LitJson.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI">
+      <HintPath>..\packages\NPOIdotnet4\NPOI.dll</HintPath>
     </Reference>
     <Reference Include="QuickMark">
       <HintPath>..\lib\wxpay\QuickMark.dll</HintPath>
@@ -42,7 +52,9 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -56,6 +68,46 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="JPush\common\APIRequestException.cs" />
+    <Compile Include="JPush\common\AudienceConverter.cs" />
+    <Compile Include="JPush\common\BaseHttpClient.cs" />
+    <Compile Include="JPush\common\BaseResult.cs" />
+    <Compile Include="JPush\common\DeviceType.cs" />
+    <Compile Include="JPush\common\PlatformConverter.cs" />
+    <Compile Include="JPush\common\ResponseWrapper.cs" />
+    <Compile Include="JPush\common\resp\APIConnectionException.cs" />
+    <Compile Include="JPush\common\resp\BooleanResult.cs" />
+    <Compile Include="JPush\common\resp\DefaultResult.cs" />
+    <Compile Include="JPush\common\ServiceHelper.cs" />
+    <Compile Include="JPush\common\TimeUnit.cs" />
+    <Compile Include="JPush\device\AliasDeviceListResult.cs" />
+    <Compile Include="JPush\device\DeviceClient.cs" />
+    <Compile Include="JPush\device\TagAliasResult.cs" />
+    <Compile Include="JPush\device\TagListResult.cs" />
+    <Compile Include="JPush\JPushClient.cs" />
+    <Compile Include="JPush\push\audience\AudienceTarget.cs" />
+    <Compile Include="JPush\push\audience\AudienceType.cs" />
+    <Compile Include="JPush\push\MessageResult.cs" />
+    <Compile Include="JPush\push\mode\Audience.cs" />
+    <Compile Include="JPush\push\mode\Message.cs" />
+    <Compile Include="JPush\push\mode\Notification.cs" />
+    <Compile Include="JPush\push\mode\Options.cs" />
+    <Compile Include="JPush\push\mode\Platform.cs" />
+    <Compile Include="JPush\push\mode\PushPayload.cs" />
+    <Compile Include="JPush\push\notification\AndroidNotification.cs" />
+    <Compile Include="JPush\push\notification\IosNotification.cs" />
+    <Compile Include="JPush\push\notification\PlatformNotification.cs" />
+    <Compile Include="JPush\push\notification\WinphoneNotification.cs" />
+    <Compile Include="JPush\push\PushClient.cs" />
+    <Compile Include="JPush\report\MessagesResult.cs" />
+    <Compile Include="JPush\report\ReceivedResult.cs" />
+    <Compile Include="JPush\report\ReportClient.cs" />
+    <Compile Include="JPush\report\UsersResult.cs" />
+    <Compile Include="JPush\util\Base64.cs" />
+    <Compile Include="JPush\util\JsonTool.cs" />
+    <Compile Include="JPush\util\Md5.cs" />
+    <Compile Include="JPush\util\Preconditions.cs" />
+    <Compile Include="JPush\util\StringUtil.cs" />
     <Compile Include="Pay\WxPay\Config.cs" />
     <Compile Include="Pay\WxPay\Data.cs" />
     <Compile Include="Pay\WxPay\Exception.cs" />

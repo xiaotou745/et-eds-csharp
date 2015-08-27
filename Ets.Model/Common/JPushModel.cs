@@ -13,7 +13,7 @@ namespace Ets.Model.Common
     {
 
         /// <summary>
-        /// 来源标识（B端/C端）
+        /// 来源标识（B端/C端） 0:骑士 1：商户
         /// </summary>
         public int TagId { get; set; }
 

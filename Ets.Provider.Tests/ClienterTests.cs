@@ -1,5 +1,6 @@
 ﻿using Ets.Model.Common;
 using Ets.Model.ParameterModel.Order;
+using Ets.Service.IProvider.Order;
 using Ets.Service.Provider.Clienter;
 using Ets.Service.Provider.MyPush;
 using Ets.Service.Provider.Order;
@@ -47,14 +48,18 @@ namespace Ets.Provider.Tests
             //string ess = AESApp.AesEncrypt(ss);
             //string dss = AESApp.AesDecrypt(ss);
             //string s = MD5Helper.MD5("123456");
-            Push.PushMessage(new JPushModel()
-            {
-                Title = "订单提醒",
-                Alert = "您有新订单了，请点击查看！",
-                RegistrationId = "C_3237",
-                TagId = 0,
-                PushType = 1
-            });
+            //Push.PushMessage(new JPushModel()
+            //{
+            //    Title = "订单提醒",
+            //    Alert = "您有新订单了，请点击查看！",
+            //    RegistrationId = "C_3237",
+            //    TagId = 0,
+            //    PushType = 1
+            //});
+
+
+            OrderProvider orderProvider=new OrderProvider();
+            orderProvider.AutoPushOrder();
         }
 
     }

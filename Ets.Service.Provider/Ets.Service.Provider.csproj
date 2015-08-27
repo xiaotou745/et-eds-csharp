@@ -34,7 +34,7 @@
       <HintPath>..\lib\CalculateCommon.dll</HintPath>
       <HintPath>..\packages\CalculateCommon.dll</HintPath>
     </Reference>
-    <Reference Include="jpush-api, Version=1.0.0.27500, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="jpush-api, Version=1.0.0.29202, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\JPush.NET.1.2.3.27974\lib\jpush-api.dll</HintPath>
     </Reference>
