@@ -147,8 +147,13 @@ order by OperateTime desc";
                 }
                 obj = dataReader["Status"];
                 if (obj != null && obj != DBNull.Value)
-                {
-                    result.Status = int.Parse(obj.ToString());
+                {                    
+                    int status = int.Parse(obj.ToString());
+                    result.Status = status;
+
+                    Enum enu = (ClienterBalanceRecordStatus)status;
+                    result.StatusDescription = EnumExtenstion.GetEnumItem(enu.GetType(), enu).Text;  
+
                 }
 
                 obj = dataReader["Balance"];

@@ -226,7 +226,7 @@ namespace Ets.Service.Provider.Finance
                     Operator = business.Name,
                     WithwardId = withwardId,
                     RelationNo = withwardNo,
-                    Remark = "土豪欧巴，提款后记得充值哦"
+                    Remark = withdrawBBackPM.Remarks
                 });
                 #endregion
 
@@ -650,7 +650,7 @@ namespace Ets.Service.Provider.Finance
                         OptName = model.OptName,
                         RechargeAmount = model.RechargeAmountFree,
                         RechargeType = model.RechargeType,
-                        Remark = model.Remark + "(赠送)",
+                        Remark = model.Remark,
                         PayType = 4
                     });
                 }
@@ -672,7 +672,7 @@ namespace Ets.Service.Provider.Finance
                        OptName = model.OptName,
                        RechargeAmount = model.RechargeAmountFree,
                        RechargeType = 2,
-                       Remark = model.Remark + "(赠送)",
+                       Remark = model.Remark ,
                        PayType = 4
                    });
                     reslult = temp1 && temp2;
