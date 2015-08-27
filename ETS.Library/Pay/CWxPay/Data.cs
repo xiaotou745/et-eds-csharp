@@ -6,7 +6,7 @@ using System.Security.Cryptography;
 using System.Text;
 using LitJson;
 
-namespace ETS.Library.Pay.WxPay
+namespace ETS.Library.Pay.CWxPay
 {
     /// <summary>
     /// 微信支付协议接口数据类，所有的API接口通信都依赖这个数据结构，

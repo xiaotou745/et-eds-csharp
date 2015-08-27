@@ -19,10 +19,13 @@ using Ets.Service.Provider.MyPush;
 namespace Ets.Provider.Tests
 {
     [TestFixture]
-   public   class YeePayTest
+    public class YeePayTest
     {
-
-      
+        [Test]
+        public void YeePayCashTransferClienterCallBack()
+        {
+           new PayProvider().YeePayCashTransferClienterCallBack();
+        }
 
         /// <summary>
         /// 注册
@@ -102,19 +105,19 @@ namespace Ets.Provider.Tests
         [Test]
         public void TransferAccounts()
         {
-            var model= new PayProvider().TransferAccountsYee(new YeeTransferParameter()
+            var model = new PayProvider().TransferAccountsYee(new YeeTransferParameter()
             {
-                UserType=1,
-                WithdrawId=1212,
+                UserType = 1,
+                WithdrawId = 1212,
                 Ledgerno = "10012474356",
                 SourceLedgerno = "",
-                Amount="2"
+                Amount = "2"
             });
         }
 
 
 
-     
-     
+
+
     }
 }

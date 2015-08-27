@@ -90,10 +90,19 @@ namespace Ets.Service.IProvider.Pay
 
         QueryCashStatusReturnModel QueryCashStatusYee(YeeQueryCashStatusParameter model);
         /// <summary>
-        /// 易宝转账回调接口
+        /// 易宝转账骑士回调接口
+        /// 窦海超 
+        /// 2015年8月26日 20:07:16
         /// </summary>
-        /// <param name="data"></param>
-        bool YeePayCashTransferCallback(string data);
+        bool YeePayCashTransferClienterCallBack();
+
+
+        /// <summary>
+        /// 易宝转账商家回调接口
+        /// 窦海超 
+        /// 2015年8月26日 20:07:20
+        /// </summary>
+        bool YeePayCashTransferBusinessCallBack();
 
         /// <summary> 
         /// 注册易宝子账户 add by caoheyang 20150722

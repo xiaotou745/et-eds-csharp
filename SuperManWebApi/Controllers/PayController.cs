@@ -24,16 +24,7 @@ namespace SuperManWebApi.Controllers
     public class PayController : ApiController
     {
         readonly IPayProvider payProvider = new PayProvider();
-        /// <summary>
-        /// 生成支付宝订单
-        /// 窦海超
-        /// 2015年5月12日 14:35:05
-        /// </summary>
-        [Token]
-        public ResultModel<PayResultModel> CreatePay(PayModel model)//
-        {
-            return payProvider.CreatePay(model);
-        }
+        #region TestMethod
         [HttpGet]
         public ResultModel<PayResultModel> CreatePayTest(int orderId)
         {
@@ -48,6 +39,34 @@ namespace SuperManWebApi.Controllers
             };
             return payProvider.CreatePay(model);
         }
+
+        [HttpGet]
+        public ResultModel<BusinessRechargeResultModel> CreateRechargeTest()
+        {
+            BusinessRechargeModel model = new BusinessRechargeModel()
+            {
+                Businessid = 1987,
+                payAmount = ETS.Util.ParseHelper.ToDecimal(0.01),
+                PayType = 2,
+                Version = "1.1"
+            };
+            ResultModel<BusinessRechargeResultModel> result = payProvider.BusinessRecharge(model);
+            return result;
+        }
+
+
+        #endregion
+        /// <summary>
+        /// 生成支付宝订单
+        /// 窦海超
+        /// 2015年5月12日 14:35:05
+        /// </summary>
+        [Token]
+        public ResultModel<PayResultModel> CreatePay(PayModel model)//
+        {
+            return payProvider.CreatePay(model);
+        }
+
 
         /// <summary>
         /// 现金支付
@@ -175,23 +194,11 @@ namespace SuperManWebApi.Controllers
         {
             string data = HttpContext.Current.Request["data"];
             ETS.Util.LogHelper.LogWriter(DateTime.Now + "易宝回调：" + data);
-            HttpModel httpModel = new HttpModel()
-            {
-                Url = HttpContext.Current.Request.Url.AbsoluteUri,
-                Htype = HtypeEnum.ThridCallback.GetHashCode(),
-                RequestBody = data,
-                ResponseBody = "",
-                ReuqestPlatForm = RequestPlatFormEnum.EdsManagePlat.GetHashCode(),
-                ReuqestMethod = "SuperManWebApi.Controllers.PayController.YeePayCashTransferCallback",
-                Status = 1,
-                Remark = "第三方回调:易宝转账接口回调"
-            };
-            new HttpDao().LogThirdPartyInfo(httpModel);
-            if (payProvider.YeePayCashTransferCallback(data))//如果返回值是成功
-            {
-                HttpContext.Current.Response.Write("SUCCESS");
-                HttpContext.Current.Response.End();
-            }
+            //if (payProvider.YeePayCashTransferCallback(data))//如果返回值是成功
+            //{
+            //    HttpContext.Current.Response.Write("SUCCESS");
+            //    HttpContext.Current.Response.End();
+            //}
         }
     }
 }

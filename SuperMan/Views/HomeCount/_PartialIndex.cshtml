@@ -24,10 +24,15 @@
 
 
         <td>在线支付(扫码/代付)总计</td>
+
         <td>商户充值总计</td>
+        <td>客户端充值金额</td>
+        <td>系统充值金额</td>
+        <td>系统赠送金额</td>
+
         <td>账户收入总计</td>
         @*<td>商户余额总计</td>
-    <td>商户已提款金额（实付）</td>*@
+            <td>商户已提款金额（实付）</td>*@
 
 
         <td>商户结算金额（应收）</td>
@@ -64,11 +69,17 @@
                 <td>@ParseHelper.ToDivision(ParseHelper.ToDouble(item.YfPrice), item.MisstionCount)</td>
                 <td>@ParseHelper.ToDivision(ParseHelper.ToDouble(item.YfPrice), item.OrderCount)</td>
 
-<td>@ParseHelper.ToSplitByPercentile(false, (item.incomeTotal))@*在线支付(扫码/代付)总计*@
-<td>@ParseHelper.ToSplitByPercentile(false, (item.rechargeTotal.ToString("f2")))@*商户充值总计*@
-<td>@ParseHelper.ToSplitByPercentile(false, (item.incomeTotal+item.rechargeTotal).ToString("f2"))@*账户收入总计*@
-@*<td>@ParseHelper.ToSplitByPercentile(false, (item.businessBalance.ToString("f2")))商户余额总计*@
-@*<td>@ParseHelper.ToSplitByPercentile(false, (item.withdrawBusinessPrice.ToString("f2")))</td>商户已提款金额（实付）*@
+                <td>@ParseHelper.ToSplitByPercentile(false, (item.incomeTotal))@*在线支付(扫码/代付)总计*@
+
+                <td>@ParseHelper.ToSplitByPercentile(false, (item.rechargeTotal.ToString("f2")))@*商户充值总计*@
+                <td>￥@ParseHelper.ToSplitByPercentile(false, (item.ClientRecharge.ToString("f2")))</td>@*客户端充值金额*@
+                <td>￥@ParseHelper.ToSplitByPercentile(false, (item.SystemRecharge.ToString("f2")))</td>@*系统充值金额*@
+                <td>￥@ParseHelper.ToSplitByPercentile(false, (item.SystemPresented.ToString("f2")))</td>@*系统赠送金额*@
+
+                <td>
+                    @ParseHelper.ToSplitByPercentile(false, (item.incomeTotal + item.rechargeTotal).ToString("f2"))@*账户收入总计*@
+                    @*<td>@ParseHelper.ToSplitByPercentile(false, (item.businessBalance.ToString("f2")))商户余额总计*@
+                    @*<td>@ParseHelper.ToSplitByPercentile(false, (item.withdrawBusinessPrice.ToString("f2")))</td>商户已提款金额（实付）*@
 
                 <td>@ParseHelper.ToSplitByPercentile(false, item.YsPrice)</td>
                 <td>@ParseHelper.ToSplitByPercentile(false, item.YfPrice)</td>

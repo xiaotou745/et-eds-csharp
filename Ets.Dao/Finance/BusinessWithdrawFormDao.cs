@@ -113,6 +113,27 @@ where  Id=@Id ";
         }
 
         #endregion
-
+        /// <summary>
+        /// 获取提现中的商家提现单数据 
+        /// 窦海超 
+        /// 2015年8月26日 18:58:39
+        /// </summary>
+        /// <returns></returns>
+        public IList<Ets.Model.DomainModel.Finance.BusinessWithdrawFormModel> GetBusinessWithdrawing()
+        {
+            string sql = @"
+ SELECT ypr.RequestId,bwf.Id,bwf.Amount,
+  ypr.Ledgerno,ypr.CustomerNumber
+   FROM 
+ dbo.BusinessWithdrawForm bwf (nolock)
+ join dbo.YeePayRecord ypr(nolock) on bwf.Id=ypr.WithdrawId and TransferType=1 and ypr.UserType=1 --商家 
+  where bwf.Status=20";
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
+            if (!dt.HasData())
+            {
+                return null;
+            }
+            return MapRows<Ets.Model.DomainModel.Finance.BusinessWithdrawFormModel>(dt);
+        }
     }
 }
