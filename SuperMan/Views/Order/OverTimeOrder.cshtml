@@ -1,0 +1,140 @@
+﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Order.OverTimeOrderModel>
+@{
+    ViewBag.Title = "OverTimeOrder";
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+}
+<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+<link href="~/Content/jQuery-File-Upload/css/jquery.fileupload-ui.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-2.1.1.js"></script>
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script src="~/Scripts/jquery-ui-1.8.20.js"></script>
+<script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
+<script type="text/javascript" src="~/Content/jQuery-File-Upload/js/jquery.ui.widget.js"></script>
+<script type="text/javascript" src="~/Content/jQuery-File-Upload/js/jquery.iframe-transport.js"></script>
+<script type="text/javascript" src="~/Content/jQuery-File-Upload/js/jquery.fileupload.js"></script>
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置：订单 > 超时订单
+    </h2>
+    @using (Ajax.BeginForm("PostOverTimeOrder", new RouteValueDictionary { { "pageindex", "" } },
+        new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
+        new RouteValueDictionary { { "id", "searchForm" } }))
+    {
+        <div class="SearchMd">
+            <table border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td>
+                        <span class="">超时时间: </span>
+                        <select name="OverTime" class="selectw" id="selectovertime" style="width:143px">
+                            <option value="5">>5分钟</option>
+                            <option value="10">>10分钟</option>
+                            <option value="20">>20分钟</option>
+                        </select>
+                        <span class="">商户姓名: </span>
+                        <input id="txtbusname" type="text" name="BusName" value="" />
+                        <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+    }
+    <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <div class="bd clearfix" id="dataList">
+        @Html.Partial("_PostOverTimeOrder", Model)
+    </div>
+
+    <div class="selectSupplierDish">
+        <div class="add-openbox add-form" id="cancelorderdiv" style="width:500px">
+            <fieldset>
+                <div class="control-group">
+                    <label><h4 style="padding-left: 185px">取消订单</h4></label>
+                    <input type="hidden" id="hidOrderID"/>
+                    <hr style="margin-top: 0px; margin-bottom: -5px;" />
+                    <br />
+                    <div class="controls" >
+                        <span>取消原因:</span>
+                        <select id="selectreason">
+                            <option value="1">请选择</option>
+                            <option value="2">无人配送</option>
+                            <option value="3">商家要求取消订单</option>
+                            <option value="4">其它原因</option>
+                        </select>
+                    </div>
+                    <div class="controls" id="reasontxtdiv">
+                        <span>其它原因:</span><br />
+                        <textarea cols="45" rows="5" id="otherReason"></textarea>
+                        <p class="help-block"></p>
+                    </div>
+                </div>
+            </fieldset>
+            <p class="btnbox">
+                <input value="确认" type="button" id="btnSaveReason" class="yesBtn" />
+                <input value="关闭" type="button" class="J_closebox qxBtn" />
+            </p>
+        </div>
+    </div>
+</div>
+<script>
+    var adminjs = new adminglass(); //实例化后台类
+    $(document).ready(function () {
+        //下拉框改变事件
+        $('#selectreason').change(function () {
+            $('#reasontxtdiv').hide();
+            var reasonvalue = $('#selectreason option:selected').html();
+            $('#otherReason').val(reasonvalue);
+            if (reasonvalue == '其它原因') {
+                //其他
+                $('#otherReason').val('');
+                $('#reasontxtdiv').show();
+            }
+        });
+        //点击确定取消订单
+        $('#btnSaveReason').click(function() {
+            var orderid = $('#hidOrderID').val();
+            CancelOrder(orderid);
+        });
+    });
+    //取消订单弹窗
+    function ShowCancelBox(orderId) {
+        $('#hidOrderID').val(orderId);
+        $('#otherReason').val('');
+        $("#selectreason").val("1");
+        $('#reasontxtdiv').hide();
+        adminjs.openwinbox('#cancelorderdiv');
+    }
+    $('.J_closebox').click(function () {
+        adminjs.closewinbox('.add-openbox');
+        return false;
+    });
+    function CancelOrder(orderId) {
+        var orderOptionLog = $('#otherReason').val();
+        var reasonvalue = $('#selectreason option:selected').html();
+        if (reasonvalue == '请选择') {
+            alert('请选择或输入取消原因');
+            return;
+        }
+        if (reasonvalue == '其它原因' && (orderOptionLog.length < 5 || orderOptionLog.length > 50)) {
+            alert('取消原因描述必须为5-50个字符');
+            return;
+        }
+        if (confirm("确定要取消该订单吗？")) {
+            var paramaters = { "orderId": orderId, "OrderOptionLog": orderOptionLog };
+            var url = "/Order/CancelOrder";
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: paramaters,
+                success: function (result) {
+                    if (result.IsSuccess) {
+                        alert(result.Message);
+                        adminjs.closewinbox('.add-openbox');
+                    } else {
+                        alert(result.Message);
+                    }
+                }
+            });
+        }
+    }
+</script>
+<script src="~/Scripts/mvcpager.js"></script>
+
