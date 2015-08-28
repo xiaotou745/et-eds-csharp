@@ -37,6 +37,7 @@ set @starttime= convert(char(10),getdate()-{0},120)
 set @endtime = convert(char(10),getdate(),120)
 print @starttime +','+ @endtime
 
+
 set @BusinessCount = (SELECT COUNT(Id) AS BusinessCount FROM dbo.business(NOLOCK) WHERE [status]=1)
 --print @starttime +','+@endtime
 set @RzqsCount = (SELECT count(1) RzqsCount from dbo.clienter (nolock) where Status =1 )--认证骑士数量
@@ -78,11 +79,9 @@ t4 as (
                 sum(case when PayType=2 then payAmount else 0 end) WeiXinRecharge,
                 sum(case when PayType=3 then payAmount else 0 end) SystemRecharge,
                 sum(case when PayType=4 then payAmount else 0 end) SystemPresented,
-                (sum(case when PayType=1 then payAmount else 0 end) +
-                sum(case when PayType=2 then payAmount else 0 end) +
-                sum(case when PayType=3 then payAmount else 0 end) +
-                sum(case when PayType=4 then payAmount else 0 end) ) rechargeTotal
-                from BusinessRecharge(nolock) where PayTime between @startime  and @endtime 
+                sum(payAmount) rechargeTotal
+                from BusinessRecharge(nolock) where PayTime between @starttime  and @endtime 
+                group by convert(char(10),PayTime,120)
 	 --商户充值总计
 ),
 t5 as (
@@ -109,10 +108,10 @@ select
 	min(t2.ActiveBusiness) ActiveBusiness, --活跃商家
 	isnull(min(t3.incomeTotal),0) incomeTotal,--在线支付(扫码/代付)总计
  	isnull( min(t4.rechargeTotal),0) rechargeTotal, --商户充值总计
-    t4.ZhiFuBaoRecharge,
-    t4.WeiXinRecharge,
-    t4.SystemRecharge,
-    t4.SystemPresented,
+    min(t4.ZhiFuBaoRecharge),
+    min(t4.WeiXinRecharge),
+    min(t4.SystemRecharge),
+    min(t4.SystemPresented),
 	@businessPrice businessBalance, --商户余额总计（应付）
  	isnull( min(t5.withdrawBusinessPrice),0) withdrawBusinessPrice --商户已提款金额（实付）
  from dbo.[order] o (nolock)
@@ -123,7 +122,6 @@ select
  left join t5 on convert(char(10),o.PubDate,120)  = convert(char(10),t5.PubDate,120) 
   where o.Status <> 3 and o.PubDate between @starttime and @endtime
 group by CONVERT(CHAR(10),o.PubDate,120)
-
 ", Day);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             if (!dt.HasData())
