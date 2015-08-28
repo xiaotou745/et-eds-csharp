@@ -42,13 +42,81 @@
     <div class="bd clearfix" id="dataList">
         @Html.Partial("_PostOverTimeOrder", Model)
     </div>
+
+    <div class="selectSupplierDish">
+        <div class="add-openbox add-form" id="cancelorderdiv" style="width:500px">
+            <fieldset>
+                <div class="control-group">
+                    <label><h4 style="padding-left: 185px">取消订单</h4></label>
+                    <input type="hidden" id="hidOrderID"/>
+                    <hr style="margin-top: 0px; margin-bottom: -5px;" />
+                    <br />
+                    <div class="controls" >
+                        <span>取消原因:</span>
+                        <select id="selectreason">
+                            <option value="1">请选择</option>
+                            <option value="2">无人配送</option>
+                            <option value="3">商家要求取消订单</option>
+                            <option value="4">其它原因</option>
+                        </select>
+                    </div>
+                    <div class="controls" id="reasontxtdiv">
+                        <span>其它原因:</span><br />
+                        <textarea cols="45" rows="5" id="otherReason"></textarea>
+                        <p class="help-block"></p>
+                    </div>
+                </div>
+            </fieldset>
+            <p class="btnbox">
+                <input value="确认" type="button" id="btnSaveReason" class="yesBtn" />
+                <input value="关闭" type="button" class="J_closebox qxBtn" />
+            </p>
+        </div>
+    </div>
 </div>
 <script>
+    var adminjs = new adminglass(); //实例化后台类
     $(document).ready(function () {
-
+        //下拉框改变事件
+        $('#selectreason').change(function () {
+            $('#reasontxtdiv').hide();
+            var reasonvalue = $('#selectreason option:selected').html();
+            $('#otherReason').val(reasonvalue);
+            if (reasonvalue == '其它原因') {
+                //其他
+                $('#otherReason').val('');
+                $('#reasontxtdiv').show();
+            }
+        });
+        //点击确定取消订单
+        $('#btnSaveReason').click(function() {
+            var orderid = $('#hidOrderID').val();
+            CancelOrder(orderid);
+        });
+    });
+    //取消订单弹窗
+    function ShowCancelBox(orderId) {
+        $('#hidOrderID').val(orderId);
+        $('#otherReason').val('');
+        $("#selectreason").val("1");
+        $('#reasontxtdiv').hide();
+        adminjs.openwinbox('#cancelorderdiv');
+    }
+    $('.J_closebox').click(function () {
+        adminjs.closewinbox('.add-openbox');
+        return false;
     });
     function CancelOrder(orderId) {
-        var orderOptionLog = '超时未接单订单';
+        var orderOptionLog = $('#otherReason').val();
+        var reasonvalue = $('#selectreason option:selected').html();
+        if (reasonvalue == '请选择') {
+            alert('请选择或输入取消原因');
+            return;
+        }
+        if (reasonvalue == '其它原因' && (orderOptionLog.length < 5 || orderOptionLog.length > 50)) {
+            alert('取消原因描述必须为5-50个字符');
+            return;
+        }
         if (confirm("确定要取消该订单吗？")) {
             var paramaters = { "orderId": orderId, "OrderOptionLog": orderOptionLog };
             var url = "/Order/CancelOrder";
@@ -59,6 +127,7 @@
                 success: function (result) {
                     if (result.IsSuccess) {
                         alert(result.Message);
+                        adminjs.closewinbox('.add-openbox');
                     } else {
                         alert(result.Message);
                     }
