@@ -104,6 +104,7 @@
     <Compile Include="DataModel\Order\OrderChildPayModel.cs" />
     <Compile Include="DataModel\Order\OrderMapDetail.cs" />
     <Compile Include="DataModel\Order\OrderPushRecord.cs" />
+    <Compile Include="DataModel\Order\OverTimeOrderModel.cs" />
     <Compile Include="DataModel\Order\PayStatusModel.cs" />
     <Compile Include="DataModel\Order\ReceviceAddress.cs" />
     <Compile Include="DataModel\Strategy\StrategyModel.cs" />
@@ -353,6 +354,7 @@
     <Compile Include="ParameterModel\Order\OrderReceiveModel.cs" />
     <Compile Include="ParameterModel\Order\OrderRecordsLog.cs" />
     <Compile Include="ParameterModel\Order\OrderSearchCriteria.cs" />
+    <Compile Include="ParameterModel\Order\OverTimeOrderPM.cs" />
     <Compile Include="ParameterModel\Order\PullOrderInfoPM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\RemoveAddressBPM.cs" />
     <Compile Include="ParameterModel\Order\UserStatusModel.cs" />

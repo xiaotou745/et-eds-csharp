@@ -704,6 +704,8 @@
     <Content Include="Views\Account\ChangePassword.cshtml" />
     <Content Include="Views\Complain\Complain.cshtml" />
     <Content Include="Views\Complain\_ComplainList.cshtml" />
+    <Content Include="Views\Order\OverTimeOrder.cshtml" />
+    <Content Include="Views\Order\_PostOverTimeOrder.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
