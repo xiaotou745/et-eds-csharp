@@ -245,7 +245,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Startup.cs" />
+    <Compile Include="Startup.cs" /> 
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\ace.css" />
@@ -549,6 +549,7 @@
     <Content Include="Scripts\view\supplierEdit.js" />
     <Content Include="Scripts\view\orderList.js" />
     <Content Include="Scripts\_references.js" />
+    <Content Include="Views\Order\GetCity.asmx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

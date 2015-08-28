@@ -89,6 +89,7 @@
     <Compile Include="Cacheing\AbstractCache.cs" />
     <Compile Include="Cacheing\CacheFactory.cs" />
     <Compile Include="Cacheing\LocalCache.cs" />
+    <Compile Include="Const\MessageConst.cs" />
     <Compile Include="Const\RedissCacheKey.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Const\GroupConst.cs" />

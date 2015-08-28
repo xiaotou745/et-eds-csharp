@@ -37,7 +37,6 @@ set @starttime= convert(char(10),getdate()-{0},120)
 set @endtime = convert(char(10),getdate(),120)
 print @starttime +','+ @endtime
 
-
 set @BusinessCount = (SELECT COUNT(Id) AS BusinessCount FROM dbo.business(NOLOCK) WHERE [status]=1)
 --print @starttime +','+@endtime
 set @RzqsCount = (SELECT count(1) RzqsCount from dbo.clienter (nolock) where Status =1 )--认证骑士数量
@@ -108,10 +107,10 @@ select
 	min(t2.ActiveBusiness) ActiveBusiness, --活跃商家
 	isnull(min(t3.incomeTotal),0) incomeTotal,--在线支付(扫码/代付)总计
  	isnull( min(t4.rechargeTotal),0) rechargeTotal, --商户充值总计
-    min(t4.ZhiFuBaoRecharge),
-    min(t4.WeiXinRecharge),
-    min(t4.SystemRecharge),
-    min(t4.SystemPresented),
+    min(t4.ZhiFuBaoRecharge) ZhiFuBaoRecharge,
+    min(t4.WeiXinRecharge) WeiXinRecharge,
+    min(t4.SystemRecharge) SystemRecharge,
+    min(t4.SystemPresented) SystemPresented,
 	@businessPrice businessBalance, --商户余额总计（应付）
  	isnull( min(t5.withdrawBusinessPrice),0) withdrawBusinessPrice --商户已提款金额（实付）
  from dbo.[order] o (nolock)
@@ -306,10 +305,15 @@ VALUES
             parm.Add("businessBalance", DbType.Decimal, 18).Value = model.businessBalance;
             parm.Add("withdrawBusinessPrice", DbType.Decimal, 18).Value = model.withdrawBusinessPrice;
 
-            parm.Add("SystemRecharge", DbType.Decimal, 18).Value = model.SystemRecharge;
-            parm.Add("SystemPresented", DbType.Decimal, 18).Value = model.SystemRecharge;
-            parm.Add("ZhiFuBaoRecharge", DbType.Decimal, 18).Value = model.ZhiFuBaoRecharge;
-            parm.Add("WeiXinRecharge", DbType.Decimal, 18).Value = model.WeiXinRecharge;
+            //parm.Add("SystemRecharge", DbType.Decimal, 18).Value = model.SystemRecharge;
+            //parm.Add("SystemPresented", DbType.Decimal, 18).Value = model.SystemPresented;
+            //parm.Add("ZhiFuBaoRecharge", DbType.Decimal, 18).Value = model.ZhiFuBaoRecharge;
+            //parm.Add("WeiXinRecharge", DbType.Decimal, 18).Value = model.WeiXinRecharge;
+            parm.AddWithValue("SystemRecharge", model.SystemRecharge);
+            parm.AddWithValue("SystemPresented", model.SystemPresented);
+            parm.AddWithValue("ZhiFuBaoRecharge",model.ZhiFuBaoRecharge) ;
+            parm.AddWithValue("WeiXinRecharge", model.WeiXinRecharge);
+
 
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
 

@@ -2649,7 +2649,8 @@ JOIN dbo.clienter c WITH(NOLOCK) ON bcr.ClienterId=c.Id
 WHERE bcr.IsEnable=1 
     AND bcr.IsBind=1
     AND c.IsBind=1 
-    AND c.[Status]=1 
+    AND c.[Status]=1
+    AND c.IsReceivePush=1 
     AND c.WorkStatus=0
     AND bcr.BusinessId=@BusinessId;";
             var parm = DbHelper.CreateDbParameters();
@@ -2678,7 +2679,8 @@ SELECT ber.[Id]
       ,c.TrueName 
       ,c.Id ClienterId
 FROM BusinessExpressRelation ber with(nolock) 
- JOIN dbo.clienter c WITH(NOLOCK) ON ber.ExpressId=c.DeliveryCompanyId AND ber.IsEnable=1 AND c.[Status]=1 AND c.WorkStatus=0 AND ber.BusinessId=@BusinessId
+ JOIN dbo.clienter c WITH(NOLOCK) ON ber.ExpressId=c.DeliveryCompanyId AND ber.IsEnable=1 AND c.[Status]=1 AND c.WorkStatus=0 
+    AND c.IsReceivePush=1  AND ber.BusinessId=@BusinessId 
  JOIN( SELECT cl.ClienterId
 			 ,cl.CreateTime
 			 ,cl.Latitude

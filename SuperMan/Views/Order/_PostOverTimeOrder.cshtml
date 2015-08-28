@@ -1,0 +1,60 @@
+﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Order.OverTimeOrderModel>
+@using Webdiyer.WebControls.Mvc;
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
+    <thead>
+        <tr class="tdbg">
+            <th style="width: 100px;">订单号</th>
+            <th>商铺信息</th>
+            <th>发布时间</th>
+            <th>超时</th>
+            <th>送货地址</th>
+            <th>订单数量</th>
+            <th>订单金额</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+
+            for (int i = 0; i < Model.Records.Count; i++)
+            {
+                <tr id="@Model.Records[i].OrderNo">
+                    <td><a href="/Order/OrderDetail?OrderNo=@(Model.Records[i].OrderNo)&OrderId=@(Model.Records[i].OrderID)" target="_blank">@Model.Records[i].OrderNo</a></td>
+                    <td>
+                        @(Model.Records[i].Name)<br />@(Model.Records[i].PhoneNo)
+                    </td>
+                    <td>
+                        @(Model.Records[i].PubDate.ToString())
+                    </td>
+                    <td>
+                        @(Model.Records[i].OverTime > 60 ? "一小时以上" : Model.Records[i].OverTime.ToString() + "分钟")
+                    </td>
+                    <td>
+                        @Model.Records[i].ReceviceAddress
+                    </td>
+                    <td>
+                        @Model.Records[i].OrderCount
+                    </td>
+                    <td>
+                        @Model.Records[i].Amount
+                    </td>
+                    <td>@if (SuperMan.App_Start.UserContext.Current.HasAuthority(39))
+                    {
+                        <a href="javascript:ShowCancelBox('@(Model.Records[i].OrderID)')">取消订单</a>
+                    } &nbsp;<a href="@(Model.Records[i].Bid)/@(Model.Records[i].IsEmployerTask)">附近骑士</a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+@{
+    if (Model != null)
+    {
+        ViewBag.ActionName = "PostOverTimeOrder";
+        @Html.Partial("~/views/shared/PagerControl.cshtml", Model);
+    }
+}
+<script type="text/javascript">
+
+</script>

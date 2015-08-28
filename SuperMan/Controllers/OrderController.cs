@@ -312,6 +312,7 @@ namespace SuperMan.Controllers
         /// 王旭丹
         /// 2015年4月24日 11:32:55
         /// 取消订单
+        /// 该方法在订单超时列表页也调用
         /// </summary>
         /// <param name="OrderNo"></param>
         /// <param name="OrderOptionLog"></param>
@@ -524,5 +525,35 @@ namespace SuperMan.Controllers
             return false;
         }
         #endregion
+
+        /// <summary>
+        /// 超时订单页面
+        /// 茹化肖
+        /// 2015年8月28日10:34:46
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult OverTimeOrder()
+        {
+            OverTimeOrderPM model=new OverTimeOrderPM();
+            model.PageIndex = 1;
+            var list= iOrderProvider.GetOverTimeOrderList<OverTimeOrderModel>(model);
+            return View(list);
+        }
+
+        /// <summary>
+        /// 超时订单页面(异步列表)
+        /// 茹化肖
+        /// 2015年8月28日10:34:46
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult PostOverTimeOrder(int pageindex = 1)
+        {
+            OverTimeOrderPM model = new OverTimeOrderPM();
+            TryUpdateModel(model);
+            model.PageIndex = pageindex;
+            var list = iOrderProvider.GetOverTimeOrderList<OverTimeOrderModel>(model);
+            return PartialView("_PostOverTimeOrder",list);
+        }
+
     }
 }
