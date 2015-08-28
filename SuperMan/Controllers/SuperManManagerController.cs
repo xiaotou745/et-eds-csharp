@@ -294,7 +294,7 @@ namespace SuperMan.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult BusinessRecharge(ClienterOptionLog model)
+        public JsonResult ClienterRecharge(ClienterOptionLog model)
         {
             model.OptName = UserContext.Current.Name;
             var reg = iClienterFinanceProvider.ClienterRecharge(model);

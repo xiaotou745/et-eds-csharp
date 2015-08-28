@@ -11,7 +11,9 @@
             <th>骑士姓名</th>
             <th>电话</th>
             <th>账户余额（提款前）</th>
+            <th>账户余额（提款后）</th>
             <th>可提款金额（提款前）</th>
+            <th>可提款金额（提款后）</th>
             <th>提现金额</th>
             <th>状态</th>
             <th>手续费支付方</th>
@@ -38,14 +40,16 @@
                             {
                                 <input type="checkbox" name="checkItem" disabled="disabled" />
                             }
-                    </td>
+                        </td>
 
                         <td>@i</td>
                         <td><a href="/ClienterWithdraw/ClienterWithdrawDetail?withwardId=@item.Id" style=" text-decoration-line: underline">@item.WithwardNo</a></td>
                         <td>@item.ClienterName</td>
                         <td>@item.ClienterPhoneNo</td>
                         <td>￥@ParseHelper.ToSplitByPercentile(false, item.BalancePrice)</td>
+                        <td>￥@ParseHelper.ToSplitByPercentile(false, item.BalancePrice-item.Amount)</td>
                         <td>￥@ParseHelper.ToSplitByPercentile(false, item.AllowWithdrawPrice)</td>
+                        <td>￥@ParseHelper.ToSplitByPercentile(false, item.AllowWithdrawPrice-item.Amount)</td>
                         <td style="color:green;font-weight:600">￥@ParseHelper.ToSplitByPercentile(false, item.Amount)</td>
                         <td>@ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.ClienterWithdrawFormStatus)item.Status).GetType(), (ETS.Enums.ClienterWithdrawFormStatus)item.Status).Text</td>
                         <td>@(item.HandChargeOutlay == HandChargeOutlay.Private ? "骑士" : "E代送")</td>
@@ -102,11 +106,11 @@
         <fieldset>
             <div class="control-group">
                 <div style="width:480px;font-size:16px"><center><label id="refusedes"></label></center></div>
-                <div class="controls" style="width:480px">
-                    <div style="width:75px">拒绝原因:</div>
-                    <div style="width:480px">
-                        <textarea cols="60" rows="5" id="txtWithdrawAuditRefuse"></textarea>
-                        <p class="help-block"></p>
+                <div class="controls" style="width: 480px">
+
+                    <span class="">拒绝原因:@Html.DropDownList("RefuseReason", new SelectList(ETS.Extension.EnumExtenstion.GetEnumItems(typeof(RefuseReason)), "Value", "Text"), "请选择", new { @class = "selectw", style = "width:157px" })</span>
+                    <div id="reasonDiv" style="display: none">
+                        <textarea cols="60" rows="5" style="width: 400px;height: 60px; resize: none; overflow-y: auto;max-width: 400px;max-height: 100px;" id="txtWithdrawAuditRefuse"></textarea>
                     </div>
                 </div>
                 <div><input type="hidden" id="hidWithwardIdAuditRefuse" value="" /></div>
@@ -124,10 +128,9 @@
         <fieldset>
             <div class="control-group">
                 <div class="controls" style="width:480px">
-                    <div style="width:75px">失败原因:</div>
-                    <div style="width:480px">
-                        <textarea cols="60" rows="5" id="txtWithdrawPayFailed"></textarea>
-                        <p class="help-block"></p>
+                    <span class="">失败原因:@Html.DropDownList("FailReason", new SelectList(ETS.Extension.EnumExtenstion.GetEnumItems(typeof(FailReason)), "Value", "Text"), "请选择", new { @class = "selectw", style = "width:157px" })</span>
+                    <div id="failReasonDiv" style="display: none">
+                        <textarea cols="60" rows="5" style="width: 400px;height: 60px; resize: none; overflow-y: auto;max-width: 400px;max-height: 100px;" id="txtWithdrawPayFailed"></textarea>
                     </div>
                 </div>
                 <div><input type="hidden" id="hidWithwardIdPayFailed" value="" /></div>
@@ -161,9 +164,25 @@
             });
         });
     });
+    $("#RefuseReason").change(function () {
+        var seleVal = $(this).val();
+        if (seleVal == 6) {
+            $("#reasonDiv").show();
+        } else {
+            $("#reasonDiv").hide();
+        }
+    });
+    $("#FailReason").change(function () {
+        var seleVal = $(this).val();
+        if (seleVal == 6) {
+            $("#failReasonDiv").show();
+        } else {
+            $("#failReasonDiv").hide();
+        }
+    });
     var adminjs = new adminglass(); //实例化后台类
     ///审核通过
-    function funWithdrawAuditOk(withwardId,withwardNo) {
+    function funWithdrawAuditOk(withwardId, withwardNo) {
         if (!window.confirm("确认要提交审核？")) {
             return;
         }
@@ -187,8 +206,8 @@
         });
     }
     //确认打款
-    function funPayOk(withwardId,amount) {
-        if (!window.confirm("确认打款" + amount+"元？")) {
+    function funPayOk(withwardId, amount) {
+        if (!window.confirm("确认打款" + amount + "元？")) {
             return;
         }
         var paramaters = { "withwardId": withwardId };
@@ -215,16 +234,28 @@
     }
     //审核拒绝提交
     $("#btnWithdrawAuditRefuse").click(function () {
+        if ($("#RefuseReason").val().length == 0) {
+            alert("请选择拒绝原因！");
+            return;
+        }
         if (!window.confirm("确认要审核拒绝？")) {
             return;
         }
         var auditFailedReason = $('#txtWithdrawAuditRefuse').val();
-        if (auditFailedReason.trim().length == 0) {
-            alert("拒绝原因不能为空！");
-            return;
-        }
-        var withwardId=$('#hidWithwardIdAuditRefuse').val();
-        var paramaters = { "withwardId": withwardId,"auditFailedReason":auditFailedReason };
+        if ($("#RefuseReason").val() == 6) {
+            if (auditFailedReason.trim().length == 0) {
+                alert("拒绝原因不能为空！");
+                return;
+            }
+            if (auditFailedReason.length < 5 || auditFailedReason.length > 20) {
+                alert("请保证输入内容在5到20个字符");
+                return;
+            }
+        } else {
+            auditFailedReason = $("#RefuseReason").find('option:selected').text().trim();
+        } 
+        var withwardId = $('#hidWithwardIdAuditRefuse').val();
+        var paramaters = { "withwardId": withwardId, "auditFailedReason": auditFailedReason };
         var url = "/ClienterWithdraw/WithdrawAuditRefuse";
         $.ajax({
             type: 'POST',
@@ -247,13 +278,25 @@
     }
     //打款失败提交
     $("#btnWithdrawPayFailed").click(function () {
+        if ($("#FailReason").val().length == 0) {
+            alert("请选择失败原因！");
+            return;
+        }
         if (!window.confirm("确认要提交打款失败操作？")) {
             return;
         }
         var payFailedReason = $('#txtWithdrawPayFailed').val();
-        if (payFailedReason.trim().length == 0) {
-            alert("打款失败原因不能为空！");
-            return;
+
+        if ($("#FailReason").val() == 6) {
+            if (payFailedReason.trim().length == 0) {
+                alert("打款失败原因不能为空！");
+                return;
+            } if (payFailedReason.length < 5 || payFailedReason.length > 20) {
+                alert("请保证输入内容在5到20个字符");
+                return;
+            }
+        } else {
+            payFailedReason = $("#FailReason").find('option:selected').text().trim();
         }
         var withwardId = $('#hidWithwardIdPayFailed').val();
         var paramaters = { "withwardId": withwardId, "payFailedReason": payFailedReason };

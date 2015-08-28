@@ -226,7 +226,7 @@ namespace SuperMan.Controllers
             var businessWithdrawLog = new BusinessWithdrawLogModel()
             {
                 Operator = UserContext.Current.Name,
-                Remark = "商户提款申请单审核拒绝-" + auditFailedReason,
+                Remark =  auditFailedReason,
                 Status = BusinessWithdrawFormStatus.TurnDown.GetHashCode(),
                 WithwardId = Convert.ToInt64(withwardId),
                 AuditFailedReason = auditFailedReason
@@ -247,7 +247,7 @@ namespace SuperMan.Controllers
             var businessWithdrawLog = new BusinessWithdrawLogModel()
             {
                 Operator = UserContext.Current.Name,
-                Remark = "商户提款申请单打款失败-" + payFailedReason,
+                Remark = payFailedReason,
                 Status = BusinessWithdrawFormStatus.Error.GetHashCode(),
                 OldStatus = BusinessWithdrawFormStatus.Allow.GetHashCode(),
                 WithwardId = Convert.ToInt64(withwardId),

@@ -8,7 +8,7 @@ using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 
-namespace ETS.Library.Pay.WxPay
+namespace ETS.Library.Pay.BWxPay
 {
     /// <summary>
     /// http连接基础类，负责底层的http通信
@@ -152,9 +152,9 @@ namespace ETS.Library.Pay.WxPay
                 request.Method = "GET";
 
                 //设置代理
-                WebProxy proxy = new WebProxy();
-                proxy.Address = new Uri(WxPayConfig.PROXY_URL);
-                request.Proxy = proxy;
+                //WebProxy proxy = new WebProxy();
+                //proxy.Address = new Uri(WxPayConfig.PROXY_URL);
+                //request.Proxy = proxy;
 
                 //获取服务器返回
                 response = (HttpWebResponse)request.GetResponse();

@@ -30,11 +30,11 @@ namespace SuperMan.Controllers
             }
             Ets.Service.Provider.Common.HomeCountProvider homeCountProvider = new Ets.Service.Provider.Common.HomeCountProvider();
             var criteria = new Ets.Model.ParameterModel.Order.OrderSearchCriteria();
-            ViewBag.homeCountTitleToAllData = homeCountProvider.GetHomeCountTitleToAllData();
-            ViewBag.homeCountTitleModel = homeCountProvider.GetCurrentDateModel();
+            ViewBag.homeCountTitleToAllData = homeCountProvider.GetHomeCountTitleToAllData();  //总数据统计
+            ViewBag.homeCountTitleModel = homeCountProvider.GetCurrentDateModel();  //当日数据统计
             IList<Ets.Model.DomainModel.Business.BusinessesDistributionModel> clienteStorerGrabStatistical = iClienterProvider.GetClienteStorerGrabStatisticalInfo();
             ViewBag.clienteStorerGrabStatistical = clienteStorerGrabStatistical.ToList();
-            var pagedList = iOrderProvider.GetCurrentDateCountAndMoney(criteria);
+            var pagedList = iOrderProvider.GetCurrentDateCountAndMoney(criteria);  //每天数据统计
             return View(pagedList);
 
 
@@ -48,7 +48,7 @@ namespace SuperMan.Controllers
             ViewBag.homeCountTitleToAllData = homeCountProvider.GetHomeCountTitleToAllData();//获取总统计数据
             ViewBag.homeCountTitleModel = homeCountProvider.GetHomeCountTitle();//当前统计
             ViewBag.clienteStorerGrabStatistical = iClienterProvider.GetClienteStorerGrabStatisticalInfo();
-            var pagedList = iOrderProvider.GetCurrentDateCountAndMoney(criteria);
+            var pagedList = iOrderProvider.GetCurrentDateCountAndMoney(criteria);  //每天数据统计
             return PartialView("_PartialIndex", pagedList);
         }
         //[HttpPost]

@@ -66,6 +66,7 @@ namespace Ets.Service.Provider.Order
         ClienterBalanceRecordDao clienterBalanceRecordDao = new ClienterBalanceRecordDao();
         ClienterAllowWithdrawRecordDao clienterAllowWithdrawRecordDao = new ClienterAllowWithdrawRecordDao();
         OrderSubsidiesLogDao orderSubsidiesLogDao = new OrderSubsidiesLogDao();
+        IClienterLocationProvider clienterLocationProvider = new ClienterLocationProvider();
 
         private readonly BusinessBalanceRecordDao _businessBalanceRecordDao = new BusinessBalanceRecordDao();
         ClienterFinanceDao clienterFinanceDao = new ClienterFinanceDao();
@@ -309,6 +310,7 @@ namespace Ets.Service.Provider.Order
             to.ReceviceLatitude = busiOrderInfoModel.laitude;
             to.PubLongitude = busiOrderInfoModel.PubLongitude;//商户发单经度
             to.PubLatitude = busiOrderInfoModel.PubLatitude;
+            to.IsPubDateTimely = busiOrderInfoModel.IsTimely;
 
 
             //必须写to.DistribSubsidy ，防止bussiness为空情况
@@ -387,7 +389,7 @@ namespace Ets.Service.Provider.Order
                                                             Operator = order.BusinessName,
                                                             WithwardId = result,
                                                             RelationNo = order.OrderNo,
-                                                            Remark = "扣除商家结算费"
+                                                            Remark = "配送费支出金额"
                                                         });
 
                 if (order.Adjustment > 0)
@@ -1043,6 +1045,8 @@ namespace Ets.Service.Provider.Order
                     order.OrderFromName = "全时";
                 else if (order.OrderFrom == 4)
                     order.OrderFromName = "美团";
+                else if (order.OrderFrom == 99)
+                    order.OrderFromName = "商户web版";
                 var list = orderDao.GetOrderDetail(order_no);
                 mo.order = order;
                 mo.orderDetails = list;
@@ -1234,7 +1238,7 @@ namespace Ets.Service.Provider.Order
                     return dealResultInfo;
                 }
                 orderModel.OptUserName = orderOptionModel.OptUserName;
-                orderModel.Remark = "管理后台取消订单：" + orderOptionModel.OptLog;
+                orderModel.Remark =  orderOptionModel.OptLog;
                 var orderTaskPayStatus = orderDao.GetOrderTaskPayStatus(orderModel.Id);
                 #region 订单不可取消
                 if (orderModel.Status == 3)//订单已为取消状态
@@ -1272,45 +1276,7 @@ namespace Ets.Service.Provider.Order
                                                             RelationNo = orderModel.OrderNo,
                                                             Remark = orderModel.Remark
                                                         });
-
-                        #region 临时
-                        //decimal accountBalance = decimal.Parse(clienterDao.GetUserInfoByUserId(orderModel.clienterId).AccountBalance.ToString());
-                        //decimal allowWithdrawPrice = clienterDao.GetUserInfoByUserId(orderModel.clienterId).AllowWithdrawPrice;
-                        //clienterFinanceDao.ClienterRecharge(new ClienterOptionLog()
-                        //            {
-                        //                RechargeAmount = -orderModel.RealOrderCommission,
-                        //                ClienterId = orderModel.clienterId
-                        //            }
-                        //    );
-
-                        //ClienterBalanceRecord cbrm = new ClienterBalanceRecord()
-                        //{
-                        //    ClienterId = orderModel.clienterId,
-                        //    Amount = -orderModel.RealOrderCommission,
-                        //    Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
-                        //    Balance = accountBalance,
-                        //    RecordType = ClienterBalanceRecordRecordType.BalanceAdjustment.GetHashCode(),
-                        //    Operator = orderModel.OptUserName,
-                        //    WithwardId = orderModel.Id,
-                        //    RelationNo = orderModel.OrderNo,
-                        //    Remark = orderModel.Remark
-                        //};
-                        //clienterBalanceRecordDao.Insert(cbrm);
-
-                        //ClienterAllowWithdrawRecord cawrm = new ClienterAllowWithdrawRecord()
-                        //{
-                        //    ClienterId = orderModel.clienterId,
-                        //    Amount = -orderModel.RealOrderCommission,
-                        //    Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(),
-                        //    Balance = allowWithdrawPrice,
-                        //    RecordType = ClienterAllowWithdrawRecordType.BalanceAdjustment.GetHashCode(),
-                        //    Operator = orderModel.OptUserName,
-                        //    WithwardId = orderModel.Id,
-                        //    RelationNo = orderModel.OrderNo,
-                        //    Remark = orderModel.Remark
-                        //};
-                        //clienterAllowWithdrawRecordDao.Insert(cawrm);
-                        #endregion
+                   
                     }
 
                     // 更新商户余额、可提现余额                        
@@ -1325,12 +1291,7 @@ namespace Ets.Service.Provider.Order
                                                                 RelationNo = orderModel.OrderNo,
                                                                 Remark = orderModel.Remark
                                                             });
-
-                    //if (!orderDao.OrderCancelReturnBusiness(orderModel))
-                    //{
-                    //    dealResultInfo.DealMsg = "商家应收返回失败！";
-                    //    return dealResultInfo;
-                    //}
+       
                     dealResultInfo.DealFlag = true;
                     dealResultInfo.DealMsg = "订单取消成功！";
                     tran.Complete();
@@ -1386,6 +1347,7 @@ namespace Ets.Service.Provider.Order
                 #endregion
 
 
+                OrderOtherPM orderOtherPM = new OrderOtherPM();
                 //如果要扣除的金额大于0， 写流水
                 if (orderModel.OrderCommission > orderModel.SettleMoney)
                 {
@@ -1406,8 +1368,14 @@ namespace Ets.Service.Provider.Order
                                                                     RelationNo = orderModel.OrderNo,
                                                                     Remark = orderOptionModel.OptLog
                                                                 });
-                        //更新扣除补贴原因,扣除补贴方式为手动扣除
-                        orderOtherDao.UpdateOrderIsReal(orderModel.Id, orderOptionModel.OptLog, 2);
+                        ////更新扣除补贴原因,扣除补贴方式为手动扣除
+                        //orderOtherDao.UpdateOrderIsReal(orderModel.Id, orderOptionModel.OptLog, 2);
+
+                        orderOtherPM.OrderId = orderModel.Id;
+                        orderOtherPM.RealOrderCommission = disOrderCommission;
+                        orderOtherPM.DeductCommissionReason = orderOptionModel.OptLog;
+                        orderOtherPM.DeductCommissionType = 2;
+                        UpdateOrderIsReal(orderOtherPM);
 
                         
                         //更新订单日志
@@ -1441,10 +1409,19 @@ namespace Ets.Service.Provider.Order
                                                                 Remark = "管理后台审核拒绝加可提现"
                                                             });
 
-                //更新订单真实佣金
-                orderDao.UpdateOrderRealOrderCommission(orderModel.Id.ToString(), realOrderCommission);
-                //更新无效订单(状态，原因)
-                orderOtherDao.UpdateOrderIsReal(orderModel.Id, orderOptionModel.OptLog, 2);
+                orderOtherPM.OrderId = orderModel.Id;
+                orderOtherPM.RealOrderCommission = realOrderCommission;
+                orderOtherPM.DeductCommissionReason = orderOptionModel.OptLog;
+                orderOtherPM.DeductCommissionType = 2;
+                //更新无效订单
+                UpdateOrderIsReal(orderOtherPM);
+
+                ////更新订单真实佣金
+                //orderDao.UpdateOrderRealCommission( orderModel.Id.ToString(), realOrderCommission);
+                ////更新无效订单(状态，原因)
+                //orderOtherDao.UpdateOrderIsReal(orderModel.Id, orderOptionModel.OptLog, 2);
+
+
                 //更新已提现状态
                 orderOtherDao.UpdateJoinWithdraw(orderModel.Id);
                 //更新审核状态
@@ -1921,15 +1898,13 @@ namespace Ets.Service.Provider.Order
         }
 
         /// <summary>
-        /// 更新取货坐标
+        /// 更新取货信息
         /// </summary>
         /// <UpdateBy>hulingbo</UpdateBy>
         /// <UpdateTime>20150701</UpdateTime>
         /// <param name="modelPM"></param>
         public void UpdateTake(OrderPM modelPM)
-        {
-            //float takeLongitude = (float)modelPM.longitude;
-            //float takeLatitude = (float)modelPM.latitude;
+        {         
             orderDao.UpdateTake(modelPM);
         }
 
@@ -1961,7 +1936,7 @@ namespace Ets.Service.Provider.Order
                 {
                     return ResultModel<bool>.Conclude(tempresult, false);
                 }
-                CancelOrderModel comModel = new CancelOrderModel() { OrderNo = paramodel.OrderNo, OrderStatus = OrderStatus.Status3.GetHashCode(), Remark = "商家取消订单", Status = OrderStatus.Status0.GetHashCode(), Price = order.SettleMoney, OrderCancelFrom = SuperPlatform.FromBusiness.GetHashCode(), OrderCancelName = order.BusinessName };
+                CancelOrderModel comModel = new CancelOrderModel() { OrderNo = paramodel.OrderNo, OrderStatus = OrderStatus.Status3.GetHashCode(), Remark = "商户取消订单", Status = OrderStatus.Status0.GetHashCode(), Price = order.SettleMoney, OrderCancelFrom = SuperPlatform.FromBusiness.GetHashCode(), OrderCancelName = order.BusinessName };
                 int result = orderDao.CancelOrderStatus(comModel);
                 bool blCancelTime = orderOtherDao.UpdateCancelTime(paramodel.OrderId);
                 //int result = orderDao.CancelOrderStatus(paramodel.OrderNo, OrderStatus.Status3.GetHashCode(), "商家取消订单", OrderStatus.Status0.GetHashCode(), order.SettleMoney);
@@ -1977,7 +1952,7 @@ namespace Ets.Service.Provider.Order
                                                         Operator = string.Format("商家:{0}", paramodel.BusinessId),
                                                         WithwardId = paramodel.OrderId,
                                                         RelationNo = paramodel.OrderNo,
-                                                        Remark = "商户取消订单返回配送费"
+                                                        Remark = "商户取消订单"
                                                     });
                     tran.Complete();
                 }
@@ -2108,22 +2083,40 @@ namespace Ets.Service.Provider.Order
             OrderMapDetail detail = orderDao.GetOrderMapDetail(orderID);
             if (detail != null)
             {
+                DateTime startTime = DateTime.MinValue;
+                DateTime endTime = DateTime.MinValue;
                 DateTime d = DateTime.Parse("1900-01-01");
                 if (DateTime.Parse(detail.PubDate) == d)
                 {
                     detail.PubDate = "暂无";
                 }
+                else
+                {
+                    startTime = DateTime.Parse(detail.PubDate);
+                }
                 if (DateTime.Parse(detail.GrabTime) == d)
                 {
                     detail.GrabTime = "暂无";
+                }
+                else
+                {
+                    endTime = DateTime.Parse(detail.GrabTime);
+                }
+                if (DateTime.Parse(detail.TakeTime) == d)
+                {
+                    detail.TakeTime = "暂无";
+                }
+                else
+                {
+                    endTime = DateTime.Parse(detail.TakeTime);
                 }
                 if (DateTime.Parse(detail.ActualDoneDate) == d)
                 {
                     detail.ActualDoneDate = "暂无";
                 }
-                if (DateTime.Parse(detail.TakeTime) == d)
+                else
                 {
-                    detail.TakeTime = "暂无";
+                    endTime = DateTime.Parse(detail.ActualDoneDate);
                 }
                 #region 如果抢单，取货，完成地点的经度或纬度为0，则其经纬度都取发单经纬度
                 if (detail.GrabLatitude == 0 || detail.GrabLongitude == 0)
@@ -2141,6 +2134,14 @@ namespace Ets.Service.Provider.Order
                     detail.CompleteLongitude = detail.PubLongitude;
                     detail.CompleteLatitude = detail.PubLatitude;
                 }
+
+                //开始时间小于结束时间才获取实时坐标 add by pengyi 20150825
+                if (startTime < endTime)
+                {
+                    detail.Locations = clienterLocationProvider.GetLocationsByTime(startTime, endTime, detail.ClienterId);
+                }
+                if (detail.Locations == null )
+                    detail.Locations = new List<Location>();
                 #endregion
             }
             return detail;
@@ -2220,7 +2221,7 @@ namespace Ets.Service.Provider.Order
                                 OptUserName = "system",
                                 Id = orderListModel.Id,
                                 OrderNo = orderListModel.OrderNo,
-                                Remark = "程序自动处理超时未完成订单",
+                                Remark = "E代送客服处理超时未完成订单",
                                 businessId = orderListModel.businessId
                             }))
                             {
@@ -2266,7 +2267,7 @@ namespace Ets.Service.Provider.Order
                                     Operator = "system",
                                     WithwardId = orderListModel.Id,
                                     RelationNo = orderListModel.OrderNo,
-                                    Remark = "服务自动处理超时未完成订单"
+                                    Remark = "E代送客服处理超时未完成订单"
                                 }))
                                 {
                                     orderDao.AutoAuditRefuseDeal(orderListModel.Id);
@@ -2294,9 +2295,10 @@ namespace Ets.Service.Provider.Order
         /// </summary>
         public void AutoPushOrder()
         {
+
             #region 对象声明及初始化
 
-            var listClienterId=new List<int>();//骑士Id集合
+            var listClienterId = new List<int>();//骑士Id集合
             string pushRadius = GlobalConfigDao.GlobalConfigGet(0).PushRadius;//推送距离半径
 
             #region 在Redis中记录推送时间供下次查询用
@@ -2341,7 +2343,7 @@ namespace Ets.Service.Provider.Order
                         PushCount = 1,
                         ClienterCount = clienterCount
                     });
-                    LogHelper.LogWriter("订单【" + order.Id + "】已推送给骑士【" + (string.IsNullOrEmpty(strClienterId) ? "" : strClienterId.TrimEnd(','))+"】");
+                    LogHelper.LogWriter("订单【" + order.Id + "】已推送给骑士【" + (string.IsNullOrEmpty(strClienterId) ? "" : strClienterId.TrimEnd(',')) + "】");
                     continue;
                 }
                 #endregion
@@ -2403,22 +2405,35 @@ namespace Ets.Service.Provider.Order
 
             foreach (var clienterId in listClienterId)
             {
-                Task.Factory.StartNew(() =>
-                {
-                    Push.PushMessage(new JPushModel()
+                //Task.Factory.StartNew(() =>
+                //{
+                Push.PushMessageNew(new JPushModel()
                     {
                         Title = "订单提醒",
                         Alert = "您有新订单了，请点击查看！",
                         City = string.Empty,
-                        Content = string.Empty,
-                        RegistrationId = "C_" + clienterId,
+                        Content = "Order",
+                        ContentKey = "Content",
+                        RegistrationId = "C_" + clienterId.ToString(),
                         TagId = 0,
                         PushType = 1
                     });
-                });
+                //});
             }
             #endregion
+
         }
+
+        #region 用户自定义方法
+        public void UpdateOrderIsReal(OrderOtherPM orderOtherPM)
+        {
+            //更新订单真实佣金
+            orderDao.UpdateOrderRealCommission(orderOtherPM);
+            //更新无效订单(状态，原因)
+            orderOtherDao.UpdateOrderIsReal(orderOtherPM);
+        }
+
+        #endregion
 
     }
 }

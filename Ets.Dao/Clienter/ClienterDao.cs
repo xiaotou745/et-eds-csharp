@@ -1710,7 +1710,7 @@ FROM ( SELECT cl.ClienterId
 	  JOIN ClienterLocation  cl WITH(NOLOCK) ON cl.ID = tbl.ID) tblcl
 JOIN clienter c WITH(NOLOCK) ON c.Id=tblcl.ClienterId
 WHERE c.Status=1 
-	AND c.WorkStatus=1
+	AND c.WorkStatus=0
     AND ISNULL(c.DeliveryCompanyId,0)=0
 	AND  geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tblcl.Latitude,tblcl.Longitude,4326))<=@PushRadius;";
             var parm = DbHelper.CreateDbParameters();

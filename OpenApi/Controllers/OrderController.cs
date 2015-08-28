@@ -1,4 +1,5 @@
-﻿using Ets.Service.IProvider.Order;
+﻿using Ets.Dao.Common;
+using Ets.Service.IProvider.Order;
 using Ets.Service.Provider.Order;
 using Ets.Service.IProvider.Clienter;
 using Ets.Service.Provider.Clienter;
@@ -39,6 +40,8 @@ namespace OpenApi.Controllers
         // POST: Order GetStatus    paramodel 固定 必须是 paramodel
         /// <summary>
         /// 订单状态查询功能  add by caoheyang 20150316
+        /// 茹化肖修改
+        /// 2015年8月26日12:59:12
         /// </summary>
         /// <returns></returns>
         [HttpPost]
@@ -48,6 +51,18 @@ namespace OpenApi.Controllers
         {
             paramodel.fields.orderfrom = paramodel.group; //设置订单来源,其实就是订单对应的集团是什么
             int status = new OrderProvider().GetStatus(paramodel.fields.order_no, paramodel.fields.orderfrom);
+            HttpModel httpModel = new HttpModel()
+            {
+                Url = HttpContext.Current.Request.Url.AbsoluteUri,
+                Htype = HtypeEnum.ThridCallback.GetHashCode(),
+                RequestBody =JsonHelper.JsonConvertToString(paramodel),
+                ResponseBody = JsonHelper.JsonConvertToString(status),
+                ReuqestPlatForm = RequestPlatFormEnum.OpenApiPlat.GetHashCode(),
+                ReuqestMethod = "OpenApi.Controllers.OrderController.GetStatus",
+                Status = 1,
+                Remark = "第三方回调:订单状态查询"
+            };
+            new HttpDao().LogThirdPartyInfo(httpModel);
             return status < 0 ?
             ResultModel<object>.Conclude(OrderApiStatusType.ParaError) :    //订单不存在返回参数错误提示
             ResultModel<object>.Conclude(OrderApiStatusType.Success, new { order_status = status });
@@ -56,6 +71,8 @@ namespace OpenApi.Controllers
         // POST: Order Create   paramodel 固定 必须是 paramodel  
         /// <summary>
         /// 物流订单接收接口  add by caoheyang 201503167
+        /// 茹化肖修改
+        /// 2015年8月26日12:59:04
         /// </summary>
         /// <returns></returns>
         [HttpPost]
@@ -65,12 +82,27 @@ namespace OpenApi.Controllers
         {
             paramodel.fields.store_info.group = paramodel.group;  //设置集团信息到具体的门店上  在dao层会用到
             paramodel.fields.orderfrom = paramodel.group; //设置订单来源,其实就是订单对应的集团是什么
-            return  new OrderProvider().Create(paramodel.fields);
+            var result=  new OrderProvider().Create(paramodel.fields);
+            HttpModel httpModel = new HttpModel()
+            {
+                Url = HttpContext.Current.Request.Url.AbsoluteUri,
+                Htype = HtypeEnum.ThridCallback.GetHashCode(),
+                RequestBody = JsonHelper.JsonConvertToString(paramodel),
+                ResponseBody = JsonHelper.JsonConvertToString(result),
+                ReuqestPlatForm = RequestPlatFormEnum.OpenApiPlat.GetHashCode(),
+                ReuqestMethod = "OpenApi.Controllers.OrderController.Create",
+                Status = 1,
+                Remark = "第三方回调:物流订单接收接口"
+            };
+            new HttpDao().LogThirdPartyInfo(httpModel);
+            return result;
         }
 
         // POST: Order OrderDetail   paramodel 固定 必须是 paramodel  
         /// <summary>
         /// 查看订单详情接口  add by caoheyang 20150325
+        /// 茹化肖修改
+        /// 2015年8月26日12:58:56
         /// </summary>
         /// <returns></returns>
         [HttpPost]
@@ -79,12 +111,29 @@ namespace OpenApi.Controllers
         public ResultModel<object> OrderDetail(ParaModel<OrderDetailPM_OpenApi> paramodel)
         {
             paramodel.fields.orderfrom = paramodel.group; //设置订单来源,其实就是订单对应的集团是什么
-            return new OrderProvider().OrderDetail(paramodel.fields);
+
+            var result = new OrderProvider().OrderDetail(paramodel.fields);
+            HttpModel httpModel = new HttpModel()
+            {
+                Url = HttpContext.Current.Request.Url.AbsoluteUri,
+                Htype = HtypeEnum.ThridCallback.GetHashCode(),
+                RequestBody = JsonHelper.JsonConvertToString(paramodel),
+                ResponseBody = JsonHelper.JsonConvertToString(result),
+                ReuqestPlatForm = RequestPlatFormEnum.OpenApiPlat.GetHashCode(),
+                ReuqestMethod = "OpenApi.Controllers.OrderController.OrderDetail",
+                Status = 1,
+                Remark = "第三方回调:查看订单详情接口"
+            };
+            new HttpDao().LogThirdPartyInfo(httpModel);
+            return result;
         }
 
         // POST: Order AsyncStatus   paramodel 固定 必须是 paramodel  
         /// <summary>
-        /// 第三方订单状态同步   add by caoheyang 20150326  
+
+        /// 第三方订单状态同步   add by caoheyang 20150326 
+        /// 茹化肖修改
+        /// 2015年8月26日13:03:23 
         /// </summary>
         /// <returns></returns>
         [HttpPost]
@@ -97,6 +146,18 @@ namespace OpenApi.Controllers
             if (groupProvider == null)
                 ResultModel<object>.Conclude(OrderApiStatusType.Success);  //无集团信息，不需要同步返回成功，实际应该不会该情况
             OrderApiStatusType statusType = groupProvider.AsyncStatus(paramodel);
+            HttpModel httpModel = new HttpModel()
+            {
+                Url = HttpContext.Current.Request.Url.AbsoluteUri,
+                Htype = HtypeEnum.ThridCallback.GetHashCode(),
+                RequestBody = JsonHelper.JsonConvertToString(paramodel),
+                ResponseBody = JsonHelper.JsonConvertToString(statusType),
+                ReuqestPlatForm = RequestPlatFormEnum.OpenApiPlat.GetHashCode(),
+                ReuqestMethod = "OpenApi.Controllers.OrderController.AsyncStatus",
+                Status = 1,
+                Remark = "第三方回调:第三方订单状态同步"
+            };
+            new HttpDao().LogThirdPartyInfo(httpModel);
             return ResultModel<object>.Conclude(statusType);
         }
 
@@ -104,6 +165,7 @@ namespace OpenApi.Controllers
         // POST: Order ChangeStatus   paramodel 固定 必须是 paramodel  
         /// <summary>
         /// 第三方更新E代送订单状态   add by caoheyang 20150421  目前美团专用  
+        /// 茹化肖修改 2015年8月26日13:07:18
         /// </summary>
         /// <returns></returns>
         [HttpPost]
@@ -114,11 +176,27 @@ namespace OpenApi.Controllers
             paramodel.fields.groupid = paramodel.group;
             paramodel.fields.remark = "取消订单";    //TODO 第三方调用该接口时根据实际目标状态处理
             paramodel.fields.orderfrom = paramodel.group; //设置订单来源,其实就是订单对应的集团是什么
-            return new OrderProvider().UpdateOrderStatus_Other(paramodel.fields);
+
+            var result= new OrderProvider().UpdateOrderStatus_Other(paramodel.fields);
+            HttpModel httpModel = new HttpModel()
+            {
+                Url = HttpContext.Current.Request.Url.AbsoluteUri,
+                Htype = HtypeEnum.ThridCallback.GetHashCode(),
+                RequestBody = JsonHelper.JsonConvertToString(paramodel),
+                ResponseBody = JsonHelper.JsonConvertToString(result),
+                ReuqestPlatForm = RequestPlatFormEnum.OpenApiPlat.GetHashCode(),
+                ReuqestMethod = "OpenApi.Controllers.OrderController.ChangeStatus",
+                Status = 1,
+                Remark = "第三方回调:第三方订单状态同步(美团)"
+            };
+            new HttpDao().LogThirdPartyInfo(httpModel);
+            return result;
         }
 
         /// <summary>
         /// 获取订单的日志信息
+        /// 茹化肖修改
+        /// 2015年8月26日13:11:06
         /// </summary>
         /// <param name="paramodel"></param>
         /// <returns></returns>
@@ -129,11 +207,27 @@ namespace OpenApi.Controllers
         {
             LogHelper.LogWriter("获取订单信息：", new { paramodel = paramodel });
             List<OrderRecordsLog> orderRecords =  new OrderProvider().GetOrderRecords(paramodel.fields.order_no, paramodel.group).ToList(); 
-            return ResultModel<object>.Conclude(OrderApiStatusType.Success,orderRecords);
+
+            var result= ResultModel<object>.Conclude(OrderApiStatusType.Success,orderRecords);
+            HttpModel httpModel = new HttpModel()
+            {
+                Url = HttpContext.Current.Request.Url.AbsoluteUri,
+                Htype = HtypeEnum.ThridCallback.GetHashCode(),
+                RequestBody = JsonHelper.JsonConvertToString(paramodel),
+                ResponseBody = JsonHelper.JsonConvertToString(result),
+                ReuqestPlatForm = RequestPlatFormEnum.OpenApiPlat.GetHashCode(),
+                ReuqestMethod = "OpenApi.Controllers.OrderController.GetOrderRecords",
+                Status = 1,
+                Remark = "第三方回调:获取订单的日志"
+            };
+            new HttpDao().LogThirdPartyInfo(httpModel);
+            return result;
 
         }
         /// <summary>
         /// 取消订单   王旭丹
+        /// 茹化肖修改
+        /// 2015年8月26日13:12:41
         /// </summary>
         /// <param name="paramodel"></param>
         /// <returns></returns>
@@ -144,6 +238,18 @@ namespace OpenApi.Controllers
         {
             LogHelper.LogWriter("取消订单信息：", new { paramodel = paramodel });
             string kk = new OrderProvider().CanOrder(paramodel.fields.order_no, paramodel.group);
+            HttpModel httpModel = new HttpModel()
+            {
+                Url = HttpContext.Current.Request.Url.AbsoluteUri,
+                Htype = HtypeEnum.ThridCallback.GetHashCode(),
+                RequestBody = JsonHelper.JsonConvertToString(paramodel),
+                ResponseBody =kk,
+                ReuqestPlatForm = RequestPlatFormEnum.OpenApiPlat.GetHashCode(),
+                ReuqestMethod = "OpenApi.Controllers.OrderController.CanOrder",
+                Status = 1,
+                Remark = "第三方回调:取消订单"
+            };
+            new HttpDao().LogThirdPartyInfo(httpModel);
             if (kk == "1")
             {
                 return ResultModel<object>.Conclude(OrderApiStatusType.Success);

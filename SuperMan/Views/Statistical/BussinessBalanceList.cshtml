@@ -16,7 +16,7 @@
             <th class="J_City none">地址</th>
             <th class="J_City none">充值时间</th>
             <th>充值金额</th>
-            <th>充值后余额</th>
+            @*<th>充值后余额</th>*@
         </tr>
     </thead>
     <tbody id="tbodyTimeSpan">
@@ -27,13 +27,13 @@
                 {
                     <tr>
                         <td>@item.Id</td>
-                        <td>@(item.RelationNo==null?"":item.RelationNo)</td>
+                        <td>@item.RelationNo</td>
                         <td>@item.Name</td>
                         <td>@item.PhoneNo</td>
                         <td>@item.Address</td>
                         <td>@item.OperateTime</td>
                         <td><a target="_blank" href="/BusinessManager/BusinessDetail?businessId=@item.BusinessId">@item.Amount.ToString("F2")</a></td>
-                        <td>@item.Balance.ToString("F2")</td>
+                        @*<td>@item.Balance.ToString("F2")</td>*@
                     </tr>
                 }
             }
