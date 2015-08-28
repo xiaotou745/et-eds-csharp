@@ -43,5 +43,7 @@ namespace ETS.Const
         public const string SMSSOURCE = "superManCheckCode";
 
         public const string OriginSize = "_0_0";
+
+        public const string NoExportData = "<script>alert('您需要导出的数据为空，请重新选择筛选条件');window.history.go(-1);</script>";
     }
 }

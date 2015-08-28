@@ -35,6 +35,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ICSharpCode.SharpZipLib">
+      <HintPath>..\packages\NPOIdotnet4\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Ets.WinService\Ets.SendMessage\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -96,6 +99,7 @@
     <Compile Include="Enums\ClienterEnum.cs" />
     <Compile Include="Enums\ComplainEnum.cs" />
     <Compile Include="Enums\EnumStatusType.cs" />
+    <Compile Include="Enums\ExportFileFormat.cs" />
     <Compile Include="Enums\FinanceEnums.cs" />
     <Compile Include="Enums\GroupEnum.cs" />
     <Compile Include="Enums\MessageEnums.cs" />
@@ -188,6 +192,8 @@
     <Compile Include="Util\EncodeAndDecode.cs" />
     <Compile Include="Util\EnumItem.cs" />
     <Compile Include="Util\EnumUtils.cs" />
+    <Compile Include="Util\ExcelBase.cs" />
+    <Compile Include="Util\ExcelIO.cs" />
     <Compile Include="Util\NPOIHelper.cs" />
     <Compile Include="Util\DataTableRenderToExcel.cs" />
     <Compile Include="Util\FileHelper.cs" />
@@ -203,7 +209,9 @@
     <Compile Include="Util\MailUtils.cs" />
     <Compile Include="Util\MD5Helper.cs" />
     <Compile Include="Util\ParseHelper.cs" />
+    <Compile Include="Util\ServiceResult.cs" />
     <Compile Include="Util\SoaCommon.cs" />
+    <Compile Include="Util\StreamDataSource.cs" />
     <Compile Include="Util\StringHelper.cs" />
     <Compile Include="Util\StringVerify.cs" />
     <Compile Include="Util\TimeHelper.cs" />
