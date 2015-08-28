@@ -3870,14 +3870,15 @@ MERGE INTO OrderPushRecord opr
             string columnList = @"
                 o.OrderNo ,
         o.id AS OrderID,
-        b.Id ,
+        b.id as Bid ,
         b.Name ,
         b.PhoneNo ,
         o.PubDate ,
         DATEDIFF(MINUTE, o.PubDate, GETDATE()) AS OverTime ,
         ISNULL(o.ReceviceAddress, '') AS ReceviceAddress ,
         o.OrderCount ,
-        o.Amount
+        o.Amount,
+        b.IsEmployerTask
                 ";
             var sbSqlWhere = new StringBuilder(" o.Status = 0 ");
             if (model.OverTime == 5)

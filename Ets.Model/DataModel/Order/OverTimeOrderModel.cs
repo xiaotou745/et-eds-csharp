@@ -18,7 +18,7 @@ namespace Ets.Model.DataModel.Order
         /// <summary>
         /// 商户ID
         /// </summary>
-        public int ID { get; set; }
+        public int Bid { get; set; }
 
         /// <summary>
         /// 订单ID
@@ -53,5 +53,9 @@ namespace Ets.Model.DataModel.Order
         /// 订单金额
         /// </summary>
         public decimal Amount { get; set; }
+        /// <summary>
+        /// 是否店内任务
+        /// </summary>
+        public int IsEmployerTask { get; set; }
     }
 }
