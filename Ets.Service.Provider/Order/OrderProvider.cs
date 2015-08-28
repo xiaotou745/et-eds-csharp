@@ -2412,8 +2412,8 @@ namespace Ets.Service.Provider.Order
                         Title = "订单提醒",
                         Alert = "您有新订单了，请点击查看！",
                         City = string.Empty,
-                        Content = "Order",
-                        ContentKey = "Content",
+                        Content = "",
+                        ContentKey = "Order",
                         RegistrationId = "C_" + clienterId.ToString(),
                         TagId = 0,
                         PushType = 1
