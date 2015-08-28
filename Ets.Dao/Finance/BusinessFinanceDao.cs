@@ -696,7 +696,7 @@ insert into dbo.BusinessRecharge
         )
 values  (
         @BusinessId,
-        0,
+        @PayType,
         '',
         @Amount,
         1,
@@ -711,6 +711,8 @@ values  (
             parm.AddWithValue("@Operator", model.OptName);
             parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@BusinessId", model.BusinessId);
+            parm.Add("@PayType", DbType.Int32).Value = model.PayType;
+
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
 

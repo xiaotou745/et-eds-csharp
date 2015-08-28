@@ -88,7 +88,10 @@
                     <td>
                         扫码支付总计：￥@ParseHelper.ToSplitByPercentile(false, resultList.userTotal)<br />
                         骑士代付总计:￥@ParseHelper.ToSplitByPercentile(false, resultList.clienterTotal)<br />
-                        商户充值金额：￥@ParseHelper.ToSplitByPercentile(false, resultList.rechargeTotal)<br />
+                        商户充值金额：￥@ParseHelper.ToSplitByPercentile(false, resultList.rechargeTotal)<br/>
+                        客户端充值金额：￥@ParseHelper.ToSplitByPercentile(false, resultList.ClientRecharge)<br/>
+                        系统充值金额：￥@ParseHelper.ToSplitByPercentile(false, resultList.SystemRecharge)<br/>
+                        系统赠送金额：￥@ParseHelper.ToSplitByPercentile(false, resultList.SystemPresented)<br/>
                         账户收入总计：￥@ParseHelper.ToSplitByPercentile(false, resultList.incomeTotal)<br />
                     </td>
                 </tr>
@@ -108,10 +111,13 @@
                 <td>客单价</td>
                 <td>任务单价</td>
                 <td>扫码/代付总计</td>
-                <td>商户充值总计</td>
-                <td>账户收入总计</td>
-                
 
+                <td>商户充值总计</td>
+                <td>客户端充值金额</td> 
+                <td>系统充值金额</td>
+                <td>系统赠送金额</td>
+
+                <td>账户收入总计</td> 
                 <td>总商户结算金额（应收)</td>
                 <td>总骑士佣金总计（应付)</td>
                 @*<td>可提现佣金总计</td>*@
@@ -133,7 +139,12 @@
                     <td>@ParseHelper.ToDivision(homeCountAllData.OrderPrice, homeCountAllData.MisstionCount)</td>@*任务单价*@
 
                     <td>￥@ParseHelper.ToSplitByPercentile(false, ((homeCountAllData.incomeTotal).ToString("f2")))</td>@*扫码/代付总计*@
+
                     <td>￥@ParseHelper.ToSplitByPercentile(false, (homeCountAllData.rechargeTotal))</td>@*商户充值总计*@
+                    <td>￥@ParseHelper.ToSplitByPercentile(false, homeCountAllData.ClientRecharge)</td>@*客户端充值金额*@
+                    <td>￥@ParseHelper.ToSplitByPercentile(false, (homeCountAllData.SystemRecharge))</td>@*系统充值金额*@
+                    <td>￥@ParseHelper.ToSplitByPercentile(false, (homeCountAllData.SystemPresented))</td>@*系统赠送金额*@ 
+
                     <td>￥@ParseHelper.ToSplitByPercentile(false, (homeCountAllData.allIncomeTotal))</td>@*账户收入总计*@
 
                     <td>￥@ParseHelper.ToSplitByPercentile(false,Math.Round(homeCountAllData.YsPrice, 2))</td>@*总商户结算金额（应收)*@

@@ -47,8 +47,7 @@ namespace Ets.Model.DataModel.Business
         /// <summary>
         /// 1 充值 2 赠送 3 充值加赠送
         /// </summary>
-        public int RechargeType { get; set; }
-
+        public int RechargeType { get; set; } 
     }
     /// <summary>
     /// 商户充值实体类
@@ -78,6 +77,10 @@ namespace Ets.Model.DataModel.Business
         /// 1 充值 2 赠送 3 充值加赠送
         /// </summary>
         public int RechargeType { get; set; }
+        /// <summary>
+        /// 支付方式：1：支付宝；2微信;3后台;4赠送
+        /// </summary>
+        public int PayType { get; set; }
 
     }
 }

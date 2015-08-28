@@ -13,6 +13,7 @@ using ETS.Extension;
 using Ets.Model.DomainModel.Finance;
 using ETS.Util;
 using Ets.Model.ParameterModel.Finance;
+using ETS.Enums;
 #endregion
 
 namespace Ets.Dao.Finance
@@ -79,6 +80,27 @@ where  Id=@Id ";
         }
 
         /// <summary>
+        /// 更新状态及原因
+        /// 胡灵波
+        /// 2015年8月25日 11:23:10
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool UpdateStatusAndRemark(BusinessBalanceRecord businessBalanceRecord)
+        {
+            const string updateSql =@" 
+UPDATE BusinessBalanceRecord
+SET    [Status] = @Status,
+Remark=@Remark
+WHERE  WithwardId = @WithwardId AND [Status]=2;";
+            var dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@Status", BusinessBalanceRecordStatus.Success.GetHashCode());
+            dbParameters.AddWithValue("@Remark", businessBalanceRecord.Remark);
+            dbParameters.AddWithValue("@WithwardId", businessBalanceRecord.WithwardId);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters) > 0;
+        }
+
+        /// <summary>
         /// 根据ID获取对象
         /// <param name="businessId">商户id</param>
         /// </summary>
@@ -102,9 +124,98 @@ order by OperateTime desc";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("BusinessId", businessId);
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
-            if (DataTableHelper.CheckDt(dt))
+
+            foreach (DataRow dataReader in dt.Rows)
             {
-                models = DataTableHelper.ConvertDataTableList<FinanceRecordsDM>(dt);
+                FinanceRecordsDM result = new FinanceRecordsDM();
+
+                object obj;
+                obj = dataReader["Id"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.Id = long.Parse(obj.ToString());
+                }
+                obj = dataReader["UserId"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.UserId = int.Parse(obj.ToString());
+                }
+                obj = dataReader["Amount"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.Amount = decimal.Parse(obj.ToString());
+                }
+                obj = dataReader["Status"];
+                if (obj != null && obj != DBNull.Value)
+                {                    
+                    int status = int.Parse(obj.ToString());
+                    result.Status = status;
+
+                    Enum enu = (ClienterBalanceRecordStatus)status;
+                    result.StatusDescription = EnumExtenstion.GetEnumItem(enu.GetType(), enu).Text;  
+
+                }
+
+                obj = dataReader["Balance"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.Balance = decimal.Parse(obj.ToString());
+                }
+                obj = dataReader["RecordType"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    int recordType = int.Parse(obj.ToString());
+                    result.RecordType = recordType;
+
+                    Enum status = (ClienterBalanceRecordRecordType)recordType;
+                    result.RecordTypeDescription = EnumExtenstion.GetEnumItem(status.GetType(), status).Text;
+                }
+
+                result.Operator = dataReader["Operator"].ToString();
+                obj = dataReader["OperateTime"];
+                if (obj != null && obj != DBNull.Value)
+                {                  
+                    result.OperateTime = ParseHelper.ToDatetime(obj.ToString(), DateTime.Now).ToString("yyyy-MM-dd HH:mm");
+                }
+                obj = dataReader["WithwardId"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.WithwardId = long.Parse(obj.ToString());
+                }
+                result.RelationNo = dataReader["RelationNo"].ToString();
+
+                obj = dataReader["Remark"].ToString();
+                if (obj != null && obj != DBNull.Value)
+                {           
+                    result.Remark = obj.ToString();
+                    if (obj.ToString().Length > 8)
+                    {
+                        result.RemarkDescription = obj.ToString().Substring(0, 8) + "...";
+                    }
+                    else
+                    {
+                        result.RemarkDescription = obj.ToString();
+                    }         
+                }
+
+                obj = dataReader["TimeInfo"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.TimeInfo = obj.ToString();
+                }
+
+                obj = dataReader["DateInfo"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.DateInfo = obj.ToString();
+                }
+
+                obj = dataReader["MonthInfo"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.MonthInfo = obj.ToString();
+                }
+                models.Add(result);
             }
             return models;
         }

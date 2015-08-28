@@ -270,8 +270,7 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         public ActionResult OrderDetail(string orderNo, int orderId)
         {
-            var orderModel = iOrderProvider.GetOrderByNo(orderNo, orderId);
-
+            var orderModel = iOrderProvider.GetOrderByNo(orderNo, orderId); 
             ViewBag.orderOptionLog = iOrderProvider.GetOrderOptionLog(orderId);
             ViewBag.IsShowAuditBtn = IsShowAuditBtn(orderModel);//是否显示审核按钮
             return View(orderModel);
@@ -292,7 +291,7 @@ namespace SuperMan.Controllers
             {
                 OptUserId = UserContext.Current.Id,
                 OptUserName = UserContext.Current.Name,
-                OptLog = OrderOptionLog,
+                OptLog ="客服取消"+ OrderOptionLog,
                 OrderId = orderId
             };
             var reg = iOrderProvider.CancelOrderByOrderNo(orderOptionModel);
@@ -367,15 +366,13 @@ namespace SuperMan.Controllers
             {
                 ViewBag.superManModel = superManModel;
             }
-            var criteria = new OrderSearchCriteria()
-            {
-                AuditStatus = 0,
-                UserType = UserType,
-                //GroupId = UserContext.Current.GroupId,
-                AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType)
-            };
-
-
+            var criteria = new OrderSearchCriteria();
+            TryUpdateModel(criteria);
+            criteria.AuditStatus = 0;
+            criteria.UserType = UserType;
+            //criteria.GroupId = UserContext.Current.GroupId;
+            criteria.AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType);
+              
             if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
             {
                 return View();
@@ -393,7 +390,7 @@ namespace SuperMan.Controllers
             TryUpdateModel(criteria);
             criteria.AuthorityCityNameListStr =
                 iAreaProvider.GetAuthorityCityNameListStr(UserType);
-            criteria.UserType = UserType;
+            criteria.UserType = UserType; 
             //指派超人时  以下代码 有用，现在 注释掉  wc 
             //var superManModel = iDistributionProvider.GetClienterModelByGroupID(ViewBag.txtGroupId);
             //if (superManModel != null)

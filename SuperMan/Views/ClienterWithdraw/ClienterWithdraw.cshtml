@@ -32,7 +32,7 @@
                     <td>
                         <span class="">提款单号: </span>
                         <input id="withwardNo" type="text" name="withwardNo" />
-                        <span class="">申请提款日期: </span>
+                        <span class="">@Html.DropDownList("ClientWithdrawDate", new SelectList(EnumExtenstion.GetEnumItems(typeof(ClientWithdrawType)), "Value", "Text"), "请选择", new { @class = "selectw", style = "width:157px" }) </span>
                         <input id="withdrawDateStart" readonly="readonly" type="text" name="withdrawDateStart" style="width:164px" />
                         <span class="">到: </span>
                         <input id="withdrawDateEnd" readonly="readonly" type="text" name="withdrawDateEnd" style="width:164px" />

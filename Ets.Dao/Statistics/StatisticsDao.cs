@@ -37,6 +37,7 @@ set @starttime= convert(char(10),getdate()-{0},120)
 set @endtime = convert(char(10),getdate(),120)
 print @starttime +','+ @endtime
 
+
 set @BusinessCount = (SELECT COUNT(Id) AS BusinessCount FROM dbo.business(NOLOCK) WHERE [status]=1)
 --print @starttime +','+@endtime
 set @RzqsCount = (SELECT count(1) RzqsCount from dbo.clienter (nolock) where Status =1 )--认证骑士数量
@@ -72,10 +73,15 @@ t3 as (
 	 group by convert(char(10),CreateTime ,120)--在线支付(扫码/代付)总计
 ),
 t4 as (
-	select convert(char(10),OperateTime,120) PubDate,
-	 sum(Amount) rechargeTotal from BusinessBalanceRecord(nolock)
-	 where RecordType = 9 and OperateTime between @starttime and @endtime
-	group by convert(char(10),OperateTime ,120) 
+	 select
+                convert(char(10),PayTime,120) PubDate,
+                sum(case when PayType=1 then payAmount else 0 end) ZhiFuBaoRecharge,
+                sum(case when PayType=2 then payAmount else 0 end) WeiXinRecharge,
+                sum(case when PayType=3 then payAmount else 0 end) SystemRecharge,
+                sum(case when PayType=4 then payAmount else 0 end) SystemPresented,
+                sum(payAmount) rechargeTotal
+                from BusinessRecharge(nolock) where PayTime between @starttime  and @endtime 
+                group by convert(char(10),PayTime,120)
 	 --商户充值总计
 ),
 t5 as (
@@ -102,6 +108,10 @@ select
 	min(t2.ActiveBusiness) ActiveBusiness, --活跃商家
 	isnull(min(t3.incomeTotal),0) incomeTotal,--在线支付(扫码/代付)总计
  	isnull( min(t4.rechargeTotal),0) rechargeTotal, --商户充值总计
+    min(t4.ZhiFuBaoRecharge),
+    min(t4.WeiXinRecharge),
+    min(t4.SystemRecharge),
+    min(t4.SystemPresented),
 	@businessPrice businessBalance, --商户余额总计（应付）
  	isnull( min(t5.withdrawBusinessPrice),0) withdrawBusinessPrice --商户已提款金额（实付）
  from dbo.[order] o (nolock)
@@ -112,7 +122,6 @@ select
  left join t5 on convert(char(10),o.PubDate,120)  = convert(char(10),t5.PubDate,120) 
   where o.Status <> 3 and o.PubDate between @starttime and @endtime
 group by CONVERT(CHAR(10),o.PubDate,120)
-
 ", Day);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             if (!dt.HasData())
@@ -232,6 +241,10 @@ INSERT INTO [dbo].[Statistic]
 ,[rechargeTotal]
 ,[businessBalance]
 ,[withdrawBusinessPrice]
+,SystemRecharge
+,SystemPresented
+,ZhiFuBaoRecharge
+,WeiXinRecharge
 )
 VALUES
 (@InsertTime
@@ -257,6 +270,10 @@ VALUES
 ,@rechargeTotal
 ,@businessBalance
 ,@withdrawBusinessPrice
+,@SystemRecharge
+,@SystemPresented
+,@ZhiFuBaoRecharge
+,@WeiXinRecharge
 )
 ";
             IDbParameters parm = DbHelper.CreateDbParameters();
@@ -288,6 +305,11 @@ VALUES
             parm.Add("rechargeTotal", DbType.Decimal, 18).Value = model.rechargeTotal;
             parm.Add("businessBalance", DbType.Decimal, 18).Value = model.businessBalance;
             parm.Add("withdrawBusinessPrice", DbType.Decimal, 18).Value = model.withdrawBusinessPrice;
+
+            parm.Add("SystemRecharge", DbType.Decimal, 18).Value = model.SystemRecharge;
+            parm.Add("SystemPresented", DbType.Decimal, 18).Value = model.SystemRecharge;
+            parm.Add("ZhiFuBaoRecharge", DbType.Decimal, 18).Value = model.ZhiFuBaoRecharge;
+            parm.Add("WeiXinRecharge", DbType.Decimal, 18).Value = model.WeiXinRecharge;
 
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
 
@@ -450,11 +472,19 @@ declare
                group by convert(char(10), PayTime, 120)
 			),
 		t9
-		 as (
-			select convert(char(10),OperateTime,120) PubDate, 
-			sum(Amount) rechargeTotal
-			from BusinessBalanceRecord(nolock) where RecordType = 9 and  OperateTime  between @startime  and @endtime
-			group by convert(char(10),OperateTime,120)
+		 as ( 
+                select
+                convert(char(10),PayTime,120) PubDate,
+                sum(case when PayType=1 then payAmount else 0 end) ZhiFuBaoRecharge,
+                sum(case when PayType=2 then payAmount else 0 end) WeiXinRecharge,
+                sum(case when PayType=3 then payAmount else 0 end) SystemRecharge,
+                sum(case when PayType=4 then payAmount else 0 end) SystemPresented,
+                (sum(case when PayType=1 then payAmount else 0 end) +
+                sum(case when PayType=2 then payAmount else 0 end) +
+                sum(case when PayType=3 then payAmount else 0 end) +
+                sum(case when PayType=4 then payAmount else 0 end) ) rechargeTotal
+                from BusinessRecharge(nolock) where PayTime between @startime  and @endtime  
+                group by convert(char(10),PayTime,120)
 			 --商户充值总计
 		 )
     select  t.PubDate, isnull(t.RzqsCount, 0) RzqsCount,
@@ -475,6 +505,10 @@ declare
             isnull(t7.userTotal,0) userTotal,
             isnull(t8.clienterTotal,0) clienterTotal,
             isnull(t9.rechargeTotal,0) rechargeTotal,
+            t9.ZhiFuBaoRecharge,
+            t9.WeiXinRecharge,
+            t9.SystemRecharge,
+            t9.SystemPresented,
             (isnull( userTotal,0)+isnull(clienterTotal,0))+isnull(t9.rechargeTotal,0) incomeTotal
     from    t
             left join t2 on t.PubDate = t2.PubDate
@@ -642,26 +676,37 @@ order by o.Date desc, o.ActiveClienterCount desc";
         /// <returns></returns>
         public PageInfo<BusinessBalanceInfo> QueryBusinessBalance(BussinessBalanceQuery queryInfo)
         {
-            string columnList = @"
-                                    bbr.Id
-                                    ,bbr.RelationNo
+//            string columnList = @"
+//                                    bbr.Id
+//                                    ,bbr.RelationNo
+//                                    ,bbr.BusinessId
+//                                    ,b.Name
+//                                    ,b.PhoneNo
+//                                    ,b.Address
+//                                    ,bbr.OperateTime
+//                                    ,bbr.Amount
+//                                    ,bbr.Balance";
+//            string tables = " dbo.BusinessBalanceRecord bbr(nolock) join dbo.business b(nolock) on bbr.BusinessId = b.Id";
+
+            string columnList = @"  bbr.Id
+                                    ,bbr.OrderNo RelationNo
                                     ,bbr.BusinessId
                                     ,b.Name
                                     ,b.PhoneNo
-                                    ,b.Address
-                                    ,bbr.OperateTime
-                                    ,bbr.Amount
-                                    ,bbr.Balance";
-            string tables = " dbo.BusinessBalanceRecord bbr(nolock) join dbo.business b(nolock) on bbr.BusinessId = b.Id";
-            var sbSqlWhere = GetQueryWhere(queryInfo);
+                                    ,b.[Address]
+                                    ,bbr.PayTime OperateTime
+                                    ,bbr.payAmount Amount ";
+            string tables = " dbo.BusinessRecharge bbr(nolock) join dbo.business b(nolock) on bbr.BusinessId = b.Id ";
+
+            var sbSqlWhere = GetQueryRechargeWhere(queryInfo);
 
             //0为充值时间倒序，1为充值金额降序，2为充值金额升序
-            string orderByColumn = " bbr.operatetime desc  ";
+            string orderByColumn = " bbr.PayTime desc  ";
             switch (queryInfo.OrderType)
             {
-                case 1: orderByColumn = " bbr.Amount desc  ";
+                case 1: orderByColumn = " bbr.payAmount desc  ";
                     break;
-                case 2: orderByColumn = " bbr.Amount asc  ";
+                case 2: orderByColumn = " bbr.payAmount asc  ";
                     break;
                 default:
                     break;
@@ -669,6 +714,72 @@ order by o.Date desc, o.ActiveClienterCount desc";
             return new PageHelper().GetPages<BusinessBalanceInfo>(SuperMan_Read, queryInfo.PageIndex, sbSqlWhere,
                 orderByColumn, columnList, tables, ETS.Const.SystemConst.PageSize, true);
         }
+
+        /// <summary>
+        /// 根据查询条件组装过滤的sql语句
+        /// </summary>
+        /// <UpdateBy>wc</UpdateBy> 
+        /// <param name="queryInfo"></param>
+        /// <returns></returns>
+        private static string GetQueryRechargeWhere(BussinessBalanceQuery queryInfo)
+        {
+            var sbSqlWhere = new StringBuilder(" 1=1 ");
+            if (!string.IsNullOrWhiteSpace(queryInfo.BusinessId))
+            {
+                sbSqlWhere.AppendFormat(" AND bbr.BusinessId='{0}' ", queryInfo.BusinessId);
+            }
+            if (!string.IsNullOrWhiteSpace(queryInfo.StartDate))
+            {
+                sbSqlWhere.AppendFormat(" AND bbr.PayTime>='{0}' ", queryInfo.StartDate);
+            }
+            if (!string.IsNullOrWhiteSpace(queryInfo.EndDate))
+            {
+                DateTime finalDt = ParseHelper.ToDatetime(queryInfo.EndDate);
+                if (finalDt != DateTime.MaxValue)
+                {
+                    finalDt = finalDt.AddDays(1);
+                }
+                sbSqlWhere.AppendFormat(" AND bbr.PayTime<='{0}' ", finalDt.ToString("yyyy-MM-dd"));
+            }
+            if (!string.IsNullOrWhiteSpace(queryInfo.Name))
+            {
+                sbSqlWhere.AppendFormat(" AND b.Name='{0}' ", queryInfo.Name);
+            }
+            if (!string.IsNullOrWhiteSpace(queryInfo.PhoneNo))
+            {
+                sbSqlWhere.AppendFormat(" AND b.PhoneNo='{0}' ", queryInfo.PhoneNo);
+            }
+            if (!string.IsNullOrWhiteSpace(queryInfo.CityId))
+            {
+                sbSqlWhere.AppendFormat(" AND b.CityId={0} ", queryInfo.CityId);
+            }
+            if (queryInfo.RechargePrice > 0)
+            {
+                sbSqlWhere.AppendFormat(" AND bbr.payAmount>={0} ", queryInfo.RechargePrice);
+            }
+            if (queryInfo.RechargeType > 0)
+            {
+                if (queryInfo.RechargeType == 3)//充值赠送
+                {
+                    sbSqlWhere.Append(" and bbr.PayType=4 ");
+                } 
+                else if (queryInfo.RechargeType == 1)//系统充值
+                {
+                    sbSqlWhere.AppendFormat("and  bbr.PayType=3 ");
+                }
+
+                else if (queryInfo.RechargeType == 2)//客户端充值
+                {
+                    sbSqlWhere.AppendFormat(" and bbr.PayType in(1,2)");
+                }
+            } 
+            //else
+            //{
+            //    sbSqlWhere.Append("  and bbr.PayType IN(1,2,3,4) ");
+            //}
+            return sbSqlWhere.ToString();
+        }
+
 
         /// <summary>
         /// 根据查询条件组装过滤的sql语句

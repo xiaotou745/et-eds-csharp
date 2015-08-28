@@ -114,6 +114,10 @@ namespace Ets.Service.Provider.Business
                 {
                     model.OrderFromName = "美团";
                 }
+                else if (from.OrderFrom == 99)
+                {
+                    model.OrderFromName = "商户web版";
+                }
                 model.OriginalOrderNo = from.OriginalOrderNo;
                 if (from.BusinessId > 0 && from.ReceviceLongitude != null && from.ReceviceLatitude != null)
                 {

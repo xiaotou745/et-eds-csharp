@@ -98,9 +98,8 @@ namespace Ets.Service.IProvider.Finance
         /// add by caoheyang  20150716
         /// </summary>
         /// <param name="model"></param>
-        ///  <param name="callback"></param>
         /// <returns></returns>
-        bool ClienterWithdrawPayFailed(ClienterWithdrawLogModel model, CashTransferCallback callback);
+        bool ClienterWithdrawPayFailedForCallBack(ClienterWithdrawLogModel model);
         /// <summary>
         /// 获取骑士提款收支记录列表
         /// danny-20150513

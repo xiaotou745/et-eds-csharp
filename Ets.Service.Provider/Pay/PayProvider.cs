@@ -1,4 +1,5 @@
 ﻿using ETS.Const;
+using Ets.Dao.Common;
 using Ets.Dao.Common.YeePay;
 using Ets.Model.Common.YeePay;
 using Ets.Model.DomainModel.Finance;
@@ -33,7 +34,7 @@ using Ets.Model.DataModel.Finance;
 using Ets.Model.ParameterModel.Finance;
 using Ets.Dao.Business;
 using Config = ETS.Config;
-using ETS.Library.Pay.WxPay;
+using ETS.Library.Pay.CWxPay;
 using System.Web;
 using Ets.Model.ParameterModel.AliPay;
 
@@ -54,7 +55,10 @@ namespace Ets.Service.Provider.Pay
         private ClienterFinanceProvider clienterFinanceProvider = new ClienterFinanceProvider();
         private readonly BusinessFinanceAccountDao businessFinanceAccountDao = new BusinessFinanceAccountDao();
         private readonly ClienterFinanceAccountDao clienterFinanceAccountDao = new ClienterFinanceAccountDao();
+        private ClienterWithdrawFormDao clienterWithDao = new ClienterWithdrawFormDao();
+        private BusinessWithdrawFormDao businessWithDao = new BusinessWithdrawFormDao();
         private readonly OrderDao orderDao = new OrderDao();
+        private  readonly HttpDao httpDao=new HttpDao();
         #region 生成支付宝、微信二维码订单
 
         /// <summary>
@@ -112,7 +116,7 @@ namespace Ets.Service.Provider.Pay
             int result = orderChildDao.UpdateChildStatusFromCashOrder(model, orderInfo.ClienterName);
             if (result > 0)
             {
-               return ResultModel<PayResultModel>.Conclude(AliPayStatus.success);
+                return ResultModel<PayResultModel>.Conclude(AliPayStatus.success);
             }
             return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
         }
@@ -360,7 +364,7 @@ namespace Ets.Service.Provider.Pay
                         orderId = orderId,
                         payBy = notify.buyer_email,
                         payStyle = payStyle,
-                        payType = PayTypeEnum.WeiXin.GetHashCode(),
+                        payType = PayTypeEnum.ZhiFuBao.GetHashCode(),
                         originalOrderNo = notify.trade_no,
                     };
 
@@ -410,11 +414,11 @@ namespace Ets.Service.Provider.Pay
             BusinessRechargeResultModel resultModel = new BusinessRechargeResultModel();
             if (model.PayType == PayTypeEnum.WeiXin.GetHashCode())
             {
-                NativePay nativePay = new NativePay();
+                ETS.Library.Pay.BWxPay.NativePay nativePay = new ETS.Library.Pay.BWxPay.NativePay();
                 string prepayId = string.Empty;
                 string code_url = nativePay.GetPayUrl(orderNo, model.payAmount * 100, "E代送商家充值", Config.WXBusinessRecharge, out prepayId);
                 resultModel.prepayId = prepayId;
-                resultModel.notifyUrl = ETS.Config.WXBusinessRecharge;
+                resultModel.notifyUrl = code_url;//ETS.Config.WXBusinessRecharge;
             }
             else
             {
@@ -726,8 +730,11 @@ namespace Ets.Service.Provider.Pay
 
         #endregion
 
-
         #region 易宝相关
+
+        #region 易宝回调老接口
+
+        /*
         /// <summary>
         /// 易宝转账回调接口
         /// </summary>
@@ -735,111 +742,322 @@ namespace Ets.Service.Provider.Pay
 
         public bool YeePayCashTransferCallback(string data)
         {
-
-            bool result = false;
-            string username = "易宝提现回调";
-            CashTransferCallback model = JsonHelper.JsonConvertToObject<CashTransferCallback>(ResponseYeePay.OutRes(data, true));
-            YeePayRecordDao yeePayRecordDao = new YeePayRecordDao();
-            YeePayRecord yeePayRecordDbModel = yeePayRecordDao.GetReocordByRequestId(model.cashrequestid);
-            if (yeePayRecordDbModel == null)
+            try
             {
-                EmailHelper.SendEmailTo(string.Format("易宝请求号为{0}的提现单回调失败，数据库提示无该提现记录，回调的完整参数为{1}",
-                    model.cashrequestid, ResponseYeePay.OutRes(data, true)), ConfigSettings.Instance.EmailToAdress);
+                bool result = false;
+                string username = "易宝提现回调";
+                CashTransferCallback model = JsonHelper.JsonConvertToObject<CashTransferCallback>(ResponseYeePay.OutRes(data, true));
+                YeePayRecordDao yeePayRecordDao = new YeePayRecordDao();
+                YeePayRecord yeePayRecordDbModel = yeePayRecordDao.GetReocordByRequestId(model.cashrequestid);
+                if (yeePayRecordDbModel == null)
+                {
+                    EmailHelper.SendEmailTo(string.Format("易宝请求号为{0}的提现单回调失败，数据库提示无该提现记录，回调的完整参数为{1}",
+                        model.cashrequestid, ResponseYeePay.OutRes(data, true)), ConfigSettings.Instance.EmailToAdress);
+                    return false;
+                }
+                #region 判断提现单是否已经是完成状态
+                if (yeePayRecordDbModel.UserType == UserTypeYee.Clienter.GetHashCode())//判断骑士提现单状态
+                {
+                    ClienterWithdrawFormDao withDao = new ClienterWithdrawFormDao();
+                    ClienterWithdrawForm clienerModel = withDao.GetById(yeePayRecordDbModel.WithdrawId);
+                    if (clienerModel != null && clienerModel.Status == 3)
+                    {
+                        EmailHelper.SendEmailTo(string.Format("该骑士提现单已经是完成状态" + data,
+                           model.cashrequestid, ResponseYeePay.OutRes(data, true)), ConfigSettings.Instance.EmailToAdress);
+                        return false;
+                    }
+                }
+                else if (yeePayRecordDbModel.UserType == UserTypeYee.Business.GetHashCode())//判断商家提现单状态
+                {
+                    BusinessWithdrawFormDao withDao = new BusinessWithdrawFormDao();
+                    BusinessWithdrawForm businessModel = withDao.GetById(yeePayRecordDbModel.WithdrawId);
+                    if (businessModel != null && businessModel.Status == 3)
+                    {
+                        EmailHelper.SendEmailTo(string.Format("该商家提现单已经是完成状态" + data,
+                           model.cashrequestid, ResponseYeePay.OutRes(data, true)), ConfigSettings.Instance.EmailToAdress);
+                        return false;
+                    }
+                }
+                #endregion
+
+                long withwardId = yeePayRecordDbModel.WithdrawId; //提现单id
+                yeePayRecordDao.Insert(new YeePayRecord()
+                {
+                    WithdrawId = withwardId,
+                    RequestId = model.cashrequestid,
+                    CustomerNumber = model.customernumber,
+                    Ledgerno = model.ledgerno,
+                    Amount = model.amount,
+                    Status = model.status,
+                    Lastno = model.lastno,
+                    Desc = model.desc,
+                    TransferType = TransferTypeYee.CallBack.GetHashCode(),
+                    UserType = yeePayRecordDbModel.UserType
+                });
+
+                if (model.status == "SUCCESS") //提现成功 走 成功的逻辑
+                {
+                    if (yeePayRecordDbModel.UserType == UserTypeYee.Business.GetHashCode()) //B端逻辑
+                    {
+                        result = iBusinessFinanceProvider.BusinessWithdrawPayOk(new BusinessWithdrawLog()
+                        {
+                            Operator = username,
+                            Remark = "易宝提现打款成功" + model.desc,
+                            OldStatus = BusinessWithdrawFormStatus.Paying.GetHashCode(),
+                            Status = BusinessWithdrawFormStatus.Success.GetHashCode(),
+                            WithwardId = withwardId,
+                            IsCallBack = 1,
+                            CallBackRequestId = model.cashrequestid
+                        });
+                    }
+                    else if (yeePayRecordDbModel.UserType == UserTypeYee.Clienter.GetHashCode()) //C端逻辑
+                    {
+                        result = iClienterFinanceProvider.ClienterWithdrawPayOk(new ClienterWithdrawLog()
+                        {
+                            Operator = username,
+                            Remark = "易宝提现打款成功" + model.desc,
+                            Status = ClienterWithdrawFormStatus.Success.GetHashCode(),
+                            OldStatus = ClienterWithdrawFormStatus.Paying.GetHashCode(),
+                            WithwardId = withwardId,
+                            IsCallBack = 1,
+                            CallBackRequestId = model.cashrequestid
+                        });
+                    }
+                }
+                else if (model.status == "FAIL") //提现失败 走 失败的逻辑
+                {
+                    if (yeePayRecordDbModel.UserType == UserTypeYee.Business.GetHashCode()) //B端逻辑
+                    {
+                        result = iBusinessFinanceProvider.BusinessWithdrawPayFailed(new BusinessWithdrawLogModel()
+                        {
+                            Operator = username,
+                            Remark = "易宝提现打款失败，" + model.desc,
+                            Status = BusinessWithdrawFormStatus.Error.GetHashCode(),
+                            OldStatus = BusinessWithdrawFormStatus.Paying.GetHashCode(),
+                            WithwardId = withwardId,
+                            PayFailedReason = "",
+                            IsCallBack = 1,
+                            CallBackRequestId = model.cashrequestid
+                        }, model); //商户提现失败
+                    }
+                    else if (yeePayRecordDbModel.UserType == UserTypeYee.Clienter.GetHashCode()) //C端逻辑
+                    {
+                        result = iClienterFinanceProvider.ClienterWithdrawPayFailed(new ClienterWithdrawLogModel()
+                        {
+                            Operator = username,
+                            Remark = "易宝提现打款失败，" + model.desc,
+                            Status = ClienterWithdrawFormStatus.Error.GetHashCode(),
+                            OldStatus = ClienterWithdrawFormStatus.Paying.GetHashCode(),
+                            WithwardId = withwardId,
+                            PayFailedReason = "",
+                            IsCallBack = 1,
+                            CallBackRequestId = model.cashrequestid
+                        }, model);
+                    }
+                }
+                if (!result)
+                {
+                    EmailHelper.SendEmailTo(string.Format("易宝请求号为{0}的提现单回调失败，提现单号为{1}，提现单数据库出现数据异常",
+                       model.cashrequestid, withwardId.ToString()), ConfigSettings.Instance.EmailToAdress);
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                EmailHelper.SendEmailTo("易宝回调异常,data为：" + data + ",异常信息为：" + ex.Message,
+                 ConfigSettings.Instance.EmailToAdress);
+                throw ex;
+                //return false;
+            }
+
+        }
+         * 
+        */
+        #endregion
+
+        /// <summary>
+        /// 易宝回调骑士服务
+        /// 窦海超 
+        /// 2015年8月26日 20:02:16
+        /// </summary>
+        /// <returns></returns>
+        public bool YeePayCashTransferClienterCallBack()
+        {
+            var list = clienterWithDao.GetClienterWithdrawing();
+            if (list == null || list.Count <= 0)
+            {
                 return false;
             }
-            long withwardId = yeePayRecordDbModel.WithdrawId; //提现单id
-            yeePayRecordDao.Insert(new YeePayRecord()
+            foreach (var item in list)
             {
-                WithdrawId = withwardId,
-                RequestId = model.cashrequestid,
-                CustomerNumber = model.customernumber,
-                Ledgerno = model.ledgerno,
-                Amount = model.amount,
-                Status = model.status,
-                Lastno = model.lastno,
-                Desc = model.desc,
-                TransferType = TransferTypeYee.CallBack.GetHashCode(),
-                UserType = yeePayRecordDbModel.UserType
-            });
-
-            if (model.status == "SUCCESS") //提现成功 走 成功的逻辑
-            {
-                if (yeePayRecordDbModel.UserType == UserTypeYee.Business.GetHashCode()) //B端逻辑
+                try
                 {
-                    result = iBusinessFinanceProvider.BusinessWithdrawPayOk(new BusinessWithdrawLog()
+                    var queryYeepayModel = QueryCashStatusYee(new YeeQueryCashStatusParameter()
+                     {
+                         CashrequestId = item.RequestId
+                     });//查询易宝提现单状态
+                    if (queryYeepayModel == null)
                     {
-                        Operator = username,
-                        Remark = "易宝提现打款成功" + model.desc,
-                        OldStatus = BusinessWithdrawFormStatus.Paying.GetHashCode(),
-                        Status = BusinessWithdrawFormStatus.Success.GetHashCode(),
-                        WithwardId = withwardId,
-                        IsCallBack = 1,
-                        CallBackRequestId = model.cashrequestid
+                        string str = string.Concat("易宝回调服务查询状态异常,requestid:", item.RequestId);
+                        EmailHelper.SendEmailTo(str, ConfigSettings.Instance.EmailToAdress);
+                        continue;
+                    }
+                    yeePayRecordDao.Insert(new YeePayRecord()
+                    {
+                        WithdrawId = item.Id,
+                        RequestId = item.RequestId,
+                        CustomerNumber = item.CustomerNumber,
+                        Ledgerno = item.Ledgerno,
+                        Amount = queryYeepayModel.amount,
+                        Status = queryYeepayModel.status,
+                        Lastno = queryYeepayModel.lastno,
+                        Desc = queryYeepayModel.desc,
+                        TransferType = TransferTypeYee.CallBack.GetHashCode(),
+                        UserType = UserTypeYee.Clienter.GetHashCode()
                     });
-                }
-                else if (yeePayRecordDbModel.UserType == UserTypeYee.Clienter.GetHashCode()) //C端逻辑
-                {
-                    result = iClienterFinanceProvider.ClienterWithdrawPayOk(new ClienterWithdrawLog()
+                    if (queryYeepayModel.status.ToUpper() == "SUCCESS")//成功
                     {
-                        Operator = username,
-                        Remark = "易宝提现打款成功" + model.desc,
-                        Status = ClienterWithdrawFormStatus.Success.GetHashCode(),
-                        OldStatus = ClienterWithdrawFormStatus.Paying.GetHashCode(),
-                        WithwardId = withwardId,
-                        IsCallBack = 1,
-                        CallBackRequestId = model.cashrequestid
-                    });
+                         iClienterFinanceProvider.ClienterWithdrawPayOk( new ClienterWithdrawLog()
+                        {
+                            Operator = "system",
+                            Remark = "易宝提现打款成功，银行卡后四位" + queryYeepayModel.lastno,
+                            Status = ClienterWithdrawFormStatus.Success.GetHashCode(),
+                            OldStatus = ClienterWithdrawFormStatus.Paying.GetHashCode(),
+                            WithwardId = item.Id,
+                            IsCallBack = 1,
+                            CallBackRequestId = item.RequestId
+                        });
+                    }
+                    else if (queryYeepayModel.status.ToUpper() == "FAIL")//失败
+                    {
+                         iClienterFinanceProvider.ClienterWithdrawPayFailedForCallBack(new ClienterWithdrawLogModel()
+                           {
+                               Operator = "system",
+                               Remark = "易宝提现打款失败，" + queryYeepayModel.desc,
+                               Status = ClienterWithdrawFormStatus.Error.GetHashCode(),
+                               OldStatus = ClienterWithdrawFormStatus.Paying.GetHashCode(),
+                               WithwardId = item.Id,
+                               PayFailedReason = queryYeepayModel.desc,
+                               IsCallBack = 1,
+                               CallBackRequestId = item.RequestId
+                           });
+                    }
+                    else if (queryYeepayModel.status.ToUpper() == "UNKNOWN")//易宝都不知道原因 
+                    {
+                        string str = string.Concat("易宝回调服务出现未知状态,requestid:", item.RequestId);
+                        EmailHelper.SendEmailTo(str, ConfigSettings.Instance.EmailToAdress);
+                    }
+                    //PROCESSING 处理中
+                }
+                catch (Exception ex)
+                {
+                    string str = string.Concat("易宝回调异常：", ex.Message, ",requestid:");
+                    EmailHelper.SendEmailTo(str, ConfigSettings.Instance.EmailToAdress);
+                    throw ex;
                 }
             }
-            else if (model.status == "FAIL") //提现失败 走 失败的逻辑
-            {
-                if (yeePayRecordDbModel.UserType == UserTypeYee.Business.GetHashCode()) //B端逻辑
-                {
-                    result = iBusinessFinanceProvider.BusinessWithdrawPayFailed(new BusinessWithdrawLogModel()
-                    {
-                        Operator = username,
-                        Remark = "易宝提现打款失败，" + model.desc,
-                        Status = BusinessWithdrawFormStatus.Error.GetHashCode(),
-                        OldStatus = BusinessWithdrawFormStatus.Paying.GetHashCode(),
-                        WithwardId = withwardId,
-                        PayFailedReason = "",
-                        IsCallBack = 1,
-                        CallBackRequestId = model.cashrequestid
-                    }, model); //商户提现失败
-                }
-                else if (yeePayRecordDbModel.UserType == UserTypeYee.Clienter.GetHashCode()) //C端逻辑
-                {
-                    result = iClienterFinanceProvider.ClienterWithdrawPayFailed(new ClienterWithdrawLogModel()
-                    {
-                        Operator = username,
-                        Remark = "易宝提现打款失败，" + model.desc,
-                        Status = ClienterWithdrawFormStatus.Error.GetHashCode(),
-                        OldStatus = ClienterWithdrawFormStatus.Paying.GetHashCode(),
-                        WithwardId = withwardId,
-                        PayFailedReason = "",
-                        IsCallBack = 1,
-                        CallBackRequestId = model.cashrequestid
-                    }, model);
-                }
-            }
-            if (!result)
-            {
-                EmailHelper.SendEmailTo(string.Format("易宝请求号为{0}的提现单回调失败，提现单号为{1}，提现单数据库出现数据异常",
-                   model.cashrequestid, withwardId.ToString()), ConfigSettings.Instance.EmailToAdress);
-            }
-            return result;
+            return true;
+        }
 
+
+
+        /// <summary>
+        /// 易宝回调商家服务
+        /// 窦海超 
+        /// 2015年8月26日 20:02:16
+        /// </summary>
+        /// <returns></returns>
+        public bool YeePayCashTransferBusinessCallBack()
+        {
+            var list = businessWithDao.GetBusinessWithdrawing();
+            if (list == null || list.Count <= 0)
+            {
+                return false;
+            }
+            foreach (var item in list)
+            {
+                try
+                {
+                    var queryYeepayModel = QueryCashStatusYee(new YeeQueryCashStatusParameter()
+                    {
+                        CashrequestId = item.RequestId
+                    });//查询易宝提现单状态
+                    if (queryYeepayModel == null)
+                    {
+                        string str = string.Concat("易宝回调服务查询状态异常,requestid:", item.RequestId);
+                        EmailHelper.SendEmailTo(str, ConfigSettings.Instance.EmailToAdress);
+                        continue;
+                    }
+                    yeePayRecordDao.Insert(new YeePayRecord()
+                    {
+                        WithdrawId = item.Id,
+                        RequestId = item.RequestId,
+                        CustomerNumber = item.CustomerNumber,
+                        Ledgerno = item.Ledgerno,
+                        Amount = queryYeepayModel.amount,
+                        Status = queryYeepayModel.status,
+                        Lastno = queryYeepayModel.lastno,
+                        Desc = queryYeepayModel.desc,
+                        TransferType = TransferTypeYee.CallBack.GetHashCode(),
+                        UserType = UserTypeYee.Clienter.GetHashCode()
+                    });
+                    if (queryYeepayModel.status.ToUpper() == "SUCCESS")//成功
+                    {
+                         iBusinessFinanceProvider.BusinessWithdrawPayOk(new BusinessWithdrawLog()
+                        {
+                            Operator = "system",
+                            Remark = "易宝提现打款成功，银行卡后四位" + queryYeepayModel.lastno,
+                            OldStatus = BusinessWithdrawFormStatus.Paying.GetHashCode(),
+                            Status = BusinessWithdrawFormStatus.Success.GetHashCode(),
+                            WithwardId = item.Id,
+                            IsCallBack = 1,
+                            CallBackRequestId = item.RequestId
+                        });
+                    }
+                    else if (queryYeepayModel.status.ToUpper() == "FAIL")//失败
+                    {
+                         iBusinessFinanceProvider.BusinessWithdrawPayFailedForCallBack(new BusinessWithdrawLogModel()
+                        {
+                            Operator = "system",
+                            Remark = "易宝提现打款失败，" + queryYeepayModel.desc,
+                            Status = BusinessWithdrawFormStatus.Error.GetHashCode(),
+                            OldStatus = BusinessWithdrawFormStatus.Paying.GetHashCode(),
+                            WithwardId = item.Id,
+                            PayFailedReason = queryYeepayModel.desc,
+                            IsCallBack = 1,
+                            CallBackRequestId = item.RequestId
+                        }); //商户提现失败
+                    }
+                    else if (queryYeepayModel.status.ToUpper() == "UNKNOWN")//易宝都不知道原因 
+                    {
+                        string str = string.Concat("易宝回调服务出现未知状态,requestid:", item.RequestId);
+                        EmailHelper.SendEmailTo(str, ConfigSettings.Instance.EmailToAdress);
+                    }
+                    //PROCESSING 处理中
+                }
+                catch (Exception ex)
+                {
+                    string str = string.Concat("易宝回调异常：", ex.Message, ",requestid:");
+                    EmailHelper.SendEmailTo(str, ConfigSettings.Instance.EmailToAdress);
+                    throw ex;
+                }
+            }
+            return true;
         }
 
         /// <summary> 
         /// 注册易宝子账户 add by caoheyang 20150722
+        /// 茹化肖 修改
+        /// 2015年8月26日10:24:35
         /// </summary>
         /// <param name="para"></param>
         public RegisterReturnModel RegisterYee(YeeRegisterParameter para)
         {
             var regisiter = new Register();
+            //HttpModel httpModel = new HttpModel();
             var retunModel = regisiter.RegSubaccount(para);
-            new YeePayUserDao().Insert(TranslateRegisterYeeModel(para));
+            //httpDao.LogThirdPartyInfo(httpModel);
+            //new YeePayUserDao().Insert(TranslateRegisterYeeModel(para));
             return retunModel;
         }
 
@@ -886,7 +1104,9 @@ namespace Ets.Service.Provider.Pay
         public TransferReturnModel CashTransferYee(YeeCashTransferParameter model)
         {
             var transfer = new Transfer();
+           // HttpModel httpModel = new HttpModel();
             var retunModel = transfer.CashTransfer(ref model);
+           // httpDao.LogThirdPartyInfo(httpModel);
             new YeePayRecordDao().Insert(CashTransferYeeModel(model, retunModel));
             return retunModel;
         }
@@ -921,12 +1141,17 @@ namespace Ets.Service.Provider.Pay
 
         /// <summary> 
         /// 易宝转账 add by caoheyang 20150722
+        /// 茹化肖 修改
+        /// 2015年8月26日10:37:47
         /// </summary> 
         /// <param name="para"></param>
         public TransferReturnModel TransferAccountsYee(YeeTransferParameter para)
         {
             var transfer = new Transfer();
+            //HttpModel httpModel = new HttpModel();
             var retunModel = transfer.TransferAccounts(ref para);
+            //var retunModel = transfer.TransferAccounts(ref para, out httpModel);
+            //httpDao.LogThirdPartyInfo(httpModel);
             new YeePayRecordDao().Insert(TransferYeeModel(para, retunModel));
             return retunModel;
         }
@@ -940,12 +1165,17 @@ namespace Ets.Service.Provider.Pay
         {
             model.CustomerNumber = KeyConfig.YeepayAccountId;//商户编号 
             model.HmacKey = KeyConfig.YeepayHmac;//密钥 
-            return queryBalance.GetBalance(model);
+            //HttpModel httpModel=new HttpModel();
+            var result = queryBalance.GetBalance(model);
+           // var result= queryBalance.GetBalance(model, out httpModel);
+           // httpDao.LogThirdPartyInfo(httpModel);
+            return result;
         }
 
         /// <summary>
-        /// 余额查询
-        /// danny-20150820
+        /// 获取提现单状态(易宝)
+        /// 茹化肖
+        /// 2015年8月26日10:13:40
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
@@ -953,7 +1183,11 @@ namespace Ets.Service.Provider.Pay
         {
             model.CustomerNumber = KeyConfig.YeepayAccountId;//商户编号 
             model.HmacKey = KeyConfig.YeepayHmac;//密钥 
-            return queryCashStatus.GetCashStatus(model);
+            var result= queryCashStatus.GetCashStatus(model);
+            //HttpModel httpModel = new HttpModel();
+            //var result= queryCashStatus.GetCashStatus(model, out httpModel);
+            //httpDao.LogThirdPartyInfo(httpModel);
+            return result;
         }
 
         /// <summary>
@@ -1279,7 +1513,7 @@ namespace Ets.Service.Provider.Pay
                                 Ledgerno = item.YeepayKey,
                                 SourceLedgerno = "",
                                 Amount = amount.ToString(),
-                                IsTryAgain = string.IsNullOrEmpty(item.PayFailedReason)?0:1
+                                IsTryAgain = string.IsNullOrEmpty(item.PayFailedReason) ? 0 : 1
                             });
                             if (regTransfer.code != "1")
                             {
@@ -1319,7 +1553,7 @@ namespace Ets.Service.Provider.Pay
                                 Ledgerno = item.YeepayKey,
                                 App = APP.B,
                                 Amount = amount.ToString(),
-                                IsTryAgain = string.IsNullOrEmpty(item.PayFailedReason)?0:1
+                                IsTryAgain = string.IsNullOrEmpty(item.PayFailedReason) ? 0 : 1
                             });
                             if (regCash.code != "1")
                             {

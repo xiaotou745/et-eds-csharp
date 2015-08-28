@@ -14,6 +14,7 @@ namespace SuperMan
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
             filters.Add(new WebHandleErrorAttribute(), 1);
+            //filters.Add(new HttpLogAttribute());//注册全局的请求记录 暂时注释掉茹化肖
             //filters.Add(new HandleErrorAttribute(), 2);
         }
     }

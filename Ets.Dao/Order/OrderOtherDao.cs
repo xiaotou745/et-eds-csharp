@@ -30,17 +30,20 @@ namespace Ets.Dao.Order
         /// 胡灵波
         /// 2015年8月18日 17:47:35
         /// </summary>
-        public void UpdateGrab(string orderNo, float grabLongitude, float grabLatitude)
+        public void UpdateGrab(OrderCompleteModel parModel)
         {
             const string updateSql = @"
 update OrderOther 
-set GrabTime=GETDATE(), GrabLongitude=@GrabLongitude,GrabLatitude=@GrabLatitude where orderid=(
+set GrabTime=GETDATE(), GrabLongitude=@GrabLongitude,
+GrabLatitude=@GrabLatitude,IsGrabTimely=@IsGrabTimely
+where orderid=(
 select id from dbo.[order](nolock) where OrderNo=@OrderNo
 )";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("@GrabLongitude", grabLongitude);
-            dbParameters.AddWithValue("@grabLatitude", grabLatitude);
-            dbParameters.AddWithValue("@orderNo", orderNo);
+            dbParameters.AddWithValue("@GrabLongitude", parModel.Longitude);
+            dbParameters.AddWithValue("@grabLatitude", parModel.Latitude);
+            dbParameters.AddWithValue("@IsGrabTimely", parModel.IsTimely);
+            dbParameters.AddWithValue("@orderNo", parModel.orderNo);
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
 
@@ -56,12 +59,15 @@ select id from dbo.[order](nolock) where OrderNo=@OrderNo
         {
             const string updateSql = @"
 update OrderOther 
-set CompleteLongitude=@CompleteLongitude,CompleteLatitude=@CompleteLatitude where orderid=(
+set CompleteLongitude=@CompleteLongitude,CompleteLatitude=@CompleteLatitude,
+IsCompleteTimely=@IsCompleteTimely
+where orderid=(
 select id from dbo.[order] where OrderNo=@OrderNo
 )";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@CompleteLongitude", parModel.Longitude);
             dbParameters.AddWithValue("@CompleteLatitude", parModel.Latitude);
+            dbParameters.AddWithValue("@IsCompleteTimely", parModel.IsTimely);
             dbParameters.AddWithValue("@orderNo", parModel.orderNo);
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
@@ -103,29 +109,17 @@ update OrderOther set IsJoinWithdraw=1 where orderId=@orderId";
         /// </summary>
         /// <param name="orderId"></param>
         /// <param name="DeductCommissionReason">扣除订单补贴原因(如果需要扣除补贴需要此信息)</param>
-        public void UpdateOrderIsReal(int orderId, string deductCommissionReason,int deductCommissionType)
+        public void UpdateOrderIsReal(OrderOtherPM  orderOtherPM)
         {
-//            const string UPDATE_SQL = @"
-//                                        update OrderOther 
-//                                        set IsNotRealOrder=1,
-//                                        DeductCommissionReason=@DeductCommissionReason,
-//                                        DeductCommissionType=1
-//                                        where orderid=@orderId
-//                                        ";
-//            IDbParameters dbParameters = DbHelper.CreateDbParameters();
-//            dbParameters.AddWithValue("@orderId", orderId);
-//            dbParameters.AddWithValue("@DeductCommissionReason", deductCommissionReason);
-//            DbHelper.ExecuteNonQuery(SuperMan_Write, UPDATE_SQL, dbParameters);
-
             const string updateSql = @"
 update OrderOther 
 set IsNotRealOrder=1, DeductCommissionReason=@DeductCommissionReason,
 DeductCommissionType=@DeductCommissionType
 where orderid=@orderId";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("@orderId", orderId);
-            dbParameters.AddWithValue("@DeductCommissionReason", deductCommissionReason);
-            dbParameters.AddWithValue("@DeductCommissionType", deductCommissionType);
+            dbParameters.AddWithValue("@orderId", orderOtherPM.OrderId);
+            dbParameters.AddWithValue("@DeductCommissionReason", orderOtherPM.DeductCommissionReason);
+            dbParameters.AddWithValue("@DeductCommissionType", orderOtherPM.DeductCommissionType);
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
 

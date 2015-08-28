@@ -932,7 +932,7 @@ select @@IDENTITY ";
                                         ,o.FinishAll
                                         ,ISNULL(oo.DeductCommissionType,0) DeductCommissionType
                                         ,ISNULL(oo.IsJoinWithdraw,0) IsJoinWithdraw
-                                        ,ISNULL(oo.IsOrderChecked,1) IsOrderChecked
+                                        ,ISNULL(oo.IsOrderChecked,1) IsOrderChecked,o.MealsSettleMode 
                                     FROM [order] o WITH ( NOLOCK )
                                     LEFT JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                     LEFT JOIN clienter c WITH (NOLOCK) ON o.clienterId=c.Id
@@ -1285,12 +1285,18 @@ declare
 @withdrawClienterPrice decimal(18,2),
 @businessBalance decimal(18,2),
 @withdrawBusinessPrice decimal(18,2),
-@rechargeTotal decimal(18,2)
+@rechargeTotal decimal(18,2),
+@SystemRecharge decimal(18,2),
+@SystemPresented decimal(18,2),
+@ClientRecharge decimal(18,2) 
 set @incomeTotal =convert(decimal(18,2),(select sum(TotalPrice) from dbo.OrderChild oc(nolock) where ThirdPayStatus =1))
 set @withdrawClienterPrice = convert(decimal(18,2),(select isnull( sum(isnull(Amount,0)),0) withPirce FROM dbo.ClienterWithdrawForm(nolock) cwf where Status =3)) 
 set @businessBalance=convert(decimal(18,2),(SELECT sum(BalancePrice) FROM dbo.business b(nolock) where Status=1 ))
 set @withdrawBusinessPrice=convert( decimal(18,2),(SELECT sum(Amount) as withdrawBusinessPrice FROM dbo.BusinessWithdrawForm(nolock) bwf where Status =3 ))
-set @rechargeTotal = (SELECT sum(Amount) FROM dbo.BusinessBalanceRecord(nolock) bbr where RecordType=9  ) --商户充值总计
+set @rechargeTotal = (SELECT sum(bbr.payAmount) FROM dbo.BusinessRecharge(nolock) bbr where bbr.PayType in(1,2,3,4)  ) --商户充值总计
+set @SystemRecharge = (SELECT sum(isnull(bbr.payAmount,0)) FROM dbo.BusinessRecharge(nolock) bbr where bbr.PayType =3) 
+set @SystemPresented = (SELECT sum(isnull(bbr.payAmount,0)) FROM dbo.BusinessRecharge(nolock) bbr where bbr.PayType =4) 
+set @ClientRecharge = (SELECT sum(isnull(bbr.payAmount,0)) FROM dbo.BusinessRecharge(nolock) bbr where bbr.PayType in(1,2)) 
 select  ( select    sum(AccountBalance)
           from      dbo.clienter(nolock)
           where     AccountBalance >= 1000
@@ -1305,6 +1311,9 @@ select  ( select    sum(AccountBalance)
         sum(isnull(OrderCommission, 0)) as YfPrice,  --应付金额
         @incomeTotal incomeTotal, --扫码/代付总计
 		isnull(@rechargeTotal,0) rechargeTotal,--商户充值总计
+        @SystemRecharge SystemRecharge,
+        @SystemPresented SystemPresented,
+        @ClientRecharge ClientRecharge,
 		(@incomeTotal+@rechargeTotal) allIncomeTotal, --账户收入总计
 		-2348288.69-(@withdrawClienterPrice) withdrawClienterPrice, --骑士已提现佣金-实付
 		@businessBalance businessBalance,--商家余额总计-应付
@@ -1347,7 +1356,7 @@ where   o.[Status] <> 3
             }
             else if (criteria.searchType == 3)//本月
             {
-                sbtbl.Append("   o.PubDate between dateadd(day,-30,getdate()) and getdate() ");
+                sbtbl.Append(" and   o.PubDate between dateadd(day,-30,getdate()) and getdate() ");
             }
             sbtbl.Append(" group by b.district ) tbl ");
             string columnList = @"  tbl.district
@@ -1392,6 +1401,9 @@ where   o.[Status] <> 3
                                   ,[ActiveBusiness]
                                   ,[ActiveClienter]
                                   ,rechargeTotal
+                                  ,SystemRecharge
+                                  ,SystemPresented
+                                  ,(ZhiFuBaoRecharge+WeiXinRecharge) ClientRecharge 
                                   ,incomeTotal
                                     ";
 
@@ -2174,8 +2186,8 @@ select @@identity";
 
             #region 写子OrderOther表
             const string insertOtherSql = @"
-insert into OrderOther(OrderId,NeedUploadCount,HadUploadCount,PubLongitude,PubLatitude,OneKeyPubOrder,IsOrderChecked,IsAllowCashPay)
-values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude,@OneKeyPubOrder,@IsOrderChecked,@IsAllowCashPay)";
+insert into OrderOther(OrderId,NeedUploadCount,HadUploadCount,PubLongitude,PubLatitude,OneKeyPubOrder,IsOrderChecked,IsAllowCashPay,IsPubDateTimely)
+values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude,@OneKeyPubOrder,@IsOrderChecked,@IsAllowCashPay,@IsPubDateTimely)";
             IDbParameters dbOtherParameters = DbHelper.CreateDbParameters();
             dbOtherParameters.AddWithValue("@OrderId", orderId); //商户ID
             dbOtherParameters.AddWithValue("@NeedUploadCount", order.OrderCount); //需上传数量
@@ -2184,6 +2196,7 @@ values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude,@OneKeyPubOrder,@I
             dbOtherParameters.AddWithValue("@OneKeyPubOrder", order.OneKeyPubOrder);
             dbOtherParameters.Add("@IsOrderChecked", DbType.Int32).Value = order.IsOrderChecked;
             dbOtherParameters.Add("@IsAllowCashPay", DbType.Int32).Value = order.IsAllowCashPay;
+            dbOtherParameters.Add("@IsPubDateTimely", DbType.Int32).Value = order.IsPubDateTimely;
 
             DbHelper.ExecuteScalar(SuperMan_Write, insertOtherSql, dbOtherParameters);
             #endregion
@@ -2820,7 +2833,7 @@ update dbo.[Order]
    return
  end
 update OrderOther 
-    set TakeTime=GETDATE(),TakeLongitude=@TakeLongitude,TakeLatitude=@TakeLatitude 
+    set TakeTime=GETDATE(),TakeLongitude=@TakeLongitude,TakeLatitude=@TakeLatitude,IsTakeTimely=@IsTakeTimely 
 where orderid=@orderid; 
 insert into dbo.OrderSubsidiesLog ( Price, InsertTime, OptName, Remark,
                                      OrderId, OptId, OrderStatus, Platform )
@@ -2828,9 +2841,10 @@ select OrderCommission,getdate(),@ClienterTrueName,'确认已取货',Id,@cliente
 end
             ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("orderId", DbType.Int32, 4).Value = modelPM.OrderId;
             dbParameters.AddWithValue("TakeLongitude", modelPM.longitude);
             dbParameters.AddWithValue("TakeLatitude", modelPM.latitude);
-            dbParameters.Add("orderId", DbType.Int32, 4).Value = modelPM.OrderId;
+            dbParameters.AddWithValue("IsTakeTimely", modelPM.IsTimely);            
             dbParameters.AddWithValue("clienterId", modelPM.ClienterId);
             dbParameters.AddWithValue("Platform", SuperPlatform.FromClienter.GetHashCode());
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
@@ -3194,7 +3208,12 @@ where   Id = @OrderId and FinishAll = 0";
                                                 WHEN 0 THEN -1
                                                 ELSE ord.GrabToCompleteDistance
                                             END
-                                    END AS GrabToCompleteDistance
+                                    END AS GrabToCompleteDistance,
+                                    ISNULL(ord.IsPubDateTimely, 0),
+                                    ISNULL(ord.IsGrabTimely, 0),
+                                    ISNULL(ord.IsTakeTimely, 0),
+                                    ISNULL(ord.IsCompleteTimely, 0),
+                                    ISNULL(ab.clienterId, 0)
                             FROM  [order] (NOLOCK) ab  
                                     JOIN OrderOther (NOLOCK) ord ON ord.OrderId = ab.Id
                                     JOIN business (NOLOCK) c ON c.id = ab.businessId 
@@ -3240,17 +3259,19 @@ where   Id = @OrderId and FinishAll = 0";
         /// <summary>
         /// 更新订单是真实佣金
         /// zhaohailong20150706
+        /// 修改人：胡灵波
+        /// 2015年8月25日 16:28:18
         /// </summary>
         /// <param name="orderId"></param>
         /// <param name="realOrderCommission"></param>
         /// <returns></returns>
-        public int UpdateOrderRealOrderCommission(string orderId, decimal realOrderCommission)
+        public int UpdateOrderRealCommission(OrderOtherPM  orderOtherPM)
         {
             string sql = @" update [Order] set RealOrderCommission=@realOrderCommission where id=@orderId";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("@realOrderCommission", realOrderCommission);
-            dbParameters.AddWithValue("@OrderId", orderId);
+            dbParameters.AddWithValue("@realOrderCommission", orderOtherPM.RealOrderCommission);
+            dbParameters.AddWithValue("@OrderId", orderOtherPM.OrderId);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
         }      
 
@@ -3662,7 +3683,7 @@ where c.Id=@ClienterId;");
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Amount", model.RealOrderCommission);
             parm.AddWithValue("@Status", ClienterBalanceRecordStatus.Success);
-            parm.AddWithValue("@RecordType", ClienterBalanceRecordRecordType.CancelOrder);
+            parm.AddWithValue("@RecordType", ClienterBalanceRecordRecordType.OrderCommission);
             parm.AddWithValue("@Operator", "服务");
             parm.AddWithValue("@WithwardId", model.Id);
             parm.AddWithValue("@RelationNo", model.OrderNo);

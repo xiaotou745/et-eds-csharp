@@ -5,7 +5,7 @@ using System.Net;
 using System.IO;
 using System.Text;
 
-namespace ETS.Library.Pay.WxPay
+namespace ETS.Library.Pay.BWxPay
 {
     public class WxPayApi
     {

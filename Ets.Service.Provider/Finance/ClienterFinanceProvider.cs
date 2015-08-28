@@ -125,7 +125,7 @@ namespace Ets.Service.Provider.Finance
                                                                 Operator = clienter.TrueName,
                                                                 WithwardId = withwardId,
                                                                 RelationNo = withwardNo,
-                                                                Remark = "骑士提现"
+                                                                Remark = "提现扣除余额"
                                                             });
 
                     tran.Complete();
@@ -644,9 +644,8 @@ namespace Ets.Service.Provider.Finance
         /// add by caoheyang  20150716
         /// </summary>
         /// <param name="model"></param>
-        ///  <param name="callback"></param>
         /// <returns></returns>
-        public bool ClienterWithdrawPayFailed(ClienterWithdrawLogModel model, CashTransferCallback callback)
+        public bool ClienterWithdrawPayFailedForCallBack(ClienterWithdrawLogModel model)
         {
             bool reg = false;
             var withdraw = _clienterWithdrawFormDao.GetById(model.WithwardId);
@@ -655,18 +654,7 @@ namespace Ets.Service.Provider.Finance
             {
                 return reg;
             }
-            /*  //服务已自动回转此处停用
-            IPayProvider payProvider = new PayProvider();
-            TransferReturnModel tempmodel = payProvider.TransferAccountsYee(new YeeTransferParameter()
-            {
-                UserType = UserTypeYee.Clienter.GetHashCode(),
-                WithdrawId = model.WithwardId,
-                Ledgerno = "",
-                SourceLedgerno = callback.ledgerno,
-                Amount = (ParseHelper.ToDecimal(callback.amount) - withdraw.HandCharge).ToString()
-            });
-            if (tempmodel.code == "1") //易宝子账户到主账户打款 成功
-            {*/
+         
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 if (clienterFinanceDao.ClienterWithdrawReturn(model) && clienterFinanceDao.ClienterClienterAllowWithdrawRecordReturn(model)
@@ -690,7 +678,7 @@ namespace Ets.Service.Provider.Finance
                             Operator = "易宝系统回调",
                             WithwardId = withdraw.Id,
                             RelationNo = withdraw.WithwardNo,
-                            Remark = "易宝提现失败扣除手续费"
+                            Remark = "提现手续费用"
                         });
 
                         clienterAllowWithdrawRecordDao.Insert(new ClienterAllowWithdrawRecord()
@@ -702,7 +690,7 @@ namespace Ets.Service.Provider.Finance
                             Operator = "易宝系统回调",
                             WithwardId = withdraw.Id,
                             RelationNo = withdraw.WithwardNo,
-                            Remark = "易宝提现失败扣除手续费"
+                            Remark = "提现手续费用"
                         });
                     }
                     reg = true;
@@ -838,11 +826,8 @@ namespace Ets.Service.Provider.Finance
             decimal allowWithdrawPrice = _clienterDao.GetUserStatus(model.ClienterId).AllowWithdrawPrice;
 
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
-            {
-                clienterFinanceDao.ClienterRecharge(model);
-
-
-                //更新骑士余额、可提现余额  
+            {                
+                //更新骑士余额、可提现余额 
                 iClienterProvider.UpdateCBalanceAndWithdraw(new ClienterMoneyPM()
                                                             {
                                                                 ClienterId = model.ClienterId,

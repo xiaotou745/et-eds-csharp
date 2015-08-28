@@ -516,10 +516,10 @@ namespace ETS.Enums
         Cancel = 3,
         [DisplayText("已取货")]
         PickUp = 4,
-        //[DisplayText("审核通过")]
-        //AuditStatusOk = 11,
-        //[DisplayText("审核拒绝")]
-        //AuditStatusRefuse = 12
+        [DisplayText("审核通过")]
+        AuditStatusOk = 11,
+        [DisplayText("审核拒绝")]
+        AuditStatusRefuse = 12
     }
     public enum OrderOperationCommon
     {
