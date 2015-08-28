@@ -2435,5 +2435,18 @@ namespace Ets.Service.Provider.Order
 
         #endregion
 
+        /// <summary>
+        /// 超时订单-获取列表
+        /// 茹化肖
+        /// 2015年8月28日10:58:28
+        /// </summary>
+        /// <typeparam name="T1"></typeparam>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<T> GetOverTimeOrderList<T>(OverTimeOrderPM model)
+        {
+            return orderDao.GetOverTimeOrderList<T>(model);
+        }
+
     }
 }
