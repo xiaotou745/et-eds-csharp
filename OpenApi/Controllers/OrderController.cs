@@ -111,6 +111,7 @@ namespace OpenApi.Controllers
         public ResultModel<object> OrderDetail(ParaModel<OrderDetailPM_OpenApi> paramodel)
         {
             paramodel.fields.orderfrom = paramodel.group; //设置订单来源,其实就是订单对应的集团是什么
+
             var result = new OrderProvider().OrderDetail(paramodel.fields);
             HttpModel httpModel = new HttpModel()
             {
@@ -129,6 +130,7 @@ namespace OpenApi.Controllers
 
         // POST: Order AsyncStatus   paramodel 固定 必须是 paramodel  
         /// <summary>
+
         /// 第三方订单状态同步   add by caoheyang 20150326 
         /// 茹化肖修改
         /// 2015年8月26日13:03:23 
@@ -174,6 +176,7 @@ namespace OpenApi.Controllers
             paramodel.fields.groupid = paramodel.group;
             paramodel.fields.remark = "取消订单";    //TODO 第三方调用该接口时根据实际目标状态处理
             paramodel.fields.orderfrom = paramodel.group; //设置订单来源,其实就是订单对应的集团是什么
+
             var result= new OrderProvider().UpdateOrderStatus_Other(paramodel.fields);
             HttpModel httpModel = new HttpModel()
             {
@@ -204,6 +207,7 @@ namespace OpenApi.Controllers
         {
             LogHelper.LogWriter("获取订单信息：", new { paramodel = paramodel });
             List<OrderRecordsLog> orderRecords =  new OrderProvider().GetOrderRecords(paramodel.fields.order_no, paramodel.group).ToList(); 
+
             var result= ResultModel<object>.Conclude(OrderApiStatusType.Success,orderRecords);
             HttpModel httpModel = new HttpModel()
             {
