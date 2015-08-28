@@ -37,7 +37,8 @@ using Config = ETS.Config;
 using ETS.Library.Pay.CWxPay;
 using System.Web;
 using Ets.Model.ParameterModel.AliPay;
-
+using Ets.Dao.Message;
+using Ets.Model.DataModel.Message;
 namespace Ets.Service.Provider.Pay
 {
     public class PayProvider : IPayProvider
@@ -59,6 +60,7 @@ namespace Ets.Service.Provider.Pay
         private BusinessWithdrawFormDao businessWithDao = new BusinessWithdrawFormDao();
         private readonly OrderDao orderDao = new OrderDao();
         private  readonly HttpDao httpDao=new HttpDao();
+        ClienterMessageDao clienterMessageDao = new ClienterMessageDao();
         #region 生成支付宝、微信二维码订单
 
         /// <summary>
@@ -927,6 +929,9 @@ namespace Ets.Service.Provider.Pay
                             IsCallBack = 1,
                             CallBackRequestId = item.RequestId
                         });
+                        //发送消息
+                        ClienterFinanceAccountModel clienterFinanceAccountModel = clienterFinanceDao.GetClienterFinanceAccount(item.Id.ToString());
+                        AddCPlayMoneySuccessMessage(clienterFinanceAccountModel);
                     }
                     else if (queryYeepayModel.status.ToUpper() == "FAIL")//失败
                     {
@@ -941,6 +946,10 @@ namespace Ets.Service.Provider.Pay
                                IsCallBack = 1,
                                CallBackRequestId = item.RequestId
                            });
+                         //发送消息
+                        ClienterFinanceAccountModel clienterFinanceAccountModel = clienterFinanceDao.GetClienterFinanceAccount(item.Id.ToString());
+                        clienterFinanceAccountModel.PayFailedReason = queryYeepayModel.desc;
+                        AddCPlayMoneyFailureMessage(clienterFinanceAccountModel);
                     }
                     else if (queryYeepayModel.status.ToUpper() == "UNKNOWN")//易宝都不知道原因 
                     {
@@ -1960,6 +1969,44 @@ namespace Ets.Service.Provider.Pay
             return yeePayRecordDao.GetRequestId(withdrawId);
         }
 
+        #endregion
+
+        #region
+        /// <summary>
+        /// 新增打款成功消息
+        /// 胡灵波
+        /// 2015年8月28日 11:54:09
+        /// </summary>
+        /// <param name="clienterFinanceAccountModel"></param>
+        void AddCPlayMoneySuccessMessage(ClienterFinanceAccountModel clienterFinanceAccountModel)
+        {
+            int month = clienterFinanceAccountModel.WithdrawTime.Month;
+            int day = clienterFinanceAccountModel.WithdrawTime.Day;
+
+            long id = clienterMessageDao.Insert(new ClienterMessage
+            {
+                ClienterId = Convert.ToInt32(clienterFinanceAccountModel.ClienterId),
+                Content = string.Format(MessageConst.PlayMoneySuccess, month, day, clienterFinanceAccountModel.Amount),
+                IsRead = 0
+            });
+        }
+
+        /// <summary>
+        /// 新增打款失败消息
+        /// </summary>
+        /// <param name="clienterFinanceAccountModel"></param>
+        void AddCPlayMoneyFailureMessage(ClienterFinanceAccountModel clienterFinanceAccountModel)
+        {
+            int month = clienterFinanceAccountModel.WithdrawTime.Month;
+            int day = clienterFinanceAccountModel.WithdrawTime.Day;
+
+            long id = clienterMessageDao.Insert(new ClienterMessage
+            {
+                ClienterId = Convert.ToInt32(clienterFinanceAccountModel.ClienterId),
+                Content = string.Format(MessageConst.PlayMoneyFailure, month, day, clienterFinanceAccountModel.PayFailedReason),
+                IsRead = 0
+            });
+        }
         #endregion
     }
 }
