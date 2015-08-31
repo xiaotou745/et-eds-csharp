@@ -142,7 +142,7 @@ using Ets.Model.DomainModel.Area;namespace SuperMan.Controllers
                 }
                 if (!string.IsNullOrWhiteSpace(criteria.orderPubStart))
                 {
-                    filname = string.Format(filname, criteria.orderPubStart + "到" + criteria.orderPubEnd);
+                    filname = string.Format(filname, ParseHelper.ToDatetime(criteria.orderPubStart).ToString("yyyy-MM-dd") + "到" + ParseHelper.ToDatetime(criteria.orderPubEnd).ToString("yyyy-MM-dd"));
                 }
                 ExcelIO.CreateFactory().Export(ConvertOrderToOrderExcel(pagedList), ExportFileFormat.excel, filname, title);
                 return null;
