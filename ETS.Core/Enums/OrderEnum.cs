@@ -81,7 +81,7 @@ namespace ETS.Enums
         /// <summary>
         /// 订单已经接入到E代送系统，无法取消订单
         /// </summary>
-        [DisplayText("订单已经接入到e代送系统，无法取消订单")]
+        [DisplayText("订单已经接入到E代送系统，无法取消订单")]
         OrderIsJoin = 20000,
         /// <summary>
         /// 第三方接口调用异常
