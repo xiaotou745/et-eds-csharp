@@ -523,5 +523,20 @@ namespace SuperMan.Controllers
             return PartialView("_PostOverTimeOrder",list);
         }
 
+        /// <summary>
+        /// 获取商户附近骑士列表
+        /// danny-20150831
+        /// </summary>
+        /// <param name="orderId">订单Id</param>
+        /// <param name="businessId">商户Id</param>
+        /// <returns></returns>
+        public ActionResult LocalClienter(int orderId,int businessId)
+        {
+            ViewBag.businessUnReceiveOrder = iOrderProvider.GetBusinessUnReceiveOrderQty(businessId);
+            var localClienters = iOrderProvider.GetLocalClienterList(orderId);
+            return View(localClienters);
+        }
+
+
     }
 }

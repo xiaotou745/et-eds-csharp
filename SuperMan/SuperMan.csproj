@@ -706,6 +706,7 @@
     <Content Include="Views\Complain\_ComplainList.cshtml" />
     <Content Include="Views\Order\OverTimeOrder.cshtml" />
     <Content Include="Views\Order\_PostOverTimeOrder.cshtml" />
+    <Content Include="Views\Order\LocalClienter.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

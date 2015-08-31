@@ -1660,7 +1660,9 @@ select top 1
         o.DeliveryCompanySettleMoney,
         o.DeliveryCompanyID,
         o.MealsSettleMode,
-        ISNULL(oo.IsOrderChecked,1) AS IsOrderChecked         
+        ISNULL(oo.IsOrderChecked,1) AS IsOrderChecked,
+		oo.PubLatitude,
+		oo.PubLongitude       
 from    [order] o with ( nolock )
         join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
         join dbo.business b with ( nolock ) on o.businessId = b.Id
@@ -3901,6 +3903,33 @@ MERGE INTO OrderPushRecord opr
         JOIN dbo.business AS b ( NOLOCK ) ON b.Id = o.businessId ";
             string orderByColumn = " o.PubDate ASC";
             return new PageHelper().GetPages<T>(SuperMan_Read, model.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, model.PageSize, true);
+        }
+
+        /// <summary>
+        /// 获取商户未抢单订单数
+        /// danny-20150831
+        /// </summary>
+        /// <param name="businessId"></param>
+        /// <returns></returns>
+        public OrderListModel GetBusinessUnReceiveOrderQty(int businessId)
+        {
+            string sql = @"
+SELECT b.Name BusinessName,b.PhoneNo BusinessPhoneNo,ISNULL(COUNT(1),0) UnReceiveQty
+FROM dbo.[order] o WITH(NOLOCK) 
+JOIN dbo.business b WITH(NOLOCK) ON o.businessId=b.Id
+WHERE o.Status=0 AND o.businessId=@BusinessId
+GROUP BY b.Name,b.PhoneNo;
+";
+            var parm = DbHelper.CreateDbParameters();
+            parm.Add("@BusinessId", DbType.Int32, 4).Value = businessId;
+            var dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            var list = ConvertDataTableList<OrderListModel>(dt);
+            if (list == null || list.Count <= 0)
+            {
+                return null;
+            }
+            return list[0];
+            
         }
     }
 }

@@ -266,6 +266,8 @@
     <Compile Include="ParameterModel\Business\BussOrderParaModelApp.cs" />
     <Compile Include="ParameterModel\Business\BusinessSearchCriteria.cs" />
     <Compile Include="ParameterModel\Business\ClienterPushLocaltionPM.cs" />
+    <Compile Include="ParameterModel\Business\LocalClienterModel.cs" />
+    <Compile Include="ParameterModel\Business\LocalClienterParameter.cs" />
     <Compile Include="ParameterModel\Business\LoginModel.cs" />
     <Compile Include="ParameterModel\Business\NewBusiRegisterResultModel.cs" />
     <Compile Include="ParameterModel\Business\NewRegisterInfoModel.cs" />

@@ -382,5 +382,10 @@ namespace Ets.Model.DataModel.Order
         /// 商户发单地址纬度
         /// </summary>
         public double PubLatitude { get; set; }
+        /// <summary>
+        /// 待抢单订单数
+        /// </summary>
+        public int UnReceiveQty { get; set; }
+        
     }
 }

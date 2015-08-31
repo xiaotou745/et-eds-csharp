@@ -1238,7 +1238,7 @@ namespace Ets.Service.Provider.Order
                     return dealResultInfo;
                 }
                 orderModel.OptUserName = orderOptionModel.OptUserName;
-                orderModel.Remark =  orderOptionModel.OptLog;
+                orderModel.Remark = orderOptionModel.OptLog;
                 var orderTaskPayStatus = orderDao.GetOrderTaskPayStatus(orderModel.Id);
                 #region 订单不可取消
                 if (orderModel.Status == 3)//订单已为取消状态
@@ -1258,9 +1258,9 @@ namespace Ets.Service.Provider.Order
                 }
                 #endregion
 
-                if (orderDao.CancelOrder(orderModel, orderOptionModel) 
+                if (orderDao.CancelOrder(orderModel, orderOptionModel)
                     && orderOtherDao.UpdateCancelTime(orderModel.Id))
-                {                   
+                {
                     if (orderModel.Status == 1 && orderTaskPayStatus == 2 &&
                         orderModel.HadUploadCount == orderModel.NeedUploadCount) //已完成订单
                     {
@@ -1276,7 +1276,7 @@ namespace Ets.Service.Provider.Order
                                                             RelationNo = orderModel.OrderNo,
                                                             Remark = orderModel.Remark
                                                         });
-                   
+
                     }
 
                     // 更新商户余额、可提现余额                        
@@ -1291,7 +1291,7 @@ namespace Ets.Service.Provider.Order
                                                                 RelationNo = orderModel.OrderNo,
                                                                 Remark = orderModel.Remark
                                                             });
-       
+
                     dealResultInfo.DealFlag = true;
                     dealResultInfo.DealMsg = "订单取消成功！";
                     tran.Complete();
@@ -1377,7 +1377,7 @@ namespace Ets.Service.Provider.Order
                         orderOtherPM.DeductCommissionType = 2;
                         UpdateOrderIsReal(orderOtherPM);
 
-                        
+
                         //更新订单日志
                         orderSubsidiesLogDao.Insert(new OrderSubsidiesLog()
                                                     {
@@ -1471,7 +1471,7 @@ namespace Ets.Service.Provider.Order
                 #region 调用老接口 临时用
                 //无效订单
                 if (orderModel.OrderCommission > orderModel.SettleMoney)
-                {                    
+                {
                     ClienterBalanceRecord currModel = clienterBalanceRecordDao.GetByOrderId(orderModel.Id);
                     if (currModel != null)
                     {
@@ -1904,7 +1904,7 @@ namespace Ets.Service.Provider.Order
         /// <UpdateTime>20150701</UpdateTime>
         /// <param name="modelPM"></param>
         public void UpdateTake(OrderPM modelPM)
-        {         
+        {
             orderDao.UpdateTake(modelPM);
         }
 
@@ -2140,7 +2140,7 @@ namespace Ets.Service.Provider.Order
                 {
                     detail.Locations = clienterLocationProvider.GetLocationsByTime(startTime, endTime, detail.ClienterId);
                 }
-                if (detail.Locations == null )
+                if (detail.Locations == null)
                     detail.Locations = new List<Location>();
                 #endregion
             }
@@ -2295,9 +2295,7 @@ namespace Ets.Service.Provider.Order
         /// </summary>
         public void AutoPushOrder()
         {
-
             #region 对象声明及初始化
-
             var listClienterId = new List<int>();//骑士Id集合
             string pushRadius = GlobalConfigDao.GlobalConfigGet(0).PushRadius;//推送距离半径
 
@@ -2446,6 +2444,62 @@ namespace Ets.Service.Provider.Order
         public PageInfo<T> GetOverTimeOrderList<T>(OverTimeOrderPM model)
         {
             return orderDao.GetOverTimeOrderList<T>(model);
+        }
+        /// <summary>
+        /// 获取附近骑士信息
+        /// danny-20150831
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        public IList<LocalClienterModel> GetLocalClienterList(int orderId)
+        {
+            #region 声明对象及初始化
+            var orderModel = orderDao.GetByOrderId(orderId);
+            if (orderModel == null || orderModel.businessId <= 0)
+            {
+                return null;
+            }
+            #endregion
+
+            #region 店内骑士
+            var listbcRel = _businessDao.GetBusinessLocalRelClienterList(new LocalClienterParameter()
+            {
+                BusinessId = orderModel.businessId,
+                Latitude = orderModel.PubLatitude,
+                Longitude = orderModel.PubLongitude,
+                PushRadius = "3"
+            });
+            if (listbcRel != null && listbcRel.Count > 0) //有店内骑士
+            {
+                return listbcRel;
+            }
+            #endregion
+
+            #region 物流公司和众包骑士
+            var listbeRel = _businessDao.GetBusinessLocaClienterList(new LocalClienterParameter()
+            {
+                BusinessId = orderModel.businessId,
+                Latitude = orderModel.PubLatitude,
+                Longitude = orderModel.PubLongitude,
+                PushRadius = "3"
+            });
+            if (listbeRel == null || listbeRel.Count <= 0) //有店内骑士
+            {
+                return null;
+            }
+            return listbeRel;
+            #endregion
+        }
+
+        /// <summary>
+        /// 获取商户未抢单订单数
+        /// danny-20150831
+        /// </summary>
+        /// <param name="businessId"></param>
+        /// <returns></returns>
+        public OrderListModel GetBusinessUnReceiveOrderQty(int businessId)
+        {
+            return orderDao.GetBusinessUnReceiveOrderQty(businessId);
         }
 
     }

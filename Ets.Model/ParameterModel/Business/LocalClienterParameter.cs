@@ -3,20 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Ets.Model.DataModel.Business;
 
-namespace Ets.Model.DomainModel.Business
+namespace Ets.Model.ParameterModel.Business
 {
-    public class BusinessClienterRelationModel : BusinessClienterRelation
+    public class LocalClienterParameter
     {
         /// <summary>
-        /// 骑士姓名
+        /// 商户ID
         /// </summary>
-        public string ClienterName { get; set; }
-        /// <summary>
-        /// 骑士电话
-        /// </summary>
-        public string PhoneNo { get; set; }
+        public int BusinessId { get; set; }
         /// <summary>
         /// 经度
         /// </summary>
