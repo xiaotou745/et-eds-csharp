@@ -1,0 +1,59 @@
+﻿@using Ets.Model.DataModel.Order
+@using Ets.Model.ParameterModel.Business
+@model IList<Ets.Model.ParameterModel.Business.LocalClienterModel>
+@{
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+}
+<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script src="~/Scripts/jquery-ui-1.8.20.js"></script>
+<script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
+<link rel="stylesheet" type="text/css" href="~/Content/pagestyle/pagerstyles.css" />
+<div class="zpManage zpSh">
+    <h2 class="crumbs">
+        您所在位置：订单 > 超时订单 > 附近骑士
+    </h2>
+    <div id="Head" style="width: 1000px;text-align: center;font-size: 20px;">
+        附近骑士
+    </div>
+    @{
+        var businessUnReceiveOrder = ViewBag.businessUnReceiveOrder as OrderListModel;
+        if (businessUnReceiveOrder != null && !string.IsNullOrEmpty(businessUnReceiveOrder.BusinessName))
+        {
+            <div id="Left" style="float: left;width: 650px">
+                <div id="map_contain"></div>
+            </div>
+            <div id="Right" style="float: left;width: 350px">
+                <div id="businessInfo">
+                    <div id="">商铺信息：</div>
+                    <div id="">@businessUnReceiveOrder.BusinessName</div>
+                    <div id="">@businessUnReceiveOrder.BusinessPhoneNo</div>
+                    <div id="">待抢任务数：@businessUnReceiveOrder.UnReceiveQty</div>
+                </div>
+                @{
+            if (Model != null && Model.Count > 0)
+            {
+                <div id="clienterInfo">
+
+                    @foreach (var item in Model)
+                    {
+                        int i = 0;
+                        i++;
+                        <div>1.</div>
+                        <div>陈凯</div>
+                        <div>13811111111</div>
+                        <div>距门店100m</div>
+                        <div>待取货：10</div>
+                        <div>配送中：10</div>
+                        <div>已完成：10</div>
+                    }
+                </div>
+            }
+                }
+
+            </div>
+        }
+
+    }
+</div>
+
