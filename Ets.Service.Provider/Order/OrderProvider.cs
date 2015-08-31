@@ -2454,7 +2454,7 @@ namespace Ets.Service.Provider.Order
         public IList<LocalClienterModel> GetLocalClienterList(int orderId)
         {
             #region 声明对象及初始化
-            var orderModel = orderDao.GetByOrderId(orderId);
+            var orderModel = orderDao.GetOrderInfoById(orderId);
             if (orderModel == null || orderModel.businessId <= 0)
             {
                 return null;
@@ -2495,11 +2495,12 @@ namespace Ets.Service.Provider.Order
         /// 获取商户未抢单订单数
         /// danny-20150831
         /// </summary>
-        /// <param name="businessId"></param>
+        /// <param name="orderId">订单Id</param>
+        /// <param name="businessId">商户Id</param>
         /// <returns></returns>
-        public OrderListModel GetBusinessUnReceiveOrderQty(int businessId)
+        public OrderListModel GetBusinessUnReceiveOrderQty(int orderId,int businessId)
         {
-            return orderDao.GetBusinessUnReceiveOrderQty(businessId);
+            return orderDao.GetBusinessUnReceiveOrderQty(orderId,businessId);
         }
 
     }

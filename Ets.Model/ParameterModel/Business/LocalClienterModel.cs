@@ -36,5 +36,13 @@ namespace Ets.Model.ParameterModel.Business
         /// 已完成任务数量
         /// </summary>
         public int FinishQty { get; set; }
+        /// <summary>
+        /// 经度
+        /// </summary>
+        public double Longitude { get; set; }
+        /// <summary>
+        /// 纬度
+        /// </summary>
+        public double Latitude { get; set; }
     }
 }

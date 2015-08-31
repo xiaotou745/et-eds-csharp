@@ -7,12 +7,14 @@
 ﻿using ETS.Data.PageData;
 ﻿using Ets.Model.DataModel.Order;
 ﻿using Ets.Model.DomainModel.Business;
+﻿using Ets.Model.ParameterModel.Business;
 ﻿using Ets.Service.IProvider.AuthorityMenu;
 ﻿using Ets.Service.Provider.Authority;
 using Ets.Service.Provider.Distribution;
 using Ets.Service.Provider.Order;
 using Ets.Service.IProvider.Common;
 using Ets.Service.Provider.Common;
+﻿using Newtonsoft.Json;
 ﻿using SuperMan.App_Start;
 using Ets.Model.ParameterModel.User;
 using Ets.Model.ParameterModel.Order;
@@ -593,8 +595,9 @@ using Ets.Model.DomainModel.Area;namespace SuperMan.Controllers
         /// <returns></returns>
         public ActionResult LocalClienter(int orderId,int businessId)
         {
-            ViewBag.businessUnReceiveOrder = iOrderProvider.GetBusinessUnReceiveOrderQty(businessId);
+            ViewBag.businessUnReceiveOrder = iOrderProvider.GetBusinessUnReceiveOrderQty(orderId,businessId);
             var localClienters = iOrderProvider.GetLocalClienterList(orderId);
+            ViewBag.clienterJsonInfo  = JsonHelper.JsonConvertToString(localClienters);
             return View(localClienters);
         }
 

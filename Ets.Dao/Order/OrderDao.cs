@@ -3912,17 +3912,23 @@ MERGE INTO OrderPushRecord opr
         /// </summary>
         /// <param name="businessId"></param>
         /// <returns></returns>
-        public OrderListModel GetBusinessUnReceiveOrderQty(int businessId)
+        public OrderListModel GetBusinessUnReceiveOrderQty(int orderId,int businessId)
         {
             string sql = @"
-SELECT b.Name BusinessName,b.PhoneNo BusinessPhoneNo,ISNULL(COUNT(1),0) UnReceiveQty
-FROM dbo.[order] o WITH(NOLOCK) 
+SELECT   b.Name BusinessName
+        ,b.PhoneNo BusinessPhoneNo
+        ,ISNULL(COUNT(1),0) UnReceiveQty
+		,oo.PubLatitude
+		,oo.PubLongitude  
+FROM dbo.[order] o WITH(NOLOCK)  
+JOIN dbo.OrderOther oo WITH(NOLOCK) ON oo.OrderId=o.Id AND o.Id=@OrderId
 JOIN dbo.business b WITH(NOLOCK) ON o.businessId=b.Id
 WHERE o.Status=0 AND o.businessId=@BusinessId
-GROUP BY b.Name,b.PhoneNo;
+GROUP BY b.Name,b.PhoneNo,oo.PubLatitude,oo.PubLongitude;
 ";
             var parm = DbHelper.CreateDbParameters();
             parm.Add("@BusinessId", DbType.Int32, 4).Value = businessId;
+            parm.Add("@OrderId", DbType.Int32, 4).Value = orderId;
             var dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             var list = ConvertDataTableList<OrderListModel>(dt);
             if (list == null || list.Count <= 0)
@@ -3931,6 +3937,36 @@ GROUP BY b.Name,b.PhoneNo;
             }
             return list[0];
             
+        }
+        /// <summary>
+        /// 根据订单Id获取订单信息
+        /// danny-20150831
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        public OrderListModel GetOrderInfoById(int orderId)
+        {
+            string sql = @"
+select  top 1
+        o.[Id] ,
+        o.[OrderNo] ,
+        o.[Status] ,
+        o.businessId ,
+		oo.PubLatitude,
+		oo.PubLongitude       
+from    [order] o with ( nolock )
+        join dbo.OrderOther oo with(nolock) on o.Id = oo.OrderId 
+where    o.Id = @Id
+";
+            var parm = DbHelper.CreateDbParameters();
+            parm.Add("@Id", DbType.Int32, 4).Value = orderId;
+            var dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            var list = ConvertDataTableList<OrderListModel>(dt);
+            if (list == null || list.Count <= 0)
+            {
+                return null;
+            }
+            return list[0];
         }
     }
 }
