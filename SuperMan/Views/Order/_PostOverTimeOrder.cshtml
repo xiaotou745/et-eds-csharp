@@ -3,7 +3,7 @@
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
     <thead>
         <tr class="tdbg">
-            <th style="width: 70px;">订单号</th>
+            <th style="width: 100px;">订单号</th>
             <th>商铺信息</th>
             <th>发布时间</th>
             <th>超时</th>
@@ -41,7 +41,7 @@
                     <td>@if (SuperMan.App_Start.UserContext.Current.HasAuthority(39))
                     {
                         <a href="javascript:ShowCancelBox('@(Model.Records[i].OrderID)')">取消订单</a>
-                    } &nbsp;<a>附近骑士</a>
+                    } &nbsp;<a href="@(Model.Records[i].Bid)/@(Model.Records[i].IsEmployerTask)">附近骑士</a>
                     </td>
                 </tr>
             }

@@ -18,13 +18,15 @@ using Ets.Model.ParameterModel.User;
 using Ets.Model.ParameterModel.Order;
 using ETS.Util;
 using Ets.Model.Common;
-using Ets.Service.Provider.Clienter;
+﻿using Ets.Model.DomainModel.Order;
+﻿using Ets.Service.Provider.Clienter;
 using ETS.Enums;
 using Ets.Service.Provider.Business;
 using Ets.Service.IProvider.Business;
-using Ets.Model.DomainModel.Area;
+﻿using ETS.Const;
+﻿using SuperMan.Common;
 
-namespace SuperMan.Controllers
+using Ets.Model.DomainModel.Area;namespace SuperMan.Controllers
 {
     public class OrderController : BaseController
     {
@@ -73,7 +75,7 @@ namespace SuperMan.Controllers
                     criteria.businessName = Request.QueryString["userName"];
                     ViewBag.businessPhone = Request.QueryString["phoneNo"];
                     ViewBag.businessName = Request.QueryString["userName"];
-                }  
+                }
             }
 
             if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
@@ -115,22 +117,21 @@ namespace SuperMan.Controllers
         /// <param name="pageindex"></param>
         /// <returns></returns>
         [HttpGet]
-        public FileContentResult PostDaoChuOrder(int pageindex = 1)
+        public ActionResult PostDaoChuOrder(int pageindex = 1)
         {
-            Ets.Model.ParameterModel.Order.OrderSearchCriteria criteria = new Ets.Model.ParameterModel.Order.OrderSearchCriteria();
+            OrderSearchCriteria criteria = new OrderSearchCriteria();
             TryUpdateModel(criteria);
             criteria.PageIndex = 1;
             criteria.PageSize = 65534;
             if (criteria.businessCity == "--无--")
             {
                 criteria.businessCity = "";
-            }
-            
+            } 
             var pagedList = iOrderProvider.GetOrders(criteria);
-           
             if (pagedList != null && pagedList.Records.Count > 0)
             {
-                string filname = "e代送-{0}-订单数据.xls";
+                string[] title = ExcelUtility.GetDescription(new OrderExcel());
+                string filname = "e代送-{0}-订单数据";
                 if (!string.IsNullOrWhiteSpace(criteria.businessName))
                 {
                     filname = string.Format(filname, criteria.businessName);
@@ -141,26 +142,55 @@ namespace SuperMan.Controllers
                 }
                 if (!string.IsNullOrWhiteSpace(criteria.orderPubStart))
                 {
-                    filname = string.Format(filname, criteria.orderPubStart + ":" + criteria.orderPubEnd);
+                    filname = string.Format(filname, criteria.orderPubStart + "到" + criteria.orderPubEnd);
                 }
-                if (pagedList.Records.Count > 3)
-                {
-                    byte[] data = Encoding.UTF8.GetBytes(CreateExcel(pagedList));
-                    return File(data, "application/msexcel", filname);
-                }
-                else
-                {
-                    byte[] data = Encoding.Default.GetBytes(CreateExcel(pagedList));
-                    return File(data, "application/msexcel", filname);
-                }
-
+                ExcelIO.CreateFactory().Export(ConvertOrderToOrderExcel(pagedList), ExportFileFormat.excel, filname, title);
+                return null;
             }
-            Response.Write("<script>alert('您需要导出的数据为空，请重新选择筛选条件');window.history.go(-1);</script>");
-            //return PartialView("_PartialOrderList", pagedList);
-            //return File(new byte[0]{}, "application/msexcel", "无数据.xls");
+            Response.Write(SystemConst.NoExportData); 
             return null;
         }
+        /// <summary>
+        /// 转换为导出的Excel所需Model
+        /// wc
+        /// </summary>
+        /// <param name="paraModel"></param>
+        /// <returns></returns>
+        private IList<OrderExcel> ConvertOrderToOrderExcel(PageInfo<OrderListModel> paraModel)
+        {
+            var orderExcels = new List<OrderExcel>();
+            foreach (var oOrderListModel in paraModel.Records)
+            {
+                var clienterInfo = "";
+                var orderExcel = new OrderExcel();
+                orderExcel.OrderNo = oOrderListModel.OrderNo;
+                if (!string.IsNullOrEmpty(oOrderListModel.ClienterName))
+                {
+                    clienterInfo = oOrderListModel.ClienterName;
+                }
+                if (!string.IsNullOrEmpty(oOrderListModel.ClienterPhoneNo))
+                {
+                    clienterInfo += ":" + oOrderListModel.ClienterPhoneNo;
+                }
+                orderExcel.BusinessInfo = oOrderListModel.BusinessName + ":" + oOrderListModel.BusinessPhoneNo;
+                orderExcel.ClienterInfo = clienterInfo;
+                orderExcel.PubDate = oOrderListModel.PubDate;
+                orderExcel.ActualDoneDate = oOrderListModel.ActualDoneDate;
+                orderExcel.Amount = oOrderListModel.Amount.Value;
+                orderExcel.TotalAmount = oOrderListModel.Amount.Value + oOrderListModel.OrderCount * oOrderListModel.DistribSubsidy.Value;
+                orderExcel.OrderCommission = oOrderListModel.OrderCommission.Value;
+                orderExcel.OrderCount = oOrderListModel.OrderCount;
+                orderExcel.DistribSubsidy = oOrderListModel.DistribSubsidy.Value;
+                orderExcel.WebsiteSubsidy = oOrderListModel.WebsiteSubsidy.Value;
+                orderExcel.Adjustment = oOrderListModel.Adjustment;
+                orderExcel.BusiSettlement = oOrderListModel.CommissionType == 1
+                    ? oOrderListModel.BusinessCommission + "%"
+                    : oOrderListModel.CommissionFixValue.ToString();
 
+                orderExcels.Add(orderExcel);
+            }
+            return orderExcels;
+        }
 
         /// <summary>
         /// 生成excel文件
@@ -272,7 +302,7 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         public ActionResult OrderDetail(string orderNo, int orderId)
         {
-            var orderModel = iOrderProvider.GetOrderByNo(orderNo, orderId); 
+            var orderModel = iOrderProvider.GetOrderByNo(orderNo, orderId);
             ViewBag.orderOptionLog = iOrderProvider.GetOrderOptionLog(orderId);
             ViewBag.IsShowAuditBtn = IsShowAuditBtn(orderModel);//是否显示审核按钮
             return View(orderModel);
@@ -294,7 +324,7 @@ namespace SuperMan.Controllers
             {
                 OptUserId = UserContext.Current.Id,
                 OptUserName = UserContext.Current.Name,
-                OptLog ="客服取消"+ OrderOptionLog,
+                OptLog = "客服取消" + OrderOptionLog,
                 OrderId = orderId
             };
             var reg = iOrderProvider.CancelOrderByOrderNo(orderOptionModel);
@@ -375,7 +405,7 @@ namespace SuperMan.Controllers
             criteria.UserType = UserType;
             //criteria.GroupId = UserContext.Current.GroupId;
             criteria.AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType);
-              
+
             if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
             {
                 return View();
@@ -393,7 +423,7 @@ namespace SuperMan.Controllers
             TryUpdateModel(criteria);
             criteria.AuthorityCityNameListStr =
                 iAreaProvider.GetAuthorityCityNameListStr(UserType);
-            criteria.UserType = UserType; 
+            criteria.UserType = UserType;
             //指派超人时  以下代码 有用，现在 注释掉  wc 
             //var superManModel = iDistributionProvider.GetClienterModelByGroupID(ViewBag.txtGroupId);
             //if (superManModel != null)
@@ -414,7 +444,7 @@ namespace SuperMan.Controllers
             string totalMsg = "";
             if (!string.IsNullOrEmpty(orderIds))
             {
-                string[] ids = orderIds.Split(new char[]{';'},System.StringSplitOptions.RemoveEmptyEntries);
+                string[] ids = orderIds.Split(new char[] { ';' }, System.StringSplitOptions.RemoveEmptyEntries);
                 Dictionary<string, DealResultInfo> result = new Dictionary<string, DealResultInfo>();
                 foreach (var item in ids)
                 {
@@ -429,17 +459,17 @@ namespace SuperMan.Controllers
                             OrderId = int.Parse(infos[0])
                         };
                         var reg = iOrderProvider.AuditRefuse(orderOptionModel);
-                        result.Add(infos[1],reg);
+                        result.Add(infos[1], reg);
                     }
                 }
                 int successedNum = result.Where(p => p.Value.DealFlag == true).Count();
                 totalMsg = string.Format("共{0}个订单，其中{1}个操作成功;", ids.Length, successedNum);
-                if (successedNum<ids.Length)
+                if (successedNum < ids.Length)
                 {
                     var failedList = result.Where(p => p.Value.DealFlag == false);
                     var failedMsgList = failedList.Select(p => p.Key + ":" + p.Value.DealMsg);
                     string failedMsg = string.Join("\n", failedMsgList);
-                    totalMsg += string.Format("{0}个操作失败:\n{1}",failedList.Count(), failedMsg);
+                    totalMsg += string.Format("{0}个操作失败:\n{1}", failedList.Count(), failedMsg);
                 }
             }
             return Json(new ResultModel(true, totalMsg), JsonRequestBehavior.AllowGet);

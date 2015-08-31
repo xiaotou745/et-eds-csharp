@@ -14,8 +14,12 @@ using System.Text;
 using System.Web.Mvc;
 using Ets.Model.Common;
 using System.Collections.Generic;
+using Ets.Model.DomainModel.Clienter;
+using Ets.Model.DomainModel.Order;
 using Ets.Service.IProvider.Pay;
+using ETS.Const;
 using ETS.Pay.YeePay;
+using SuperMan.Common;
 
 namespace SuperMan.Controllers
 {
@@ -36,7 +40,7 @@ namespace SuperMan.Controllers
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(UserType);//获取筛选城市
             var criteria = new Ets.Model.ParameterModel.Finance.ClienterWithdrawSearchCriteria()
             {
-                WithdrawStatus = 0, 
+                WithdrawStatus = 0,
                 AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType)
             };
             var pagedList = iClienterFinanceProvider.GetClienterWithdrawList(criteria);
@@ -97,7 +101,7 @@ namespace SuperMan.Controllers
                 Status = ClienterWithdrawFormStatus.Allow.GetHashCode(),
                 WithwardId = Convert.ToInt64(withwardId)
             };
-           
+
             try
             {
                 var reg = iClienterFinanceProvider.ClienterWithdrawAudit(clienterWithdrawLog);
@@ -158,7 +162,7 @@ namespace SuperMan.Controllers
                 {
                     totalMsg = "";
                     string[] error = errorResult.Where(p => p.Value == "").Select(p => p.Key).ToArray();
-                    if (error!=null&&error.Length>0)
+                    if (error != null && error.Length > 0)
                     {
                         totalMsg = "以下单号审核失败,请重试！\n" + string.Join("\n", error);
                     }
@@ -229,7 +233,7 @@ namespace SuperMan.Controllers
             var clienterWithdrawLog = new ClienterWithdrawLogModel()
             {
                 Operator = UserContext.Current.Name,
-                Remark =  payFailedReason,
+                Remark = payFailedReason,
                 Status = ClienterWithdrawFormStatus.Error.GetHashCode(),
                 OldStatus = ClienterWithdrawFormStatus.Allow.GetHashCode(),
                 WithwardId = Convert.ToInt64(withwardId),
@@ -250,7 +254,7 @@ namespace SuperMan.Controllers
             var clienterWithdrawFormModel = iClienterFinanceProvider.GetClienterWithdrawListById(withwardId);
             clienterWithdrawFormModel.AccountNo = ParseHelper.ToDecrypt(clienterWithdrawFormModel.AccountNo);
             clienterWithdrawFormModel.WithdrawTime = Convert.ToDateTime(clienterWithdrawFormModel.WithdrawTime.ToString());
-            return new ContentResult () { Content= Newtonsoft.Json.JsonConvert.SerializeObject( clienterWithdrawFormModel) };
+            return new ContentResult() { Content = Newtonsoft.Json.JsonConvert.SerializeObject(clienterWithdrawFormModel) };
         }
         /// <summary>
         /// 导出骑士提款申请单列表
@@ -258,7 +262,7 @@ namespace SuperMan.Controllers
         /// </summary>
         /// <param name="pageindex">页码</param>
         /// <returns></returns>
-        public FileContentResult ExportClienterWithdrawForm(int pageindex = 1)
+        public ActionResult ExportClienterWithdrawForm(int pageindex = 1)
         {
             var criteria = new Ets.Model.ParameterModel.Finance.ClienterWithdrawSearchCriteria();
             TryUpdateModel(criteria);
@@ -270,12 +274,38 @@ namespace SuperMan.Controllers
                 {
                     filname = string.Format(filname, criteria.WithdrawDateStart + "~" + criteria.WithdrawDateEnd);
                 }
-                var data = Encoding.UTF8.GetBytes(iClienterFinanceProvider.CreateClienterWithdrawFormExcel(dtClienterWithdraw.ToList()));
-                return File(data, "application/ms-excel", filname);
+                string[] title = ExcelUtility.GetDescription(new ClienterWithdrawExcel());
+                ExcelIO.CreateFactory().Export(ConvertToClienterWithdrawExcel(dtClienterWithdraw.ToList()), ExportFileFormat.excel, filname, title);
+                return null;
+                //var data = Encoding.UTF8.GetBytes(iClienterFinanceProvider.CreateClienterWithdrawFormExcel(dtClienterWithdraw.ToList()));
+                //return File(data, "application/ms-excel", filname);
             }
+            Response.Write(SystemConst.NoExportData);
             return null;
-            //var pagedList = iClienterFinanceProvider.GetClienterWithdrawList(criteria);
-            //return View("ClienterWithdraw", pagedList);
+        }
+        /// <summary>
+        /// 转换骑士提现数据Excel
+        /// wc
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        private IList<ClienterWithdrawExcel> ConvertToClienterWithdrawExcel(List<ClienterWithdrawFormModel> list)
+        {
+            var cwExcels = new List<ClienterWithdrawExcel>();
+            //输出数据.
+            foreach (var item in list)
+            {
+                ClienterWithdrawExcel cwe = new ClienterWithdrawExcel();
+                cwe.AccountNo = ParseHelper.ToDecrypt(item.AccountNo);
+                cwe.ClienterName = item.ClienterName;
+                cwe.Amount = item.Amount.ToString("F2");
+                cwe.WithdrawDateStart = item.WithdrawDateStart;
+                cwe.ClienterPhoneNo = item.ClienterPhoneNo;
+                cwe.OpenBank = item.OpenBank;
+                cwe.TrueName = item.TrueName;
+                cwExcels.Add(cwe);
+            }
+            return cwExcels;
         }
     }
 }
