@@ -142,7 +142,7 @@ namespace SuperMan.Controllers
                 }
                 if (!string.IsNullOrWhiteSpace(criteria.OptDateStart))
                 {
-                    filname = string.Format(filname, criteria.OptDateStart + "到" + criteria.OptDateEnd);
+                    filname = string.Format(filname, ParseHelper.ToDatetime(criteria.OptDateStart).ToLongDateString() + "到" + ParseHelper.ToDatetime(criteria.OptDateEnd).ToLongDateString());
                 }
                 string[] title = ExcelUtility.GetDescription(new ImprestPaymentExcel());
                 ExcelIO.CreateFactory().Export(ConvertToImprestPaymentExcel(pagedList), ExportFileFormat.excel, filname, title);

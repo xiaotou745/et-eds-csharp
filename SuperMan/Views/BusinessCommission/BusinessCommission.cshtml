@@ -6,10 +6,6 @@
 <script src="~/Scripts/jquery-1.8.2.js"></script>
 <script src="~/Scripts/jquery-ui-1.8.20.js"></script>
 <script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
-
-<script type="text/javascript" src="~/Scripts/jquery-1.11.1.min.js"></script>
-<link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet">
-<script src="~/Scripts/jquery-ui.min.js"></script>
 <div class="zpManage zpSh">
     <h2 class="crumbs">
         您所在位置：商户 > 商户结算
@@ -83,7 +79,7 @@
         var txtDateEnd = $("#t2").val();
         var txtGroupId = $("#txtGroupId").val();
         //var BusinessCity = $("#BusinessCity").find("option:selected").text();
-        var BusinessCity = $("#BusinessCity").val();
+        var BusinessCity = $("#businessCity").val();
         if (txtDateStart == "") {
             alert("请输入开始时间!");
             return;
