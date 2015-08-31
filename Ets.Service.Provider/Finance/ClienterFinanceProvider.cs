@@ -29,6 +29,9 @@ using ETS.Data.PageData;
 using Ets.Service.IProvider.Clienter;
 using Ets.Service.Provider.Clienter;
 using Ets.Model.ParameterModel.Order;
+using Ets.Dao.Message;
+using Ets.Model.DataModel.Message;
+using ETS.Const;
 namespace Ets.Service.Provider.Finance
 {
     public class ClienterFinanceProvider : IClienterFinanceProvider
@@ -56,6 +59,7 @@ namespace Ets.Service.Provider.Finance
         ClienterFinanceDao clienterFinanceDao = new ClienterFinanceDao();
 
         private IClienterProvider iClienterProvider = new ClienterProvider();
+        ClienterMessageDao clienterMessageDao = new ClienterMessageDao();
         #endregion
 
         #region 骑士提现功能  add by caoheyang 20150509
@@ -583,6 +587,10 @@ namespace Ets.Service.Provider.Finance
                 dealResultInfo.DealMsg = "更改提现单状态为打款中失败！";
                 return dealResultInfo;
             }
+
+            //生成消息
+            AddCConfirmPlayMoneyMessage(cliFinanceAccount);
+    
             dealResultInfo.DealFlag = true;
             dealResultInfo.DealMsg = "骑士提现单确认打款处理成功，等待银行打款！";
             return dealResultInfo;
@@ -607,6 +615,10 @@ namespace Ets.Service.Provider.Finance
                         {
                             if (clienterFinanceDao.ModifyClienterAmountInfo(model.WithwardId.ToString()))
                             {
+                                //生成消息
+                                var cliFinanceAccount = clienterFinanceDao.GetClienterFinanceAccount(model.WithwardId.ToString());
+                                AddCAuditRejectionMessage(cliFinanceAccount);
+
                                 reg = true;
                                 tran.Complete();
                             }
@@ -887,5 +899,46 @@ namespace Ets.Service.Provider.Finance
             }
             return dealResultInfo;
         }
+
+        #region 用户自定义方法
+
+        /// <summary>
+        /// 新增确认打款消息
+        /// 胡灵波
+        /// 2015年8月28日 11:53:31
+        /// </summary>
+        /// <param name="clienterFinanceAccountModel"></param>
+        void AddCConfirmPlayMoneyMessage(ClienterFinanceAccountModel clienterFinanceAccountModel)
+        {
+            int month = clienterFinanceAccountModel.WithdrawTime.Month;
+            int day = clienterFinanceAccountModel.WithdrawTime.Day;
+            
+            long id = clienterMessageDao.Insert(new ClienterMessage
+            {
+                ClienterId = Convert.ToInt32(clienterFinanceAccountModel.ClienterId),
+                Content = string.Format(MessageConst.ConfirmPlayMoney, month, day, clienterFinanceAccountModel.Amount),
+                IsRead = 0
+            });
+        }
+
+        /// <summary>
+        /// 新增审核拒绝消息
+        /// 胡灵波
+        /// 2015年8月28日 12:05:47
+        /// </summary>
+        /// <param name="clienterFinanceAccountModel"></param>
+        void AddCAuditRejectionMessage(ClienterFinanceAccountModel clienterFinanceAccountModel)
+        {
+            int month = clienterFinanceAccountModel.WithdrawTime.Month;
+            int day = clienterFinanceAccountModel.WithdrawTime.Day;
+
+            long id = clienterMessageDao.Insert(new ClienterMessage
+            {
+                ClienterId = Convert.ToInt32(clienterFinanceAccountModel.ClienterId),
+                Content = string.Format(MessageConst.AuditRejection, month, day),
+                IsRead = 0
+            });
+        }
+        #endregion
     }
 }

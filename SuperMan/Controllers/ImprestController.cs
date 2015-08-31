@@ -7,12 +7,16 @@ using System.Web.Mvc;
 using ETS.Data.PageData;
 using ETS.Enums;
 using Ets.Model.DataModel.Finance;
+using Ets.Model.DomainModel.Clienter;
+using Ets.Model.DomainModel.Finance;
 using Ets.Model.ParameterModel.Finance;
 using Ets.Service.IProvider.Finance;
 using Ets.Service.Provider.Finance;
+using ETS.Const;
 using ETS.Util;
 using NPOI.SS.Formula.Functions;
 using SuperMan.App_Start;
+using SuperMan.Common;
 
 namespace SuperMan.Controllers
 {
@@ -114,7 +118,7 @@ namespace SuperMan.Controllers
         /// <param name="pageindex"></param>
         /// <returns></returns>
         [HttpGet]
-        public void PostDaoChuImprestPayment(int pageindex = 1)
+        public ActionResult PostDaoChuImprestPayment(int pageindex = 1)
         {
             ImprestBalanceRecordSearchCriteria criteria = new ImprestBalanceRecordSearchCriteria();
             TryUpdateModel(criteria);
@@ -124,30 +128,35 @@ namespace SuperMan.Controllers
 
             var pagedList = imprestProvider.GetImprestBalanceRecordList(criteria);
 
-            var buffer = new byte[0] { };
-            Response.ContentType = "application/msexcel";
-            Response.Clear();
-            Response.BufferOutput = true;
-            string filname = "无数据.xls";
+            //var buffer = new byte[0] { };
+            //Response.ContentType = "application/msexcel";
+            //Response.Clear();
+            //Response.BufferOutput = true;
+            //string filname = "无数据.xls";
             if (pagedList != null && pagedList.Records.Count > 0)
             {
-                filname = "e代送-{0}-备用金支出数据.xls";
+                string filname = "e代送-{0}-备用金支出数据";
                 if (!string.IsNullOrWhiteSpace(criteria.ClienterPhoneNo))
                 {
                     filname = string.Format(filname, criteria.ClienterPhoneNo);
                 }
                 if (!string.IsNullOrWhiteSpace(criteria.OptDateStart))
                 {
-                    filname = string.Format(filname, criteria.OptDateStart + ":" + criteria.OptDateEnd);
+                    filname = string.Format(filname, criteria.OptDateStart + "到" + criteria.OptDateEnd);
                 }
-                byte[] data = Encoding.UTF8.GetBytes(CreateExcel(pagedList));
-                buffer = data;
+                string[] title = ExcelUtility.GetDescription(new ImprestPaymentExcel());
+                ExcelIO.CreateFactory().Export(ConvertToImprestPaymentExcel(pagedList), ExportFileFormat.excel, filname, title);
+                return null;
+                //byte[] data = Encoding.UTF8.GetBytes(CreateExcel(pagedList));
+                //buffer = data;
             }
-            Response.AppendHeader("Content-Disposition", string.Format("attachment;filename={0}", filname));
-            Response.BinaryWrite(buffer);
-            Response.Flush();
-            Response.End();
+            //Response.AppendHeader("Content-Disposition", string.Format("attachment;filename={0}", filname));
+            //Response.BinaryWrite(buffer);
+            //Response.Flush();
+            //Response.End();
             //return File(new byte[0] { }, "application/msexcel", "无数据.xls");
+            Response.Write(SystemConst.NoExportData);
+            return null;
         }
 
         /// <summary>
@@ -179,6 +188,31 @@ namespace SuperMan.Controllers
             ImprestPayoutModel model = imprestProvider.ClienterWithdrawOk(parModel);
             return Json(model);
         }
+        /// <summary>
+        /// 转换备用金支出excel实体
+        /// wc
+        /// </summary>
+        /// <param name="paraModel"></param>
+        /// <returns></returns>
+        private IList<ImprestPaymentExcel> ConvertToImprestPaymentExcel(PageInfo<ImprestBalanceRecord> paraModel)
+        {
+            var ipex = new List<ImprestPaymentExcel>();
+            //输出数据.
+            foreach (var record in paraModel.Records)
+            {
+                ImprestPaymentExcel ipe = new ImprestPaymentExcel();
+                ipe.ClienterName = record.ClienterName;
+                ipe.ClienterPhoneNo = record.ClienterPhoneNo;
+                ipe.Amount = record.Amount;
+                ipe.AfterAmount = record.AfterAmount;
+                ipe.OptTime = record.OptTime;
+                ipe.OptName = record.OptName;
+                ipe.Remark = record.Remark;
+                ipex.Add(ipe);
+            }
+            return ipex;
+        }
+
 
         /// <summary>
         /// 生成excel文件

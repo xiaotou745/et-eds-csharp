@@ -3857,5 +3857,51 @@ MERGE INTO OrderPushRecord opr
             parm.AddWithValue("@PushCount", model.PushCount);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, parm) > 0;
         }
+        /// <summary>
+        /// 超时订单-获取列表
+        /// 茹化肖
+        /// 2015年8月28日10:58:28
+        /// </summary>
+        /// <typeparam name="T1"></typeparam>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public PageInfo<T> GetOverTimeOrderList<T>(OverTimeOrderPM model)
+        {
+            string columnList = @"
+                o.OrderNo ,
+        o.id AS OrderID,
+        b.id as Bid ,
+        b.Name ,
+        b.PhoneNo ,
+        o.PubDate ,
+        DATEDIFF(MINUTE, o.PubDate, GETDATE()) AS OverTime ,
+        ISNULL(o.ReceviceAddress, '') AS ReceviceAddress ,
+        o.OrderCount ,
+        o.Amount,
+        b.IsEmployerTask
+                ";
+            var sbSqlWhere = new StringBuilder(" o.Status = 0 ");
+            if (model.OverTime == 5)
+            {
+                sbSqlWhere.Append("AND DATEDIFF(MINUTE, o.PubDate, GETDATE()) >= 5");
+            }
+            if (model.OverTime == 10)
+            {
+                sbSqlWhere.Append("AND DATEDIFF(MINUTE, o.PubDate, GETDATE()) >= 10");
+            }
+            if (model.OverTime == 20)
+            {
+                sbSqlWhere.Append("AND DATEDIFF(MINUTE, o.PubDate, GETDATE()) >= 20");
+            }
+            if (!string.IsNullOrWhiteSpace(model.BusName))
+            {
+                sbSqlWhere.AppendFormat(" AND b.Name LIKE '%{0}%'",model.BusName);
+            }
+            string tableList = @" dbo.[order] AS o ( NOLOCK )
+        JOIN dbo.OrderOther AS oo ( NOLOCK ) ON o.id = oo.OrderId
+        JOIN dbo.business AS b ( NOLOCK ) ON b.Id = o.businessId ";
+            string orderByColumn = " o.PubDate ASC";
+            return new PageHelper().GetPages<T>(SuperMan_Read, model.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, model.PageSize, true);
+        }
     }
 }
