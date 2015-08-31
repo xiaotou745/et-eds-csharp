@@ -18,16 +18,20 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using Ets.Model.DomainModel.Business;
+using Ets.Model.DomainModel.Clienter;
 using Ets.Service.IProvider.Pay;
 using Ets.Service.Provider.Pay;
+using ETS.Const;
 using ETS.Pay.YeePay;
+using SuperMan.Common;
 
 namespace SuperMan.Controllers
 {
     public class BusinessWithdrawController : BaseController
     {
         readonly IAreaProvider iAreaProvider = new AreaProvider();
-        readonly IBusinessFinanceProvider iBusinessFinanceProvider=new BusinessFinanceProvider();
+        readonly IBusinessFinanceProvider iBusinessFinanceProvider = new BusinessFinanceProvider();
 
         private readonly IPayProvider iPayProvider = new PayProvider();
         /// <summary>
@@ -37,12 +41,12 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         public ActionResult BusinessWithdraw()
         {
-            
+
             int userType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(userType);
             var criteria = new BusinessWithdrawSearchCriteria()
             {
-                WithdrawStatus=0,
+                WithdrawStatus = 0,
                 UserType = userType,
                 AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(userType)
             };
@@ -62,7 +66,7 @@ namespace SuperMan.Controllers
         [HttpPost]
         public ActionResult PostBusinessWithdraw(int pageindex = 1)
         {
-           
+
             int userType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(userType);
             var criteria = new BusinessWithdrawSearchCriteria();
@@ -85,7 +89,7 @@ namespace SuperMan.Controllers
         public ActionResult BusinessWithdrawDetail(string withwardId)
         {
             var businessWithdrawFormModel = iBusinessFinanceProvider.GetBusinessWithdrawListById(withwardId);
-            var requestId= iPayProvider.GetRequestId(ParseHelper.ToLong(withwardId));
+            var requestId = iPayProvider.GetRequestId(ParseHelper.ToLong(withwardId));
             businessWithdrawFormModel.RequestId = requestId;
             ViewBag.businessWithdrawOptionLog = iBusinessFinanceProvider.GetBusinessWithdrawOptionLog(withwardId);
             return View(businessWithdrawFormModel);
@@ -97,7 +101,7 @@ namespace SuperMan.Controllers
             {
                 CashrequestId = requestId
             });
-            return new ContentResult { Content = Newtonsoft.Json.JsonConvert.SerializeObject(queryCashStatusReturnModel) }; 
+            return new ContentResult { Content = Newtonsoft.Json.JsonConvert.SerializeObject(queryCashStatusReturnModel) };
         }
         /// <summary>
         /// 审核商户提款申请单通过
@@ -113,7 +117,7 @@ namespace SuperMan.Controllers
                 Operator = UserContext.Current.Name,
                 Remark = "商户提款申请单审核通过",
                 Status = BusinessWithdrawFormStatus.Allow.GetHashCode(),
-                WithwardId =Convert.ToInt64(withwardId)
+                WithwardId = Convert.ToInt64(withwardId)
             };
             try
             {
@@ -126,7 +130,7 @@ namespace SuperMan.Controllers
             }
 
         }
-         /// <summary>
+        /// <summary>
         /// 商家批量审核通过（只审核待审核状态的数据）
         /// </summary>
         /// <UpdateBy>zhaohailong</UpdateBy>
@@ -176,19 +180,19 @@ namespace SuperMan.Controllers
                 {
                     totalMsg = "";
                     string[] error = errorResult.Where(p => p.Value == "").Select(p => p.Key).ToArray();
-                    if (error!=null&&error.Length>0)
+                    if (error != null && error.Length > 0)
                     {
                         totalMsg = "以下单号审核失败,请重试！\n" + string.Join("\n", error);
                     }
-                   
-                  
-                    string excepptionMsg= errorResult.Where(p => p.Value != "").Select(p=>p.Value).FirstOrDefault();
+
+
+                    string excepptionMsg = errorResult.Where(p => p.Value != "").Select(p => p.Value).FirstOrDefault();
                     if (!string.IsNullOrEmpty(excepptionMsg))
-	                {
-		                string[] exceptionIDs = errorResult.Where(p => p.Value != "").Select(p => p.Key).ToArray();
+                    {
+                        string[] exceptionIDs = errorResult.Where(p => p.Value != "").Select(p => p.Key).ToArray();
                         totalMsg += string.Format("\n以下单号审核失败:{0}！\n{1}\n", excepptionMsg, string.Join("\n", exceptionIDs));
-	                }
-                   
+                    }
+
                 }
             }
             return Json(new ResultModel(hasSuccess, totalMsg), JsonRequestBehavior.DenyGet);
@@ -226,7 +230,7 @@ namespace SuperMan.Controllers
             var businessWithdrawLog = new BusinessWithdrawLogModel()
             {
                 Operator = UserContext.Current.Name,
-                Remark =  auditFailedReason,
+                Remark = auditFailedReason,
                 Status = BusinessWithdrawFormStatus.TurnDown.GetHashCode(),
                 WithwardId = Convert.ToInt64(withwardId),
                 AuditFailedReason = auditFailedReason
@@ -288,12 +292,39 @@ namespace SuperMan.Controllers
                 {
                     filname = string.Format(filname, criteria.WithdrawDateStart + "~" + criteria.WithdrawDateEnd);
                 }
-                byte[] data = Encoding.UTF8.GetBytes(iBusinessFinanceProvider.CreateBusinessWithdrawFormExcel(dtBusinessWithdraw.ToList()));
-                return File(data, "application/ms-excel", filname);
+                string[] title = ExcelUtility.GetDescription(new BusinessWithdrawExcel());
+                ExcelIO.CreateFactory().Export(ConvertToClienterWithdrawExcel(dtBusinessWithdraw.ToList()), ExportFileFormat.excel, filname, title);
+                //byte[] data = Encoding.UTF8.GetBytes(iBusinessFinanceProvider.CreateBusinessWithdrawFormExcel(dtBusinessWithdraw.ToList()));
+                //return File(data, "application/ms-excel", filname);
             }
-            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(0);
-            var pagedList = iBusinessFinanceProvider.GetBusinessWithdrawList(criteria);
-            return View("BusinessWithdraw", pagedList);
+            Response.Write(SystemConst.NoExportData);
+            return null;
+            //ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(0);
+            //var pagedList = iBusinessFinanceProvider.GetBusinessWithdrawList(criteria);
+            //return View("BusinessWithdraw", pagedList);
+        }
+        /// <summary>
+        /// 转换骑士提现数据Excel
+        /// wc
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        private IList<BusinessWithdrawExcel> ConvertToClienterWithdrawExcel(List<BusinessWithdrawFormModel> list)
+        {
+            var bwExcels = new List<BusinessWithdrawExcel>();
+            //输出数据.
+            foreach (var item in list)
+            {
+                BusinessWithdrawExcel bwe = new BusinessWithdrawExcel();
+                bwe.BusinessName = item.BusinessName;
+                bwe.BusinessPhoneNo = item.BusinessPhoneNo;
+                bwe.OpenBank = item.OpenBank;
+                bwe.TrueName = item.TrueName;
+                bwe.AccountNo = ParseHelper.ToDecrypt(item.AccountNo);
+                bwe.Amount = item.Amount;
+                bwExcels.Add(bwe);
+            }
+            return bwExcels;
         }
     }
 }

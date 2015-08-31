@@ -202,6 +202,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Authority\AdminAuthenticationService.cs" />
     <Compile Include="Authority\IAuthenticationService.cs" />
+    <Compile Include="Common\ExcelUtility.cs" />
     <Compile Include="Controllers\AdminToolsController.cs" />
     <Compile Include="Controllers\api\MonitoringController.cs" />
     <Compile Include="Controllers\api\StatisticalController.cs" />
@@ -221,6 +222,7 @@
     <Compile Include="Controllers\DeliveryCompanyController.cs" />
     <Compile Include="Controllers\DeliveryManagerController.cs" />
     <Compile Include="Controllers\DownloadController.cs" />
+    <Compile Include="Controllers\PublicController.cs" />
     <Compile Include="Controllers\ImprestController.cs" />
     <Compile Include="Controllers\MessageManagerController.cs" />
     <Compile Include="Controllers\StatisticalController.cs" />
@@ -411,6 +413,7 @@
     <Content Include="Content\themes\base\images\ui-icons_888888_256x240.png" />
     <Content Include="Content\themes\base\images\ui-icons_cd0a0a_256x240.png" />
     <Content Include="Content\themes\base\jquery-ui.css" />
+    <Content Include="Content\themes\base\jquery-ui.min.css" />
     <Content Include="Content\themes\base\jquery.ui.accordion.css" />
     <Content Include="Content\themes\base\jquery.ui.all.css" />
     <Content Include="Content\themes\base\jquery.ui.autocomplete.css" />
@@ -518,6 +521,7 @@
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery-ui-1.8.20.js" />
     <Content Include="Scripts\jquery-ui-1.8.20.min.js" />
+    <Content Include="Scripts\jquery-ui.min.js" />
     <Content Include="Scripts\jquery.blockUI.js" />
     <Content Include="Scripts\jquery.colorbox-min.js" />
     <Content Include="Scripts\jquery.loadmask.js" />
