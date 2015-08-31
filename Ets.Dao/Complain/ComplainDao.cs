@@ -81,6 +81,11 @@ values  ( @ComplainId ,
             {
                 sbSqlWhere.AppendFormat(" and b.CityId = '{0}' ", complainCriteria.CityId);
             } 
+            if (!string.IsNullOrWhiteSpace(complainCriteria.businessCity))
+            {
+                sbSqlWhere.AppendFormat(" and b.City = '{0}' ", complainCriteria.businessCity);
+            } 
+            
             if (!string.IsNullOrEmpty(complainCriteria.ComplainStartTime) && !string.IsNullOrEmpty(complainCriteria.ComplainEndTime))
             {
                 sbSqlWhere.AppendFormat(" and cp.CreateTime > '{0}' and cp.CreateTime < '{1}' ", complainCriteria.ComplainStartTime, complainCriteria.ComplainEndTime);

@@ -222,6 +222,7 @@
     <Compile Include="Controllers\DeliveryCompanyController.cs" />
     <Compile Include="Controllers\DeliveryManagerController.cs" />
     <Compile Include="Controllers\DownloadController.cs" />
+    <Compile Include="Controllers\PublicController.cs" />
     <Compile Include="Controllers\ImprestController.cs" />
     <Compile Include="Controllers\MessageManagerController.cs" />
     <Compile Include="Controllers\StatisticalController.cs" />
