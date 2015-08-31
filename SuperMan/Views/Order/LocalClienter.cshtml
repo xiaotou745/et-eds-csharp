@@ -44,49 +44,48 @@
                     <div id="map_contain"></div>
                 </div>
                 <div id="Right" style="float: left;width: 388px;height: 602px;border: 1px #dcdcdc solid;margin-left: 20px;margin-top: 10px">
-                    <div id="businessInfo" style="width: 378px;">
-                            <div id="" style="font-size: 16px;float: left;margin-left: 5px">商铺信息：</div>
-                            <div id="" style="float: left;margin-left: 2px;margin-top: 4px">@businessUnReceiveOrder.BusinessName</div>
-                            <div id="" style="float: left;margin-left: 2px;margin-top: 4px">@businessUnReceiveOrder.BusinessPhoneNo</div>
-                            <div style="clear:both;"></div>
-                            <div id="" style="float: left;margin-top: 4px;margin-left: 88px">待抢任务数：@businessUnReceiveOrder.UnReceiveQty</div>
-                            <input type="hidden" id="busiLongitude" value="@businessUnReceiveOrder.PubLongitude">
-                            <input type="hidden" id="busiLatitude" value="@businessUnReceiveOrder.PubLatitude">
-                             <div style="clear:both;"></div>
-                            <div id="" style="font-size: 14px;float: left;margin-left: 5px">附近三公里的骑士：</div>
-                    </div>
-                    <div style="clear:both;"></div>
-                    @{
+            <div id="businessInfo" style="width: 378px;">
+                <div id="" style="font-size: 16px;float: left;margin-left: 5px">商铺信息：</div>
+                <div id="" style="float: left;margin-left: 2px;margin-top: 4px">@businessUnReceiveOrder.BusinessName</div>
+                <div id="" style="float: left;margin-left: 2px;margin-top: 4px">@businessUnReceiveOrder.BusinessPhoneNo</div>
+                <div style="clear:both;"></div>
+                <div id="" style="float: left;margin-top: 4px;margin-left: 88px">待抢任务数：@businessUnReceiveOrder.UnReceiveQty</div>
+                <input type="hidden" id="busiLongitude" value="@businessUnReceiveOrder.PubLongitude">
+                <input type="hidden" id="busiLatitude" value="@businessUnReceiveOrder.PubLatitude">
+                <div style="clear:both;"></div>
+                <div id="" style="font-size: 14px;float: left;margin-left: 5px">附近三公里的骑士：</div>
+            </div>
+            <div style="clear:both;"></div>
+            @{
                 if (Model != null && Model.Count > 0)
                 {
                     int i = 0;
                     <input type="hidden" id="clienterJsonInfo" value="@clienterJsonInfo">
-                        <div id="clienterInfo" style="width: 388px;border-top: 1px #dcdcdc solid">
+                    <div id="clienterInfo" style="width: 388px;border-top: 1px #dcdcdc solid">
 
-                            @foreach (var item in Model)
+                        @foreach (var item in Model)
                             {
                                 i++;
-                                <div style="border-color: red;border-bottom: 1px #dcdcdc solid;">
-                                    <div style="float: left;margin-left: 8px;margin-top: 4px">@i.@item.ClienterName</div>
-                                    <div style="float: left;margin-left: 8px;margin-top: 4px">@item.PhoneNo</div>
-                                    <div style="float: left;margin-left: 8px;margin-top: 4px">距门店 @(string.IsNullOrEmpty(item.Radius) ? "0" : item.Radius) m</div>
-                                    <div style="clear:both;"></div>
-                                    <div style="float: left;margin-left: 20px;margin-top: 4px">待取货：@item.ReceiveQty</div>
-                                    <div style="float: left;margin-left: 8px;margin-top: 4px">配送中：@item.TransferQty</div>
-                                    <div style="float: left;margin-left: 8px;margin-top: 4px">已完成：@item.FinishQty</div>
-                                    <div style="float: left;margin-left: 8px;margin-top: 4px">上班状态：@(item.WorkStatus == 0 ? "上班" : "下班")</div>
-                                    <div style="clear:both;"></div>
-                                </div>
+                            <div style="border-color: red;border-bottom: 1px #dcdcdc solid;">
+                                <div style="float: left;margin-left: 8px;margin-top: 4px">@i.@item.ClienterName</div>
+                                <div style="float: left;margin-left: 8px;margin-top: 4px">@item.PhoneNo</div>
+                                <div style="float: left;margin-left: 8px;margin-top: 4px">距门店 @(string.IsNullOrEmpty(item.Radius) ? "0" : item.Radius) m</div>
+                                <div style="clear:both;"></div>
+                                <div style="float: left;margin-left: 20px;margin-top: 4px">待取货：@item.ReceiveQty</div>
+                                <div style="float: left;margin-left: 8px;margin-top: 4px">配送中：@item.TransferQty</div>
+                                <div style="float: left;margin-left: 8px;margin-top: 4px">已完成：@item.FinishQty</div>
+                                <div style="float: left;margin-left: 8px;margin-top: 4px">上班状态：@(item.WorkStatus == 0 ? "上班" : "下班")</div>
+                                <div style="clear:both;"></div>
+                            </div>
                             }
-                        </div>
+                    </div>
                 }
-                    }
-
-                </div>
+            }
+             </div>
             }
         }
     </div>
-    
+
 </div>
 
 <script type="text/javascript">
@@ -100,7 +99,7 @@
         var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
         var infoWindow = new BMap.InfoWindow(content, opts);  // 创建信息窗口对象
         map.openInfoWindow(infoWindow, point); //开启信息窗口
-        
+
     }
     //var allData = clienterJsonInfo;
     //加载地图数据
@@ -144,4 +143,3 @@
 
 
 </script>
-
