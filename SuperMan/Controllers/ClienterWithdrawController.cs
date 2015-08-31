@@ -269,10 +269,10 @@ namespace SuperMan.Controllers
             var dtClienterWithdraw = iClienterFinanceProvider.GetClienterWithdrawForExport(criteria);
             if (dtClienterWithdraw != null && dtClienterWithdraw.Count > 0)
             {
-                string filname = "骑士提款申请单{0}.xls";
+                string filname = "骑士提款申请单{0}";
                 if (!string.IsNullOrWhiteSpace(criteria.WithdrawDateStart))
                 {
-                    filname = string.Format(filname, criteria.WithdrawDateStart + "~" + criteria.WithdrawDateEnd);
+                    filname = string.Format(filname, ParseHelper.ToDatetime(criteria.WithdrawDateStart).ToLongDateString() + "到" + ParseHelper.ToDatetime(criteria.WithdrawDateEnd).ToLongDateString());
                 }
                 string[] title = ExcelUtility.GetDescription(new ClienterWithdrawExcel());
                 ExcelIO.CreateFactory().Export(ConvertToClienterWithdrawExcel(dtClienterWithdraw.ToList()), ExportFileFormat.excel, filname, title);

@@ -287,10 +287,10 @@ namespace SuperMan.Controllers
             var dtBusinessWithdraw = iBusinessFinanceProvider.GetBusinessWithdrawForExport(criteria);
             if (dtBusinessWithdraw != null && dtBusinessWithdraw.Count > 0)
             {
-                string filname = "商户提款申请单{0}.xls";
+                string filname = "商户提款申请单{0}";
                 if (!string.IsNullOrWhiteSpace(criteria.WithdrawDateStart))
                 {
-                    filname = string.Format(filname, criteria.WithdrawDateStart + "~" + criteria.WithdrawDateEnd);
+                    filname = string.Format(filname, ParseHelper.ToDatetime(criteria.WithdrawDateStart).ToLongDateString() + "到" + ParseHelper.ToDatetime(criteria.WithdrawDateEnd).ToLongDateString());
                 }
                 string[] title = ExcelUtility.GetDescription(new BusinessWithdrawExcel());
                 ExcelIO.CreateFactory().Export(ConvertToClienterWithdrawExcel(dtBusinessWithdraw.ToList()), ExportFileFormat.excel, filname, title);
