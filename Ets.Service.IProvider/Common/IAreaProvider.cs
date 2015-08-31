@@ -28,6 +28,9 @@ namespace Ets.Service.IProvider.Common
         /// </summary>
         /// <returns></returns>
         Model.Common.ResultModel<Model.DomainModel.Area.AreaModelList> GetOpenCityOfSingleCity(int accountId);
+
+        Model.DomainModel.Area.AreaModelList GetOpenCity(int accountId = 0);
+        
         /// <summary>
         /// 根据用户传递的  省、市、区名称、级别（省1，市2，区3）,转换为 国标码
         /// 例如：用户传的是 Name:北京市,Code:1,级别:1，调用该方法返回：Name:北京市,Code:110000,级别:1

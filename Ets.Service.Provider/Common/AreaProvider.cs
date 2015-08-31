@@ -189,6 +189,27 @@ namespace Ets.Service.Provider.Common
                 return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.UnNewest, areaList);
             }
         }
+
+        public Model.DomainModel.Area.AreaModelList GetOpenCity(int accountId = 0)
+        {
+            var areaList = new AreaModelList();
+            if (accountId == 0)
+            {
+                var openCityList = GetOpenCity("").Result.AreaModels.Where(t => t.JiBie == 2).ToList();
+                areaList.AreaModels = openCityList;
+                areaList.Version = Config.ApiVersion;
+                return areaList;                
+            }
+            else
+            {
+                var authorityCityList = authoritySetDao.GetAccountCityRel(accountId).Select(i => i.CityId);
+                var openCityList = GetOpenCity("").Result.AreaModels.Where(t => t.JiBie == 2).Where(k => authorityCityList.Contains(k.Code)).ToList();
+                areaList.AreaModels = openCityList;
+                areaList.Version = Config.ApiVersion;
+                return areaList;                
+            }
+        }
+
         /// <summary>
         /// 根据用户Id获取权限城市名称集合
         /// danny-20150526
