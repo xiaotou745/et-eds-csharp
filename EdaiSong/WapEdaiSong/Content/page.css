@@ -116,10 +116,15 @@ h2 {
   color:#4b4b4c;
   padding:10% 2rem 0;
 }
+p.t1{
+  width: 100%;
+  position: absolute;
+  top: 45%;
+}
 h2 img {
   display:block;
-  width:60%;
-  margin:10px auto 25%;
+  width: 55%;
+  margin:10px auto 0;
 }
 h2.t2,h2.t5{
   padding-top: 5%;
@@ -159,7 +164,7 @@ p {
   margin:0 auto;
 }
 .page1 .img { bottom:20%; }
-.page1 .img .btn { margin-top:2rem; }
+.page1 .img .btn { margin-top:1rem; }
 .page2{ background: #e8eaf1;}
 .page5{ background: #031447;}
 .page2 .img {
@@ -172,7 +177,7 @@ p {
   margin: 0 auto;
   height: 50%;
 }
-.page2 .img,.page5 .img { bottom:25%; }
+.page2 .img,.page5 .img { bottom:23%; }
 .page6 .img { bottom:45%; }
 .opc {
   position:absolute;
