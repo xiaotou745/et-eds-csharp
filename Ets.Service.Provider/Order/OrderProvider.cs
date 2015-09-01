@@ -2321,9 +2321,40 @@ namespace Ets.Service.Provider.Order
             #region 分类获取对应满足条件的骑士
             foreach (var order in orderList)
             {
-                #region 店内骑士推送
+                #region 物流公司骑士推送
                 string strClienterId = "";
                 int clienterCount = 0;
+                var listbeRel = _businessDao.GetExpressClienterList(new BusinessExpressRelationModel()
+                {
+                    BusinessId = order.businessId,
+                    Latitude = order.BusinessLatitude,
+                    Longitude = order.BusinessLongitude,
+                    PushRadius = pushRadius
+                });
+                if (listbeRel != null && listbeRel.Count > 0)//有物流公司骑士
+                {
+                    foreach (var beRel in listbeRel)
+                    {
+                        listClienterId.Add(beRel.ClienterId);
+                        strClienterId += beRel.ClienterId + ",";
+                        clienterCount++;
+                    }
+                    orderDao.EditOrderPushRecord(new OrderPushRecord()
+                    {
+                        OrderId = order.Id,
+                        ClienterIdList = string.IsNullOrEmpty(strClienterId) ? "" : strClienterId.TrimEnd(','),
+                        TaskType = 0,
+                        PushCount = 1,
+                        ClienterCount = clienterCount
+                    });
+                    LogHelper.LogWriter("订单【" + order.Id + "】已推送给骑士【" + (string.IsNullOrEmpty(strClienterId) ? "" : strClienterId.TrimEnd(',')) + "】");
+                    continue;
+                }
+
+                #endregion
+
+                #region 店内骑士推送
+               
                 var listbcRel = _businessDao.GetBusinessClienterRelationList(order.businessId);
                 if (listbcRel != null && listbcRel.Count > 0)//有店内骑士
                 {
@@ -2346,30 +2377,11 @@ namespace Ets.Service.Provider.Order
                 }
                 #endregion
 
-                #region 物流公司骑士推送
-                var listbeRel = _businessDao.GetExpressClienterList(new BusinessExpressRelationModel()
-                {
-                    BusinessId = order.businessId,
-                    Latitude = order.PubLatitude,
-                    Longitude = order.PubLongitude,
-                    PushRadius = pushRadius
-                });
-                if (listbeRel != null && listbeRel.Count > 0)//有物流公司骑士
-                {
-                    foreach (var beRel in listbeRel)
-                    {
-                        listClienterId.Add(beRel.ClienterId);
-                        strClienterId += beRel.ClienterId + ",";
-                        clienterCount++;
-                    }
-                }
-                #endregion
-
                 #region 众包骑士推送
                 var listprc = clienterDao.GetPushRadiusClienterList(new BusinessExpressRelationModel()
                 {
-                    Latitude = order.PubLatitude,
-                    Longitude = order.PubLongitude,
+                    Latitude = order.BusinessLatitude,
+                    Longitude = order.BusinessLongitude,
                     PushRadius = pushRadius
                 });
                 if (listprc != null && listprc.Count > 0)
@@ -2465,8 +2477,8 @@ namespace Ets.Service.Provider.Order
             var listbcRel = _businessDao.GetBusinessLocalRelClienterList(new LocalClienterParameter()
             {
                 BusinessId = orderModel.businessId,
-                Latitude = orderModel.PubLatitude,
-                Longitude = orderModel.PubLongitude,
+                Latitude = orderModel.BusinessLatitude,
+                Longitude = orderModel.BusinessLongitude,
                 PushRadius = "3"
             });
             if (listbcRel != null && listbcRel.Count > 0) //有店内骑士
@@ -2479,8 +2491,8 @@ namespace Ets.Service.Provider.Order
             var listbeRel = _businessDao.GetBusinessLocaClienterList(new LocalClienterParameter()
             {
                 BusinessId = orderModel.businessId,
-                Latitude = orderModel.PubLatitude,
-                Longitude = orderModel.PubLongitude,
+                Latitude = orderModel.BusinessLatitude,
+                Longitude = orderModel.BusinessLongitude,
                 PushRadius = "3"
             });
             if (listbeRel == null || listbeRel.Count <= 0) //有店内骑士

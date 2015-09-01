@@ -2715,7 +2715,7 @@ SELECT   cl.ClienterId
 INTO #tempActiveClienter
 FROM ( SELECT ClienterId,MAX(ID) ID
 	   FROM ClienterLocation  WITH(NOLOCK)
-	   WHERE CreateTime>DATEADD(MINUTE,-10000,GetDate())
+	   WHERE CreateTime>DATEADD(MINUTE,-50000,GetDate())
 	   GROUP BY ClienterId) tbl
 JOIN ClienterLocation  cl WITH(NOLOCK) ON cl.ID = tbl.ID;
 
@@ -2723,7 +2723,7 @@ SELECT c.Id ClienterId
       ,c.TrueName ClienterName
       ,c.PhoneNo
       ,c.WorkStatus
-      ,geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326)) Radius
+      ,ROUND(geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326)),0) Radius
       ,tac.Latitude
       ,tac.Longitude
 INTO #tempLocalClienter
@@ -2740,7 +2740,8 @@ SELECT  TOP 20 templc.ClienterName,
         templc.Longitude,
 		tbllac.ReceiveQty,
 		tbllac.TransferQty,
-		tbllac.FinishQty
+		tbllac.FinishQty,
+        1 IsEmployerTask
 FROM #tempLocalClienter templc
 JOIN(
 SELECT tlc.clienterId,
@@ -2775,7 +2776,7 @@ SELECT cl.ClienterId
 INTO #tempActiveClienter
 FROM ( SELECT ClienterId,MAX(ID) ID
 	   FROM ClienterLocation  WITH(NOLOCK)
-	   WHERE CreateTime>DATEADD(MINUTE,-10000,GetDate())
+	   WHERE CreateTime>DATEADD(MINUTE,-50000,GetDate())
 	   GROUP BY ClienterId) tbl
 JOIN ClienterLocation  cl WITH(NOLOCK) ON cl.ID = tbl.ID;
 
@@ -2783,7 +2784,7 @@ SELECT c.Id ClienterId
 	  ,c.TrueName ClienterName
       ,c.PhoneNo
       ,c.WorkStatus
-      ,geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326)) Radius
+      ,ROUND(geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326)),0) Radius
       ,tac.Latitude
       ,tac.Longitude
 INTO #tempLocalClienter
@@ -2803,7 +2804,8 @@ SELECT  TOP 20 templc.ClienterName,
         templc.Longitude,
 		tbllac.ReceiveQty,
 		tbllac.TransferQty,
-		tbllac.FinishQty
+		tbllac.FinishQty,
+        0 IsEmployerTask
 FROM #tempLocalClienter templc
 JOIN(
 SELECT tlc.clienterId,
