@@ -24,6 +24,7 @@ using Ets.Service.IProvider.Common;
 using Ets.Service.Provider.Common;
 using ETS.Security;
 using Ets.Model.DataModel.Business;
+using Ets.Model.DomainModel.Business;
 using Ets.Service.IProvider.Business;
 using Ets.Service.Provider.Business;
 namespace OpenApi.Controllers
@@ -78,7 +79,8 @@ namespace OpenApi.Controllers
                 //{
                 LogHelper.LogWriter("商户注册---：", new { busid = busi.Id,BusiStatus=BusiStatus.BusiNoPass.GetHashCode() });
 
-                bool upresult = iBusiProvider.UpdateAuditStatus(busi.Id, BusiStatus.BusiNoPass.GetHashCode(), paramodel.fields.Address);
+                BusinessAuditModel bamModel = new BusinessAuditModel() { AuditStatus = AuditStatus.Status0,OptionUserId = busi.Id,OptionUserName = busi.Name};
+                bool upresult = iBusiProvider.UpdateAuditStatus(bamModel, paramodel.fields.Address);
                 
                 //}
                 if (upresult)

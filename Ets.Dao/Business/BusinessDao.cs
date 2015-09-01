@@ -635,7 +635,6 @@ order by a.id desc
         /// </summary>
         /// <param name="id"></param>
         /// <param name="enumStatusType"></param>
-        /// <param name="busiAddress"></param>
         /// <returns></returns>
         public bool UpdateAuditStatus(int id, AuditStatus enumStatusType)
         {
@@ -696,16 +695,124 @@ order by a.id desc
         /// <summary>
         /// 更新审核状态
         /// danny-20150317
+        /// 茹化肖修改
+        /// 2015年8月26日11:10:29 
+        /// wc修改
+        /// 2015年9月1日
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="enumStatusType"></param>
         /// <returns></returns>
-        public bool UpdateAuditStatus(int id, int enumStatus, string busiAddress)
+        public bool UpdateAuditStatus(BusinessAuditModel bam)
+        {
+            var juWangKeBusiAuditUrl = ConfigSettings.Instance.JuWangKeBusiAuditCallBack;
+            bool reslut = false;
+            string remark = "";
+            try
+            {
+                StringBuilder sql = new StringBuilder();
+                if (bam.AuditStatus == AuditStatus.Status1)
+                {
+                    remark = "审核状态修改为审核通过";
+                    sql.AppendFormat(@" update business set Status={0} OUTPUT
+                                              Inserted.Id,
+                                              @OptId,
+                                              @OptName,
+                                              GETDATE(),
+                                              @Platform,
+                                              @Remark
+                                            INTO BusinessOptionLog
+                                             (BusinessId,
+                                              OptId,
+                                              OptName,
+                                              InsertTime,
+                                              Platform,
+                                              Remark) ", BusinessStatus.Status1.GetHashCode());
+                }
+                else if (bam.AuditStatus == AuditStatus.Status0)
+                {
+                    remark = "审核状态修改为审核取消";
+                    sql.AppendFormat(@" update business set Status={0} OUTPUT
+                                              Inserted.Id,
+                                              @OptId,
+                                              @OptName,
+                                              GETDATE(),
+                                              @Platform,
+                                              @Remark
+                                            INTO BusinessOptionLog
+                                             (BusinessId,
+                                              OptId,
+                                              OptName,
+                                              InsertTime,
+                                              Platform,
+                                              Remark) ", BusinessStatus.Status4.GetHashCode());
+                }
+
+                sql.Append(" where id=@id;");
+                IDbParameters dbParameters = DbHelper.CreateDbParameters();
+                dbParameters.AddWithValue("id", bam.BusinessId);
+                dbParameters.AddWithValue("@OptId", bam.OptionUserId);
+                dbParameters.AddWithValue("@OptName", bam.OptionUserName);
+                dbParameters.AddWithValue("@Platform", 3);
+                dbParameters.AddWithValue("@Remark", remark);  
+                int i = DbHelper.ExecuteNonQuery(Config.SuperMan_Write, sql.ToString(), dbParameters);
+
+                if (i > 0)
+                {
+                    //调用第三方接口 ，聚网客商户审核通过后调用接口
+                    //这里不建议使用 1 数字，而是根据 配置文件中的 appkey来获取 groupid
+                    var busi = GetBusiness(bam.BusinessId);
+                    if (busi.GroupId == 1 && busi.OriginalBusiId > 0 && bam.AuditStatus == AuditStatus.Status1)
+                    {
+                        string str = HTTPHelper.HttpPost(juWangKeBusiAuditUrl, "supplier_id=" + busi.OriginalBusiId);
+                        HttpModel httpModel = new HttpModel()
+                        {
+                            Url = juWangKeBusiAuditUrl,
+                            Htype = HtypeEnum.ReqType.GetHashCode(),
+                            RequestBody = "supplier_id=" + busi.OriginalBusiId,
+                            ResponseBody = str,
+                            ReuqestPlatForm = RequestPlatFormEnum.EdsManagePlat.GetHashCode(),
+                            ReuqestMethod = "Ets.Dao.Business.BusinessDao.UpdateAuditStatus",
+                            Status = 1,
+                            Remark = "更新审核状态:调用聚网客"
+                        };
+                        new HttpDao().LogThirdPartyInfo(httpModel);
+                    } 
+                    reslut = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                reslut = false;
+                LogHelper.LogWriter(ex, "更新审核状态");
+                throw;
+            }
+            return reslut;
+        }
+
+        /// <summary>
+        /// 更新审核状态
+        /// danny-20150317
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns></returns>
+        public bool UpdateAuditStatus(BusinessAuditModel bam, string busiAddress)
         {
             bool reslut = false;
             try
             {
-                StringBuilder sql = new StringBuilder("update business set Status=@enumStatus ");
+                StringBuilder sql = new StringBuilder(@" update business set Status=@enumStatus OUTPUT 
+                                              Inserted.Id,
+                                              @OptId,
+                                              @OptName,
+                                              GETDATE(),
+                                              @Platform,
+                                              Deleted.[Address]+'修改为'+Inserted.[Address] 
+                                            INTO BusinessOptionLog 
+                                             (BusinessId,
+                                              OptId,
+                                              OptName,
+                                              InsertTime,
+                                              Platform,
+                                              Remark) ");
 
                 if (!string.IsNullOrWhiteSpace(busiAddress))  //当商户地址不为空的时候，修改商户地址
                 {
@@ -713,9 +820,12 @@ order by a.id desc
                 }
                 sql.Append(" where id=@id");
                 IDbParameters parm = DbHelper.CreateDbParameters();
-                parm.Add("id", DbType.Int32, 4).Value = id;
+                parm.Add("@id", DbType.Int32, 4).Value = bam.BusinessId;
                 parm.Add("@Address", DbType.String).Value = busiAddress; //商户地址
-                parm.Add("enumStatus", DbType.Int32, 4).Value = enumStatus;
+                parm.Add("@enumStatus", DbType.Int32, 4).Value = bam.AuditStatus.GetHashCode();
+                parm.AddWithValue("@OptId", bam.OptionUserId);
+                parm.AddWithValue("@OptName", bam.OptionUserName);
+                parm.AddWithValue("@Platform", 0); 
                 return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql.ToString(), parm)) > 0 ? true : false;
             }
             catch (Exception ex)

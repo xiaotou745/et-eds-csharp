@@ -125,6 +125,7 @@
     <Compile Include="DataModel\Order\OrderSubsidiesLog.cs" />
     <Compile Include="DataModel\YeePay\YeePayRunningAccountModel.cs" />
     <Compile Include="DomainModel\Authority\AccountDCRelationModel.cs" />
+    <Compile Include="DomainModel\Business\BusinessAuditModel.cs" />
     <Compile Include="DomainModel\Business\BusinessCommissionExcel.cs" />
     <Compile Include="DomainModel\Business\BusinessExpressRelationModel.cs" />
     <Compile Include="DomainModel\Business\BusinessWithdrawExcel.cs" />
@@ -144,6 +145,7 @@
     <Compile Include="DomainModel\Business\ClienterBindOptionLogModel.cs" />
     <Compile Include="DomainModel\Clienter\ClienterDetailModel.cs" />
     <Compile Include="DomainModel\Clienter\ClienterDM.cs" />
+    <Compile Include="DomainModel\DeliveryCompany\ClienterOrderExcel.cs" />
     <Compile Include="DomainModel\DeliveryCompany\CompanyModel.cs" />
     <Compile Include="DomainModel\DeliveryCompany\CompanyModelList.cs" />
     <Compile Include="DomainModel\DeliveryCompany\DeliveryCompanyResultModel.cs" />

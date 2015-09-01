@@ -11,11 +11,7 @@
 <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
 <script src="~/Scripts/jquery-1.8.2.js"></script>
 <script src="~/Scripts/jquery-ui-1.8.20.js"></script>
-<script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
-<script type="text/javascript" src="~/Scripts/jquery-1.11.1.min.js"></script>
-<link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet">
-<script src="~/Scripts/jquery-ui.min.js"></script>
-
+<script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script> 
 <div class="zpManage zpSh">
     <h2 class="crumbs">
         您所在位置：物流订单管理 > 订单管理
@@ -83,7 +79,7 @@
         var txtSuperManName = $("#txtSuperManName").val();
         var txtOrderPubStart = $("#txtOrderPubStart").val();
         var txtOrderPubEnd = $("#txtOrderPubEnd").val();
-        var businessCity = $("#businessCity option:selected").val();
+        var businessCity = $("#businessCity").val();
         var orderStatus = $("#StatusSelect option:selected").val() == undefined? -1 : $("#StatusSelect option:selected").val();
         var deliveryCompany = $("#deliveryCompany option:selected").val() == undefined ? -1 : $("#deliveryCompany option:selected").val();
         if (txtOrderPubStart == "" || txtOrderPubEnd == "") {
