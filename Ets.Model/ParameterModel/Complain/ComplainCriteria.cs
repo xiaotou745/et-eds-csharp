@@ -22,5 +22,7 @@ namespace Ets.Model.ParameterModel.Complain
         /// 城市id
         /// </summary>
         public string CityId { get; set; }
+
+        public string businessCity { get; set; }
     }
 }

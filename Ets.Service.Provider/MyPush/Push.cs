@@ -232,10 +232,10 @@ namespace Ets.Service.Provider.MyPush
                         new ETS.Library.JPush.push.notification.IosNotification().setAlert(model.Alert)
                             .setBadge(1)
                             .setSound(string.Concat(model.ContentKey, ":", model.Content));
-                    if (!string.IsNullOrEmpty(model.Content))
-                    {
+                    //if (!string.IsNullOrEmpty(model.Content))
+                    //{
                         notification.AndroidNotification = new ETS.Library.JPush.push.notification.AndroidNotification().AddExtra(model.ContentKey, model.Content);
-                    }
+                    //}
                     pushPayload.notification = notification.Check();
                     var response = client.SendPush(pushPayload);
                     LogHelper.LogWriter(!response.isResultOK() ? "推送失败" : "推送成功", response.msg_id);

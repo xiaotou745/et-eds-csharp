@@ -32,6 +32,7 @@ namespace Ets.Model.DomainModel.Statistics
        /// 城市id
        /// </summary>
        public string CityId { get; set; }
+       public string businessCity { get; set; }
        /// <summary>
        /// 排序方式(0为充值时间倒序，1为充值金额降序，2为充值金额升序)
        /// </summary>

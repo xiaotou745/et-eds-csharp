@@ -25,7 +25,8 @@
                         <span class="">商户电话: </span>
                         <input id="BusinessPhoneNo" type="tel" name="BusinessPhoneNo" />
                         <span class="">筛选城市: </span>
-                        @Html.DropDownList("businessCity", new SelectList(ViewBag.openCityList.Result.AreaModels, "Name", "Name"), "--无--", new { style = "width:155px" })
+                        @*@Html.DropDownList("businessCity", new SelectList(ViewBag.openCityList.Result.AreaModels, "Name", "Name"), "--无--", new { style = "width:155px" })*@
+                        <input id="businessCity" name="businessCity" type="text">
                         <span class="">提款状态: </span>
                         @Html.DropDownList("withdrawStatus", new SelectList(EnumExtenstion.GetEnumItems(typeof(BusinessWithdrawFormStatus)), "Value", "Text"), "全部", new { @class = "selectw", style = "width:157px" })
                     </td>
@@ -114,5 +115,31 @@
             }
         });
     }
+
+    $("#businessCity").autocomplete(
+               {
+                   source: function (request, response) {
+
+                       $.ajax({
+                           url: "/Public/GetCity?cityName=" + encodeURI(encodeURI(request.term)),
+                           //dataType: "json",
+                           data: {
+                               top: 10,
+                               key: request.term
+                           },
+                           success: function (data) {
+                               testJson = $.parseJSON(data);
+                               response($.map(testJson.citylist, function (item) {
+                                   return { label: item.city, value: item.city }
+                               }));
+                           }
+                       });
+                   },
+                   select: function (event, ui) {
+                   },
+                   minLength: 1,
+                   autoFocus: false,
+                   delay: 500
+               });
 </script>
 <script src="~/Scripts/mvcpager.js"></script>

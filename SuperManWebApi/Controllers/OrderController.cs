@@ -261,7 +261,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model">参数实体</param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpPost] 
         public ResultModel<object> GetJobC(GetJobCPM model)
         {
             return iOrderProvider.GetJobC(model);

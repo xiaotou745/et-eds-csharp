@@ -1,14 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using Ets.Model.DataModel.Business;
 using Ets.Model.DomainModel.Business;
+using Ets.Model.DomainModel.Clienter;
 using Ets.Service.IProvider.Common;
 using Ets.Service.Provider.Common;
 using SuperMan.App_Start;
 using Ets.Service.IProvider.Business;
 using Ets.Service.Provider.Business;
+using ETS.Const;
+using ETS.Enums;
+using ETS.Util;
+using SuperMan.Common;
+
 namespace SuperMan.Controllers
 {
     /// <summary>
@@ -173,29 +180,37 @@ namespace SuperMan.Controllers
                 criteria.BusinessCity = "";
             }
             string authorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType);
+
             if (UserType > 0 && string.IsNullOrWhiteSpace(authorityCityNameListStr))
             {
-                return View("BusinessCommission");
+                Response.Write(SystemConst.NoExportData);
+                return null;
+                //return View("BusinessCommission");
             }
             var result = iBusinessProvider.GetBusinessCommission(date1, date2, criteria.txtBusinessName, criteria.txtBusinessPhoneNo, criteria.txtGroupId, criteria.BusinessCity, authorityCityNameListStr);
             if (result.Result && result.Data.Count > 0)
             {
-                string filname = "e代送商户订单结算_" + date1.ToShortDateString() + "-" + date2.ToShortDateString() + ".xls";
-                if (result.Data.Count > 3)
-                {
-                    byte[] data = Encoding.UTF8.GetBytes(CreateExcel(result.Data));
-                    return File(data, "application/ms-excel", filname);
-                }
-                else
-                {
-                    byte[] data = Encoding.Default.GetBytes(CreateExcel(result.Data));
-                    return File(data, "application/ms-excel", filname);
-                }
-                
-            }
-            return View("BusinessCommission", result);
-        }
+                string filname = "e代送商户订单结算" + date1.ToLongDateString() + "到" + date2.ToLongDateString();
+                string[] title = ExcelUtility.GetDescription(new BusinessCommissionExcel());
+                ExcelIO.CreateFactory().Export(ConvertToBusinessCommissionExcel(result.Data.ToList()), ExportFileFormat.excel, filname, title);
+                return null;
+                //if (result.Data.Count > 3)
+                //{
+                //    byte[] data = Encoding.UTF8.GetBytes(CreateExcel(result.Data));
+                //    return File(data, "application/ms-excel", filname);
+                //}
+                //else
+                //{
+                //    byte[] data = Encoding.Default.GetBytes(CreateExcel(result.Data));
+                //    return File(data, "application/ms-excel", filname);
+                //}
 
+            }
+            Response.Write(SystemConst.NoExportData);
+            return null;
+            //return View("BusinessCommission", result);
+        }
+        //private IList<> 
         /// <summary>
         /// 生成商户结算excel文件
         /// </summary>
@@ -230,8 +245,30 @@ namespace SuperMan.Controllers
             strBuilder.AppendLine("</table>");
             return strBuilder.ToString();
         }
-
-
+        /// <summary>
+        /// 转换商户结算数据Excel
+        /// wc
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>s
+        private IList<BusinessCommissionExcel> ConvertToBusinessCommissionExcel(List<BusinessCommissionDM> list)
+        {
+            var bcExcels = new List<BusinessCommissionExcel>();
+            //输出数据.
+            foreach (var item in list)
+            {
+                BusinessCommissionExcel bce = new BusinessCommissionExcel();
+                bce.BusinessName = item.Name;
+                bce.Amount = item.Amount;
+                bce.OrderCount = item.OrderCount;
+                bce.BusinessCommission = item.BusinessCommission;
+                bce.StartTime = item.T1;
+                bce.EndTime = item.T2;
+                bce.TotalAmount = item.TotalAmount;
+                bcExcels.Add(bce);
+            }
+            return bcExcels;
+        }
 
         /// <summary>
         /// 导出商户结算金额excel

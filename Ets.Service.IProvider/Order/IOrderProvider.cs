@@ -300,5 +300,31 @@ namespace Ets.Service.IProvider.Order
         /// <param name="criteria"></param>
         /// <returns></returns>
         PageInfo<T> GetOverTimeOrderList<T>(OverTimeOrderPM model);
+        ///// <summary>
+        ///// 获取商家附近骑士列表
+        ///// danny-20150831
+        ///// </summary>
+        ///// <param name="orderId"></param>
+        ///// <returns></returns>
+        //IList<LocalClienterModel> GetLocalClienterList(int orderId);
+
+        /// <summary>
+        /// 获取商户未抢单订单数
+        /// danny-20150831
+        /// </summary>
+        /// <param name="orderId">订单Id</param>
+        /// <param name="businessId">商户Id</param>
+        /// <returns></returns>
+        OrderListModel GetBusinessUnReceiveOrderQty(int orderId,int businessId);
+
+        /// <summary>
+        /// 获取附近骑士信息
+        /// danny-20150831
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        IList<LocalClienterModel> GetLocalClienterList(int orderId);
+
+
     }
 }

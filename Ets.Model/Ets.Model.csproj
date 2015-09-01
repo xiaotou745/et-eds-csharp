@@ -125,6 +125,7 @@
     <Compile Include="DataModel\Order\OrderSubsidiesLog.cs" />
     <Compile Include="DataModel\YeePay\YeePayRunningAccountModel.cs" />
     <Compile Include="DomainModel\Authority\AccountDCRelationModel.cs" />
+    <Compile Include="DomainModel\Business\BusinessCommissionExcel.cs" />
     <Compile Include="DomainModel\Business\BusinessExpressRelationModel.cs" />
     <Compile Include="DomainModel\Business\BusinessWithdrawExcel.cs" />
     <Compile Include="DomainModel\Clienter\ClienterUpdateModel.cs" />
@@ -270,6 +271,8 @@
     <Compile Include="ParameterModel\Business\BussOrderParaModelApp.cs" />
     <Compile Include="ParameterModel\Business\BusinessSearchCriteria.cs" />
     <Compile Include="ParameterModel\Business\ClienterPushLocaltionPM.cs" />
+    <Compile Include="ParameterModel\Business\LocalClienterModel.cs" />
+    <Compile Include="ParameterModel\Business\LocalClienterParameter.cs" />
     <Compile Include="ParameterModel\Business\LoginModel.cs" />
     <Compile Include="ParameterModel\Business\NewBusiRegisterResultModel.cs" />
     <Compile Include="ParameterModel\Business\NewRegisterInfoModel.cs" />

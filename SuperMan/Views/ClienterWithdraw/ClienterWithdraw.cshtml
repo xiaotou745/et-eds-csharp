@@ -3,11 +3,11 @@
 @model ETS.Data.PageData.PageInfo<Ets.Model.DomainModel.Finance.ClienterWithdrawFormModel>
 @{
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
-}
+} 
 <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
 <script src="~/Scripts/jquery-1.8.2.js"></script>
 <script src="~/Scripts/jquery-ui-1.8.20.js"></script>
-<script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
+<script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script> 
 <div class="zpManage zpSh">
     <h2 class="crumbs">
         您所在位置：财务管理 > 骑士提现管理
@@ -33,16 +33,17 @@
                         <span class="">提款单号: </span>
                         <input id="withwardNo" type="text" name="withwardNo" />
                         <span class="">@Html.DropDownList("ClientWithdrawDate", new SelectList(EnumExtenstion.GetEnumItems(typeof(ClientWithdrawType)), "Value", "Text"), "请选择", new { @class = "selectw", style = "width:157px" }) </span>
-                        <input id="withdrawDateStart" readonly="readonly" type="text" name="withdrawDateStart" style="width:164px" />
+                        <input id="withdrawDateStart" readonly="readonly" type="text" name="withdrawDateStart"  />
                         <span class="">到: </span>
-                        <input id="withdrawDateEnd" readonly="readonly" type="text" name="withdrawDateEnd" style="width:164px" />
+                        <input id="withdrawDateEnd" readonly="readonly" type="text" name="withdrawDateEnd"  />
                         <span id="tip"></span><br />
                     </td>
                 </tr>
                 <tr>
                     <td>
                         <span class="">筛选城市: </span>
-                        @Html.DropDownList("businessCity", new SelectList(ViewBag.openCityList.Result.AreaModels, "Name", "Name"), "--无--", new { style = "width:155px" })
+                        @*@Html.DropDownList("businessCity", new SelectList(ViewBag.openCityList.Result.AreaModels, "Name", "Name"), "--无--", new { style = "width:155px" })*@
+                        <input id="businessCity" name="businessCity" type="text">
                         <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
                         <input type="button" value="导出" onclick="return funExport()" class="searchBtn" id="btnExport" />
                         <input type="button" value="批量审核通过" onclick="return funBatchAuditPass()" class="searchBtn" id="btnBatchAuditPass" />
@@ -114,5 +115,31 @@
             }
         });
     }
+
+    $("#businessCity").autocomplete(
+               {
+                   source: function (request, response) {
+
+                       $.ajax({
+                           url: "/Public/GetCity?cityName=" + encodeURI(encodeURI(request.term)),
+                           //dataType: "json",
+                           data: {
+                               top: 10,
+                               key: request.term
+                           },
+                           success: function (data) {
+                               testJson = $.parseJSON(data);
+                               response($.map(testJson.citylist, function (item) {
+                                   return { label: item.city, value: item.city }
+                               }));
+                           }
+                       });
+                   },
+                   select: function (event, ui) {
+                   },
+                   minLength: 1,
+                   autoFocus: false,
+                   delay: 500
+               });
 </script>
 <script src="~/Scripts/mvcpager.js"></script>

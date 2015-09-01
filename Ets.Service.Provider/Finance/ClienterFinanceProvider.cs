@@ -617,6 +617,7 @@ namespace Ets.Service.Provider.Finance
                             {
                                 //生成消息
                                 var cliFinanceAccount = clienterFinanceDao.GetClienterFinanceAccount(model.WithwardId.ToString());
+                                cliFinanceAccount.AuditFailedReason = model.AuditFailedReason;
                                 AddCAuditRejectionMessage(cliFinanceAccount);
 
                                 reg = true;
@@ -935,7 +936,7 @@ namespace Ets.Service.Provider.Finance
             long id = clienterMessageDao.Insert(new ClienterMessage
             {
                 ClienterId = Convert.ToInt32(clienterFinanceAccountModel.ClienterId),
-                Content = string.Format(MessageConst.AuditRejection, month, day),
+                Content = string.Format(MessageConst.AuditRejection, month, day,clienterFinanceAccountModel.AuditFailedReason),
                 IsRead = 0
             });
         }

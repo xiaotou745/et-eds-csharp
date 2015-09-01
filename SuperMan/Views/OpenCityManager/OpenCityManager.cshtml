@@ -5,6 +5,10 @@
 @{
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
 }
+<script type="text/javascript" src="~/Scripts/jquery-1.11.1.min.js"></script>
+<link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet">
+<script src="~/Scripts/jquery-ui.min.js"></script>
+
 <div class="zpManage zpSh">
     <h2 class="crumbs">
         您所在位置：管理员 > 开放城市管理
@@ -15,7 +19,7 @@
                 <tr>
                     <td>
                         <span>城市名称: </span>
-                        <input id="txtCityName" type="text" name="cityName" value="@ViewBag.cityName" />
+                        <input id="txtCityName" type="text" name="cityName" value="@ViewBag.cityName" />                  
                         <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
                         @*@if (UserContext.Current.HasAuthority(39))
                         {*@
@@ -73,6 +77,32 @@
             });
         }
     });
+    $("#txtCityName").autocomplete(
+           {
+               source: function (request, response) {
+
+                   $.ajax({
+                       url: "/Public/GetCity?cityName=" + encodeURI(encodeURI(request.term)),
+                       //dataType: "json",
+                       data: {
+                           top: 10,
+                           key: request.term
+                       },
+                       success: function (data) {
+                           testJson = $.parseJSON(data);
+                           response($.map(testJson.citylist, function (item) {
+                               return { label: item.city, value: item.city }
+                           }));
+                       }
+                   });
+               },
+               select: function (event, ui) {
+               },
+               minLength: 1,
+               autoFocus: false,
+               delay: 500
+           });
+
 </script>
 
 

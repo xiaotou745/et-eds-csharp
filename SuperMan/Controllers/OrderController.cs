@@ -7,12 +7,14 @@
 ﻿using ETS.Data.PageData;
 ﻿using Ets.Model.DataModel.Order;
 ﻿using Ets.Model.DomainModel.Business;
+﻿using Ets.Model.ParameterModel.Business;
 ﻿using Ets.Service.IProvider.AuthorityMenu;
 ﻿using Ets.Service.Provider.Authority;
 using Ets.Service.Provider.Distribution;
 using Ets.Service.Provider.Order;
 using Ets.Service.IProvider.Common;
 using Ets.Service.Provider.Common;
+﻿using Newtonsoft.Json;
 ﻿using SuperMan.App_Start;
 using Ets.Model.ParameterModel.User;
 using Ets.Model.ParameterModel.Order;
@@ -26,7 +28,7 @@ using Ets.Service.IProvider.Business;
 ﻿using ETS.Const;
 ﻿using SuperMan.Common;
 
-namespace SuperMan.Controllers
+using Ets.Model.DomainModel.Area;namespace SuperMan.Controllers
 {
     public class OrderController : BaseController
     {
@@ -142,7 +144,7 @@ namespace SuperMan.Controllers
                 }
                 if (!string.IsNullOrWhiteSpace(criteria.orderPubStart))
                 {
-                    filname = string.Format(filname, criteria.orderPubStart + "到" + criteria.orderPubEnd);
+                    filname = string.Format(filname, ParseHelper.ToDatetime(criteria.orderPubStart).ToLongDateString() + "到" + ParseHelper.ToDatetime(criteria.orderPubEnd).ToLongDateString());
                 }
                 ExcelIO.CreateFactory().Export(ConvertOrderToOrderExcel(pagedList), ExportFileFormat.excel, filname, title);
                 return null;
@@ -553,6 +555,50 @@ namespace SuperMan.Controllers
             model.PageIndex = pageindex;
             var list = iOrderProvider.GetOverTimeOrderList<OverTimeOrderModel>(model);
             return PartialView("_PostOverTimeOrder",list);
+        }
+
+        /// <summary>
+        /// 获取城市列表 仿google下拉列表框
+        /// 胡灵波
+        /// 2015年8月31日 10:40:51
+        /// </summary>
+        /// <param name="cityName"></param>
+        /// <returns></returns>
+        public ContentResult GetCity(string cityName)
+        {
+            int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
+
+            string cityNameZ = Server.UrlDecode(cityName);
+            IList<AreaModel> aMoldeList = iAreaProvider.GetOpenCity(ParseHelper.ToInt(UserType)).AreaModels.Where(p => p.Name.Contains(cityNameZ)).ToList();
+            string callback = "{\"citylist\":[";  
+            for(int i=0;i<aMoldeList.Count;i++)
+            {
+                if (i == aMoldeList.Count - 1)
+                {
+                    callback += "{\"id\":" + i + ",\"city\":\"" + aMoldeList[i].Name + "\"}";                
+                }
+                else
+                {
+                    callback += "{\"id\":" + i + ",\"city\":\"" + aMoldeList[i].Name + "\"},";                
+                }
+            }
+            callback += "]}";
+
+            return Content(callback);
+        } 
+        /// <summary>
+        /// 获取商户附近骑士列表
+        /// danny-20150831
+        /// </summary>
+        /// <param name="orderId">订单Id</param>
+        /// <param name="businessId">商户Id</param>
+        /// <returns></returns>
+        public ActionResult LocalClienter(int orderId,int businessId)
+        {
+            ViewBag.businessUnReceiveOrder = iOrderProvider.GetBusinessUnReceiveOrderQty(orderId,businessId);
+            var localClienters = iOrderProvider.GetLocalClienterList(orderId);
+            ViewBag.clienterJsonInfo  = JsonHelper.JsonConvertToString(localClienters);
+            return View(localClienters);
         }
 
     }

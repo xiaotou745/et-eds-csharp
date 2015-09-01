@@ -12,7 +12,9 @@
 <script src="~/Scripts/jquery-1.8.2.js"></script>
 <script src="~/Scripts/jquery-ui-1.8.20.js"></script>
 <script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
-
+<script type="text/javascript" src="~/Scripts/jquery-1.11.1.min.js"></script>
+<link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet">
+<script src="~/Scripts/jquery-ui.min.js"></script>
 
 <div class="zpManage zpSh">
     <h2 class="crumbs">
@@ -37,7 +39,8 @@
                 <tr>
                     <td>
                         <span class="">筛选城市: </span>
-                        @Html.DropDownList("businessCity", new SelectList(ViewBag.openCityList.Result.AreaModels, "Name", "Name"), "--无--", new { style = "width:155px" })
+                        @*@Html.DropDownList("businessCity", new SelectList(ViewBag.openCityList.Result.AreaModels, "Name", "Name"), "--无--", new { style = "width:155px" })*@
+                        <input id="businessCity" name="businessCity" type="text">
                         <span class="">订单号: </span>
                         <input id="txtOrderNo" type="text" name="orderId" />
                     </td>
@@ -91,6 +94,34 @@
         window.location.href = url;
         return true;
     }
+
+
+    $("#businessCity").autocomplete(
+               {
+                   source: function (request, response) {
+
+                       $.ajax({
+                           url: "/Public/GetCity?cityName=" + encodeURI(encodeURI(request.term)),
+                           //dataType: "json",
+                           data: {
+                               top: 10,
+                               key: request.term
+                           },
+                           success: function (data) {
+                               testJson = $.parseJSON(data);
+                               response($.map(testJson.citylist, function (item) {
+                                   return { label: item.city, value: item.city }
+                               }));
+                           }
+                       });
+                   },
+                   select: function (event, ui) {
+                   },
+                   minLength: 1,
+                   autoFocus: false,
+                   delay: 500
+               });
+
 </script>
 <script src="~/Scripts/mvcpager.js"></script>
 
