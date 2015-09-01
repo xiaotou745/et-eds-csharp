@@ -1,5 +1,6 @@
 ﻿@using Ets.Model.DataModel.Order
 @using Ets.Model.ParameterModel.Business
+@using ETS.Util
 @model IList<LocalClienterModel>
 @{
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
@@ -24,7 +25,7 @@
 <script src="~/Scripts/jquery-ui-1.8.20.js"></script>
 <script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
 <script type="text/javascript" src="~/Scripts/jquery-1.11.1.min.js"></script>
-<link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet">
+<link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
 <script src="~/Scripts/jquery-ui.min.js"></script>
 <div class="zpManage zpSh " style="border: 1px #dcdcdc solid;width: 1000px;height: 730px">
     <h2 class="crumbs">
@@ -40,20 +41,20 @@
             var businessUnReceiveOrder = ViewBag.businessUnReceiveOrder as OrderListModel;
             if (businessUnReceiveOrder != null && !string.IsNullOrEmpty(businessUnReceiveOrder.BusinessName))
             {
-                <div id="Left" style="float: left;width: 590px;border: 1px #dcdcdc solid;margin-top: 10px">
-                    <div id="map_contain"></div>
-                </div>
-                <div id="Right" style="float: left;width: 388px;height: 602px;border: 1px #dcdcdc solid;margin-left: 20px;margin-top: 10px">
+        <div id="Left" style="float: left;width: 590px;border: 1px #dcdcdc solid;margin-top: 10px">
+            <div id="map_contain"></div>
+        </div>
+        <div id="Right" style="float: left;width: 388px;height: 602px;border: 1px #dcdcdc solid;margin-left: 20px;margin-top: 10px; ">
             <div id="businessInfo" style="width: 378px;">
-                <div id="" style="font-size: 16px;float: left;margin-left: 5px">商铺信息：</div>
+                <div id="" style="font-size: 16px;float: left;margin-left: 5px;font-weight:bold">商铺信息：</div>
                 <div id="" style="float: left;margin-left: 2px;margin-top: 4px">@businessUnReceiveOrder.BusinessName</div>
                 <div id="" style="float: left;margin-left: 2px;margin-top: 4px">@businessUnReceiveOrder.BusinessPhoneNo</div>
                 <div style="clear:both;"></div>
                 <div id="" style="float: left;margin-top: 4px;margin-left: 88px">待抢任务数：@businessUnReceiveOrder.UnReceiveQty</div>
-                <input type="hidden" id="busiLongitude" value="@businessUnReceiveOrder.PubLongitude">
-                <input type="hidden" id="busiLatitude" value="@businessUnReceiveOrder.PubLatitude">
+                <input type="hidden" id="busiLongitude" value="@businessUnReceiveOrder.BusinessLongitude">
+                <input type="hidden" id="busiLatitude" value="@businessUnReceiveOrder.BusinessLatitude">
                 <div style="clear:both;"></div>
-                <div id="" style="font-size: 14px;float: left;margin-left: 5px">附近三公里的骑士：</div>
+                <div id="" style="font-size: 12px;float: left;margin-left: 5px;font-weight:bold">@(Model != null && Model.Count > 0 && Model[0].IsEmployerTask > 0 ? "店内三公里的骑士：" : "附近三公里的骑士：")</div>
             </div>
             <div style="clear:both;"></div>
             @{
@@ -61,27 +62,27 @@
                 {
                     int i = 0;
                     <input type="hidden" id="clienterJsonInfo" value="@clienterJsonInfo">
-                    <div id="clienterInfo" style="width: 388px;border-top: 1px #dcdcdc solid">
+                    <div id="clienterInfo" style="width: 388px;border-top: 1px #dcdcdc solid;height: 535px; overflow:auto;">
 
                         @foreach (var item in Model)
                             {
                                 i++;
-                            <div style="border-color: red;border-bottom: 1px #dcdcdc solid;">
-                                <div style="float: left;margin-left: 8px;margin-top: 4px">@i.@item.ClienterName</div>
-                                <div style="float: left;margin-left: 8px;margin-top: 4px">@item.PhoneNo</div>
-                                <div style="float: left;margin-left: 8px;margin-top: 4px">距门店 @(string.IsNullOrEmpty(item.Radius) ? "0" : item.Radius) m</div>
-                                <div style="clear:both;"></div>
-                                <div style="float: left;margin-left: 20px;margin-top: 4px">待取货：@item.ReceiveQty</div>
-                                <div style="float: left;margin-left: 8px;margin-top: 4px">配送中：@item.TransferQty</div>
-                                <div style="float: left;margin-left: 8px;margin-top: 4px">已完成：@item.FinishQty</div>
-                                <div style="float: left;margin-left: 8px;margin-top: 4px">上班状态：@(item.WorkStatus == 0 ? "上班" : "下班")</div>
-                                <div style="clear:both;"></div>
-                            </div>
+                        <div style="border-bottom: 1px #dcdcdc solid;margin-bottom: 5px;margin-top: 5px">
+                            <div style="float: left;margin-left: 8px;">@i.@item.ClienterName</div>
+                            <div style="float: left;margin-left: 8px;">@item.PhoneNo</div>
+                            <div style="float: left;margin-left: 8px;">距门店 @ParseHelper.ToInt(item.Radius)  m</div>
+                            <div style="clear:both;"></div>
+                            <div style="float: left;margin-left: 20px;margin-top: 4px;margin-bottom: 5px">待取货：@item.ReceiveQty</div>
+                            <div style="float: left;margin-left: 8px;margin-top: 4px;margin-bottom: 5px">配送中：@item.TransferQty</div>
+                            <div style="float: left;margin-left: 8px;margin-top: 4px;margin-bottom: 5px">已完成：@item.FinishQty</div>
+                            <div style="float: left;margin-left: 8px;margin-top: 4px;margin-bottom: 5px">上班状态：@(item.WorkStatus == 0 ? "上班" : "下班")</div>
+                            <div style="clear:both;"></div>
+                        </div>
                             }
                     </div>
                 }
             }
-             </div>
+        </div>
             }
         }
     </div>
@@ -101,11 +102,10 @@
         map.openInfoWindow(infoWindow, point); //开启信息窗口
 
     }
-    //var allData = clienterJsonInfo;
     //加载地图数据
     // 百度地图API功能
     var map = new BMap.Map("map_contain");    // 创建Map实例
-    map.centerAndZoom(new BMap.Point(busiLongitude, busiLatitude), 11);  // 初始化地图,设置中心点坐标和地图级别   商家坐标
+    map.centerAndZoom(new BMap.Point(busiLongitude, busiLatitude), 17);  // 初始化地图,设置中心点坐标和地图级别   商家坐标
     map.addControl(new BMap.MapTypeControl());   //添加地图类型控件
     //map.setCurrentCity("北京");          // 设置地图显示的城市 此项是必须设置的
     map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放

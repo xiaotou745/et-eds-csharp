@@ -19,7 +19,7 @@ namespace Ets.Model.ParameterModel.Business
         /// <summary>
         /// 骑士距商户距离
         /// </summary>
-        public string Radius { get; set; }
+        public double Radius { get; set; }
         /// <summary>
         /// 上班状态（0：上班 1：下班）
         /// </summary>
@@ -44,5 +44,11 @@ namespace Ets.Model.ParameterModel.Business
         /// 纬度
         /// </summary>
         public double Latitude { get; set; }
+        /// <summary>
+        /// 是否为店内任务（0：否 1：是）
+        /// </summary>
+        public int IsEmployerTask { get; set; }
+
+        
     }
 }
