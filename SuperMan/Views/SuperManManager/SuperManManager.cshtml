@@ -220,50 +220,50 @@
         $('#hidupload').val(''); //页面加载时清空隐藏域的值。
         $('#hidHandUpload').val(''); //页面加载时清空隐藏域的值。
         $("#fileUpload").val("");
-        $("#fileUploadHand").val('');
+        //$("#fileUploadHand").val('');
 
-        //手持身份证图片上传
-        $("#fileUploadHand").fileupload({
-            url: "/UploadTest/Upload",//文件上传地址，当然也可以直接写在input的data-url属性内
-            formData: {},//如果需要额外添加参数可以在这里添加
-            autoUpload: false,
-            acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
-            maxFileSize: 5000000, // 5 MB
-            done: function (e, results) {
-                //done方法就是上传完毕的回调函数，其他回调函数可以自行查看api
-                //注意result要和jquery的ajax的data参数区分，这个对象包含了整个请求信息
-                //返回的数据在result.result中，假设我们服务器返回了一个json对象
-                var result = results.result;
-                var picNames = result.Message.split('|');
-                if (result.IsSuccess) {
-                    $('#hidHandUpload').val(picNames[0]);
-                } else {
-                    alert(result.Message);
-                    $('#labfileuploadHand').val(picNames[0]).show();
-                }
-            }
-        });
-        //图片上传
-        $("#fileUpload").fileupload({
-            url: "/UploadTest/Upload",//文件上传地址，当然也可以直接写在input的data-url属性内
-            formData: {},//如果需要额外添加参数可以在这里添加
-            autoUpload: false,
-            acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
-            maxFileSize: 5000000, // 5 MB
-            done: function (e, results) {
-                //done方法就是上传完毕的回调函数，其他回调函数可以自行查看api
-                //注意result要和jquery的ajax的data参数区分，这个对象包含了整个请求信息
-                //返回的数据在result.result中，假设我们服务器返回了一个json对象
-                var result = results.result;
-                var picNames = result.Message.split('|');
-                if (result.IsSuccess) {
-                    $('#hidupload').val(picNames[0]).show();
-                } else {
-                    alert(result.Message);
-                    $('#labfileupload').val(picNames[0]).show();
-                }
-            }
-        });
+        ////手持身份证图片上传
+        //$("#fileUploadHand").fileupload({
+        //    url: "/UploadTest/Upload",//文件上传地址，当然也可以直接写在input的data-url属性内
+        //    formData: {},//如果需要额外添加参数可以在这里添加
+        //    autoUpload: false,
+        //    acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+        //    maxFileSize: 5000000, // 5 MB
+        //    done: function (e, results) {
+        //        //done方法就是上传完毕的回调函数，其他回调函数可以自行查看api
+        //        //注意result要和jquery的ajax的data参数区分，这个对象包含了整个请求信息
+        //        //返回的数据在result.result中，假设我们服务器返回了一个json对象
+        //        var result = results.result;
+        //        var picNames = result.Message.split('|');
+        //        if (result.IsSuccess) {
+        //            $('#hidHandUpload').val(picNames[0]);
+        //        } else {
+        //            alert(result.Message);
+        //            $('#labfileuploadHand').val(picNames[0]).show();
+        //        }
+        //    }
+        //});
+        ////图片上传
+        //$("#fileUpload").fileupload({
+        //    url: "/UploadTest/Upload",//文件上传地址，当然也可以直接写在input的data-url属性内
+        //    formData: {},//如果需要额外添加参数可以在这里添加
+        //    autoUpload: false,
+        //    acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+        //    maxFileSize: 5000000, // 5 MB
+        //    done: function (e, results) {
+        //        //done方法就是上传完毕的回调函数，其他回调函数可以自行查看api
+        //        //注意result要和jquery的ajax的data参数区分，这个对象包含了整个请求信息
+        //        //返回的数据在result.result中，假设我们服务器返回了一个json对象
+        //        var result = results.result;
+        //        var picNames = result.Message.split('|');
+        //        if (result.IsSuccess) {
+        //            $('#hidupload').val(picNames[0]).show();
+        //        } else {
+        //            alert(result.Message);
+        //            $('#labfileupload').val(picNames[0]).show();
+        //        }
+        //    }
+        //});
 
         //新增骑士保存按钮点击事件    add by caoheyang 20150302
         $("#btnSuperConfim").click(
