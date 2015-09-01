@@ -2829,33 +2829,45 @@ FROM ( SELECT ClienterId,MAX(ID) ID
 	   GROUP BY ClienterId) tbl
 JOIN ClienterLocation  cl WITH(NOLOCK) ON cl.ID = tbl.ID;
 
-SELECT c.TrueName ClienterName
+SELECT c.Id ClienterId
+      ,c.TrueName ClienterName
       ,c.PhoneNo
       ,c.WorkStatus
-      ,geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326)) Radius
+      ,ROUND(geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326)),0) Radius
+      ,tac.Latitude
+      ,tac.Longitude
 INTO #tempLocalClienter
 FROM [BusinessClienterRelation] bcr WITH(NOLOCK)
 JOIN dbo.clienter c WITH(NOLOCK) ON bcr.ClienterId=c.Id AND bcr.IsEnable=1 AND bcr.IsBind=1 AND c.IsBind=1 AND c.[Status]=1 AND bcr.BusinessId=@BusinessId
 JOIN #tempActiveClienter tac ON tac.ClienterId = c.Id
 WHERE geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326))<=@PushRadius;
 
-SELECT TOP 20 tlc.ClienterName,
-	   tlc.PhoneNo,
-	   tlc.Radius,
-	   tlc.WorkStatus,
+SELECT  TOP 20 templc.ClienterName,
+		templc.PhoneNo,
+		templc.Radius,
+		templc.WorkStatus,
+        templc.Latitude,
+        templc.Longitude,
+		tbllac.ReceiveQty,
+		tbllac.TransferQty,
+		tbllac.FinishQty,
+        1 IsEmployerTask
+FROM #tempLocalClienter templc
+JOIN(
+SELECT tlc.clienterId,
 	   COUNT(CASE WHEN o.Status=2 THEN 1  END) ReceiveQty,
 	   COUNT(CASE WHEN o.Status=4 THEN 1  END) TransferQty,
        COUNT(CASE WHEN o.Status=1 THEN 1  END) FinishQty
 FROM #tempLocalClienter tlc
 JOIN dbo.[order] o WITH(NOLOCK) ON tlc.ClienterId=o.clienterId
-GROUP BY o.clienterId
-ORDER BY tlc.WorkStatus;
+GROUP BY tlc.clienterId) tbllac ON templc.ClienterId=tbllac.clienterId
+ORDER BY templc.WorkStatus;
 ";
             var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@BusinessId", model.BusinessId);
             parm.AddWithValue("@Latitude", model.Latitude);
             parm.AddWithValue("@Longitude", model.Longitude);
-            parm.AddWithValue("@PushRadius", model.PushRadius);
+            parm.AddWithValue("@PushRadius", ParseHelper.ToInt(model.PushRadius) * 1000);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             return MapRows<LocalClienterModel>(dt);
         }
@@ -2882,7 +2894,9 @@ SELECT c.Id ClienterId
 	  ,c.TrueName ClienterName
       ,c.PhoneNo
       ,c.WorkStatus
-      ,geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326)) Radius
+      ,ROUND(geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326)),0) Radius
+      ,tac.Latitude
+      ,tac.Longitude
 INTO #tempLocalClienter
 FROM #tempActiveClienter tac
 JOIN dbo.clienter c WITH(NOLOCK) ON tac.ClienterId=c.Id AND c.Status=1
@@ -2892,17 +2906,26 @@ JOIN(   SELECT ExpressId
 		UNION SELECT 0 ExpressId) tblbe ON c.DeliveryCompanyId=tblbe.ExpressId
 WHERE  geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326))<=@PushRadius;
 
-SELECT TOP 20 tlc.ClienterName,
-	   tlc.PhoneNo,
-	   tlc.Radius,
-	   tlc.WorkStatus,
+SELECT  TOP 20 templc.ClienterName,
+		templc.PhoneNo,
+		templc.Radius,
+		templc.WorkStatus,
+        templc.Latitude,
+        templc.Longitude,
+		tbllac.ReceiveQty,
+		tbllac.TransferQty,
+		tbllac.FinishQty,
+        0 IsEmployerTask
+FROM #tempLocalClienter templc
+JOIN(
+SELECT tlc.clienterId,
 	   COUNT(CASE WHEN o.Status=2 THEN 1  END) ReceiveQty,
 	   COUNT(CASE WHEN o.Status=4 THEN 1  END) TransferQty,
        COUNT(CASE WHEN o.Status=1 THEN 1  END) FinishQty
 FROM #tempLocalClienter tlc
 JOIN dbo.[order] o WITH(NOLOCK) ON tlc.ClienterId=o.clienterId
-GROUP BY o.clienterId
-ORDER BY tlc.WorkStatus;";
+GROUP BY tlc.clienterId) tbllac ON templc.ClienterId=tbllac.clienterId
+ORDER BY templc.WorkStatus;";
             var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@BusinessId", model.BusinessId);
             parm.AddWithValue("@Latitude", model.Latitude);

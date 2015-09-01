@@ -1,59 +1,145 @@
 ﻿@using Ets.Model.DataModel.Order
 @using Ets.Model.ParameterModel.Business
-@model IList<Ets.Model.ParameterModel.Business.LocalClienterModel>
+@using ETS.Util
+@model IList<LocalClienterModel>
 @{
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
+    var clienterJsonInfo = ViewBag.clienterJsonInfo;
 }
+@section styles{
+    <style type="text/css">
+        #map_contain {
+            height: 600px;
+            width: 100%;
+            max-width: none;
+        }
+
+        .none {
+            display: none;
+        }
+    </style>
+}
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=dAeaG6HwIFGlkbqtyKkyFGEC"></script>
 <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
 <script src="~/Scripts/jquery-1.8.2.js"></script>
 <script src="~/Scripts/jquery-ui-1.8.20.js"></script>
 <script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
-<link rel="stylesheet" type="text/css" href="~/Content/pagestyle/pagerstyles.css" />
-<div class="zpManage zpSh">
+<script type="text/javascript" src="~/Scripts/jquery-1.11.1.min.js"></script>
+<link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-ui.min.js"></script>
+<div class="zpManage zpSh " style="border: 1px #dcdcdc solid;width: 1000px;height: 730px">
     <h2 class="crumbs">
         您所在位置：订单 > 超时订单 > 附近骑士
     </h2>
-    <div id="Head" style="width: 1000px;text-align: center;font-size: 20px;">
+
+    <div id="Head" style="width: 1000px;text-align: center;font-size: 20px;border-top: 0px #dcdcdc solid;">
         附近骑士
     </div>
-    @{
-        var businessUnReceiveOrder = ViewBag.businessUnReceiveOrder as OrderListModel;
-        if (businessUnReceiveOrder != null && !string.IsNullOrEmpty(businessUnReceiveOrder.BusinessName))
-        {
-            <div id="Left" style="float: left;width: 650px">
-                <div id="map_contain"></div>
-            </div>
-            <div id="Right" style="float: left;width: 350px">
-                <div id="businessInfo">
-                    <div id="">商铺信息：</div>
-                    <div id="">@businessUnReceiveOrder.BusinessName</div>
-                    <div id="">@businessUnReceiveOrder.BusinessPhoneNo</div>
-                    <div id="">待抢任务数：@businessUnReceiveOrder.UnReceiveQty</div>
-                </div>
-                @{
-            if (Model != null && Model.Count > 0)
+
+    <div id="Bottom" style="width: 1000px;text-align: center;font-size: 20px;border: 1px #dcdcdc solid;">
+        @{
+            var businessUnReceiveOrder = ViewBag.businessUnReceiveOrder as OrderListModel;
+            if (businessUnReceiveOrder != null && !string.IsNullOrEmpty(businessUnReceiveOrder.BusinessName))
             {
-                <div id="clienterInfo">
-
-                    @foreach (var item in Model)
-                    {
-                        int i = 0;
-                        i++;
-                        <div>1.</div>
-                        <div>陈凯</div>
-                        <div>13811111111</div>
-                        <div>距门店100m</div>
-                        <div>待取货：10</div>
-                        <div>配送中：10</div>
-                        <div>已完成：10</div>
-                    }
-                </div>
-            }
-                }
-
+        <div id="Left" style="float: left;width: 590px;border: 1px #dcdcdc solid;margin-top: 10px">
+            <div id="map_contain"></div>
+        </div>
+        <div id="Right" style="float: left;width: 388px;height: 602px;border: 1px #dcdcdc solid;margin-left: 20px;margin-top: 10px; ">
+            <div id="businessInfo" style="width: 378px;">
+                <div id="" style="font-size: 16px;float: left;margin-left: 5px;font-weight:bold">商铺信息：</div>
+                <div id="" style="float: left;margin-left: 2px;margin-top: 4px">@businessUnReceiveOrder.BusinessName</div>
+                <div id="" style="float: left;margin-left: 2px;margin-top: 4px">@businessUnReceiveOrder.BusinessPhoneNo</div>
+                <div style="clear:both;"></div>
+                <div id="" style="float: left;margin-top: 4px;margin-left: 88px">待抢任务数：@businessUnReceiveOrder.UnReceiveQty</div>
+                <input type="hidden" id="busiLongitude" value="@businessUnReceiveOrder.BusinessLongitude">
+                <input type="hidden" id="busiLatitude" value="@businessUnReceiveOrder.BusinessLatitude">
+                <div style="clear:both;"></div>
+                <div id="" style="font-size: 12px;float: left;margin-left: 5px;font-weight:bold">@(Model != null && Model.Count > 0 && Model[0].IsEmployerTask > 0 ? "店内三公里的骑士：" : "附近三公里的骑士：")</div>
             </div>
-        }
+            <div style="clear:both;"></div>
+            @{
+                if (Model != null && Model.Count > 0)
+                {
+                    int i = 0;
+                    <input type="hidden" id="clienterJsonInfo" value="@clienterJsonInfo">
+                    <div id="clienterInfo" style="width: 388px;border-top: 1px #dcdcdc solid;height: 535px; overflow:auto;">
 
-    }
+                        @foreach (var item in Model)
+                            {
+                                i++;
+                        <div style="border-bottom: 1px #dcdcdc solid;margin-bottom: 5px;margin-top: 5px">
+                            <div style="float: left;margin-left: 8px;">@i.@item.ClienterName</div>
+                            <div style="float: left;margin-left: 8px;">@item.PhoneNo</div>
+                            <div style="float: left;margin-left: 8px;">距门店 @(ParseHelper.ToInt(item.Radius) >= 1000 ? ParseHelper.ToDecimal(item.Radius / 1000.0) + "km" : ParseHelper.ToInt(item.Radius) + "m") </div>
+                            <div style="clear:both;"></div>
+                            <div style="float: left;margin-left: 20px;margin-top: 4px;margin-bottom: 5px">待取货：@item.ReceiveQty</div>
+                            <div style="float: left;margin-left: 8px;margin-top: 4px;margin-bottom: 5px">配送中：@item.TransferQty</div>
+                            <div style="float: left;margin-left: 8px;margin-top: 4px;margin-bottom: 5px">已完成：@item.FinishQty</div>
+                            <div style="float: left;margin-left: 8px;margin-top: 4px;margin-bottom: 5px">上班状态：@(item.WorkStatus == 0 ? "上班" : "下班")</div>
+                            <div style="clear:both;"></div>
+                        </div>
+                            }
+                    </div>
+                }
+            }
+        </div>
+            }
+        }
+    </div>
+
 </div>
 
+<script type="text/javascript">
+    var busiLongitude = $("#busiLongitude").val();//商户发单所在经度
+    var busiLatitude = $("#busiLatitude").val();//商户发单所在纬度
+    var businessIcon = new BMap.Icon("/Content/images/businessmarkernew.png", new BMap.Size(40, 40), {});//商户打点图标
+    var clienterIcon = new BMap.Icon("/Content/images/clientermarkernew.png", new BMap.Size(40, 40), {});//骑士打点图标
+    var clienterJsonInfo = $("#clienterJsonInfo").val();//骑士信息Json串
+    function openInfo(content, e, opts, map) {
+        var p = e.target;
+        var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
+        var infoWindow = new BMap.InfoWindow(content, opts);  // 创建信息窗口对象
+        map.openInfoWindow(infoWindow, point); //开启信息窗口
+
+    }
+    //加载地图数据
+    // 百度地图API功能
+    var map = new BMap.Map("map_contain");    // 创建Map实例
+    map.centerAndZoom(new BMap.Point(busiLongitude, busiLatitude), 17);  // 初始化地图,设置中心点坐标和地图级别   商家坐标
+    map.addControl(new BMap.MapTypeControl());   //添加地图类型控件
+    //map.setCurrentCity("北京");          // 设置地图显示的城市 此项是必须设置的
+    map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+    var opts = {
+        width: 40,     // 信息窗口宽度
+        height: 10,     // 信息窗口高度
+        enableMessage: true//设置允许信息窗发送短息
+    };
+
+    $(function () {
+        var data = JSON.parse(clienterJsonInfo);//骑士数据
+        var marker = new BMap.Marker(new BMap.Point(busiLongitude, busiLatitude), { icon: businessIcon });  // 商户打点
+        map.addOverlay(marker);
+        //addClickHandler("", marker, opts, map);
+        loadDataToMap(data);
+    });
+    function addClickHandler(content, marker, opts, map) {
+        marker.addEventListener("click", function (e) {
+            openInfo(content, e, opts, map);
+        }
+    );
+    }
+
+    function loadDataToMap(data) {
+        if (data != null) {
+            for (var i = 0; i < data.length; i++) {
+                var myIcon = clienterIcon;
+                var marker = new BMap.Marker(new BMap.Point(data[i].Longitude, data[i].Latitude), { icon: myIcon });  // 创建标注
+                var content = data[i].ClienterName+" " + data[i].PhoneNo;
+                map.addOverlay(marker);               // 将标注添加到地图中
+                addClickHandler(content, marker, opts, map);
+            }
+        }
+    }
+
+
+</script>

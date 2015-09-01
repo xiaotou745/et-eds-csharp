@@ -41,7 +41,7 @@
                     <td>@if (SuperMan.App_Start.UserContext.Current.HasAuthority(39))
                     {
                         <a href="javascript:ShowCancelBox('@(Model.Records[i].OrderID)')">取消订单</a>
-                    } &nbsp;<a href="@(Model.Records[i].Bid)/@(Model.Records[i].IsEmployerTask)">附近骑士</a>
+                    } &nbsp;<a target="_blank" href="/Order/LocalClienter?orderId=@Model.Records[i].OrderID&businessId=@Model.Records[i].Bid ">附近骑士</a>
                     </td>
                 </tr>
             }

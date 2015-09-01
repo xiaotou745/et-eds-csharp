@@ -312,9 +312,10 @@ namespace Ets.Service.IProvider.Order
         /// 获取商户未抢单订单数
         /// danny-20150831
         /// </summary>
-        /// <param name="businessId"></param>
+        /// <param name="orderId">订单Id</param>
+        /// <param name="businessId">商户Id</param>
         /// <returns></returns>
-        OrderListModel GetBusinessUnReceiveOrderQty(int businessId);
+        OrderListModel GetBusinessUnReceiveOrderQty(int orderId,int businessId);
 
         /// <summary>
         /// 获取附近骑士信息
