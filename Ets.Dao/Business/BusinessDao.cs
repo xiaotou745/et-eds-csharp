@@ -2715,7 +2715,7 @@ SELECT   cl.ClienterId
 INTO #tempActiveClienter
 FROM ( SELECT ClienterId,MAX(ID) ID
 	   FROM ClienterLocation  WITH(NOLOCK)
-	   WHERE CreateTime>DATEADD(MINUTE,-50000,GetDate())
+	   WHERE CreateTime>DATEADD(MINUTE,-10,GetDate())
 	   GROUP BY ClienterId) tbl
 JOIN ClienterLocation  cl WITH(NOLOCK) ON cl.ID = tbl.ID;
 
@@ -2730,7 +2730,7 @@ INTO #tempLocalClienter
 FROM [BusinessClienterRelation] bcr WITH(NOLOCK)
 JOIN dbo.clienter c WITH(NOLOCK) ON bcr.ClienterId=c.Id AND bcr.IsEnable=1 AND bcr.IsBind=1 AND c.IsBind=1 AND c.[Status]=1 AND bcr.BusinessId=@BusinessId
 JOIN #tempActiveClienter tac ON tac.ClienterId = c.Id
---WHERE geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326))<=@PushRadius;
+WHERE geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326))<=@PushRadius;
 
 SELECT  TOP 20 templc.ClienterName,
 		templc.PhoneNo,
@@ -2776,7 +2776,7 @@ SELECT cl.ClienterId
 INTO #tempActiveClienter
 FROM ( SELECT ClienterId,MAX(ID) ID
 	   FROM ClienterLocation  WITH(NOLOCK)
-	   WHERE CreateTime>DATEADD(MINUTE,-50000,GetDate())
+	   WHERE CreateTime>DATEADD(MINUTE,-10,GetDate())
 	   GROUP BY ClienterId) tbl
 JOIN ClienterLocation  cl WITH(NOLOCK) ON cl.ID = tbl.ID;
 
@@ -2794,7 +2794,7 @@ JOIN(   SELECT ExpressId
 		FROM BusinessExpressRelation ber with(nolock) 
 		WHERE BusinessId=@BusinessId AND ber.IsEnable=1
 		UNION SELECT 0 ExpressId) tblbe ON c.DeliveryCompanyId=tblbe.ExpressId
---WHERE  geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326))<=@PushRadius;
+WHERE  geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326))<=@PushRadius;
 
 SELECT  TOP 20 templc.ClienterName,
 		templc.PhoneNo,
