@@ -68,6 +68,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Pay\BusinessWxPay\Config.cs" />
+    <Compile Include="Pay\BusinessWxPay\RequestHandler.cs" />
+    <Compile Include="Pay\BusinessWxPay\ResponseHandler.cs" />
+    <Compile Include="Pay\BusinessWxPay\ReturnValue.cs" />
+    <Compile Include="Pay\BusinessWxPay\StreamReaderUtils.cs" />
+    <Compile Include="Pay\BusinessWxPay\WXpayService.cs" />
     <Compile Include="Pay\CWxPay\Config.cs" />
     <Compile Include="Pay\CWxPay\Data.cs" />
     <Compile Include="Pay\CWxPay\Exception.cs" />
@@ -132,6 +138,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Util\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ETS.Core\ETS.Core.csproj">
+      <Project>{bba67a86-afd6-46f2-bbd9-5dfb5bfdafe2}</Project>
+      <Name>ETS.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

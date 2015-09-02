@@ -66,9 +66,6 @@ namespace ETS.Library.Pay.BWxPay
             prepay_id = result.GetValue("prepay_id").ToString();
             Log.Info(this.GetType().ToString(), "Get native pay mode 2 url : " + url);
             return url;
-
-       
-
         }
 
         /**

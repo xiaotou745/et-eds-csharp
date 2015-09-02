@@ -416,11 +416,12 @@ namespace Ets.Service.Provider.Pay
             BusinessRechargeResultModel resultModel = new BusinessRechargeResultModel();
             if (model.PayType == PayTypeEnum.WeiXin.GetHashCode())
             {
-                ETS.Library.Pay.BWxPay.NativePay nativePay = new ETS.Library.Pay.BWxPay.NativePay();
+                ETS.Library.Pay.BWxPay.BusinessWxPay.WXpayService wxpay = new ETS.Library.Pay.BWxPay.BusinessWxPay.WXpayService(orderNo, ETS.Config.WXBusinessRecharge, (Convert.ToInt32(model.payAmount * 100)).ToString());//传给微信的金额
+                //ETS.Library.Pay.BWxPay.NativePay nativePay = new ETS.Library.Pay.BWxPay.NativePay();
                 string prepayId = string.Empty;
-                string code_url = nativePay.GetPayUrl(orderNo, model.payAmount * 100, "E代送商家充值", Config.WXBusinessRecharge, out prepayId);
+                string code_url =wxpay.CreateNativeApi(); //nativePay.GetPayUrl(orderNo, model.payAmount * 100, "E代送商家充值", Config.WXBusinessRecharge, out prepayId);
                 resultModel.prepayId = prepayId;
-                resultModel.notifyUrl = code_url;//ETS.Config.WXBusinessRecharge;
+                resultModel.notifyUrl = code_url;// ETS.Config.WXBusinessRecharge;
             }
             else
             {
@@ -430,6 +431,7 @@ namespace Ets.Service.Provider.Pay
             resultModel.payAmount = model.payAmount;
             resultModel.orderNo = orderNo;
             resultModel.PayType = model.PayType;
+            
             //所属产品_主订单号_子订单号_支付方式
 
             return ResultModel<BusinessRechargeResultModel>.Conclude(AliPayStatus.success, resultModel);

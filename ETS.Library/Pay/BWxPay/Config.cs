@@ -29,8 +29,10 @@ namespace ETS.Library.Pay.BWxPay
         //=======【证书路径设置】===================================== 
         /* 证书路径,注意应该填写绝对路径（仅退款、撤销订单时需要）
         */
-        public const string SSLCERT_PATH = "cert/apiclient_cert.p12";
-        public const string SSLCERT_PASSWORD = "1233410002";
+        //public const string SSLCERT_PATH = "cert/apiclient_cert.p12";
+        //public const string SSLCERT_PASSWORD = "1233410002";
+        public const string SSLCERT_PATH = "";
+        public const string SSLCERT_PASSWORD = "";
 
 
 
@@ -43,7 +45,7 @@ namespace ETS.Library.Pay.BWxPay
         /* 此参数可手动配置也可在程序中自动获取
         */
         //public const string IP = "59.151.43.221";
-        public const string IP = "8.8.8.8";
+        public const string IP = "106.37.191.106";
 
 
         //=======【代理服务器设置】===================================
@@ -62,4 +64,5 @@ namespace ETS.Library.Pay.BWxPay
         */
         public const int LOG_LEVENL = 0;
     }
+
 }
