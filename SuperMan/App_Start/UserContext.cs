@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Web;
 using ETS.Const;
@@ -26,6 +27,14 @@ namespace SuperMan.App_Start
                     else
                     {
                         cookie = HttpUtility.UrlDecode(cookie, Encoding.UTF8);
+                    }
+                }
+                else
+                {
+                    //如果.net cookie不为空但java cookie为空,需要设置java cookie
+                    if (string.IsNullOrEmpty(ETS.Util.CookieHelper.ReadCookie(SystemConst.cookieNameJava)))
+                    {
+                        CookieHelper.WriteCookie(SystemConst.cookieNameJava, HttpUtility.UrlEncode(cookie, Encoding.UTF8), DateTime.Now.AddDays(7));
                     }
                 }
                 var userInfo = JsonHelper.ToObject<SimpleUserInfoModel>(cookie);
