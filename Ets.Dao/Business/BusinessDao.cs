@@ -2837,10 +2837,23 @@ SELECT c.Id ClienterId
       ,tac.Latitude
       ,tac.Longitude
 INTO #tempLocalClienter
-FROM [BusinessClienterRelation] bcr WITH(NOLOCK)
+FROM #tempActiveClienter tac
+JOIN [BusinessClienterRelation] bcr WITH(NOLOCK) ON tac.ClienterId = bcr.ClienterId
 JOIN dbo.clienter c WITH(NOLOCK) ON bcr.ClienterId=c.Id AND bcr.IsEnable=1 AND bcr.IsBind=1 AND c.IsBind=1 AND c.[Status]=1 AND bcr.BusinessId=@BusinessId
-JOIN #tempActiveClienter tac ON tac.ClienterId = c.Id
-WHERE geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326))<=@PushRadius;
+WHERE geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326))<=@PushRadius
+UNION
+SELECT c.Id ClienterId
+	  ,c.TrueName ClienterName
+      ,c.PhoneNo
+      ,c.WorkStatus
+      ,ROUND(geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326)),0) Radius
+      ,tac.Latitude
+      ,tac.Longitude
+INTO #tempLocalClienter
+FROM #tempActiveClienter tac
+JOIN dbo.clienter c WITH(NOLOCK) ON tac.ClienterId=c.Id AND c.Status=1
+JOIN BusinessExpressRelation ber with(nolock) ON ber.ExpressId=c.DeliveryCompanyId AND  ber.BusinessId=@BusinessId AND ber.IsEnable=1
+WHERE  geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326))<=@PushRadius;
 
 SELECT  TOP 20 templc.ClienterName,
 		templc.PhoneNo,

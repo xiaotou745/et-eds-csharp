@@ -2321,9 +2321,25 @@ namespace Ets.Service.Provider.Order
             #region 分类获取对应满足条件的骑士
             foreach (var order in orderList)
             {
-                #region 物流公司骑士推送
-                string strClienterId = "";
-                int clienterCount = 0;
+                var strClienterId = "";
+                var clienterCount = 0;
+                if (order.IsBind > 0)
+                {
+                    #region 店内骑士
+                    var listbcRel = _businessDao.GetBusinessClienterRelationList(order.businessId);
+                    if (listbcRel != null && listbcRel.Count > 0)//有店内骑士
+                    {
+                        foreach (var bcRel in listbcRel)
+                        {
+                            listClienterId.Add(bcRel.ClienterId);
+                            strClienterId += bcRel.ClienterId + ",";
+                            clienterCount++;
+                        }
+                    }
+                    #endregion
+                }
+
+                #region 物流公司骑士
                 var listbeRel = _businessDao.GetExpressClienterList(new BusinessExpressRelationModel()
                 {
                     BusinessId = order.businessId,
@@ -2339,41 +2355,6 @@ namespace Ets.Service.Provider.Order
                         strClienterId += beRel.ClienterId + ",";
                         clienterCount++;
                     }
-                    orderDao.EditOrderPushRecord(new OrderPushRecord()
-                    {
-                        OrderId = order.Id,
-                        ClienterIdList = string.IsNullOrEmpty(strClienterId) ? "" : strClienterId.TrimEnd(','),
-                        TaskType = 0,
-                        PushCount = 1,
-                        ClienterCount = clienterCount
-                    });
-                    LogHelper.LogWriter("订单【" + order.Id + "】已推送给骑士【" + (string.IsNullOrEmpty(strClienterId) ? "" : strClienterId.TrimEnd(',')) + "】");
-                    continue;
-                }
-
-                #endregion
-
-                #region 店内骑士推送
-               
-                var listbcRel = _businessDao.GetBusinessClienterRelationList(order.businessId);
-                if (listbcRel != null && listbcRel.Count > 0)//有店内骑士
-                {
-                    foreach (var bcRel in listbcRel)
-                    {
-                        listClienterId.Add(bcRel.ClienterId);
-                        strClienterId += bcRel.ClienterId + ",";
-                        clienterCount++;
-                    }
-                    orderDao.EditOrderPushRecord(new OrderPushRecord()
-                    {
-                        OrderId = order.Id,
-                        ClienterIdList = string.IsNullOrEmpty(strClienterId) ? "" : strClienterId.TrimEnd(','),
-                        TaskType = 1,
-                        PushCount = 1,
-                        ClienterCount = clienterCount
-                    });
-                    LogHelper.LogWriter("订单【" + order.Id + "】已推送给骑士【" + (string.IsNullOrEmpty(strClienterId) ? "" : strClienterId.TrimEnd(',')) + "】");
-                    continue;
                 }
                 #endregion
 
