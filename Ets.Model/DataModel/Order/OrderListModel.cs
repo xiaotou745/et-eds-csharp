@@ -394,6 +394,10 @@ namespace Ets.Model.DataModel.Order
         /// 待抢单订单数
         /// </summary>
         public int UnReceiveQty { get; set; }
+        /// <summary>
+        /// 商户是否有绑定骑士（0：否 1：是）
+        /// </summary>
+        public int IsBind { get; set; }
         
     }
 }

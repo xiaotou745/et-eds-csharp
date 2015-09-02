@@ -3776,7 +3776,8 @@ SELECT  o.Id,
 		o.OrderNo,
 		o.businessId,
 		b.Latitude BusinessLatitude,
-		b.Longitude BusinessLongitude
+		b.Longitude BusinessLongitude,
+        b.IsBind
 FROM dbo.[order] o WITH(NOLOCK)
 JOIN dbo.business b WITH(NOLOCK) ON o.businessId=b.Id
 WHERE o.[Status]=0 AND o.PubDate>=@LastOrderPushTime;
@@ -3952,7 +3953,8 @@ select  top 1
         o.[Status] ,
         o.businessId ,
 		b.Latitude BusinessLatitude,
-		b.Longitude BusinessLongitude     
+		b.Longitude BusinessLongitude,
+        b.IsBind     
 from    [order] o with ( nolock )
         JOIN dbo.business b WITH(NOLOCK) ON o.businessId=b.Id
 where    o.Id = @Id
