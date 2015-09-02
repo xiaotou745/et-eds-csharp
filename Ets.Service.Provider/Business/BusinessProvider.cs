@@ -532,22 +532,39 @@ namespace Ets.Service.Provider.Business
         /// <summary>
         /// 更新审核状态
         /// danny-20150317
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="price"></param>
+        /// </summary> 
         /// <returns></returns>
-        public bool UpdateAuditStatus(int id, AuditStatus enumStatusType)
+        //public bool UpdateAuditStatus(int id, AuditStatus enumStatusType)
+        //{
+        //    ETS.NoSql.RedisCache.RedisCache redis = new ETS.NoSql.RedisCache.RedisCache();
+        //    string cacheKey = string.Format(RedissCacheKey.BusinessProvider_GetUserStatus, id);
+        //    redis.Delete(cacheKey);
+        //    return businessDao.UpdateAuditStatus(id, enumStatusType);
+        //}
+        /// <summary>
+        /// 商户审核
+        /// wc
+        /// </summary>
+        /// <param name="bam"></param>
+        /// <returns></returns> 
+        public bool UpdateAuditStatus(BusinessAuditModel bam)
         {
             ETS.NoSql.RedisCache.RedisCache redis = new ETS.NoSql.RedisCache.RedisCache();
-            string cacheKey = string.Format(RedissCacheKey.BusinessProvider_GetUserStatus, id);
+            string cacheKey = string.Format(RedissCacheKey.BusinessProvider_GetUserStatus, bam.BusinessId);
             redis.Delete(cacheKey);
-            return businessDao.UpdateAuditStatus(id, enumStatusType);
+            return businessDao.UpdateAuditStatus(bam);
         }
 
-        public bool UpdateAuditStatus(int id, int enumStatus, string busiAddress)
+        //public bool UpdateAuditStatus(int id, int enumStatus, string busiAddress)
+        //{
+        //    return businessDao.UpdateAuditStatus(id, enumStatus, busiAddress);
+        //}
+        public bool UpdateAuditStatus(BusinessAuditModel bam, string busiAddress)
         {
-            return businessDao.UpdateAuditStatus(id, enumStatus, busiAddress);
+            return businessDao.UpdateAuditStatus(bam, busiAddress);
         }
+
+
         /// <summary>
         ///  根据城市信息查询当前城市下该集团的所有商户信息
         ///  danny-20150317

@@ -7,6 +7,7 @@ using System.Web.Mvc;
 using ETS.Enums;
 using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.Order;
+using Ets.Model.DomainModel.DeliveryCompany;
 using Ets.Model.DomainModel.Order;
 using Ets.Model.ParameterModel.Clienter;
 using Ets.Model.ParameterModel.Order;
@@ -14,8 +15,10 @@ using Ets.Service.IProvider.Common;
 using Ets.Service.IProvider.DeliveryManager;
 using Ets.Service.Provider.Common;
 using Ets.Service.Provider.DeliveryManager;
+using ETS.Const;
 using ETS.Util;
 using SuperMan.App_Start;
+using SuperMan.Common;
 
 namespace SuperMan.Controllers
 {
@@ -25,7 +28,7 @@ namespace SuperMan.Controllers
     public class DeliveryManagerController : BaseController
     {
         readonly IAreaProvider iAreaProvider = new AreaProvider();
-        readonly IDeliveryManagerProvider iDeliveryManagerProvider=new DeliveryManagerProvider();
+        readonly IDeliveryManagerProvider iDeliveryManagerProvider = new DeliveryManagerProvider();
         /// <summary>
         /// 物流订单管理-骑士管理
         /// </summary>
@@ -34,14 +37,14 @@ namespace SuperMan.Controllers
         {
             int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(UserType);//获取筛选城市
-            var dclist=new CompanyProvider().GetCompanyListByAccountID(UserContext.Current.Id);//获取物流公司
+            var dclist = new CompanyProvider().GetCompanyListByAccountID(UserContext.Current.Id);//获取物流公司
             ViewBag.deliveryCompanyList = dclist;
             var criteria = new ClienterSearchCriteria()
             {
                 Status = -1,
                 GroupId = SuperMan.App_Start.UserContext.Current.GroupId,
                 AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType),
-                deliveryCompany = dclist.Count>0?dclist[0].CompanyId.ToString():"-1",
+                deliveryCompany = dclist.Count > 0 ? dclist[0].CompanyId.ToString() : "-1",
                 UserType = UserType
             };
             if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
@@ -79,13 +82,13 @@ namespace SuperMan.Controllers
             TryUpdateModel(criteria);
             criteria.PageIndex = 1;
             criteria.PageSize = 65534;
-            
-            var result=iDeliveryManagerProvider.GetClienterList(criteria).Records;
+
+            var result = iDeliveryManagerProvider.GetClienterList(criteria).Records;
             int totalRows = result.Count;
 
             string excelContent = this.CreateSuperManExcel(result);
             byte[] data = Encoding.UTF8.GetBytes(excelContent);
-            string filname = "e代送-骑士导出数据-"+DateTime.Now.ToString("yyyy-MM-dd")+".xls";
+            string filname = "e代送-骑士导出数据-" + DateTime.Now.ToString("yyyy-MM-dd") + ".xls";
             return File(data, "application/ms-excel", filname);
         }
 
@@ -128,7 +131,7 @@ namespace SuperMan.Controllers
                 #endregion
                 strBuilder.AppendLine(string.Format("<tr><td>{0}</td>", item.Id));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.TrueName));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.WorkStatus==0?"上班":"下班"));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.WorkStatus == 0 ? "上班" : "下班"));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.PhoneNo));
                 strBuilder.AppendLine(string.Format("<td>'{0}'</td>", item.IDCard));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.InsertTime));
@@ -170,8 +173,8 @@ namespace SuperMan.Controllers
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(UserType));
             var criteria = new OrderSearchCriteria();
             TryUpdateModel(criteria);
-            criteria.AuthorityCityNameListStr =iAreaProvider.GetAuthorityCityNameListStr(UserType);
-            criteria.deliveryCompany=string.IsNullOrWhiteSpace(criteria.deliveryCompany) ? "-1" : criteria.deliveryCompany;
+            criteria.AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType);
+            criteria.deliveryCompany = string.IsNullOrWhiteSpace(criteria.deliveryCompany) ? "-1" : criteria.deliveryCompany;
             criteria.UserType = UserType;
             if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
             {
@@ -194,18 +197,66 @@ namespace SuperMan.Controllers
 
         public ActionResult OrderExport()
         {
-            int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;
+            int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
+            
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(UserType));
             var criteria = new OrderSearchCriteria();
             TryUpdateModel(criteria);
-            criteria.PageIndex = 1;
-            criteria.PageSize = 65534;
             criteria.AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType);
+            criteria.deliveryCompany = string.IsNullOrWhiteSpace(criteria.deliveryCompany) ? "-1" : criteria.deliveryCompany;
+            criteria.UserType = UserType; 
+            criteria.PageIndex = 1;
+            criteria.PageSize = 65534; 
             var pagedList = iDeliveryManagerProvider.GetOrderList(criteria).Records;
-            string excelContent = this.CreateOrderExcel(pagedList);
-            byte[] data = Encoding.UTF8.GetBytes(excelContent);
-            string filname = "e代送-订单导出数据"+criteria.orderPubStart+"-"+criteria.orderPubEnd+".xls";
-            return File(data, "application/ms-excel", filname);
+            if (pagedList != null && pagedList.Count > 0)
+            {
+                //string excelContent = this.CreateOrderExcel(pagedList);
+                //byte[] data = Encoding.UTF8.GetBytes(excelContent);
+                string filname = "e代送订单导出数据" + criteria.orderPubStart + "到" + criteria.orderPubEnd;
+                string[] title = ExcelUtility.GetDescription(new ClienterOrderExcel());
+                ExcelIO.CreateFactory()
+                    .Export(ConvertToClienterOrderExcel(pagedList), ExportFileFormat.excel, filname, title);
+                return null;
+            }
+            else
+            {
+                Response.Write(SystemConst.NoExportData);
+                return null;
+            }
+            //return File(data, "application/ms-excel", filname);
+        }
+
+        private IList<ClienterOrderExcel> ConvertToClienterOrderExcel(IList<OrderListModel> pagedList)
+        {
+            var coExcels = new List<ClienterOrderExcel>();
+            //输出数据.
+            foreach (var item in pagedList)
+            {
+                ClienterOrderExcel coe = new ClienterOrderExcel();
+                var statusView = ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.OrderStatusCommon)item.Status).GetType(),
+                        (ETS.Enums.OrderStatusCommon)item.Status).Text;
+                coe.OrderNo = item.OrderNo;
+                coe.BusinessName = item.BusinessName;
+                coe.ClienterId = item.clienterId;
+                coe.ClienterName = item.ClienterName;
+                coe.PubDate = item.PubDate;
+                coe.JieDanTime = item.GrabTime;
+                coe.QuHuoTime = item.TakeTime;
+                coe.ActualDoneDate = item.ActualDoneDate;
+                coe.Amount = item.Amount;
+                coe.OrderCount = item.OrderCount;
+                coe.SettleType = item.SettleType;
+                coe.CompanySettleValue = item.SettleValue;
+                coe.SuperManSettleValue = item.SuperManSettleValue;
+                coe.CompanySettleValueAll = item.SettleValueAll;
+                coe.SuperManSettleValueAll = item.SuperManSettleValueAll;
+                coe.OrderStatus = statusView;
+                coe.BusinessCity = item.BusinessCity;
+                coe.MealsSettleMode = item.MealsSettleMode == 1 ? "是" : "否";
+                coe.IsNotRealOrder = item.IsNotRealOrder == 1 ? "是" : "否";
+                coExcels.Add(coe);
+            }
+            return coExcels;
         }
 
         private string CreateOrderExcel(IList<OrderListModel> pagedList)
@@ -222,7 +273,7 @@ namespace SuperMan.Controllers
             strBuilder.AppendLine("<td>骑士姓名</td>");
             strBuilder.AppendLine("<td>下单时间</td>");
             strBuilder.AppendLine("<td>接单时间</td>");
-            strBuilder.AppendLine("<td>取货时间</td>"); 
+            strBuilder.AppendLine("<td>取货时间</td>");
             strBuilder.AppendLine("<td>完成时间</td>");
             //strBuilder.AppendLine("<td>配送费</td>");
             strBuilder.AppendLine("<td>订单金额</td>");
@@ -240,8 +291,8 @@ namespace SuperMan.Controllers
             //输出数据.
             foreach (var item in pagedList)
             {
-                var statusView =ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.OrderStatusCommon) item.Status).GetType(),
-                        (ETS.Enums.OrderStatusCommon) item.Status).Text;
+                var statusView = ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.OrderStatusCommon)item.Status).GetType(),
+                        (ETS.Enums.OrderStatusCommon)item.Status).Text;
                 strBuilder.AppendLine(string.Format("<tr><td>'{0}'</td>", item.OrderNo));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.BusinessName));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.clienterId));
@@ -250,7 +301,7 @@ namespace SuperMan.Controllers
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.GrabTime));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.GrabTime));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.ActualDoneDate));
-               // strBuilder.AppendLine(string.Format("<td>{0}</td>", item.DistribSubsidy));
+                // strBuilder.AppendLine(string.Format("<td>{0}</td>", item.DistribSubsidy));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.Amount));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.OrderCount));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.SettleType));
@@ -260,8 +311,8 @@ namespace SuperMan.Controllers
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.SuperManSettleValueAll));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", statusView));
                 strBuilder.AppendLine(string.Format("<td>{0}</td>", item.BusinessCity));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.MealsSettleMode==1?"是":"否"));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.IsNotRealOrder==1?"是":"否"));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.MealsSettleMode == 1 ? "是" : "否"));
+                strBuilder.AppendLine(string.Format("<td>{0}</td>", item.IsNotRealOrder == 1 ? "是" : "否"));
                 strBuilder.AppendLine("</tr>");
             }
             strBuilder.AppendLine("</table>");

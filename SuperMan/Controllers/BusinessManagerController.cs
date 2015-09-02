@@ -109,17 +109,17 @@ namespace SuperMan.Controllers
         [HttpPost]
         public JsonResult AuditOK(int id)
         {
-            bool b = iBusinessProvider.UpdateAuditStatus(id, AuditStatus.Status1);
-            return Json(new ResultModel(true, string.Empty), JsonRequestBehavior.DenyGet);
+            BusinessAuditModel bam = new BusinessAuditModel() { BusinessId = id, AuditStatus = AuditStatus.Status1, OptionUserId = UserContext.Current.Id, OptionUserName = UserContext.Current.Name };
+            bool b = iBusinessProvider.UpdateAuditStatus(bam);
+            return Json(new ResultModel(b, string.Empty), JsonRequestBehavior.DenyGet);
         }
         [HttpPost]
         public JsonResult AuditCel(int id)
         {
-            iBusinessProvider.UpdateAuditStatus(id, AuditStatus.Status0);
-            return Json(new ResultModel(true, string.Empty), JsonRequestBehavior.DenyGet);
+            BusinessAuditModel bam = new BusinessAuditModel() { BusinessId = id, AuditStatus = AuditStatus.Status0, OptionUserId = UserContext.Current.Id, OptionUserName = UserContext.Current.Name };
+            bool b = iBusinessProvider.UpdateAuditStatus(bam);
+            return Json(new ResultModel(b, string.Empty), JsonRequestBehavior.DenyGet);
         }
-
-
         /// <summary>
         /// 根据城市信息查询当前城市下该集团的所有商户信息  add by caoheyang 20150302
         /// </summary>
@@ -224,7 +224,7 @@ namespace SuperMan.Controllers
                 MealsSettleMode = mealsSettleMode
             };
             return Json(new ResultModel(iBus.ModifyBusinessInfo(businessModel, model), "成功!"), JsonRequestBehavior.DenyGet);
-        }       
+        }
 
         /// <summary>
         /// 查看商户详细信息
@@ -325,13 +325,13 @@ namespace SuperMan.Controllers
         public JsonResult Withdraw(WithdrawBBackPM model)
         {
             int FinanceAccountId = iBusinessFinanceAccountProvider.GetBFinanceAccountId(model.BusinessId);
-            if(FinanceAccountId==0)
+            if (FinanceAccountId == 0)
                 return Json(new ResultModel(false, "商户金融账号不存在！"), JsonRequestBehavior.DenyGet);
 
             model.FinanceAccountId = FinanceAccountId;
-            var reg = iBusinessFinanceProvider.WithdrawB(model);            
+            var reg = iBusinessFinanceProvider.WithdrawB(model);
 
-            return Json(reg, JsonRequestBehavior.DenyGet);            
+            return Json(reg, JsonRequestBehavior.DenyGet);
         }
         /// <summary>
         /// 查询商户综合信息
@@ -358,7 +358,7 @@ namespace SuperMan.Controllers
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(userType));
             ViewBag.openAreaList = iAreaProvider.GetOpenCityDistrict(ParseHelper.ToInt(businessDetailModel.CityId));
             ViewBag.businessThirdRelation = iBusinessProvider.GetBusinessThirdRelation(ParseHelper.ToInt(businessId));
-            ViewBag.BusinessOpLog = iBusinessProvider.GetBusinessOpLog(ParseHelper.ToInt(businessId,0));//add by wangchao
+            ViewBag.BusinessOpLog = iBusinessProvider.GetBusinessOpLog(ParseHelper.ToInt(businessId, 0));//add by wangchao
             ViewBag.deliveryCompany = iDeliveryCompanyProvider.GetDeliveryCompanyList();
             return View("BusinessModify", businessDetailModel);
         }
@@ -534,7 +534,7 @@ namespace SuperMan.Controllers
 
         public ActionResult ClienterBatchBind(string businessId)
         {
-            var businessDetailModel = iBusinessProvider.GetBusinessDetailById(businessId);               
+            var businessDetailModel = iBusinessProvider.GetBusinessDetailById(businessId);
             return View(businessDetailModel);
         }
 
@@ -559,10 +559,10 @@ namespace SuperMan.Controllers
                     HttpPostedFileBase file = Request.Files["file1"];
                     fs = file.InputStream;
                     if (Path.GetExtension(Request.Files["file1"].FileName) == ".xls")
-                        wk = new HSSFWorkbook(fs);                                      
+                        wk = new HSSFWorkbook(fs);
                     else
                         wk = new XSSFWorkbook(fs);
-                     
+
                     ISheet st = wk.GetSheetAt(0);
                     int rowCount = st.LastRowNum;
                     if (rowCount > 50)
@@ -571,7 +571,7 @@ namespace SuperMan.Controllers
                         return Json(new Ets.Model.Common.ResultModel(false, "每次最多导入50行数据！", JsonRequestBehavior.DenyGet));
                     }
 
-                    list = GetList(st, rowCount);                   
+                    list = GetList(st, rowCount);
                 }
             }
             catch (Exception ex)
@@ -580,9 +580,9 @@ namespace SuperMan.Controllers
             }
 
             return Json(list);
-            
+
         }
-   
+
         /// <summary>
         /// 批量保存骑士绑定
         /// </summary>
@@ -591,10 +591,10 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         [HttpPost]
         public ActionResult ClienterBatchSave()
-        {                      
+        {
             string businessId = Request.Params["BusinessId"].ToString();
             string OverallS = Request.Params["OverallS"].ToString();
-            List<BusinessBindClienterDM> list = ParseHelper.JSONStringToList<BusinessBindClienterDM>(Request.Params["OverallS"].ToString());              
+            List<BusinessBindClienterDM> list = ParseHelper.JSONStringToList<BusinessBindClienterDM>(Request.Params["OverallS"].ToString());
 
             for (int i = 0; i < list.Count; i++)
             {
@@ -610,35 +610,36 @@ namespace SuperMan.Controllers
                                                         ClienterId = clienterId
                                                     });
                     if (model == null)//插入
-                    {                               
-                        iBusinessProvider.AddClienterBind(new ClienterBindOptionLogModel { 
-                                                    BusinessId=Convert.ToInt32(businessId),
-                                                    ClienterId=clienterId,
-                                                    OptId = UserContext.Current.Id,
-                                                    OptName = UserContext.Current.Name,
-                                                    Remark = "添加绑定"
-                                                });
+                    {
+                        iBusinessProvider.AddClienterBind(new ClienterBindOptionLogModel
+                        {
+                            BusinessId = Convert.ToInt32(businessId),
+                            ClienterId = clienterId,
+                            OptId = UserContext.Current.Id,
+                            OptName = UserContext.Current.Name,
+                            Remark = "添加绑定"
+                        });
                     }
-                    else if(model!=null && model.IsBind==0)//更新                   
-                    {                     
-                        iBusinessProvider.ModifyClienterBind(new ClienterBindOptionLogModel 
+                    else if (model != null && model.IsBind == 0)//更新                   
+                    {
+                        iBusinessProvider.ModifyClienterBind(new ClienterBindOptionLogModel
                                             {
                                                 BusinessId = Convert.ToInt32(businessId),
                                                 ClienterId = clienterId,
                                                 OptId = UserContext.Current.Id,
                                                 OptName = UserContext.Current.Name,
                                                 Remark = "修改绑定",
-                                                IsBind=1
-                                            });                
+                                                IsBind = 1
+                                            });
                     }
-                }             
+                }
             }
-          
+
             return Json(new Ets.Model.Common.ResultModel(true, "保存成功！", JsonRequestBehavior.DenyGet));
         }
 
         #region
-        
+
         /// <summary>
         /// 获取批量导入列表
         /// </summary>
@@ -647,7 +648,7 @@ namespace SuperMan.Controllers
         /// <param name="st"></param>
         /// <param name="rowCount"></param>
         /// <returns></returns>
-        List<BusinessBindClienterDM> GetList(ISheet st,int rowCount)
+        List<BusinessBindClienterDM> GetList(ISheet st, int rowCount)
         {
             List<BusinessBindClienterDM> list = new List<BusinessBindClienterDM>();
             for (int i = 1; i <= rowCount; i++)
@@ -720,7 +721,7 @@ namespace SuperMan.Controllers
         public ContentResult GetBusinessRechargeDetailByNo(string orderNo)
         {
             BusinessRechargeDetail detailModel = iBusinessFinanceProvider.GetBusinessRechargeDetailByNo(orderNo);
-            if (detailModel==null)
+            if (detailModel == null)
             {
                 return null;
             }
@@ -752,7 +753,7 @@ namespace SuperMan.Controllers
             var reg = iBusinessProvider.ModifyBusinessExpress(busiId, deliveryCompanyList, UserContext.Current.Name);
             return Json(new Ets.Model.Common.ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.DenyGet);
         }
-         
+
         /// <summary>
         /// 获取省市
         /// </summary>
@@ -771,7 +772,7 @@ namespace SuperMan.Controllers
         /// </summary>
         /// <param name="jiBie"></param>
         /// <returns></returns>
-        public JsonResult GetOpenCity(int jiBie,int parrentId)
+        public JsonResult GetOpenCity(int jiBie, int parrentId)
         {
             //获取版本号  
             var openProvince = new AreaProvider().GetPublicBankCity("1.0");

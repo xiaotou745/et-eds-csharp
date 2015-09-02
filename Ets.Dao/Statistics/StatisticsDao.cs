@@ -865,10 +865,10 @@ order by o.Date desc, o.ActiveClienterCount desc";
         public decimal QueryBusinessTotalAmount(BussinessBalanceQuery queryInfo)
         {
             string sql = @"
-                            SELECT  SUM(bbr.amount) AS totalAmount
-                            FROM    BusinessBalanceRecord bbr ( NOLOCK )
+                            SELECT  SUM(isnull(bbr.payAmount,0)) AS totalAmount
+                            FROM    dbo.BusinessRecharge bbr ( NOLOCK ) 
                                     INNER JOIN dbo.business b ( NOLOCK ) ON bbr.BusinessId = b.Id where ";
-            var sbSqlWhere = GetQueryWhere(queryInfo);
+            var sbSqlWhere = GetQueryRechargeWhere(queryInfo);
             object obj = DbHelper.ExecuteScalar(SuperMan_Read, sql + sbSqlWhere);
             return ParseHelper.ToDecimal(obj, 0);
         }
