@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Web;
 using ETS.Const;
 using Ets.Model.ParameterModel.Authority;
@@ -11,6 +13,44 @@ namespace SuperMan.App_Start
     {
         private static readonly UserContext Empty = new UserContext();
         public static UserContext Current
+        {
+            get
+            {
+                var cookie = ETS.Util.CookieHelper.ReadCookie(SystemConst.cookieName);
+                if (string.IsNullOrEmpty(cookie))
+                {
+                    cookie = ETS.Util.CookieHelper.ReadCookie(SystemConst.cookieNameJava);
+                    if (string.IsNullOrEmpty(cookie))
+                    {
+                        return UserContext.Empty;
+                    }
+                    else
+                    {
+                        cookie = HttpUtility.UrlDecode(cookie, Encoding.UTF8);
+                    }
+                }
+                else
+                {
+                    //如果.net cookie不为空但java cookie为空,需要设置java cookie
+                    if (string.IsNullOrEmpty(ETS.Util.CookieHelper.ReadCookie(SystemConst.cookieNameJava)))
+                    {
+                        CookieHelper.WriteCookie(SystemConst.cookieNameJava, HttpUtility.UrlEncode(cookie, Encoding.UTF8), DateTime.Now.AddDays(7));
+                    }
+                }
+                var userInfo = JsonHelper.ToObject<SimpleUserInfoModel>(cookie);
+                return new UserContext
+                {
+                    Id = userInfo.Id,
+                    Name = userInfo.LoginName,
+                    RoleId = userInfo.RoleId,
+                    GroupId = ETS.Util.ParseHelper.ToInt(userInfo.GroupId, 0),
+                    AccountType = userInfo.AccountType
+                };
+            }
+        }
+
+        //旧有判断cookie代码
+        /*public static UserContext Current
         {
             get
             {
@@ -29,7 +69,7 @@ namespace SuperMan.App_Start
                     AccountType = userInfo.AccountType
                 };
             }
-        }
+        }*/
 
         public bool HasAuthority(string authorityName)
         {

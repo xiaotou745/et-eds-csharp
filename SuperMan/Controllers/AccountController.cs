@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Web;
 using System.Web.Mvc;
 using ETS.Const;
 using Ets.Model.Common;
@@ -39,6 +41,14 @@ namespace SuperMan.Controllers
         public ActionResult LogOff()
         {
             string loginInfo=CookieHelper.ReadCookie(SystemConst.cookieName);
+            if (string.IsNullOrEmpty(loginInfo))
+            {
+                loginInfo = CookieHelper.ReadCookie(SystemConst.cookieNameJava);
+                if (!string.IsNullOrEmpty(loginInfo))
+                {
+                    loginInfo = HttpUtility.UrlDecode(loginInfo, Encoding.UTF8);
+                }
+            }
             AccountLoginLogModel logModel = new AccountLoginLogModel()
             {
                 LoginName = ParseHelper.ToString(Regex.Match( loginInfo, "\"LoginName\":\"(.*?)\",\"GroupId\"").Groups[1].Value),
@@ -60,7 +70,8 @@ namespace SuperMan.Controllers
         public ActionResult Login(string returnUrl)
         {
             string userinfo = CookieHelper.ReadCookie(SystemConst.cookieName);
-            if (!string.IsNullOrEmpty(userinfo))
+            string userinfoJava = CookieHelper.ReadCookie(SystemConst.cookieNameJava);
+            if (!string.IsNullOrEmpty(userinfo) || !string.IsNullOrEmpty(userinfoJava))
             {
                 return RedirectToAction("Index", "HomeCount");
             }
@@ -117,7 +128,8 @@ namespace SuperMan.Controllers
                         }
                     }
                     string menujson = JsonHelper.ToJson(myMenus);
-                    CookieHelper.WriteCookie("menulist", menujson, DateTime.Now.AddDays(10));
+                    CookieHelper.WriteCookie(SystemConst.menuListCookieName, menujson, DateTime.Now.AddDays(10));
+                    CookieHelper.WriteCookie(SystemConst.menuListCookieNameJava, HttpUtility.UrlEncode(menujson,Encoding.UTF8), DateTime.Now.AddDays(10));
                     //return Json(new ResultModel(true, "成功"));
                     returnStatus = true;
                     returnMsg = "成功";

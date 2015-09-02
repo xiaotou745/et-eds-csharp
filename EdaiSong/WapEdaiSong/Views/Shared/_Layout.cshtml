@@ -2,99 +2,99 @@
 <html> 
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-         <title>E代送 - 专注同城外卖提供外卖配送服务</title>
+        <title>E代送 - 专注同城外卖提供外卖配送服务</title>
         <meta name="description" content="E代送专注外卖订餐平台提供同城外卖即时配送服务;下载E代送配送版APP:查看附近外卖订单、抢单、取餐配送,即可完成外卖订餐的配送服务;下载E代送商家版APP,为商家提供快速便捷的外卖物流服务！">
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black" /> 
+        <meta name="apple-mobile-web-app-status-bar-style" content="black" />
         <meta name="location" content="province=北京;city=北京">
-        <link rel="stylesheet" href="~/Content/page.css?v=1">
+        <link rel="stylesheet" href="/Content/page.css?v=3">
     </head> 
-    <body class="hb-bd"> 
-        <script>
-            // 阻止滑动事件
-            document.body.addEventListener('touchmove', function (e) {
-                if (e.preventDefault) {
-                    e.preventDefault();
-                }
-            });
-</script>
+      <body class="hb-bd"> 
+          <script>
+    // 阻止滑动事件
+    document.body.addEventListener('touchmove', function (e) {
+        if (e.preventDefault) {
+            e.preventDefault();
+        }
+    });
+          </script>
         <div class="wrap">
             @RenderBody()
         </div>
            <div class="tips">为了更好的体验，请使用竖屏浏览</div>
-    <script type="text/javascript" src="~/Scripts/zepto.js"></script>
-         <script type="text/javascript">
-             $(function () {
+          <script type="text/javascript" src="/Scripts/zepto.js?v=3"></script>
+          <script type="text/javascript">
+              $(function () {
 
-                 var startPosY = 0, // 起始点垂直位置
-                     lTouch = 0, // lTouch_rTouch 场景切换
-                     rTouch = 1,
-                     $container = $(".container");
+                  var startPosY = 0, // 起始点垂直位置
+                      lTouch = 0, // lTouch_rTouch 场景切换
+                      rTouch = 1,
+                      $container = $(".container");
 
-                 $('.peisongban').on('click', function () {
-                     lTouch = 1;
-                     rTouch = 2;
-                     $(".wrap")[0].className = 'wrap go1_2';
-                 })
-                 $('.shangjiaban').on('click', function () {
-                     lTouch = 4;
-                     rTouch = 5;
-                     $(".wrap")[0].className = 'wrap go4_5';
-                 })
-                 // 触控开始
-                 document.body.addEventListener('touchstart', function (e) {
-                     if (isScrolling) { return; }
-                     startPosY = e.touches[0].pageY;
-                 });
-                 var isScrolling = false;
-                 function startScroll() {
-                     isScrolling = true;
-                     setTimeout(function () {
-                         isScrolling = false;
-                     }, 800);
-                 }
-                 // 触控结束
-                 document.body.addEventListener('touchend', function (e) {
-                     if (isScrolling) { return; }
-                     var endPosY = e.changedTouches[0].pageY;
-                     if (Math.abs(endPosY - startPosY) > 50) {
+                  $('.peisongban').on('click', function () {
+                      lTouch = 1;
+                      rTouch = 2;
+                      $(".wrap")[0].className = 'wrap go1_2';
+                  })
+                  $('.shangjiaban').on('click', function () {
+                      lTouch = 2;
+                      rTouch = 3;
+                      $(".wrap")[0].className = 'wrap go2_3';
+                  })
+                  // 触控开始
+                  document.body.addEventListener('touchstart', function (e) {
+                      if (isScrolling) { return; }
+                      startPosY = e.touches[0].pageY;
+                  });
+                  var isScrolling = false;
+                  function startScroll() {
+                      isScrolling = true;
+                      setTimeout(function () {
+                          isScrolling = false;
+                      }, 800);
+                  }
+                  // 触控结束
+                  document.body.addEventListener('touchend', function (e) {
+                      if (isScrolling) { return; }
+                      var endPosY = e.changedTouches[0].pageY;
+                      if (Math.abs(endPosY - startPosY) > 50) {
 
-                         // 向下滑动
-                         if (endPosY > startPosY) {
-                             if (lTouch > 0) {
-                                 startScroll();
-                                 $(".wrap")[0].className = 'wrap ' + 'go' + rTouch + '_' + lTouch;
-                                 lTouch -= 1;
-                                 rTouch -= 1;
-                                 var $lContainer = $($container[lTouch]),
-                                     $rContainer = $($container[rTouch]);
-                                 $('.gotop i', $rContainer).hide();
-                                 $('.gotop i', $lContainer).show();
-                             }
-                         }
+                          // 向下滑动
+                          if (endPosY > startPosY) {
+                              if (lTouch > 0) {
+                                  startScroll();
+                                  $(".wrap")[0].className = 'wrap ' + 'go' + rTouch + '_' + lTouch;
+                                  lTouch -= 1;
+                                  rTouch -= 1;
+                                  var $lContainer = $($container[lTouch]),
+                                      $rContainer = $($container[rTouch]);
+                                  $('.gotop i', $rContainer).hide();
+                                  $('.gotop i', $lContainer).show();
+                              }
+                          }
 
-                             // 向上滑动
-                         else {
-                             if (lTouch < 6) {
-                                 var $lContainer = $($container[lTouch]),
-                                     $rContainer = $($container[rTouch]);
-                                 $('.gotop i', $lContainer).hide();
-                                 if (lTouch != 6) {
-                                     $('.gotop i', $rContainer).show();
-                                 }
-                                 lTouch += 1;
-                                 rTouch += 1;
-                                 $(".wrap")[0].className = 'wrap ' + 'go' + lTouch + '_' + rTouch;
-                                 startScroll();
-                             }
-                         }
-                     }
+                              // 向上滑动
+                          else {
+                              if (lTouch < 2) {
+                                  var $lContainer = $($container[lTouch]),
+                                      $rContainer = $($container[rTouch]);
+                                  $('.gotop i', $lContainer).hide();
+                                  if (lTouch != 2) {
+                                      $('.gotop i', $rContainer).show();
+                                  }
+                                  lTouch += 1;
+                                  rTouch += 1;
+                                  $(".wrap")[0].className = 'wrap ' + 'go' + lTouch + '_' + rTouch;
+                                  startScroll();
+                              }
+                          }
+                      }
 
-                 });
-             });
-    </script>
+                  });
+              });
+          </script>
 </body>
 
 </html>
