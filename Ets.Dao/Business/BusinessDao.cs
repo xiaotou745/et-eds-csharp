@@ -2158,7 +2158,7 @@ ORDER BY btr.Id;";
                 }
                 if (brm.CommissionType != model.CommissionType)
                 {
-                    remark.AppendFormat("结算类型原值:{0},修改为{1};", brm.CommissionType, model.CommissionType);
+                    remark.AppendFormat("结算类型原值:{0},修改为{1};", ((OrderCommissionType)brm.CommissionType).GetDisplayText(), ((OrderCommissionType)model.CommissionType).GetDisplayText());
                     if (model.CommissionType == 1)
                     {
                         remark.AppendFormat("固定比例原值:{0},修改为{1};", brm.BusinessCommission, model.BusinessCommission);
@@ -2171,27 +2171,27 @@ ORDER BY btr.Id;";
                 //补贴策略 BusinessGroupId
                 if (brm.BusinessGroupId != model.BusinessGroupId)
                 {
-                    remark.AppendFormat("补贴策略原值:{0},修改为{1};", brm.BusinessGroupId, model.BusinessGroupId);
+                    remark.AppendFormat("补贴策略原值:{0},修改为{1};",brm.BusinessGroupId, model.BusinessGroupId);
                 }
                 //餐费结算方式
                 if (brm.MealsSettleMode != model.MealsSettleMode)
                 {
-                    remark.AppendFormat("餐费结算方式原值:{0},修改为{1};", brm.MealsSettleMode, model.MealsSettleMode);
+                    remark.AppendFormat("餐费结算方式原值:{0},修改为{1};",((MealsSettleMode) brm.MealsSettleMode).GetDisplayText(), ((MealsSettleMode) model.MealsSettleMode).GetDisplayText());
                 }
                 //一键发单
                 if (brm.OneKeyPubOrder != model.OneKeyPubOrder)
                 {
-                    remark.AppendFormat("一键发单原值:{0},修改为{1};", brm.OneKeyPubOrder, model.OneKeyPubOrder);
+                    remark.AppendFormat("一键发单原值:{0},修改为{1};", brm.OneKeyPubOrder == 1 ? "是" : "否", model.OneKeyPubOrder == 1 ? "是" : "否");
                 }
                 //余额可以透支
                 if (brm.IsAllowOverdraft != model.IsAllowOverdraft)
                 {
-                    remark.AppendFormat("余额透支原值:{0},修改为{1};", brm.IsAllowOverdraft, model.IsAllowOverdraft);
+                    remark.AppendFormat("余额透支原值:{0},修改为{1};", brm.IsAllowOverdraft == 1 ? "可以透支" : "不可透支", model.IsAllowOverdraft == 1 ? "可以透支" : "不可透支");
                 }
                 //雇主任务时间限制
                 if (brm.IsEmployerTask != model.IsEmployerTask)
                 {
-                    remark.AppendFormat("余额透支原值:{0},修改为{1};", brm.IsEmployerTask, model.IsEmployerTask);
+                    remark.AppendFormat("是否雇主任务:{0},修改为{1};", brm.IsEmployerTask == 1 ? "是" : "否", model.IsEmployerTask == 1 ? "是" : "否");
                 }
                 //第三方Id
                 if (brm.OriginalBusiId.HasValue)
@@ -2207,7 +2207,7 @@ ORDER BY btr.Id;";
                 }
                 if (brm.IsAllowCashPay != model.IsAllowCashPay)
                 {
-                    remark.AppendFormat("是否允许现金支付原值:{0},修改为{1};", brm.IsAllowCashPay, model.IsAllowCashPay);
+                    remark.AppendFormat("是否允许现金支付原值:{0},修改为{1};", brm.IsAllowCashPay == 1 ? "是" : "否", model.IsAllowCashPay == 1 ? "是" : "否");
                 }
             }
             return remark.ToString();

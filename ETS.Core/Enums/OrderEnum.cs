@@ -22,6 +22,19 @@ namespace ETS.Enums
         [DisplayText("第三方待接入订单")]
         Status30 = 30
     }
+    /// <summary>
+    /// 订单审核状态
+    /// </summary>
+    public enum OrderAuditEnum
+    {
+        //审核状态：0待审核1审核通过2审核拒绝
+        [DisplayText("待审核")]
+        Status0 = 0,
+        [DisplayText("审核通过")]
+        Status1 = 1,
+        [DisplayText("审核拒绝")]
+        Status2 = 2  
+    }
 
     /// <summary>
     /// 订单结算类型

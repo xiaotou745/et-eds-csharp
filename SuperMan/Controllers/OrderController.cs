@@ -28,7 +28,10 @@ using Ets.Service.IProvider.Business;
 ﻿using ETS.Const;
 ﻿using SuperMan.Common;
 
-using Ets.Model.DomainModel.Area;namespace SuperMan.Controllers
+using Ets.Model.DomainModel.Area;
+﻿using ETS.Extension;
+
+namespace SuperMan.Controllers
 {
     public class OrderController : BaseController
     {
@@ -128,7 +131,7 @@ using Ets.Model.DomainModel.Area;namespace SuperMan.Controllers
             if (criteria.businessCity == "--无--")
             {
                 criteria.businessCity = "";
-            } 
+            }
             var pagedList = iOrderProvider.GetOrders(criteria);
             if (pagedList != null && pagedList.Records.Count > 0)
             {
@@ -149,7 +152,7 @@ using Ets.Model.DomainModel.Area;namespace SuperMan.Controllers
                 ExcelIO.CreateFactory().Export(ConvertOrderToOrderExcel(pagedList), ExportFileFormat.excel, filname, title);
                 return null;
             }
-            Response.Write(SystemConst.NoExportData); 
+            Response.Write(SystemConst.NoExportData);
             return null;
         }
         /// <summary>
@@ -440,6 +443,87 @@ using Ets.Model.DomainModel.Area;namespace SuperMan.Controllers
 
             return PartialView("_PartialOrderAuditList", pagedList);
         }
+
+        public ActionResult ExportOrderAudit(int pageindex = 1)
+        {
+            ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId; ;//集团id
+            int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
+            ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(UserType));
+            var criteria = new OrderSearchCriteria();
+            TryUpdateModel(criteria);
+            criteria.PageIndex = 1;
+            criteria.PageSize = 65534;
+            criteria.AuthorityCityNameListStr =
+                iAreaProvider.GetAuthorityCityNameListStr(UserType);
+            criteria.UserType = UserType;
+
+            var pagedList = iOrderProvider.GetOrders(criteria);
+            if (pagedList != null && pagedList.Records.Count > 0)
+            {
+                string[] title = ExcelUtility.GetDescription(new OrderAuditExcel());
+                string filname = "e代送订单审核-{0}-订单数据";
+                if (!string.IsNullOrWhiteSpace(criteria.businessName))
+                {
+                    filname = string.Format(filname, criteria.businessName);
+                }
+                if (!string.IsNullOrWhiteSpace(criteria.superManName))
+                {
+                    filname = string.Format(filname, criteria.superManName);
+                }
+                if (!string.IsNullOrWhiteSpace(criteria.orderPubStart))
+                {
+                    filname = string.Format(filname, ParseHelper.ToDatetime(criteria.orderPubStart).ToLongDateString() + "到" + ParseHelper.ToDatetime(criteria.orderPubEnd).ToLongDateString());
+                } 
+                ExcelIO.CreateFactory().Export(ConvertOrderToOrderAuditExcel(pagedList), ExportFileFormat.excel, filname, title);
+                return null;
+            } 
+            Response.Write(SystemConst.NoExportData);
+            return null; 
+        }
+
+        private IList<OrderAuditExcel> ConvertOrderToOrderAuditExcel(PageInfo<OrderListModel> pagedList)
+        {
+            var orderAuditExcels = new List<OrderAuditExcel>();
+            foreach (var oOrderListModel in pagedList.Records)
+            {
+                var clienterInfo = "";
+                var orderAuditExcel = new OrderAuditExcel();
+
+                if (!string.IsNullOrEmpty(oOrderListModel.ClienterName))
+                {
+                    clienterInfo = oOrderListModel.ClienterName;
+                }
+                if (!string.IsNullOrEmpty(oOrderListModel.ClienterPhoneNo))
+                {
+                    clienterInfo += ":" + oOrderListModel.ClienterPhoneNo;
+                }
+                orderAuditExcel.OrderNo = oOrderListModel.OrderNo;
+                orderAuditExcel.OrderStatus = ((OrderStatus)oOrderListModel.Status).GetDisplayText();
+                orderAuditExcel.OrderAuditStatus = ((OrderAuditEnum)oOrderListModel.AuditStatus).GetDisplayText();
+
+                orderAuditExcel.BusinessInfo = oOrderListModel.BusinessName + ":" + oOrderListModel.BusinessPhoneNo;
+                orderAuditExcel.ClienterInfo = clienterInfo;
+                orderAuditExcel.PubDate = oOrderListModel.PubDate;
+                orderAuditExcel.ActualDoneDate = oOrderListModel.ActualDoneDate;
+                orderAuditExcel.Amount = oOrderListModel.Amount.Value;
+                orderAuditExcel.YingShouAmount = oOrderListModel.SettleMoney; //应收
+                orderAuditExcel.YingKui = oOrderListModel.SettleMoney - oOrderListModel.OrderCommission.Value +
+                                          oOrderListModel.RealOrderCommission;
+                orderAuditExcel.OrderCommission = oOrderListModel.OrderCommission.Value;
+                orderAuditExcel.OrderCount = oOrderListModel.OrderCount;
+                orderAuditExcel.IsException = oOrderListModel.IsNotRealOrder == 1 ? "是" : "否";
+                decimal kouchubutie = 0.00M;
+                if (oOrderListModel.IsNotRealOrder == 1)
+                {
+                    if (oOrderListModel.AuditStatus == 2)
+                    { kouchubutie = oOrderListModel.OrderCommission.Value - oOrderListModel.RealOrderCommission; }
+                }
+                orderAuditExcel.DeductSubsidy = kouchubutie;
+                orderAuditExcels.Add(orderAuditExcel);
+            }
+            return orderAuditExcels;
+        }
+
         [HttpPost]
         public JsonResult BatchAuditCancel(string orderIds, string remark)
         {
@@ -536,9 +620,9 @@ using Ets.Model.DomainModel.Area;namespace SuperMan.Controllers
         /// <returns></returns>
         public ActionResult OverTimeOrder()
         {
-            OverTimeOrderPM model=new OverTimeOrderPM();
+            OverTimeOrderPM model = new OverTimeOrderPM();
             model.PageIndex = 1;
-            var list= iOrderProvider.GetOverTimeOrderList<OverTimeOrderModel>(model);
+            var list = iOrderProvider.GetOverTimeOrderList<OverTimeOrderModel>(model);
             return View(list);
         }
 
@@ -554,7 +638,7 @@ using Ets.Model.DomainModel.Area;namespace SuperMan.Controllers
             TryUpdateModel(model);
             model.PageIndex = pageindex;
             var list = iOrderProvider.GetOverTimeOrderList<OverTimeOrderModel>(model);
-            return PartialView("_PostOverTimeOrder",list);
+            return PartialView("_PostOverTimeOrder", list);
         }
 
         ///// <summary>
@@ -593,11 +677,11 @@ using Ets.Model.DomainModel.Area;namespace SuperMan.Controllers
         /// <param name="orderId">订单Id</param>
         /// <param name="businessId">商户Id</param>
         /// <returns></returns>
-        public ActionResult LocalClienter(int orderId,int businessId)
+        public ActionResult LocalClienter(int orderId, int businessId)
         {
-            ViewBag.businessUnReceiveOrder = iOrderProvider.GetBusinessUnReceiveOrderQty(orderId,businessId);
+            ViewBag.businessUnReceiveOrder = iOrderProvider.GetBusinessUnReceiveOrderQty(orderId, businessId);
             var localClienters = iOrderProvider.GetLocalClienterList(orderId);
-            ViewBag.clienterJsonInfo  = JsonHelper.JsonConvertToString(localClienters);
+            ViewBag.clienterJsonInfo = JsonHelper.JsonConvertToString(localClienters);
             return View(localClienters);
         }
 
