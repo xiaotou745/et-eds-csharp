@@ -94,7 +94,7 @@ namespace Ets.Dao.DeliveryManager
 		                            ,CASE dc.SettleType WHEN 1 THEN  o.[Amount]*dc.DeliveryCompanyRatio*0.01 WHEN 2 THEN o.[OrderCount]*DC.DeliveryCompanySettleMoney END  AS SettleValueAll
 		                            ,CASE dc.SettleType WHEN 1 THEN  o.[Amount]*dc.ClienterSettleRatio*0.01 WHEN 2 THEN o.[OrderCount]*DC.ClienterFixMoney END AS SuperManSettleValueAll
                                     ,oo.IsNotRealOrder
-                                    ,oo.GrabTime,oo.TakeTime,
+                                    ,oo.GrabTime,oo.TakeTime
                                     ,b.City AS BusinessCity
                                     ";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
