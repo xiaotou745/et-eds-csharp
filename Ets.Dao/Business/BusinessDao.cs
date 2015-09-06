@@ -2158,7 +2158,7 @@ ORDER BY btr.Id;";
                 }
                 if (brm.CommissionType != model.CommissionType)
                 {
-                    remark.AppendFormat("结算类型原值:{0},修改为{1};", brm.CommissionType, model.CommissionType);
+                    remark.AppendFormat("结算类型原值:{0},修改为{1};", ((OrderCommissionType)brm.CommissionType).GetDisplayText(), ((OrderCommissionType)model.CommissionType).GetDisplayText());
                     if (model.CommissionType == 1)
                     {
                         remark.AppendFormat("固定比例原值:{0},修改为{1};", brm.BusinessCommission, model.BusinessCommission);
@@ -2171,27 +2171,27 @@ ORDER BY btr.Id;";
                 //补贴策略 BusinessGroupId
                 if (brm.BusinessGroupId != model.BusinessGroupId)
                 {
-                    remark.AppendFormat("补贴策略原值:{0},修改为{1};", brm.BusinessGroupId, model.BusinessGroupId);
+                    remark.AppendFormat("补贴策略原值:{0},修改为{1};",brm.BusinessGroupId, model.BusinessGroupId);
                 }
                 //餐费结算方式
                 if (brm.MealsSettleMode != model.MealsSettleMode)
                 {
-                    remark.AppendFormat("餐费结算方式原值:{0},修改为{1};", brm.MealsSettleMode, model.MealsSettleMode);
+                    remark.AppendFormat("餐费结算方式原值:{0},修改为{1};",((MealsSettleMode) brm.MealsSettleMode).GetDisplayText(), ((MealsSettleMode) model.MealsSettleMode).GetDisplayText());
                 }
                 //一键发单
                 if (brm.OneKeyPubOrder != model.OneKeyPubOrder)
                 {
-                    remark.AppendFormat("一键发单原值:{0},修改为{1};", brm.OneKeyPubOrder, model.OneKeyPubOrder);
+                    remark.AppendFormat("一键发单原值:{0},修改为{1};", brm.OneKeyPubOrder == 1 ? "是" : "否", model.OneKeyPubOrder == 1 ? "是" : "否");
                 }
                 //余额可以透支
                 if (brm.IsAllowOverdraft != model.IsAllowOverdraft)
                 {
-                    remark.AppendFormat("余额透支原值:{0},修改为{1};", brm.IsAllowOverdraft, model.IsAllowOverdraft);
+                    remark.AppendFormat("余额透支原值:{0},修改为{1};", brm.IsAllowOverdraft == 1 ? "可以透支" : "不可透支", model.IsAllowOverdraft == 1 ? "可以透支" : "不可透支");
                 }
                 //雇主任务时间限制
                 if (brm.IsEmployerTask != model.IsEmployerTask)
                 {
-                    remark.AppendFormat("余额透支原值:{0},修改为{1};", brm.IsEmployerTask, model.IsEmployerTask);
+                    remark.AppendFormat("是否雇主任务:{0},修改为{1};", brm.IsEmployerTask == 1 ? "是" : "否", model.IsEmployerTask == 1 ? "是" : "否");
                 }
                 //第三方Id
                 if (brm.OriginalBusiId.HasValue)
@@ -2207,7 +2207,7 @@ ORDER BY btr.Id;";
                 }
                 if (brm.IsAllowCashPay != model.IsAllowCashPay)
                 {
-                    remark.AppendFormat("是否允许现金支付原值:{0},修改为{1};", brm.IsAllowCashPay, model.IsAllowCashPay);
+                    remark.AppendFormat("是否允许现金支付原值:{0},修改为{1};", brm.IsAllowCashPay == 1 ? "是" : "否", model.IsAllowCashPay == 1 ? "是" : "否");
                 }
             }
             return remark.ToString();
@@ -2837,10 +2837,23 @@ SELECT c.Id ClienterId
       ,tac.Latitude
       ,tac.Longitude
 INTO #tempLocalClienter
-FROM [BusinessClienterRelation] bcr WITH(NOLOCK)
+FROM #tempActiveClienter tac
+JOIN [BusinessClienterRelation] bcr WITH(NOLOCK) ON tac.ClienterId = bcr.ClienterId
 JOIN dbo.clienter c WITH(NOLOCK) ON bcr.ClienterId=c.Id AND bcr.IsEnable=1 AND bcr.IsBind=1 AND c.IsBind=1 AND c.[Status]=1 AND bcr.BusinessId=@BusinessId
-JOIN #tempActiveClienter tac ON tac.ClienterId = c.Id
-WHERE geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326))<=@PushRadius;
+WHERE geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326))<=@PushRadius
+UNION
+SELECT c.Id ClienterId
+	  ,c.TrueName ClienterName
+      ,c.PhoneNo
+      ,c.WorkStatus
+      ,ROUND(geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326)),0) Radius
+      ,tac.Latitude
+      ,tac.Longitude
+INTO #tempLocalClienter
+FROM #tempActiveClienter tac
+JOIN dbo.clienter c WITH(NOLOCK) ON tac.ClienterId=c.Id AND c.Status=1
+JOIN BusinessExpressRelation ber with(nolock) ON ber.ExpressId=c.DeliveryCompanyId AND  ber.BusinessId=@BusinessId AND ber.IsEnable=1
+WHERE  geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326))<=@PushRadius;
 
 SELECT  TOP 20 templc.ClienterName,
 		templc.PhoneNo,

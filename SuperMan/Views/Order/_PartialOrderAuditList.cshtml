@@ -1,4 +1,5 @@
-﻿@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Order.OrderListModel>
+﻿@using ETS.Extension
+@model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Order.OrderListModel>
 <script src="~/Scripts/view/orderList.js"></script>
 <style type="text/css">
 #map_contain {
@@ -44,21 +45,8 @@ width: 100%;
                 {
                     var diffMinutes = (DateTime.Now - DateTime.Parse(item.PubDate != null ? item.PubDate.ToString() : DateTime.Now.ToString())).TotalMinutes;
                     string timeoutStyle = diffMinutes > 5 && item.Status == 0 ? " style=background-color:#FFCCCC" : "";
-                    
-                    string AuditStatus = "";
-                    if (item.AuditStatus == 2)
-                    {
-                        AuditStatus = "审核拒绝";
-                    }
-                    else if (item.AuditStatus == 1)
-                    {
-                        AuditStatus="审核通过";
-                    }
-                    else
-                    {
-                        AuditStatus = "待审核";
-                    }
 
+                    string AuditStatus = ((ETS.Enums.OrderAuditEnum)item.AuditStatus).GetDisplayText();
                     string realID = "real" + item.Id;
                     string reals = "否";
                     string real_tipString = "";

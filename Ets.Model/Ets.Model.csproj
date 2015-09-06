@@ -159,6 +159,7 @@
     <Compile Include="DomainModel\Finance\ClienterWithdrawLogModel.cs" />
     <Compile Include="DomainModel\Finance\FinanceRecordsDM.cs" />
     <Compile Include="DomainModel\Finance\ImprestPaymentExcel.cs" />
+    <Compile Include="DomainModel\Finance\ImprestRechargeExcel.cs" />
     <Compile Include="DomainModel\Message\ListBDM.cs" />
     <Compile Include="DomainModel\Message\ListCDM.cs" />
     <Compile Include="DomainModel\Message\MessageModelDM.cs" />
@@ -171,6 +172,7 @@
     <Compile Include="DomainModel\Order\NonJoinWithdrawModel.cs" />
     <Compile Include="DomainModel\Finance\FinanceRecordsDMList.cs" />
     <Compile Include="DomainModel\Order\CancelOrderModel.cs" />
+    <Compile Include="DomainModel\Order\OrderAuditExcel.cs" />
     <Compile Include="DomainModel\Order\OrderAuditStatisticalModel.cs" />
     <Compile Include="DomainModel\Order\OrderChildForTicket.cs" />
     <Compile Include="DomainModel\Order\OrderExcel.cs" />
