@@ -96,13 +96,23 @@ namespace Ets.Dao.Account
         public IList<AuthorityMenuModel> GetAuth(int AccountId)
         {
             string sql = @"
-SELECT AccoutId,MenuId,ParId,MenuName,Url FROM dbo.AuthorityAccountMenuSet  aam (nolock)
+DECLARE @roleID INT
+SELECT @roleID=ISNULL(b.Id,0) FROM dbo.account a left JOIN (select * from  AuthorityRole where BeLock=0 ) b ON 
+a.RoleId=b.Id WHERE a.id=@AccountId
+
+IF @roleID>0
+  SELECT @AccountId AS AccoutId,MenuId,ParId,MenuName,Url FROM dbo.AuthorityRoleMentMenuSet  aam (nolock)
 JOIN AuthorityMenuClass amc(nolock) ON aam.MenuId = amc.Id
-WHERE aam.AccoutId=@AccountId";
+WHERE aam.RoleId = @roleID and amc.BeLock = CAST(0 AS BIT)	
+
+ELSE
+  SELECT AccoutId,MenuId,ParId,MenuName,Url FROM dbo.AuthorityAccountMenuSet  aam (nolock)
+JOIN AuthorityMenuClass amc(nolock) ON aam.MenuId = amc.Id
+WHERE aam.AccoutId=@AccountId and amc.BeLock = CAST(0 AS BIT)	";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("AccountId", DbType.Int32, 4).Value = AccountId;
-            DataTable dt= DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
-            if (dt==null || dt.Rows.Count<=0)
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            if (dt == null || dt.Rows.Count <= 0)
             {
                 return null;
             }
