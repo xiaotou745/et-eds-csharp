@@ -96,7 +96,7 @@ update OrderOther set IsJoinWithdraw=1 where orderId=@orderId";
         /// <param name="auditstatus"></param>
         public void UpdateAuditStatus(int orderId, int auditstatus)
         {
-            string updateSql = @"update dbo.OrderOther set auditstatus = @auditstatus where OrderId=@orderId";
+            string updateSql = @"update dbo.OrderOther set auditstatus = @auditstatus,AuditDate=getdate() where OrderId=@orderId";
             IDbParameters parm = DbHelper.CreateDbParameters("orderId", DbType.Int32, 4, orderId);
             parm.AddWithValue("@auditstatus", auditstatus);
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, parm);
