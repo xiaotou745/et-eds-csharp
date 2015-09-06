@@ -60,7 +60,8 @@
                         <input id="txtBusinessName" type="text" name="businessName" />
                         <span class="">订单号: </span>
                         <input id="txtOrderNo" type="text" name="orderId" />
-                        <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
+                        <input type="submit" value="查询" class="searchBtn" id="btnSearch"/>
+                        <input type="button" value="导出" class="searchBtn" id="btnExport" onclick="return orderAuditExport()" />
                         @if (SuperMan.App_Start.UserContext.Current.HasAuthority(80))
                         {
                             <input type="button" value="批量审核通过" onclick="return batchAuditPass()" class="searchBtn" id="batchAuditPass" />
@@ -170,6 +171,31 @@
             }
         });
     });
+
+    function orderAuditExport() { 
+        var txtOptTimeStart = $("#txtOrderPubStart").val();
+        var txtOptTimeEnd = $("#txtOrderPubEnd").val();
+        if (txtOptTimeStart == "" || txtOptTimeEnd == "") {
+            alert("请输入时间范围!");
+            return false;
+        }
+        if (txtOptTimeStart != "" && txtOptTimeEnd != "") {
+            if (CheckTime(txtOptTimeStart, txtOptTimeEnd)) {
+                alert("开始时间不能大于结束时间");
+                return false;
+            }
+        }
+        //var paramaters = { "OrderPubStart": $("#txtOrderPubStart").val(), "OrderPubEnd": $("#txtOrderPubEnd").val(), "businessCity": $("#businessCity").val(), "auditStatus": $("#auditStatus").val(), "IsNotRealOrder": $('input[name="IsNotRealOrder"]:checked').val(), "superManName": $("#txtSuperManName").val(), "businessName": $("#txtBusinessName").val(), "orderId": $("#txtOrderNo").val() };
+        var url = "/Order/ExportOrderAudit?OrderPubStart=" + $("#txtOrderPubStart").val() + "&OrderPubEnd=" + $("#txtOrderPubEnd").val() + "&businessCity=" + $("#businessCity").val() + "&auditStatus=" + $("#auditStatus").val() + "&IsNotRealOrder=" + $('input[name="IsNotRealOrder"]:checked').val() + "&superManName=" + $("#txtSuperManName").val() + "&businessName=" + $("#txtBusinessName").val() + "&orderId=" + $("#txtOrderNo").val();
+        window.location.href = url;
+        return true;
+    }
+    //验证时间大小
+    function CheckTime(d1, d2) {
+        var d11 = new Date(d1.replace(/\-/g, '/'));
+        var d22 = new Date(d2.replace(/\-/g, '/'));
+        return d1 > d2;
+    }
     function checkDate() {
         var StartDate = $('#txtOrderPubStart').val();
         var EndDate = $('#txtOrderPubEnd').val();
