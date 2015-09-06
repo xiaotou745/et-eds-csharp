@@ -103,7 +103,7 @@
 @*审核拒绝弹框*@
 <div class="selectSupplierDish">
     <div class="add-openbox add-form" id="WithdrawAuditRefuseShow" style="width:480px">
-        <fieldset style="border-bottom: 0px">
+        <fieldset>
             <div class="control-group">
                 <div style="width:480px;font-size:16px"><center><label id="refusedes"></label></center></div>
                 <div class="controls" style="width: 480px">
@@ -125,7 +125,7 @@
 @*打款失败弹框*@
 <div class="selectSupplierDish">
     <div class="add-openbox add-form" id="WithdrawPayFailedShow" style="width:480px">
-        <fieldset style="border-bottom: 0px">
+        <fieldset>
             <div class="control-group">
                 <div class="controls" style="width:480px">
                     <span class="">失败原因:@Html.DropDownList("FailReason", new SelectList(ETS.Extension.EnumExtenstion.GetEnumItems(typeof(FailReason)), "Value", "Text"), "请选择", new { @class = "selectw", style = "width:157px" })</span>
