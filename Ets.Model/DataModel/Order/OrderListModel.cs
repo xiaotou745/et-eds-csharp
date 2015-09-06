@@ -383,9 +383,21 @@ namespace Ets.Model.DataModel.Order
         /// </summary>
         public double PubLatitude { get; set; }
         /// <summary>
+        /// 商户注册地址经度
+        /// </summary>
+        public double BusinessLongitude { get; set; }
+        /// <summary>
+        /// 商户注册地址纬度
+        /// </summary>
+        public double BusinessLatitude { get; set; }
+        /// <summary>
         /// 待抢单订单数
         /// </summary>
         public int UnReceiveQty { get; set; }
+        /// <summary>
+        /// 商户是否有绑定骑士（0：否 1：是）
+        /// </summary>
+        public int IsBind { get; set; }
         
     }
 }

@@ -635,7 +635,6 @@ order by a.id desc
         /// </summary>
         /// <param name="id"></param>
         /// <param name="enumStatusType"></param>
-        /// <param name="busiAddress"></param>
         /// <returns></returns>
         public bool UpdateAuditStatus(int id, AuditStatus enumStatusType)
         {
@@ -696,16 +695,124 @@ order by a.id desc
         /// <summary>
         /// 更新审核状态
         /// danny-20150317
+        /// 茹化肖修改
+        /// 2015年8月26日11:10:29 
+        /// wc修改
+        /// 2015年9月1日
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="enumStatusType"></param>
         /// <returns></returns>
-        public bool UpdateAuditStatus(int id, int enumStatus, string busiAddress)
+        public bool UpdateAuditStatus(BusinessAuditModel bam)
+        {
+            var juWangKeBusiAuditUrl = ConfigSettings.Instance.JuWangKeBusiAuditCallBack;
+            bool reslut = false;
+            string remark = "";
+            try
+            {
+                StringBuilder sql = new StringBuilder();
+                if (bam.AuditStatus == AuditStatus.Status1)
+                {
+                    remark = "审核状态修改为审核通过";
+                    sql.AppendFormat(@" update business set Status={0} OUTPUT
+                                              Inserted.Id,
+                                              @OptId,
+                                              @OptName,
+                                              GETDATE(),
+                                              @Platform,
+                                              @Remark
+                                            INTO BusinessOptionLog
+                                             (BusinessId,
+                                              OptId,
+                                              OptName,
+                                              InsertTime,
+                                              Platform,
+                                              Remark) ", BusinessStatus.Status1.GetHashCode());
+                }
+                else if (bam.AuditStatus == AuditStatus.Status0)
+                {
+                    remark = "审核状态修改为审核取消";
+                    sql.AppendFormat(@" update business set Status={0} OUTPUT
+                                              Inserted.Id,
+                                              @OptId,
+                                              @OptName,
+                                              GETDATE(),
+                                              @Platform,
+                                              @Remark
+                                            INTO BusinessOptionLog
+                                             (BusinessId,
+                                              OptId,
+                                              OptName,
+                                              InsertTime,
+                                              Platform,
+                                              Remark) ", BusinessStatus.Status4.GetHashCode());
+                }
+
+                sql.Append(" where id=@id;");
+                IDbParameters dbParameters = DbHelper.CreateDbParameters();
+                dbParameters.AddWithValue("id", bam.BusinessId);
+                dbParameters.AddWithValue("@OptId", bam.OptionUserId);
+                dbParameters.AddWithValue("@OptName", bam.OptionUserName);
+                dbParameters.AddWithValue("@Platform", 3);
+                dbParameters.AddWithValue("@Remark", remark);  
+                int i = DbHelper.ExecuteNonQuery(Config.SuperMan_Write, sql.ToString(), dbParameters);
+
+                if (i > 0)
+                {
+                    //调用第三方接口 ，聚网客商户审核通过后调用接口
+                    //这里不建议使用 1 数字，而是根据 配置文件中的 appkey来获取 groupid
+                    var busi = GetBusiness(bam.BusinessId);
+                    if (busi.GroupId == 1 && busi.OriginalBusiId > 0 && bam.AuditStatus == AuditStatus.Status1)
+                    {
+                        string str = HTTPHelper.HttpPost(juWangKeBusiAuditUrl, "supplier_id=" + busi.OriginalBusiId);
+                        HttpModel httpModel = new HttpModel()
+                        {
+                            Url = juWangKeBusiAuditUrl,
+                            Htype = HtypeEnum.ReqType.GetHashCode(),
+                            RequestBody = "supplier_id=" + busi.OriginalBusiId,
+                            ResponseBody = str,
+                            ReuqestPlatForm = RequestPlatFormEnum.EdsManagePlat.GetHashCode(),
+                            ReuqestMethod = "Ets.Dao.Business.BusinessDao.UpdateAuditStatus",
+                            Status = 1,
+                            Remark = "更新审核状态:调用聚网客"
+                        };
+                        new HttpDao().LogThirdPartyInfo(httpModel);
+                    } 
+                    reslut = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                reslut = false;
+                LogHelper.LogWriter(ex, "更新审核状态");
+                throw;
+            }
+            return reslut;
+        }
+
+        /// <summary>
+        /// 更新审核状态
+        /// danny-20150317
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns></returns>
+        public bool UpdateAuditStatus(BusinessAuditModel bam, string busiAddress)
         {
             bool reslut = false;
             try
             {
-                StringBuilder sql = new StringBuilder("update business set Status=@enumStatus ");
+                StringBuilder sql = new StringBuilder(@" update business set Status=@enumStatus OUTPUT 
+                                              Inserted.Id,
+                                              @OptId,
+                                              @OptName,
+                                              GETDATE(),
+                                              @Platform,
+                                              Deleted.[Address]+'修改为'+Inserted.[Address] 
+                                            INTO BusinessOptionLog 
+                                             (BusinessId,
+                                              OptId,
+                                              OptName,
+                                              InsertTime,
+                                              Platform,
+                                              Remark) ");
 
                 if (!string.IsNullOrWhiteSpace(busiAddress))  //当商户地址不为空的时候，修改商户地址
                 {
@@ -713,9 +820,12 @@ order by a.id desc
                 }
                 sql.Append(" where id=@id");
                 IDbParameters parm = DbHelper.CreateDbParameters();
-                parm.Add("id", DbType.Int32, 4).Value = id;
+                parm.Add("@id", DbType.Int32, 4).Value = bam.BusinessId;
                 parm.Add("@Address", DbType.String).Value = busiAddress; //商户地址
-                parm.Add("enumStatus", DbType.Int32, 4).Value = enumStatus;
+                parm.Add("@enumStatus", DbType.Int32, 4).Value = bam.AuditStatus.GetHashCode();
+                parm.AddWithValue("@OptId", bam.OptionUserId);
+                parm.AddWithValue("@OptName", bam.OptionUserName);
+                parm.AddWithValue("@Platform", 0); 
                 return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql.ToString(), parm)) > 0 ? true : false;
             }
             catch (Exception ex)
@@ -2048,7 +2158,7 @@ ORDER BY btr.Id;";
                 }
                 if (brm.CommissionType != model.CommissionType)
                 {
-                    remark.AppendFormat("结算类型原值:{0},修改为{1};", brm.CommissionType, model.CommissionType);
+                    remark.AppendFormat("结算类型原值:{0},修改为{1};", ((OrderCommissionType)brm.CommissionType).GetDisplayText(), ((OrderCommissionType)model.CommissionType).GetDisplayText());
                     if (model.CommissionType == 1)
                     {
                         remark.AppendFormat("固定比例原值:{0},修改为{1};", brm.BusinessCommission, model.BusinessCommission);
@@ -2061,27 +2171,27 @@ ORDER BY btr.Id;";
                 //补贴策略 BusinessGroupId
                 if (brm.BusinessGroupId != model.BusinessGroupId)
                 {
-                    remark.AppendFormat("补贴策略原值:{0},修改为{1};", brm.BusinessGroupId, model.BusinessGroupId);
+                    remark.AppendFormat("补贴策略原值:{0},修改为{1};",brm.BusinessGroupId, model.BusinessGroupId);
                 }
                 //餐费结算方式
                 if (brm.MealsSettleMode != model.MealsSettleMode)
                 {
-                    remark.AppendFormat("餐费结算方式原值:{0},修改为{1};", brm.MealsSettleMode, model.MealsSettleMode);
+                    remark.AppendFormat("餐费结算方式原值:{0},修改为{1};",((MealsSettleMode) brm.MealsSettleMode).GetDisplayText(), ((MealsSettleMode) model.MealsSettleMode).GetDisplayText());
                 }
                 //一键发单
                 if (brm.OneKeyPubOrder != model.OneKeyPubOrder)
                 {
-                    remark.AppendFormat("一键发单原值:{0},修改为{1};", brm.OneKeyPubOrder, model.OneKeyPubOrder);
+                    remark.AppendFormat("一键发单原值:{0},修改为{1};", brm.OneKeyPubOrder == 1 ? "是" : "否", model.OneKeyPubOrder == 1 ? "是" : "否");
                 }
                 //余额可以透支
                 if (brm.IsAllowOverdraft != model.IsAllowOverdraft)
                 {
-                    remark.AppendFormat("余额透支原值:{0},修改为{1};", brm.IsAllowOverdraft, model.IsAllowOverdraft);
+                    remark.AppendFormat("余额透支原值:{0},修改为{1};", brm.IsAllowOverdraft == 1 ? "可以透支" : "不可透支", model.IsAllowOverdraft == 1 ? "可以透支" : "不可透支");
                 }
                 //雇主任务时间限制
                 if (brm.IsEmployerTask != model.IsEmployerTask)
                 {
-                    remark.AppendFormat("余额透支原值:{0},修改为{1};", brm.IsEmployerTask, model.IsEmployerTask);
+                    remark.AppendFormat("是否雇主任务:{0},修改为{1};", brm.IsEmployerTask == 1 ? "是" : "否", model.IsEmployerTask == 1 ? "是" : "否");
                 }
                 //第三方Id
                 if (brm.OriginalBusiId.HasValue)
@@ -2097,7 +2207,7 @@ ORDER BY btr.Id;";
                 }
                 if (brm.IsAllowCashPay != model.IsAllowCashPay)
                 {
-                    remark.AppendFormat("是否允许现金支付原值:{0},修改为{1};", brm.IsAllowCashPay, model.IsAllowCashPay);
+                    remark.AppendFormat("是否允许现金支付原值:{0},修改为{1};", brm.IsAllowCashPay == 1 ? "是" : "否", model.IsAllowCashPay == 1 ? "是" : "否");
                 }
             }
             return remark.ToString();
@@ -2715,7 +2825,7 @@ SELECT   cl.ClienterId
 INTO #tempActiveClienter
 FROM ( SELECT ClienterId,MAX(ID) ID
 	   FROM ClienterLocation  WITH(NOLOCK)
-	   WHERE CreateTime>DATEADD(MINUTE,-10000,GetDate())
+	   WHERE CreateTime>DATEADD(MINUTE,-10,GetDate())
 	   GROUP BY ClienterId) tbl
 JOIN ClienterLocation  cl WITH(NOLOCK) ON cl.ID = tbl.ID;
 
@@ -2723,14 +2833,27 @@ SELECT c.Id ClienterId
       ,c.TrueName ClienterName
       ,c.PhoneNo
       ,c.WorkStatus
-      ,geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326)) Radius
+      ,ROUND(geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326)),0) Radius
       ,tac.Latitude
       ,tac.Longitude
 INTO #tempLocalClienter
-FROM [BusinessClienterRelation] bcr WITH(NOLOCK)
+FROM #tempActiveClienter tac
+JOIN [BusinessClienterRelation] bcr WITH(NOLOCK) ON tac.ClienterId = bcr.ClienterId
 JOIN dbo.clienter c WITH(NOLOCK) ON bcr.ClienterId=c.Id AND bcr.IsEnable=1 AND bcr.IsBind=1 AND c.IsBind=1 AND c.[Status]=1 AND bcr.BusinessId=@BusinessId
-JOIN #tempActiveClienter tac ON tac.ClienterId = c.Id
---WHERE geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326))<=@PushRadius;
+WHERE geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326))<=@PushRadius
+UNION
+SELECT c.Id ClienterId
+	  ,c.TrueName ClienterName
+      ,c.PhoneNo
+      ,c.WorkStatus
+      ,ROUND(geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326)),0) Radius
+      ,tac.Latitude
+      ,tac.Longitude
+INTO #tempLocalClienter
+FROM #tempActiveClienter tac
+JOIN dbo.clienter c WITH(NOLOCK) ON tac.ClienterId=c.Id AND c.Status=1
+JOIN BusinessExpressRelation ber with(nolock) ON ber.ExpressId=c.DeliveryCompanyId AND  ber.BusinessId=@BusinessId AND ber.IsEnable=1
+WHERE  geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326))<=@PushRadius;
 
 SELECT  TOP 20 templc.ClienterName,
 		templc.PhoneNo,
@@ -2740,7 +2863,8 @@ SELECT  TOP 20 templc.ClienterName,
         templc.Longitude,
 		tbllac.ReceiveQty,
 		tbllac.TransferQty,
-		tbllac.FinishQty
+		tbllac.FinishQty,
+        1 IsEmployerTask
 FROM #tempLocalClienter templc
 JOIN(
 SELECT tlc.clienterId,
@@ -2775,7 +2899,7 @@ SELECT cl.ClienterId
 INTO #tempActiveClienter
 FROM ( SELECT ClienterId,MAX(ID) ID
 	   FROM ClienterLocation  WITH(NOLOCK)
-	   WHERE CreateTime>DATEADD(MINUTE,-10000,GetDate())
+	   WHERE CreateTime>DATEADD(MINUTE,-10,GetDate())
 	   GROUP BY ClienterId) tbl
 JOIN ClienterLocation  cl WITH(NOLOCK) ON cl.ID = tbl.ID;
 
@@ -2783,7 +2907,7 @@ SELECT c.Id ClienterId
 	  ,c.TrueName ClienterName
       ,c.PhoneNo
       ,c.WorkStatus
-      ,geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326)) Radius
+      ,ROUND(geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326)),0) Radius
       ,tac.Latitude
       ,tac.Longitude
 INTO #tempLocalClienter
@@ -2793,7 +2917,7 @@ JOIN(   SELECT ExpressId
 		FROM BusinessExpressRelation ber with(nolock) 
 		WHERE BusinessId=@BusinessId AND ber.IsEnable=1
 		UNION SELECT 0 ExpressId) tblbe ON c.DeliveryCompanyId=tblbe.ExpressId
---WHERE  geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326))<=@PushRadius;
+WHERE  geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326))<=@PushRadius;
 
 SELECT  TOP 20 templc.ClienterName,
 		templc.PhoneNo,
@@ -2803,7 +2927,8 @@ SELECT  TOP 20 templc.ClienterName,
         templc.Longitude,
 		tbllac.ReceiveQty,
 		tbllac.TransferQty,
-		tbllac.FinishQty
+		tbllac.FinishQty,
+        0 IsEmployerTask
 FROM #tempLocalClienter templc
 JOIN(
 SELECT tlc.clienterId,

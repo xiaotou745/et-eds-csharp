@@ -210,8 +210,10 @@
     <Content Include="Images\iphone-qs.png" />
     <Content Include="Images\iphone-sh.png" />
     <Content Include="Images\t2.jpg" />
+    <Content Include="Images\t2.png" />
     <Content Include="Images\t2_db.jpg" />
     <Content Include="Images\t5.jpg" />
+    <Content Include="Images\t5.png" />
     <Content Include="Images\t5_db.jpg" />
     <Content Include="Scripts\zepto.js" />
     <Content Include="Scripts\_references.js" />

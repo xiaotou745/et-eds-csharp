@@ -97,16 +97,23 @@ namespace Ets.Service.IProvider.Business
         /// <param name="criteria"></param>
         /// <returns></returns>
         PageInfo<BusinessesDistributionModel> GetBusinessesDistributionStatisticalInfo(OrderSearchCriteria criteria);
-        /// <summary>
-        /// 更新审核状态
-        /// danny-20150317
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="enumStatusType"></param>
+        ///// <summary>
+        ///// 更新审核状态
+        ///// danny-20150317
+        ///// </summary>
+        ///// <param name="id"></param>
+        ///// <param name="enumStatusType"></param>
         /// <returns></returns>
-        bool UpdateAuditStatus(int id, AuditStatus enumStatusType);
-
-        bool UpdateAuditStatus(int id, int enumStatus,string busiAddress);
+        //bool UpdateAuditStatus(int id, AuditStatus enumStatusType);
+        /// <summary>
+        /// 商户审核
+        /// wc
+        /// </summary>
+        /// <param name="bam"></param>
+        /// <returns></returns>
+        bool UpdateAuditStatus(BusinessAuditModel bam);
+        bool UpdateAuditStatus(BusinessAuditModel bam, string busiAddress);
+        //bool UpdateAuditStatus(int id, int enumStatus,string busiAddress);
 
         /// <summary>
         /// 根据城市信息查询当前城市下该集团的所有商户信息

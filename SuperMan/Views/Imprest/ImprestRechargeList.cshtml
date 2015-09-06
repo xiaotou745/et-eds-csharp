@@ -30,7 +30,9 @@
                         <span class="">到: </span>
                         <input id="txtOptTimeEnd" readonly="readonly" type="text" name="OptDateEnd" />
                         <input type="button" value="查询" class="searchBtn" id="btnSearch" />
-                        <input type="button" value="充值" class="searchBtn" id="btnRecharge" />
+                        <input type="button" value="充值" class="searchBtn" id="btnRecharge"/>
+                        <input type="button" value="导出" class="searchBtn" id="btnExportRecharge" onclick="return ExportRecharge()"/>
+
                     </td>
                 </tr>
                 <tr>
@@ -80,7 +82,25 @@
             });
         });
     });
-   
+    function ExportRecharge() {
+        var startDate = $('#txtOptTimeStart').val();
+        var endDate = $('#txtOptTimeEnd').val();
+        if (startDate == "" || endDate == "") {
+            alert("请输入时间范围!");
+            return false;
+        }
+        if (startDate != "" && endDate != "") {
+            var start = new Date(startDate);
+            var end = new Date(endDate);
+            if (end < start) {
+                alert("开始日期不能大于结束日期");
+                return false;
+            }
+        }
+        var url = "/Imprest/ExportRecharge?OptDateStart=" + startDate + "&OptDateEnd=" + endDate;
+        window.location.href = url;
+        return true;
+    }
 </script>
 
 <script src="~/Scripts/mvcpager.js"></script>

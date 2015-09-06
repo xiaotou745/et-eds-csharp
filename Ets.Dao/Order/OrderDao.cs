@@ -3775,10 +3775,11 @@ and FinishAll=0 ";
 SELECT  o.Id,
 		o.OrderNo,
 		o.businessId,
-		oo.PubLatitude,
-		oo.PubLongitude
+		b.Latitude BusinessLatitude,
+		b.Longitude BusinessLongitude,
+        b.IsBind
 FROM dbo.[order] o WITH(NOLOCK)
-JOIN dbo.OrderOther oo(NOLOCK) ON o.Id=oo.OrderId
+JOIN dbo.business b WITH(NOLOCK) ON o.businessId=b.Id
 WHERE o.[Status]=0 AND o.PubDate>=@LastOrderPushTime;
 ";
             IDbParameters parm = DbHelper.CreateDbParameters();
@@ -3918,13 +3919,12 @@ MERGE INTO OrderPushRecord opr
 SELECT   b.Name BusinessName
         ,b.PhoneNo BusinessPhoneNo
         ,ISNULL(COUNT(1),0) UnReceiveQty
-		,oo.PubLatitude
-		,oo.PubLongitude  
+		,b.Latitude BusinessLatitude
+		,b.Longitude BusinessLongitude 
 FROM dbo.[order] o WITH(NOLOCK)  
-JOIN dbo.OrderOther oo WITH(NOLOCK) ON oo.OrderId=o.Id AND o.Id=@OrderId
 JOIN dbo.business b WITH(NOLOCK) ON o.businessId=b.Id
 WHERE o.Status=0 AND o.businessId=@BusinessId
-GROUP BY b.Name,b.PhoneNo,oo.PubLatitude,oo.PubLongitude;
+GROUP BY b.Name,b.PhoneNo,b.Latitude,b.Longitude;
 ";
             var parm = DbHelper.CreateDbParameters();
             parm.Add("@BusinessId", DbType.Int32, 4).Value = businessId;
@@ -3952,10 +3952,11 @@ select  top 1
         o.[OrderNo] ,
         o.[Status] ,
         o.businessId ,
-		oo.PubLatitude,
-		oo.PubLongitude       
+		b.Latitude BusinessLatitude,
+		b.Longitude BusinessLongitude,
+        b.IsBind     
 from    [order] o with ( nolock )
-        join dbo.OrderOther oo with(nolock) on o.Id = oo.OrderId 
+        JOIN dbo.business b WITH(NOLOCK) ON o.businessId=b.Id
 where    o.Id = @Id
 ";
             var parm = DbHelper.CreateDbParameters();

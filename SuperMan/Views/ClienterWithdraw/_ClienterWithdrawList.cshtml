@@ -103,13 +103,13 @@
 @*审核拒绝弹框*@
 <div class="selectSupplierDish">
     <div class="add-openbox add-form" id="WithdrawAuditRefuseShow" style="width:480px">
-        <fieldset>
+        <fieldset style="border-bottom: 0px">
             <div class="control-group">
                 <div style="width:480px;font-size:16px"><center><label id="refusedes"></label></center></div>
                 <div class="controls" style="width: 480px">
 
                     <span class="">拒绝原因:@Html.DropDownList("RefuseReason", new SelectList(ETS.Extension.EnumExtenstion.GetEnumItems(typeof(RefuseReason)), "Value", "Text"), "请选择", new { @class = "selectw", style = "width:157px" })</span>
-                    <div id="reasonDiv" style="display: none">
+                    <div id="reasonDiv" style="display: none;margin-top: 10px">
                         <textarea cols="60" rows="5" style="width: 400px;height: 60px; resize: none; overflow-y: auto;max-width: 400px;max-height: 100px;" id="txtWithdrawAuditRefuse"></textarea>
                     </div>
                 </div>
@@ -125,11 +125,11 @@
 @*打款失败弹框*@
 <div class="selectSupplierDish">
     <div class="add-openbox add-form" id="WithdrawPayFailedShow" style="width:480px">
-        <fieldset>
+        <fieldset style="border-bottom: 0px">
             <div class="control-group">
                 <div class="controls" style="width:480px">
                     <span class="">失败原因:@Html.DropDownList("FailReason", new SelectList(ETS.Extension.EnumExtenstion.GetEnumItems(typeof(FailReason)), "Value", "Text"), "请选择", new { @class = "selectw", style = "width:157px" })</span>
-                    <div id="failReasonDiv" style="display: none">
+                    <div id="failReasonDiv" style="display: none;margin-top: 10px">
                         <textarea cols="60" rows="5" style="width: 400px;height: 60px; resize: none; overflow-y: auto;max-width: 400px;max-height: 100px;" id="txtWithdrawPayFailed"></textarea>
                     </div>
                 </div>

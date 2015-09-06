@@ -35,6 +35,12 @@ namespace ETS.Const
 
         public const string cookieName = "userinfo_edaisong";
 
+        public const string cookieNameJava = "userinfo_edaisong_java";//java版后台cookie
+
+        public const string menuListCookieName = "menulist";
+
+        public const string menuListCookieNameJava = "menulist_java";//java版后台cookie
+
         /// <summary>
         /// 城市尚未开放的信息 缓存用到 add by caoheyang 20150407
         /// </summary>

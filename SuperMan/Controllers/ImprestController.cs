@@ -213,6 +213,55 @@ namespace SuperMan.Controllers
             return ipex;
         }
 
+        public ActionResult ExportRecharge(int pageindex = 1)
+        {
+            var criteria = new ImprestBalanceRecordSearchCriteria();
+            TryUpdateModel(criteria);
+            criteria.PageIndex = 1;
+            criteria.PageSize = 65534;
+            criteria.OptType = ImprestBalanceRecordOptType.Recharge.GetHashCode();
+            var pagedList=  imprestProvider.GetImprestBalanceRecordList(criteria);
+            if (pagedList != null && pagedList.Records.Count > 0)
+            {
+                string filname = "e代送-{0}-备用金充值数据";
+                 
+                if (!string.IsNullOrWhiteSpace(criteria.OptDateStart))
+                {
+                    filname = string.Format(filname, ParseHelper.ToDatetime(criteria.OptDateStart).ToLongDateString() + "到" + ParseHelper.ToDatetime(criteria.OptDateEnd).ToLongDateString());
+                }
+                string[] title = ExcelUtility.GetDescription(new ImprestRechargeExcel());
+                ExcelIO.CreateFactory().Export(ConvertToImprestRechargeExcel(pagedList), ExportFileFormat.excel, filname, title);
+                return null;
+                //byte[] data = Encoding.UTF8.GetBytes(CreateExcel(pagedList));
+                //buffer = data;
+            }
+            //Response.AppendHeader("Content-Disposition", string.Format("attachment;filename={0}", filname));
+            //Response.BinaryWrite(buffer);
+            //Response.Flush();
+            //Response.End();
+            //return File(new byte[0] { }, "application/msexcel", "无数据.xls");
+            Response.Write(SystemConst.NoExportData);
+            return null;
+
+
+        }
+
+        private IList<ImprestRechargeExcel> ConvertToImprestRechargeExcel(PageInfo<ImprestBalanceRecord> pagedList)
+        {
+            var ipex = new List<ImprestRechargeExcel>();
+            //输出数据.
+            foreach (var record in pagedList.Records)
+            {
+                ImprestRechargeExcel ipe = new ImprestRechargeExcel();
+                ipe.JieShouRen = record.ImprestReceiver;
+                ipe.ChongZhiDate = record.OptTime;
+                ipe.ChongZhiAmount = record.Amount;
+                ipe.OptName = record.OptName; 
+                ipe.Remark = record.Remark;
+                ipex.Add(ipe);
+            }
+            return ipex;
+        }
 
         /// <summary>
         /// 生成excel文件
