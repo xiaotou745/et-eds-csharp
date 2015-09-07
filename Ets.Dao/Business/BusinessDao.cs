@@ -2894,7 +2894,7 @@ ORDER BY templc.WorkStatus;
             return MapRows<LocalClienterModel>(dt);
         }
         /// <summary>
-        /// 获取附近店内骑士列表
+        /// 获取附近骑士列表
         /// danny-20150831
         /// </summary>
         /// <param name="model"></param>

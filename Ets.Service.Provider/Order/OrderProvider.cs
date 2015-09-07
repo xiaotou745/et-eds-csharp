@@ -2323,21 +2323,6 @@ namespace Ets.Service.Provider.Order
             {
                 var strClienterId = "";
                 var clienterCount = 0;
-                if (order.IsBind > 0)
-                {
-                    #region 店内骑士
-                    var listbcRel = _businessDao.GetBusinessClienterRelationList(order.businessId);
-                    if (listbcRel != null && listbcRel.Count > 0)//有店内骑士
-                    {
-                        foreach (var bcRel in listbcRel)
-                        {
-                            listClienterId.Add(bcRel.ClienterId);
-                            strClienterId += bcRel.ClienterId + ",";
-                            clienterCount++;
-                        }
-                    }
-                    #endregion
-                }
 
                 #region 物流公司骑士
                 var listbeRel = _businessDao.GetExpressClienterList(new BusinessExpressRelationModel()
@@ -2358,21 +2343,40 @@ namespace Ets.Service.Provider.Order
                 }
                 #endregion
 
-                #region 众包骑士推送
-                var listprc = clienterDao.GetPushRadiusClienterList(new BusinessExpressRelationModel()
+                if (order.IsBind > 0)
                 {
-                    Latitude = order.BusinessLatitude,
-                    Longitude = order.BusinessLongitude,
-                    PushRadius = pushRadius
-                });
-                if (listprc != null && listprc.Count > 0)
-                {
-                    foreach (var prc in listprc)
+                    #region 店内骑士
+                    var listbcRel = _businessDao.GetBusinessClienterRelationList(order.businessId);
+                    if (listbcRel != null && listbcRel.Count > 0)//有店内骑士
                     {
-                        listClienterId.Add(prc.Id);
-                        strClienterId += prc.Id + ",";
-                        clienterCount++;
+                        foreach (var bcRel in listbcRel)
+                        {
+                            listClienterId.Add(bcRel.ClienterId);
+                            strClienterId += bcRel.ClienterId + ",";
+                            clienterCount++;
+                        }
                     }
+                    #endregion
+                }
+                else
+                {
+                    #region 众包骑士推送
+                    var listprc = clienterDao.GetPushRadiusClienterList(new BusinessExpressRelationModel()
+                    {
+                        Latitude = order.BusinessLatitude,
+                        Longitude = order.BusinessLongitude,
+                        PushRadius = pushRadius
+                    });
+                    if (listprc != null && listprc.Count > 0)
+                    {
+                        foreach (var prc in listprc)
+                        {
+                            listClienterId.Add(prc.Id);
+                            strClienterId += prc.Id + ",";
+                            clienterCount++;
+                        }
+                    }
+                    #endregion
                 }
                 orderDao.EditOrderPushRecord(new OrderPushRecord()
                 {
@@ -2383,7 +2387,7 @@ namespace Ets.Service.Provider.Order
                     ClienterCount = clienterCount
                 });
                 LogHelper.LogWriter("订单【" + order.Id + "】已推送给骑士【" + (string.IsNullOrEmpty(strClienterId) ? "" : strClienterId.TrimEnd(',')) + "】");
-                #endregion
+
             }
             if (listClienterId.Count == 0)
             {
