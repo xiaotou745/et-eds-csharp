@@ -1425,7 +1425,7 @@ namespace Ets.Service.Provider.Order
                 //更新已提现状态
                 orderOtherDao.UpdateJoinWithdraw(orderModel.Id);
                 //更新审核状态
-                orderOtherDao.UpdateAuditStatus(orderModel.Id, OrderAuditStatusCommon.Refuse.GetHashCode());
+                orderOtherDao.UpdateAuditStatus(orderModel.Id, OrderAuditStatusCommon.Refuse.GetHashCode(), orderOptionModel.OptUserName);
                 //写入订单日志
                 orderSubsidiesLogDao.Insert(new OrderSubsidiesLog()
                                             {
@@ -1537,7 +1537,7 @@ namespace Ets.Service.Provider.Order
                 //更新已提现状态
                 orderOtherDao.UpdateJoinWithdraw(orderModel.Id);
                 //更新审核状态
-                orderOtherDao.UpdateAuditStatus(orderModel.Id, OrderAuditStatusCommon.Through.GetHashCode());
+                orderOtherDao.UpdateAuditStatus(orderModel.Id, OrderAuditStatusCommon.Through.GetHashCode(), orderOptionModel.OptUserName);
                 //写入订单日志                
                 orderSubsidiesLogDao.Insert(new OrderSubsidiesLog()
                                             {
