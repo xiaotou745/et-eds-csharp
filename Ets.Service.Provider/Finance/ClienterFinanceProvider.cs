@@ -653,7 +653,7 @@ namespace Ets.Service.Provider.Finance
                     long id = clienterMessageDao.Insert(new ClienterMessage
                     {
                         ClienterId = Convert.ToInt32(clienterFinanceAccountModel.ClienterId),
-                        Content = string.Format(MessageConst.PlayMoneyFailure, month, day, clienterFinanceAccountModel.PayFailedReason),
+                        Content = string.Format(MessageConst.PlayMoneyFailure, month, day, model.PayFailedReason),
                         IsRead = 0
                     });
 
