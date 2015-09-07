@@ -372,14 +372,7 @@ namespace Ets.Dao.MenuSet
         /// <returns></returns>
         public bool CheckPermission(int accoutId, int menuId)
         {
-            string sql = @"
-            DECLARE @roleID INT
-SELECT @roleID=ISNULL(b.Id,0) FROM dbo.account a left JOIN (select * from  AuthorityRole where BeLock=0 ) b ON 
-a.RoleId=b.Id WHERE a.id=@AccoutId
-IF @roleID>0
-select Id from AuthorityRoleMentMenuSet with(nolock) where roleid=@roleID and MenuId = @MenuId
-ELSE 
-select Id from AuthorityAccountMenuSet with(nolock) where AccoutId=@AccoutId and MenuId = @MenuId";
+            string sql = "select Id from AuthorityAccountMenuSet with(nolock) where AccoutId=@AccoutId and MenuId = @MenuId";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("AccoutId", accoutId);
             dbParameters.AddWithValue("MenuId", menuId);
@@ -390,7 +383,26 @@ select Id from AuthorityAccountMenuSet with(nolock) where AccoutId=@AccoutId and
             }
             return false;
         }
-
+        //        public bool CheckPermission(int accoutId, int menuId)
+//        {
+//            string sql = @"
+//            DECLARE @roleID INT
+//SELECT @roleID=ISNULL(b.Id,0) FROM dbo.account a left JOIN (select * from  AuthorityRole where BeLock=0 ) b ON 
+//a.RoleId=b.Id WHERE a.id=@AccoutId
+//IF @roleID>0
+//select Id from AuthorityRoleMentMenuSet with(nolock) where roleid=@roleID and MenuId = @MenuId
+//ELSE 
+//select Id from AuthorityAccountMenuSet with(nolock) where AccoutId=@AccoutId and MenuId = @MenuId";
+//            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+//            dbParameters.AddWithValue("AccoutId", accoutId);
+//            dbParameters.AddWithValue("MenuId", menuId);
+//            object i = DbHelper.ExecuteScalar(SuperMan_Read, sql, dbParameters);
+//            if (i != null)
+//            {
+//                return int.Parse(i.ToString()) > 0;
+//            }
+//            return false;
+//        }
         /// <summary>
         /// 加入权限
         /// </summary>

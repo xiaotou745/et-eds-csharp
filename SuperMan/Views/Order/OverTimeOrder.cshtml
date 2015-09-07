@@ -26,9 +26,9 @@
                     <td>
                         <span class="">超时时间: </span>
                         <select name="OverTime" class="selectw" id="selectovertime" style="width:143px">
-                            <option value="5">>5分钟</option>
-                            <option value="10">>10分钟</option>
-                            <option value="20">>20分钟</option>
+                            <option value="5">大于5分钟</option>
+                            <option value="10">大于10分钟</option>
+                            <option value="20">大于20分钟</option>
                         </select>
                         <span class="">商户姓名: </span>
                         <input id="txtbusname" type="text" name="BusName" value="" />
@@ -57,7 +57,8 @@
                             <option value="1">请选择</option>
                             <option value="2">无人配送</option>
                             <option value="3">商家要求取消订单</option>
-                            <option value="4">其它原因</option>
+                            <option value="4">联系不上商家</option>
+                            <option value="5">其它原因</option>
                         </select>
                     </div>
                     <div class="controls" id="reasontxtdiv">
@@ -129,6 +130,7 @@
                     if (result.IsSuccess) {
                         alert(result.Message);
                         adminjs.closewinbox('.add-openbox');
+                        $('#searchForm').submit();
                     } else {
                         alert(result.Message);
                     }
