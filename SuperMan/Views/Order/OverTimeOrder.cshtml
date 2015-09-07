@@ -129,6 +129,7 @@
                     if (result.IsSuccess) {
                         alert(result.Message);
                         adminjs.closewinbox('.add-openbox');
+                        $('#searchForm').submit();
                     } else {
                         alert(result.Message);
                     }
