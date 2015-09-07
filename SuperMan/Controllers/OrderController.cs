@@ -641,35 +641,6 @@ namespace SuperMan.Controllers
             return PartialView("_PostOverTimeOrder", list);
         }
 
-        ///// <summary>
-        ///// 获取城市列表 仿google下拉列表框
-        ///// 胡灵波
-        ///// 2015年8月31日 10:40:51
-        ///// </summary>
-        ///// <param name="cityName"></param>
-        ///// <returns></returns>
-        //public ContentResult GetCity(string cityName)
-        //{
-        //    int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
-
-        //    string cityNameZ = Server.UrlDecode(cityName);
-        //    IList<AreaModel> aMoldeList = iAreaProvider.GetOpenCity(ParseHelper.ToInt(UserType)).AreaModels.Where(p => p.Name.Contains(cityNameZ)).ToList();
-        //    string callback = "{\"citylist\":[";  
-        //    for(int i=0;i<aMoldeList.Count;i++)
-        //    {
-        //        if (i == aMoldeList.Count - 1)
-        //        {
-        //            callback += "{\"id\":" + i + ",\"city\":\"" + aMoldeList[i].Name + "\"}";                
-        //        }
-        //        else
-        //        {
-        //            callback += "{\"id\":" + i + ",\"city\":\"" + aMoldeList[i].Name + "\"},";                
-        //        }
-        //    }
-        //    callback += "]}";
-
-        //    return Content(callback);
-        //} 
         /// <summary>
         /// 获取商户附近骑士列表
         /// danny-20150831
