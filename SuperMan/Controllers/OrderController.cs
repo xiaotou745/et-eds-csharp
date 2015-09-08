@@ -1,4 +1,5 @@
 
+﻿using System;
 ﻿using System.Collections.Generic;
 ﻿using System.Linq;
 ﻿using System.Text;
@@ -640,7 +641,19 @@ namespace SuperMan.Controllers
             var list = iOrderProvider.GetOverTimeOrderList<OverTimeOrderModel>(model);
             return PartialView("_PostOverTimeOrder", list);
         }
-
+        /// <summary>
+        /// 获取商户附近骑士列表
+        /// danny-20150831
+        /// </summary>
+        /// <param name="orderId">订单Id</param>
+        /// <param name="businessId">商户Id</param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult CheckHave(int orderId, int businessId)
+        {
+            var isHave = iOrderProvider.CheckOrderIsExist(orderId,0);
+            return Json(new ResultModel(isHave,"此订单状态已变更！"), JsonRequestBehavior.DenyGet);
+        }
         /// <summary>
         /// 获取商户附近骑士列表
         /// danny-20150831
@@ -650,7 +663,8 @@ namespace SuperMan.Controllers
         /// <returns></returns>
         public ActionResult LocalClienter(int orderId, int businessId)
         {
-            ViewBag.businessUnReceiveOrder = iOrderProvider.GetBusinessUnReceiveOrderQty(orderId, businessId);
+            var businessUnReceiveOrder =iOrderProvider.GetBusinessUnReceiveOrderQty(orderId, businessId);
+            ViewBag.businessUnReceiveOrder = businessUnReceiveOrder;
             var localClienters = iOrderProvider.GetLocalClienterList(orderId);
             ViewBag.clienterJsonInfo = JsonHelper.JsonConvertToString(localClienters);
             return View(localClienters);

@@ -2349,7 +2349,21 @@ where  o.Id=@Id ";
 
             return isExist;
         }
-
+        /// <summary>
+        /// 判断制定状态的订单是否存在
+        /// danny-20150908
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <param name="orderStatus"></param>
+        /// <returns></returns>
+        public bool CheckOrderIsExist(int orderId,int orderStatus)
+        {
+            var querySql = @" select count(1)  from   dbo.[order] with(nolock) where  Id = @OrderId AND Status=@OrderStatus;";
+            var dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@OrderId", orderId);
+            dbParameters.AddWithValue("@OrderStatus", orderStatus);
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, querySql, dbParameters)) > 0;
+        }
         /// <summary>
         /// 获取订单状态
         /// </summary>

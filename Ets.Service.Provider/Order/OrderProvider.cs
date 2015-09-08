@@ -1673,6 +1673,18 @@ namespace Ets.Service.Provider.Order
         }
 
         /// <summary>
+        /// 判断制定状态的订单是否存在
+        /// danny-20150908
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <param name="orderStatus"></param>
+        /// <returns></returns>
+        public bool CheckOrderIsExist(int orderId, int orderStatus)
+        {
+            return orderDao.CheckOrderIsExist(orderId,orderStatus);
+        }
+
+        /// <summary>
         /// 获取主订单信息
         /// </summary>
         /// <UpdateBy>hulingbo</UpdateBy>

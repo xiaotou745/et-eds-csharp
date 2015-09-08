@@ -2829,40 +2829,34 @@ FROM ( SELECT ClienterId,MAX(ID) ID
 	   GROUP BY ClienterId) tbl
 JOIN ClienterLocation  cl WITH(NOLOCK) ON cl.ID = tbl.ID;
 
-
-SELECT   temp.ClienterId
-        ,temp.ClienterName
-        ,temp.PhoneNo
-        ,temp.WorkStatus
-        ,temp.Radius
-        ,temp.Latitude
-        ,temp.Longitude
+SELECT c.Id ClienterId
+        ,c.TrueName ClienterName
+        ,c.PhoneNo
+        ,c.WorkStatus
+        ,ROUND(geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326)),0) Radius
+        ,tac.Latitude
+        ,tac.Longitude
 INTO #tempLocalClienter
-FROM(
+FROM #tempActiveClienter tac
+JOIN [BusinessClienterRelation] bcr WITH(NOLOCK) ON tac.ClienterId = bcr.ClienterId
+JOIN dbo.clienter c WITH(NOLOCK) ON bcr.ClienterId=c.Id AND bcr.IsEnable=1 AND bcr.IsBind=1 AND c.IsBind=1 AND c.[Status]=1 AND bcr.BusinessId=@BusinessId
+WHERE geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326))<=@PushRadius
+
+IF  EXISTS(SELECT COUNT(1) FROM #tempLocalClienter)
+    BEGIN
+        INSERT INTO #tempLocalClienter 
         SELECT c.Id ClienterId
-              ,c.TrueName ClienterName
-              ,c.PhoneNo
-              ,c.WorkStatus
-              ,ROUND(geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326)),0) Radius
-              ,tac.Latitude
-              ,tac.Longitude
-        FROM #tempActiveClienter tac
-        JOIN [BusinessClienterRelation] bcr WITH(NOLOCK) ON tac.ClienterId = bcr.ClienterId
-        JOIN dbo.clienter c WITH(NOLOCK) ON bcr.ClienterId=c.Id AND bcr.IsEnable=1 AND bcr.IsBind=1 AND c.IsBind=1 AND c.[Status]=1 AND bcr.BusinessId=@BusinessId
-        WHERE geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326))<=@PushRadius
-        UNION
-        SELECT c.Id ClienterId
-	          ,c.TrueName ClienterName
-              ,c.PhoneNo
-              ,c.WorkStatus
-              ,ROUND(geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326)),0) Radius
-              ,tac.Latitude
-              ,tac.Longitude
+	            ,c.TrueName ClienterName
+                ,c.PhoneNo
+                ,c.WorkStatus
+                ,ROUND(geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326)),0) Radius
+                ,tac.Latitude
+                ,tac.Longitude
         FROM #tempActiveClienter tac
         JOIN dbo.clienter c WITH(NOLOCK) ON tac.ClienterId=c.Id AND c.Status=1
         JOIN BusinessExpressRelation ber with(nolock) ON ber.ExpressId=c.DeliveryCompanyId AND  ber.BusinessId=@BusinessId AND ber.IsEnable=1
         WHERE  geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326))<=@PushRadius
-) temp
+    END
 
 SELECT  TOP 20 templc.ClienterName,
 		templc.PhoneNo,
