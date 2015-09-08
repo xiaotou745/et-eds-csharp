@@ -98,6 +98,7 @@ update OrderOther set IsJoinWithdraw=1 where orderId=@orderId";
         /// <param name="auditOptName">订单审核操作人</param>
         public void UpdateAuditStatus(int orderId, int auditstatus,string auditOptName)
         {
+            if (auditOptName == null) auditOptName = "";
             string updateSql = @"update dbo.OrderOther set auditstatus = @auditstatus,AuditDate=getdate(),AuditOptName=@AuditOptName where OrderId=@orderId";
             IDbParameters parm = DbHelper.CreateDbParameters("orderId", DbType.Int32, 4, orderId);
             parm.Add("AuditOptName", DbType.String, 30).Value = auditOptName;
