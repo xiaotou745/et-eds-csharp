@@ -1244,7 +1244,7 @@ namespace Ets.Service.Provider.Clienter
                 //将订单标记为加入已提现
                 orderOtherDao.UpdateJoinWithdraw(myOrderInfo.Id);
                 //更新订单审核通过 
-                orderOtherDao.UpdateAuditStatus(myOrderInfo.Id, OrderAuditStatusCommon.Through.GetHashCode(), myOrderInfo.OptUserName);
+                orderOtherDao.UpdateAuditStatus(myOrderInfo.Id, OrderAuditStatusCommon.Through.GetHashCode(), myOrderInfo.ClienterName);
             }//非物流公司
             else
             {
@@ -1284,7 +1284,7 @@ namespace Ets.Service.Provider.Clienter
                     //将订单标记为加入已提现
                     orderOtherDao.UpdateJoinWithdraw(myOrderInfo.Id);
                     //订单审核通过 
-                    orderOtherDao.UpdateAuditStatus(myOrderInfo.Id, OrderAuditStatusCommon.Through.GetHashCode(), myOrderInfo.OptUserName);
+                    orderOtherDao.UpdateAuditStatus(myOrderInfo.Id, OrderAuditStatusCommon.Through.GetHashCode(), myOrderInfo.ClienterName);
                     //更新骑士无效订单金额
                     UpdateInvalidOrder(myOrderInfo);
                 }
