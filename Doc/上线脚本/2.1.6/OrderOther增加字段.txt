@@ -1,0 +1,13 @@
+ use superman
+go
+alter table dbo.OrderOther
+add AuditDate datetime null
+go 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'审核时间' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderOther', @level2type=N'COLUMN',@level2name=N'AuditDate'
+go
+
+alter table dbo.OrderOther
+add AuditOptName nvarchar(30) null
+go 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'审核操作人' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderOther', @level2type=N'COLUMN',@level2name=N'AuditOptName'
+go

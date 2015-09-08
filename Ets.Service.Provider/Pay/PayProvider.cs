@@ -1988,7 +1988,7 @@ namespace Ets.Service.Provider.Pay
             long id = clienterMessageDao.Insert(new ClienterMessage
             {
                 ClienterId = Convert.ToInt32(clienterFinanceAccountModel.ClienterId),
-                Content = string.Format(MessageConst.PlayMoneySuccess, month, day, clienterFinanceAccountModel.Amount),
+                Content = string.Format(MessageConst.PlayMoneySuccess, month, day, clienterFinanceAccountModel.Amount.ToString("0.00")),
                 IsRead = 0
             });
         }
