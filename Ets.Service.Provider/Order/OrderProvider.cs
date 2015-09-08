@@ -2464,7 +2464,7 @@ namespace Ets.Service.Provider.Order
                 BusinessId = orderModel.businessId,
                 Latitude = orderModel.BusinessLatitude,
                 Longitude = orderModel.BusinessLongitude,
-                PushRadius = "3"
+                PushRadius = "1000"
             });
             if (listbcRel != null && listbcRel.Count > 0) //有店内骑士
             {
@@ -2478,7 +2478,7 @@ namespace Ets.Service.Provider.Order
                 BusinessId = orderModel.businessId,
                 Latitude = orderModel.BusinessLatitude,
                 Longitude = orderModel.BusinessLongitude,
-                PushRadius = "3"
+                PushRadius = "1000"
             });
             if (listbeRel == null || listbeRel.Count <= 0) //有店内骑士
             {
