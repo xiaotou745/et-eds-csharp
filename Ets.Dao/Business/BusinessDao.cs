@@ -2870,12 +2870,12 @@ SELECT  TOP 20 templc.ClienterName,
 		templc.WorkStatus,
         templc.Latitude,
         templc.Longitude,
-		tbllac.ReceiveQty,
-		tbllac.TransferQty,
-		tbllac.FinishQty,
+		ISNULL(tbllac.ReceiveQty,0) ReceiveQty,
+		ISNULL(tbllac.TransferQty,0) TransferQty,
+		ISNULL(tbllac.FinishQty,0) FinishQty,
         1 IsEmployerTask
 FROM #tempLocalClienter templc
-JOIN(
+LEFT JOIN(
 SELECT tlc.clienterId,
 	   COUNT(CASE WHEN o.Status=2 THEN 1  END) ReceiveQty,
 	   COUNT(CASE WHEN o.Status=4 THEN 1  END) TransferQty,
@@ -2934,12 +2934,12 @@ SELECT  TOP 20 templc.ClienterName,
 		templc.WorkStatus,
         templc.Latitude,
         templc.Longitude,
-		tbllac.ReceiveQty,
-		tbllac.TransferQty,
-		tbllac.FinishQty,
+		ISNULL(tbllac.ReceiveQty,0) ReceiveQty,
+		ISNULL(tbllac.TransferQty,0) TransferQty,
+		ISNULL(tbllac.FinishQty,0) FinishQty,
         0 IsEmployerTask
 FROM #tempLocalClienter templc
-JOIN(
+LEFT JOIN(
 SELECT tlc.clienterId,
 	   COUNT(CASE WHEN o.Status=2 THEN 1  END) ReceiveQty,
 	   COUNT(CASE WHEN o.Status=4 THEN 1  END) TransferQty,
