@@ -1697,28 +1697,31 @@ namespace Ets.Service.Provider.Order
 
             int id = modelPM.OrderId;
             order order = GetById(modelPM);
+            decimal orderCommission = ParseHelper.ToDecimal(order.OrderCommission);
 
             #region 获取物流公司应付骑士佣金  2015年8月13日 09:34:02 窦海超
             DeliveryCompanyModel deliveryModel = null;
             if (modelPM.DeliveryCompanyID > 0)
             {
                 deliveryModel = new DeliveryCompanyDao().GetById(modelPM.DeliveryCompanyID);
-            }
-            decimal orderCommission = ParseHelper.ToDecimal(order.OrderCommission);
-            if (deliveryModel != null)
-            {
-                //SettleType=结算类型（1结算比例、2固定金额）
-                if (deliveryModel.SettleType == 1)
+
+                if (deliveryModel != null && order.Status == OrderStatus.Status0.GetHashCode())
                 {
-                    //订单金额/骑士结算比例值*订单数量
-                    orderCommission = deliveryModel.ClienterSettleRatio == 0 ? 0 : ParseHelper.ToDecimal(order.Amount) * deliveryModel.ClienterSettleRatio / 100;//* ParseHelper.ToInt(order.OrderCount);
-                }
-                else if (deliveryModel.SettleType == 2)
-                {
-                    //骑士固定金额值*订单数量 
-                    orderCommission = deliveryModel.ClienterFixMoney == 0 ? 0 : deliveryModel.ClienterFixMoney * ParseHelper.ToInt(order.OrderCount);
+                    //SettleType=结算类型（1结算比例、2固定金额）
+                    if (deliveryModel.SettleType == 1)
+                    {
+                        //订单金额/骑士结算比例值*订单数量
+                        orderCommission = deliveryModel.ClienterSettleRatio == 0 ? 0 : ParseHelper.ToDecimal(order.Amount) * deliveryModel.ClienterSettleRatio / 100;//* ParseHelper.ToInt(order.OrderCount);
+                    }
+                    else if (deliveryModel.SettleType == 2)
+                    {
+                        //骑士固定金额值*订单数量 
+                        orderCommission = deliveryModel.ClienterFixMoney == 0 ? 0 : deliveryModel.ClienterFixMoney * ParseHelper.ToInt(order.OrderCount);
+                    }
                 }
             }
+            
+ 
             #endregion
 
             orderDM.IsAllowCashPay = order.IsAllowCashPay;
