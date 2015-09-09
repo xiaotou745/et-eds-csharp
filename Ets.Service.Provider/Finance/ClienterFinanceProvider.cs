@@ -645,6 +645,18 @@ namespace Ets.Service.Provider.Finance
                     && clienterFinanceDao.ModifyClienterBalanceRecordStatus(model.WithwardId.ToString())
                     && clienterFinanceDao.ModifyClienterAmountInfo(model.WithwardId.ToString()))
                 {
+
+                    ClienterFinanceAccountModel clienterFinanceAccountModel = clienterFinanceDao.GetClienterFinanceAccount(model.WithwardId.ToString());
+                    int month = clienterFinanceAccountModel.WithdrawTime.Month;
+                    int day = clienterFinanceAccountModel.WithdrawTime.Day;
+
+                    long id = clienterMessageDao.Insert(new ClienterMessage
+                    {
+                        ClienterId = Convert.ToInt32(clienterFinanceAccountModel.ClienterId),
+                        Content = string.Format(MessageConst.PlayMoneyFailure, month, day, model.PayFailedReason),
+                        IsRead = 0
+                    });
+
                     reg = true;
                     tran.Complete();
                 }
@@ -917,7 +929,7 @@ namespace Ets.Service.Provider.Finance
             long id = clienterMessageDao.Insert(new ClienterMessage
             {
                 ClienterId = Convert.ToInt32(clienterFinanceAccountModel.ClienterId),
-                Content = string.Format(MessageConst.ConfirmPlayMoney, month, day, clienterFinanceAccountModel.Amount),
+                Content = string.Format(MessageConst.ConfirmPlayMoney, month, day, clienterFinanceAccountModel.Amount.ToString("0.00")),
                 IsRead = 0
             });
         }

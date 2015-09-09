@@ -192,6 +192,15 @@ namespace Ets.Service.IProvider.Order
         /// <param name="id">订单Id</param>
         /// <returns></returns>
         bool IsExist(int id);
+
+        /// <summary>
+        /// 判断制定状态的订单是否存在
+        /// danny-20150908
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <param name="orderStatus"></param>
+        /// <returns></returns>
+        bool CheckOrderIsExist(int orderId, int orderStatus);
         /// <summary>
         /// 获取主订单信息
         /// </summary>

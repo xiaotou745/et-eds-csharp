@@ -2349,7 +2349,21 @@ where  o.Id=@Id ";
 
             return isExist;
         }
-
+        /// <summary>
+        /// 判断制定状态的订单是否存在
+        /// danny-20150908
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <param name="orderStatus"></param>
+        /// <returns></returns>
+        public bool CheckOrderIsExist(int orderId,int orderStatus)
+        {
+            var querySql = @" select count(1)  from   dbo.[order] with(nolock) where  Id = @OrderId AND Status=@OrderStatus;";
+            var dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@OrderId", orderId);
+            dbParameters.AddWithValue("@OrderStatus", orderStatus);
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, querySql, dbParameters)) > 0;
+        }
         /// <summary>
         /// 获取订单状态
         /// </summary>
@@ -3186,14 +3200,11 @@ where   Id = @OrderId and FinishAll = 0";
         /// <returns></returns>
         public OrderMapDetail GetOrderMapDetail(long orderID)
         {
+
             string sql = @" 
                             SELECT  ord.OrderId,
-                                    CASE WHEN ISNULL(PubLongitude, 0) = 0 THEN c.Longitude
-                                         ELSE PubLongitude
-                                    END AS PubLongitude ,
-                                    CASE WHEN ISNULL(PubLatitude, 0) = 0 THEN c.Latitude
-                                         ELSE PubLatitude
-                                    END AS PubLatitude ,
+                                    isnull(c.Longitude,0) PubLongitude,
+                                    isnull(c.Latitude,0) PubLatitude,           
                                     ISNULL(ab.PubDate, '') AS PubDate,
                                     ISNULL(GrabLongitude, 0) AS GrabLongitude,
                                     ISNULL(GrabLatitude, 0) AS GrabLatitude,

@@ -41,7 +41,8 @@
                     <td>@if (SuperMan.App_Start.UserContext.Current.HasAuthority(39))
                     {
                         <a href="javascript:ShowCancelBox('@(Model.Records[i].OrderID)')">取消订单</a>
-                    } &nbsp;<a target="_blank" href="/Order/LocalClienter?orderId=@Model.Records[i].OrderID&businessId=@Model.Records[i].Bid ">附近骑士</a>
+                    } &nbsp;@*<a target="_blank" href="/Order/LocalClienter?orderId=@Model.Records[i].OrderID&businessId=@Model.Records[i].Bid ">附近骑士</a>*@
+                        <a href="javascript:LocalClienter(@Model.Records[i].OrderID,@Model.Records[i].Bid)">附近骑士</a>
                     </td>
                 </tr>
             }
@@ -56,5 +57,20 @@
     }
 }
 <script type="text/javascript">
-
+    function LocalClienter(orderId, businessId) {
+        var paramaters = { "orderId": orderId, "businessId":businessId };
+        var url = "/Order/CheckHave";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                if (!result.IsSuccess) {
+                    alert(result.Message);
+                } else {
+                    window.location.href = '/Order/LocalClienter?orderId=' + orderId + '&businessId=' + businessId;
+                }
+            }
+        });
+    }
 </script>

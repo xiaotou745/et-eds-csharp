@@ -1425,7 +1425,7 @@ namespace Ets.Service.Provider.Order
                 //更新已提现状态
                 orderOtherDao.UpdateJoinWithdraw(orderModel.Id);
                 //更新审核状态
-                orderOtherDao.UpdateAuditStatus(orderModel.Id, OrderAuditStatusCommon.Refuse.GetHashCode());
+                orderOtherDao.UpdateAuditStatus(orderModel.Id, OrderAuditStatusCommon.Refuse.GetHashCode(), orderOptionModel.OptUserName);
                 //写入订单日志
                 orderSubsidiesLogDao.Insert(new OrderSubsidiesLog()
                                             {
@@ -1537,7 +1537,7 @@ namespace Ets.Service.Provider.Order
                 //更新已提现状态
                 orderOtherDao.UpdateJoinWithdraw(orderModel.Id);
                 //更新审核状态
-                orderOtherDao.UpdateAuditStatus(orderModel.Id, OrderAuditStatusCommon.Through.GetHashCode());
+                orderOtherDao.UpdateAuditStatus(orderModel.Id, OrderAuditStatusCommon.Through.GetHashCode(), orderOptionModel.OptUserName);
                 //写入订单日志                
                 orderSubsidiesLogDao.Insert(new OrderSubsidiesLog()
                                             {
@@ -1673,6 +1673,18 @@ namespace Ets.Service.Provider.Order
         }
 
         /// <summary>
+        /// 判断制定状态的订单是否存在
+        /// danny-20150908
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <param name="orderStatus"></param>
+        /// <returns></returns>
+        public bool CheckOrderIsExist(int orderId, int orderStatus)
+        {
+            return orderDao.CheckOrderIsExist(orderId,orderStatus);
+        }
+
+        /// <summary>
         /// 获取主订单信息
         /// </summary>
         /// <UpdateBy>hulingbo</UpdateBy>
@@ -1697,28 +1709,31 @@ namespace Ets.Service.Provider.Order
 
             int id = modelPM.OrderId;
             order order = GetById(modelPM);
+            decimal orderCommission = ParseHelper.ToDecimal(order.OrderCommission);
 
             #region 获取物流公司应付骑士佣金  2015年8月13日 09:34:02 窦海超
             DeliveryCompanyModel deliveryModel = null;
             if (modelPM.DeliveryCompanyID > 0)
             {
                 deliveryModel = new DeliveryCompanyDao().GetById(modelPM.DeliveryCompanyID);
-            }
-            decimal orderCommission = ParseHelper.ToDecimal(order.OrderCommission);
-            if (deliveryModel != null)
-            {
-                //SettleType=结算类型（1结算比例、2固定金额）
-                if (deliveryModel.SettleType == 1)
+
+                if (deliveryModel != null && order.Status == OrderStatus.Status0.GetHashCode())
                 {
-                    //订单金额/骑士结算比例值*订单数量
-                    orderCommission = deliveryModel.ClienterSettleRatio == 0 ? 0 : ParseHelper.ToDecimal(order.Amount) * deliveryModel.ClienterSettleRatio / 100;//* ParseHelper.ToInt(order.OrderCount);
-                }
-                else if (deliveryModel.SettleType == 2)
-                {
-                    //骑士固定金额值*订单数量 
-                    orderCommission = deliveryModel.ClienterFixMoney == 0 ? 0 : deliveryModel.ClienterFixMoney * ParseHelper.ToInt(order.OrderCount);
+                    //SettleType=结算类型（1结算比例、2固定金额）
+                    if (deliveryModel.SettleType == 1)
+                    {
+                        //订单金额/骑士结算比例值*订单数量
+                        orderCommission = deliveryModel.ClienterSettleRatio == 0 ? 0 : ParseHelper.ToDecimal(order.Amount) * deliveryModel.ClienterSettleRatio / 100;//* ParseHelper.ToInt(order.OrderCount);
+                    }
+                    else if (deliveryModel.SettleType == 2)
+                    {
+                        //骑士固定金额值*订单数量 
+                        orderCommission = deliveryModel.ClienterFixMoney == 0 ? 0 : deliveryModel.ClienterFixMoney * ParseHelper.ToInt(order.OrderCount);
+                    }
                 }
             }
+            
+ 
             #endregion
 
             orderDM.IsAllowCashPay = order.IsAllowCashPay;
@@ -2323,21 +2338,6 @@ namespace Ets.Service.Provider.Order
             {
                 var strClienterId = "";
                 var clienterCount = 0;
-                if (order.IsBind > 0)
-                {
-                    #region 店内骑士
-                    var listbcRel = _businessDao.GetBusinessClienterRelationList(order.businessId);
-                    if (listbcRel != null && listbcRel.Count > 0)//有店内骑士
-                    {
-                        foreach (var bcRel in listbcRel)
-                        {
-                            listClienterId.Add(bcRel.ClienterId);
-                            strClienterId += bcRel.ClienterId + ",";
-                            clienterCount++;
-                        }
-                    }
-                    #endregion
-                }
 
                 #region 物流公司骑士
                 var listbeRel = _businessDao.GetExpressClienterList(new BusinessExpressRelationModel()
@@ -2358,21 +2358,40 @@ namespace Ets.Service.Provider.Order
                 }
                 #endregion
 
-                #region 众包骑士推送
-                var listprc = clienterDao.GetPushRadiusClienterList(new BusinessExpressRelationModel()
+                if (order.IsBind > 0)
                 {
-                    Latitude = order.BusinessLatitude,
-                    Longitude = order.BusinessLongitude,
-                    PushRadius = pushRadius
-                });
-                if (listprc != null && listprc.Count > 0)
-                {
-                    foreach (var prc in listprc)
+                    #region 店内骑士
+                    var listbcRel = _businessDao.GetBusinessClienterRelationList(order.businessId);
+                    if (listbcRel != null && listbcRel.Count > 0)//有店内骑士
                     {
-                        listClienterId.Add(prc.Id);
-                        strClienterId += prc.Id + ",";
-                        clienterCount++;
+                        foreach (var bcRel in listbcRel)
+                        {
+                            listClienterId.Add(bcRel.ClienterId);
+                            strClienterId += bcRel.ClienterId + ",";
+                            clienterCount++;
+                        }
                     }
+                    #endregion
+                }
+                else
+                {
+                    #region 众包骑士推送
+                    var listprc = clienterDao.GetPushRadiusClienterList(new BusinessExpressRelationModel()
+                    {
+                        Latitude = order.BusinessLatitude,
+                        Longitude = order.BusinessLongitude,
+                        PushRadius = pushRadius
+                    });
+                    if (listprc != null && listprc.Count > 0)
+                    {
+                        foreach (var prc in listprc)
+                        {
+                            listClienterId.Add(prc.Id);
+                            strClienterId += prc.Id + ",";
+                            clienterCount++;
+                        }
+                    }
+                    #endregion
                 }
                 orderDao.EditOrderPushRecord(new OrderPushRecord()
                 {
@@ -2383,7 +2402,7 @@ namespace Ets.Service.Provider.Order
                     ClienterCount = clienterCount
                 });
                 LogHelper.LogWriter("订单【" + order.Id + "】已推送给骑士【" + (string.IsNullOrEmpty(strClienterId) ? "" : strClienterId.TrimEnd(',')) + "】");
-                #endregion
+
             }
             if (listClienterId.Count == 0)
             {
@@ -2460,7 +2479,7 @@ namespace Ets.Service.Provider.Order
                 BusinessId = orderModel.businessId,
                 Latitude = orderModel.BusinessLatitude,
                 Longitude = orderModel.BusinessLongitude,
-                PushRadius = "3"
+                PushRadius = "1000"
             });
             if (listbcRel != null && listbcRel.Count > 0) //有店内骑士
             {
@@ -2474,7 +2493,7 @@ namespace Ets.Service.Provider.Order
                 BusinessId = orderModel.businessId,
                 Latitude = orderModel.BusinessLatitude,
                 Longitude = orderModel.BusinessLongitude,
-                PushRadius = "3"
+                PushRadius = "1000"
             });
             if (listbeRel == null || listbeRel.Count <= 0) //有店内骑士
             {

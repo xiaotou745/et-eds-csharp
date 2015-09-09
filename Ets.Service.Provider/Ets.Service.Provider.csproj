@@ -64,8 +64,8 @@
     <Compile Include="Authority\AuthorityMenuProvider.cs" />
     <Compile Include="Business\BusinessClienterRelationProvider.cs" />
     <Compile Include="Clienter\ClienterLocationProvider.cs" />
-    <Compile Include="Clienter\CrossShopStatisticLogProvider.cs" />
     <Compile Include="Clienter\ClienterProvider.cs" />
+    <Compile Include="Clienter\CrossShopStatisticLogProvider.cs" />
     <Compile Include="Common\HttpLogProvider.cs" />
     <Compile Include="Common\TokenProvider.cs" />
     <Compile Include="Common\AdminToolsProvider.cs" />
