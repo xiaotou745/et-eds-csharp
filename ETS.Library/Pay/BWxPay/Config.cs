@@ -27,7 +27,7 @@ namespace ETS.Library.Pay.BWxPay
         public const string APPID = "wxb89ebba3cec98a8c";
         public const string MCHID = "1243442302";
         public const string KEY = "51c56b886b5be869567dd389b3e5d1d6";
-        public const string APPSECRET = "51c56b886b5be869567dd389b3e5d1d6";
+        public const string APPSECRET = "1937e6b47786c86fac37303f97d5ed91";
         //public const string APPID = "wx2428e34e0e7dc6ef";
         //public const string MCHID = "1233410002";
         //public const string KEY = "e10adc3849ba56abbe56e056f20f883e";
@@ -57,7 +57,7 @@ namespace ETS.Library.Pay.BWxPay
         /* 此参数可手动配置也可在程序中自动获取
         */
         //public const string IP = "59.151.43.221";
-        public const string IP = "106.37.191.106";
+        public const string IP = "127.0.0.1";
 
 
         //=======【代理服务器设置】===================================
