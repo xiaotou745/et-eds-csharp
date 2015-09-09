@@ -2825,7 +2825,7 @@ SELECT   cl.ClienterId
 INTO #tempActiveClienter
 FROM ( SELECT ClienterId,MAX(ID) ID
 	   FROM ClienterLocation  WITH(NOLOCK)
-	   WHERE CreateTime>DATEADD(MINUTE,-10,GetDate())
+	   WHERE CreateTime>DATEADD(MINUTE,-60,GetDate())
 	   GROUP BY ClienterId) tbl
 JOIN ClienterLocation  cl WITH(NOLOCK) ON cl.ID = tbl.ID;
 
@@ -2842,7 +2842,7 @@ JOIN [BusinessClienterRelation] bcr WITH(NOLOCK) ON tac.ClienterId = bcr.Cliente
 JOIN dbo.clienter c WITH(NOLOCK) ON bcr.ClienterId=c.Id AND bcr.IsEnable=1 AND bcr.IsBind=1 AND c.IsBind=1 AND c.[Status]=1 AND bcr.BusinessId=@BusinessId
 WHERE geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326))<=@PushRadius
 
-IF  EXISTS(SELECT COUNT(1) FROM #tempLocalClienter)
+IF NOT EXISTS(SELECT COUNT(1) FROM #tempLocalClienter)
     BEGIN
         INSERT INTO #tempLocalClienter 
         SELECT c.Id ClienterId
@@ -2902,7 +2902,7 @@ SELECT cl.ClienterId
 INTO #tempActiveClienter
 FROM ( SELECT ClienterId,MAX(ID) ID
 	   FROM ClienterLocation  WITH(NOLOCK)
-	   WHERE CreateTime>DATEADD(MINUTE,-10,GetDate())
+	   WHERE CreateTime>DATEADD(MINUTE,-60,GetDate())
 	   GROUP BY ClienterId) tbl
 JOIN ClienterLocation  cl WITH(NOLOCK) ON cl.ID = tbl.ID;
 
