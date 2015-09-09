@@ -3200,14 +3200,11 @@ where   Id = @OrderId and FinishAll = 0";
         /// <returns></returns>
         public OrderMapDetail GetOrderMapDetail(long orderID)
         {
+
             string sql = @" 
                             SELECT  ord.OrderId,
-                                    CASE WHEN ISNULL(PubLongitude, 0) = 0 THEN c.Longitude
-                                         ELSE PubLongitude
-                                    END AS PubLongitude ,
-                                    CASE WHEN ISNULL(PubLatitude, 0) = 0 THEN c.Latitude
-                                         ELSE PubLatitude
-                                    END AS PubLatitude ,
+                                    isnull(c.Longitude,0) PubLongitude,
+                                    isnull(c.Latitude,0) PubLatitude,           
                                     ISNULL(ab.PubDate, '') AS PubDate,
                                     ISNULL(GrabLongitude, 0) AS GrabLongitude,
                                     ISNULL(GrabLatitude, 0) AS GrabLatitude,
