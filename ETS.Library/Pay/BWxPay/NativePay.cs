@@ -38,13 +38,13 @@ namespace ETS.Library.Pay.BWxPay
         /// <param name="notify_url">回调地址</param>
         /// <param name="total_fee">金额 分</param>
         /// <returns></returns>
-        public string GetPayUrl(string productId, decimal total_fee, string body, string notify_url, out string prepay_id)
+        public string GetPayUrl(int businessId,string productId, decimal total_fee, string body, string notify_url, out string prepay_id)
         {
             Log.Info(this.GetType().ToString(), "Native pay mode 2 url is producing...");
 
             WxPayData data = new WxPayData();
             data.SetValue("body", body);//商品描述
-            data.SetValue("attach", productId);//附加数据
+            data.SetValue("attach", businessId);//附加数据
             data.SetValue("out_trade_no", WxPayApi.GenerateOutTradeNo());//随机字符串
             string total = (total_fee * 100).ToString();
             total = total.Contains(".") ? total.Split('.')[0] : total;

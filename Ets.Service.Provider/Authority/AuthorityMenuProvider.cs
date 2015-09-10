@@ -408,7 +408,7 @@ namespace Ets.Service.Provider.Authority
             }
             catch (Exception ex)
             {
-                list = null;
+                list = new List<int>();
                 LogHelper.LogWriterFromFilter(ex);
             }
             return list;

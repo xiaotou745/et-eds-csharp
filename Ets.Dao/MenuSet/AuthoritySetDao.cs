@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Linq;
+using ETS.Extension;
 using Ets.Model.DomainModel.Authority;
 using Ets.Model.ParameterModel.Clienter;
 
@@ -314,15 +315,16 @@ namespace Ets.Dao.MenuSet
         /// <returns></returns>
         public List<int> GetMenuIdsByAccountId(int accoutId)
         {
+            var list = new List<int>();
             string sql = "select MenuId from AuthorityAccountMenuSet with(nolock) where AccoutId=@AccoutId";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("AccoutId", accoutId);
-            DataTable dt = DbHelper.ExecuteDataset(SuperMan_Read, sql, dbParameters).Tables[0];
-            var list = new List<int>();
-            if (dt.Rows.Count > 0)
+            dbParameters.Add("AccoutId", DbType.Int32, 4).Value = accoutId;
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, dbParameters);
+            if (!dt.HasData())
             {
-                list.AddRange(from DataRow row in dt.Rows select ParseHelper.ToInt(row["MenuId"]));
+                return list;
             }
+            list.AddRange(from DataRow row in dt.Rows select ParseHelper.ToInt(row["MenuId"]));
             return list;
         }
 
@@ -384,25 +386,25 @@ namespace Ets.Dao.MenuSet
             return false;
         }
         //        public bool CheckPermission(int accoutId, int menuId)
-//        {
-//            string sql = @"
-//            DECLARE @roleID INT
-//SELECT @roleID=ISNULL(b.Id,0) FROM dbo.account a left JOIN (select * from  AuthorityRole where BeLock=0 ) b ON 
-//a.RoleId=b.Id WHERE a.id=@AccoutId
-//IF @roleID>0
-//select Id from AuthorityRoleMentMenuSet with(nolock) where roleid=@roleID and MenuId = @MenuId
-//ELSE 
-//select Id from AuthorityAccountMenuSet with(nolock) where AccoutId=@AccoutId and MenuId = @MenuId";
-//            IDbParameters dbParameters = DbHelper.CreateDbParameters();
-//            dbParameters.AddWithValue("AccoutId", accoutId);
-//            dbParameters.AddWithValue("MenuId", menuId);
-//            object i = DbHelper.ExecuteScalar(SuperMan_Read, sql, dbParameters);
-//            if (i != null)
-//            {
-//                return int.Parse(i.ToString()) > 0;
-//            }
-//            return false;
-//        }
+        //        {
+        //            string sql = @"
+        //            DECLARE @roleID INT
+        //SELECT @roleID=ISNULL(b.Id,0) FROM dbo.account a left JOIN (select * from  AuthorityRole where BeLock=0 ) b ON 
+        //a.RoleId=b.Id WHERE a.id=@AccoutId
+        //IF @roleID>0
+        //select Id from AuthorityRoleMentMenuSet with(nolock) where roleid=@roleID and MenuId = @MenuId
+        //ELSE 
+        //select Id from AuthorityAccountMenuSet with(nolock) where AccoutId=@AccoutId and MenuId = @MenuId";
+        //            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+        //            dbParameters.AddWithValue("AccoutId", accoutId);
+        //            dbParameters.AddWithValue("MenuId", menuId);
+        //            object i = DbHelper.ExecuteScalar(SuperMan_Read, sql, dbParameters);
+        //            if (i != null)
+        //            {
+        //                return int.Parse(i.ToString()) > 0;
+        //            }
+        //            return false;
+        //        }
         /// <summary>
         /// 加入权限
         /// </summary>
@@ -849,7 +851,7 @@ WHERE acr.AccountId=@AccountId and acr.IsEnable=1;";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrWhiteSpace(criteria.LoginName))
             {
-                sbSqlWhere.AppendFormat(@" AND LoginName='{0}' ",criteria.LoginName);
+                sbSqlWhere.AppendFormat(@" AND LoginName='{0}' ", criteria.LoginName);
             }
             string tableList = @" account with(nolock) ";
             string orderByColumn = " Id ASC";
@@ -913,10 +915,10 @@ MERGE INTO AccountDeliveryRelation adr
 					@CreateBy,
 					@IsEnable);";
             var parm = DbHelper.CreateDbParameters();
-            parm.Add("@AccountId",DbType.Int32,4).Value=addmodel.AccountId;
-            parm.Add("@DeliveryCompanyID", DbType.Int32, 4).Value=addmodel.DeliveryCompanyID;
-            parm.Add("@CreateBy", DbType.String).Value=addmodel.CreateBy;
-            parm.Add("@IsEnable", DbType.Int32,4).Value = addmodel.IsEnable;
+            parm.Add("@AccountId", DbType.Int32, 4).Value = addmodel.AccountId;
+            parm.Add("@DeliveryCompanyID", DbType.Int32, 4).Value = addmodel.DeliveryCompanyID;
+            parm.Add("@CreateBy", DbType.String).Value = addmodel.CreateBy;
+            parm.Add("@IsEnable", DbType.Int32, 4).Value = addmodel.IsEnable;
             return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm)) > 0;
         }
     }
