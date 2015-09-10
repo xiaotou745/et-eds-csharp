@@ -15,6 +15,7 @@ go
 
 
 --删除原有约束，修改默认值由0改为1
+--查询OrderOther表 IsGrabTimely 所对应约束
 alter table OrderOther drop constraint DF__OrderOthe__GrabT__1A74D648  
 alter table OrderOther add CONSTRAINT DF__OrderOthe__GrabT__1A74D648 DEFAULT ((1))  for IsGrabTimely 
 go
