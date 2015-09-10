@@ -24,12 +24,11 @@ namespace ETS.Library.Pay.BWxPay
         //public const string KEY = "567f0fbc31fc4366af187e0af2d0e9b2";
         //public const string APPSECRET = "c0cb93c7fb3f7322326b0c853f0cba46";
 
-
-
         public const string APPID = "wxb89ebba3cec98a8c";
-        public const string MCHID = "1264102901";
-        public const string KEY = "567f0fbc31fc4366af187e0af2d0e9b2";//51c56b886b5be869567dd389b3e5d1d6
         public const string APPSECRET = "1937e6b47786c86fac37303f97d5ed91";
+        public const string MCHID = "1243442302";
+        public const string KEY = "51c56b886b5be869567dd389b3e5d1d6";//51c56b886b5be869567dd389b3e5d1d6
+        
         //public const string APPID = "wx2428e34e0e7dc6ef";
         //public const string MCHID = "1233410002";
         //public const string KEY = "e10adc3849ba56abbe56e056f20f883e";
