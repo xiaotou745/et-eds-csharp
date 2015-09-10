@@ -41,13 +41,9 @@ namespace SuperMan.Controllers
         public ActionResult LogOff()
         {
             string loginInfo=CookieHelper.ReadCookie(SystemConst.cookieName);
-            if (string.IsNullOrEmpty(loginInfo))
+            if (!string.IsNullOrEmpty(loginInfo))
             {
-                loginInfo = CookieHelper.ReadCookie(SystemConst.cookieNameJava);
-                if (!string.IsNullOrEmpty(loginInfo))
-                {
-                    loginInfo = HttpUtility.UrlDecode(loginInfo, Encoding.UTF8);
-                }
+                loginInfo = HttpUtility.UrlDecode(loginInfo, Encoding.UTF8);
             }
             AccountLoginLogModel logModel = new AccountLoginLogModel()
             {
@@ -70,8 +66,7 @@ namespace SuperMan.Controllers
         public ActionResult Login(string returnUrl)
         {
             string userinfo = CookieHelper.ReadCookie(SystemConst.cookieName);
-            string userinfoJava = CookieHelper.ReadCookie(SystemConst.cookieNameJava);
-            if (!string.IsNullOrEmpty(userinfo) || !string.IsNullOrEmpty(userinfoJava))
+            if (!string.IsNullOrEmpty(userinfo))
             {
                 return RedirectToAction("Index", "HomeCount");
             }
@@ -129,7 +124,6 @@ namespace SuperMan.Controllers
                     }
                     string menujson = JsonHelper.ToJson(myMenus);
                     CookieHelper.WriteCookie(SystemConst.menuListCookieName, menujson, DateTime.Now.AddDays(10));
-                    CookieHelper.WriteCookie(SystemConst.menuListCookieNameJava, HttpUtility.UrlEncode(menujson,Encoding.UTF8), DateTime.Now.AddDays(10));
                     //return Json(new ResultModel(true, "成功"));
                     returnStatus = true;
                     returnMsg = "成功";

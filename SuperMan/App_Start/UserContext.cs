@@ -19,24 +19,20 @@ namespace SuperMan.App_Start
                 var cookie = ETS.Util.CookieHelper.ReadCookie(SystemConst.cookieName);
                 if (string.IsNullOrEmpty(cookie))
                 {
-                    cookie = ETS.Util.CookieHelper.ReadCookie(SystemConst.cookieNameJava);
-                    if (string.IsNullOrEmpty(cookie))
-                    {
-                        return UserContext.Empty;
-                    }
-                    else
-                    {
-                        cookie = HttpUtility.UrlDecode(cookie, Encoding.UTF8);
-                    }
+                    return UserContext.Empty;
                 }
                 else
                 {
-                    //如果.net cookie不为空但java cookie为空,需要设置java cookie
-                    if (string.IsNullOrEmpty(ETS.Util.CookieHelper.ReadCookie(SystemConst.cookieNameJava)))
+                    //如果cookie的值是{"Id":1,"Password":"abc123","UserName":null,"LoginName":"admin","GroupId":0,"RoleId":0,"AccountType":1}格式
+                    //则表示这个cookie的值是老的版本，不能兼容java，此时需要删除这个老的cookie，让用户重新登录
+                    //java和.net通用的cookie的值需要是经过了UrlEncode的（由于cookie的值是json）
+                    if (cookie.Contains("{\""))
                     {
-                        CookieHelper.WriteCookie(SystemConst.cookieNameJava, HttpUtility.UrlEncode(cookie, Encoding.UTF8), DateTime.Now.AddDays(7));
+                        return UserContext.Empty;
                     }
+                    cookie = HttpUtility.UrlDecode(cookie, Encoding.UTF8);
                 }
+                
                 var userInfo = JsonHelper.ToObject<SimpleUserInfoModel>(cookie);
                 return new UserContext
                 {
