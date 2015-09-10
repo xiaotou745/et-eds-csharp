@@ -9,6 +9,8 @@ namespace ETS.Library.Pay.BWxPay
     */
     public class WxPayConfig
     {
+        //公众平台 ：AppId  AppSecret
+        //商户平台：Mchid PartnerKey
         //=======【基本信息设置】=====================================
         /* 微信公众号信息配置
         * APPID：绑定支付的APPID（必须配置）
@@ -25,8 +27,8 @@ namespace ETS.Library.Pay.BWxPay
 
 
         public const string APPID = "wxb89ebba3cec98a8c";
-        public const string MCHID = "1243442302";
-        public const string KEY = "51c56b886b5be869567dd389b3e5d1d6";
+        public const string MCHID = "1264102901";
+        public const string KEY = "567f0fbc31fc4366af187e0af2d0e9b2";//51c56b886b5be869567dd389b3e5d1d6
         public const string APPSECRET = "1937e6b47786c86fac37303f97d5ed91";
         //public const string APPID = "wx2428e34e0e7dc6ef";
         //public const string MCHID = "1233410002";
