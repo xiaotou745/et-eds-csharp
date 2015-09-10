@@ -78,18 +78,6 @@ namespace SuperManWebApi.Controllers
             return payProvider.CashPay(model);
         }
 
-
-        [HttpGet]
-        public ResultModel<BusinessRechargeResultModel> BusinessRechargeTest()
-        {
-            BusinessRechargeModel model = new BusinessRechargeModel();
-            model.Businessid = 253;
-            model.payAmount = Convert.ToDecimal(0.01);
-            model.PayType = 2;
-            model.Version = "1";
-            return payProvider.BusinessRecharge(model);
-        }
-
         #region 支付宝
 
         /// <summary>

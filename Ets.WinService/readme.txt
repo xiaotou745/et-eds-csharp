@@ -20,3 +20,5 @@
 	Ets.AddressAssociate
 11、地址补全服务
 	Ets.ReceiveAddressRepair
+12、新订单推送
+	Ets.AutoPushOrder

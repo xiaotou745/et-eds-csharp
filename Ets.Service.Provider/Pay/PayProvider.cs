@@ -496,7 +496,7 @@ namespace Ets.Service.Provider.Pay
                     {
                         BusinessId = businessid,
                         OrderNo = orderNo,
-                        OriginalOrderNo = orderNo,//第三方的订单号
+                        OriginalOrderNo = notify.transaction_id,//第三方的订单号
                         PayAmount = ParseHelper.ToDecimal(notify.total_fee),
                         PayBy = notify.openid,
                         PayStatus = 1,
