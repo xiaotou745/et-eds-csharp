@@ -87,6 +87,7 @@ update OrderOther set IsJoinWithdraw=1 where orderId=@orderId";
             dbParameters.AddWithValue("@orderId", orderId);
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
+
         /// <summary>
         /// 更新审核状态
         /// 胡灵波
@@ -94,10 +95,13 @@ update OrderOther set IsJoinWithdraw=1 where orderId=@orderId";
         /// </summary>
         /// <param name="orderId"></param>
         /// <param name="auditstatus"></param>
-        public void UpdateAuditStatus(int orderId, int auditstatus)
+        /// <param name="auditOptName">订单审核操作人</param>
+        public void UpdateAuditStatus(int orderId, int auditstatus,string auditOptName)
         {
-            string updateSql = @"update dbo.OrderOther set auditstatus = @auditstatus,AuditDate=getdate() where OrderId=@orderId";
+            if (auditOptName == null) auditOptName = "";
+            string updateSql = @"update dbo.OrderOther set auditstatus = @auditstatus,AuditDate=getdate(),AuditOptName=@AuditOptName where OrderId=@orderId";
             IDbParameters parm = DbHelper.CreateDbParameters("orderId", DbType.Int32, 4, orderId);
+            parm.Add("AuditOptName", DbType.String, 30).Value = auditOptName;
             parm.AddWithValue("@auditstatus", auditstatus);
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, parm);
         }

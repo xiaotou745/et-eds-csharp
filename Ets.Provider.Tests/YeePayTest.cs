@@ -8,6 +8,7 @@ using Ets.Model.Common.YeePay;
 using Ets.Model.DataModel.Finance;
 using Ets.Model.DomainModel.Finance;
 using ETS.Pay.YeePay;
+using Ets.Service.IProvider.Pay;
 using Ets.Service.Provider.Finance;
 using Ets.Service.Provider.Pay;
 using ETS.Util;
@@ -33,7 +34,7 @@ namespace Ets.Provider.Tests
         [Test]
         public void Register1()
         {
-            string requestid = string.Concat(APP.B.ToString(), "-t", "2313123", "-", Config.WithdrawType);// +"-" + TimeHelper.GetTimeStamp(false);
+            //string requestid = string.Concat(APP.B.ToString(), "-t", "2313123", "-", Config.WithdrawType);// +"-" + TimeHelper.GetTimeStamp(false);
 
             //var result1 = new PayProvider().RegisterYee(new YeeRegisterParameter()
             //{
@@ -52,6 +53,8 @@ namespace Ets.Provider.Tests
             //    UserId=1,
             //    UserType=UserTypeYee.Business.GetHashCode()
             //});//注册帐号
+            IPayProvider iPayProvider=new PayProvider();
+            iPayProvider.YeePayCashTransferClienterCallBack();
         }
 
         /// <summary>

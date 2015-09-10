@@ -1,0 +1,21 @@
+ use superman
+go
+alter table dbo.OrderOther
+add AuditDate datetime null
+go 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'审核时间' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderOther', @level2type=N'COLUMN',@level2name=N'AuditDate'
+go
+
+alter table dbo.OrderOther
+add AuditOptName nvarchar(30) null
+go 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'审核操作人' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderOther', @level2type=N'COLUMN',@level2name=N'AuditOptName'
+go
+
+
+
+--删除原有约束，修改默认值由0改为1
+--查询OrderOther表 IsGrabTimely 所对应约束
+alter table OrderOther drop constraint DF__OrderOthe__GrabT__1A74D648  
+alter table OrderOther add CONSTRAINT DF__OrderOthe__GrabT__1A74D648 DEFAULT ((1))  for IsGrabTimely 
+go

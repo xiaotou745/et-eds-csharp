@@ -2825,44 +2825,38 @@ SELECT   cl.ClienterId
 INTO #tempActiveClienter
 FROM ( SELECT ClienterId,MAX(ID) ID
 	   FROM ClienterLocation  WITH(NOLOCK)
-	   WHERE CreateTime>DATEADD(MINUTE,-10,GetDate())
+	   WHERE CreateTime>DATEADD(MINUTE,-60,GetDate())
 	   GROUP BY ClienterId) tbl
 JOIN ClienterLocation  cl WITH(NOLOCK) ON cl.ID = tbl.ID;
 
-
-SELECT   temp.ClienterId
-        ,temp.ClienterName
-        ,temp.PhoneNo
-        ,temp.WorkStatus
-        ,temp.Radius
-        ,temp.Latitude
-        ,temp.Longitude
+SELECT c.Id ClienterId
+        ,c.TrueName ClienterName
+        ,c.PhoneNo
+        ,c.WorkStatus
+        ,ROUND(geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326)),0) Radius
+        ,tac.Latitude
+        ,tac.Longitude
 INTO #tempLocalClienter
-FROM(
+FROM #tempActiveClienter tac
+JOIN [BusinessClienterRelation] bcr WITH(NOLOCK) ON tac.ClienterId = bcr.ClienterId
+JOIN dbo.clienter c WITH(NOLOCK) ON bcr.ClienterId=c.Id AND bcr.IsEnable=1 AND bcr.IsBind=1 AND c.IsBind=1 AND c.[Status]=1 AND bcr.BusinessId=@BusinessId
+WHERE geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326))<=@PushRadius
+
+IF NOT EXISTS(SELECT COUNT(1) FROM #tempLocalClienter)
+    BEGIN
+        INSERT INTO #tempLocalClienter 
         SELECT c.Id ClienterId
-              ,c.TrueName ClienterName
-              ,c.PhoneNo
-              ,c.WorkStatus
-              ,ROUND(geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326)),0) Radius
-              ,tac.Latitude
-              ,tac.Longitude
-        FROM #tempActiveClienter tac
-        JOIN [BusinessClienterRelation] bcr WITH(NOLOCK) ON tac.ClienterId = bcr.ClienterId
-        JOIN dbo.clienter c WITH(NOLOCK) ON bcr.ClienterId=c.Id AND bcr.IsEnable=1 AND bcr.IsBind=1 AND c.IsBind=1 AND c.[Status]=1 AND bcr.BusinessId=@BusinessId
-        WHERE geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326))<=@PushRadius
-        UNION
-        SELECT c.Id ClienterId
-	          ,c.TrueName ClienterName
-              ,c.PhoneNo
-              ,c.WorkStatus
-              ,ROUND(geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326)),0) Radius
-              ,tac.Latitude
-              ,tac.Longitude
+	            ,c.TrueName ClienterName
+                ,c.PhoneNo
+                ,c.WorkStatus
+                ,ROUND(geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326)),0) Radius
+                ,tac.Latitude
+                ,tac.Longitude
         FROM #tempActiveClienter tac
         JOIN dbo.clienter c WITH(NOLOCK) ON tac.ClienterId=c.Id AND c.Status=1
         JOIN BusinessExpressRelation ber with(nolock) ON ber.ExpressId=c.DeliveryCompanyId AND  ber.BusinessId=@BusinessId AND ber.IsEnable=1
         WHERE  geography::Point(ISNULL(@Latitude,0),ISNULL(@Longitude,0),4326).STDistance(geography::Point(tac.Latitude,tac.Longitude,4326))<=@PushRadius
-) temp
+    END
 
 SELECT  TOP 20 templc.ClienterName,
 		templc.PhoneNo,
@@ -2870,12 +2864,12 @@ SELECT  TOP 20 templc.ClienterName,
 		templc.WorkStatus,
         templc.Latitude,
         templc.Longitude,
-		tbllac.ReceiveQty,
-		tbllac.TransferQty,
-		tbllac.FinishQty,
+		ISNULL(tbllac.ReceiveQty,0) ReceiveQty,
+		ISNULL(tbllac.TransferQty,0) TransferQty,
+		ISNULL(tbllac.FinishQty,0) FinishQty,
         1 IsEmployerTask
 FROM #tempLocalClienter templc
-JOIN(
+LEFT JOIN(
 SELECT tlc.clienterId,
 	   COUNT(CASE WHEN o.Status=2 THEN 1  END) ReceiveQty,
 	   COUNT(CASE WHEN o.Status=4 THEN 1  END) TransferQty,
@@ -2894,7 +2888,7 @@ ORDER BY templc.WorkStatus;
             return MapRows<LocalClienterModel>(dt);
         }
         /// <summary>
-        /// 获取附近店内骑士列表
+        /// 获取附近骑士列表
         /// danny-20150831
         /// </summary>
         /// <param name="model"></param>
@@ -2908,7 +2902,7 @@ SELECT cl.ClienterId
 INTO #tempActiveClienter
 FROM ( SELECT ClienterId,MAX(ID) ID
 	   FROM ClienterLocation  WITH(NOLOCK)
-	   WHERE CreateTime>DATEADD(MINUTE,-10,GetDate())
+	   WHERE CreateTime>DATEADD(MINUTE,-60,GetDate())
 	   GROUP BY ClienterId) tbl
 JOIN ClienterLocation  cl WITH(NOLOCK) ON cl.ID = tbl.ID;
 
@@ -2934,12 +2928,12 @@ SELECT  TOP 20 templc.ClienterName,
 		templc.WorkStatus,
         templc.Latitude,
         templc.Longitude,
-		tbllac.ReceiveQty,
-		tbllac.TransferQty,
-		tbllac.FinishQty,
+		ISNULL(tbllac.ReceiveQty,0) ReceiveQty,
+		ISNULL(tbllac.TransferQty,0) TransferQty,
+		ISNULL(tbllac.FinishQty,0) FinishQty,
         0 IsEmployerTask
 FROM #tempLocalClienter templc
-JOIN(
+LEFT JOIN(
 SELECT tlc.clienterId,
 	   COUNT(CASE WHEN o.Status=2 THEN 1  END) ReceiveQty,
 	   COUNT(CASE WHEN o.Status=4 THEN 1  END) TransferQty,

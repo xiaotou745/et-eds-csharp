@@ -533,9 +533,10 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.FromClienter, OrderConst.O
         c.AllowWithdrawPrice as AllowWithdrawPrice ,
         c.IsBind,
         ISNULL(d.Id,0) as DeliveryCompanyId,
-        isnull(d.DeliveryCompanyName,'') DeliveryCompanyName,
-        --isnull(d.IsDisplay,1) IsDisplay,c.IsReceivePush,
-        (case when c.DeliveryCompanyId=0 or (d.SettleType=1 and ClienterSettleRatio>0 or d.SettleType=2 and d.ClienterFixMoney>0) then 1 else 0 end) IsDisplay
+        isnull(d.DeliveryCompanyName,'') DeliveryCompanyName,     
+ (case when c.DeliveryCompanyId=0 or 
+        (d.SettleType=1 and ClienterSettleRatio>0) or 
+        (d.SettleType=2 and d.ClienterFixMoney>0) then 1 else 0 end) IsDisplay        
 from    dbo.clienter c ( nolock )
  left join dbo.DeliveryCompany d ( nolock ) on c.DeliveryCompanyId = d.Id 
 where c.Id=@clienterId ";
