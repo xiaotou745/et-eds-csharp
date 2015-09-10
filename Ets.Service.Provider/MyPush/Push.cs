@@ -215,26 +215,26 @@ namespace Ets.Service.Provider.MyPush
                     ETS.Library.JPush.push.mode.Audience audience = null;
                     if (model.PushType == 0)//0：别名,因为一个应用只能有一个别名，现有支付已经使用，其它应用请使用别名
                     {
-                        if (string.IsNullOrEmpty(model.RegistrationId))
-                        {
-                            audience = ETS.Library.JPush.push.mode.Audience.s_alias(model.RegistrationIdArray);
-                        }
-                        else
-                        {
-                            audience = ETS.Library.JPush.push.mode.Audience.s_alias(model.RegistrationId);
-                        }
+                        //if (string.IsNullOrEmpty(model.RegistrationId))
+                        //{
+                        //    audience = ETS.Library.JPush.push.mode.Audience.s_alias(model.RegistrationIdArray);
+                        //}
+                        //else
+                        //{
+                        audience = ETS.Library.JPush.push.mode.Audience.s_alias(model.RegistrationId);
+                        //}
                         model.ContentKey = "Content"; //string.IsNullOrEmpty(model.Content) ? "Content" : model.Content;
                     }
                     if (model.PushType == 1)//1：标签
                     {
-                        if (string.IsNullOrEmpty(model.RegistrationId))
-                        {
-                            audience = ETS.Library.JPush.push.mode.Audience.s_tag(model.RegistrationIdArray);
-                        }
-                        else
-                        {
-                            audience = ETS.Library.JPush.push.mode.Audience.s_tag(model.RegistrationId);
-                        }
+                        //if (string.IsNullOrEmpty(model.RegistrationId))
+                        //{
+                        //    audience = ETS.Library.JPush.push.mode.Audience.s_tag(model.RegistrationIdArray);
+                        //}
+                        //else
+                        //{
+                        audience = ETS.Library.JPush.push.mode.Audience.s_tag(model.RegistrationId);
+                        //}
                     }
                     var pushPayload = new ETS.Library.JPush.push.mode.PushPayload();
                     pushPayload.platform = ETS.Library.JPush.push.mode.Platform.android_ios();

@@ -40,7 +40,7 @@ namespace Ets.Model.Common
         /// <summary>
         /// 一次推送多个
         /// </summary>
-        public HashSet<string> RegistrationIdArray{ get; set; }
+        //public HashSet<string> RegistrationIdArray{ get; set; }
 
         /// <summary>
         /// 推送城市信息
