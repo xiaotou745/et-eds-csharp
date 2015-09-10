@@ -1681,7 +1681,7 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public bool CheckOrderIsExist(int orderId, int orderStatus)
         {
-            return orderDao.CheckOrderIsExist(orderId,orderStatus);
+            return orderDao.CheckOrderIsExist(orderId, orderStatus);
         }
 
         /// <summary>
@@ -1732,8 +1732,8 @@ namespace Ets.Service.Provider.Order
                     }
                 }
             }
-            
- 
+
+
             #endregion
 
             orderDM.IsAllowCashPay = order.IsAllowCashPay;
@@ -2155,8 +2155,33 @@ namespace Ets.Service.Provider.Order
                 {
                     detail.Locations = clienterLocationProvider.GetLocationsByTime(startTime, endTime, detail.ClienterId);
                 }
-                if (detail.Locations == null)
-                    detail.Locations = new List<Location>();
+                //如果获取坐标是空就获取发单，抢单，取货，完成坐标
+                if (detail.Locations == null || detail.Locations.Count <= 1)
+                {
+                    IList<Location> list = new List<Location>();
+
+                    list.Add(new Location()
+                    {
+                        Latitude = detail.PubLatitude,
+                        Longitude = detail.PubLongitude
+                    });
+                    list.Add(new Location()
+                    {
+                        Latitude = detail.GrabLatitude,
+                        Longitude = detail.GrabLongitude
+                    });
+                    list.Add(new Location()
+                    {
+                        Latitude = detail.TakeLatitude,
+                        Longitude = detail.TakeLongitude
+                    });
+                    list.Add(new Location()
+                    {
+                        Latitude = detail.CompleteLatitude,
+                        Longitude = detail.CompleteLongitude
+                    });
+                    detail.Locations = list;
+                }
                 #endregion
             }
             return detail;
@@ -2510,9 +2535,9 @@ namespace Ets.Service.Provider.Order
         /// <param name="orderId">订单Id</param>
         /// <param name="businessId">商户Id</param>
         /// <returns></returns>
-        public OrderListModel GetBusinessUnReceiveOrderQty(int orderId,int businessId)
+        public OrderListModel GetBusinessUnReceiveOrderQty(int orderId, int businessId)
         {
-            return orderDao.GetBusinessUnReceiveOrderQty(orderId,businessId);
+            return orderDao.GetBusinessUnReceiveOrderQty(orderId, businessId);
         }
 
     }
