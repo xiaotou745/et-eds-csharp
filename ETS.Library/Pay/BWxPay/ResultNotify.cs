@@ -29,7 +29,7 @@ namespace ETS.Library.Pay.BWxPay
                 return model;
             }
 
-            string transaction_id = notifyData.GetValue("out_trade_no").ToString();//第三方订单号
+            string transaction_id = notifyData.GetValue("transaction_id").ToString();//第三方订单号
 
             //查询订单，判断订单真实性
             if (!QueryOrder(transaction_id))
@@ -42,9 +42,9 @@ namespace ETS.Library.Pay.BWxPay
             model.return_code = "SUCCESS";
             model.return_msg = "OK";
             model.openid = notifyData.GetValue("openid").ToString();//支付人
-            model.total_fee = notifyData.GetValue("total_fee").ToString();//总金额
-            model.transaction_id = notifyData.GetValue("transaction_id").ToString();//微信支付订单号
-            model.order_no = notifyData.GetValue("product_id").ToString();
+            model.total_fee = (ETS.Util.ParseHelper.ToDecimal(notifyData.GetValue("total_fee")) / 100).ToString();//总金额
+            model.transaction_id = transaction_id;//微信支付订单号
+            model.order_no = notifyData.GetValue("out_trade_no").ToString();
             model.attach = notifyData.GetValue("attach").ToString();
             return model;
             //}

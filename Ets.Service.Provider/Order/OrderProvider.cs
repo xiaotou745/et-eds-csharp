@@ -2438,22 +2438,32 @@ namespace Ets.Service.Provider.Order
             #region 循环向满足条件的骑士推送订单提醒
             listClienterId = listClienterId.Distinct().ToList();//对骑士Id进行去重
 
+            int tempCount = 0;
+            int allCount = listClienterId.Count;
+            StringBuilder sb = new StringBuilder();
+            HashSet<string> hash = new HashSet<string>();
             foreach (var clienterId in listClienterId)
             {
-                //Task.Factory.StartNew(() =>
-                //{
-                Push.PushMessageNew(new JPushModel()
+                tempCount++;
+                hash.Add(string.Concat("C_", clienterId.ToString()));
+                //sb.Append(string.Concat("C_", clienterId.ToString(), ","));
+                if (tempCount % 50 == 0 || tempCount == allCount)
+                {
+                    Push.PushMessageNew(new JPushModel()
                     {
                         Title = "订单提醒",
                         Alert = "您有新订单了，请点击查看！",
                         City = string.Empty,
                         Content = "",
                         ContentKey = "Order",
-                        RegistrationId = "C_" + clienterId.ToString(),
+                        //RegistrationId = "C_" + clienterId.ToString(),
+                        RegistrationIdArray = hash,
                         TagId = 0,
                         PushType = 1
                     });
-                //});
+                    hash = new HashSet<string>();
+                }
+
             }
             #endregion
 
