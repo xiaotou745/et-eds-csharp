@@ -3222,10 +3222,10 @@ where   Id = @OrderId and FinishAll = 0";
                                                 ELSE ord.GrabToCompleteDistance
                                             END
                                     END AS GrabToCompleteDistance,
-                                    ISNULL(ord.IsPubDateTimely, 0),
-                                    ISNULL(ord.IsGrabTimely, 0),
-                                    ISNULL(ord.IsTakeTimely, 0),
-                                    ISNULL(ord.IsCompleteTimely, 0),
+                                    ISNULL(ord.IsPubDateTimely, 0 ) as IsPubDateTimely,
+                                    ISNULL(ord.IsGrabTimely, 0) as IsGrabTimely,
+                                    ISNULL(ord.IsTakeTimely, 0) as IsTakeTimely ,
+                                    ISNULL(ord.IsCompleteTimely, 0) as IsCompleteTimely,
                                     ISNULL(ab.clienterId, 0)
                             FROM  [order] (NOLOCK) ab  
                                     JOIN OrderOther (NOLOCK) ord ON ord.OrderId = ab.Id
