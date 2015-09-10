@@ -11,15 +11,15 @@ namespace ETS.Enums
     { 
         [DisplayText("待接单")]
         Status0 = 0,     
-        [DisplayText("订单已完成")]
+        [DisplayText("已完成")]
         Status1 = 1,     
-        [DisplayText("订单已接单")]
+        [DisplayText("已接单")]
         Status2 = 2,    
-        [DisplayText("订单已取消")]
+        [DisplayText("已取消")]
         Status3 = 3,     
-        [DisplayText("订单已取货")]
+        [DisplayText("已取货")]
         Status4 = 4,   
-        [DisplayText("第三方待接入订单")]
+        [DisplayText("第三方待接入")]
         Status30 = 30
     }
     /// <summary>

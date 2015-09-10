@@ -42,7 +42,7 @@
             <tr>
                 <td>
                     <span class="">订单状态: </span>
-                    @Html.DropDownList("orderStatus", new SelectList(EnumExtenstion.GetEnumItems(typeof(OrderStatusCommon)), "Value", "Text"), "全部", new { @class = "selectw", style = "width:157px" })
+                    @Html.DropDownList("orderStatus", new SelectList(EnumExtenstion.GetEnumItems(typeof(OrderStatus)), "Value", "Text"), "全部", new { @class = "selectw", style = "width:157px" })
                     <span class="">发布时间: </span>
                     <input id="txtOrderPubStart" readonly="readonly" type="text" name="OrderPubStart" value="@ViewBag.orderPubStart" />
                     <span class="">到: </span>
