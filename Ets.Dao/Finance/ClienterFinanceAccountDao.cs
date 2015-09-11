@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using ETS.Dao;
 using ETS.Data;
 using ETS.Data.Core;
+using ETS.Enums;
 using ETS.Extension;
 using Ets.Model.DataModel.Finance;
 using Ets.Model.ParameterModel.Finance;
@@ -209,6 +210,25 @@ where  ClienterId=@ClienterId and IsEnable=1";  //事物内不加锁
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("ClienterId", clienterId);
            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, querysql, dbParameters));     
+        }
+
+        /// <summary>
+        /// 根据骑士ID,账户类型获取当前骑士的有效金融账户数量 add by pengyi 20150911
+        /// </summary>
+        /// <param name="clienterId">骑士ID</param>
+        /// <param name="accountType">账户类型</param>
+        /// <returns></returns>
+        public int GetCountByClienterId(int clienterId, int accountType)
+        {
+            IList<ClienterFinanceAccount> models = new List<ClienterFinanceAccount>();
+            const string querysql = @"
+select  Count(Id)
+from  ClienterFinanceAccount  
+where  ClienterId=@ClienterId and AccountType=@AccountType and IsEnable=1";  //事物内不加锁
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("ClienterId", clienterId);
+            dbParameters.AddWithValue("AccountType", accountType);
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, querysql, dbParameters));
         }
 
         #endregion

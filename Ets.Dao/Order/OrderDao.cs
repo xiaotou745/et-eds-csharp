@@ -232,7 +232,7 @@ namespace Ets.Dao.Order
                 Remark,Weight,DistribSubsidy,OrderCount,ReceviceName,
                 RecevicePhoneNo,ReceiveProvinceCode,ReceiveCityCode,ReceiveAreaCode,ReceviceAddress,
                 ReceviceLongitude,ReceviceLatitude,businessId,PickUpAddress,Payment,OrderCommission,
-                WebsiteSubsidy,CommissionRate,CommissionFormulaMode,ReceiveProvince,ReceviceCity,ReceiveArea,
+                WebsiteSubsidy,CommissionRate,BaseCommission,CommissionFormulaMode,ReceiveProvince,ReceviceCity,ReceiveArea,
                 PickupCode,BusinessCommission,SettleMoney,Adjustment,OrderFrom,Status,CommissionType,CommissionFixValue,BusinessGroupId,Invoice,
                 MealsSettleMode,BusinessReceivable)
                 output Inserted.Id,GETDATE(),@OptName,'新增订单',Inserted.businessId,Inserted.[Status],@Platform
@@ -249,8 +249,7 @@ namespace Ets.Dao.Order
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             //基本参数信息
 
-            dbParameters.Add("@OrderNo", SqlDbType.NVarChar);
-            dbParameters.SetValue("@OrderNo", paramodel.OrderNo); //订单号
+            dbParameters.Add("@OrderNo", SqlDbType.NVarChar,50).Value=paramodel.OrderNo; //订单号
             dbParameters.AddWithValue("@OriginalOrderNo", paramodel.order_id);    //其它平台的来源订单号
             dbParameters.AddWithValue("@PubDate", paramodel.create_time);    //订单下单时间
             dbParameters.AddWithValue("@SongCanDate", paramodel.receive_time);  //要求送餐时间

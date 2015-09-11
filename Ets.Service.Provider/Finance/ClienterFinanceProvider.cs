@@ -200,6 +200,10 @@ namespace Ets.Service.Provider.Finance
         public ResultModel<object> CardBindC(CardBindCPM cardBindCpm)
         {
             #region 参数验证
+            var accountType = cardBindCpm.AccountType == 0
+                ? (int)ClienterFinanceAccountType.WangYin
+                : cardBindCpm.AccountType;
+            cardBindCpm.AccountType = accountType;
             FinanceCardBindC checkbool = CheckCardBindC(cardBindCpm);  //验证数据合法性
             if (checkbool != FinanceCardBindC.Success)
             {
@@ -224,6 +228,7 @@ namespace Ets.Service.Provider.Finance
             }
             #endregion
             var result = 0;
+
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 result = _clienterFinanceAccountDao.Insert(new ClienterFinanceAccount()
@@ -232,8 +237,7 @@ namespace Ets.Service.Provider.Finance
                     TrueName = cardBindCpm.TrueName, //户名
                     AccountNo = DES.Encrypt(cardBindCpm.AccountNo), //卡号(DES加密)  
                     IsEnable = true,// 是否有效(true：有效 0：无效）  新增时true 
-                    AccountType = cardBindCpm.AccountType == 0
-                        ? (int)ClienterFinanceAccountType.WangYin : cardBindCpm.AccountType,  //账号类型 
+                    AccountType = accountType,  //账号类型 
                     BelongType = cardBindCpm.BelongType,//账号类别  0 个人账户 1 公司账户  
                     OpenBank = cardBindCpm.OpenBank, //开户行
                     OpenSubBank = cardBindCpm.OpenSubBank, //开户支行
@@ -266,8 +270,8 @@ namespace Ets.Service.Provider.Finance
             {
                 return FinanceCardBindC.BelongTypeError;
             }
-            int count = _clienterFinanceAccountDao.GetCountByClienterId(cardBindCpm.ClienterId);
-            if (count > 0) //该骑士已绑定过金融账号
+            int count = _clienterFinanceAccountDao.GetCountByClienterId(cardBindCpm.ClienterId, cardBindCpm.AccountType);
+            if (count > 0) //该骑士已绑定过指定账户类型的金融账号
             {
                 return FinanceCardBindC.Exists;
             }
@@ -590,7 +594,7 @@ namespace Ets.Service.Provider.Finance
 
             //生成消息
             AddCConfirmPlayMoneyMessage(cliFinanceAccount);
-    
+
             dealResultInfo.DealFlag = true;
             dealResultInfo.DealMsg = "骑士提现单确认打款处理成功，等待银行打款！";
             return dealResultInfo;
@@ -679,7 +683,7 @@ namespace Ets.Service.Provider.Finance
             {
                 return reg;
             }
-         
+
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 if (clienterFinanceDao.ClienterWithdrawReturn(model) && clienterFinanceDao.ClienterClienterAllowWithdrawRecordReturn(model)
@@ -851,7 +855,7 @@ namespace Ets.Service.Provider.Finance
             decimal allowWithdrawPrice = _clienterDao.GetUserStatus(model.ClienterId).AllowWithdrawPrice;
 
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
-            {                
+            {
                 //更新骑士余额、可提现余额 
                 iClienterProvider.UpdateCBalanceAndWithdraw(new ClienterMoneyPM()
                                                             {
@@ -925,7 +929,7 @@ namespace Ets.Service.Provider.Finance
         {
             int month = clienterFinanceAccountModel.WithdrawTime.Month;
             int day = clienterFinanceAccountModel.WithdrawTime.Day;
-            
+
             long id = clienterMessageDao.Insert(new ClienterMessage
             {
                 ClienterId = Convert.ToInt32(clienterFinanceAccountModel.ClienterId),
@@ -948,7 +952,7 @@ namespace Ets.Service.Provider.Finance
             long id = clienterMessageDao.Insert(new ClienterMessage
             {
                 ClienterId = Convert.ToInt32(clienterFinanceAccountModel.ClienterId),
-                Content = string.Format(MessageConst.AuditRejection, month, day,clienterFinanceAccountModel.AuditFailedReason),
+                Content = string.Format(MessageConst.AuditRejection, month, day, clienterFinanceAccountModel.AuditFailedReason),
                 IsRead = 0
             });
         }

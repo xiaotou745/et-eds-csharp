@@ -416,9 +416,8 @@ namespace Ets.Service.Provider.Pay
             BusinessRechargeResultModel resultModel = new BusinessRechargeResultModel();
             if (model.PayType == PayTypeEnum.WeiXin.GetHashCode())
             {
-                string prepayId = string.Empty;
                 ETS.Library.Pay.BWxPay.NativePay nativePay = new ETS.Library.Pay.BWxPay.NativePay();
-                string code_url = nativePay.GetPayUrl(model.Businessid, orderNo, model.payAmount, "E代送商家充值", Config.WXBusinessRecharge, out prepayId);
+                string prepayId = nativePay.GetPayPrepayId(model.Businessid, orderNo, model.payAmount, "E代送商家充值", Config.WXBusinessRecharge);
 
                 resultModel.prepayId = prepayId;
                 resultModel.notifyUrl = ETS.Config.WXBusinessRecharge;
