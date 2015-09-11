@@ -1159,20 +1159,11 @@ namespace Ets.Service.Provider.Business
         }
 
         /// <summary>
-        /// 获取商户外送费        
-        /// </summary>
-        /// <UpdateBy>hulingbo</UpdateBy>
-        /// <UpdateTime>20150511</UpdateTime>
-        /// <param name="id">商户id</param>
-        /// <returns></returns>
-        public BusinessInfo GetDistribSubsidy(int id)
-        {
-            return businessDao.GetDistribSubsidy(id);
-        }
-
-        /// <summary>
-        /// 获取商家发布任务需要的信息(包含商户外送费,当前任务结算金额,剩余余额)
+        /// 获取门店发布任务需要的信息
+        /// 门店,集团,任务
         /// add by 彭宜   20150714
+        /// 修改人:胡灵波
+        /// 2015年9月11日 17:15:31
         /// </summary>
         /// <param name="id">商户id</param>
         /// <param name="orderChildCount">子订单数量</param>
@@ -1180,8 +1171,12 @@ namespace Ets.Service.Provider.Business
         /// <returns></returns>
         public BusiDistribSubsidyResultModel GetBusinessPushOrderInfo(int id, int orderChildCount, decimal amount)
         {
-            var busiInfo = businessDao.GetDistribSubsidy(id);
-            var result = new BusiDistribSubsidyResultModel { DistribSubsidy = busiInfo.DistribSubsidy };
+            var busiInfo = businessDao.GetSettlementRelevantById(id);
+            var result = new BusiDistribSubsidyResultModel 
+                        { 
+                            DistribSubsidy = busiInfo.DistribSubsidy,
+                            GroupBusinessAmount=busiInfo.GroupBusinessAmount
+                        };
             result.OrderBalance = amount * busiInfo.BusinessCommission / 100 + (busiInfo.CommissionFixValue +
                                    busiInfo.DistribSubsidy ?? 0m) * orderChildCount;
             //剩余余额(商家余额 –当前任务结算金额)

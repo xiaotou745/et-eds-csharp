@@ -97,14 +97,7 @@ namespace Ets.Service.IProvider.Business
         /// <param name="criteria"></param>
         /// <returns></returns>
         PageInfo<BusinessesDistributionModel> GetBusinessesDistributionStatisticalInfo(OrderSearchCriteria criteria);
-        ///// <summary>
-        ///// 更新审核状态
-        ///// danny-20150317
-        ///// </summary>
-        ///// <param name="id"></param>
-        ///// <param name="enumStatusType"></param>
-        /// <returns></returns>
-        //bool UpdateAuditStatus(int id, AuditStatus enumStatusType);
+
         /// <summary>
         /// 商户审核
         /// wc
@@ -141,13 +134,6 @@ namespace Ets.Service.IProvider.Business
         /// <param name="BusinessId">商户ID</param>
         /// <returns></returns>
         BusiOrderCountResultModel GetOrderCountData(int BusinessId);
-        ///// <summary>
-        ///// 验证商户手机号 是否 注册
-        ///// wc
-        ///// </summary>
-        ///// <param name="PhoneNo"></param>
-        ///// <returns></returns>
-        //bool CheckBusinessExistPhone(string PhoneNo);
         /// <summary>
         /// 判断该 商户是否有资格 
         /// wc
@@ -270,14 +256,6 @@ namespace Ets.Service.IProvider.Business
         BusinessDM GetDetails(int id);
 
         /// <summary>
-        /// 获取商户外送费        
-        /// </summary>
-        /// <UpdateBy>hulingbo</UpdateBy>
-        /// <UpdateTime>20150511</UpdateTime>
-        /// <param name="id">商户id</param>
-        /// <returns></returns>
-        BusinessInfo GetDistribSubsidy(int id);
-        /// <summary>
         /// 获取商家发布任务需要的信息(包含商户外送费,当前任务结算金额,剩余余额)
         /// add by 彭宜   20150714
         /// </summary>
@@ -286,6 +264,7 @@ namespace Ets.Service.IProvider.Business
         /// <param name="amount">订单金额</param>
         /// <returns></returns>
         BusiDistribSubsidyResultModel GetBusinessPushOrderInfo(int id, int orderChildCount, decimal amount);
+
         /// <summary>
         /// 判断商户是否存在      
         /// </summary>

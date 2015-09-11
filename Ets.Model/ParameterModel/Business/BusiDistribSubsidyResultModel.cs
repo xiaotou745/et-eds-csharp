@@ -26,5 +26,12 @@ namespace Ets.Model.ParameterModel.Business
         /// 剩余余额(商家余额 –当前任务结算金额)    add by 彭宜   20150714
         /// </summary>
         public decimal? RemainBalance { get; set; }
+
+        /// <summary>
+        /// 集团金额
+        /// 胡灵波
+        /// 2015年9月11日 17:13:04
+        /// </summary>
+        public decimal GroupBusinessAmount { get; set; }
     }
 }
