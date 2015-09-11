@@ -1,5 +1,9 @@
- use superman
+use superman
 go
+
+
+
+--在订单分列加两个新列
 alter table dbo.OrderOther
 add AuditDate datetime null
 go 
@@ -11,7 +15,6 @@ add AuditOptName nvarchar(30) null
 go 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'审核操作人' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderOther', @level2type=N'COLUMN',@level2name=N'AuditOptName'
 go
-
 
 
 --删除原有约束，修改默认值由0改为1

@@ -9,6 +9,8 @@ namespace ETS.Library.Pay.BWxPay
     */
     public class WxPayConfig
     {
+        //公众平台 ：AppId  AppSecret
+        //商户平台：Mchid PartnerKey
         //=======【基本信息设置】=====================================
         /* 微信公众号信息配置
         * APPID：绑定支付的APPID（必须配置）
@@ -17,27 +19,12 @@ namespace ETS.Library.Pay.BWxPay
         * APPSECRET：公众帐号secert（仅JSAPI支付的时候需要配置）
         */
         //易代送正式
-        //public const string APPID = "wxbb8fb40942327ec6";
-        //public const string MCHID = "1264102901";
-        //public const string KEY = "567f0fbc31fc4366af187e0af2d0e9b2";
-        //public const string APPSECRET = "c0cb93c7fb3f7322326b0c853f0cba46";
-
-
-
         public const string APPID = "wxb89ebba3cec98a8c";
+        public const string APPSECRET = "1937e6b47786c86fac37303f97d5ed91";
         public const string MCHID = "1243442302";
         public const string KEY = "51c56b886b5be869567dd389b3e5d1d6";
-        public const string APPSECRET = "1937e6b47786c86fac37303f97d5ed91";
-        //public const string APPID = "wx2428e34e0e7dc6ef";
-        //public const string MCHID = "1233410002";
-        //public const string KEY = "e10adc3849ba56abbe56e056f20f883e";
-        //public const string APPSECRET = "51c56b886b5be869567dd389b3e5d1d6";
-        /* //聚网客
-        public const string APPID = "wx4f67167b10dfbdf8";
-        public const string MCHID = "1230274401";
-        public const string KEY = "f90ad1f9f591a3c08793cae51d7d5248";
-        public const string APPSECRET = "02728adf6c9d6db62b5abaf6a6208d0b";
-        */
+
+        /*
         //=======【证书路径设置】===================================== 
         /* 证书路径,注意应该填写绝对路径（仅退款、撤销订单时需要）
         */

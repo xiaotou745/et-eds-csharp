@@ -86,7 +86,7 @@ namespace ETS.Library.Pay.BWxPay
             inputObj.SetValue("mch_id", WxPayConfig.MCHID);//商户号
             inputObj.SetValue("nonce_str", WxPayApi.GenerateNonceStr());//随机字符串
             inputObj.SetValue("sign", inputObj.MakeSign());//签名
-
+            //inputObj.SetValue("transaction_id", inputObj.GetValue("transaction_id"));
             string xml = inputObj.ToXml();
 
             var start = DateTime.Now;

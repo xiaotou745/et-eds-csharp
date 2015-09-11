@@ -26,10 +26,10 @@ namespace SuperMan.App_Start
                     //如果cookie的值是{"Id":1,"Password":"abc123","UserName":null,"LoginName":"admin","GroupId":0,"RoleId":0,"AccountType":1}格式
                     //则表示这个cookie的值是老的版本，不能兼容java，此时需要删除这个老的cookie，让用户重新登录
                     //java和.net通用的cookie的值需要是经过了UrlEncode的（由于cookie的值是json）
-                    if (cookie.Contains("{\""))
-                    {
-                        return UserContext.Empty;
-                    }
+                    //if (cookie.Contains("{\""))
+                    //{
+                    //    return UserContext.Empty;
+                    //}
                     cookie = HttpUtility.UrlDecode(cookie, Encoding.UTF8);
                 }
                 

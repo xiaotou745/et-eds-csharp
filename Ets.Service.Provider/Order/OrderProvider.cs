@@ -1681,7 +1681,7 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public bool CheckOrderIsExist(int orderId, int orderStatus)
         {
-            return orderDao.CheckOrderIsExist(orderId,orderStatus);
+            return orderDao.CheckOrderIsExist(orderId, orderStatus);
         }
 
         /// <summary>
@@ -1732,8 +1732,8 @@ namespace Ets.Service.Provider.Order
                     }
                 }
             }
-            
- 
+
+
             #endregion
 
             orderDM.IsAllowCashPay = order.IsAllowCashPay;
@@ -2155,8 +2155,33 @@ namespace Ets.Service.Provider.Order
                 {
                     detail.Locations = clienterLocationProvider.GetLocationsByTime(startTime, endTime, detail.ClienterId);
                 }
-                if (detail.Locations == null)
-                    detail.Locations = new List<Location>();
+                //如果获取坐标是空就获取发单，抢单，取货，完成坐标
+                if (detail.Locations == null || detail.Locations.Count <= 1)
+                {
+                    IList<Location> list = new List<Location>();
+
+                    list.Add(new Location()
+                    {
+                        Latitude = detail.PubLatitude,
+                        Longitude = detail.PubLongitude
+                    });
+                    list.Add(new Location()
+                    {
+                        Latitude = detail.GrabLatitude,
+                        Longitude = detail.GrabLongitude
+                    });
+                    list.Add(new Location()
+                    {
+                        Latitude = detail.TakeLatitude,
+                        Longitude = detail.TakeLongitude
+                    });
+                    list.Add(new Location()
+                    {
+                        Latitude = detail.CompleteLatitude,
+                        Longitude = detail.CompleteLongitude
+                    });
+                    detail.Locations = list;
+                }
                 #endregion
             }
             return detail;
@@ -2413,22 +2438,32 @@ namespace Ets.Service.Provider.Order
             #region 循环向满足条件的骑士推送订单提醒
             listClienterId = listClienterId.Distinct().ToList();//对骑士Id进行去重
 
+            int tempCount = 0;
+            int allCount = listClienterId.Count;
+            StringBuilder sb = new StringBuilder();
+            HashSet<string> hash = new HashSet<string>();
             foreach (var clienterId in listClienterId)
             {
-                //Task.Factory.StartNew(() =>
-                //{
-                Push.PushMessageNew(new JPushModel()
+                tempCount++;
+                hash.Add(string.Concat("C_", clienterId.ToString()));
+                //sb.Append(string.Concat("C_", clienterId.ToString(), ","));
+                if (tempCount % 50 == 0 || tempCount == allCount)
+                {
+                    Push.PushMessageNew(new JPushModel()
                     {
                         Title = "订单提醒",
                         Alert = "您有新订单了，请点击查看！",
                         City = string.Empty,
                         Content = "",
                         ContentKey = "Order",
-                        RegistrationId = "C_" + clienterId.ToString(),
+                        //RegistrationId = "C_" + clienterId.ToString(),
+                        RegistrationIdArray = hash,
                         TagId = 0,
                         PushType = 1
                     });
-                //});
+                    hash = new HashSet<string>();
+                }
+
             }
             #endregion
 
@@ -2510,9 +2545,9 @@ namespace Ets.Service.Provider.Order
         /// <param name="orderId">订单Id</param>
         /// <param name="businessId">商户Id</param>
         /// <returns></returns>
-        public OrderListModel GetBusinessUnReceiveOrderQty(int orderId,int businessId)
+        public OrderListModel GetBusinessUnReceiveOrderQty(int orderId, int businessId)
         {
-            return orderDao.GetBusinessUnReceiveOrderQty(orderId,businessId);
+            return orderDao.GetBusinessUnReceiveOrderQty(orderId, businessId);
         }
 
     }

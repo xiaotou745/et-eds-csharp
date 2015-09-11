@@ -33,7 +33,7 @@ namespace ETS.Const
 
 
 
-        public const string cookieName = "userinfo_edaisong";
+        public const string cookieName = "userinfo_edaisongcom";
 
 
         public const string menuListCookieName = "menulist";

@@ -41,6 +41,10 @@ namespace ETS.Library.Pay.BWxPay
         /// </summary>
         public string device_info { get; set; }
 
+        /// <summary>
+        /// 附加列
+        /// </summary>
+        public string attach { get; set; }
 
 
     }
