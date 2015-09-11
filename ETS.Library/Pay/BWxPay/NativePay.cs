@@ -38,7 +38,7 @@ namespace ETS.Library.Pay.BWxPay
         /// <param name="notify_url">回调地址</param>
         /// <param name="total_fee">金额 分</param>
         /// <returns></returns>
-        public string GetPayUrl(int businessId,string productId, decimal total_fee, string body, string notify_url, out string prepay_id)
+        public string GetPayPrepayId(int businessId, string productId, decimal total_fee, string body, string notify_url)
         {
             Log.Info(this.GetType().ToString(), "Native pay mode 2 url is producing...");
 
@@ -53,19 +53,18 @@ namespace ETS.Library.Pay.BWxPay
             data.SetValue("time_start", DateTime.Now.ToString("yyyyMMddHHmmss"));//交易起始时间
             data.SetValue("time_expire", DateTime.Now.AddMinutes(10).ToString("yyyyMMddHHmmss"));//交易结束时间
             data.SetValue("goods_tag", productId);//商品标记
-            data.SetValue("trade_type", "NATIVE");//交易类型
+            data.SetValue("trade_type", "APP");//交易类型
             data.SetValue("product_id", productId);//商品ID
             data.SetValue("notify_url", notify_url);
             WxPayData result = WxPayApi.UnifiedOrder(data);//调用统一下单接口
             if (result.GetValue("return_code").ToString().ToUpper() == "FAIL")
             {
-                prepay_id = string.Empty;
                 return string.Empty;
             }
-            string url = result.GetValue("code_url").ToString();//获得统一下单接口返回的二维码链接
-            prepay_id = result.GetValue("prepay_id").ToString();
-            Log.Info(this.GetType().ToString(), "Get native pay mode 2 url : " + url);
-            return url;
+            //string url = result.GetValue("code_url").ToString();//获得统一下单接口返回的二维码链接
+            string prepay_id = result.GetValue("prepay_id").ToString();
+            Log.Info(this.GetType().ToString(), "Get native pay mode 2 prepay_id : " + prepay_id);
+            return prepay_id;
         }
 
         /**

@@ -68,12 +68,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Pay\BusinessWxPay\Config.cs" />
-    <Compile Include="Pay\BusinessWxPay\RequestHandler.cs" />
-    <Compile Include="Pay\BusinessWxPay\ResponseHandler.cs" />
-    <Compile Include="Pay\BusinessWxPay\ReturnValue.cs" />
-    <Compile Include="Pay\BusinessWxPay\StreamReaderUtils.cs" />
-    <Compile Include="Pay\BusinessWxPay\WXpayService.cs" />
     <Compile Include="Pay\CWxPay\Config.cs" />
     <Compile Include="Pay\CWxPay\Data.cs" />
     <Compile Include="Pay\CWxPay\Exception.cs" />
