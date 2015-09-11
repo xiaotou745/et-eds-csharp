@@ -828,6 +828,10 @@ order by o.Date desc, o.ActiveClienterCount desc";
             {
                 sbSqlWhere.AppendFormat(" AND CityId={0} ", queryInfo.CityId);
             }
+            if (!string.IsNullOrWhiteSpace(queryInfo.businessCity))
+            {
+                sbSqlWhere.AppendFormat(" AND b.City='{0}' ", queryInfo.businessCity);
+            }
             if (queryInfo.RechargePrice > 0)
             {
                 sbSqlWhere.AppendFormat(" AND Amount>={0} ", queryInfo.RechargePrice);
