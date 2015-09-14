@@ -176,10 +176,11 @@ namespace Ets.Service.Provider.Finance
             {
                 return FinanceWithdrawC.FinanceAccountError;
             }
-            if (string.IsNullOrEmpty(clienterFinanceAccount.IDCard) || !Regex.IsMatch(clienterFinanceAccount.IDCard, Config.IDCARD_REG, RegexOptions.IgnoreCase) ||
+            //如果是支付宝,不走下面的判断,因为支付宝没有身份证和银行信息 add by pengyi 20150914
+            if (clienterFinanceAccount.AccountType!= 2 && (string.IsNullOrEmpty(clienterFinanceAccount.IDCard) || !Regex.IsMatch(clienterFinanceAccount.IDCard, Config.IDCARD_REG, RegexOptions.IgnoreCase) ||
                 string.IsNullOrEmpty(clienterFinanceAccount.OpenCity) || string.IsNullOrEmpty(clienterFinanceAccount.OpenProvince) ||
                 string.IsNullOrEmpty(clienterFinanceAccount.OpenBank) || string.IsNullOrEmpty(clienterFinanceAccount.OpenSubBank) ||
-                string.IsNullOrEmpty(clienterFinanceAccount.OpenSubBank) || !Regex.IsMatch(clienterFinanceAccount.OpenSubBank, Config.OPEN_SUB_BANK_REG)
+                string.IsNullOrEmpty(clienterFinanceAccount.OpenSubBank) || !Regex.IsMatch(clienterFinanceAccount.OpenSubBank, Config.OPEN_SUB_BANK_REG))
                 )
             {
                 return FinanceWithdrawC.BankInfoError;
