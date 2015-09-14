@@ -56,7 +56,33 @@ select @@IDENTITY";
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters);
             return ParseHelper.ToLong(result);
         }
-
+        /// <summary>
+        /// 写入集团流水
+        /// 胡灵波
+        /// 2015年9月14日 11:19:12
+        /// </summary>
+        /// <param name="businessBalanceRecord"></param>
+        /// <returns></returns>
+        public long InsertGroupRecord(BusinessBalanceRecord businessBalanceRecord)
+        {
+            const string insertSql = @"
+insert into BusinessBalanceRecord
+(GroupId,GroupAmount,Status,GroupBeforeBalance,RecordType,Operator,WithwardId,RelationNo,Remark)
+select @GroupId,@GroupAmount,@Status,gb.Amount,@RecordType,@Operator,@WithwardId,@RelationNo,@Remark 
+from dbo.GroupBusiness as gb where Id=@GroupId
+select @@IDENTITY";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("GroupId", businessBalanceRecord.GroupId);//集团Id
+            dbParameters.AddWithValue("GroupAmount", businessBalanceRecord.GroupAmount);//流水金额
+            dbParameters.AddWithValue("Status", businessBalanceRecord.Status); //流水状态(1、交易成功 2、交易中）
+            dbParameters.AddWithValue("RecordType", businessBalanceRecord.RecordType); //交易类型(1佣金 2奖励 3提现 4取消订单赔偿 5无效订单扣款)
+            dbParameters.AddWithValue("Operator", businessBalanceRecord.Operator); //操作人 
+            dbParameters.AddWithValue("WithwardId", businessBalanceRecord.WithwardId); //关联ID
+            dbParameters.AddWithValue("RelationNo", businessBalanceRecord.RelationNo); //关联单号
+            dbParameters.AddWithValue("Remark", businessBalanceRecord.Remark); //描述
+            object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters);
+            return ParseHelper.ToLong(result);
+        }
         /// <summary>
         /// 更新一条记录
         /// </summary>

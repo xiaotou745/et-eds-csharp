@@ -11,5 +11,6 @@ namespace Ets.Model.ParameterModel.Finance
     /// </summary>
     public class ClienterWithdrawFormPM
     {
+        public int Status { get; set; }
     }
 }

@@ -42,6 +42,7 @@
     <Compile Include="Account\AccountDao.cs" />
     <Compile Include="Account\AccountLoginLogDao.cs" />
     <Compile Include="Business\BusinessClienterRelationDao.cs" />
+    <Compile Include="Business\GroupBusinessDao.cs" />
     <Compile Include="Clienter\CrossShopStatisticLogDao.cs" />
     <Compile Include="Clienter\ClienterDao.cs" />
     <Compile Include="Clienter\ClienterLocationDao.cs" />

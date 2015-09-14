@@ -166,6 +166,10 @@ where  Id=@Id ";
             {
                 return stringBuilder.ToString();
             }
+            if (clienterWithdrawFormPm.Status>-100 )
+            {
+                stringBuilder.Append(" and Status=" + clienterWithdrawFormPm.Status);
+            }
             //TODO:在此加入查询条件构建代码
             return stringBuilder.ToString();
         }
@@ -194,6 +198,20 @@ SELECT ypr.RequestId,cwf.Id,cwf.Amount,
             return MapRows<Ets.Model.DomainModel.Finance.ClienterWithdrawFormModel>(dt);
         }
 
-     
+        /// <summary>
+        /// 胡灵波
+        /// 临时修复数据使用
+        /// 2015年9月14日 16:14:11
+        /// </summary>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        public DataTable Query(int status)
+        {
+            string querysql = @"
+select  Id,WithwardNo,ClienterId,BalancePrice,AllowWithdrawPrice,Status,Amount,Balance,WithdrawTime,Auditor,AuditTime,AuditFailedReason,Payer,PayTime,PayFailedReason
+from  ClienterWithdrawForm (nolock) where Status=" + status;
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql));
+            return dt;
+        }
     }
 }
