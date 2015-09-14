@@ -1655,7 +1655,8 @@ where Id=@Id";
 
             #region 商家金融账号表
             const string queryBFAccountSql = @"
-select  Id,BusinessId,TrueName,AccountNo,IsEnable,AccountType,BelongType,OpenBank,OpenSubBank,CreateBy,CreateTime,UpdateBy,UpdateTime,OpenProvince,OpenCity,OpenProvinceCode,OpenCityCode,IDCard 
+select  Id,BusinessId,TrueName,AccountNo,IsEnable,AccountType,BelongType,OpenBank,OpenSubBank,
+        CreateBy,CreateTime,UpdateBy,UpdateTime,OpenProvince,OpenCity,OpenProvinceCode,OpenCityCode,IDCard 
 from  BusinessFinanceAccount (nolock) 
 where BusinessId=@BusinessId and IsEnable=1";
             IDbParameters dbBFAccountParameters = DbHelper.CreateDbParameters();
@@ -1713,24 +1714,28 @@ where BusinessId=@BusinessId and IsEnable=1";
         }
 
         /// <summary>
-        /// 获取商家外送费,订单结算费用等信息
+        /// 获取门店结算相关
+        /// 胡灵波
+        /// 2015年9月11日 16:49:36
         /// </summary>
-        /// <UpdateBy>pengyi</UpdateBy>
-        /// <UpdateTime>20150714</UpdateTime>
         /// <param name="id">商家Id</param>
         /// <returns></returns>
-        public BusinessInfo GetDistribSubsidy(int id)
+        public BusinessInfo GetSettlementRelevantById(int id)
         {
             string querSql = @"
-select  isnull(DistribSubsidy,0) as DistribSubsidy, 
+SELECT gbr.IsEnable,  isnull(DistribSubsidy,0) as DistribSubsidy, 
             b.BusinessCommission,
             b.CommissionType, 
             b.CommissionFixValue,
-            b.BalancePrice from Business b (nolock) 
-where Id=@Id";
+            b.BalancePrice ,
+            CASE WHEN gbr.IsBind=1 THEN gb.Amount
+            ELSE 0  END GroupBusinessAmount           
+            from Business b (nolock) 
+LEFT JOIN   GroupBusinessRelation gbr (NOLOCK)    ON b.Id=gbr.BusinessId  AND IsEnable=1
+LEFT JOIN GroupBusiness gb (NOLOCK) ON gbr.Groupid=gb.Id 
+where b.Id=@Id";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int32, 4, id);
-
             return DbHelper.QueryForObjectDelegate<BusinessInfo>(SuperMan_Read, querSql, dbParameters,
              dataRow => new BusinessInfo
              {
@@ -1738,7 +1743,8 @@ where Id=@Id";
                  BusinessCommission = ParseHelper.ToDecimal(dataRow["BusinessCommission"], 0),
                  BalancePrice = ParseHelper.ToDecimal(dataRow["BalancePrice"], 0),
                  CommissionFixValue = ParseHelper.ToDecimal(dataRow["CommissionFixValue"], 0),
-                 CommissionType = ParseHelper.ToInt(dataRow["CommissionType"], 0)
+                 CommissionType = ParseHelper.ToInt(dataRow["CommissionType"], 0),
+                 GroupBusinessAmount = ParseHelper.ToDecimal(dataRow["GroupBusinessAmount"], 0)
              });
         }
 

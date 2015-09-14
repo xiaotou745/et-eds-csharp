@@ -82,11 +82,12 @@ namespace SuperManWebApi.Controllers
             }
         }
 
-        /// <summary>
-        /// 获取商户外送费      
-        /// </summary>
-        /// <UpdateBy>hulingbo</UpdateBy>
-        /// <UpdateTime>20150511</UpdateTime>
+        /// <summary>        
+        /// 获取门店发布任务需要的信息
+        /// 门店,集团,任务
+        /// 胡灵波
+        /// 2015年9月11日 17:01:46
+        /// </summary>     
         /// <param name="model">商户参数</param>
         /// <returns></returns>        
         [HttpPost]

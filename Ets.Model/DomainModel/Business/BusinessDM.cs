@@ -183,5 +183,10 @@ namespace Ets.Model.DomainModel.Business
         /// 余额
         /// </summary>
         public decimal BalancePrice { get; set; }
+        /// <summary>
+        /// 当前集团金额
+        /// </summary>
+        public decimal GroupBusinessAmount { get; set; }
+        
     }
 }
