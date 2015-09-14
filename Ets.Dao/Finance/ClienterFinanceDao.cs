@@ -810,7 +810,7 @@ SELECT cwf.[ClienterId]
 ";
             var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@withwardId", withwardId);
-            var dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            var dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql, parm);
             if (dt == null || dt.Rows.Count <= 0)
             {
                 return null;
