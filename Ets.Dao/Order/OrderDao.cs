@@ -3226,7 +3226,7 @@ where   Id = @OrderId and FinishAll = 0";
                                     ISNULL(ord.IsGrabTimely, 0) as IsGrabTimely,
                                     ISNULL(ord.IsTakeTimely, 0) as IsTakeTimely ,
                                     ISNULL(ord.IsCompleteTimely, 0) as IsCompleteTimely,
-                                    ISNULL(ab.clienterId, 0)
+                                    ISNULL(ab.clienterId, 0) clienterId
                             FROM  [order] (NOLOCK) ab  
                                     JOIN OrderOther (NOLOCK) ord ON ord.OrderId = ab.Id
                                     JOIN business (NOLOCK) c ON c.id = ab.businessId 
