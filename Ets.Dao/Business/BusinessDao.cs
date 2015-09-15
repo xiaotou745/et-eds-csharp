@@ -530,46 +530,27 @@ order by a.id desc
         public BusListResultModel GetBusiness(int busiId)
         {
             BusListResultModel busi = new BusListResultModel();
-            string selSql = @" select 
-                                b.Id ,
-                                b.Name ,
-                                b.City ,
-                                b.district ,
-                                b.PhoneNo ,
-                                b.PhoneNo2 ,
-                                b.IDCard ,
-                                b.[Address] ,
-                                b.Landline ,
-                                b.Longitude ,
-                                b.Latitude ,
-                                b.[Status] ,
-                                b.InsertTime ,
-                                b.districtId ,
-                                b.CityId ,
-                                b.GroupId , 
-                                b.ProvinceCode ,
-                                b.CityCode ,
-                                b.AreaCode ,
-                                b.Province ,
-                                b.DistribSubsidy,
-                                b.BusinessCommission,
-                                b.CommissionType,
-                                b.CommissionFixValue,
-                                b.BusinessGroupId,
-                                b.MealsSettleMode,
-                                b.OriginalBusiId,
-                                BusinessGroup.StrategyId,
-                                b.BalancePrice,
-                                b.OneKeyPubOrder,
-                                b.IsAllowOverdraft,
-                                b.IsEmployerTask,
-                                b.IsOrderChecked,b.IsAllowCashPay                                  
-                                FROM dbo.business as b WITH(NOLOCK)
-                                left join BusinessGroup on b.BusinessGroupId=BusinessGroup.Id
-                                WHERE b.Id = @busiId";
-            ///TODO 类型？
-            IDbParameters parm = DbHelper.CreateDbParameters("busiId", DbType.Int32, 4, busiId);
-            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, selSql, parm));
+            string querySql = @"
+select   b.Id ,
+b.Name, b.City,b.district, b.PhoneNo ,b.PhoneNo2 ,b.IDCard ,b.[Address] ,b.Landline ,
+b.Longitude ,b.Latitude ,b.[Status] , b.InsertTime ,b.districtId ,b.CityId ,b.GroupId , 
+b.ProvinceCode ,b.CityCode ,b.AreaCode ,b.Province ,b.DistribSubsidy,b.BusinessCommission,
+b.CommissionType,b.CommissionFixValue,b.BusinessGroupId,b.MealsSettleMode,b.OriginalBusiId,
+b.BalancePrice,b.OneKeyPubOrder,b.IsAllowOverdraft,b.IsEmployerTask,b.IsOrderChecked,b.IsAllowCashPay,  
+bg.StrategyId,
+CASE WHEN gbr.id >0 THEN 1 ELSE 0 END AS IsBindGroup, 
+ISNULL(gb.Id,0) AS BussGroupId,
+ISNULL(gb.IsAllowOverdraft,0) AS BussGroupIsAllowOverdraft,
+ISNULL(gb.Amount,0) AS BussGroupAmount,
+gb.GroupBusiName,gb.CreateName                               
+from dbo.business as b WITH(NOLOCK)
+left join BusinessGroup bg WITH(nolock) on b.BusinessGroupId=bg.Id
+LEFT JOIN GroupBusinessRelation gbr WITH(NOLOCK) ON b.Id=gbr.BusinessId  AND gbr.IsBind=1 AND gbr.IsEnable=1
+LEFT JOIN dbo.GroupBusiness gb WITH(NOLOCK) ON gbr.groupid=gb.Id
+WHERE b.Id = @busiId";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters("busiId", DbType.Int32, 4, busiId);
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querySql, dbParameters));
             if (dt != null && dt.Rows.Count > 0)
                 busi = DataTableHelper.ConvertDataTableList<BusListResultModel>(dt)[0];
             return busi;
@@ -584,7 +565,7 @@ order by a.id desc
         public BusListResultModel GetBusiness(int originalBusiId, int groupId)
         {
             BusListResultModel busi = new BusListResultModel();
-            string selSql = @" SELECT  
+            string querySql = @" SELECT  
          Id ,
          Name ,
          City ,
@@ -612,10 +593,9 @@ order by a.id desc
 
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@busiId", originalBusiId);
-
             parm.AddWithValue("@GroupId", groupId);
 
-            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, selSql, parm));
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querySql, parm));
             if (dt != null && dt.Rows.Count > 0)
             {
                 busi = DataTableHelper.ConvertDataTableList<BusListResultModel>(dt)[0];

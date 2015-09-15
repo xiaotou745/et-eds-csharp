@@ -57,6 +57,8 @@ namespace Ets.Service.Provider.Order
     {
         private OrderDao orderDao = new OrderDao();
         private IBusinessProvider iBusinessProvider = new BusinessProvider();
+        private IGroupBusinessProvider iGroupBusinessProvider = new GroupBusinessProvider();
+        
         private IClienterProvider iClienterProvider = new ClienterProvider();
         readonly OrderOtherDao orderOtherDao = new OrderOtherDao();
         private ISubsidyProvider iSubsidyProvider = new SubsidyProvider();
@@ -285,6 +287,13 @@ namespace Ets.Service.Provider.Order
                 to.OneKeyPubOrder = business.OneKeyPubOrder;
                 to.IsOrderChecked = business.IsOrderChecked;
                 to.IsAllowCashPay = business.IsAllowCashPay;
+                to.IsBindGroup=business.IsBindGroup;
+                to.BussGroupId=business.BussGroupId;
+                to.GroupBusiName = business.GroupBusiName;               
+                to.BussGroupAmount=business.BussGroupAmount;
+                to.BussGroupIsAllowOverdraft=business.BussGroupIsAllowOverdraft;
+                to.BalancePrice = business.BalancePrice;
+                
             }
             if (ConfigSettings.Instance.IsGroupPush)
             {
@@ -379,18 +388,52 @@ namespace Ets.Service.Provider.Order
                     return PubOrderStatus.InvalidPubOrder;
                 }
 
-                // 更新商户余额、可提现余额                        
-                iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
-                                                        {
-                                                            BusinessId = order.businessId.Value,
-                                                            Amount = -order.SettleMoney,
-                                                            Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
-                                                            RecordType = BusinessBalanceRecordRecordType.PublishOrder.GetHashCode(),
-                                                            Operator = order.BusinessName,
-                                                            WithwardId = result,
-                                                            RelationNo = order.OrderNo,
-                                                            Remark = "配送费支出金额"
-                                                        });
+                //// 更新商户余额、可提现余额                        
+                //iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
+                //                                        {
+                //                                            BusinessId = order.businessId.Value,
+                //                                            Amount = -order.SettleMoney,
+                //                                            Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
+                //                                            RecordType = BusinessBalanceRecordRecordType.PublishOrder.GetHashCode(),
+                //                                            Operator = order.BusinessName,
+                //                                            WithwardId = result,
+                //                                            RelationNo = order.OrderNo,
+                //                                            Remark = "配送费支出金额"
+                //                                        });
+
+                if (order.SettleMoney > order.BalancePrice && order.IsBindGroup==1)
+                {
+                     // 更新集团余额
+                    iGroupBusinessProvider.UpdateGBalance(new GroupBusinessPM()
+                                                            {
+                                                                GroupId = order.GroupId,
+                                                                Amount = -order.SettleMoney,
+                                                                Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
+                                                                RecordType = BusinessBalanceRecordRecordType.PublishOrder.GetHashCode(),
+                                                                Operator = order.GroupBusiName,
+                                                                WithwardId = result,
+                                                                RelationNo = order.OrderNo,
+                                                                Remark = "配送费支出金额"
+                                                            });
+
+                    
+                }
+                else
+                {
+                    // 更新商户余额、可提现余额                        
+                    iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
+                                                            {
+                                                                BusinessId = order.businessId.Value,
+                                                                Amount = -order.SettleMoney,
+                                                                Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
+                                                                RecordType = BusinessBalanceRecordRecordType.PublishOrder.GetHashCode(),
+                                                                Operator = order.BusinessName,
+                                                                WithwardId = result,
+                                                                RelationNo = order.OrderNo,
+                                                                Remark = "配送费支出金额"
+                                                            });
+                }        
+                
 
                 if (order.Adjustment > 0)
                 {
