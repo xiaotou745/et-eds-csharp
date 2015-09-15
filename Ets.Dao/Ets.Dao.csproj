@@ -41,6 +41,8 @@
   <ItemGroup>
     <Compile Include="Account\AccountDao.cs" />
     <Compile Include="Account\AccountLoginLogDao.cs" />
+    <Compile Include="Authority\ClienterLoginLogDao.cs" />
+    <Compile Include="Authority\BusinessLoginLogDao.cs" />
     <Compile Include="Business\BusinessClienterRelationDao.cs" />
     <Compile Include="Business\GroupBusinessDao.cs" />
     <Compile Include="Clienter\CrossShopStatisticLogDao.cs" />

@@ -4,30 +4,29 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ets.Model.ParameterModel.Clienter
+namespace Ets.Model.DomainModel.Authority
 {
     /// <summary>
-    /// 登录实体
+    ///骑士登陆实体
     /// </summary>
-    public class LoginCPM
+    public class ClienterLoginLogDM
     {
         /// <summary>
-        /// 手机号md5
+        /// Id
         /// </summary>
-        //public string aesPhoneNo { get; set; }
+        public long Id { get; set; }
         /// <summary>
-        /// 登录手机号
+        /// 骑士Id
         /// </summary>
-        public string phoneNo { get; set; }
-
+        public int? ClienterId { get; set; }
         /// <summary>
-        /// 密码
+        /// 电话
         /// </summary>
-        public string passWord { get; set; }
-
-        //ssid
+        public string PhoneNo { get; set; }
+        /// <summary>
+        /// SSID
+        /// </summary>
         public string Ssid { get; set; }
-
         /// <summary>
         /// 手机操作系统android,ios
         /// </summary>
@@ -44,5 +43,18 @@ namespace Ets.Model.ParameterModel.Clienter
         /// App版本
         /// </summary>
         public string AppVersion { get; set; }
+        /// <summary>
+        /// 创建时间
+        /// </summary>
+        public DateTime CreateTime { get; set; }
+        /// <summary>
+        /// 描述信息
+        /// </summary>
+        public string Description { get; set; }
+        /// <summary>
+        /// 是否成功   1 成功   0失败
+        /// </summary>
+        public int IsSuccess { get; set; }
+
     }
 }
