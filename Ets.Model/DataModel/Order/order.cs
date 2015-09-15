@@ -250,5 +250,31 @@ namespace Ets.Model.DataModel.Order
         /// 是否及时上传坐标
         /// </summary>
         public int IsPubDateTimely { get; set; }
+
+        public decimal BalancePrice { get; set; }
+
+        /// <summary>
+        /// 是否绑定集团
+        /// </summary>
+        public int IsBindGroup { get; set; }
+
+        /// <summary>
+        /// 集团Id
+        /// </summary>
+        public int BussGroupId { get; set; }
+
+        /// <summary>
+        /// 集团名称
+        /// </summary>
+        public string GroupBusiName { get; set; }
+        /// <summary>
+        /// 集团金额
+        /// </summary>
+        public decimal BussGroupAmount { get; set; }
+
+        /// <summary>
+        /// 是否允许集团透支
+        /// </summary>
+        public int BussGroupIsAllowOverdraft { get; set; }   
     }
 }
