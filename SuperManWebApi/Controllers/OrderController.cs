@@ -195,7 +195,7 @@ namespace SuperManWebApi.Controllers
             #region 验证
             if (model.orderId <= 0) //订单号码非空验证
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderEmpty);
-            if (model.userId <= 0) //用户id验证
+            if (model.ClienterId <= 0) //用户id验证
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.userIdEmpty);
             if (model.businessId <= 0)  //商户Id
             {
@@ -222,7 +222,7 @@ namespace SuperManWebApi.Controllers
         [Token]
         public ResultModel<FinishOrderResultModel> Complete(OrderCompleteModel parModel)
         {
-            if (parModel.userId <= 0)  //用户id非空验证 骑士Id
+            if (parModel.ClienterId <= 0)  //用户id非空验证 骑士Id
                 return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.UserIdEmpty);
             if (string.IsNullOrEmpty(parModel.orderNo)) //订单号码非空验证
                 return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.OrderEmpty);
