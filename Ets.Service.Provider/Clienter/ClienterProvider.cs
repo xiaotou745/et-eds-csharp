@@ -993,7 +993,7 @@ namespace Ets.Service.Provider.Clienter
         {
             //int userId, string orderNo, int bussinessId, float grabLongitude, float grabLatitude
             ///TODO 骑士是否有资格抢单放前面
-            ClienterModel clienterModel = new Ets.Dao.Clienter.ClienterDao().GetUserInfoByUserId(parmodel.userId);
+            ClienterModel clienterModel = new Ets.Dao.Clienter.ClienterDao().GetUserInfoByUserId(parmodel.ClienterId);
 
             if (clienterModel.Status != 1)  //判断 该骑士 是否 有资格 抢单 wc
             {
@@ -1002,7 +1002,7 @@ namespace Ets.Service.Provider.Clienter
             //这里可以优化，去掉提前验证用户信息，当失败的时候在去验证 
             OrderListModel model = new OrderListModel()
             {
-                clienterId = parmodel.userId,
+                clienterId = parmodel.ClienterId,
                 ClienterTrueName = clienterModel.TrueName,
                 OrderNo = parmodel.orderNo,
                 DeliveryCompanyID = parmodel.DeliveryCompanyID//物流公司ID
