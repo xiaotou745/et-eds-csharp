@@ -185,7 +185,7 @@ namespace Ets.Dao.MenuSet
         /// <returns></returns>
         public List<AuthorityMenuModel> GetAllListMenu()
         {
-            string sql = @" SELECT Id,ParId,MenuName,BeLock,Url,IsButton FROM AuthorityMenuClass with(nolock) where BeLock=CAST(0 as bit) ";
+            string sql = @" SELECT Id,ParId,MenuName,BeLock,Url,JavaUrl,IsButton FROM AuthorityMenuClass with(nolock) where BeLock=CAST(0 as bit) ";
             var dt = DbHelper.ExecuteDataset(SuperMan_Read, sql).Tables[0];
             return (List<AuthorityMenuModel>)ConvertDataTableList<AuthorityMenuModel>(dt);
         }

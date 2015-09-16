@@ -453,49 +453,40 @@ namespace Ets.Service.Provider.Pay
                 //如果状态为空或状态不等于同步成功和异步成功就认为是错误
 
                 #region 回调完成状态
-                if (notify.return_code == "SUCCESS")
+                if (notify.return_code.ToUpper() == "SUCCESS")
                 {
-                    string orderNo = notify.order_no;//商家ID_充值单ID
-
-                    ETS.Library.Pay.BWxPay.WxPayData res = new ETS.Library.Pay.BWxPay.WxPayData();
-                    res.SetValue("return_code", "SUCCESS");
-                    res.SetValue("return_msg", "订单成功");
-
-                    if (new BusinessRechargeDao().Check(notify.order_no))
-                    {
-                        //如果存在就退出，这里写的很扯，因为支付宝要的是success不带双引号.
-                        //但WEBAPI直接返回时带引号，所以现在要去库里查一次。
-                        //回头找到原因一定要改
-                        HttpContext.Current.Response.Write(res.ToXml());
-                        HttpContext.Current.Response.End();
-                        return;
-                    }
-
+                    string orderNo = notify.order_no;//订单号
                     int businessid = ParseHelper.ToInt(notify.attach);
-                    //string orderno = ordermsg.Split('_')[1];
-                    //Ets.Model.DataModel.Business.BusinessRechargeModel businessRechargeModel = new Ets.Model.DataModel.Business.BusinessRechargeModel()
-                    //{
-                    //    BusinessId = businessid,
-                    //    OrderNo = orderno,
-                    //    OriginalOrderNo = notify.order_no,//第三方的订单号
-                    //    PayAmount = ParseHelper.ToDecimal(ParseHelper.ToInt(notify.total_fee) / 100),
-                    //    PayBy = notify.openid,
-                    //    PayStatus = 1,
-                    //    PayType = PayTypeEnum.WeiXin.GetHashCode()
-                    //};
-                    //string msg = BusinessRechargeSusess(businessRechargeModel);
-                    //if (msg.Equals("success"))
-                    //{
-                    //    HttpContext.Current.Response.Write("<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>");
-                    //    HttpContext.Current.Response.End();
-                    //    return;
-                    //}
                     if (string.IsNullOrEmpty(notify.order_no))
                     {
                         string fail = string.Concat("商家微信充值错误啦orderNo：", notify.order_no, "businessid:", businessid);
                         LogHelper.LogWriter(fail);
                         return;
                     }
+                    #region 支付宝锁
+                    //因为最后更新数据库日志时需要时间，但支付宝第二次更新状态访问过来，解决套圈问题.
+                    string key = string.Format(RedissCacheKey.AlipayLock, orderNo);
+                    var redis = new ETS.NoSql.RedisCache.RedisCache();
+                    var aliLock = ParseHelper.ToInt(redis.Get<int>(key));
+                    if (aliLock > 0)
+                    {
+                        return;
+                    }
+                    redis.Set(key, 1, new TimeSpan(0, 1, 0));
+                    #endregion
+
+                    ETS.Library.Pay.BWxPay.WxPayData res = new ETS.Library.Pay.BWxPay.WxPayData();
+                    res.SetValue("return_code", "SUCCESS");
+                    res.SetValue("return_msg", "订单成功");
+
+                    //检查该充值单是否已经更新
+                    if (new BusinessRechargeDao().Check(notify.order_no))
+                    {
+                        HttpContext.Current.Response.Write(res.ToXml());
+                        HttpContext.Current.Response.End();
+                        return;
+                    }
+                   
                     Ets.Model.DataModel.Business.BusinessRechargeModel businessRechargeModel = new Ets.Model.DataModel.Business.BusinessRechargeModel()
                     {
                         BusinessId = businessid,
@@ -506,6 +497,7 @@ namespace Ets.Service.Provider.Pay
                         PayStatus = 1,
                         PayType = 2
                     };
+                    //写充值单
                     string result = BusinessRechargeSusess(businessRechargeModel);
                     if (result.ToLower() == "success")
                     {

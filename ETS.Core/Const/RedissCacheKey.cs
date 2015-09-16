@@ -130,6 +130,11 @@ namespace ETS.Const
         public const string CheckOrderPay = "CheckOrderPay_{0}";
 
         /// <summary>
+        /// 支付宝支付时回调时的锁
+        /// </summary>
+        public const string AlipayLock = "EDS_AlipayLock_{0}";
+
+        /// <summary>
         /// 商户对应骑士
         /// </summary>
         public const string BusinessClienter = "BusinessClienter_{0}";
@@ -172,6 +177,11 @@ namespace ETS.Const
         /// 上次订单推送服务执行时间
         /// </summary>
         public const string LastOrderPushTime = "LastOrderPushTime";
+
+        //zhaohailong，20150916
+        //java中在redis中缓存用户权限的key
+        //java中redis接口会自动给所有key添加前缀：java_20150508_
+        public const string Menu_Auth = "java_20150508_Menu_Auth_";
 
     }
 }

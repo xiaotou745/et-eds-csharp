@@ -57,7 +57,7 @@ values  (
         public bool Check(string OriginalOrderNo)
         {
             string sql = @"
-SELECT count(1) FROM dbo.BusinessRecharge(nolock) br where OriginalOrderNo=@OriginalOrderNo";
+SELECT count(1) FROM dbo.BusinessRecharge br where OriginalOrderNo=@OriginalOrderNo";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("OriginalOrderNo", DbType.String, 100).Value = OriginalOrderNo;
             return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm), 0) > 0 ? true : false;
