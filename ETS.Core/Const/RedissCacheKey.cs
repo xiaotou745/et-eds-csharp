@@ -178,5 +178,10 @@ namespace ETS.Const
         /// </summary>
         public const string LastOrderPushTime = "LastOrderPushTime";
 
+        //zhaohailong，20150916
+        //java中在redis中缓存用户权限的key
+        //java中redis接口会自动给所有key添加前缀：java_20150508_
+        public const string Menu_Auth = "java_20150508_Menu_Auth_";
+
     }
 }
