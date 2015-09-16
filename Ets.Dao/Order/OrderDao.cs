@@ -812,6 +812,7 @@ select @@IDENTITY ";
                                         ,o.[OrderCount]
                                         ,o.[CommissionRate] 
                                         ,o.[RealOrderCommission] 
+                                        ,isnull(o.GroupBusinessId,0) as GroupBusinessId
                                         ,b.[City] BusinessCity
                                         ,b.Name BusinessName
                                         ,b.PhoneNo BusinessPhoneNo
@@ -2076,7 +2077,8 @@ insert  into dbo.[order]
           BusinessGroupId,
           TimeSpan,
           MealsSettleMode,
-          BusinessReceivable
+          BusinessReceivable,
+          GroupBusinessId
         )
 values  ( @OrderNo ,
           @PickUpAddress ,
@@ -2117,7 +2119,8 @@ values  ( @OrderNo ,
           @BusinessGroupId,
           @TimeSpan,
           @MealsSettleMode,
-          @BusinessReceivable
+          @BusinessReceivable,
+          @GroupBusinessId
         )
 select @@identity";
 
@@ -2161,6 +2164,7 @@ select @@identity";
             dbParameters.AddWithValue("@TimeSpan", order.TimeSpan);
             dbParameters.AddWithValue("@MealsSettleMode", order.MealsSettleMode);
             dbParameters.AddWithValue("@BusinessReceivable", order.BusinessReceivable);
+            dbParameters.AddWithValue("@GroupBusinessId", order.GroupBusinessId);
 
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters);
             int orderId = ParseHelper.ToInt(result, 0);
@@ -2899,12 +2903,10 @@ SELECT CASE SUM(oc.PayStatus)
         /// <returns></returns>
         public order GetOrderById(int orderId, int businessId, int? status = null)
         {
-            order order = null;
-            //string sql = @" select * from [order] (nolock) where Id=@OrderId and businessId=@BusinessId";
-
+            order order = null;     
             string sql = @"select  o.Id ,
         o.OrderNo ,
-        o.SettleMoney ,
+        o.SettleMoney ,isnull(o.GroupBusinessId,0),
         b.Name BusinessName
 from    [order] o ( nolock )
         join dbo.business b ( nolock ) on o.businessId = b.Id
@@ -3502,6 +3504,7 @@ where   Id = @OrderId and FinishAll = 0";
                                         ,o.FinishAll
                                         ,o.[OrderCount]
                                         ,ISNULL(o.MealsSettleMode,0) MealsSettleMode
+                                        ,ISNULL(o.GroupBusinessId,0) GroupBusinessId            
                                         ,ISNULL(oo.IsJoinWithdraw,0) IsJoinWithdraw
                                     FROM [order] o WITH ( NOLOCK )
                                     JOIN OrderOther oo WITH (NOLOCK) ON oo.OrderId=o.Id

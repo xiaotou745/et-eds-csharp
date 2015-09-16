@@ -12,13 +12,17 @@ namespace Ets.Model.ParameterModel.Business
     public class GroupBusinessPM
     {
         /// <summary>
+        /// 门店
+        /// </summary>
+        public int BusinessId { get; set; }
+        /// <summary>
         /// 集团Id
         /// </summary>
         public int GroupId { get; set; }
         /// <summary>
         /// 流水金额
         /// </summary>
-        public decimal Amount { get; set; }
+        public decimal GroupAmount { get; set; }
         /// <summary>
         /// 流水状态(1、交易成功 2、交易中）
         /// </summary>

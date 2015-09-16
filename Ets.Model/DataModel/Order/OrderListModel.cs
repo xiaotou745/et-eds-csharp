@@ -398,6 +398,11 @@ namespace Ets.Model.DataModel.Order
         /// 商户是否有绑定骑士（0：否 1：是）
         /// </summary>
         public int IsBind { get; set; }
+
+        /// <summary>
+        /// 集团Id
+        /// </summary>
+        public int GroupBusinessId { get; set; }
         
     }
 }

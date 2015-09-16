@@ -481,22 +481,21 @@ namespace Ets.Service.Provider.Business
                     Appkey = row["Appkey"].ToString()
                 });
                 resultMode.Token = token;
-
-
-                //记录登陆日志
+         
+                    //记录登陆日志
                 businessLoginLogDao.Insert(new BusinessLoginLogDM
-                            {
-                                BusinessId= ParseHelper.ToInt(row["userId"]),
-                                PhoneNo = model.phoneNo,
-                                Ssid = model.Ssid,
-                                OperSystem = model.OperSystem,
-                                OperSystemModel = model.OperSystemModel,
-                                PhoneType = model.PhoneType,
-                                AppVersion = model.AppVersion,  
-                                Description="登陆成功",
-                                IsSuccess=1
-                            }
-                    );
+                                {
+                                    BusinessId = ParseHelper.ToInt(row["userId"]),
+                                    PhoneNo = model.phoneNo,
+                                    Ssid = model.Ssid,
+                                    OperSystem = model.OperSystem,
+                                    OperSystemModel = model.OperSystemModel,
+                                    PhoneType = model.PhoneType,
+                                    AppVersion = model.AppVersion,
+                                    Description = "登陆成功",
+                                    IsSuccess = 1
+                                }
+                        );               
 
                 //string resultStr = AESApp.AesDecrypt(JsonHelper.JsonConvertToString(resultMode));
                 return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.Success, resultMode);//BusiLoginResultModel

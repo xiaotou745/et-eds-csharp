@@ -37,14 +37,15 @@ namespace Ets.Service.Provider.Business
             groupBusinessDao.UpdateAmount(new UpdateForWithdrawPM()
             {
                 Id = groupBusinessPM.GroupId,
-                Money = groupBusinessPM.Amount
+                Money = groupBusinessPM.GroupAmount
             });
 
             //更新商户余额流水          
-            businessBalanceRecordDao.Insert(new BusinessBalanceRecord()
+            businessBalanceRecordDao.InsertGroupRecord(new BusinessBalanceRecord()
             {    
+                BusinessId=groupBusinessPM.BusinessId,
                 GroupId = groupBusinessPM.GroupId,
-                Amount = groupBusinessPM.Amount,
+                Amount = groupBusinessPM.GroupAmount,
                 Status = groupBusinessPM.Status,
                 RecordType = groupBusinessPM.RecordType,
                 Operator = groupBusinessPM.Operator,

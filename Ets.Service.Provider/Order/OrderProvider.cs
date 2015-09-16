@@ -288,13 +288,17 @@ namespace Ets.Service.Provider.Order
                 to.IsOrderChecked = business.IsOrderChecked;
                 to.IsAllowCashPay = business.IsAllowCashPay;
                 to.IsBindGroup=business.IsBindGroup;
-                to.BussGroupId=business.BussGroupId;
+                //to.BussGroupId=business.BussGroupId;
                 to.GroupBusiName = business.GroupBusiName;               
                 to.BussGroupAmount=business.BussGroupAmount;
                 to.BussGroupIsAllowOverdraft=business.BussGroupIsAllowOverdraft;
-                to.BalancePrice = business.BalancePrice;
-                
+                to.BalancePrice = business.BalancePrice;                
             }
+            if (to.SettleMoney > to.BalancePrice && to.IsBindGroup == 1)
+            {
+                to.GroupBusinessId = business.BussGroupId;
+            }
+
             if (ConfigSettings.Instance.IsGroupPush)
             {
                 if (busiOrderInfoModel.OrderFrom != 0)
@@ -309,7 +313,6 @@ namespace Ets.Service.Provider.Order
             }
             to.Remark = busiOrderInfoModel.Remark;
             to.ReceviceName = string.IsNullOrWhiteSpace(busiOrderInfoModel.receviceName) ? "" : busiOrderInfoModel.receviceName;
-
             to.RecevicePhoneNo = busiOrderInfoModel.recevicePhone;
             to.ReceviceAddress = busiOrderInfoModel.receviceAddress;
             to.IsPay = busiOrderInfoModel.IsPay;
@@ -406,8 +409,9 @@ namespace Ets.Service.Provider.Order
                      // 更新集团余额
                     iGroupBusinessProvider.UpdateGBalance(new GroupBusinessPM()
                                                             {
-                                                                GroupId = order.GroupId,
-                                                                Amount = -order.SettleMoney,
+                                                                BusinessId = order.businessId.Value,
+                                                                GroupId = order.GroupBusinessId,
+                                                                GroupAmount = -order.SettleMoney,
                                                                 Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
                                                                 RecordType = BusinessBalanceRecordRecordType.PublishOrder.GetHashCode(),
                                                                 Operator = order.GroupBusiName,
@@ -415,7 +419,6 @@ namespace Ets.Service.Provider.Order
                                                                 RelationNo = order.OrderNo,
                                                                 Remark = "配送费支出金额"
                                                             });
-
                     
                 }
                 else
@@ -1322,19 +1325,39 @@ namespace Ets.Service.Provider.Order
 
                     }
 
-                    // 更新商户余额、可提现余额                        
-                    iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
-                                                            {
-                                                                BusinessId = orderModel.businessId,
-                                                                Amount = orderModel.SettleMoney,
-                                                                Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
-                                                                RecordType = BusinessBalanceRecordRecordType.CancelOrder.GetHashCode(),
-                                                                Operator = orderModel.OptUserName,
-                                                                WithwardId = orderModel.Id,
-                                                                RelationNo = orderModel.OrderNo,
-                                                                Remark = orderModel.Remark
-                                                            });
+                    if (orderModel.GroupBusinessId > 0)
+                    {
+                        // 更新集团余额
+                        iGroupBusinessProvider.UpdateGBalance(new GroupBusinessPM()
+                        {
+                            BusinessId = orderModel.businessId,//门店Id
+                            GroupId = orderModel.GroupBusinessId,
+                            GroupAmount =orderModel.SettleMoney,
+                            Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
+                            RecordType = BusinessBalanceRecordRecordType.CancelOrder.GetHashCode(),
+                            Operator = orderModel.OptUserName,
+                            WithwardId = orderModel.Id,
+                            RelationNo = orderModel.OrderNo,
+                            Remark = orderModel.Remark
+                        });
+                    }
+                    else
+                    {
+                        // 更新商户余额、可提现余额                        
+                        iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
+                                                                {
+                                                                    BusinessId = orderModel.businessId,
+                                                                    Amount = orderModel.SettleMoney,
+                                                                    Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
+                                                                    RecordType = BusinessBalanceRecordRecordType.CancelOrder.GetHashCode(),
+                                                                    Operator = orderModel.OptUserName,
+                                                                    WithwardId = orderModel.Id,
+                                                                    RelationNo = orderModel.OrderNo,
+                                                                    Remark = orderModel.Remark
+                                                                });
 
+                    }
+               
                     dealResultInfo.DealFlag = true;
                     dealResultInfo.DealMsg = "订单取消成功！";
                     tran.Complete();
@@ -2000,18 +2023,38 @@ namespace Ets.Service.Provider.Order
                 //int result = orderDao.CancelOrderStatus(paramodel.OrderNo, OrderStatus.Status3.GetHashCode(), "商家取消订单", OrderStatus.Status0.GetHashCode(), order.SettleMoney);
                 if (result > 0 && blCancelTime)
                 {
-                    // 更新商户余额、可提现余额                        
-                    iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
-                                                    {
-                                                        BusinessId = paramodel.BusinessId,//商户Id
-                                                        Amount = order.SettleMoney,//流水金额  结算金额
-                                                        Status = BusinessBalanceRecordStatus.Success.GetHashCode(), //流水状态(1、交易成功 2、交易中）
-                                                        RecordType = BusinessBalanceRecordRecordType.CancelOrder.GetHashCode(),
-                                                        Operator = string.Format("商家:{0}", paramodel.BusinessId),
-                                                        WithwardId = paramodel.OrderId,
-                                                        RelationNo = paramodel.OrderNo,
-                                                        Remark = "商户取消订单"
-                                                    });
+                    if (order.GroupBusinessId > 0)
+                    {
+                        // 更新集团余额
+                        iGroupBusinessProvider.UpdateGBalance(new GroupBusinessPM()
+                            {
+                                BusinessId = paramodel.BusinessId,//商户Id
+                                GroupId = order.GroupBusinessId,
+                                GroupAmount = order.SettleMoney,
+                                Status = BusinessBalanceRecordStatus.Success.GetHashCode(), //流水状态(1、交易成功 2、交易中）
+                                RecordType = BusinessBalanceRecordRecordType.CancelOrder.GetHashCode(),
+                                Operator = string.Format("门店:{0}", paramodel.BusinessId),
+                                WithwardId = paramodel.OrderId,
+                                RelationNo = order.OrderNo,
+                                Remark = "商户取消订单"
+                            });
+                    }
+                    else
+                    {
+                        // 更新商户余额、可提现余额                        
+                        iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
+                                                        {
+                                                            BusinessId = paramodel.BusinessId,//商户Id
+                                                            Amount = order.SettleMoney,//流水金额  结算金额
+                                                            Status = BusinessBalanceRecordStatus.Success.GetHashCode(), //流水状态(1、交易成功 2、交易中）
+                                                            RecordType = BusinessBalanceRecordRecordType.CancelOrder.GetHashCode(),
+                                                            Operator = string.Format("门店:{0}", paramodel.BusinessId),
+                                                            WithwardId = paramodel.OrderId,
+                                                            RelationNo = paramodel.OrderNo,
+                                                            Remark = "商户取消订单"
+                                                        });
+                    }
+               
                     tran.Complete();
                 }
                 else
@@ -2297,19 +2340,39 @@ namespace Ets.Service.Provider.Order
                             OrderCommission = orderListModel.OrderCommission
                         }))
                         {
-                            //返回商家应收
-                            if (orderDao.OrderCancelReturnBusiness(new OrderListModel()
+                            if (orderListModel.GroupBusinessId > 0)
                             {
-                                SettleMoney = orderListModel.SettleMoney,
-                                OptUserName = "system",
-                                Id = orderListModel.Id,
-                                OrderNo = orderListModel.OrderNo,
-                                Remark = "E代送客服处理超时未完成订单",
-                                businessId = orderListModel.businessId
-                            }))
-                            {
-                                tran.Complete();
+                                // 更新集团余额
+                                iGroupBusinessProvider.UpdateGBalance(new GroupBusinessPM()
+                                {
+                                    BusinessId = orderListModel.businessId,//商户Id
+                                    GroupId = orderListModel.GroupBusinessId,
+                                    GroupAmount = orderListModel.SettleMoney,
+                                    Status = BusinessBalanceRecordStatus.Success.GetHashCode(), //流水状态(1、交易成功 2、交易中）
+                                    RecordType = BusinessBalanceRecordRecordType.CancelOrder.GetHashCode(),
+                                    Operator = "system",
+                                    WithwardId = orderListModel.Id,
+                                    RelationNo = orderListModel.OrderNo,
+                                    Remark = "E代送客服处理超时未完成订单"
+                                });
                             }
+                            else
+                            {
+                                //返回商家应收
+                                if (orderDao.OrderCancelReturnBusiness(new OrderListModel()
+                                {
+                                    SettleMoney = orderListModel.SettleMoney,
+                                    OptUserName = "system",
+                                    Id = orderListModel.Id,
+                                    OrderNo = orderListModel.OrderNo,
+                                    Remark = "E代送客服处理超时未完成订单",
+                                    businessId = orderListModel.businessId
+                                }))
+                                {
+                                    tran.Complete();
+                                }
+                            }
+                        
                         }
                     }
                 }
