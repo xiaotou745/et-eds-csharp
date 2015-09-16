@@ -137,6 +137,10 @@ namespace Ets.Model.DataModel.Finance
         /// 手机号
         /// </summary>
         public string PhoneNo { get; set; }
+        /// <summary>
+        /// 实付金额
+        /// </summary>
+        public decimal PaidAmount { get; set; }
     }
 
 }

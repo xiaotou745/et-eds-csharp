@@ -313,6 +313,26 @@ namespace Ets.Service.Provider.Business
                         return false;
                     }
                 }
+                if (ParseHelper.ToInt(globalConfigModel.YeepayWithdrawCommission) >= 0)
+                {
+                    globalConfig.KeyName = "YeepayWithdrawCommission";
+                    globalConfig.Value = globalConfigModel.YeepayWithdrawCommission;
+                    reg = businessGroupDao.UpdateGlobalConfig(globalConfig);
+                    if (!reg)
+                    {
+                        return false;
+                    }
+                }
+                if (ParseHelper.ToInt(globalConfigModel.AlipayWithdrawCommission) >= 0)
+                {
+                    globalConfig.KeyName = "AlipayWithdrawCommission";
+                    globalConfig.Value = globalConfigModel.AlipayWithdrawCommission;
+                    reg = businessGroupDao.UpdateGlobalConfig(globalConfig);
+                    if (!reg)
+                    {
+                        return false;
+                    }
+                }
                 tran.Complete();
                 DeleteGlobalConfigRedisByGroupId(globalConfigModel.GroupId);
                 return true;

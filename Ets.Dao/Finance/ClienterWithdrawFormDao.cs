@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ETS.Dao;
 using ETS.Data.Core;
+using ETS.Enums;
 using ETS.Extension;
 using Ets.Model.DataModel.Finance;
 using Ets.Model.ParameterModel.Finance;
@@ -127,7 +128,7 @@ select  Id,WithwardNo,ClienterId,BalancePrice,AllowWithdrawPrice,Status,Amount,B
 Auditor,AuditTime,AuditFailedReason,Payer,PayTime,PayFailedReason,HandChargeThreshold,HandCharge,HandChargeOutlay 
 from  ClienterWithdrawForm (nolock)
 where  Id=@Id ";
-            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            var dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Id", id);
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
             if (DataTableHelper.CheckDt(dt))
@@ -188,8 +189,10 @@ SELECT ypr.RequestId,cwf.Id,cwf.Amount,
   ypr.Ledgerno,CustomerNumber
    FROM 
  dbo.ClienterWithdrawForm cwf (nolock)
- join dbo.YeePayRecord ypr(nolock) on cwf.Id=ypr.WithdrawId and TransferType=1 and ypr.UserType=0 --骑士
+ join dbo.YeePayRecord ypr(nolock) on cwf.Id=ypr.WithdrawId and TransferType=1 and ypr.UserType=0 and cwf.AccountType=@AccountType
   where cwf.Status=20 ";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@AccountType", ClienterFinanceAccountType.WangYin.GetHashCode());//账号类型：(1网银 2支付宝 3微信 4财付通 5百度钱包）
             DataTable dt= DbHelper.ExecuteDataTable(SuperMan_Read,sql);
             if (!dt.HasData())
             {

@@ -1637,7 +1637,8 @@ namespace Ets.Service.Provider.Pay
                         string key = string.Format(RedissCacheKey.Ets_Withdraw_Deal_C, item.WithwardId);
                         var redis = new ETS.NoSql.RedisCache.RedisCache();
                         var dealStatus = ParseHelper.ToInt(redis.Get<int>(key));
-                        var amount = item.HandChargeOutlay == 0 ? item.Amount : item.Amount + item.HandCharge;//转账及提现金额（计算手续费）
+                        //var amount = item.HandChargeOutlay == 0 ? item.Amount : item.Amount + item.HandCharge;//转账及提现金额（计算手续费）
+                        var amount = ParseHelper.ToDecimal(item.PaidAmount); //转账及提现金额（新逻辑为实付金额）
 
                         #endregion
 

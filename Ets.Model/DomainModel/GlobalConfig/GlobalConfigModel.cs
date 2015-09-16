@@ -176,13 +176,21 @@ namespace Ets.Model.DomainModel.GlobalConfig
         /// </summary>
         public string ClienterWithdrawCommissionAccordingMoney { get; set; }
         /// <summary>
-        /// 提现扣除手续费数值
+        /// 提现扣除骑士/商户手续费
         /// </summary>
         public string WithdrawCommission { get; set; }
         /// <summary>
         /// 易宝账户活跃时间配置
         /// </summary>
         public string YeeAccountActiveTime { get; set; }
+        /// <summary>
+        /// 易宝实际手续费
+        /// </summary>
+        public string YeepayWithdrawCommission { get; set; }
+        /// <summary>
+        /// 支付宝实际手续费
+        /// </summary>
+        public string AlipayWithdrawCommission { get; set; }
 
         
     }
