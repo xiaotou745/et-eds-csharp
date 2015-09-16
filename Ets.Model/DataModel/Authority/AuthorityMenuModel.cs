@@ -29,6 +29,7 @@
         /// 是否按钮
         /// </summary>
         public bool IsButton { get; set; }
+        public string JavaUrl { get; set; }
 
     }
 }

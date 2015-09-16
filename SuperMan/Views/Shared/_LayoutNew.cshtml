@@ -11,6 +11,7 @@
     List<AuthorityMenuModel> menus = iauthority.GetAllMenuList(); //所有菜单权限
     IList<AuthorityMenuModel> mymenus = new Ets.Service.Provider.Account.AccountProvider().GetAuth(UserContext.Current.Id);
     int pwdtime = new Ets.Service.Provider.Account.AccountProvider().PasswordTime(UserContext.Current.Id);
+    string javaAdminUrl=ConfigSettings.Instance.JavaAdminUrl;
 }
 <!DOCTYPE html>
 
@@ -108,7 +109,11 @@
                                                     {
                                                         foreach(var cMenu in childMenus)
                                                         {
-                                                            <li><a href="@cMenu.Url" data-url-def="#">@cMenu.MenuName</a></li>
+                                                            if(string.IsNullOrEmpty(cMenu.Url)){
+                                                                  <li><a href="@(javaAdminUrl+cMenu.JavaUrl)" data-url-def="#">@cMenu.MenuName</a></li>
+                                                            }else{
+                                                                 <li><a href="@cMenu.Url" data-url-def="#">@cMenu.MenuName</a></li>
+                                                            }
                                                         }
                                                     }
                                                 }
