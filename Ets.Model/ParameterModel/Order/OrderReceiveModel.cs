@@ -8,7 +8,7 @@ namespace Ets.Model.ParameterModel.Order
 {
     public class OrderReceiveModel
     {
-        public int userId { get; set; }
+        public int ClienterId { get; set; }
 
         public int businessId { get; set; }
 

@@ -47,6 +47,8 @@ using Ets.Service.Provider.Business;
 using Ets.Model.ParameterModel.Common;
 using ETS.Security;
 using ETS;
+using Ets.Dao.Authority;
+using Ets.Model.DomainModel.Authority;
 namespace Ets.Service.Provider.Clienter
 {
     public class ClienterProvider : IClienterProvider
@@ -62,11 +64,11 @@ namespace Ets.Service.Provider.Clienter
         readonly BusinessClienterRelationDao businessClienterDao = new BusinessClienterRelationDao();
         readonly BusinessBalanceRecordDao businessBalanceRecordDao = new BusinessBalanceRecordDao();
         readonly DeliveryCompanyProvider deliveryCompanyProvider = new DeliveryCompanyProvider();
-        readonly IAreaProvider iAreaProvider = new AreaProvider();
-        //readonly IOrderProvider iOrderProvider = new OrderProvider();
+        readonly IAreaProvider iAreaProvider = new AreaProvider();        
         readonly IOrderOtherProvider iOrderOtherProvider = new OrderOtherProvider();
         readonly ITokenProvider iTokenProvider = new TokenProvider();
         private IBusinessProvider iBusinessProvider = new BusinessProvider();
+        readonly ClienterLoginLogDao clienterLoginLogDao = new ClienterLoginLogDao();
 
         /// <summary>
         /// 骑士上下班功能 add by caoheyang 20150312
@@ -246,6 +248,20 @@ namespace Ets.Service.Provider.Clienter
                    });
                 resultModel.Token = token;
                 //string resultStr = AESApp.AesDecrypt(JsonHelper.JsonConvertToString(resultModel));
+                //记录登陆日志
+                clienterLoginLogDao.Insert(new ClienterLoginLogDM
+                                        {
+                                            ClienterId= resultModel.userId,
+                                            PhoneNo = model.phoneNo,
+                                            Ssid = model.Ssid,
+                                            OperSystem = model.OperSystem,
+                                            OperSystemModel = model.OperSystemModel,
+                                            PhoneType = model.PhoneType,
+                                            AppVersion = model.AppVersion,
+                                            Description = "登陆成功",
+                                            IsSuccess = 1
+                                        }
+                    );
                 return ResultModel<ClienterLoginResultModel>.Conclude(LoginModelStatus.Success, resultModel);
             }
             catch (Exception ex)
@@ -977,7 +993,7 @@ namespace Ets.Service.Provider.Clienter
         {
             //int userId, string orderNo, int bussinessId, float grabLongitude, float grabLatitude
             ///TODO 骑士是否有资格抢单放前面
-            ClienterModel clienterModel = new Ets.Dao.Clienter.ClienterDao().GetUserInfoByUserId(parmodel.userId);
+            ClienterModel clienterModel = new Ets.Dao.Clienter.ClienterDao().GetUserInfoByUserId(parmodel.ClienterId);
 
             if (clienterModel.Status != 1)  //判断 该骑士 是否 有资格 抢单 wc
             {
@@ -986,7 +1002,7 @@ namespace Ets.Service.Provider.Clienter
             //这里可以优化，去掉提前验证用户信息，当失败的时候在去验证 
             OrderListModel model = new OrderListModel()
             {
-                clienterId = parmodel.userId,
+                clienterId = parmodel.ClienterId,
                 ClienterTrueName = clienterModel.TrueName,
                 OrderNo = parmodel.orderNo,
                 DeliveryCompanyID = parmodel.DeliveryCompanyID//物流公司ID

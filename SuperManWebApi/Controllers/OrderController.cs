@@ -195,7 +195,7 @@ namespace SuperManWebApi.Controllers
             #region 验证
             if (model.orderId <= 0) //订单号码非空验证
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.OrderEmpty);
-            if (model.userId <= 0) //用户id验证
+            if (model.ClienterId <= 0) //用户id验证
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.userIdEmpty);
             if (model.businessId <= 0)  //商户Id
             {
@@ -222,7 +222,7 @@ namespace SuperManWebApi.Controllers
         [Token]
         public ResultModel<FinishOrderResultModel> Complete(OrderCompleteModel parModel)
         {
-            if (parModel.userId <= 0)  //用户id非空验证 骑士Id
+            if (parModel.ClienterId <= 0)  //用户id非空验证 骑士Id
                 return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.UserIdEmpty);
             if (string.IsNullOrEmpty(parModel.orderNo)) //订单号码非空验证
                 return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.OrderEmpty);
@@ -429,20 +429,29 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.CountIsNotEqual);
             }
-            BusListResultModel business = null;
-            //= iBusinessProvider.GetBusiness(model.userId)
-
+            BusListResultModel business = null;        
             order = iOrderProvider.TranslateOrder(model, out business);
 
             if (business == null) //如果商户不允许可透支发单，验证余额是否满足结算费用，如果不满足，提示：“您的余额不足，请及时充值!”
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.BusinessEmpty);  //未取到商户信息
             }
-            if (buStatus.IsAllowOverdraft == 0) //0不允许透支
+            //if (buStatus.IsAllowOverdraft == 0) //0不允许透支
+            //{
+            //    if (business.BalancePrice < order.SettleMoney)
+            //    {
+            //        return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.BusiBalancePriceLack);
+            //    }
+            //}
+            if (order.SettleMoney > business.BalancePrice)
             {
-                if (business.BalancePrice < order.SettleMoney)
+                if (order.IsBindGroup == 1 &&  business.BussGroupIsAllowOverdraft==0 && order.SettleMoney > business.BussGroupAmount )
+                {                  
+                   return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.BusiBalancePriceLack);                
+                }
+                else if (order.IsBindGroup == 0 && buStatus.IsAllowOverdraft == 0)
                 {
-                    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.BusiBalancePriceLack);
+                    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.BusiBalancePriceLack);                
                 }
             }
             return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.VerificationSuccess);

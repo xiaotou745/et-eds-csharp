@@ -72,6 +72,7 @@
     <Compile Include="DataModel\Authority\AccountCityRelation.cs" />
     <Compile Include="DataModel\Authority\AccountDcRelation.cs" />
     <Compile Include="DataModel\Business\BusiModifyResultModelDM.cs" />
+    <Compile Include="DataModel\Business\GroupBusinessModel.cs" />
     <Compile Include="DataModel\Business\BusinessClienterRelation.cs" />
     <Compile Include="DataModel\Business\BusinessCommissionDM.cs" />
     <Compile Include="DataModel\Business\BusinessExpressRelation.cs" />
@@ -125,6 +126,8 @@
     <Compile Include="DataModel\Order\OrderSubsidiesLog.cs" />
     <Compile Include="DataModel\YeePay\YeePayRunningAccountModel.cs" />
     <Compile Include="DomainModel\Authority\AccountDCRelationModel.cs" />
+    <Compile Include="DomainModel\Authority\ClienterLoginLogDM.cs" />
+    <Compile Include="DomainModel\Authority\BusinessLoginLogDM.cs" />
     <Compile Include="DomainModel\Business\BusinessAuditModel.cs" />
     <Compile Include="DomainModel\Business\BusinessCommissionExcel.cs" />
     <Compile Include="DomainModel\Business\BusinessExpressRelationModel.cs" />
@@ -196,6 +199,7 @@
     <Compile Include="ParameterModel\Business\BusiDistribInfoPM.cs" />
     <Compile Include="ParameterModel\Business\BusiDistribSubsidyResultModel.cs" />
     <Compile Include="ParameterModel\Business\BusinessCommissionSearchCriteria.cs" />
+    <Compile Include="ParameterModel\Business\GroupBusinessPM.cs" />
     <Compile Include="ParameterModel\Business\BusinessPushLocaltionPM.cs" />
     <Compile Include="ParameterModel\Business\BusinessRechargeModel.cs" />
     <Compile Include="ParameterModel\AliPay\PayModel.cs" />

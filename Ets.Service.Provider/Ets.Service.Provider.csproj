@@ -62,7 +62,10 @@
     <Compile Include="Account\AccountLoginLogProvider.cs" />
     <Compile Include="Account\AccountProvider.cs" />
     <Compile Include="Authority\AuthorityMenuProvider.cs" />
+    <Compile Include="Authority\BusinessLoginLogProvider.cs" />
+    <Compile Include="Authority\ClienterLoginLogProvider.cs" />
     <Compile Include="Business\BusinessClienterRelationProvider.cs" />
+    <Compile Include="Business\GroupBusinessProvider.cs" />
     <Compile Include="Clienter\ClienterLocationProvider.cs" />
     <Compile Include="Clienter\ClienterProvider.cs" />
     <Compile Include="Clienter\CrossShopStatisticLogProvider.cs" />

@@ -8,7 +8,7 @@ namespace Ets.Model.ParameterModel.Order
 {
     public class OrderCompleteModel
     {
-        public int userId { get; set; }
+        public int ClienterId { get; set; }
 
         public string orderNo { get; set; }
         public string pickupCode { get; set; }

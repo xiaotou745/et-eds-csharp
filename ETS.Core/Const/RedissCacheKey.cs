@@ -130,6 +130,11 @@ namespace ETS.Const
         public const string CheckOrderPay = "CheckOrderPay_{0}";
 
         /// <summary>
+        /// 支付宝支付时回调时的锁
+        /// </summary>
+        public const string AlipayLock = "EDS_AlipayLock_{0}";
+
+        /// <summary>
         /// 商户对应骑士
         /// </summary>
         public const string BusinessClienter = "BusinessClienter_{0}";
