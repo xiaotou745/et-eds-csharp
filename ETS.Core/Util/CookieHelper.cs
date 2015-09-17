@@ -13,7 +13,7 @@ namespace ETS.Util
     public class CookieHelper
     {
         //Cookie的主域
-        private const string CookieHost = "edaisong.com.cn";
+        private const string CookieHost = ".eds.com";
 
         /// <summary>
         /// 读取指定Cookie
@@ -42,7 +42,7 @@ namespace ETS.Util
             HttpCookie cookie = new HttpCookie(cookieName);
             if (HttpContext.Current.Request.Url.Host.ToLower().Contains(CookieHost))
             {
-                cookie.Domain = "." + CookieHost;
+                cookie.Domain = CookieHost;
             }
             cookie.Expires = expires;
             cookie.Value = data;
