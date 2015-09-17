@@ -5,6 +5,7 @@ using Ets.Dao.GlobalConfig;
 using Ets.Dao.Message;
 using Ets.Dao.User;
 using Ets.Model.Common;
+using Ets.Model.DataModel.Tag;
 using Ets.Model.DomainModel.Business;
 using ETS.Data.PageData;
 using System;
@@ -1308,7 +1309,6 @@ namespace Ets.Service.Provider.Business
             dealResultInfo.DealMsg = "未获取到商户物流公司配置信息！";
             return dealResultInfo;
         }
-
 
 
         /// <summary>
