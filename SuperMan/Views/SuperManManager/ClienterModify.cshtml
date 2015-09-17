@@ -1,4 +1,5 @@
-﻿@using ETS.Util
+﻿@using Ets.Model.DataModel.Tag
+@using ETS.Util
 @model Ets.Model.DomainModel.Clienter.ClienterDetailModel
 @{
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
@@ -40,6 +41,7 @@
                 <label>所属物流公司：</label>
                 @Html.DropDownList("deliveryCompany", new SelectList(ViewBag.deliveryCompanyList, "Id", "DeliveryCompanyName", Model.DeliveryCompanyId), "-请选择-", new { style = "width:167px" })
             </div>
+
         </div>
         @{
             var originSize = "_0_0";
@@ -61,16 +63,39 @@
             店主手持身份证照片<a id="showBigBusiImage" href="@PicHost@bigFileName" target="_blank" style="margin-left: 15px">查看大图</a>
         </div>
         <div style="clear: both"></div>
-        <div class="SearchMd" style="float: left;width:700px;border-top:solid 1px #dcdcdc;padding-left:10px;margin-top: 15px">
-            <div style="margin-left: 100px;float: left"><input type="button" value="保存" class="searchBtn" id="btnModifyCommit" /></div>
-            <div style="margin-left: 180px;float: left"><input type="button" value="返回" class="searchBtn" id="btnReturn" /></div>
-            <br />
+        <div style="width:750px;height:auto;overflow:auto;margin-top:10px;border-bottom:solid 1px #dcdcdc;padding-top:20px;padding-bottom:20px;" id="divTag">
+            <div style="float: left">
+                <label style="width:100px;">标签：</label>
+            </div>
+            <div id="divTagList" style="float: left;width:550px">
+                @{
+                    List<TagRelation> tagRelations = ViewBag.currenTags;
+                    var tags = ViewBag.tags as List<TagModel>;   //所有的标签
+                    string oldCheck = ""; //之前选中的标签
+                    if (tags != null && tags.Count > 0)
+                    {
+                        <div style="width: 110px;height:25px;float: left">
+                            <input type="checkbox" name="checkAllTags" id="selectAllTags" onclick="selectAllTags()" />全部
+                        </div>
+                        oldCheck = tagRelations.Aggregate(";", (current, old) => current + old.TagId + ";");
+                        foreach (var item in tags)
+                        {
+                            string checkstr = oldCheck.IndexOf(";" + item.Id + ";") >= 0 ? "checked" : "";
+                            <div style="width: 110px;height:25px;float: left">
+                                <input type="checkbox" name="checkTags" id="@item.Id" value="@item.Id" @checkstr />
+                                <label>@item.TagName</label>
+                            </div>
+                        }
+                    }
+                }
+            </div>
+            <div class="SearchMd" style="float: left;width:700px;border-top:solid 1px #dcdcdc;padding-left:10px;margin-top: 15px">
+                <div style="margin-left: 100px;float: left"><input type="button" value="保存" class="searchBtn" id="btnModifyCommit" /></div>
+                <div style="margin-left: 180px;float: left"><input type="button" value="返回" class="searchBtn" id="btnReturn" /></div>
+                <br />
+            </div>
+
         </div>
-
-    </div>
-    @*<div id="right" style="float: left;width: 250px;height: auto;">
-
-        </div>*@
     <div style="clear: both"></div>
 </div>
 <script type="text/javascript">
@@ -115,13 +140,29 @@
             alert("请输入正确的身份证号!");
             return;
         }
-        //if (deliveryCompany == "") {
-        //    alert("请选择配送公司！");
-        //    return;
-        //}
+        var tags = "";
+        var newKeys = new Array();//所有tag的key
+        var newValues = new Array(); //所有tag的value
+        $("input[name='checkTags']").each(
+                function () {
+                    newKeys.push($(this).val());
+                    if ($(this).is(':checked')) {
+                        newValues.push(1);
+                    } else {
+                        newValues.push(0);  //不选择该标签
+                    }
+                });
+        var oldChecks = "@Html.Raw(oldCheck)"; //所有之前属于选中状态的tag的id
+        for (var i = 0; i < newKeys.length; i++) {//发生了改变，才需要提交db
+            if ((oldChecks.indexOf(";" + newKeys[i] + ";") >= 0 && newValues[i] == 0) ||
+            (oldChecks.indexOf(";" + newKeys[i] + ";") < 0 && newValues[i] == 1)) {
+                tags = tags + newKeys[i] + "," + newValues[i] + ";";
+            }
+        }
 
         var paramaters = {
-            "Id": id, "TrueName": trueName, "IDcard": idCard, "DeliveryCompanyId": deliveryCompany, "recommendPhone": recommendPhone
+            "Id": id, "TrueName": trueName, "IDcard": idCard, "DeliveryCompanyId": deliveryCompany, "recommendPhone": recommendPhone,
+            "Tags": tags
         };
         var url = "/SuperManManager/ModifyClienterDetail";
         $.ajax({
@@ -144,4 +185,9 @@
         adminjs.closewinbox('.add-openbox');
         return false;
     });
+    //标签“全部” 点击
+    function selectAllTags() {
+        var checkedOfAll = $("#selectAllTags").prop("checked");
+        $("input[name='checkTags']").prop("checked", checkedOfAll);
+    }
 </script>

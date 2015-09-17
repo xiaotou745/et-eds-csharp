@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ETS.Const;
 using Ets.Dao.Clienter;
 using Ets.Dao.Message;
+using Ets.Dao.Tag;
 using Ets.Model.DataModel.Clienter;
 using Ets.Model.DataModel.Order;
 using Ets.Model.ParameterModel.Business;
@@ -64,11 +65,12 @@ namespace Ets.Service.Provider.Clienter
         readonly BusinessClienterRelationDao businessClienterDao = new BusinessClienterRelationDao();
         readonly BusinessBalanceRecordDao businessBalanceRecordDao = new BusinessBalanceRecordDao();
         readonly DeliveryCompanyProvider deliveryCompanyProvider = new DeliveryCompanyProvider();
-        readonly IAreaProvider iAreaProvider = new AreaProvider();        
+        readonly IAreaProvider iAreaProvider = new AreaProvider();
         readonly IOrderOtherProvider iOrderOtherProvider = new OrderOtherProvider();
         readonly ITokenProvider iTokenProvider = new TokenProvider();
         private IBusinessProvider iBusinessProvider = new BusinessProvider();
         readonly ClienterLoginLogDao clienterLoginLogDao = new ClienterLoginLogDao();
+        private TagRelationDao tagRelationDao = new TagRelationDao();
 
         /// <summary>
         /// 骑士上下班功能 add by caoheyang 20150312
@@ -251,7 +253,7 @@ namespace Ets.Service.Provider.Clienter
                 //记录登陆日志
                 clienterLoginLogDao.Insert(new ClienterLoginLogDM
                                         {
-                                            ClienterId= resultModel.userId,
+                                            ClienterId = resultModel.userId,
                                             PhoneNo = model.phoneNo,
                                             Ssid = model.Ssid,
                                             OperSystem = model.OperSystem,
@@ -718,7 +720,7 @@ namespace Ets.Service.Provider.Clienter
                 //更新商家金额
                 UpdateBusinessMoney(myOrderInfo);
                 //更新骑士金额
-                UpdateClienterMoney(myOrderInfo);               
+                UpdateClienterMoney(myOrderInfo);
                 //写入骑士完成坐标                 
                 orderOtherDao.UpdateComplete(parModel);
                 tran.Complete();
@@ -1017,11 +1019,11 @@ namespace Ets.Service.Provider.Clienter
                     //更新骑士抢单记录
                     orderOtherDao.UpdateGrab(new OrderCompleteModel
                                             {
-                                                orderNo=parmodel.orderNo,
-                                                Longitude=parmodel.Longitude,
-                                                Latitude=parmodel.Latitude,
-                                                IsTimely=parmodel.IsTimely
-                                            } );
+                                                orderNo = parmodel.orderNo,
+                                                Longitude = parmodel.Longitude,
+                                                Latitude = parmodel.Latitude,
+                                                IsTimely = parmodel.IsTimely
+                                            });
                     new OrderProvider().AsyncOrderStatus(parmodel.orderNo);//同步第三方订单
                     Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", parmodel.businessId.ToString(), string.Empty);
                 });
@@ -1092,10 +1094,35 @@ namespace Ets.Service.Provider.Clienter
                     return dealResultInfo;
                 }
             }
-            if (!clienterDao.ModifyClienterDetail(model))
+            using (var tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                dealResultInfo.DealMsg = "修改骑士信息失败！";
-                return dealResultInfo;
+                if (!clienterDao.ModifyClienterDetail(model))
+                {
+                    dealResultInfo.DealMsg = "修改骑士信息失败！";
+                    return dealResultInfo;
+                }
+                var tag = model.Tags.Split(';');
+                foreach (var item in tag)
+                {
+                    if (!string.IsNullOrEmpty(item))
+                    {
+                        var deliveryCompany = item.Split(',');
+                        var berm = new Ets.Model.DataModel.Tag.TagRelation
+                        {
+                            TagId = Convert.ToInt32(deliveryCompany[0]),
+                            IsEnable = Convert.ToInt32(deliveryCompany[1]),
+                            UserId = model.Id,
+                            CreateBy = model.OptUserName,
+                            UserType = TagUserType.Clienter.GetHashCode()
+                        };
+                        if (!tagRelationDao.Edit(berm))
+                        {
+                            dealResultInfo.DealMsg = "编辑标签配置信息失败！";
+                            return dealResultInfo;
+                        }
+                    }
+                }
+                tran.Complete();
             }
             dealResultInfo.DealMsg = "修改骑士信息成功！";
             dealResultInfo.DealFlag = true;
@@ -1209,8 +1236,8 @@ namespace Ets.Service.Provider.Clienter
             });
 
         }
-        #endregion    
-        
+        #endregion
+
         #region  用户自定义方法 金额
         /// <summary>
         /// 更新骑士金额
@@ -1233,18 +1260,18 @@ namespace Ets.Service.Provider.Clienter
 
             decimal orderCommission = myOrderInfo.OrderCommission == null ? 0 : myOrderInfo.OrderCommission.Value;
             decimal settleMoney = myOrderInfo.SettleMoney;
-            decimal baseCommission=0;
-            decimal bt=0;
+            decimal baseCommission = 0;
+            decimal bt = 0;
             if (orderCommission > settleMoney)
             {
                 bt = orderCommission - settleMoney;
             }
-            baseCommission=orderCommission-bt;
+            baseCommission = orderCommission - bt;
 
             //物流公司 
             //更新骑士余额、可提现余额, 将订单标记为加入已提现,更新订单审核通过 
             if (myOrderInfo.DeliveryCompanyID > 0)
-            {                
+            {
                 // 更新骑士余额、可提现余额  
                 UpdateCBalanceAndWithdraw(new ClienterMoneyPM()
                                         {
@@ -1255,7 +1282,7 @@ namespace Ets.Service.Provider.Clienter
                                             Operator = string.IsNullOrEmpty(myOrderInfo.ClienterName) ? "骑士" : myOrderInfo.ClienterName,
                                             WithwardId = myOrderInfo.Id,
                                             RelationNo = myOrderInfo.OrderNo,
-                                            Remark = "基本佣金"+  baseCommission+ "元+平台补贴"+bt+"元就是你的订单佣金！"
+                                            Remark = "基本佣金" + baseCommission + "元+平台补贴" + bt + "元就是你的订单佣金！"
                                         });
                 //将订单标记为加入已提现
                 orderOtherDao.UpdateJoinWithdraw(myOrderInfo.Id);
@@ -1304,7 +1331,7 @@ namespace Ets.Service.Provider.Clienter
                     //更新骑士无效订单金额
                     UpdateInvalidOrder(myOrderInfo);
                 }
-            }     
+            }
         }
 
         /// <summary>
@@ -1339,7 +1366,7 @@ namespace Ets.Service.Provider.Clienter
                 orderOtherPM.RealOrderCommission = realOrderCommission;
                 orderOtherPM.DeductCommissionReason = deductCommissionReason;
                 orderOtherPM.DeductCommissionType = 1;
-                iOrderProvider.UpdateOrderIsReal(orderOtherPM);                
+                iOrderProvider.UpdateOrderIsReal(orderOtherPM);
             }
         }
         /// <summary>
@@ -1383,7 +1410,7 @@ namespace Ets.Service.Provider.Clienter
                 iBusinessProvider.UpdateBBalanceAndWithdraw(businessMoneyPm);
             }
         }
-         
+
         /// <summary>
         /// 判断当前订单是否为无效订单
         /// zhaohailong20150706
@@ -1453,7 +1480,7 @@ namespace Ets.Service.Provider.Clienter
         #endregion
 
         #region 用户自定义方法  骑士账号错误信息
-          /// <summary>
+        /// <summary>
         /// 获取获取骑士账号错误信息
         /// 胡灵波
         /// 2015年8月19日 13:18:10
@@ -1476,19 +1503,19 @@ namespace Ets.Service.Provider.Clienter
                 //获取骑士余额流水错误信息
                 StringBuilder sbCBalanceRecordErr = GetCBalanceRecordErr(id);
                 //获取骑士可提现余额流水错误信息
-                StringBuilder sbCAWthdrawRecordErr = GetCAWthdrawRecordErr(id);            
-                           
+                StringBuilder sbCAWthdrawRecordErr = GetCAWthdrawRecordErr(id);
+
                 if (sbClienterErr.Length > 0 ||
                     sbCBalanceRecordErr.Length > 0 ||
-                    sbCAWthdrawRecordErr.Length > 0                    
+                    sbCAWthdrawRecordErr.Length > 0
                     )
-                {                   
+                {
                     sbEmail.AppendLine("当前骑士Id:" + id.ToString() + " 真实姓名：" + trueName + " 联系电话：" + phoneNo);
                     sbEmail.Append(sbClienterErr);
                     sbEmail.Append(sbCBalanceRecordErr);
-                    sbEmail.Append(sbCAWthdrawRecordErr);                    
+                    sbEmail.Append(sbCAWthdrawRecordErr);
                     sbEmail.AppendLine("");
-                }                 
+                }
             }
 
             //获取FinishAll错误的订单
@@ -1499,7 +1526,7 @@ namespace Ets.Service.Provider.Clienter
             }
 
             if (sbEmail.Length > 0)
-                EmailHelper.SendEmailTo(sbEmail.ToString(), emailSendTo, "骑士异常金额", copyTo, false);    
+                EmailHelper.SendEmailTo(sbEmail.ToString(), emailSendTo, "骑士异常金额", copyTo, false);
 
         }
 
@@ -1532,25 +1559,25 @@ namespace Ets.Service.Provider.Clienter
             return strErr;
         }
 
-       /// <summary>
+        /// <summary>
         /// 获取骑士余额流水错误信息
         /// 胡灵波
         /// 2015年8月19日 15:59:52
-       /// </summary>
-       /// <param name="clienterId"></param>
-       /// <returns></returns>
+        /// </summary>
+        /// <param name="clienterId"></param>
+        /// <returns></returns>
         private StringBuilder GetCBalanceRecordErr(int clienterId)
         {
-            StringBuilder strErr = new StringBuilder(""); 
-            IList<ClienterBalanceRecord> clienterBalanceRecordList= clienterBalanceRecordDao.Query(new ClienterBalanceRecordPM() { ClienterId = clienterId });
-            for (int i = 0; i < clienterBalanceRecordList.Count-1; i++)     
+            StringBuilder strErr = new StringBuilder("");
+            IList<ClienterBalanceRecord> clienterBalanceRecordList = clienterBalanceRecordDao.Query(new ClienterBalanceRecordPM() { ClienterId = clienterId });
+            for (int i = 0; i < clienterBalanceRecordList.Count - 1; i++)
             {
                 long id = clienterBalanceRecordList[i].Id;
-                decimal balance = clienterBalanceRecordList[i].Balance+clienterBalanceRecordList[i + 1].Amount;                
-                decimal balance2 = clienterBalanceRecordList[i+1].Balance;
+                decimal balance = clienterBalanceRecordList[i].Balance + clienterBalanceRecordList[i + 1].Amount;
+                decimal balance2 = clienterBalanceRecordList[i + 1].Balance;
                 if (balance != balance2)
                 {
-                    strErr.AppendLine("骑士余额表id:" + id + " 骑士余额：" + balance + " != 骑士余额:"+balance2);
+                    strErr.AppendLine("骑士余额表id:" + id + " 骑士余额：" + balance + " != 骑士余额:" + balance2);
                     return strErr;
                 }
             }
@@ -1589,11 +1616,11 @@ namespace Ets.Service.Provider.Clienter
         /// </summary>
         /// <param name="clienterId"></param>
         /// <returns></returns>
-        private StringBuilder GetFinishAllErr( )
+        private StringBuilder GetFinishAllErr()
         {
             StringBuilder strErr = new StringBuilder("");
-            IList<order> orderList= orderDao.GetFinallErrByClienterId();
-            for (int i = 0; i < orderList.Count;i++ )
+            IList<order> orderList = orderDao.GetFinallErrByClienterId();
+            for (int i = 0; i < orderList.Count; i++)
             {
                 int id = orderList[i].Id;
                 strErr.AppendLine("订单表id:" + id + " 已完成且上传完小票FinishAll=0");
@@ -1650,7 +1677,7 @@ namespace Ets.Service.Provider.Clienter
 
 
         public bool UpdateClientHeadPhotoInfo(ClienterModel clienterModel)
-        { 
+        {
             return clienterDao.UpdateClientHeadPhotoInfo(clienterModel);
         }
     }

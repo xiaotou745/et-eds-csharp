@@ -36,6 +36,7 @@ namespace SuperMan.Controllers
         private readonly IBusinessClienterRelationProvider iBusinessClienterRelationProvider =
             new BusinessClienterRelationProvider();
         private readonly ITagProvider tagProvider = new TagProvider();
+        private readonly ITagRelationProvider tagRelationProvider = new TagRelationProvider();
         // GET: BusinessManager
         public ActionResult SuperManManager()
         {
@@ -369,6 +370,8 @@ namespace SuperMan.Controllers
         {
             var clienterDetailModel = cliterProvider.GetClienterDetailById(clienterId);
             ViewBag.deliveryCompanyList = iDeliveryCompanyProvider.GetDeliveryCompanyList();
+            ViewBag.tags = tagProvider.GetTagsByTagType(TagType.Clienter.GetHashCode());  //加在所有标签
+            ViewBag.currenTags = tagRelationProvider.GetTagRelationRelationList(ParseHelper.ToInt(clienterId), TagUserType.Clienter.GetHashCode());
             return View("ClienterModify", clienterDetailModel);
         }
         /// <summary>
@@ -383,7 +386,7 @@ namespace SuperMan.Controllers
             clienterDetailModel.OptUserId = UserContext.Current.Id;
             clienterDetailModel.OptUserName = UserContext.Current.Name;
             var reg = cliterProvider.ModifyClienterDetail(clienterDetailModel);
-            return Json(new Ets.Model.Common.ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.DenyGet);
+            return Json(new ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.DenyGet);
         }
     }
 }

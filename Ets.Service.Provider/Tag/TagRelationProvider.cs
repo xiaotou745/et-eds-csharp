@@ -55,11 +55,11 @@ namespace Ets.Service.Provider.Tag
                     {
                         if (!string.IsNullOrEmpty(item))
                         {
-                            var deliveryCompany = item.Split(',');
+                            var temp = item.Split(',');
                             var berm = new TagRelation
                             {
-                                TagId = Convert.ToInt32(deliveryCompany[0]),
-                                IsEnable = Convert.ToInt32(deliveryCompany[1]),
+                                TagId = Convert.ToInt32(temp[0]),
+                                IsEnable = Convert.ToInt32(temp[1]),
                                 UserId = userId,
                                 CreateBy = optName,
                                 UserType = userType
