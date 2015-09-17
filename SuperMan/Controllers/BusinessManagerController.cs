@@ -364,6 +364,7 @@ namespace SuperMan.Controllers
             ViewBag.businessThirdRelation = iBusinessProvider.GetBusinessThirdRelation(ParseHelper.ToInt(businessId));
             ViewBag.BusinessOpLog = iBusinessProvider.GetBusinessOpLog(ParseHelper.ToInt(businessId, 0));//add by wangchao
             ViewBag.deliveryCompany = iDeliveryCompanyProvider.GetDeliveryCompanyList();
+            ViewBag.tags = tagProvider.GetTagsByTagType(TagType.Business.GetHashCode());
             return View("BusinessModify", businessDetailModel);
         }
         /// <summary>
