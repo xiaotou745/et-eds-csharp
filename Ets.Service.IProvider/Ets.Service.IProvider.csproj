@@ -93,6 +93,8 @@
     <Compile Include="Subsidy\ISubsidyProvider.cs" />
     <Compile Include="Business\IBusinessGroupProvider.cs" />
     <Compile Include="Business\IBusinessProvider.cs" />
+    <Compile Include="Tag\ITagProvider.cs" />
+    <Compile Include="Tag\ITagRelationProvider.cs" />
     <Compile Include="User\IUser.cs" />
     <Compile Include="WtihdrawRecords\IWtihdrawRecordsProvider.cs" />
     <Compile Include="YeePay\IYeePayRunningProvider.cs" />
