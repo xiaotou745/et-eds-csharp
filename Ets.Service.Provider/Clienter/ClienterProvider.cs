@@ -1106,11 +1106,11 @@ namespace Ets.Service.Provider.Clienter
                 {
                     if (!string.IsNullOrEmpty(item))
                     {
-                        var deliveryCompany = item.Split(',');
+                        var temp = item.Split(',');
                         var berm = new Ets.Model.DataModel.Tag.TagRelation
                         {
-                            TagId = Convert.ToInt32(deliveryCompany[0]),
-                            IsEnable = Convert.ToInt32(deliveryCompany[1]),
+                            TagId = Convert.ToInt32(temp[0]),
+                            IsEnable = Convert.ToInt32(temp[1]),
                             UserId = model.Id,
                             CreateBy = model.OptUserName,
                             UserType = TagUserType.Clienter.GetHashCode()
