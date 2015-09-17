@@ -13,7 +13,7 @@ namespace Ets.Model.DataModel.Tag
     /// add by caoheyang 20150917
     /// </summary>
 
-    public class Tag
+    public class TagModel
     {
         /// <summary>
         /// Id主键自增

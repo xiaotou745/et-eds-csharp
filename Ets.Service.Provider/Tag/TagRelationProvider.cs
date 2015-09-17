@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ETS.Dao;
+using Ets.Service.IProvider.Tag;
 
-namespace Ets.Dao.Tag
+namespace Ets.Service.Provider.Tag
 {
     /// <summary>
-    /// 标签关系类  add by caoheyang 20150917
+    /// 标签类
+    /// caoheyang 20150917
     /// </summary>
-    public class TagRelationDao : DaoBase
+    public class TagRelationProvider : ITagRelationProvider
     {
-
     }
 }
