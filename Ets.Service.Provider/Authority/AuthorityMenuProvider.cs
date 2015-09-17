@@ -16,6 +16,7 @@ namespace Ets.Service.Provider.Authority
     using Ets.Model.Common;
     using System.Linq;
     using ETS.Data.PageData;
+    using ETS.Const;
     /// <summary>
     /// 权限业务操作类-平扬 2015.3.18
     /// </summary>
@@ -440,6 +441,12 @@ namespace Ets.Service.Provider.Authority
                         }
                     }
                     reslut = true;
+
+                    //java中对用户的权限信息进行了redis缓存，因此当.net中对用户的权限进行更新时，需要清除java中的这个用户的权限缓存信息
+                    //zhaohailong，20150916
+                    var redis = new ETS.NoSql.RedisCache.RedisCache();
+                    string cacheKey = RedissCacheKey.Menu_Auth+accoutId;
+                    redis.Delete(cacheKey);
                 }
 
             }

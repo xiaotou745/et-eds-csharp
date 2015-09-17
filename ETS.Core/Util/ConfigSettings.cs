@@ -13,7 +13,13 @@ namespace ETS.Util
         public static readonly ConfigSettings Instance = new ConfigSettings();
 
         private ConfigSettings() { }
-
+        public string JavaAdminUrl
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["JavaAdminUrl"];
+            }
+        }
         public string FileUploadPath
         {
             get
