@@ -1647,6 +1647,12 @@ namespace Ets.Service.Provider.Clienter
         {
             return clienterDao.SetReceivePush(model);
         }
+
+
+        public bool UpdateClientHeadPhotoInfo(ClienterModel clienterModel)
+        { 
+            return clienterDao.UpdateClientHeadPhotoInfo(clienterModel);
+        }
     }
 
 }
