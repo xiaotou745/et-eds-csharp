@@ -1,6 +1,7 @@
 ﻿using Ets.Model.DataModel.Clienter;
 using Ets.Model.DomainModel.Clienter;
 using Ets.Model.ParameterModel.Business;
+using Ets.Model.ParameterModel.Clienter;
 using Ets.Service.IProvider.Business;
 using Ets.Service.IProvider.Common;
 using Ets.Service.IProvider.DeliveryCompany;
@@ -74,7 +75,7 @@ namespace SuperMan.Controllers
         [HttpPost]
         public ActionResult PostSuperManManager(int pageindex = 1)
         {
-            var criteria = new Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria();
+            var criteria = new ClienterSearchCriteria();
             TryUpdateModel(criteria);
 
             int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
