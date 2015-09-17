@@ -53,6 +53,10 @@ namespace Ets.Model.DomainModel.Clienter
         /// 状态
         /// </summary>
         public byte? Status { get; set; }
+        /// <summary>
+        /// 骑士头像信息
+        /// </summary>
+        public string HeadPhotoUrl { get; set; }
     }
 
     public class ClienterViewModel

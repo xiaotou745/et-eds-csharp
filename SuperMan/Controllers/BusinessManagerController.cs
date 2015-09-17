@@ -1,9 +1,11 @@
 ﻿using System.Text.RegularExpressions;
 using Ets.Model.DomainModel.Business;
 using Ets.Service.IProvider.DeliveryCompany;
+using Ets.Service.IProvider.Tag;
 using Ets.Service.IProvider.User;
 using Ets.Service.Provider.DeliveryCompany;
 using Ets.Service.Provider.Distribution;
+using Ets.Service.Provider.Tag;
 using Ets.Service.Provider.User;
 using ETS.Util;
 using System;
@@ -54,6 +56,7 @@ namespace SuperMan.Controllers
         readonly IStatisticsProvider statisticsProvider = new StatisticsProvider();
         readonly IBusinessFinanceAccountProvider iBusinessFinanceAccountProvider = new BusinessFinanceAccountProvider();
         readonly IDeliveryCompanyProvider iDeliveryCompanyProvider = new DeliveryCompanyProvider();
+        private readonly ITagProvider tagProvider = new TagProvider();
 
         // GET: BusinessManager
         [HttpGet]
@@ -76,6 +79,7 @@ namespace SuperMan.Controllers
             {
                 return View();
             }
+            ViewBag.tags = tagProvider.GetTagsByTagType(TagType.Business.GetHashCode());
             var pagedList = iBusinessProvider.GetBusinesses(criteria);
             return View(pagedList);
         }
@@ -360,6 +364,7 @@ namespace SuperMan.Controllers
             ViewBag.businessThirdRelation = iBusinessProvider.GetBusinessThirdRelation(ParseHelper.ToInt(businessId));
             ViewBag.BusinessOpLog = iBusinessProvider.GetBusinessOpLog(ParseHelper.ToInt(businessId, 0));//add by wangchao
             ViewBag.deliveryCompany = iDeliveryCompanyProvider.GetDeliveryCompanyList();
+            ViewBag.tags = tagProvider.GetTagsByTagType(TagType.Business.GetHashCode());
             return View("BusinessModify", businessDetailModel);
         }
         /// <summary>

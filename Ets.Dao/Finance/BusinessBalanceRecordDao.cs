@@ -67,11 +67,12 @@ select @@IDENTITY";
         {
             const string insertSql = @"
 insert into BusinessBalanceRecord
-(GroupId,GroupAmount,Status,GroupBeforeBalance,RecordType,Operator,WithwardId,RelationNo,Remark)
+(BusinessId,GroupId,GroupAmount,Status,GroupAfterBalance,RecordType,Operator,WithwardId,RelationNo,Remark)
 select @GroupId,@GroupAmount,@Status,gb.Amount,@RecordType,@Operator,@WithwardId,@RelationNo,@Remark 
 from dbo.GroupBusiness as gb where Id=@GroupId
 select @@IDENTITY";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("BusinessId", businessBalanceRecord.BusinessId);//商户id
             dbParameters.AddWithValue("GroupId", businessBalanceRecord.GroupId);//集团Id
             dbParameters.AddWithValue("GroupAmount", businessBalanceRecord.GroupAmount);//流水金额
             dbParameters.AddWithValue("Status", businessBalanceRecord.Status); //流水状态(1、交易成功 2、交易中）

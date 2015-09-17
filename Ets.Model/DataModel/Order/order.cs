@@ -259,7 +259,7 @@ namespace Ets.Model.DataModel.Order
         public int IsBindGroup { get; set; }
 
         /// <summary>
-        /// 集团Id
+        /// 集团Id,从商户获取Id
         /// </summary>
         public int BussGroupId { get; set; }
 
@@ -275,6 +275,11 @@ namespace Ets.Model.DataModel.Order
         /// <summary>
         /// 是否允许集团透支
         /// </summary>
-        public int BussGroupIsAllowOverdraft { get; set; }   
+        public int BussGroupIsAllowOverdraft { get; set; }
+
+        /// <summary>
+        /// 集团Id
+        /// </summary>
+        public int GroupBusinessId { get; set; }
     }
 }

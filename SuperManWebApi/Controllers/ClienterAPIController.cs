@@ -507,5 +507,41 @@ namespace SuperManWebApi.Controllers
             return ResultModel<object>.Conclude(SetReceivePushStatus.Failed);
         }
 
+
+        /// <summary>
+        /// 骑士上传头像
+        /// WangChao
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Token]
+        public ResultModel<UploadIconModel> UploadHeadPhoto()
+        {
+            if (HttpContext.Current.Request.Form.Count == 0)
+            {
+                return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.NOFormParameter);
+            }
+            int clienterId = ParseHelper.ToInt(HttpContext.Current.Request.Form["clienterId"], 0); //用户Id
+            
+            if (clienterId == 0 || !iClienterProvider.CheckClienterExistById(clienterId))
+            {
+                return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.InvalidUserId);
+            }
+            if (HttpContext.Current.Request.Files.Count == 0)
+            {
+                return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.InvalidFileFormat);
+            } 
+            var headPhoto = HttpContext.Current.Request.Files[0]; //手持照片 
+            ImageHelper ih = new ImageHelper();
+            //骑士头像上传
+            ImgInfo headPhotoInfo = ih.UploadImg(headPhoto, clienterId, ImageType.Clienter);
+
+            var upResult = iClienterProvider.UpdateClientHeadPhotoInfo(new ClienterModel { Id = clienterId, HeadPhotoUrl = headPhotoInfo.PicUrl });
+            if (!upResult)
+            {
+                return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.UpFailed, new UploadIconModel() { Id = clienterId, ImagePath = "" });
+            }
+            return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.Success, new UploadIconModel() { Id = clienterId, ImagePath = ImageCommon.ReceiptPicConvert(headPhotoInfo.PicUrl) });
+        }
     }
 }

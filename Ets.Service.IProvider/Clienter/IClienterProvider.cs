@@ -290,5 +290,7 @@ namespace Ets.Service.IProvider.Clienter
         /// <param name="myOrderInfo"></param>
         bool SetReceivePush(ClienterReceivePushModel model);
 
+
+        bool UpdateClientHeadPhotoInfo(ClienterModel clienterModel);
     }
 }
