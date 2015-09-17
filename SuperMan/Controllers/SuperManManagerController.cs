@@ -4,12 +4,14 @@ using Ets.Model.ParameterModel.Business;
 using Ets.Service.IProvider.Business;
 using Ets.Service.IProvider.Common;
 using Ets.Service.IProvider.DeliveryCompany;
+using Ets.Service.IProvider.Tag;
 using Ets.Service.Provider.Business;
 using Ets.Service.Provider.Clienter;
 using Ets.Service.Provider.Common;
 using Ets.Service.Provider.DeliveryCompany;
 using Ets.Service.Provider.Distribution;
 using Ets.Service.Provider.Subsidy;
+using Ets.Service.Provider.Tag;
 using Ets.Service.Provider.WtihdrawRecords;
 using ETS.Util;
 using SuperMan.App_Start;
@@ -33,6 +35,7 @@ namespace SuperMan.Controllers
         readonly IDeliveryCompanyProvider iDeliveryCompanyProvider = new DeliveryCompanyProvider();
         private readonly IBusinessClienterRelationProvider iBusinessClienterRelationProvider =
             new BusinessClienterRelationProvider();
+        private readonly ITagProvider tagProvider = new TagProvider();
         // GET: BusinessManager
         public ActionResult SuperManManager()
         {
@@ -60,6 +63,7 @@ namespace SuperMan.Controllers
             {
                 return View();
             }
+            ViewBag.tags = tagProvider.GetTagsByTagType(TagType.Clienter.GetHashCode());
             //ViewBag.openCityList.Result.AreaModels;
             var pagedList = iDistributionProvider.GetClienteres(criteria);
             return View(pagedList);

@@ -108,6 +108,7 @@
     <Compile Include="Enums\RequestPlatFormEnum.cs" />
     <Compile Include="Enums\SuperPlatform.cs" />
     <Compile Include="Enums\SystemEnum.cs" />
+    <Compile Include="Enums\TagEnum.cs" />
     <Compile Include="Enums\UserLoginResults.cs" />
     <Compile Include="Expand\ActionStatusAttribute.cs" />
     <Compile Include="Const\OrderConst.cs" />
