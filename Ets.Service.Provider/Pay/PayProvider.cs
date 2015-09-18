@@ -406,7 +406,7 @@ namespace Ets.Service.Provider.Pay
             // string.Concat(model.productId, "_", model.orderId, "_", model.childId, "_", model.payStyle);
 
             #region 金额验证
-            if (model.payAmount <= 0 || model.payAmount > 100000)
+            if (model.payAmount <= 0 || model.payAmount > 100000 || model.Businessid <= 0)
             {
                 return ResultModel<BusinessRechargeResultModel>.Conclude(AliPayStatus.fail);
             }
@@ -486,7 +486,7 @@ namespace Ets.Service.Provider.Pay
                         HttpContext.Current.Response.End();
                         return;
                     }
-                   
+
                     Ets.Model.DataModel.Business.BusinessRechargeModel businessRechargeModel = new Ets.Model.DataModel.Business.BusinessRechargeModel()
                     {
                         BusinessId = businessid,
@@ -604,7 +604,7 @@ namespace Ets.Service.Provider.Pay
                 Operator = model.PayBy,
                 RecordType = BusinessBalanceRecordRecordType.Recharge.GetHashCode(),
                 RelationNo = model.OrderNo,
-                Remark =model.PayType==PayTypeEnum.WeiXin.GetHashCode()? "商家微信充值":"商家支付宝充值",
+                Remark = model.PayType == PayTypeEnum.WeiXin.GetHashCode() ? "商家微信充值" : "商家支付宝充值",
                 Status = 1,
                 WithwardId = 0
             };
