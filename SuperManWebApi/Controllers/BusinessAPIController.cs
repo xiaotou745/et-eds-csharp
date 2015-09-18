@@ -217,7 +217,7 @@ namespace SuperManWebApi.Controllers
         /// <param name="paramodel"></param>
         /// <returns></returns>
         [HttpPost]
-        //[Token]
+        [Token]
         public ResultModel<bool> CancelOrder_B(CancelOrderBPM paramodel)
         {
             return iOrderProvider.CancelOrderB(paramodel);
