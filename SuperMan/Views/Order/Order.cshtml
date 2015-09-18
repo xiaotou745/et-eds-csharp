@@ -2,6 +2,7 @@
 @using ETS.Enums
 @using ETS.Extension
 @using Ets.Model
+@using Ets.Model.DataModel.Tag
 @using Ets.Service.Provider.User
 @using Ets.Service.Provider.Business
 @{
@@ -26,49 +27,70 @@
     new RouteValueDictionary { { "id", "searchForm" } }))
     {
          <div class="SearchMd">
-               <table border="0" cellspacing="0" cellpadding="0" style="width:1080px">
-            <tr>
-                <td>
-                    <span class="">超人电话: </span>
-                    <input id="txtSuperManPhone" type="tel" name="superManPhone" value="@ViewBag.superManPhone" />
-                    <span class="">超人姓名: </span>
-                    <input id="txtSuperManName" type="text" width="90px" name="superManName" value="@ViewBag.superManName" />
-                    <span class="">商户电话: </span>
-                    <input id="txtBusinessPhone" type="tel" name="businessPhone" value="@ViewBag.businessPhone" />
-                    <span class="">商户名称: </span>
-                    <input id="txtBusinessName" type="text" name="businessName" value="@ViewBag.businessName" />
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <span class="">订单状态: </span>
-                    @Html.DropDownList("orderStatus", new SelectList(EnumExtenstion.GetEnumItems(typeof(OrderStatus)), "Value", "Text"), "全部", new { @class = "selectw", style = "width:157px" })
-                    <span class="">发布时间: </span>
-                    <input id="txtOrderPubStart" readonly="readonly" type="text" name="OrderPubStart" value="@ViewBag.orderPubStart" />
-                    <span class="">到: </span>
-                    <input id="txtOrderPubEnd" readonly="readonly" type="text" name="OrderPubEnd" value="@ViewBag.orderPubEnd" />
-                   @* <input id="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" name="GroupId" />*@
-                    <span class="">筛选城市: </span>
-                    @*@Html.DropDownList("businessCity", new SelectList(ViewBag.openCityList.Result.AreaModels, "Name", "Name"), "--无--", new { style = "width:155px" })*@
-                    <input id="businessCity" name="businessCity" type="text">
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <span class="">筛选集团: </span>
-                    @Html.DropDownList("GroupId", new SelectList(ViewBag.GroupList, "Id", "GroupName"), "--无--", new { @class = "selectw", style = "width:143px" })
-                    <span class="">原订单号: </span>
-                    <input id="txtOriginalOrderNo" type="text" name="OriginalOrderNo" />
-                    <span class="">订单号: </span>
-                    <input id="txtOrderNo" type="text" name="orderId" />
-                    <span class="">审核状态: </span>
-                    @Html.DropDownList("auditStatus", new SelectList(EnumExtenstion.GetEnumItems(typeof(OrderAuditStatusCommon)), "Value", "Text"), "请选择", new { @class = "selectw", style = "width:157px" })
+             <table border="0" cellspacing="0" cellpadding="0" style="width:1080px">
+                 <tr>
+                     <td>
+                         <span class="">超人电话: </span>
+                         <input id="txtSuperManPhone" type="tel" name="superManPhone" value="@ViewBag.superManPhone" />
+                         <span class="">超人姓名: </span>
+                         <input id="txtSuperManName" type="text" width="90px" name="superManName" value="@ViewBag.superManName" />
+                         <span class="">商户电话: </span>
+                         <input id="txtBusinessPhone" type="tel" name="businessPhone" value="@ViewBag.businessPhone" />
+                         <span class="">商户名称: </span>
+                         <input id="txtBusinessName" type="text" name="businessName" value="@ViewBag.businessName" />
+                     </td>
+                 </tr>
+                 <tr>
+                     <td>
+                         <span class="">订单状态: </span>
+                         @Html.DropDownList("orderStatus", new SelectList(EnumExtenstion.GetEnumItems(typeof(OrderStatus)), "Value", "Text"), "全部", new { @class = "selectw", style = "width:157px" })
+                         <span class="">发布时间: </span>
+                         <input id="txtOrderPubStart" readonly="readonly" type="text" name="OrderPubStart" value="@ViewBag.orderPubStart" />
+                         <span class="">到: </span>
+                         <input id="txtOrderPubEnd" readonly="readonly" type="text" name="OrderPubEnd" value="@ViewBag.orderPubEnd" />
+                         @* <input id="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" name="GroupId" />*@
+                         <span class="">筛选城市: </span>
+                         @*@Html.DropDownList("businessCity", new SelectList(ViewBag.openCityList.Result.AreaModels, "Name", "Name"), "--无--", new { style = "width:155px" })*@
+                         <input id="businessCity" name="businessCity" type="text">
+                     </td>
+                 </tr>
+                 <tr>
+                     <td>
+                         <span class="">筛选集团: </span>
+                         @Html.DropDownList("GroupId", new SelectList(ViewBag.GroupList, "Id", "GroupName"), "--无--", new { @class = "selectw", style = "width:143px" })
+                         <span class="">原订单号: </span>
+                         <input id="txtOriginalOrderNo" type="text" name="OriginalOrderNo" />
+                         <span class="">订单号: </span>
+                         <input id="txtOrderNo" type="text" name="orderId" />
+                         <span class="">审核状态: </span>
+                         @Html.DropDownList("auditStatus", new SelectList(EnumExtenstion.GetEnumItems(typeof(OrderAuditStatusCommon)), "Value", "Text"), "请选择", new { @class = "selectw", style = "width:157px" })
+                     </td>
 
-                    <input type="submit" value="查询"  class="searchBtn" id="btnSearch" />
-                    <input type="button" value="订单数据导出" onclick="return DaoCHu()" class="searchBtn" id="btncDaochu" />
-                </td>
-            </tr>
-        </table>
+                 </tr>
+                 <tr>
+                     <td>
+                         @Html.DropDownList("TagType", new SelectList(EnumExtenstion.GetEnumItems(typeof(TagType)), "Value", "Text"), new { @class = "selectw", style = "width:143px" })
+                         <select class="selectw" id="TagId" name="TagId" style="width:143px">
+                             <option value="">全部</option>
+                            @foreach (var item in (List<TagModel>)ViewBag.tags)
+                            {
+                                if (item.TagType == TagType.Business.GetHashCode())
+                                {
+                                    <option value="@item.Id" style="display: block" data-TagType="@item.TagType">@item.TagName</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Id" style="display: none" data-tagtype="@item.TagType">@item.TagName</option>
+                                }
+                            }
+                         </select>
+                       
+                         <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
+                         <input type="button" value="订单数据导出" onclick="return DaoCHu()" class="searchBtn" id="btncDaochu" />
+                     </td>
+                 </tr>
+
+             </table>
          </div>
     }
     <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
@@ -132,6 +154,16 @@
                    autoFocus: false,
                    delay: 500
                });
+
+    $(function() {
+        $("#TagType").change(function () {
+            
+            console.log($("#TagId").find("option[data-tagtype=" + $(this).val() + "]"))
+            $("#TagId").find("option[data-tagtype=" + $(this).val() + "]").css("display", "block");
+            $("#TagId").find("option[data-tagtype!=" + $(this).val() + "]").css("display", "none");
+        });
+    
+    });
 
 </script>
 <script src="~/Scripts/mvcpager.js"></script>

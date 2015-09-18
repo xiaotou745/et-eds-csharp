@@ -25,5 +25,14 @@ namespace Ets.Service.Provider.Tag
         {
             return tagDao.GetTagsByTagType(tagType);
         }
+        /// <summary>
+        /// 标签类型（0:门店 1:骑士） 查询所有启用标签
+        /// </summary>
+        /// <param name="tagType"></param>
+        /// <returns></returns>
+        public IList<TagModel> GetTagsByTagType()
+        {
+            return tagDao.GetTagsByTagType();
+        }
     }
 }
