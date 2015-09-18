@@ -157,8 +157,7 @@
 
     $(function() {
         $("#TagType").change(function () {
-            
-            console.log($("#TagId").find("option[data-tagtype=" + $(this).val() + "]"))
+            $("#TagId").val("");
             $("#TagId").find("option[data-tagtype=" + $(this).val() + "]").css("display", "block");
             $("#TagId").find("option[data-tagtype!=" + $(this).val() + "]").css("display", "none");
         });
