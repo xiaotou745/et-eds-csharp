@@ -546,7 +546,7 @@ gb.GroupBusiName,gb.CreateName
 from dbo.business as b WITH(NOLOCK)
 left join BusinessGroup bg WITH(nolock) on b.BusinessGroupId=bg.Id
 LEFT JOIN GroupBusinessRelation gbr WITH(NOLOCK) ON b.Id=gbr.BusinessId  AND gbr.IsBind=1 AND gbr.IsEnable=1
-LEFT JOIN dbo.GroupBusiness gb WITH(NOLOCK) ON gbr.groupid=gb.Id
+LEFT JOIN dbo.GroupBusiness gb WITH(NOLOCK) ON gbr.groupid=gb.Id and gb.IsValid=1
 WHERE b.Id = @busiId";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters("busiId", DbType.Int32, 4, busiId);

@@ -131,7 +131,7 @@ namespace SuperMan.Controllers
 
         }
         /// <summary>
-        /// 商家批量审核通过（只审核待审核状态的数据）
+        /// 门店批量审核通过（只审核待审核状态的数据）
         /// </summary>
         /// <UpdateBy>zhaohailong</UpdateBy>
         /// <UpdateTime>20150625</UpdateTime>

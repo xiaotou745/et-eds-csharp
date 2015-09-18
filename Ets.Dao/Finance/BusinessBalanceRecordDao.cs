@@ -67,15 +67,16 @@ select @@IDENTITY";
         {
             const string insertSql = @"
 insert into BusinessBalanceRecord
-(BusinessId,GroupId,GroupAmount,Status,GroupAfterBalance,RecordType,Operator,WithwardId,RelationNo,Remark)
-select @GroupId,@GroupAmount,@Status,gb.Amount,@RecordType,@Operator,@WithwardId,@RelationNo,@Remark 
+(BusinessId,Amount,Status,Balance,GroupId,GroupAmount,GroupAfterBalance,RecordType,Operator,WithwardId,RelationNo,Remark)
+select @BusinessId,0,@Status,0,@GroupId,@GroupAmount, gb.Amount,@RecordType,@Operator,@WithwardId,@RelationNo,@Remark 
 from dbo.GroupBusiness as gb where Id=@GroupId
 select @@IDENTITY";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("BusinessId", businessBalanceRecord.BusinessId);//商户id
+            dbParameters.AddWithValue("BusinessId", businessBalanceRecord.BusinessId);//商户id            
+            dbParameters.AddWithValue("Status", businessBalanceRecord.Status); //流水状态(1、交易成功 2、交易中）
             dbParameters.AddWithValue("GroupId", businessBalanceRecord.GroupId);//集团Id
             dbParameters.AddWithValue("GroupAmount", businessBalanceRecord.GroupAmount);//流水金额
-            dbParameters.AddWithValue("Status", businessBalanceRecord.Status); //流水状态(1、交易成功 2、交易中）
+
             dbParameters.AddWithValue("RecordType", businessBalanceRecord.RecordType); //交易类型(1佣金 2奖励 3提现 4取消订单赔偿 5无效订单扣款)
             dbParameters.AddWithValue("Operator", businessBalanceRecord.Operator); //操作人 
             dbParameters.AddWithValue("WithwardId", businessBalanceRecord.WithwardId); //关联ID

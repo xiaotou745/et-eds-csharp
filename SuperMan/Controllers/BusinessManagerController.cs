@@ -137,9 +137,9 @@ namespace SuperMan.Controllers
         }
 
         /// <summary>
-        /// 设置商家结算比例-外送费
+        /// 设置门店结算比例-外送费
         /// </summary>
-        /// <param name="id">商家id</param>
+        /// <param name="id">门店id</param>
         /// <param name="commission">结算比例</param>
         /// <param name="waisongfei">外送费</param>
         /// <returns></returns>

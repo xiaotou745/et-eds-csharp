@@ -37,7 +37,7 @@
             </tr>
             <tr>
                 <td>
-                    <span>商家专属骑士接单响应时间:</span>
+                    <span>门店专属骑士接单响应时间:</span>
                     <input type="text" name="exclusiveOrderTime" value="@globalConfigModel.ExclusiveOrderTime" id="exclusiveOrderTime" style="width: 100px" />分
                     <input type="hidden" name="oldExclusiveOrderTime" value="@globalConfigModel.ExclusiveOrderTime" id="oldExclusiveOrderTime" />
                 </td>
@@ -83,7 +83,7 @@
                     <input type="hidden" name="oldYeeAccountActiveTime" value="@globalConfigModel.YeeAccountActiveTime" id="oldYeeAccountActiveTime" />
                 </td>*@
                 <td>
-                    <span>商家经纬度上传时间间隔:</span>
+                    <span>门店经纬度上传时间间隔:</span>
                     <input type="text" name="businessUploadTimeInterval" value="@globalConfigModel.BusinessUploadTimeInterval" id="businessUploadTimeInterval" style="width: 100px" />秒
                     <input type="hidden" name="oldBusinessUploadTimeInterval" value="@globalConfigModel.BusinessUploadTimeInterval" id="oldBusinessUploadTimeInterval" />
                 </td>
@@ -109,28 +109,28 @@
             var allFinishedOrderUploadTimeInterval = $("#allFinishedOrderUploadTimeInterval").val(); //骑士没有待完成任务经纬度上传时间间隔
             var pushRadius = $("#pushRadius").val(); //推送半径
             var clienterOrderPageSize = $("#clienterOrderPageSize").val(); //骑士订单列表每页显示条数
-            var exclusiveOrderTime = $("#exclusiveOrderTime").val(); //商家专属骑士接单响应时间
+            var exclusiveOrderTime = $("#exclusiveOrderTime").val(); //门店专属骑士接单响应时间
             var completeTimeSet = $("#completeTimeSet").val(); //骑士完成任务时间限制
             var employerTaskTimeSet = $("#employerTaskTimeSet").val(); //雇主任务时间限制
             var clienterWithdrawCommissionAccordingMoney = $("#clienterWithdrawCommissionAccordingMoney").val(); //骑士提现小于等于X元支付手续费
             var withdrawCommission = $("#withdrawCommission").val(); //易宝支付手续费金额
             var orderCountSetting = $("#orderCountSetting").val(); //无效订单判定时累计完成订单数量
             var grabToCompleteDistance = $("#grabToCompleteDistance").val(); //无效订单判定时抢单点和完成点的距离
-            var businessUploadTimeInterval = $("#businessUploadTimeInterval").val(); //商家经纬度上传时间间隔
-            var searchClienterLocationTimeInterval = $("#searchClienterLocationTimeInterval").val(); //商家经纬度上传时间间隔
+            var businessUploadTimeInterval = $("#businessUploadTimeInterval").val(); //门店经纬度上传时间间隔
+            var searchClienterLocationTimeInterval = $("#searchClienterLocationTimeInterval").val(); //门店经纬度上传时间间隔
             //var yeeAccountActiveTime = $("#yeeAccountActiveTime").val(); //易宝活跃账户时间配置
             var oldHasUnFinishedOrderUploadTimeInterval = $("#oldHasUnFinishedOrderUploadTimeInterval").val(); //骑士有待完成任务经纬度上传时间间隔（之前）
             var oldAllFinishedOrderUploadTimeInterval = $("#oldAllFinishedOrderUploadTimeInterval").val(); //骑士没有待完成任务经纬度上传时间间隔（之前）
             var oldPushRadius = $("#oldPushRadius").val(); //推送半径（之前）
             var oldClienterOrderPageSize = $("#oldClienterOrderPageSize").val(); //骑士订单列表每页显示条数（之前）
-            var oldExclusiveOrderTime = $("#oldExclusiveOrderTime").val(); //商家专属骑士接单响应时间（之前）
+            var oldExclusiveOrderTime = $("#oldExclusiveOrderTime").val(); //门店专属骑士接单响应时间（之前）
             var oldCompleteTimeSet = $("#oldCompleteTimeSet").val(); //骑士完成任务时间限制（之前）
             var oldEmployerTaskTimeSet = $("#oldEmployerTaskTimeSet").val(); //雇主任务时间限制（之前）
             var oldClienterWithdrawCommissionAccordingMoney = $("#oldClienterWithdrawCommissionAccordingMoney").val(); //骑士提现小于等于X元支付手续费（之前）
             var oldWithdrawCommission = $("#oldWithdrawCommission").val(); //易宝支付手续费金额（之前）
             var oldOrderCountSetting = $("#oldOrderCountSetting").val(); //无效订单判定时累计完成订单数量
             var oldGrabToCompleteDistance = $("#oldGrabToCompleteDistance").val(); //无效订单判定时抢单点和完成点的距离
-            var oldBusinessUploadTimeInterval = $("#oldBusinessUploadTimeInterval").val(); //商家经纬度上传时间间隔（之前）
+            var oldBusinessUploadTimeInterval = $("#oldBusinessUploadTimeInterval").val(); //门店经纬度上传时间间隔（之前）
             var oldSearchClienterLocationTimeInterval = $("#oldSearchClienterLocationTimeInterval").val();
             //var oldYeeAccountActiveTime = $("#oldYeeAccountActiveTime").val(); //易宝活跃账户时间配置（之前）
 
@@ -226,11 +226,11 @@
                 return;
             }
             if (isNaN(exclusiveOrderTime)) {
-                alert("请输入正确的商家专属骑士接单响应时间!");
+                alert("请输入正确的门店专属骑士接单响应时间!");
                 return;
             }
             if (exclusiveOrderTime < 1 || exclusiveOrderTime > 120) {
-                alert("商家专属骑士接单响应时间为1-120分钟之间!");
+                alert("门店专属骑士接单响应时间为1-120分钟之间!");
                 return;
             }
 

@@ -332,7 +332,7 @@ namespace SuperMan.Controllers
         }
 
         /// <summary>
-        /// 根据骑士id查询骑士绑定商家列表   caoheyang 20150608
+        /// 根据骑士id查询骑士绑定门店列表   caoheyang 20150608
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -346,7 +346,7 @@ namespace SuperMan.Controllers
         }
 
         /// <summary>
-        /// 根据骑士id查询骑士绑定商家列表   caoheyang 20150608
+        /// 根据骑士id查询骑士绑定门店列表   caoheyang 20150608
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>

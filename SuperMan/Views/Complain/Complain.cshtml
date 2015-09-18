@@ -18,7 +18,7 @@
 
 <div class="zpManage zpSh">
     <h2 class="crumbs">
-        您所在位置：投诉管理 > 投诉管理
+        您所在位置：客户服务 > 客户服务
     </h2>
     @using (Ajax.BeginForm("PostComplain", new RouteValueDictionary { { "pageindex", "" } },
         new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
@@ -32,7 +32,7 @@
                         <input id="ComplainStartTime" name="ComplainStartTime" class="Wdate" type="text" onfocus=" WdatePicker({ maxDate: '#F{$dp.$D(\'ComplainEndTime\')||\'%y-%M-%d\'}', dateFmt: 'yyyy-MM-dd 00:00:00' }) " />到
                         <input id="ComplainEndTime" name="ComplainEndTime" class="Wdate" type="text" onfocus=" WdatePicker({ minDate: '#F{$dp.$D(\'ComplainStartTime\')}', dateFmt: 'yyyy-MM-dd 23:59:59' }) "/>
                         <span class="">骑士姓名: </span><input id="ClienterName" name="ClienterName" />
-                        <span class="">商家名称: </span><input id="BusinessName" name="BusinessName" />
+                        <span class="">门店名称: </span><input id="BusinessName" name="BusinessName" />
                     </td>
                 </tr>
                 <tr>

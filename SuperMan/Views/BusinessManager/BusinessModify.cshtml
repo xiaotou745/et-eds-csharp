@@ -82,11 +82,11 @@
             </div>
             <div style="width:750px;height: auto;border-bottom:solid 0px #dcdcdc;padding-left:10px;">
                 <div class="control-group" style="margin-top: 10px">
-                    <label style="font-size: 15px">应收商家</label>
+                    <label style="font-size: 15px">应收门店</label>
                 </div>
                 <div class="control-group">
                     <label>订单金额*</label>
-                    <label title="应收商家配送费比例">商配比例</label><input id="bussinessDeliveryRatio" name="bussinessDeliveryRatio" style="width:100px" type="text" value="@Model.BusinessCommission" />%&nbsp;+&nbsp;<label title="应收商家配送费定额">商配定额</label><input id="bussinessFixValue" name="bussinessFixValue" style="width:100px" value="@Model.CommissionFixValue" />&nbsp;+&nbsp;
+                    <label title="应收门店配送费比例">商配比例</label><input id="bussinessDeliveryRatio" name="bussinessDeliveryRatio" style="width:100px" type="text" value="@Model.BusinessCommission" />%&nbsp;+&nbsp;<label title="应收门店配送费定额">商配定额</label><input id="bussinessFixValue" name="bussinessFixValue" style="width:100px" value="@Model.CommissionFixValue" />&nbsp;+&nbsp;
                     <label title="代收客户配送费">代收客配</label><input id="customerDeliveryMoney" name="customerDeliveryMoney" style="width:100px" value="@Model.DistribSubsidy" />
                 </div>
                 @*<div class="control-group">
@@ -369,7 +369,7 @@
                         }
                     }
                 }
-                //保存商家的物流公司设置
+                //保存门店的物流公司设置
                 $("input[name='checkMenus']").each(function () {
                     if ($(this).is(':checked')) {
                         oldValues.push(1);

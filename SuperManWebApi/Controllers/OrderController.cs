@@ -369,26 +369,25 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         ResultModel<BusiOrderResultModel> Verification(BussinessOrderInfoPM model, out  order order)
         {
-            bool isOneKeyPubOrder = false;
-            BussinessStatusModel buStatus = iBusinessProvider.GetUserStatus(model.userId);
-            if (buStatus != null && buStatus.OneKeyPubOrder == 1)
-                isOneKeyPubOrder = true;
-
             order = null;
+
+            //获取商户信息
+            BusListResultModel  business = iBusinessProvider.GetBusiness(model.userId);            
+            if (business == null) //如果商户不允许可透支发单，验证余额是否满足结算费用，如果不满足，提示：“您的余额不足，请及时充值!”
+            {
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.BusinessEmpty);  //未取到商户信息
+            }      
+       
             var version = model.Version;
             if (string.IsNullOrWhiteSpace(version)) //版本号 
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.NoVersion);
-            }
-            //if (!isOneKeyPubOrder && !StringHelper.CheckPhone(model.recevicePhone))
-            //{
-            //    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.RecevicePhoneErr);
-            //}
-            if (!isOneKeyPubOrder && string.IsNullOrEmpty(model.recevicePhone))//手机号
+            }          
+            if (business.OneKeyPubOrder!=1 && string.IsNullOrEmpty(model.recevicePhone))//手机号
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.RecevicePhoneIsNULL);
             }
-            if (!isOneKeyPubOrder && string.IsNullOrEmpty(model.receviceAddress))
+            if (business.OneKeyPubOrder != 1 && string.IsNullOrEmpty(model.receviceAddress))
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.ReceviceAddressIsNULL);
             }
@@ -429,27 +428,16 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.CountIsNotEqual);
             }
-            BusListResultModel business = null;        
-            order = iOrderProvider.TranslateOrder(model, out business);
-
-            if (business == null) //如果商户不允许可透支发单，验证余额是否满足结算费用，如果不满足，提示：“您的余额不足，请及时充值!”
-            {
-                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.BusinessEmpty);  //未取到商户信息
-            }
-            //if (buStatus.IsAllowOverdraft == 0) //0不允许透支
-            //{
-            //    if (business.BalancePrice < order.SettleMoney)
-            //    {
-            //        return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.BusiBalancePriceLack);
-            //    }
-            //}
+                
+            order = iOrderProvider.TranslateOrder(model, business);          
             if (order.SettleMoney > business.BalancePrice)
             {
-                if (order.IsBindGroup == 1 &&  business.BussGroupIsAllowOverdraft==0 && order.SettleMoney > business.BussGroupAmount )
+                if (business.IsBindGroup == 1 && business.BussGroupIsAllowOverdraft == 0 && order.SettleMoney > business.BussGroupAmount)
                 {                  
                    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.BusiBalancePriceLack);                
                 }
-                else if (order.IsBindGroup == 0 && buStatus.IsAllowOverdraft == 0)
+
+                if (business.IsBindGroup == 0 && business.IsAllowOverdraft == 0)
                 {
                     return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.BusiBalancePriceLack);                
                 }
