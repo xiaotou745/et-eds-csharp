@@ -74,6 +74,11 @@ namespace Ets.Service.Provider.Order
             return _orderChildDao.GetByOrderId(orderId);
         }
 
+        public List<OrderChild> GetListByOrderId(List<int> orderIdList)
+        {
+            return _orderChildDao.GetListByOrderId(orderIdList);
+        }
+
         /// <summary>
         /// 查询子订单是否支付
         /// 窦海超

@@ -14,6 +14,8 @@ using ETS.Data.Generic;
 using Ets.Model.DomainModel.Order;
 using Ets.Model.ParameterModel.AliPay;
 using ETS.Enums;
+using Letao.Util;
+
 namespace Ets.Dao.Order
 {
     /// <summary>
@@ -369,6 +371,47 @@ where  OrderId=@OrderId ";
                 list.Add(ochildInfo);
             }
 
+            return list;
+        }
+
+        /// <summary>
+        /// 获取子订单列表
+        /// </summary>
+        /// <UpdateBy>WangChao</UpdateBy>
+        /// <returns></returns>
+        public List<OrderChild> GetListByOrderId(List<int> orderIdList)
+        {
+            //var str= String.Join(",", orderIdList.ConvertAll<string>(new Converter<int, string>(m => m.ToString())).ToArray());
+            List<OrderChild> list = new List<OrderChild>();
+            string querySql = String.Format(@"
+select OrderId, ChildId,TotalPrice,GoodPrice,DeliveryPrice,PayStyle,PayType,PayStatus,PayBy,
+    PayTime,PayPrice,HasUploadTicket,TicketUrl 
+from  OrderChild (nolock) where OrderId IN ({0})", String.Join(",", orderIdList.ConvertAll<string>(new Converter<int, string>(m => m.ToString())).ToArray()));
+            //IDbParameters dbParameters = DbHelper.CreateDbParameters("orderIdList", DbType.Int64, 8, orderIdList);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, querySql);
+            foreach (DataRow dataRow in dt.Rows)
+            {
+                OrderChild ochildInfo = new OrderChild();
+                ochildInfo.OrderId = ParseHelper.ToInt(dataRow["OrderId"]);
+                ochildInfo.ChildId = ParseHelper.ToInt(dataRow["ChildId"]);
+                ochildInfo.TotalPrice = ParseHelper.ToDecimal(dataRow["TotalPrice"]);
+                ochildInfo.GoodPrice = ParseHelper.ToDecimal(dataRow["GoodPrice"]);
+                ochildInfo.DeliveryPrice = ParseHelper.ToDecimal(dataRow["DeliveryPrice"]);
+                if (dataRow["PayStyle"] != null && dataRow["PayStyle"] != DBNull.Value)
+                    ochildInfo.PayStyle = ParseHelper.ToInt(dataRow["PayStyle"]);
+                if (dataRow["PayType"] != null && dataRow["PayType"] != DBNull.Value)
+                    ochildInfo.PayType = ParseHelper.ToInt(dataRow["PayType"]);
+                ochildInfo.PayStatus = ParseHelper.ToInt(dataRow["PayStatus"]);
+                if (dataRow["PayBy"] != null && dataRow["PayBy"] != DBNull.Value)
+                    ochildInfo.PayBy = dataRow["PayBy"].ToString();
+                if (dataRow["PayTime"] != null && dataRow["PayTime"] != DBNull.Value)
+                    ochildInfo.PayTime = ParseHelper.ToDatetime(dataRow["PayTime"]);
+                ochildInfo.PayPrice = ParseHelper.ToDecimal(dataRow["PayPrice"]);
+                ochildInfo.HasUploadTicket = ParseHelper.ToBool(dataRow["HasUploadTicket"]);
+                if (dataRow["TicketUrl"] != null && dataRow["TicketUrl"] != DBNull.Value && dataRow["TicketUrl"].ToString() != "")
+                    ochildInfo.TicketUrl = Ets.Model.Common.ImageCommon.ReceiptPicConvert(dataRow["TicketUrl"].ToString());
+                list.Add(ochildInfo);
+            }
             return list;
         }
 
