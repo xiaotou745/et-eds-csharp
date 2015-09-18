@@ -53,5 +53,10 @@ namespace Ets.Model.ParameterModel.Clienter
 
         public string deliveryCompany { get; set; }
 
+        /// <summary>
+        /// 标签id
+        /// </summary>
+        public int? TagId { get; set; }
+
     }
 }

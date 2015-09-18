@@ -58,6 +58,8 @@
                         @Html.DropDownList("deliveryCompany", new SelectList(ViewBag.deliveryCompanyList, "CompanyId", "CompanyName"), "--无--", new { style = "width:155px" })
                         @*<span>提现时间: </span>
                             <input id="txtPubStart" readonly="readonly" type="text" name="txtPubStart" />*@
+                        <span class="">标签: </span>
+                        @Html.DropDownList("TagId", new SelectList(ViewBag.tags, "Id", "TagName", ViewBag.selectTag), "全部", new { @class = "selectw", style = "width:143px" })
                         <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
                     </td>
                 </tr>

@@ -604,7 +604,7 @@ namespace Ets.Service.Provider.Pay
                 Operator = model.PayBy,
                 RecordType = BusinessBalanceRecordRecordType.Recharge.GetHashCode(),
                 RelationNo = model.OrderNo,
-                Remark = "商家客户端充值",
+                Remark =model.PayType==PayTypeEnum.WeiXin.GetHashCode()? "商家微信充值":"商家支付宝充值",
                 Status = 1,
                 WithwardId = 0
             };
@@ -619,7 +619,7 @@ namespace Ets.Service.Provider.Pay
             {
                 new BusinessRechargeDao().Insert(model);//写入充值 
                 new BusinessDao().UpdateForWithdrawC(forWithdrawPM); //更新商家金额、可提现金额
-                new BusinessBalanceRecordDao().Insert(businessBalanceRecord);//写商家流水                
+                new BusinessBalanceRecordDao().Insert(businessBalanceRecord);//写商家流水
                 tran.Complete();
             }
             #region jpush推送

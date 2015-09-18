@@ -639,11 +639,25 @@ select @@IDENTITY ";
             {
                 sbSqlWhere.AppendFormat(" AND b.City IN({0}) ", criteria.AuthorityCityNameListStr.Trim());
             }
+
+          
             string tableList = @" [order] o WITH ( NOLOCK )
                                 LEFT JOIN clienter c WITH ( NOLOCK ) ON c.Id = o.clienterId
                                 JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                 LEFT JOIN [group] g WITH ( NOLOCK ) ON g.id = o.OrderFrom
                                 JOIN dbo.OrderOther oo (nolock) ON o.Id = oo.OrderId ";
+            if (criteria.TagId != null)
+            {
+                if (criteria.TagType == TagUserType.Business.GetHashCode())
+                {
+                    tableList = tableList + string.Format("join dbo.TagRelation tagR on b.Id=tagR.UserId and tagR.IsEnable=1 and tagR.UserType=0 and  tagR.TagId={0}",criteria.TagId); 
+                }
+                else if (criteria.TagType == TagUserType.Clienter.GetHashCode())
+                {
+                    tableList = tableList + string.Format("join dbo.TagRelation tagR on c.Id=tagR.UserId and tagR.IsEnable=1 and tagR.UserType=1  and  tagR.TagId={0}",criteria.TagId); 
+                }
+             
+            }
             string orderByColumn = " o.Status ASC,o.Id DESC ";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
         }

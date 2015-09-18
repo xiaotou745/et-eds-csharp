@@ -10,11 +10,13 @@
 ﻿using Ets.Model.DomainModel.Business;
 ﻿using Ets.Model.ParameterModel.Business;
 ﻿using Ets.Service.IProvider.AuthorityMenu;
+﻿using Ets.Service.IProvider.Tag;
 ﻿using Ets.Service.Provider.Authority;
 using Ets.Service.Provider.Distribution;
 using Ets.Service.Provider.Order;
 using Ets.Service.IProvider.Common;
 using Ets.Service.Provider.Common;
+﻿using Ets.Service.Provider.Tag;
 ﻿using Newtonsoft.Json;
 ﻿using SuperMan.App_Start;
 using Ets.Model.ParameterModel.User;
@@ -41,6 +43,7 @@ namespace SuperMan.Controllers
         IAreaProvider iAreaProvider = new AreaProvider();
         IAuthorityMenuProvider iAuthorityMenuProvider = new AuthorityMenuProvider();
         IBusinessProvider iBusinessProvider = new BusinessProvider();
+        private readonly ITagProvider tagProvider = new TagProvider();
         //Get: /Order  订单管理
         public ActionResult Order()
         {
@@ -89,6 +92,7 @@ namespace SuperMan.Controllers
                 return View();
             }
             var pagedList = iOrderProvider.GetOrders(criteria);
+            ViewBag.tags = tagProvider.GetTagsByTagType();  //加在所有标签
             return View(pagedList);
         }
         [HttpPost]
