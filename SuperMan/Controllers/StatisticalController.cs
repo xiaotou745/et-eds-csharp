@@ -68,7 +68,7 @@ namespace SuperMan.Controllers
 
         #endregion
 
-        #region 活跃商家、骑士数量
+        #region 活跃门店、骑士数量
 
         public ActionResult Active()
         {
@@ -139,9 +139,9 @@ namespace SuperMan.Controllers
         }
         #endregion
 
-        #region 商家充值统计
+        #region 门店充值统计
         /// <summary>
-        /// 页面第一次加载时调用的获取商家充值信息方法
+        /// 页面第一次加载时调用的获取门店充值信息方法
         /// </summary>
         /// <UpdateBy>zhaohailong</UpdateBy>
         /// <UpdateTime>20150623</UpdateTime>
@@ -158,7 +158,7 @@ namespace SuperMan.Controllers
             return View(resultData);
         }
         /// <summary>
-        /// 分页或查询时调用的post方法（获取商家充值信息）
+        /// 分页或查询时调用的post方法（获取门店充值信息）
         /// </summary>
         /// <UpdateBy>zhaohailong</UpdateBy>
         /// <UpdateTime>20150623</UpdateTime>
@@ -175,7 +175,7 @@ namespace SuperMan.Controllers
         }
 
         /// <summary>
-        /// 获取商家充值统计数据
+        /// 获取门店充值统计数据
         /// </summary>
         /// <UpdateBy>zhaohailong</UpdateBy>
         /// <UpdateTime>20150623</UpdateTime>
@@ -291,7 +291,7 @@ namespace SuperMan.Controllers
         /// 获取热力图数据
         /// </summary>
         /// <param name="cityId">城市Id</param>
-        /// <param name="userType">用户类型   0全部    1商家    2骑士</param>
+        /// <param name="userType">用户类型   0全部    1门店    2骑士</param>
         /// <param name="deliveryCompanyInfo">骑士所属物流公司,如果用户类型是骑士此参数才有效</param>
         /// <returns></returns>
         [HttpPost]

@@ -10,6 +10,7 @@
 @using ETS.Extension
 @using Ets.Model.DataModel.Business
 @using Ets.Model.DataModel.DeliveryCompany
+@using Ets.Model.DataModel.Tag
 @using Ets.Service.Provider.User
 @using ETS.Util;
 @using Ets.Service.Provider.Business
@@ -82,11 +83,11 @@
             </div>
             <div style="width:750px;height: auto;border-bottom:solid 0px #dcdcdc;padding-left:10px;">
                 <div class="control-group" style="margin-top: 10px">
-                    <label style="font-size: 15px">应收商家</label>
+                    <label style="font-size: 15px">应收门店</label>
                 </div>
                 <div class="control-group">
                     <label>订单金额*</label>
-                    <label title="应收商家配送费比例">商配比例</label><input id="bussinessDeliveryRatio" name="bussinessDeliveryRatio" style="width:100px" type="text" value="@Model.BusinessCommission" />%&nbsp;+&nbsp;<label title="应收商家配送费定额">商配定额</label><input id="bussinessFixValue" name="bussinessFixValue" style="width:100px" value="@Model.CommissionFixValue" />&nbsp;+&nbsp;
+                    <label title="应收门店配送费比例">商配比例</label><input id="bussinessDeliveryRatio" name="bussinessDeliveryRatio" style="width:100px" type="text" value="@Model.BusinessCommission" />%&nbsp;+&nbsp;<label title="应收门店配送费定额">商配定额</label><input id="bussinessFixValue" name="bussinessFixValue" style="width:100px" value="@Model.CommissionFixValue" />&nbsp;+&nbsp;
                     <label title="代收客户配送费">代收客配</label><input id="customerDeliveryMoney" name="customerDeliveryMoney" style="width:100px" value="@Model.DistribSubsidy" />
                 </div>
                 @*<div class="control-group">
@@ -200,34 +201,66 @@
                 <br />
             </div>*@
 
-            <div style="width:750px;height:auto;overflow:auto;margin-top:10px;border-bottom:solid 1px #dcdcdc;" id="divDeliveryCompany">
-                <div style="float: left">
-                    <label>绑定配送公司：</label>
-                </div>
-                <div id="deliveryCompanyList" style="float: left;width:550px">
-                    @{
-                        var deliveryCompany = ViewBag.deliveryCompany as List<DeliveryCompanyModel>;
-                        if (deliveryCompany != null && deliveryCompany.Count > 0)
+        <div style="width:750px;height:auto;overflow:auto;margin-top:10px;border-bottom:solid 1px #dcdcdc;padding-top:20px;padding-bottom:20px;" id="divDeliveryCompany">
+            <div style="float: left">
+                <label>绑定配送公司：</label>
+            </div>
+            <div id="deliveryCompanyList" style="float: left;width:550px">
+                @{
+                    var deliveryCompany = ViewBag.deliveryCompany as List<DeliveryCompanyModel>;
+                    if (deliveryCompany != null && deliveryCompany.Count > 0)
+                    {
+                        <div style="width: 110px;height:25px;float: left">
+                            <input type="checkbox" name="checkAllMenus" id="selectAll" onclick="checkAll()" />全部
+                        </div>
+                        foreach (var item in deliveryCompany)
                         {
+                            var check = item.DeliveryCompanyCode.Trim().Equals(Model.RecommendPhone.Trim()) ? "checked='checked'" : "";
                             <div style="width: 110px;height:25px;float: left">
-                                <input type="checkbox" name="checkAllMenus" id="selectAll" onclick="checkAll()" />全部
+                                <input type="checkbox" name="checkMenus" id="@item.Id" value="@item.Id" @check />
+                                <label>@item.DeliveryCompanyName</label>
                             </div>
-                            foreach (var item in deliveryCompany)
-                            {
-                                var check = item.DeliveryCompanyCode.Trim().Equals(Model.RecommendPhone.Trim()) ? "checked='checked'" : "";
-                                <div style="width: 110px;height:25px;float: left">
-                                    <input type="checkbox" name="checkMenus" id="@item.Id" value="@item.Id" @check />
-                                    <label>@item.DeliveryCompanyName</label>
-                                </div>
-                            }
                         }
                     }
-                    @*<input type="hidden" name="hidDeliveryCompany" id="hidDeliveryCompany" value="@Model.PushCity" />*@
-                </div>
-                <div class="SearchMd" style="padding:0px;border-bottom:solid 0px #dcdcdc;">
-                    <div style="margin-left: 640px;margin-top: 0px"><input type="button" value="保存" class="searchBtn" id="btnModifyExpress" /></div>
-                </div>
+                }
+                @*<input type="hidden" name="hidDeliveryCompany" id="hidDeliveryCompany" value="@Model.PushCity" />*@
             </div>
+            <div class="SearchMd" style="padding:0px;border-bottom:solid 0px #dcdcdc;">
+                <div style="margin-left: 640px;margin-top: 0px"><input type="button" value="保存" class="searchBtn" id="btnModifyExpress" /></div>
+            </div>
+        </div>
+        @*绑定标签*@
+        <div style="width:750px;height:auto;overflow:auto;margin-top:10px;border-bottom:solid 1px #dcdcdc;padding-top:20px;padding-bottom:20px;" id="divTag">
+            <div style="float: left">
+                <label>绑定标签：</label>
+            </div>
+            <div id="divTagList" style="float: left;width:550px">
+                @{
+                    List<TagRelation> tagRelations=  ViewBag.currenTags; 
+                    var tags = ViewBag.tags as List<TagModel>;   //所有的标签
+                    string oldCheck = ""; //之前选中的标签
+                    if (tags != null && tags.Count > 0)
+                    {                        
+                        <div style="width: 110px;height:25px;float: left">
+                            <input type="checkbox" name="checkAllTags" id="selectAllTags" onclick="selectAllTags()" />全部
+                        </div>
+                        oldCheck= tagRelations.Aggregate(";", (current, old) => current + old.TagId + ";");
+                        foreach (var item in tags)
+                        {
+                            string checkstr = oldCheck.IndexOf(";"+item.Id+";")>=0?  "checked" : "";
+                            <div style="width: 110px;height:25px;float: left">
+                                <input type="checkbox" name="checkTags" id="@item.Id" value="@item.Id" @checkstr/>
+                                <label>@item.TagName</label>
+                            </div>
+                        }
+                    }
+                }
+            </div>
+            <div class="SearchMd" style="padding:0px;border-bottom:solid 0px #dcdcdc;">
+                <div style="margin-left: 640px;margin-top: 0px"><input type="button" value="保存" class="searchBtn" id="btnModifyTag" onclick="functionModifyTag()" /></div>
+            </div>
+        </div>
+
             @*第三方绑定关系模板div*@
             <div id="clone">
                 <div class="third hide" v="1">
@@ -363,13 +396,13 @@
                 if (businessExpressRef.length > 0) {
                     for (var i = 0; i < businessExpressRef.length; i++) {
                         if (businessExpressRef[i].IsEnable == 1) {
-                            $(":checkbox[id='" + businessExpressRef[i].ExpressId + "']").prop("checked", true);
+                            $(":checkbox[name='checkMenus'][id='" + businessExpressRef[i].ExpressId + "']").prop("checked", true);
                         } else {
-                            $(":checkbox[id='" + businessExpressRef[i].ExpressId + "']").prop("checked", false);
+                            $(":checkbox[name='checkMenus'][id='" + businessExpressRef[i].ExpressId + "']").prop("checked", false);
                         }
                     }
                 }
-                //保存商家的物流公司设置
+                //保存门店的物流公司设置
                 $("input[name='checkMenus']").each(function () {
                     if ($(this).is(':checked')) {
                         oldValues.push(1);
@@ -689,6 +722,7 @@
                         + "," + newValues[i] + ";";
             }
         }
+        console.log(deliveryCompanyList)
         if (deliveryCompanyList == "") {
             alert("物流公司数据没有发生变更，不需要保存");
             return;
@@ -718,6 +752,57 @@
         adminjs.closewinbox('.add-openbox');
         return false;
     });
+    
+    //标签“全部” 点击
+    function selectAllTags() {
+        var checkedOfAll = $("#selectAllTags").prop("checked");
+        $("input[name='checkTags']").prop("checked", checkedOfAll);
+    }
+    //保存标签配置  add by caoheyang  20150917
+    function functionModifyTag() {
+        var busiId = $('#busiId').val();
+        var tags = "";
+        var newKeys = new Array();//所有tag的key
+        var newValues = new Array(); //所有tag的value
+        $("input[name='checkTags']").each(
+                function () {
+                    newKeys.push($(this).val());
+                    if ($(this).is(':checked')) {
+                        newValues.push(1);
+                    } else {
+                        newValues.push(0);  //不选择该标签
+                    }
+                });
+        var oldChecks = "@Html.Raw(oldCheck)"; //所有之前属于选中状态的tag的id
+        for (var i = 0; i < newKeys.length; i++) {//发生了改变，才需要提交db
+            if ((oldChecks.indexOf(";" + newKeys[i] + ";") >= 0 && newValues[i]==0)||
+            (oldChecks.indexOf(";" + newKeys[i] + ";") < 0 && newValues[i]==1)) {
+                tags = tags + newKeys[i]+ "," + newValues[i] + ";";
+            }
+        }
+        if (tags == "") {
+            alert("标签数据没有发生变更，不需要保存");
+            return;
+        }
+        if (!confirm("确定要提交保存吗？")) {
+            return;
+        }
+        var paramaters = { "busiId": busiId, "tags": tags };
+        var url = "/BusinessManager/ModifyTags";
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert(result.Message);
+                    window.location.href = window.location.href;
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
+    }
 </script>
 @* ReSharper restore Html.CssIdNotUsed *@
 <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=dAeaG6HwIFGlkbqtyKkyFGEC"></script>

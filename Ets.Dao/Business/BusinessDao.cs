@@ -419,6 +419,12 @@ and a.PhoneNo=@PhoneNo";
             {
                 sbSqlWhere.AppendFormat(" AND b.Name LIKE '%{0}%' ", criteria.businessName.Trim());
             }
+            if (criteria.TagId != null)
+            {
+                sbSqlWhere.AppendFormat(" AND TagR.TagId = {0} ", criteria.TagId);
+            }
+
+
             //else
             //{
             //    sbSqlWhere.AppendFormat(" AND b.City IN ({0}) ", criteria.AuthorityCityNameListStr.Trim());
@@ -427,9 +433,21 @@ and a.PhoneNo=@PhoneNo";
             {
                 sbSqlWhere.AppendFormat(" AND b.City IN ({0}) ", criteria.AuthorityCityNameListStr.Trim());
             }
-            string tableList = @" business  b WITH (NOLOCK)  
+            string tableList;
+            if (criteria.TagId == null)
+            {
+                tableList = @" business  b WITH (NOLOCK)  
                                 LEFT JOIN dbo.[group] g WITH(NOLOCK) ON g.Id = b.GroupId 
                                 JOIN dbo.[BusinessGroup]  bg WITH ( NOLOCK ) ON  b.BusinessGroupId=bg.Id";
+            }
+            else
+            {
+                tableList = @"  TagRelation TagR WITH (NOLOCK)  
+                                left join business  b WITH (NOLOCK)    on TagR.UserId=b.id and TagR.UserType=0 and IsEnable=1  
+                                LEFT JOIN dbo.[group] g WITH(NOLOCK) ON g.Id = b.GroupId 
+                                JOIN dbo.[BusinessGroup]  bg WITH ( NOLOCK ) ON  b.BusinessGroupId=bg.Id";
+                 
+            }
             string orderByColumn = " b.Id DESC";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
         }
@@ -546,7 +564,7 @@ gb.GroupBusiName,gb.CreateName
 from dbo.business as b WITH(NOLOCK)
 left join BusinessGroup bg WITH(nolock) on b.BusinessGroupId=bg.Id
 LEFT JOIN GroupBusinessRelation gbr WITH(NOLOCK) ON b.Id=gbr.BusinessId  AND gbr.IsBind=1 AND gbr.IsEnable=1
-LEFT JOIN dbo.GroupBusiness gb WITH(NOLOCK) ON gbr.groupid=gb.Id
+LEFT JOIN dbo.GroupBusiness gb WITH(NOLOCK) ON gbr.groupid=gb.Id and gb.IsValid=1
 WHERE b.Id = @busiId";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters("busiId", DbType.Int32, 4, busiId);

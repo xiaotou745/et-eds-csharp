@@ -1737,5 +1737,32 @@ WHERE id=@ID";
             parm.Add("@ID", DbType.Int32).Value = model.ClienterId;
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
+        /// <summary>
+        /// 更新骑士头像
+        /// WangChao
+        /// </summary>
+        /// <param name="clienterModel"></param>
+        /// <returns></returns>
+        public bool UpdateClientHeadPhotoInfo(ClienterModel clienterModel)
+        {
+            bool reslut = false;
+            try
+            {
+                string sql = @" update  clienter set HeadPhoto=@headPhoto where   Id = @Id ";
+                IDbParameters dbParameters = DbHelper.CreateDbParameters();
+                dbParameters.AddWithValue("@headPhoto", clienterModel.HeadPhotoUrl);
+                dbParameters.AddWithValue("@Id", clienterModel.Id);
+                int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
+                if (i > 0)
+                {
+                    reslut = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return reslut;
+        }
     }
 }

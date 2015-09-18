@@ -207,19 +207,19 @@
             return;
         }
         if (checkAddress == 0) {
-            alert("该商家未填写配送地址，不能通过审核。")
+            alert("该门店未填写配送地址，不能通过审核。")
             return;
         }
       
         if (checkImage == 0) {
-            alert("该商家未上传图片，不能通过审核。")
+            alert("该门店未上传图片，不能通过审核。")
             return;
         }
         //debugger
         var lng = parseFloat(Longitude);
         var lat = parseFloat(Latitude);
         if (lng < 73.40 || lng > 135.230 || lat < 3.52 || lat > 53.33) {
-            alert("该商家地址有误，不能通过审核。")
+            alert("该门店地址有误，不能通过审核。")
             return;
         }
         //currentId = $(this).attr("businessId");
@@ -325,7 +325,7 @@
         }
         adminjs.openwinbox('#BusinessCommissionDiv');
     }
-    //修改商家信息
+    //修改门店信息
     function funcUpdateBusinessInfo(id, name, phone, originalbusiId, groupid, mealsSettleMode) {
         $('#busiId').val(id);
         $('#busiName').val(name);

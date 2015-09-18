@@ -47,7 +47,7 @@
                         @*@Html.DropDownList("businessCity", new SelectList(ViewBag.openCityList.Result.AreaModels, "Name", "Name"), "--无--", new { style = "width:155px" })*@
                         <input id="businessCity" name="businessCity" type="text">
                         <input id="txtGroupId" type="hidden" value="@ViewBag.txtGroupId" name="GroupId" />
-                        <span class="">商家分组:</span>
+                        <span class="">门店分组:</span>
                         @Html.DropDownList("BusinessGroupId", new SelectList(new BusinessGroupProvider().GetBusinessGroupList(), "Id", "Name"), "全部", new { @class = "selectw", style = "width:143px" })
                         <span class="">结算类型: </span>
                         <select name="commissionType" class="selectw" id="CommissionMold" style="width:143px">
@@ -68,6 +68,8 @@
                     <td>
                         <span class="">推荐人电话: </span>
                         <input id="txtRecommendPhone" type="text" name="RecommendPhone" />
+                        <span class="">标签: </span>
+                        @Html.DropDownList("TagId", new SelectList(ViewBag.tags, "Id", "TagName", ViewBag.selectTag), "全部", new { @class = "selectw", style = "width:143px" })
                         <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
                         @if (SuperMan.App_Start.UserContext.Current.HasAuthority(40))
                         {
@@ -91,7 +93,7 @@
         </h2>
         <fieldset>
             <div class="control-group">
-                <label>商家名称</label>
+                <label>门店名称</label>
                 <input name="businessName" id="businessName" type="text">
             </div>
             <div class="control-group">
@@ -144,7 +146,7 @@
             <fieldset>
                 <input type="hidden" id="busCommissionHid" value="0" />
                 <div class="control-group">
-                    <label>商家</label>
+                    <label>门店</label>
                     <input name="busCommissionName" id="busCommissionName" readonly="readonly" type="text">
                 </div>
                 <div class="control-group">
@@ -171,17 +173,17 @@
 <div class="BusinessCommissionDish">
     <div class="add-openbox add-form" id="BusinessCommissionDiv" style="width:500px">
         <h2 style="border:none">
-            <p id="statusFin">商家结算-补贴策略</p>
+            <p id="statusFin">门店结算-补贴策略</p>
         </h2>
 
         <fieldset>
             <input type="hidden" id="busCommissionHid" value="0" />
             <div class="control-group">
-                <label>商家名称：</label>
+                <label>门店名称：</label>
                 <input name="busCommissionName" id="busCommissionName" readonly="readonly" type="text">
             </div>
             <div class="control-group">
-                <label>商家电话：</label>
+                <label>门店电话：</label>
                 <input name="busCommissionPhone" id="busCommissionPhone" readonly="readonly" type="text">
             </div>
             <div class="control-group">
@@ -248,16 +250,16 @@
         </form>
     </div>
 </div>
-@*修改商家信息弹窗*@
+@*修改门店信息弹窗*@
 <div class="BusinessInfoUpdate">
     <div class="add-openbox add-form" id="BusinessInfoUpdateDiv" style="width:500px">
         <h2>
-            <p id="statusFin">修改商家信息</p>
+            <p id="statusFin">修改门店信息</p>
         </h2>
         <fieldset>
             <input type="hidden" id="busiId" value="0" />
             <div class="control-group">
-                <label>商家名称：</label>
+                <label>门店名称：</label>
                 <input name="busiName" id="busiName" type="text">
             </div>
             <div class="control-group">
@@ -295,12 +297,12 @@
         <fieldset>
             <br>
             <div class="control-group">
-                <label>商家名称：</label>
+                <label>门店名称：</label>
                 <input name="busName" id="busName" disabled="disabled" type="text">
                 <input name="busId" id="busId" type="hidden">
             </div>
             <div class="control-group">
-                <label>商家电话：</label>
+                <label>门店电话：</label>
                 <input name="busPhone" id="busPhone" disabled="disabled" type="text">
             </div>
             <div class="control-group">
@@ -344,7 +346,7 @@
         <fieldset>
             <br>
             <div class="control-group">
-                <label>商家名称：</label>
+                <label>门店名称：</label>
                 <input name="withdrawName" id="withdrawName" disabled="disabled" type="text">
                 <input name="withdrawId" id="withdrawId" type="hidden">
             </div>
@@ -485,7 +487,7 @@
             }
         });
     });
-    //修改商家信息
+    //修改门店信息
     $("#btnUpdateBusinessInfo").on('click', function () {
 
         var busiId = $("#busiId").val(); //商户id
@@ -497,7 +499,7 @@
         var oldBusiSourceId = $("#oldBusiSourceId").val(); //商户原平台Id
         var oldBusGroupId = $("#oldBusGroupId").val(); ////商户集团Id
         if (busiName.trim().length == 0) {
-            alert("请输入商家名称!");
+            alert("请输入门店名称!");
             return;
         }
         var reg = /^0?1\d{10}$/;

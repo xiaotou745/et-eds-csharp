@@ -45,7 +45,7 @@ namespace Ets.Service.Provider.Business
             {    
                 BusinessId=groupBusinessPM.BusinessId,
                 GroupId = groupBusinessPM.GroupId,
-                Amount = groupBusinessPM.GroupAmount,
+                GroupAmount = groupBusinessPM.GroupAmount,
                 Status = groupBusinessPM.Status,
                 RecordType = groupBusinessPM.RecordType,
                 Operator = groupBusinessPM.Operator,

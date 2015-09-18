@@ -98,6 +98,8 @@
     <Compile Include="Subsidy\SubsidyDao.cs" />
     <Compile Include="Business\BusinessGroupDao.cs" />
     <Compile Include="Business\BusinessDao.cs" />
+    <Compile Include="Tag\TagDao.cs" />
+    <Compile Include="Tag\TagRelationDao.cs" />
     <Compile Include="User\BusinessRechargeDao.cs" />
     <Compile Include="User\UserDao.cs" />
     <Compile Include="User\UserOptRecordDao.cs" />

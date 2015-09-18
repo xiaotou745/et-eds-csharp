@@ -10,11 +10,13 @@
 ﻿using Ets.Model.DomainModel.Business;
 ﻿using Ets.Model.ParameterModel.Business;
 ﻿using Ets.Service.IProvider.AuthorityMenu;
+﻿using Ets.Service.IProvider.Tag;
 ﻿using Ets.Service.Provider.Authority;
 using Ets.Service.Provider.Distribution;
 using Ets.Service.Provider.Order;
 using Ets.Service.IProvider.Common;
 using Ets.Service.Provider.Common;
+﻿using Ets.Service.Provider.Tag;
 ﻿using Newtonsoft.Json;
 ﻿using SuperMan.App_Start;
 using Ets.Model.ParameterModel.User;
@@ -41,6 +43,7 @@ namespace SuperMan.Controllers
         IAreaProvider iAreaProvider = new AreaProvider();
         IAuthorityMenuProvider iAuthorityMenuProvider = new AuthorityMenuProvider();
         IBusinessProvider iBusinessProvider = new BusinessProvider();
+        private readonly ITagProvider tagProvider = new TagProvider();
         //Get: /Order  订单管理
         public ActionResult Order()
         {
@@ -89,6 +92,7 @@ namespace SuperMan.Controllers
                 return View();
             }
             var pagedList = iOrderProvider.GetOrders(criteria);
+            ViewBag.tags = tagProvider.GetTagsByTagType();  //加在所有标签
             return View(pagedList);
         }
         [HttpPost]
@@ -200,7 +204,7 @@ namespace SuperMan.Controllers
 
         /// <summary>
         /// 生成excel文件
-        /// 导出字段：订单号、商户信息、发布时间、完成时间、订单数量、订单总金额、订单佣金、外送费用、每单补贴、任务补贴、商家结算比例
+        /// 导出字段：订单号、商户信息、发布时间、完成时间、订单数量、订单总金额、订单佣金、外送费用、每单补贴、任务补贴、门店结算比例
         /// </summary>
         /// <returns></returns>
         private string CreateExcel(PageInfo<OrderListModel> paraModel)
@@ -221,7 +225,7 @@ namespace SuperMan.Controllers
             strBuilder.AppendLine("<td>外送费用</td>");
             strBuilder.AppendLine("<td>每单补贴</td>");
             strBuilder.AppendLine("<td>任务补贴</td>");
-            strBuilder.AppendLine("<td>商家结算</td>");
+            strBuilder.AppendLine("<td>门店结算</td>");
             strBuilder.AppendLine("</tr>");
             //输出数据.
             foreach (var oOrderListModel in paraModel.Records)
