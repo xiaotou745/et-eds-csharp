@@ -53,19 +53,20 @@ namespace SuperMan.Controllers
 
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(UserType));
             ViewBag.deliveryCompanyList = new CompanyProvider().GetCompanyList();//获取物流公司
-            var criteria = new Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria()
+            var criteria = new ClienterSearchCriteria()
             {
                 Status = -1,
                 GroupId = SuperMan.App_Start.UserContext.Current.GroupId,
                 UserType = UserType,
-                AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType)
-
+                AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType),
+                TagId = Request["TagId"] == null ? (int?) null : ParseHelper.ToInt(Request["TagId"])
             };
             if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
             {
                 return View();
             }
             ViewBag.tags = tagProvider.GetTagsByTagType(TagType.Clienter.GetHashCode());
+            ViewBag.selectTag = Request["TagId"];
             //ViewBag.openCityList.Result.AreaModels;
             var pagedList = iDistributionProvider.GetClienteres(criteria);
             return View(pagedList);

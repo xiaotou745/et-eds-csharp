@@ -73,13 +73,15 @@ namespace SuperMan.Controllers
                 GroupId = UserContext.Current.GroupId,
                 MealsSettleMode = -1,
                 UserType = UserType,
-                AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType)
+                AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType),
+                TagId = Request["TagId"] == null ? (int?)null : ParseHelper.ToInt(Request["TagId"])
             };
             if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
             {
                 return View();
             }
             ViewBag.tags = tagProvider.GetTagsByTagType(TagType.Business.GetHashCode());
+            ViewBag.selectTag = Request["TagId"];
             var pagedList = iBusinessProvider.GetBusinesses(criteria);
             return View(pagedList);
         }
