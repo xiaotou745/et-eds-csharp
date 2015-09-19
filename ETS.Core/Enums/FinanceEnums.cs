@@ -208,7 +208,17 @@ namespace ETS.Enums
         /// 异常订单
         /// </summary>
         [DisplayText("异常订单")]
-        Abnormal = 11
+        Abnormal = 11,
+        /// <summary>
+        /// 冻结金额
+        /// </summary>
+        [DisplayText("冻结金额")]
+        ForzenBalance = 12,
+        /// <summary>
+        /// 解冻金额
+        /// </summary>
+        [DisplayText("解冻金额")]        
+        UnfreezeBalance=13
     }
 
     public enum ClienterAllowWithdrawRecordType
