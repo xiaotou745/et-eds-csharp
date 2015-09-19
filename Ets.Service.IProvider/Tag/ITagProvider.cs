@@ -19,5 +19,10 @@ namespace Ets.Service.IProvider.Tag
         /// <param name="tagType"></param>
         /// <returns></returns>
         IList<TagModel> GetTagsByTagType(int tagType);
+        /// <summary>
+        /// 标签类型（0:门店 1:骑士）查询所有启用标签
+        /// </summary>
+        /// <returns></returns>
+        IList<TagModel> GetTagsByTagType();
     }
 }

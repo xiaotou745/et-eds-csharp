@@ -57,7 +57,7 @@ namespace SuperMan.Controllers
         readonly IBusinessFinanceAccountProvider iBusinessFinanceAccountProvider = new BusinessFinanceAccountProvider();
         readonly IDeliveryCompanyProvider iDeliveryCompanyProvider = new DeliveryCompanyProvider();
         private readonly ITagProvider tagProvider = new TagProvider();
-
+        private readonly ITagRelationProvider tagRelationProvider = new TagRelationProvider();
         // GET: BusinessManager
         [HttpGet]
         public ActionResult BusinessManager()
@@ -73,13 +73,15 @@ namespace SuperMan.Controllers
                 GroupId = UserContext.Current.GroupId,
                 MealsSettleMode = -1,
                 UserType = UserType,
-                AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType)
+                AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType),
+                TagId = Request["TagId"] == null ? (int?)null : ParseHelper.ToInt(Request["TagId"])
             };
             if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
             {
                 return View();
             }
             ViewBag.tags = tagProvider.GetTagsByTagType(TagType.Business.GetHashCode());
+            ViewBag.selectTag = Request["TagId"];
             var pagedList = iBusinessProvider.GetBusinesses(criteria);
             return View(pagedList);
         }
@@ -141,9 +143,9 @@ namespace SuperMan.Controllers
         }
 
         /// <summary>
-        /// 设置商家结算比例-外送费
+        /// 设置门店结算比例-外送费
         /// </summary>
-        /// <param name="id">商家id</param>
+        /// <param name="id">门店id</param>
         /// <param name="commission">结算比例</param>
         /// <param name="waisongfei">外送费</param>
         /// <returns></returns>
@@ -364,6 +366,8 @@ namespace SuperMan.Controllers
             ViewBag.businessThirdRelation = iBusinessProvider.GetBusinessThirdRelation(ParseHelper.ToInt(businessId));
             ViewBag.BusinessOpLog = iBusinessProvider.GetBusinessOpLog(ParseHelper.ToInt(businessId, 0));//add by wangchao
             ViewBag.deliveryCompany = iDeliveryCompanyProvider.GetDeliveryCompanyList();
+            ViewBag.tags = tagProvider.GetTagsByTagType(TagType.Business.GetHashCode());  //加在所有标签
+            ViewBag.currenTags = tagRelationProvider.GetTagRelationRelationList(ParseHelper.ToInt(businessId),TagUserType.Business.GetHashCode());
             return View("BusinessModify", businessDetailModel);
         }
         /// <summary>
@@ -756,6 +760,19 @@ namespace SuperMan.Controllers
         {
             var reg = iBusinessProvider.ModifyBusinessExpress(busiId, deliveryCompanyList, UserContext.Current.Name);
             return Json(new Ets.Model.Common.ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.DenyGet);
+        }
+        /// <summary>
+        /// 修改商家标签
+        /// caoheyang 20150917
+        /// </summary>
+        /// <param name="busiId"></param>
+        /// <param name="tags"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult ModifyTags(int busiId, string tags)
+        {
+            var reg = tagRelationProvider.ModifyTags(busiId, tags, UserContext.Current.Name,TagUserType.Business.GetHashCode());
+            return Json(new ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.DenyGet);
         }
 
         /// <summary>

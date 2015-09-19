@@ -1,6 +1,7 @@
 ﻿using Ets.Model.DataModel.Clienter;
 using Ets.Model.DomainModel.Clienter;
 using Ets.Model.ParameterModel.Business;
+using Ets.Model.ParameterModel.Clienter;
 using Ets.Service.IProvider.Business;
 using Ets.Service.IProvider.Common;
 using Ets.Service.IProvider.DeliveryCompany;
@@ -36,6 +37,7 @@ namespace SuperMan.Controllers
         private readonly IBusinessClienterRelationProvider iBusinessClienterRelationProvider =
             new BusinessClienterRelationProvider();
         private readonly ITagProvider tagProvider = new TagProvider();
+        private readonly ITagRelationProvider tagRelationProvider = new TagRelationProvider();
         // GET: BusinessManager
         public ActionResult SuperManManager()
         {
@@ -51,19 +53,20 @@ namespace SuperMan.Controllers
 
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(UserType));
             ViewBag.deliveryCompanyList = new CompanyProvider().GetCompanyList();//获取物流公司
-            var criteria = new Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria()
+            var criteria = new ClienterSearchCriteria()
             {
                 Status = -1,
                 GroupId = SuperMan.App_Start.UserContext.Current.GroupId,
                 UserType = UserType,
-                AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType)
-
+                AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType),
+                TagId = Request["TagId"] == null ? (int?) null : ParseHelper.ToInt(Request["TagId"])
             };
             if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
             {
                 return View();
             }
             ViewBag.tags = tagProvider.GetTagsByTagType(TagType.Clienter.GetHashCode());
+            ViewBag.selectTag = Request["TagId"];
             //ViewBag.openCityList.Result.AreaModels;
             var pagedList = iDistributionProvider.GetClienteres(criteria);
             return View(pagedList);
@@ -73,7 +76,7 @@ namespace SuperMan.Controllers
         [HttpPost]
         public ActionResult PostSuperManManager(int pageindex = 1)
         {
-            var criteria = new Ets.Model.ParameterModel.Clienter.ClienterSearchCriteria();
+            var criteria = new ClienterSearchCriteria();
             TryUpdateModel(criteria);
 
             int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
@@ -336,7 +339,7 @@ namespace SuperMan.Controllers
         }
 
         /// <summary>
-        /// 根据骑士id查询骑士绑定商家列表   caoheyang 20150608
+        /// 根据骑士id查询骑士绑定门店列表   caoheyang 20150608
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -350,7 +353,7 @@ namespace SuperMan.Controllers
         }
 
         /// <summary>
-        /// 根据骑士id查询骑士绑定商家列表   caoheyang 20150608
+        /// 根据骑士id查询骑士绑定门店列表   caoheyang 20150608
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
@@ -369,6 +372,8 @@ namespace SuperMan.Controllers
         {
             var clienterDetailModel = cliterProvider.GetClienterDetailById(clienterId);
             ViewBag.deliveryCompanyList = iDeliveryCompanyProvider.GetDeliveryCompanyList();
+            ViewBag.tags = tagProvider.GetTagsByTagType(TagType.Clienter.GetHashCode());  //加在所有标签
+            ViewBag.currenTags = tagRelationProvider.GetTagRelationRelationList(ParseHelper.ToInt(clienterId), TagUserType.Clienter.GetHashCode());
             return View("ClienterModify", clienterDetailModel);
         }
         /// <summary>
@@ -383,7 +388,7 @@ namespace SuperMan.Controllers
             clienterDetailModel.OptUserId = UserContext.Current.Id;
             clienterDetailModel.OptUserName = UserContext.Current.Name;
             var reg = cliterProvider.ModifyClienterDetail(clienterDetailModel);
-            return Json(new Ets.Model.Common.ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.DenyGet);
+            return Json(new ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.DenyGet);
         }
     }
 }
