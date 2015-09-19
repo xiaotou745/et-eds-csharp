@@ -366,7 +366,6 @@
     <Content Include="Content\jQuery-File-Upload\js\jquery.ui.widget.js" />
     <Content Include="Content\jquery.datetimepicker.css" />
     <Content Include="Content\jquery.loadmask.css" />
-    <Content Include="Content\lrtk.css" />
     <Content Include="Content\My97DatePicker\calendar.js" />
     <Content Include="Content\My97DatePicker\lang\en.js" />
     <Content Include="Content\My97DatePicker\lang\zh-cn.js" />
@@ -524,7 +523,6 @@
     <Content Include="Scripts\jquery-ui.min.js" />
     <Content Include="Scripts\jquery.blockUI.js" />
     <Content Include="Scripts\jquery.colorbox-min.js" />
-    <Content Include="Scripts\jquery.imgbox.pack.js" />
     <Content Include="Scripts\jquery.loadmask.js" />
     <Content Include="Scripts\jquery.ui.datepicker-zh-CN.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />

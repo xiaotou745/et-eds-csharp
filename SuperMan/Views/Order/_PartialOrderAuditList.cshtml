@@ -2,52 +2,45 @@
 @model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Order.OrderListModel>
 <script src="~/Scripts/view/orderList.js"></script>
 <style type="text/css">
-      #map_contain {
-          height: 90%;
-          width: 100%;
-          max-width: none;
-      }
+    #map_contain {
+        height: 90%;
+        width: 100%;
+        max-width: none;
+    }
 
-      label {
-          max-width: none;
-      }
+    label {
+        max-width: none;
+    }
 
-      #control {
-          width: 100%;
-      }
+    #control {
+        width: 100%;
+    }
 
-      .center-block, .carrousel, .carrousel .wrapper {
-          margin: auto;
-          position: absolute;
-          top: 0;
-          bottom: 0;
-          left: 0;
-          right: 0;
-      }
+    .center-block, .carrousel, .carrousel .wrapper {
+        margin: auto;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
 
-      .carrousel {
-          position: fixed;
-          background-color: rgba(10, 10, 10, 0.8);
-          display: none;
-      }
+    .carrousel {
+        position: fixed;
+        background-color: rgba(10, 10, 10, 0.8);
+        display: none;
+    } 
+    .carrousel .wrapper {
+        width: 600px;
+        height: 600px;
+        overflow: hidden;
+    }
 
-          .carrousel .wrapper {
-              width: 600px;
-              height: 600px;
-              overflow: hidden;
-              /*.loading{
-      color: #FFF;
-      font-size: 24px;
-      margin: 40% 40%;
-      display: none;
-    }*/
-          }
-
-              .carrousel .wrapper > img {
-                  width: 100%;
-              }
+    .carrousel .wrapper > img {
+        width: 100%;
+    }
 </style>
-<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle" id="dataTableRange">
+<table width="100%" class="tbstyle" id="dataTableRange">
     <thead>
         <tr id="dttr" class="tdbg">
             <th id="ckbox" width="5%"><input type="checkbox" name="selectAll" id="selectAll" onclick=" checkAll() " />全选/全消</th>
@@ -214,17 +207,22 @@
                     </tr>
                     <tr id='@(item.Id + "imgr")'>
                         <td colspan="1"></td>
-                        @for (int k = 0; k < item.OrderChildList.Count; k++)
-                        {
-                            string bigPicUrl = "";
-                            if (!string.IsNullOrWhiteSpace(item.OrderChildList[k].TicketUrl))
-                            {
-                                bigPicUrl = item.OrderChildList[k].TicketUrl.Substring(0, item.OrderChildList[k].TicketUrl.LastIndexOf(".")) + "_0_0.jpg";
-                                <td id="images" class="portrait" style="text-align: left">
-                                    <img class="pic" data-src-wide="@bigPicUrl" src="@item.OrderChildList[k].TicketUrl"/>
-                                </td>
-                            }
-                        }
+                        <td id="images" class="portrait" style="text-align: left">
+                            <ul>
+                                @for (int k = 0; k < item.OrderChildList.Count; k++)
+                                {
+                                    string bigPicUrl = "";
+                                    if (!string.IsNullOrWhiteSpace(item.OrderChildList[k].TicketUrl))
+                                    {
+                                        bigPicUrl = item.OrderChildList[k].TicketUrl.Substring(0, item.OrderChildList[k].TicketUrl.LastIndexOf(".")) + "_0_0.jpg";
+                                        <li style="float: left; margin-left: 5px;">
+                                            <img class="pic" data-src-wide="@bigPicUrl" src="@item.OrderChildList[k].TicketUrl"/>
+                                            <span style="display: block;text-align:center"><b>订单金额:</b>@item.OrderChildList[k].GoodPrice</span>
+                                        </li>
+                                    }
+                                }
+                            </ul>
+                        </td>
                     </tr>
                 }
             }
@@ -233,7 +231,7 @@
 </table>
 
 <div id="receiptBigPic" class="carrousel">
-    <span class="close entypo-cancel"></span>
+
     <div class="wrapper"> <img src="" id="bigImg" alt="" /> </div>
 </div>
 <div id="rowTip" style="position: absolute; border: 1px solid #ccc; padding: 0px 3px; display: none;  background: #FFCCCC"></div>
@@ -254,6 +252,7 @@
             $("#dataTbodyListImg").show();
             $("#dataTbodyList").hide();
             $("#dttr #ckbox").siblings().hide();
+
         } else {
             $("#dataTbodyListImg").hide();
             $("#dataTbodyList").show();
@@ -261,11 +260,12 @@
         }
     });
     var carrousel = $(".carrousel");
-    $(".portrait").click(function (e) {
+    $(".portrait ul li").click(function (e) {
         var src = $(this).find(".pic").attr("data-src-wide");
-        if (src != "") {
+        console.log(src);
+        if (typeof (src) != "undefined") {
             carrousel.find("img").attr("src", src);
-            carrousel.fadeIn(200);
+            carrousel.fadeIn(100);
         }
     });
     $("#receiptBigPic").click(function () {
@@ -305,12 +305,10 @@
                 checkedLength++;
             }
         });
-        if (checkedLength < all) {
-            //document.getElementById("selectAll").checked = false;
+        if (checkedLength < all) { 
             $("#selectAll").checked = false;
         }
-        else {
-            //document.getElementById("selectAll").checked = true;
+        else { 
             $("#selectAll").checked = true;
         }
     }
@@ -322,16 +320,16 @@
             $("#batchAuditPass").show();
             $("#batchAuditCancel").show();
             $("#dataTableRange tr").find('th:eq(0)').show();
-            $("#dataTableRange tr").find("th:eq(" + (totalColumn - 1) + ")").show();
+            $("#dataTableRange tr").find("th:eq(" + (totalColumn) + ")").show();
             $("#dataTableRange tr").find('td:eq(0)').show();
-            $("#dataTableRange tr").find("td:eq(" + (totalColumn - 1) + ")").show();
+            $("#dataTableRange tr").find("td:eq(" + (totalColumn) + ")").show();
         } else {
             $("#batchAuditPass").hide();
             $("#batchAuditCancel").hide();
             $("#dataTableRange tr").find('th:eq(0)').hide();
-            $("#dataTableRange tr").find("th:eq(" + (totalColumn - 1) + ")").hide();
+            $("#dataTableRange tr").find("th:eq(" + (totalColumn ) + ")").hide();
             $("#dataTableRange tr").find('td:eq(0)').hide();
-            $("#dataTableRange tr").find("td:eq(" + (totalColumn - 1) + ")").hide();
+            $("#dataTableRange tr").find("td:eq(" + (totalColumn ) + ")").hide();
         }
     }
 </script>
