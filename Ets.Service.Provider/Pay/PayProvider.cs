@@ -406,7 +406,7 @@ namespace Ets.Service.Provider.Pay
             // string.Concat(model.productId, "_", model.orderId, "_", model.childId, "_", model.payStyle);
 
             #region 金额验证
-            if (model.payAmount <= 0 || model.payAmount > 100000)
+            if (model.payAmount <= 0 || model.payAmount > 100000 || model.Businessid <= 0)
             {
                 return ResultModel<BusinessRechargeResultModel>.Conclude(AliPayStatus.fail);
             }
@@ -463,7 +463,7 @@ namespace Ets.Service.Provider.Pay
                         LogHelper.LogWriter(fail);
                         return;
                     }
-                    #region 支付宝锁
+                    #region 微信锁
                     //因为最后更新数据库日志时需要时间，但支付宝第二次更新状态访问过来，解决套圈问题.
                     string key = string.Format(RedissCacheKey.AlipayLock, orderNo);
                     var redis = new ETS.NoSql.RedisCache.RedisCache();
@@ -472,7 +472,7 @@ namespace Ets.Service.Provider.Pay
                     {
                         return;
                     }
-                    redis.Set(key, 1, new TimeSpan(0, 1, 0));
+                    redis.Set(key, 1, new TimeSpan(0, 0, 10));
                     #endregion
 
                     ETS.Library.Pay.BWxPay.WxPayData res = new ETS.Library.Pay.BWxPay.WxPayData();
@@ -480,13 +480,13 @@ namespace Ets.Service.Provider.Pay
                     res.SetValue("return_msg", "订单成功");
 
                     //检查该充值单是否已经更新
-                    if (new BusinessRechargeDao().Check(notify.order_no))
+                    if (new BusinessRechargeDao().Check(notify.transaction_id))
                     {
                         HttpContext.Current.Response.Write(res.ToXml());
                         HttpContext.Current.Response.End();
                         return;
                     }
-                   
+
                     Ets.Model.DataModel.Business.BusinessRechargeModel businessRechargeModel = new Ets.Model.DataModel.Business.BusinessRechargeModel()
                     {
                         BusinessId = businessid,
@@ -604,7 +604,7 @@ namespace Ets.Service.Provider.Pay
                 Operator = model.PayBy,
                 RecordType = BusinessBalanceRecordRecordType.Recharge.GetHashCode(),
                 RelationNo = model.OrderNo,
-                Remark =model.PayType==PayTypeEnum.WeiXin.GetHashCode()? "商家微信充值":"商家支付宝充值",
+                Remark = model.PayType == PayTypeEnum.WeiXin.GetHashCode() ? "商家微信充值" : "商家支付宝充值",
                 Status = 1,
                 WithwardId = 0
             };

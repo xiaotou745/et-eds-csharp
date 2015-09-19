@@ -580,7 +580,7 @@ select @@IDENTITY ";
             }
             if (!string.IsNullOrWhiteSpace(criteria.businessPhone))
             {
-                sbSqlWhere.AppendFormat(" AND b.PhoneNo='{0}' ", criteria.businessPhone);
+                sbSqlWhere.AppendFormat(" AND b.PhoneNo='{0}' ", criteria.businessPhone.Trim());
             }
             if (!string.IsNullOrWhiteSpace(criteria.orderId))
             {
