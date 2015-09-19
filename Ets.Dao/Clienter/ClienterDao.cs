@@ -1029,19 +1029,25 @@ where  Id=@Id ";
             ClienterDM clienterDM = new ClienterDM();
 
             #region 骑士表
-            //            string queryClienterSql = @"
-            //select  Id,PhoneNo,LoginName,recommendPhone,Password,TrueName,IDCard,PicWithHandUrl,PicUrl,Status,
-            //AccountBalance,InsertTime,InviteCode,City,CityId,GroupId,HealthCardID,InternalDepart,ProvinceCode
-            //,AreaCode,CityCode,Province,BussinessID,WorkStatus,AllowWithdrawPrice,HasWithdrawPrice
-            //from  clienter (nolock) 
-            //where Id=@Id";
+//            string queryClienterSql = @"
+//select  c.Id,PhoneNo,LoginName,recommendPhone,TrueName,IDCard,PicWithHandUrl,PicUrl,Status,
+//AccountBalance,InsertTime,InviteCode,City,CityId,GroupId,HealthCardID,InternalDepart,ProvinceCode
+//,AreaCode,CityCode,Province,BussinessID,WorkStatus,AllowWithdrawPrice,HasWithdrawPrice,
+//(case when (select count(1) from dbo.ClienterMessage cm(nolock) where cm.ClienterId=c.id and cm.IsRead=0)=0 then 0 else 1 end) HasMessage,
+//--(case when dc.SettleType=1 and ClienterSettleRatio>0 or dc.SettleType=2 and dc.ClienterFixMoney>0 then 1 else 0 end) IsDisplayDeliveryMoney
+//isnull(dc.IsShowAccount,1) IsShowAccount,IsReceivePush
+//from  dbo.clienter c (nolock) 
+//left join dbo.DeliveryCompany dc(nolock) on c.DeliveryCompanyId=dc.Id
+//where c.Id=@Id";
             string queryClienterSql = @"
 select  c.Id,PhoneNo,LoginName,recommendPhone,TrueName,IDCard,PicWithHandUrl,PicUrl,Status,
 AccountBalance,InsertTime,InviteCode,City,CityId,GroupId,HealthCardID,InternalDepart,ProvinceCode
 ,AreaCode,CityCode,Province,BussinessID,WorkStatus,AllowWithdrawPrice,HasWithdrawPrice,
 (case when (select count(1) from dbo.ClienterMessage cm(nolock) where cm.ClienterId=c.id and cm.IsRead=0)=0 then 0 else 1 end) HasMessage,
---(case when dc.SettleType=1 and ClienterSettleRatio>0 or dc.SettleType=2 and dc.ClienterFixMoney>0 then 1 else 0 end) IsDisplayDeliveryMoney
-isnull(dc.IsShowAccount,1) IsShowAccount,IsReceivePush
+case when dc.IsShowAccount=1 then 0
+ when (dc.IsShowAccount  is null and c.GradeType=2) then 2
+ else 1 end IsShowAccount,
+IsReceivePush
 from  dbo.clienter c (nolock) 
 left join dbo.DeliveryCompany dc(nolock) on c.DeliveryCompanyId=dc.Id
 where c.Id=@Id";
@@ -1478,7 +1484,7 @@ SELECT IDENT_CURRENT('clienter')"
             string sql = @"UPDATE clienter 
                             SET IDCard=@IDCard,
                                 TrueName=@TrueName,
-                                DeliveryCompanyId=@DeliveryCompanyId,recommendPhone=@recommendPhone ";
+                                DeliveryCompanyId=@DeliveryCompanyId,recommendPhone=@recommendPhone,GradeType=@GradeType ";
 
             sql += @" OUTPUT
                         Inserted.Id,
@@ -1502,6 +1508,7 @@ SELECT IDENT_CURRENT('clienter')"
             parm.AddWithValue("@IDCard", model.IDCard);
             parm.AddWithValue("@TrueName", model.TrueName);
             parm.AddWithValue("@DeliveryCompanyId", model.DeliveryCompanyId);
+            parm.AddWithValue("@GradeType", model.GradeType);            
             parm.AddWithValue("@Id", model.Id);
             parm.AddWithValue("@OptId", model.OptUserId);
             parm.AddWithValue("@OptName", model.OptUserName);
@@ -1672,6 +1679,7 @@ SELECT   c.[Id],
          c.[BussinessID],
          c.[WorkStatus], 
          c.DeliveryCompanyId,
+         c.GradeType,
          cfa.TrueName AccountName,
          cfa.AccountNo,
          cfa.AccountType,

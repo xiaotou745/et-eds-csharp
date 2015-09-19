@@ -22,5 +22,15 @@ namespace Ets.Model.DomainModel.Complain
         /// 城市名称
         /// </summary>
         public string CityName { get; set; }
+
+        /// <summary>
+        /// 是否处理
+        /// </summary>
+        public int IsHandle { get; set; }
+
+        /// <summary>
+        /// 处理意见
+        /// </summary>
+        public string HandleOpinion { get; set; }     
     }
 }

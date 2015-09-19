@@ -24,6 +24,15 @@ namespace Ets.Service.IProvider.Complain
         /// </summary>
         /// <param name="complainCriteria"></param>
         /// <returns></returns>
-        PageInfo<ComplainDomain> Get(ComplainCriteria complainCriteria); 
+        PageInfo<ComplainDomain> Get(ComplainCriteria complainCriteria);
+
+        /// <summary>
+        /// 意见处理
+        /// 胡灵波
+        /// 2015年9月19日 15:46:16
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        bool UpdateComplainHandle(ComplainPM model);
     }
 }

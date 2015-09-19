@@ -387,6 +387,7 @@ namespace SuperMan.Controllers
         {
             clienterDetailModel.OptUserId = UserContext.Current.Id;
             clienterDetailModel.OptUserName = UserContext.Current.Name;
+            if (string.IsNullOrWhiteSpace(clienterDetailModel.Tags)) clienterDetailModel.Tags = "";
             var reg = cliterProvider.ModifyClienterDetail(clienterDetailModel);
             return Json(new ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.DenyGet);
         }
