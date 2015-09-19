@@ -64,6 +64,8 @@ values  ( @ComplainId ,
         cp.Id,cp.OrderNo,cp.Reason ,cp.OrderId,
         cp.CreateTime ,
         cp.ComplainType ,
+        cp.IsHandle,
+        cp.HandleOpinion,        
         b.Name BussinessName ,
         c.TrueName ClienterName ,
         b.City CityName ";
@@ -76,6 +78,10 @@ values  ( @ComplainId ,
             if (complainCriteria.ComplainType > 0)
             {
                 sbSqlWhere.AppendFormat(" and cp.ComplainType = '{0}' ", complainCriteria.ComplainType);
+            }
+            if (complainCriteria.IsHandle > -1)
+            {
+                sbSqlWhere.AppendFormat(" and cp.IsHandle = '{0}' ", complainCriteria.IsHandle);
             }
             if (!string.IsNullOrWhiteSpace(complainCriteria.CityId))
             {
@@ -121,5 +127,27 @@ where OrderId = @OrderId and ComplainType = @ComplainType ";
             dbParameters.Add("ComplainType", DbType.Int32).Value = complainModel.ComplainType; 
            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql),-1);
         }
+
+        /// <summary>
+        /// 意见处理
+        /// 胡灵波
+        /// 2015年9月19日 15:46:16
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool UpdateComplainHandle(ComplainPM model)
+        {
+            const string sql = @"
+update Complain
+set  IsHandle=@IsHandle ,HandleOpinion = @HandleOpinion
+    ,Operator=@Operator
+where Id=@Id";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@Id", model.Id);
+            dbParameters.AddWithValue("@IsHandle", model.IsHandle);
+            dbParameters.AddWithValue("@HandleOpinion", model.HandleOpinion);
+            dbParameters.AddWithValue("@Operator", model.Operator);      
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters) > 0;
+        } 
     }
 }

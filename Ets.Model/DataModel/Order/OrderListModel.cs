@@ -403,6 +403,11 @@ namespace Ets.Model.DataModel.Order
         /// 集团Id
         /// </summary>
         public int GroupBusinessId { get; set; }
+
+        /// <summary>
+        /// 骑士等级
+        /// </summary>
+        public int GradeType { get; set; }
         
     }
 }

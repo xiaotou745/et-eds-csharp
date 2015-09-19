@@ -43,6 +43,11 @@ namespace Ets.Model.DomainModel.Clienter
         /// </summary>
         public string Tags { get; set; }
 
+        /// <summary>
+        /// 骑士等级
+        /// </summary>
+        public int GradeType { get; set; }
+
  
     }
 }

@@ -47,6 +47,18 @@ namespace Ets.Service.Provider.Complain
         public PageInfo<ComplainDomain> Get(ComplainCriteria complainCriteria)
         {
             return _complainDao.Get<ComplainDomain>(complainCriteria);
-        } 
+        }
+
+        /// <summary>
+        /// 意见处理
+        /// 胡灵波
+        /// 2015年9月19日 15:46:16
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool UpdateComplainHandle(ComplainPM model)
+        {
+            return _complainDao.UpdateComplainHandle(model);
+        }
     }
 }

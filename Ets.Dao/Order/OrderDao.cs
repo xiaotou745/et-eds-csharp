@@ -1659,6 +1659,7 @@ select top 1
         c.AccountBalance ,
         c.AllowWithdrawPrice, 
         c.Id clienterId ,
+        c.GradeType,
         o.OrderCommission ,
         o.businessId ,
         b.GroupId ,

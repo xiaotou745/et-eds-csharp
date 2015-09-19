@@ -15,6 +15,9 @@
             <th>投诉类型</th>
             <th>投诉时间</th>
             <th>投诉原因</th> 
+            <th>状态</th> 
+            <th>客服备注</th> 
+            <th>操作</th> 
         </tr>
     </thead>
     <tbody>
@@ -33,6 +36,29 @@
                         <td>@ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.ComplainTypeEnum)item.ComplainType).GetType(), (ETS.Enums.ComplainTypeEnum)item.ComplainType).Text</td>
                         <td>@item.CreateTime</td>
                         <td title="@item.Reason.Replace("\n", "")">@(item.Reason.Length > 20 ? item.Reason.Substring(0, 20) + "..." : item.Reason)</td>
+                        @{
+                            var statusView = "";
+                            if (@item.IsHandle ==1)
+                            {
+                                statusView = "已处理";
+                            }
+                            else 
+                            {
+                                statusView = "待处理";
+                            }             
+                        }
+                        <td>@statusView</td>
+
+                        <td>@item.HandleOpinion</td>
+                        <td>
+                            @if (item.IsHandle == 1)
+                            {
+                            }
+                            else
+                            {
+                                <a href="javascript:void(0)" onclick="funHandle(@item.Id)">处理</a>
+                            }
+                        </td>
                     </tr>
                 }
             }
@@ -47,3 +73,19 @@
         @Html.Partial("~/views/shared/PagerControl.cshtml", Model)
     }
 }
+
+<script type="text/javascript">
+
+    $('.J_closebox').click(function () {
+        adminjs.closewinbox('.add-openbox');
+        return false;
+    });
+
+
+    //处理
+    function funHandle(id) {
+        $('#txtId').val(0);
+        $('#txtId').val(id);
+        adminjs.openwinbox('#ComplainShow');
+    }
+</script>

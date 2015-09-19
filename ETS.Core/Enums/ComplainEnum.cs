@@ -30,4 +30,18 @@ namespace ETS.Enums
         [DisplayText("商户投诉骑士")]
         BusinessComplain = 2
     }
+
+    public enum HandleEnum
+    {      
+        /// <summary>
+        /// 骑士投诉商户
+        /// </summary>
+        [DisplayText("已处理")]
+        HasHandle = 1,
+        /// <summary>
+        /// 商户举报骑士
+        /// </summary>
+        [DisplayText("待处理")]
+        NoHandle = 0
+    }
 }
