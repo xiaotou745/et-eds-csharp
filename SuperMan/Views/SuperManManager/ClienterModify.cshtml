@@ -39,21 +39,14 @@
                 <label style="margin-left: 29px">身 份 证：</label>
                 <input name="idCard" id="idCard" type="text" value="@Model.IDCard">
             </div>
+
             <div class="control-group" style="margin-top: 15px">
+                <label style="margin-left: 26px">所属等级：</label>                    
+                    @Html.DropDownList("gradeType", new SelectList(EnumExtenstion.GetEnumItems(typeof(GradeType)), "Value", "Text", Model.GradeType), null, new { @class = "selectw", style = "width:157px", onchange = "fungRadeType()" })
+            </div>
+            <div id="divDeliveryCompany" class="control-group" style="margin-top: 15px">
                 <label>所属物流公司：</label>
                 @Html.DropDownList("deliveryCompany", new SelectList(ViewBag.deliveryCompanyList, "Id", "DeliveryCompanyName", Model.DeliveryCompanyId), "-请选择-", new { style = "width:167px" })
-            </div>
-            <div class="control-group" style="margin-top: 15px">
-                <label style="margin-left: 26px">所属等级：</label>                     
-                @if (Model.DeliveryCompanyId > 0)
-                {
-                    @Html.DropDownList("gradeType", new SelectList(EnumExtenstion.GetEnumItems(typeof(GradeType2)), "Value", "Text", Model.GradeType), null, new { @class = "selectw", style = "width:157px" });
-                }
-                else
-                {
-                    @Html.DropDownList("gradeType", new SelectList(EnumExtenstion.GetEnumItems(typeof(GradeType)), "Value", "Text", Model.GradeType), null, new { @class = "selectw", style = "width:157px" });
-                }
-                
             </div>
         </div>
         @{
@@ -127,8 +120,16 @@
         var id = $('#hidId').val();
         var trueName = $('#trueName').val();
         var idCard = $('#idCard').val();
-        var deliveryCompany = $('#deliveryCompany').val();
+        var deliveryCompany ;         
         var gradeType = $('#gradeType').val();
+        if (gradeType == 2)
+        {
+            deliveryCompany = -1;
+        }
+        else
+        {
+            deliveryCompany=$('#deliveryCompany').val()
+        }
         var recommendPhone = $('#recommendPhone').val().trim();
         var regPhone = /^0?1\d{10}$/; 
         if (recommendPhone.length > 0 && !regPhone.test(recommendPhone)) {
@@ -203,5 +204,17 @@
     function selectAllTags() {
         var checkedOfAll = $("#selectAllTags").prop("checked");
         $("input[name='checkTags']").prop("checked", checkedOfAll);
+    }
+    function fungRadeType()
+    {
+        var val = $("#gradeType").val();
+        var text = $("#gradeType").text();
+        if (val == 2) {
+            $("#divDeliveryCompany").hide();
+        }
+        else
+        {
+            $("#divDeliveryCompany").show();
+        }
     }
 </script>
