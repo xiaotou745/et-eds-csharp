@@ -35,7 +35,7 @@ namespace SuperMan.Controllers
 
         private readonly IPayProvider iPayProvider = new PayProvider();
         /// <summary>
-        /// 加载默认商户提款单列表
+        /// 加载默认门店提款单列表
         /// danny-20150511
         /// </summary>
         /// <returns></returns>
@@ -58,7 +58,7 @@ namespace SuperMan.Controllers
             return View(pagedList);
         }
         /// <summary>
-        /// 按条件查询商户提款单列表
+        /// 按条件查询门店提款单列表
         /// danny-20150511
         /// </summary>
         /// <param name="pageindex">页码</param>
@@ -81,7 +81,7 @@ namespace SuperMan.Controllers
             return PartialView("_BusinessWithdrawList", pagedList);
         }
         /// <summary>
-        /// 查看商户提款单明细
+        /// 查看门店提款单明细
         /// danny-20150511
         /// </summary>
         /// <param name="withwardId">提款单Id</param>
@@ -104,7 +104,7 @@ namespace SuperMan.Controllers
             return new ContentResult { Content = Newtonsoft.Json.JsonConvert.SerializeObject(queryCashStatusReturnModel) };
         }
         /// <summary>
-        /// 审核商户提款申请单通过
+        /// 审核门店提款申请单通过
         /// danny-20150511
         /// </summary>
         /// <param name="withwardId">提款单Id</param>
@@ -115,7 +115,7 @@ namespace SuperMan.Controllers
             var businessWithdrawLog = new BusinessWithdrawLog()
             {
                 Operator = UserContext.Current.Name,
-                Remark = "商户提款申请单审核通过",
+                Remark = "门店提款申请单审核通过",
                 Status = BusinessWithdrawFormStatus.Allow.GetHashCode(),
                 WithwardId = Convert.ToInt64(withwardId)
             };
@@ -131,7 +131,7 @@ namespace SuperMan.Controllers
 
         }
         /// <summary>
-        /// 商家批量审核通过（只审核待审核状态的数据）
+        /// 门店批量审核通过（只审核待审核状态的数据）
         /// </summary>
         /// <UpdateBy>zhaohailong</UpdateBy>
         /// <UpdateTime>20150625</UpdateTime>
@@ -152,7 +152,7 @@ namespace SuperMan.Controllers
                     var businessWithdrawLog = new BusinessWithdrawLog()
                     {
                         Operator = UserContext.Current.Name,
-                        Remark = "商户提款申请单审核通过",
+                        Remark = "门店提款申请单审核通过",
                         Status = BusinessWithdrawFormStatus.Allow.GetHashCode(),
                         WithwardId = Convert.ToInt64(realids[0])
                     };
@@ -198,7 +198,7 @@ namespace SuperMan.Controllers
             return Json(new ResultModel(hasSuccess, totalMsg), JsonRequestBehavior.DenyGet);
         }
         /// <summary>
-        /// 商户提款申请单确认打款
+        /// 门店提款申请单确认打款
         /// danny-20150511
         /// </summary>
         /// <param name="withwardId">提款单Id</param>
@@ -209,7 +209,7 @@ namespace SuperMan.Controllers
             var businessWithdrawLog = new BusinessWithdrawLog()
             {
                 Operator = UserContext.Current.Name,
-                Remark = "商户提款申请单确认打款",
+                Remark = "门店提款申请单确认打款",
                 Status = BusinessWithdrawFormStatus.Paying.GetHashCode(),
                 OldStatus = BusinessWithdrawFormStatus.Allow.GetHashCode(),
                 WithwardId = Convert.ToInt64(withwardId)
@@ -218,7 +218,7 @@ namespace SuperMan.Controllers
             return Json(new ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.DenyGet);
         }
         /// <summary>
-        /// 商户提款申请单审核拒绝
+        /// 门店提款申请单审核拒绝
         /// danny-20150511
         /// </summary>
         /// <param name="withwardId">提款单Id</param>
@@ -239,7 +239,7 @@ namespace SuperMan.Controllers
             return Json(new ResultModel(reg, reg ? "审核拒绝成功！" : "审核拒绝失败！"), JsonRequestBehavior.DenyGet);
         }
         /// <summary>
-        /// 商户提款申请单打款失败
+        /// 门店提款申请单打款失败
         /// danny-20150511
         /// </summary>
         /// <param name="withwardId">提款单Id</param>
@@ -262,7 +262,7 @@ namespace SuperMan.Controllers
             return Json(new ResultModel(reg, reg ? "打款失败操作提交成功！" : "打款失败操作提交失败！"), JsonRequestBehavior.DenyGet);
         }
         /// <summary>
-        /// 查看商户提款单详情
+        /// 查看门店提款单详情
         /// danny-20150511
         /// </summary>
         /// <param name="withwardId">提款单Id</param>
@@ -275,7 +275,7 @@ namespace SuperMan.Controllers
             return new ContentResult { Content = Newtonsoft.Json.JsonConvert.SerializeObject(businessWithdrawFormModel) };
         }
         /// <summary>
-        /// 导出商户提款申请单列表
+        /// 导出门店提款申请单列表
         /// danny-20150512
         /// </summary>
         /// <param name="pageindex">页码</param>
@@ -287,7 +287,7 @@ namespace SuperMan.Controllers
             var dtBusinessWithdraw = iBusinessFinanceProvider.GetBusinessWithdrawForExport(criteria);
             if (dtBusinessWithdraw != null && dtBusinessWithdraw.Count > 0)
             {
-                string filname = "商户提款申请单{0}";
+                string filname = "门店提款申请单{0}";
                 if (!string.IsNullOrWhiteSpace(criteria.WithdrawDateStart))
                 {
                     filname = string.Format(filname, ParseHelper.ToDatetime(criteria.WithdrawDateStart).ToLongDateString() + "到" + ParseHelper.ToDatetime(criteria.WithdrawDateEnd).ToLongDateString());

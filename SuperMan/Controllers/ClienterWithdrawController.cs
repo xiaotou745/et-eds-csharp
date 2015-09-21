@@ -135,7 +135,7 @@ namespace SuperMan.Controllers
                     var businessWithdrawLog = new ClienterWithdrawLog()
                     {
                         Operator = UserContext.Current.Name,
-                        Remark = "商户提款申请单审核通过",
+                        Remark = "门店提款申请单审核通过",
                         Status = ClienterWithdrawFormStatus.Allow.GetHashCode(),
                         WithwardId = Convert.ToInt64(realids[0])
                     };

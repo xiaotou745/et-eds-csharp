@@ -43,8 +43,8 @@
         //查询
         $("#btnSearch").on('click', function () {
             criteria = {
-                BusinessName: $("#txtSuperManName").val(), //商户名称
-                BusinessPhone: $("#txtSuperManPhone").val(),////商户电话
+                BusinessName: $("#txtSuperManName").val(), //门店名称
+                BusinessPhone: $("#txtSuperManPhone").val(),////门店电话
                 status: $("#superManStatus").val(),
                 PagingRequest: { PageIndex: 1, PageSize: DEFAULT_PAGESIZE }
             };

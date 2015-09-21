@@ -12,7 +12,7 @@
 <script src="~/Scripts/jquery-ui.min.js"></script>
 <div class="zpManage zpSh">
     <h2 class="crumbs">
-        您所在位置：商户 > 商户结算
+        您所在位置：门店 > 门店结算
     </h2>
     
         @using (Ajax.BeginForm("PostBusinessCommissions", new RouteValueDictionary { { "pageindex", "" } },
@@ -23,9 +23,9 @@
                 <table border="0" cellspacing="0" cellpadding="0">
                     <tr>
                         <td>
-                            <span class="">商户名称: </span>
+                            <span class="">门店名称: </span>
                             <input id="name" name="name" type="text" />
-                            <span class="">商户电话: </span>
+                            <span class="">门店电话: </span>
                             <input id="phoneNo" name="phoneNo" type="tel" />
                             <span class="">开始时间: </span>
                             <input id="t1" name="t1" readonly="readonly" type="text" />

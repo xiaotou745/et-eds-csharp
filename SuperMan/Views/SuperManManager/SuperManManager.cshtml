@@ -59,7 +59,7 @@
                         @*<span>提现时间: </span>
                             <input id="txtPubStart" readonly="readonly" type="text" name="txtPubStart" />*@
                         <span class="">标签: </span>
-                        @Html.DropDownList("TagType", new SelectList(ViewBag.tags, "Id", "TagName"), "全部", new { @class = "selectw", style = "width:143px" })
+                        @Html.DropDownList("TagId", new SelectList(ViewBag.tags, "Id", "TagName", ViewBag.selectTag), "全部", new { @class = "selectw", style = "width:143px" })
                         <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
                     </td>
                 </tr>
@@ -180,7 +180,7 @@
             </p>
         </div>
     </div>*@
-@*商户充值弹窗*@
+@*门店充值弹窗*@
 <div>
     <div class="add-openbox add-form" id="ClienterRechargeShow" style="width:500px">
         <h2>
@@ -397,7 +397,7 @@
 
         //当集团可选（即：当前登陆人员非管理员时，为集团下拉绑定事件  add by caoheyang 20150303）
         if ($("#HidGroupID").attr("type") != "hidden") {
-            //当集团选项发生改变时，重选商户。
+            //当集团选项发生改变时，重选门店。
             $("#HidGroupID").change(function () {
                 $('#BoxBussinessID').val("");
                 LoadBussinessInfo();

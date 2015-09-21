@@ -264,13 +264,12 @@ namespace Ets.Service.Provider.Order
         /// <param name="busiOrderInfoModel"></param>
         /// <param name="business">返回商户信息</param>
         /// <returns></returns>
-        public order TranslateOrder(BussinessOrderInfoPM busiOrderInfoModel, out BusListResultModel business)
+        public order TranslateOrder(BussinessOrderInfoPM busiOrderInfoModel, BusListResultModel business)
         {
             order to = new order();
             ///TODO 订单号生成规则，定了以后要改；
             to.OrderNo = Helper.generateOrderCode(busiOrderInfoModel.userId, busiOrderInfoModel.TimeSpan);  //根据userId生成订单号(15位)
-            to.businessId = busiOrderInfoModel.userId; //当前发布者
-            business = iBusinessProvider.GetBusiness(busiOrderInfoModel.userId);
+            to.businessId = busiOrderInfoModel.userId; //当前发布者            
             if (business != null)
             {
                 to.PickUpCity = business.City;  //商户所在城市
@@ -287,17 +286,13 @@ namespace Ets.Service.Provider.Order
                 to.OneKeyPubOrder = business.OneKeyPubOrder;
                 to.IsOrderChecked = business.IsOrderChecked;
                 to.IsAllowCashPay = business.IsAllowCashPay;
-                to.IsBindGroup=business.IsBindGroup;
-                //to.BussGroupId=business.BussGroupId;
+
+                to.IsBindGroup=business.IsBindGroup;                
                 to.GroupBusiName = business.GroupBusiName;               
                 to.BussGroupAmount=business.BussGroupAmount;
                 to.BussGroupIsAllowOverdraft=business.BussGroupIsAllowOverdraft;
                 to.BalancePrice = business.BalancePrice;                
-            }
-            if (to.SettleMoney > to.BalancePrice && to.IsBindGroup == 1)
-            {
-                to.GroupBusinessId = business.BussGroupId;
-            }
+            }       
 
             if (ConfigSettings.Instance.IsGroupPush)
             {
@@ -309,7 +304,6 @@ namespace Ets.Service.Provider.Order
                 {
                     to.OrderFrom = 0;
                 }
-
             }
             to.Remark = busiOrderInfoModel.Remark;
             to.ReceviceName = string.IsNullOrWhiteSpace(busiOrderInfoModel.receviceName) ? "" : busiOrderInfoModel.receviceName;
@@ -323,7 +317,6 @@ namespace Ets.Service.Provider.Order
             to.PubLongitude = busiOrderInfoModel.PubLongitude;//商户发单经度
             to.PubLatitude = busiOrderInfoModel.PubLatitude;
             to.IsPubDateTimely = busiOrderInfoModel.IsTimely;
-
 
             //必须写to.DistribSubsidy ，防止bussiness为空情况
             OrderCommission orderComm = new OrderCommission()
@@ -364,6 +357,10 @@ namespace Ets.Service.Provider.Order
                                ParseHelper.ToDecimal(to.DistribSubsidy) * ParseHelper.ToInt(to.OrderCount), 2);//第三方如果设置商家外送费会多给第三方商户返回菜品金额+外送费
             }
 
+            if (business.IsBindGroup == 1 && to.SettleMoney > business.BalancePrice)
+            {
+                to.GroupBusinessId = business.BussGroupId;
+            }
             return to;
         }
 
@@ -404,7 +401,7 @@ namespace Ets.Service.Provider.Order
                 //                                            Remark = "配送费支出金额"
                 //                                        });
 
-                if (order.SettleMoney > order.BalancePrice && order.IsBindGroup==1)
+                if (order.IsBindGroup==1 && order.SettleMoney > order.BalancePrice)
                 {
                      // 更新集团余额
                     iGroupBusinessProvider.UpdateGBalance(new GroupBusinessPM()

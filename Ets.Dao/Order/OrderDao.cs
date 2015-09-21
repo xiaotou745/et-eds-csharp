@@ -580,7 +580,7 @@ select @@IDENTITY ";
             }
             if (!string.IsNullOrWhiteSpace(criteria.businessPhone))
             {
-                sbSqlWhere.AppendFormat(" AND b.PhoneNo='{0}' ", criteria.businessPhone);
+                sbSqlWhere.AppendFormat(" AND b.PhoneNo='{0}' ", criteria.businessPhone.Trim());
             }
             if (!string.IsNullOrWhiteSpace(criteria.orderId))
             {
@@ -639,11 +639,25 @@ select @@IDENTITY ";
             {
                 sbSqlWhere.AppendFormat(" AND b.City IN({0}) ", criteria.AuthorityCityNameListStr.Trim());
             }
+
+          
             string tableList = @" [order] o WITH ( NOLOCK )
                                 LEFT JOIN clienter c WITH ( NOLOCK ) ON c.Id = o.clienterId
                                 JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                 LEFT JOIN [group] g WITH ( NOLOCK ) ON g.id = o.OrderFrom
                                 JOIN dbo.OrderOther oo (nolock) ON o.Id = oo.OrderId ";
+            if (criteria.TagId != null)
+            {
+                if (criteria.TagType == TagUserType.Business.GetHashCode())
+                {
+                    tableList = tableList + string.Format("join dbo.TagRelation tagR on b.Id=tagR.UserId and tagR.IsEnable=1 and tagR.UserType=0 and  tagR.TagId={0}",criteria.TagId); 
+                }
+                else if (criteria.TagType == TagUserType.Clienter.GetHashCode())
+                {
+                    tableList = tableList + string.Format("join dbo.TagRelation tagR on c.Id=tagR.UserId and tagR.IsEnable=1 and tagR.UserType=1  and  tagR.TagId={0}",criteria.TagId); 
+                }
+             
+            }
             string orderByColumn = " o.Status ASC,o.Id DESC ";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
         }
@@ -1573,6 +1587,7 @@ select top 1
         c.AccountBalance ,
         c.AllowWithdrawPrice,
         c.Id clienterId ,
+        c.GradeType,
         o.OrderCommission ,
         o.businessId ,
         b.GroupId ,
@@ -1595,8 +1610,7 @@ from    [order] o with ( nolock )
         join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
         join dbo.business b with ( nolock ) on o.businessId = b.Id
         join dbo.OrderOther oo with(nolock) on o.Id = oo.OrderId
-where  o.OrderNo = @OrderNo
-";
+where  o.OrderNo = @OrderNo";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderNo", SqlDbType.NVarChar).Value = orderNo;
 
@@ -1645,6 +1659,7 @@ select top 1
         c.AccountBalance ,
         c.AllowWithdrawPrice, 
         c.Id clienterId ,
+        c.GradeType,
         o.OrderCommission ,
         o.businessId ,
         b.GroupId ,
@@ -2906,7 +2921,7 @@ SELECT CASE SUM(oc.PayStatus)
             order order = null;     
             string sql = @"select  o.Id ,
         o.OrderNo ,
-        o.SettleMoney ,isnull(o.GroupBusinessId,0),
+        o.SettleMoney ,isnull(o.GroupBusinessId,0) as GroupBusinessId,
         b.Name BusinessName
 from    [order] o ( nolock )
         join dbo.business b ( nolock ) on o.businessId = b.Id

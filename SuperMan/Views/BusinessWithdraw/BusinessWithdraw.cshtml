@@ -10,7 +10,7 @@
 <script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
 <div class="zpManage zpSh">
     <h2 class="crumbs">
-        您所在位置：财务管理 > 商户提款管理
+        您所在位置：财务管理 > 门店提款管理
     </h2>
     @using (Ajax.BeginForm("PostBusinessWithdraw", new RouteValueDictionary { { "pageindex", "" } },
     new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
@@ -20,9 +20,9 @@
             <table border="0" cellspacing="0" cellpadding="0" style="width:1080px">
                 <tr>
                     <td>
-                        <span class="">商户名称: </span>
+                        <span class="">门店名称: </span>
                         <input id="businessName" type="text" name="businessName" />
-                        <span class="">商户电话: </span>
+                        <span class="">门店电话: </span>
                         <input id="BusinessPhoneNo" type="tel" name="BusinessPhoneNo" />
                         <span class="">筛选城市: </span>
                         @*@Html.DropDownList("businessCity", new SelectList(ViewBag.openCityList.Result.AreaModels, "Name", "Name"), "--无--", new { style = "width:155px" })*@

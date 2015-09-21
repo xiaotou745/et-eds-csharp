@@ -10,11 +10,13 @@
 ﻿using Ets.Model.DomainModel.Business;
 ﻿using Ets.Model.ParameterModel.Business;
 ﻿using Ets.Service.IProvider.AuthorityMenu;
+﻿using Ets.Service.IProvider.Tag;
 ﻿using Ets.Service.Provider.Authority;
 using Ets.Service.Provider.Distribution;
 using Ets.Service.Provider.Order;
 using Ets.Service.IProvider.Common;
 using Ets.Service.Provider.Common;
+﻿using Ets.Service.Provider.Tag;
 ﻿using Newtonsoft.Json;
 ﻿using SuperMan.App_Start;
 using Ets.Model.ParameterModel.User;
@@ -30,6 +32,7 @@ using Ets.Service.IProvider.Business;
 ﻿using SuperMan.Common;
 
 using Ets.Model.DomainModel.Area;
+﻿using Ets.Service.IProvider.Order;
 ﻿using ETS.Extension;
 
 namespace SuperMan.Controllers
@@ -39,8 +42,10 @@ namespace SuperMan.Controllers
         Ets.Service.IProvider.Distribution.IDistributionProvider iDistributionProvider = new DistributionProvider();
         Ets.Service.IProvider.Order.IOrderProvider iOrderProvider = new OrderProvider();
         IAreaProvider iAreaProvider = new AreaProvider();
+        IOrderChildProvider iOrderChildProvider = new OrderChildProvider();
         IAuthorityMenuProvider iAuthorityMenuProvider = new AuthorityMenuProvider();
         IBusinessProvider iBusinessProvider = new BusinessProvider();
+        private readonly ITagProvider tagProvider = new TagProvider();
         //Get: /Order  订单管理
         public ActionResult Order()
         {
@@ -89,6 +94,7 @@ namespace SuperMan.Controllers
                 return View();
             }
             var pagedList = iOrderProvider.GetOrders(criteria);
+            ViewBag.tags = tagProvider.GetTagsByTagType();  //加在所有标签
             return View(pagedList);
         }
         [HttpPost]
@@ -102,7 +108,7 @@ namespace SuperMan.Controllers
             criteria.AuthorityCityNameListStr =
                 iAreaProvider.GetAuthorityCityNameListStr(UserType);
             criteria.UserType = UserType;
-            //指派超人时  以下代码 有用，现在 注释掉  wc 
+            //指派骑士时  以下代码 有用，现在 注释掉  wc 
             //var superManModel = iDistributionProvider.GetClienterModelByGroupID(ViewBag.txtGroupId);
             //if (superManModel != null)
             //{
@@ -196,63 +202,7 @@ namespace SuperMan.Controllers
                 orderExcels.Add(orderExcel);
             }
             return orderExcels;
-        }
-
-        /// <summary>
-        /// 生成excel文件
-        /// 导出字段：订单号、商户信息、发布时间、完成时间、订单数量、订单总金额、订单佣金、外送费用、每单补贴、任务补贴、商家结算比例
-        /// </summary>
-        /// <returns></returns>
-        private string CreateExcel(PageInfo<OrderListModel> paraModel)
-        {
-            StringBuilder strBuilder = new StringBuilder();
-            strBuilder.AppendLine("<table border=1 cellspacing=0 cellpadding=5 rules=all>");
-            //输出表头.
-            strBuilder.AppendLine("<tr style=\"font-weight: bold; white-space: nowrap;\">");
-            strBuilder.AppendLine("<td>订单号</td>");
-            strBuilder.AppendLine("<td>商户信息</td>");
-            strBuilder.AppendLine("<td>骑士信息</td>");
-            strBuilder.AppendLine("<td>发布时间</td>");
-            strBuilder.AppendLine("<td>完成时间</td>");
-            strBuilder.AppendLine("<td>订单金额</td>");
-            strBuilder.AppendLine("<td>订单总金额</td>");
-            strBuilder.AppendLine("<td>订单佣金</td>");
-            strBuilder.AppendLine("<td>订单数量</td>");
-            strBuilder.AppendLine("<td>外送费用</td>");
-            strBuilder.AppendLine("<td>每单补贴</td>");
-            strBuilder.AppendLine("<td>任务补贴</td>");
-            strBuilder.AppendLine("<td>商家结算</td>");
-            strBuilder.AppendLine("</tr>");
-            //输出数据.
-            foreach (var oOrderListModel in paraModel.Records)
-            {
-                strBuilder.AppendLine(string.Format("<tr><td>'{0}'</td>", oOrderListModel.OrderNo));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.BusinessName + ":" + oOrderListModel.BusinessPhoneNo));
-                string clineter = "";
-                if (!string.IsNullOrEmpty(oOrderListModel.ClienterName))
-                {
-                    clineter = oOrderListModel.ClienterName;
-                }
-                if (!string.IsNullOrEmpty(oOrderListModel.ClienterPhoneNo))
-                {
-                    clineter += ":" + oOrderListModel.ClienterPhoneNo;
-                }
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", clineter));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.PubDate));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.ActualDoneDate));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.Amount));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.Amount + oOrderListModel.OrderCount * oOrderListModel.DistribSubsidy));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.OrderCommission));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.OrderCount));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.DistribSubsidy));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.WebsiteSubsidy));
-                strBuilder.AppendLine(string.Format("<td>{0}</td>", oOrderListModel.Adjustment));
-                strBuilder.AppendLine(string.Format("<td>{0}</td></tr>", oOrderListModel.CommissionType == 1 ? oOrderListModel.BusinessCommission + "%" : oOrderListModel.CommissionFixValue.ToString()));
-            }
-            strBuilder.AppendLine("</table>");
-            return strBuilder.ToString();
-        }
-
+        } 
         //Get: /OrderCount  订单统计
         public ActionResult OrderCount()
         {
@@ -260,17 +210,17 @@ namespace SuperMan.Controllers
 
         }
         /// <summary>
-        /// 超人抢单--平扬 2015.3.2
+        /// 骑士抢单--平扬 2015.3.2
         /// </summary>
-        /// <param name="SuperID">超人id</param>
+        /// <param name="SuperID">骑士id</param>
         /// <param name="orderNo">订单号</param>
         /// <returns></returns>
 
         [HttpPost]
         public JsonResult RushOrder(int SuperID, string OrderNo)
         {
-            //if (SuperID == -1) //超人id验证 
-            //    return Json(new ResultModel(false, "超人不能为空"), JsonRequestBehavior.AllowGet);
+            //if (SuperID == -1) //骑士id验证 
+            //    return Json(new ResultModel(false, "骑士不能为空"), JsonRequestBehavior.AllowGet);
 
             if (string.IsNullOrEmpty(OrderNo)) //订单号码非空验证
                 return Json(new ResultModel(false, "订单不能为空"), JsonRequestBehavior.AllowGet);
@@ -279,7 +229,7 @@ namespace SuperMan.Controllers
                 return Json(new ResultModel(false, "订单不存在"), JsonRequestBehavior.AllowGet);
             if (order.Status != OrderStatus.Status0.GetHashCode())  //查询订单是否被抢
                 return Json(new ResultModel(false, "订单已被抢或者已完成"), JsonRequestBehavior.AllowGet);
-            if (SuperID == -1) //未指派超人 ，触发极光推送  ，指派超人的情况下，建立订单和超人的关系
+            if (SuperID == -1) //未指派骑士 ，触发极光推送  ，指派骑士的情况下，建立订单和骑士的关系
             {
                 //异步回调第三方，推送通知
                 Task.Factory.StartNew(() =>
@@ -393,7 +343,7 @@ namespace SuperMan.Controllers
         /// 财务管理-订单审核管理
         /// </summary>
         /// <returns></returns>
-        public ActionResult OrderAudit()
+        public ActionResult OrderAudit(string businessName = "", string businessPhone = "", string startDate = "", string endDate="")
         {
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;//集团id
 
@@ -407,6 +357,15 @@ namespace SuperMan.Controllers
             }
             var criteria = new OrderSearchCriteria();
             TryUpdateModel(criteria);
+            
+            criteria.businessName = businessName;
+            criteria.businessPhone = businessPhone;
+            criteria.orderPubStart = startDate;
+            criteria.orderPubEnd = endDate;
+            ViewBag.businessName = businessName;
+            ViewBag.businessPhone = businessPhone;
+            ViewBag.orderPubStart = startDate;
+            ViewBag.orderPubEnd = endDate;
             criteria.AuditStatus = 0;
             criteria.UserType = UserType;
             //criteria.GroupId = UserContext.Current.GroupId;
@@ -417,6 +376,7 @@ namespace SuperMan.Controllers
                 return View();
             }
             var pagedList = iOrderProvider.GetOrders(criteria);
+            pagedList = GetOrderContainOrderChild(pagedList);
             return View(pagedList);
         }
         [HttpPost]
@@ -429,20 +389,32 @@ namespace SuperMan.Controllers
             TryUpdateModel(criteria);
             criteria.AuthorityCityNameListStr =
                 iAreaProvider.GetAuthorityCityNameListStr(UserType);
-            criteria.UserType = UserType;
-            //指派超人时  以下代码 有用，现在 注释掉  wc 
-            //var superManModel = iDistributionProvider.GetClienterModelByGroupID(ViewBag.txtGroupId);
-            //if (superManModel != null)
-            //{
-            //    ViewBag.superManModel = superManModel;
-            //} 
+            criteria.UserType = UserType; 
             if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
             {
                 return PartialView("_PartialOrderAuditList");
             }
             var pagedList = iOrderProvider.GetOrders(criteria);
-
+            pagedList = GetOrderContainOrderChild(pagedList);
             return PartialView("_PartialOrderAuditList", pagedList);
+        }
+
+        private PageInfo<OrderListModel> GetOrderContainOrderChild(PageInfo<OrderListModel> pagedList)
+        {
+            //获取子订单的小票信息
+            if (pagedList.Records != null && pagedList.Records.Count > 0)
+            {
+                List<int> orderIdList = pagedList.Records.Select(i => i.Id).ToList();
+                List<OrderChild> orderChildList = iOrderChildProvider.GetListByOrderId(orderIdList);
+                if (orderChildList != null && orderChildList.Count > 0)
+                {
+                    for (int i = 0; i < pagedList.Records.Count; i++)
+                    {
+                        pagedList.Records[i].OrderChildList = orderChildList.Where(k => k.OrderId == pagedList.Records[i].Id).ToList();
+                    }
+                }
+            }
+            return pagedList;
         }
 
         public ActionResult ExportOrderAudit(int pageindex = 1)
@@ -642,11 +614,11 @@ namespace SuperMan.Controllers
             return PartialView("_PostOverTimeOrder", list);
         }
         /// <summary>
-        /// 获取商户附近骑士列表
+        /// 获取门店附近骑士列表
         /// danny-20150831
         /// </summary>
         /// <param name="orderId">订单Id</param>
-        /// <param name="businessId">商户Id</param>
+        /// <param name="businessId">门店Id</param>
         /// <returns></returns>
         [HttpPost]
         public JsonResult CheckHave(int orderId, int businessId)
@@ -655,11 +627,11 @@ namespace SuperMan.Controllers
             return Json(new ResultModel(isHave,"此订单状态已变更！"), JsonRequestBehavior.DenyGet);
         }
         /// <summary>
-        /// 获取商户附近骑士列表
+        /// 获取门店附近骑士列表
         /// danny-20150831
         /// </summary>
         /// <param name="orderId">订单Id</param>
-        /// <param name="businessId">商户Id</param>
+        /// <param name="businessId">门店Id</param>
         /// <returns></returns>
         public ActionResult LocalClienter(int orderId, int businessId)
         {

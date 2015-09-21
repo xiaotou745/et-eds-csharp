@@ -18,7 +18,7 @@
 
 <div class="zpManage zpSh">
     <h2 class="crumbs">
-        您所在位置：投诉管理 > 投诉管理
+        您所在位置：客户服务 > 客户服务
     </h2>
     @using (Ajax.BeginForm("PostComplain", new RouteValueDictionary { { "pageindex", "" } },
         new AjaxOptions { UpdateTargetId = "dataList", InsertionMode = InsertionMode.Replace },
@@ -32,7 +32,7 @@
                         <input id="ComplainStartTime" name="ComplainStartTime" class="Wdate" type="text" onfocus=" WdatePicker({ maxDate: '#F{$dp.$D(\'ComplainEndTime\')||\'%y-%M-%d\'}', dateFmt: 'yyyy-MM-dd 00:00:00' }) " />到
                         <input id="ComplainEndTime" name="ComplainEndTime" class="Wdate" type="text" onfocus=" WdatePicker({ minDate: '#F{$dp.$D(\'ComplainStartTime\')}', dateFmt: 'yyyy-MM-dd 23:59:59' }) "/>
                         <span class="">骑士姓名: </span><input id="ClienterName" name="ClienterName" />
-                        <span class="">商家名称: </span><input id="BusinessName" name="BusinessName" />
+                        <span class="">门店名称: </span><input id="BusinessName" name="BusinessName" />
                     </td>
                 </tr>
                 <tr>
@@ -43,7 +43,9 @@
                         <span class="">城市筛选: </span>
                         @*@Html.DropDownList("CityId", new SelectList(ViewBag.openCityList.Result.AreaModels, "Code", "Name"), "全部城市", new {style = "width:155px"})*@
                         <input id="businessCity" name="businessCity" type="text">
-                        <input type="submit" value="查询" class="searchBtn" id="btnSearch"/>&nbsp;&nbsp;
+                    <span class="">状态: </span>
+    @Html.DropDownList("IsHandle", new SelectList(EnumExtenstion.GetEnumItems(typeof(HandleEnum)), "Value", "Text"), "全部", new { @class = "selectw", style = "width:157px" })
+                        <input type="submit" value="查询" class="searchBtn" id="btnSearch"/>
                     </td>
                 </tr>
             </table>
@@ -54,10 +56,66 @@
         @Html.Partial("_ComplainList", Model)
     </div>
 </div>
- 
+ <div>
+     <div class="add-openbox add-form" id="ComplainShow" style="width:500px">
+         <h2>
+             <p id="statusFin">客服备注</p>
+         </h2>
+         <fieldset>
+             <br>
+             <div class="control-group">
+
+                 <input name="txtId" id="txtId" type="hidden">
+             </div>
+             <div class="control-group">
+                 <label>处理意见：</label>
+                 <div class="controls">
+                     <textarea cols="45" rows="5" id="rechargeLog"></textarea>
+                 </div>
+             </div>
+         </fieldset>
+         <p class="btnbox">
+             <input value="确认" type="button" id="btnComplain" class="yesBtn" />
+             <input value="关闭" type="button" class="J_closebox qxBtn" />
+         </p>
+     </div>
+</div>
 <script>
     var adminjs = new adminglass(); //实例化后台类
     
+    //处理意见
+    $("#btnComplain").on('click', function () {
+        var Id = $("#txtId").val(); 
+      
+        var rechargeLog = $("#rechargeLog").val(); //充值描述
+        if (rechargeLog.trim().length == 0) {
+            alert("请输入处理意见!");
+            return;
+        }
+        if (rechargeLog.length < 5 || rechargeLog.length > 50) {
+            alert("请保证输入处理意见在5到50个字符");
+            return;
+        }  
+    
+        var paramaters = {
+            "Id": Id, "HandleOpinion": rechargeLog
+        };
+        var url = "/Complain/ComplainHandle";
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: paramaters,
+                success: function (result) {
+                    if (result.IsSuccess) {
+                        alert(result.Message);
+                        window.location.href = "/Complain/complain";
+                    } else {
+                        alert(result.Message);
+                    }
+                }
+            });     
+    });
+
     //关闭弹层
     $('.J_closebox').click(function () {
         adminjs.closewinbox('.add-openbox');

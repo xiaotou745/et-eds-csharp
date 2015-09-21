@@ -309,7 +309,35 @@ namespace Letao.Util
         {
             return Regex.IsMatch(phoneNo, @"^1(\d{10})$");//只验证了第一位手机是1，且满足11位
         }
-
+        /// <summary>
+        /// 逗号分隔连接起来的字符串
+        /// WangChao
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="isContainquotes">是否包含单引号</param>
+        /// <returns>'a','b','c','d'</returns>
+        public static string JoinString(List<string> list, bool isContainquotes = true)
+        {
+            StringBuilder str = new StringBuilder();
+            if (list.Count > 0)
+            {
+                for (int i = 0; i < list.Count; i++)
+                {
+                    if (isContainquotes)
+                    {
+                        if (!string.IsNullOrWhiteSpace(list[i]))
+                            str.AppendFormat("'{0}',", list[i]);
+                    }
+                    else
+                    {
+                        if (!string.IsNullOrWhiteSpace(list[i]))
+                            str.AppendFormat("{0},", list[i]);
+                    }
+                }
+                return str.ToString().TrimEnd(',');
+            }
+            return "";
+        }
     }
 
 

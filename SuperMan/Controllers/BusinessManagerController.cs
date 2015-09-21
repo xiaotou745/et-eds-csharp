@@ -45,7 +45,7 @@ namespace SuperMan.Controllers
     public class BusinessManagerController : BaseController
     {
         /// <summary>
-        /// 商户业务类
+        /// 门店业务类
         /// </summary>
         readonly IBusinessProvider iBusinessProvider = new BusinessProvider();
         readonly IClienterProvider iClienterProvider = new ClienterProvider();
@@ -57,7 +57,7 @@ namespace SuperMan.Controllers
         readonly IBusinessFinanceAccountProvider iBusinessFinanceAccountProvider = new BusinessFinanceAccountProvider();
         readonly IDeliveryCompanyProvider iDeliveryCompanyProvider = new DeliveryCompanyProvider();
         private readonly ITagProvider tagProvider = new TagProvider();
-
+        private readonly ITagRelationProvider tagRelationProvider = new TagRelationProvider();
         // GET: BusinessManager
         [HttpGet]
         public ActionResult BusinessManager()
@@ -73,13 +73,15 @@ namespace SuperMan.Controllers
                 GroupId = UserContext.Current.GroupId,
                 MealsSettleMode = -1,
                 UserType = UserType,
-                AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType)
+                AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType),
+                TagId = Request["TagId"] == null ? (int?)null : ParseHelper.ToInt(Request["TagId"])
             };
             if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
             {
                 return View();
             }
             ViewBag.tags = tagProvider.GetTagsByTagType(TagType.Business.GetHashCode());
+            ViewBag.selectTag = Request["TagId"];
             var pagedList = iBusinessProvider.GetBusinesses(criteria);
             return View(pagedList);
         }
@@ -125,7 +127,7 @@ namespace SuperMan.Controllers
             return Json(new ResultModel(b, string.Empty), JsonRequestBehavior.DenyGet);
         }
         /// <summary>
-        /// 根据城市信息查询当前城市下该集团的所有商户信息  add by caoheyang 20150302
+        /// 根据城市信息查询当前城市下该集团的所有门店信息  add by caoheyang 20150302
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
@@ -141,9 +143,9 @@ namespace SuperMan.Controllers
         }
 
         /// <summary>
-        /// 设置商家结算比例-外送费
+        /// 设置门店结算比例-外送费
         /// </summary>
-        /// <param name="id">商家id</param>
+        /// <param name="id">门店id</param>
         /// <param name="commission">结算比例</param>
         /// <param name="waisongfei">外送费</param>
         /// <returns></returns>
@@ -160,9 +162,9 @@ namespace SuperMan.Controllers
             {
                 OptUserId = UserContext.Current.Id,//后台用户id
                 OptUserName = UserContext.Current.Name, //后台用户
-                UserID = id, //商户id 
+                UserID = id, //门店id 
                 UserType = 1, //被操作人类型
-                Remark = string.Format(string.Format("将商户id为{0}的商户外送费设置为{1},结算比例设置为{2}", id, waisongfei, commission))
+                Remark = string.Format(string.Format("将门店id为{0}的门店外送费设置为{1},结算比例设置为{2}", id, waisongfei, commission))
             };
             BusListResultModel busListResultModel = new BusListResultModel()
             {
@@ -178,7 +180,7 @@ namespace SuperMan.Controllers
         }
 
         /// <summary>
-        /// 添加商户
+        /// 添加门店
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
@@ -195,14 +197,14 @@ namespace SuperMan.Controllers
             return Json(new ResultModel(false, result.Message), JsonRequestBehavior.DenyGet);
         }
         /// <summary>
-        /// 修改商户信息
+        /// 修改门店信息
         /// </summary>
-        /// <param name="id">商户Id</param>
-        /// <param name="businessName">商户名称</param>
-        /// <param name="businessPhone">商户电话</param>
-        /// <param name="businessSourceId">第三方商户id</param>
+        /// <param name="id">门店Id</param>
+        /// <param name="businessName">门店名称</param>
+        /// <param name="businessPhone">门店电话</param>
+        /// <param name="businessSourceId">第三方门店id</param>
         /// <param name="groupId">集团Id</param>
-        /// <param name="oldBusiSourceId">之前的第三方商户Id</param>
+        /// <param name="oldBusiSourceId">之前的第三方门店Id</param>
         /// <param name="oldBusGroupId">之前的集团Id</param>
         /// <returns></returns>
         [HttpPost]
@@ -215,7 +217,7 @@ namespace SuperMan.Controllers
                 OptUserId = UserContext.Current.Id,
                 OptUserName = UserContext.Current.Name,
             };
-            //商户操作实体
+            //门店操作实体
             BusinessModel businessModel = new BusinessModel()
             {
                 Name = businessName,
@@ -231,10 +233,10 @@ namespace SuperMan.Controllers
         }
 
         /// <summary>
-        /// 查看商户详细信息
+        /// 查看门店详细信息
         /// danny-20150512
         /// </summary>
-        /// <param name="businessId">商户Id</param>
+        /// <param name="businessId">门店Id</param>
         /// <returns></returns>
         public ActionResult BusinessDetail(string businessId)
         {
@@ -252,7 +254,7 @@ namespace SuperMan.Controllers
         }
 
         /// <summary>
-        /// 查看商户余额流水记录
+        /// 查看门店余额流水记录
         /// danny-20150512
         /// </summary>
         /// <param name="criteria"></param>
@@ -263,7 +265,7 @@ namespace SuperMan.Controllers
             return PartialView("_BusinessBalanceRecordList");
         }
         /// <summary>
-        /// 查看商户余额流水记录分页版
+        /// 查看门店余额流水记录分页版
         /// danny-20150604
         /// </summary>
         /// <param name="pageindex"></param>
@@ -277,7 +279,7 @@ namespace SuperMan.Controllers
             return PartialView("_BusinessBalanceRecordList");
         }
         /// <summary>
-        /// 导出商户余额流水记录
+        /// 导出门店余额流水记录
         /// danny-20150512
         /// </summary>
         /// <returns></returns>
@@ -289,7 +291,7 @@ namespace SuperMan.Controllers
             if (dtBusinessBalanceRecord != null && dtBusinessBalanceRecord.Count > 0)
             {
 
-                string filname = "商户提款流水记录{0}.xls";
+                string filname = "门店提款流水记录{0}.xls";
                 if (!string.IsNullOrWhiteSpace(criteria.OperateTimeStart))
                 {
                     filname = string.Format(filname, criteria.OperateTimeStart + "~" + criteria.OperateTimeEnd);
@@ -306,7 +308,7 @@ namespace SuperMan.Controllers
             return View("BusinessDetail", businessWithdrawFormModel);
         }
         /// <summary>
-        /// 商户充值
+        /// 门店充值
         /// danny-20150526
         /// </summary>
         /// <param name="model"></param>
@@ -319,7 +321,7 @@ namespace SuperMan.Controllers
             return Json(new ResultModel(reg, reg ? "充值成功！" : "充值失败！"), JsonRequestBehavior.DenyGet);
         }
         /// <summary>
-        /// 商户提现        
+        /// 门店提现        
         /// </summary>
         /// <UpdateBy>hulingbo</UpdateBy>
         /// <UpdateTime>20150626</UpdateTime>
@@ -330,7 +332,7 @@ namespace SuperMan.Controllers
         {
             int FinanceAccountId = iBusinessFinanceAccountProvider.GetBFinanceAccountId(model.BusinessId);
             if (FinanceAccountId == 0)
-                return Json(new ResultModel(false, "商户金融账号不存在！"), JsonRequestBehavior.DenyGet);
+                return Json(new ResultModel(false, "门店金融账号不存在！"), JsonRequestBehavior.DenyGet);
 
             model.FinanceAccountId = FinanceAccountId;
             var reg = iBusinessFinanceProvider.WithdrawB(model);
@@ -338,10 +340,10 @@ namespace SuperMan.Controllers
             return Json(reg, JsonRequestBehavior.DenyGet);
         }
         /// <summary>
-        /// 查询商户综合信息
+        /// 查询门店综合信息
         /// danny-20150601
         /// </summary>
-        /// <param name="businessId">商户Id</param>
+        /// <param name="businessId">门店Id</param>
         /// <returns></returns>
         public ActionResult QueryBusinessDetail(string businessId)
         {
@@ -364,7 +366,8 @@ namespace SuperMan.Controllers
             ViewBag.businessThirdRelation = iBusinessProvider.GetBusinessThirdRelation(ParseHelper.ToInt(businessId));
             ViewBag.BusinessOpLog = iBusinessProvider.GetBusinessOpLog(ParseHelper.ToInt(businessId, 0));//add by wangchao
             ViewBag.deliveryCompany = iDeliveryCompanyProvider.GetDeliveryCompanyList();
-            ViewBag.tags = tagProvider.GetTagsByTagType(TagType.Business.GetHashCode());
+            ViewBag.tags = tagProvider.GetTagsByTagType(TagType.Business.GetHashCode());  //加在所有标签
+            ViewBag.currenTags = tagRelationProvider.GetTagRelationRelationList(ParseHelper.ToInt(businessId),TagUserType.Business.GetHashCode());
             return View("BusinessModify", businessDetailModel);
         }
         /// <summary>
@@ -379,7 +382,7 @@ namespace SuperMan.Controllers
             return Json(iAreaProvider.GetOpenCityDistrict(cityId), JsonRequestBehavior.DenyGet);
         }
         /// <summary>
-        /// 修改商户综合信息
+        /// 修改门店综合信息
         /// danny-20150601
         /// </summary>
         /// <param name="businessDetailModel"></param>
@@ -393,7 +396,7 @@ namespace SuperMan.Controllers
             return Json(new Ets.Model.Common.ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.DenyGet);
         }
         /// <summary>
-        /// 根据商户Id获取收支记录
+        /// 根据门店Id获取收支记录
         /// danny-20150604
         /// </summary>
         /// <param name="businessId"></param>
@@ -408,7 +411,7 @@ namespace SuperMan.Controllers
             return View(pagedList);
         }
         /// <summary>
-        /// 根据商户Id获取收支记录
+        /// 根据门店Id获取收支记录
         /// danny-20150604
         /// </summary>
         /// <param name="businessId"></param>
@@ -425,10 +428,10 @@ namespace SuperMan.Controllers
 
 
         /// <summary>
-        /// 查看商户绑定骑士列表（初始化）
+        /// 查看门店绑定骑士列表（初始化）
         /// danny-20150608
         /// </summary>
-        /// <param name="businessId">商户Id</param>
+        /// <param name="businessId">门店Id</param>
         /// <returns></returns>
         public ActionResult ClienterBindManage(string businessId)
         {
@@ -444,7 +447,7 @@ namespace SuperMan.Controllers
             return View(businessDetailModel);
         }
         /// <summary>
-        /// 查看商户绑定骑士列表(翻页)
+        /// 查看门店绑定骑士列表(翻页)
         /// danny-20150608
         /// </summary>
         /// <param name="pageindex"></param>
@@ -493,7 +496,7 @@ namespace SuperMan.Controllers
         /// 添加骑士绑定查询
         /// danny-20150609
         /// </summary>
-        /// <param name="businessId">商户Id</param>
+        /// <param name="businessId">门店Id</param>
         /// <returns></returns>
         public ActionResult AddClienterBindManage(string businessId)
         {
@@ -734,7 +737,7 @@ namespace SuperMan.Controllers
         }
 
         /// <summary>
-        ///  获取商户和快递公司关系列表
+        ///  获取门店和快递公司关系列表
         /// danny-20150706
         /// </summary>
         /// <param name="businessId"></param>
@@ -746,7 +749,7 @@ namespace SuperMan.Controllers
             return Json(businessExpressRelationList, JsonRequestBehavior.DenyGet);
         }
         /// <summary>
-        /// 修改商户配送公司绑定
+        /// 修改门店配送公司绑定
         /// danny-20150706
         /// </summary>
         /// <param name="busiId"></param>
@@ -757,6 +760,19 @@ namespace SuperMan.Controllers
         {
             var reg = iBusinessProvider.ModifyBusinessExpress(busiId, deliveryCompanyList, UserContext.Current.Name);
             return Json(new Ets.Model.Common.ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.DenyGet);
+        }
+        /// <summary>
+        /// 修改商家标签
+        /// caoheyang 20150917
+        /// </summary>
+        /// <param name="busiId"></param>
+        /// <param name="tags"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult ModifyTags(int busiId, string tags)
+        {
+            var reg = tagRelationProvider.ModifyTags(busiId, tags, UserContext.Current.Name,TagUserType.Business.GetHashCode());
+            return Json(new ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.DenyGet);
         }
 
         /// <summary>

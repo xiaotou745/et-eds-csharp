@@ -50,6 +50,7 @@ namespace Ets.Service.IProvider.Order
         /// <param name="orderId">订单Id</param>
         /// <returns></returns>    
         List<OrderChildInfo> GetByOrderId(int orderId);
+        List<OrderChild> GetListByOrderId(List<int> orderIdList);
 
         /// <summary>
         /// 查询子订单是否支付
@@ -60,5 +61,6 @@ namespace Ets.Service.IProvider.Order
         /// <param name="childId">子订单ID</param>
         /// <returns>成功返回1，支付中未支付返回0</returns>
         ResultModel<PayStatusModel> GetPayStatus(int orderId, int childId);
+        
     }
 }

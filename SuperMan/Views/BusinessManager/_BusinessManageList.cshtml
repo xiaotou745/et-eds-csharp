@@ -8,7 +8,7 @@
 
         <tr class="tdbg">
             <th width="%5">编号</th>
-            <th>商户名称</th>
+            <th>门店名称</th>
             @*<th>第三方ID</th>*@
             <th>电话</th>
             <th>地址</th>
@@ -207,19 +207,19 @@
             return;
         }
         if (checkAddress == 0) {
-            alert("该商家未填写配送地址，不能通过审核。")
+            alert("该门店未填写配送地址，不能通过审核。")
             return;
         }
       
         if (checkImage == 0) {
-            alert("该商家未上传图片，不能通过审核。")
+            alert("该门店未上传图片，不能通过审核。")
             return;
         }
         //debugger
         var lng = parseFloat(Longitude);
         var lat = parseFloat(Latitude);
         if (lng < 73.40 || lng > 135.230 || lat < 3.52 || lat > 53.33) {
-            alert("该商家地址有误，不能通过审核。")
+            alert("该门店地址有误，不能通过审核。")
             return;
         }
         //currentId = $(this).attr("businessId");
@@ -325,7 +325,7 @@
         }
         adminjs.openwinbox('#BusinessCommissionDiv');
     }
-    //修改商家信息
+    //修改门店信息
     function funcUpdateBusinessInfo(id, name, phone, originalbusiId, groupid, mealsSettleMode) {
         $('#busiId').val(id);
         $('#busiName').val(name);
@@ -342,7 +342,7 @@
         $('#oldBusGroupId').val(groupid);
         adminjs.openwinbox('#BusinessInfoUpdateDiv');
     }
-    //商户充值
+    //门店充值
     function funcBusinessRecharge(id, name, phone) {
         $('#busId').val(0);
         $('#busName').val('');

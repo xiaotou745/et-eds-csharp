@@ -40,7 +40,7 @@
         </tr>
         <tr class="trclass">
             <td>发布时间：@Model.PubDate</td>
-            <td>商户信息：@Model.BusinessName</td>
+            <td>门店信息：@Model.BusinessName</td>
         </tr>
         <tr class="trclass">
             <td>订单金额：@Model.Amount</td>
@@ -165,7 +165,7 @@
                     {
                         if (item.Platform == 0)
                         {
-                            strplatform = "商家端";
+                            strplatform = "门店端";
                         }
                         else if (item.Platform == 1)
                         {

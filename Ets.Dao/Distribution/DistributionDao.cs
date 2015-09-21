@@ -83,13 +83,17 @@ namespace Ets.Dao.Distribution
             {
                 sbSqlWhere.AppendFormat(" AND DC.Id={0} ", criteria.deliveryCompany);
             }
-            if (!string.IsNullOrEmpty(criteria.AuthorityCityNameListStr) && criteria.UserType != 0)
-            {
-                sbSqlWhere.AppendFormat(" AND C.City IN ({0}) ", criteria.AuthorityCityNameListStr.Trim());
-            }
+            //if (!string.IsNullOrEmpty(criteria.AuthorityCityNameListStr) && criteria.UserType != 0)
+            //{
+            //    sbSqlWhere.AppendFormat(" AND C.City IN ({0}) ", criteria.AuthorityCityNameListStr.Trim());
+            //}
             if (!string.IsNullOrEmpty(criteria.clienterName))
             {
                 sbSqlWhere.AppendFormat(" AND C.TrueName LIKE '%{0}%' ", criteria.clienterName);
+            }
+            if (criteria.TagId!=null)
+            {
+                sbSqlWhere.AppendFormat(" AND TagR.TagId = {0} ", criteria.TagId);
             }
             //else
             //{
@@ -100,7 +104,10 @@ namespace Ets.Dao.Distribution
             //    sbSqlWhere.AppendFormat(" AND CONVERT(CHAR(10),WR.CreateTime,120)=CONVERT(CHAR(10),'{0}',120) and WtihdrawRecords.Amount < 0", criteria.txtPubStart.Trim());
             //}
 
-            string tableList = @" clienter C WITH (NOLOCK)  
+            string tableList = "";
+            if (criteria.TagId == null)
+            {
+                tableList = @" clienter C WITH (NOLOCK)  
                                   
                                    left JOIN(SELECT UserId,MIN(CreateTime) CreateTime
                                              FROM dbo.WtihdrawRecords  WITH(NOLOCK) 
@@ -113,6 +120,23 @@ namespace Ets.Dao.Distribution
                                   --left JOIN  dbo.WtihdrawRecords ON WtihdrawRecords.UserId = C.Id 
                                   --left join dbo.CrossShopLog cs on c.Id=cs.ClienterId
                                 ";
+            }
+            else
+            {
+                tableList = @" TagRelation TagR WITH (NOLOCK)  
+                                left join clienter C WITH (NOLOCK)  on TagR.UserId=C.id and TagR.UserType=1 and IsEnable=1
+                                 left JOIN(SELECT UserId,MIN(CreateTime) CreateTime
+                                             FROM dbo.WtihdrawRecords  WITH(NOLOCK) 
+                                             GROUP BY UserId) WR ON WR.UserId = C.Id 
+                                  left Join (SELECT ClienterId 
+                                               FROM CrossShopLog csl WITH(NOLOCK) 
+                                                GROUP BY csl.ClienterId) cs on c.Id=cs.ClienterId
+                                  LEFT JOIN DeliveryCompany DC (NOLOCK) ON c.DeliveryCompanyId=DC.Id
+                                  LEFT JOIN dbo.[group] g WITH(NOLOCK) ON g.Id = c.GroupId 
+
+                                ";
+            }
+          
             string orderByColumn = " C.Id DESC";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
         }

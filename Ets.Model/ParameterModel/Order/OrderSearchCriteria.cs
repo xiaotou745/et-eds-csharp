@@ -53,6 +53,15 @@ namespace Ets.Model.ParameterModel.Order
             get { return isNotRealOrder; }
             set { isNotRealOrder = value; }
         }
+
+        /// <summary>
+        /// 标签类型
+        /// </summary>
+        public int TagType { get; set; }
+        /// <summary>
+        /// 标签id
+        /// </summary>
+        public int? TagId { get; set; }
     }
 
     public class OrderByItem<Tentity>
