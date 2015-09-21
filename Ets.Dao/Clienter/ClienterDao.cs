@@ -152,10 +152,13 @@ namespace Ets.Dao.Clienter
         c.cityId ,
         c.IsBind ,
         ISNULL(d.Id,0) as DeliveryCompanyId,
-        isnull(d.DeliveryCompanyName,'') DeliveryCompanyName,
-        --isnull(d.IsDisplay,1) IsDisplay,
+        isnull(d.DeliveryCompanyName,'') DeliveryCompanyName,      
         c.Appkey,
-        (case when d.SettleType=1 and ClienterSettleRatio>0 or d.SettleType=2 and d.ClienterFixMoney>0 then 1 else 0 end) IsDisplay
+        (case when c.DeliveryCompanyId=0 or 
+        (d.SettleType=1 and ClienterSettleRatio>0) or 
+        (d.SettleType=2 and d.ClienterFixMoney>0) or
+        (d.IsShowAccount  is null and c.GradeType=2) 
+        then 1 else 0 end) IsDisplay   
 from    dbo.clienter c(nolock)
  left join dbo.DeliveryCompany d(nolock) on c.DeliveryCompanyId = d.Id
 where   c.PhoneNo = @PhoneNo
@@ -536,7 +539,9 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.FromClienter, OrderConst.O
         isnull(d.DeliveryCompanyName,'') DeliveryCompanyName,     
  (case when c.DeliveryCompanyId=0 or 
         (d.SettleType=1 and ClienterSettleRatio>0) or 
-        (d.SettleType=2 and d.ClienterFixMoney>0) then 1 else 0 end) IsDisplay        
+        (d.SettleType=2 and d.ClienterFixMoney>0) or
+        (d.IsShowAccount  is null and c.GradeType=2) 
+then 1 else 0 end) IsDisplay        
 from    dbo.clienter c ( nolock )
  left join dbo.DeliveryCompany d ( nolock ) on c.DeliveryCompanyId = d.Id 
 where c.Id=@clienterId ";
