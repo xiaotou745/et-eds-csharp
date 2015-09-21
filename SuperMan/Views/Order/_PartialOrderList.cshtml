@@ -21,8 +21,8 @@ width: 100%;
         <tr class="tdbg">
             <th width="%5">订单号</th>
             <th>原平台订单号</th>
-            <th>商户信息</th>
-            <th>超人信息</th>
+            <th>门店信息</th>
+            <th>骑士信息</th>
             <th>发布时间</th>
             @*<th width="%5">取货地址</th>*@
             <th width="%5">送货地址</th>
@@ -159,10 +159,7 @@ width: 100%;
             alert("订单佣金不能为空！");
             return false;
         }
-        //if (superID == "" || superID == "-1") {
-        //    alert("请选择超人!");
-        //    return false;
-        //}
+
         var paramaters = { "OrderCommission": orderCommission, "SuperName": "", "OrderNo": orderNo };
         var url = "/Order/SaveOrderInfo";
         $.ajax({
@@ -176,7 +173,7 @@ width: 100%;
                         window.location.href = location.href;
                         adminjs.closewinbox('.add-openbox');
                     } else {
-                        alert("分配失败，请重新选择超人!");
+                        alert("分配失败，请重新选择骑士!");
                         window.location.href = location.href;
                         adminjs.closewinbox('.add-openbox');
                     }
@@ -225,7 +222,7 @@ width: 100%;
         //    }
         //    adminjs.openwinbox('#FinishOrderShow');
         //}
-        //else if (status == 0 || status == 4) {  //待接单 和 待审核状态下 可以指定超人
+        //else if (status == 0 || status == 4) {  //待接单 和 待审核状态下 可以指定骑士
         //    $("#orderNoUnFin").val(id).attr('disabled', 'disabled');
         //    $("#PubDateUnFin").val(pubDate).attr('disabled', 'disabled');
         //    $("#businessNameUnFin").val(businessName).attr('disabled', 'disabled');

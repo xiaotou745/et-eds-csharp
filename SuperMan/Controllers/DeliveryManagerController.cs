@@ -261,14 +261,14 @@ namespace SuperMan.Controllers
 
         private string CreateOrderExcel(IList<OrderListModel> pagedList)
         {
-            //订单号、商户名称、骑士ID、骑士姓名、下单时间、接单时间、
+            //订单号、门店名称、骑士ID、骑士姓名、下单时间、接单时间、
             //取货时间、完成时间、配送费、订单金额、订单状态、城市、是否在线支付、是否异常订单
             StringBuilder strBuilder = new StringBuilder();
             strBuilder.AppendLine("<table border=1 cellspacing=0 cellpadding=5 rules=all>");
             //输出表头.
             strBuilder.AppendLine("<tr style=\"font-weight: bold; white-space: nowrap;\">");
             strBuilder.AppendLine("<td>订单号</td>");
-            strBuilder.AppendLine("<td>商户名称</td>");
+            strBuilder.AppendLine("<td>门店名称</td>");
             strBuilder.AppendLine("<td>骑士ID</td>");
             strBuilder.AppendLine("<td>骑士姓名</td>");
             strBuilder.AppendLine("<td>下单时间</td>");

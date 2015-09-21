@@ -66,8 +66,8 @@
                         3次补贴被抢任务：@ParseHelper.ToSplitByPercentile(true, resultList.ThreeSubsidyOrderCount)<br />
                     </td>
                     <td>
-                        商户平均发布任务：@ParseHelper.ToDivision(resultList.MisstionCount, resultList.ActiveBusiness)<br />
-                        商户平均发布订单：@ParseHelper.ToDivision(resultList.OrderCount,resultList.ActiveBusiness)  <br />
+                        门店平均发布任务：@ParseHelper.ToDivision(resultList.MisstionCount, resultList.ActiveBusiness)<br />
+                        门店平均发布订单：@ParseHelper.ToDivision(resultList.OrderCount,resultList.ActiveBusiness)  <br />
                         骑士平均完成任务：@ParseHelper.ToDivision(resultList.MisstionCount, resultList.ActiveClienter)<br />
                         骑士平均完成订单：@ParseHelper.ToDivision(resultList.OrderCount, resultList.ActiveClienter)  <br />
                     </td>
@@ -77,7 +77,7 @@
                         订单平均佣金：@ParseHelper.ToDivision(ParseHelper.ToDouble(resultList.YfPrice), resultList.OrderCount)<br />
                     </td>
                     <td>
-                        商户结算金额（应收）：￥@ParseHelper.ToSplitByPercentile(false, resultList.YsPrice)<br />
+                        门店结算金额（应收）：￥@ParseHelper.ToSplitByPercentile(false, resultList.YsPrice)<br />
                         骑士佣金总计（应付）：￥@ParseHelper.ToSplitByPercentile(false, resultList.YfPrice)<br />
                         @{
                             decimal ykPrice = resultList.YkPrice;
@@ -88,7 +88,7 @@
                     <td>
                         扫码支付总计：￥@ParseHelper.ToSplitByPercentile(false, resultList.userTotal)<br />
                         骑士代付总计:￥@ParseHelper.ToSplitByPercentile(false, resultList.clienterTotal)<br />
-                        商户充值金额：￥@ParseHelper.ToSplitByPercentile(false, resultList.rechargeTotal)<br/>
+                        门店充值金额：￥@ParseHelper.ToSplitByPercentile(false, resultList.rechargeTotal)<br/>
                         客户端充值金额：￥@ParseHelper.ToSplitByPercentile(false, resultList.ClientRecharge)<br/>
                         系统充值金额：￥@ParseHelper.ToSplitByPercentile(false, resultList.SystemRecharge)<br/>
                         系统赠送金额：￥@ParseHelper.ToSplitByPercentile(false, resultList.SystemPresented)<br/>
@@ -112,13 +112,13 @@
                 <td>任务单价</td>
                 <td>扫码/代付总计</td>
 
-                <td>商户充值总计</td>
+                <td>门店充值总计</td>
                 <td>客户端充值金额</td> 
                 <td>系统充值金额</td>
                 <td>系统赠送金额</td>
 
                 <td>账户收入总计</td> 
-                <td>总商户结算金额（应收)</td>
+                <td>总门店结算金额（应收)</td>
                 <td>总骑士佣金总计（应付)</td>
                 @*<td>可提现佣金总计</td>*@
                 <td>骑士已提现佣金（实付)</td>
@@ -140,14 +140,14 @@
 
                     <td>￥@ParseHelper.ToSplitByPercentile(false, ((homeCountAllData.incomeTotal).ToString("f2")))</td>@*扫码/代付总计*@
 
-                    <td>￥@ParseHelper.ToSplitByPercentile(false, (homeCountAllData.rechargeTotal))</td>@*商户充值总计*@
+                    <td>￥@ParseHelper.ToSplitByPercentile(false, (homeCountAllData.rechargeTotal))</td>@*门店充值总计*@
                     <td>￥@ParseHelper.ToSplitByPercentile(false, homeCountAllData.ClientRecharge)</td>@*客户端充值金额*@
                     <td>￥@ParseHelper.ToSplitByPercentile(false, (homeCountAllData.SystemRecharge))</td>@*系统充值金额*@
                     <td>￥@ParseHelper.ToSplitByPercentile(false, (homeCountAllData.SystemPresented))</td>@*系统赠送金额*@ 
 
                     <td>￥@ParseHelper.ToSplitByPercentile(false, (homeCountAllData.allIncomeTotal))</td>@*账户收入总计*@
 
-                    <td>￥@ParseHelper.ToSplitByPercentile(false,Math.Round(homeCountAllData.YsPrice, 2))</td>@*总商户结算金额（应收)*@
+                    <td>￥@ParseHelper.ToSplitByPercentile(false,Math.Round(homeCountAllData.YsPrice, 2))</td>@*总门店结算金额（应收)*@
                     <td>￥@ParseHelper.ToSplitByPercentile(false,Math.Round(homeCountAllData.YfPrice, 2))</td>@*总骑士佣金总计（应付)*@
                     @*<td>￥@ParseHelper.ToSplitByPercentile(false,Math.Round(homeCountAllData.WithdrawPrice, 2))</td>@*可提现佣金总计*@
                     

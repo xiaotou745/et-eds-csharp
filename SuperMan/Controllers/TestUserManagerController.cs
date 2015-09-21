@@ -85,7 +85,7 @@ namespace SuperMan.Controllers
             return Json(new ResultModel(b, string.Empty), JsonRequestBehavior.AllowGet);
         }
         /// <summary>
-        /// 删除商户
+        /// 删除门店
         /// </summary>
         /// <param name="phoneNo"></param>
         /// <returns></returns>
@@ -98,7 +98,7 @@ namespace SuperMan.Controllers
                 UserType = 0,
                 OptUserId = UserContext.Current.Id,
                 OptUserName = UserContext.Current.Name,
-                Remark = "测试账号管理-删除商户:" + phoneNo,
+                Remark = "测试账号管理-删除门店:" + phoneNo,
                 OptUserType = 0,
                 OptType = 1
             };

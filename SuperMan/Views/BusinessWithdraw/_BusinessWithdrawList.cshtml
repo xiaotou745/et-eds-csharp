@@ -8,7 +8,7 @@
             <th><input type="checkbox" id="checkAll"/>全选/全消</th>
             <th>编号</th>
             <th>提款单号</th>
-            <th>商户名称</th>
+            <th>门店名称</th>
             <th>注册账号</th>
             <th>提款前账户余额</th>
             <th>提款前可提款金额</th>
@@ -46,7 +46,7 @@
                         <td>￥@ParseHelper.ToSplitByPercentile(false, item.AllowWithdrawPrice)</td>
                         <td style="color:green;font-weight:600">￥@ParseHelper.ToSplitByPercentile(false, item.Amount)</td>
                         <td>@ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.BusinessWithdrawFormStatus)item.Status).GetType(), (ETS.Enums.BusinessWithdrawFormStatus)item.Status).Text</td>
-                        <td>@(item.HandChargeOutlay == HandChargeOutlay.Private? "商户" : "E代送")</td>
+                        <td>@(item.HandChargeOutlay == HandChargeOutlay.Private? "门店" : "E代送")</td>
                         <td>@item.HandCharge</td>
                         <td>@item.WithdrawTime</td>
                         <td>

@@ -23,7 +23,7 @@
 <div style="width:1015px;height:auto;border: 1px #dcdcdc solid">
 
     <h2 class="crumbs">
-        您所在位置：商户 > 商户管理 > 修改商铺信息
+        您所在位置：门店 > 门店管理 > 修改商铺信息
     </h2>
 
     <div id="left" style="float: left;width:750px;height: auto;border-right: 1px #dcdcdc solid;margin-top: -10px; ">
@@ -313,7 +313,7 @@
     </div>
     <div style="clear: both"></div>
     <div class="control-group">
-        <label style="font-size: 15px;margin-left: 10px">商户操作记录：</label>
+        <label style="font-size: 15px;margin-left: 10px">门店操作记录：</label>
         <table width="100%" cellspacing="0" cellpadding="0" class="tbstyle" style="border: 0">
             <thead>
                 <tr class="tdbg">
@@ -417,7 +417,7 @@
     function funAddThirdRelation() {
         var num = Number($("#btnAddThird").attr("num")) + 1;
         if ($(".third-list").length > 9) {
-            alert('每个商户最多可绑定10个第三方平台！');
+            alert('每个门店最多可绑定10个第三方平台！');
             return false;
         }
         var obj = $("#clone").find(".third").clone(true).attr('class', "third-list third_n_" + num).show();
@@ -567,11 +567,11 @@
             groupId = $('#busGroupId').val();
         }
         if (name.trim().length == 0) {
-            alert("请输入商户名称！");
+            alert("请输入门店名称！");
             return;
         }
         if (name.trim().length > 20) {
-            alert("商户名称长度不超过20！");
+            alert("门店名称长度不超过20！");
             return;
         }
         if (originalBusiId.trim().length && isNaN(originalBusiId)) {

@@ -45,7 +45,7 @@
             </div>
             <div class="control-group" style="margin-top: 15px">
                 <label style="margin-left: 26px">所属等级：</label>               
-                @Html.DropDownList("gradeType", new SelectList(EnumExtenstion.GetEnumItems(typeof(GradeType)), "Value", "Text", Model.GradeType), "请选择", new { @class = "selectw", style = "width:157px" })
+                @Html.DropDownList("gradeType", new SelectList(EnumExtenstion.GetEnumItems(typeof(GradeType)), "Value", "Text", Model.GradeType), null, new { @class = "selectw", style = "width:157px" })
             </div>
         </div>
         @{

@@ -197,7 +197,7 @@ namespace SuperMan.Controllers
         /// 添加骑士绑定查询
         /// danny-20150609
         /// </summary>
-        /// <param name="businessId">商户Id</param>
+        /// <param name="businessId">门店Id</param>
         /// <returns></returns>
         public ActionResult MessageDetail(int messageId)
         {
@@ -213,7 +213,7 @@ namespace SuperMan.Controllers
         /// 添加骑士绑定查询
         /// danny-20150609
         /// </summary>
-        /// <param name="messageId">商户Id</param>
+        /// <param name="messageId">门店Id</param>
         /// <returns></returns>
         public ActionResult Detail(int messageId)
         {
