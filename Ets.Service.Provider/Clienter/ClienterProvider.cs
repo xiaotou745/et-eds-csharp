@@ -1725,14 +1725,20 @@ namespace Ets.Service.Provider.Clienter
             return 0;
         }
 
+        /// <summary>
+        /// 订单是否需要审核
+        /// 默认不审核
+        /// </summary>
+        /// <param name="myOrderInfo"></param>
+        /// <returns></returns>
         bool IsOrderNeedAudit(OrderListModel myOrderInfo)
         {
-            bool bl=true;
+            bool bl=false;
 
-            //非物流公司、需要审核、非众包骑士
-            if (myOrderInfo.DeliveryCompanyID <= 0 && myOrderInfo.IsOrderChecked == 1 && myOrderInfo.GradeType != 1)
+            //非物流公司、需要审核、众包骑士
+            if (myOrderInfo.DeliveryCompanyID <= 0 && myOrderInfo.IsOrderChecked == 1 && myOrderInfo.GradeType == 1)
             {
-                bl = false;
+                bl = true;
             }
             return bl;
         }

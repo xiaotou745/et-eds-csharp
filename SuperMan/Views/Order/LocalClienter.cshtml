@@ -98,9 +98,9 @@
 </div>
 
 <script type="text/javascript">
-    var busiLongitude = $("#busiLongitude").val();//商户发单所在经度
-    var busiLatitude = $("#busiLatitude").val();//商户发单所在纬度
-    var businessIcon = new BMap.Icon("/Content/images/businessmarkernew.png", new BMap.Size(40, 40), {});//商户打点图标
+    var busiLongitude = $("#busiLongitude").val();//门店发单所在经度
+    var busiLatitude = $("#busiLatitude").val();//门店发单所在纬度
+    var businessIcon = new BMap.Icon("/Content/images/businessmarkernew.png", new BMap.Size(40, 40), {});//门店打点图标
     var clienterIcon = new BMap.Icon("/Content/images/clientermarkernew.png", new BMap.Size(40, 40), {});//骑士打点图标
     var clienterJsonInfo = $("#clienterJsonInfo").val();//骑士信息Json串
     function openInfo(content, e, opts, map) {
@@ -124,7 +124,7 @@
     };
 
     $(function () {
-        var marker = new BMap.Marker(new BMap.Point(busiLongitude, busiLatitude), { icon: businessIcon });  // 商户打点
+        var marker = new BMap.Marker(new BMap.Point(busiLongitude, busiLatitude), { icon: businessIcon });  // 门店打点
         map.addOverlay(marker);
         if (clienterJsonInfo != null && clienterJsonInfo.trim().length > 0)
         {

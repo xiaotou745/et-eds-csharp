@@ -19,12 +19,12 @@ using SuperMan.Common;
 namespace SuperMan.Controllers
 {
     /// <summary>
-    /// 商户结算控制器
+    /// 门店结算控制器
     /// </summary>
     public class BusinessCommissionController : BaseController
     {
         /// <summary>
-        /// 商户业务类
+        /// 门店业务类
         /// </summary>
        IBusinessProvider iBusinessProvider = new BusinessProvider();
         IAreaProvider iAreaProvider = new AreaProvider();
@@ -56,73 +56,8 @@ namespace SuperMan.Controllers
             var result = iBusinessProvider.GetBusinessCommissionOfPaging(criteria);
             return View(result);
         }
-        ///// <summary>
-        ///// 查询商户结算信息
-        ///// </summary>
-        ///// <param name="criteria"></param>
-        ///// <returns></returns>
-        //[HttpPost]
-        //public ActionResult BusinessCommissions(BusinessCommissionSearchCriteria criteria)
-        //{
-        //    ViewBag.openCityList = new AreaProvider().GetOpenCityOfSingleCity(0);
-        //    int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
-        //    DateTime date1 = DateTime.Now;
-        //    DateTime date2 = DateTime.Now;  
-        //    date1 = string.IsNullOrEmpty(criteria.txtDateStart) ? new DateTime(2014, 1, 1,0,0,0) : DateTime.Parse(criteria.txtDateStart);
-        //    date2 = string.IsNullOrEmpty(criteria.txtDateEnd) ? DateTime.Now : DateTime.Parse(criteria.txtDateEnd);
-        //    date1=new DateTime(date1.Year,date1.Month,date1.Day,0,0,0);
-        //    date2 = new DateTime(date2.Year, date2.Month, date2.Day, 23, 59, 59);
-        //    ViewBag.startDate = criteria.txtDateStart;
-        //    ViewBag.endDate = criteria.txtDateEnd;
-        //    ViewBag.name = criteria.txtBusinessName;
-        //    ViewBag.phoneno = criteria.txtBusinessPhoneNo;
-        //    ViewBag.BusinessCity = criteria.BusinessCity;
-        //    if (criteria.BusinessCity == "--无--")
-        //    {
-        //        criteria.BusinessCity = "";
-        //    }
-        //    string authorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType);
-        //    if (UserType > 0 && string.IsNullOrWhiteSpace(authorityCityNameListStr))
-        //    {
-        //        return View("BusinessCommission");
-        //    }
-        //    var result = iBusinessProvider.GetBusinessCommission(date1, date2, criteria.txtBusinessName, criteria.txtBusinessPhoneNo, criteria.txtGroupId, criteria.BusinessCity, authorityCityNameListStr);
-        //    return View("BusinessCommission", result);
-        //}
-
-
-        ///// <summary>
-        ///// 查询商户结算信息
-        ///// </summary>
-        ///// <param name="criteria"></param>
-        ///// <returns></returns>
-        //[HttpPost]
-        //public ActionResult BusinessCommissions()
-        //{
-        //    ViewBag.txtGroupId = UserContext.Current.GroupId;
-        //    var userType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
-        //    ViewBag.openCityList = new AreaProvider().GetOpenCityOfSingleCity(userType);
-        //    var t1 = new DateTime(2014, 1, 1, 0, 0, 0);
-        //    var t2 = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 23, 59, 59);
-        //    var authorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(userType);
-        //    var criteria =
-        //       new Ets.Model.ParameterModel.Bussiness.BusinessCommissionSearchCriteria
-        //       {
-        //           T1 = t1,
-        //           T2 = t2,
-        //           AuthorityCityNameListStr = authorityCityNameListStr
-        //       };
-        //    if (userType > 0 && string.IsNullOrWhiteSpace(authorityCityNameListStr))
-        //    {
-        //        return View();
-        //    }
-        //    var result = iBusinessProvider.GetBusinessCommissionOfPaging(criteria);
-        //    return View(result);
-
-
-        //}
         /// <summary>
-        /// 查询商户结算信息
+        /// 查询门店结算信息
         /// </summary>
         /// <param name="pageindex">页码</param>
         /// <returns></returns>
@@ -156,7 +91,7 @@ namespace SuperMan.Controllers
             return PartialView("_BusinessCommissionList", result);
         }
         /// <summary>
-        /// 导出商户结算金额excel
+        /// 导出门店结算金额excel
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
@@ -190,7 +125,7 @@ namespace SuperMan.Controllers
             var result = iBusinessProvider.GetBusinessCommission(date1, date2, criteria.txtBusinessName, criteria.txtBusinessPhoneNo, criteria.txtGroupId, criteria.BusinessCity, authorityCityNameListStr);
             if (result.Result && result.Data.Count > 0)
             {
-                string filname = "e代送商户订单结算" + date1.ToLongDateString() + "到" + date2.ToLongDateString();
+                string filname = "e代送门店订单结算" + date1.ToLongDateString() + "到" + date2.ToLongDateString();
                 string[] title = ExcelUtility.GetDescription(new BusinessCommissionExcel());
                 ExcelIO.CreateFactory().Export(ConvertToBusinessCommissionExcel(result.Data.ToList()), ExportFileFormat.excel, filname, title);
                 return null;
@@ -212,7 +147,7 @@ namespace SuperMan.Controllers
         }
         //private IList<> 
         /// <summary>
-        /// 生成商户结算excel文件
+        /// 生成门店结算excel文件
         /// </summary>
         /// <returns></returns>
         private string CreateExcel(IList<BusinessCommissionDM> paraModel)
@@ -221,7 +156,7 @@ namespace SuperMan.Controllers
             strBuilder.AppendLine("<table border=1 cellspacing=0 cellpadding=5 rules=all>");
             //输出表头.
             strBuilder.AppendLine("<tr style=\"font-weight: bold; white-space: nowrap;\">");
-            strBuilder.AppendLine("<td>商户名称</td>");
+            strBuilder.AppendLine("<td>门店名称</td>");
             strBuilder.AppendLine("<td>订单金额</td>");
             strBuilder.AppendLine("<td>订单数量</td>");
             strBuilder.AppendLine("<td>结算比例(%)</td>");
@@ -246,7 +181,7 @@ namespace SuperMan.Controllers
             return strBuilder.ToString();
         }
         /// <summary>
-        /// 转换商户结算数据Excel
+        /// 转换门店结算数据Excel
         /// wc
         /// </summary>
         /// <param name="list"></param>
@@ -271,7 +206,7 @@ namespace SuperMan.Controllers
         }
 
         /// <summary>
-        /// 导出商户结算金额excel
+        /// 导出门店结算金额excel
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>

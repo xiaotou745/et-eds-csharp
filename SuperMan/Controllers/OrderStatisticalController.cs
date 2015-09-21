@@ -83,8 +83,8 @@ namespace SuperMan.Controllers
             strBuilder.AppendLine("<tr style=\"font-weight: bold; white-space: nowrap;\">");
             strBuilder.AppendLine("<td>任务单号</td>");
             strBuilder.AppendLine("<td>城市</td>");
-            strBuilder.AppendLine("<td>商户信息</td>");
-            strBuilder.AppendLine("<td>超人信息</td>");
+            strBuilder.AppendLine("<td>门店信息</td>");
+            strBuilder.AppendLine("<td>骑士信息</td>");
             strBuilder.AppendLine("<td>取货地址</td>");
             strBuilder.AppendLine("<td>送货地址</td>");
             strBuilder.AppendLine("<td>发布时间</td>");
