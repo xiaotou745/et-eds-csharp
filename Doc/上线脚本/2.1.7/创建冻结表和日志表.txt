@@ -3,7 +3,7 @@ GO
 create table [dbo].[ClienterForzen](
 	[ID] [int] identity(1,1) not null,
 	[ClienterID] [int] not null,
-	[ForzenAmount] [decimal](18, 0) not null,
+	[ForzenAmount] [decimal](18, 2) not null,
 	[ForzenReason] [nvarchar](150) null,
 	[ForzenDate] [datetime] not null,
 	[ThawReason] [nvarchar](150) null,
