@@ -1,0 +1,98 @@
+USE [superman]
+GO
+create table [dbo].[ClienterForzen](
+	[ID] [int] identity(1,1) not null,
+	[ClienterID] [int] not null,
+	[ForzenAmount] [decimal](18, 0) not null,
+	[ForzenReason] [nvarchar](150) null,
+	[ForzenDate] [datetime] not null,
+	[ThawReason] [nvarchar](150) null,
+	[ThawDate] [datetime] null,
+	[Status] [int] not null,
+	[Operator] [nvarchar](50) null,
+	[CreateDate] [datetime] not null,
+ constraint [PK_ClienterForzen] primary key clustered 
+(
+	[ID] asc
+)with (pad_index  = off, statistics_norecompute  = off, ignore_dup_key = off, allow_row_locks  = on, allow_page_locks  = on) on [PRIMARY]
+) on [PRIMARY]
+
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'骑士ID' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ClienterForzen', @level2type=N'COLUMN',@level2name=N'ClienterID'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'冻结金额' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ClienterForzen', @level2type=N'COLUMN',@level2name=N'ForzenAmount'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'冻结原因' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ClienterForzen', @level2type=N'COLUMN',@level2name=N'ForzenReason'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'冻结时间' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ClienterForzen', @level2type=N'COLUMN',@level2name=N'ForzenDate'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'解冻原因' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ClienterForzen', @level2type=N'COLUMN',@level2name=N'ThawReason'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'解冻时间' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ClienterForzen', @level2type=N'COLUMN',@level2name=N'ThawDate'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'状态 1:冻结中 2:已解冻(默认1 )' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ClienterForzen', @level2type=N'COLUMN',@level2name=N'Status'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'操作人' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ClienterForzen', @level2type=N'COLUMN',@level2name=N'Operator'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'创建时间' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ClienterForzen', @level2type=N'COLUMN',@level2name=N'CreateDate'
+go
+
+alter table [dbo].[ClienterForzen] add  constraint [DF_ClienterForzen_ForzenDate]  default (getdate()) for [ForzenDate]
+go
+
+alter table [dbo].[ClienterForzen] add  constraint [DF_ClienterForzen_Status]  default ((1)) for [Status]
+go
+
+alter table [dbo].[ClienterForzen] add  constraint [DF_ClienterForzen_CreateDate]  default (getdate()) for [CreateDate]
+go
+
+use [superman]
+go 
+
+create table [dbo].[ClienterForzenLog](
+	[ID] [int] identity(1,1) not null,
+	[ClienterForzenID] [int] not null,
+	[Operator] [nvarchar](50) null,
+	[OperaType] [int] not null,
+	[CreateDate] [datetime] not null,
+	[Remark] [nvarchar](50) null,
+ constraint [PK_ClienterForzenLog] primary key clustered 
+(
+	[ID] asc
+)with (pad_index  = off, statistics_norecompute  = off, ignore_dup_key = off, allow_row_locks  = on, allow_page_locks  = on) on [PRIMARY]
+) on [PRIMARY]
+
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'冻结单号' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ClienterForzenLog', @level2type=N'COLUMN',@level2name=N'ClienterForzenID'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'操作人' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ClienterForzenLog', @level2type=N'COLUMN',@level2name=N'Operator'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'操作类型 1冻结2 解冻(默认1)' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ClienterForzenLog', @level2type=N'COLUMN',@level2name=N'OperaType'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'操作时间' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ClienterForzenLog', @level2type=N'COLUMN',@level2name=N'CreateDate'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'操作备注' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ClienterForzenLog', @level2type=N'COLUMN',@level2name=N'Remark'
+go
+
+alter table [dbo].[ClienterForzenLog] add  constraint [DF_ClienterForzenLog_OperaType]  default ((1)) for [OperaType]
+go
+
+alter table [dbo].[ClienterForzenLog] add  constraint [DF_ClienterForzenLog_CreateDate]  default (getdate()) for [CreateDate]
+go
+
+
+
