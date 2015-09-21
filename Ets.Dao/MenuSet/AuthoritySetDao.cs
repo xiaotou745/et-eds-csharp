@@ -189,7 +189,40 @@ namespace Ets.Dao.MenuSet
             var dt = DbHelper.ExecuteDataset(SuperMan_Read, sql).Tables[0];
             return (List<AuthorityMenuModel>)ConvertDataTableList<AuthorityMenuModel>(dt);
         }
-
+        /// <summary>
+        /// 根据菜单id获取拥有此菜单的用户id
+        /// </summary>
+        /// <param name="menuID"></param>
+        /// <returns></returns>
+        public List<AccountModel> GetAccountIDListByMenuID(int menuID)
+        {
+            string sql = @"                        
+                            SELECT  b.Id
+                            FROM    AuthorityMenuClass a WITH ( NOLOCK )
+                                    LEFT JOIN dbo.AuthorityAccountMenuSet b WITH ( NOLOCK ) ON a.id = b.MenuId
+                                                                               OR a.ParId = b.MenuId
+                            WHERE   ( a.id = @menuID
+                                      OR a.ParId = @menuID
+                                    )
+                                    AND b.id IS NOT NULL
+                            UNION
+                            SELECT  mb.AccoutId as Id
+                            FROM    AuthorityMenuClass m WITH ( NOLOCK )
+                                    LEFT JOIN ( SELECT  k.MenuId ,
+                                                        d.Id AS AccoutId
+                                                FROM    AuthorityRoleMentMenuSet k WITH ( NOLOCK )
+                                                        INNER JOIN account d WITH ( NOLOCK ) ON k.RoleId = d.RoleId
+                                              ) mb ON m.Id = mb.MenuId
+                                                      OR m.ParId = mb.MenuId
+                            WHERE   ( m.Id = @menuID
+                                      OR m.ParId = @menuID
+                                    )
+                                    AND mb.AccoutId IS NOT NULL";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("menuID", menuID);
+            var dt = DbHelper.ExecuteDataset(SuperMan_Read, sql, dbParameters).Tables[0];
+            return (List<AccountModel>)ConvertDataTableList<AccountModel>(dt);
+        }
         #endregion
 
         #region 部门管理
