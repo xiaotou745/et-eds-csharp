@@ -60,7 +60,7 @@ namespace SuperMan.Controllers
         private readonly ITagRelationProvider tagRelationProvider = new TagRelationProvider();
         // GET: BusinessManager
         [HttpGet]
-        public ActionResult BusinessManager()
+        public ActionResult BusinessManager(string businessName = "", string businessPhone = "", int tagId = 0)
         {
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;//集团id
 
@@ -74,14 +74,18 @@ namespace SuperMan.Controllers
                 MealsSettleMode = -1,
                 UserType = UserType,
                 AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType),
-                TagId = Request["TagId"] == null ? (int?)null : ParseHelper.ToInt(Request["TagId"])
+                TagId = tagId > 0 ? tagId : (Request["TagId"] == null ? (int?)null : ParseHelper.ToInt(Request["TagId"]))
             };
+            criteria.businessName = businessName;
+            criteria.businessPhone = businessPhone;
+            ViewBag.busName = businessName;
+            ViewBag.busPhone = businessPhone;
             if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
             {
                 return View();
             }
             ViewBag.tags = tagProvider.GetTagsByTagType(TagType.Business.GetHashCode());
-            ViewBag.selectTag = Request["TagId"];
+            ViewBag.selectTag =tagId>0?tagId.ToString(): Request["TagId"];
             var pagedList = iBusinessProvider.GetBusinesses(criteria);
             return View(pagedList);
         }

@@ -24,7 +24,7 @@
                 <tr>
                     <td>
                         <span class="">门店名称: </span>
-                        <input id="txtBusinessName" name="BusinessName" type="tel" />
+                        <input id="txtBusinessName" name="BusinessName" type="tel" value="@ViewBag.busName" />
                         <span class="">审核状态: </span>
                         <select name="status" class="selectw" id="businessStatus" style="width:143px">
                             <option value="-1" selected="selected">全部</option>
@@ -35,7 +35,7 @@
                             <option value="4">审核被拒绝</option>
                         </select>
                         <span class="">门店电话: </span>
-                        <input id="txtBusinessPhone" type="text" name="BusinessPhone" />
+                        <input id="txtBusinessPhone" type="text" name="BusinessPhone" value="@ViewBag.busPhone" />
                         <span class="">结算比例: </span>
                         <input id="txtBusinessCommission" type="text" name="BusinessCommission" />
 
