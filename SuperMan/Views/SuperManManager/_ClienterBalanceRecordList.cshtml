@@ -32,10 +32,10 @@
                             {
                                 <a href="javascript:funLookDetail(@item.WithwardId)">@item.RelationNo</a> 
                             }
-                            @else if (item.RecordType == 12 || item.RecordType == 13)
+                            else if (item.RecordType == 12 || item.RecordType == 13)
                             {
                                 @item.RelationNo
-                            }@else
+                            }else
                             {
                                 <a href="/Order/OrderDetail?OrderNo=@item.RelationNo&OrderId=@item.WithwardId ">@item.RelationNo</a>
                             }
