@@ -2,26 +2,51 @@
 @model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Order.OrderListModel>
 <script src="~/Scripts/view/orderList.js"></script>
 <style type="text/css">
-#map_contain {
-    height: 90%;
-    width: 100%;
-    max-width: none;
-}
-label {
-    max-width: none;
-}
+    #map_contain {
+        height: 90%;
+        width: 100%;
+        max-width: none;
+    }
 
-#control {
-width: 100%;
-}
+    label {
+        max-width: none;
+    }
+
+    #control {
+        width: 100%;
+    }
+
+    .center-block, .carrousel, .carrousel .wrapper {
+        margin: auto;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+
+    .carrousel {
+        position: fixed;
+        background-color: rgba(10, 10, 10, 0.8);
+        display: none;
+    } 
+    .carrousel .wrapper {
+        width: 600px;
+        height: 600px;
+        overflow: hidden;
+    }
+
+    .carrousel .wrapper > img {
+        width: 100%;
+    }
 </style>
-<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle" id="dataTableRange">
+<table width="100%" class="tbstyle" id="dataTableRange">
     <thead>
-        <tr class="tdbg">
-            <th width="%5"><input type="checkbox" name="selectAll" id="selectAll" onclick="checkAll()" />全选/全消</th>
+        <tr id="dttr" class="tdbg">
+            <th id="ckbox" width="5%"><input type="checkbox" name="selectAll" id="selectAll" onclick=" checkAll() " />全选/全消</th>
             <th width="%5">订单号</th>
             <th>是否异常</th>
-            <th>商户信息</th>
+            <th>门店信息</th>
             <th>骑士信息</th>
             <th>发布时间</th>
             <th>实际完成时间</th>
@@ -31,13 +56,13 @@ width: 100%;
             <th>订单佣金(应付)</th>
             @*<th>补贴</th>*@
             <th>扣除补贴</th>
-            <th>盈亏</th> 
+            <th>盈亏</th>
             <th>订单状态</th>
             <th>审核状态</th>
             <th>操作</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody id="dataTbodyList">
         @{
             if (Model != null && Model.Records.Count > 0)
             {
@@ -54,29 +79,29 @@ width: 100%;
                     decimal kouchubutie = 0.00M;
                     if (item.IsNotRealOrder == 1)
                     {
-                        butie = item.OrderCommission.Value - item.RealOrderCommission;  
-                        if (item.AuditStatus == 2)//审核拒绝时，才显示扣除的网站补贴
+                        butie = item.OrderCommission.Value - item.RealOrderCommission;
+                        if (item.AuditStatus == 2) //审核拒绝时，才显示扣除的网站补贴
                         {
-                            kouchubutie = butie;      
+                            kouchubutie = butie;
                         }
-                      
+
                         reals = "是";
                         real_tipString = string.Format("  class=true style=color:blue; onmousemove=tip_show('{0}',event,'{1}'); onmouseout=tip_hide();", realID, item.DeductCommissionReason);
                     }
 
                     string yingkuiID = "yingkui" + item.Id;
                     string yingkuis = string.Format("[应收-(应付-扣除补贴)]<br/>[{0}-({1}-{2})]", item.SettleMoney, item.OrderCommission, kouchubutie);
-                    decimal yingkui = item.SettleMoney - item.OrderCommission ?? 0+ kouchubutie;
+                    decimal yingkui = item.SettleMoney - item.OrderCommission ?? 0 + kouchubutie;
                     string color = "blue";
-                    if (yingkui<0)
+                    if (yingkui < 0)
                     {
                         color = "red";
                     }
-                    string yingkui_tipString = string.Format("  class=true style=color:{0}; onmousemove=tip_show('{1}',event,'{2}'); onmouseout=tip_hide();",color, yingkuiID, yingkuis);
+                    string yingkui_tipString = string.Format("  class=true style=color:{0}; onmousemove=tip_show('{1}',event,'{2}'); onmouseout=tip_hide();", color, yingkuiID, yingkuis);
 
-                    decimal waisongfei = item.DistribSubsidy??0.00M;
+                    decimal waisongfei = item.DistribSubsidy ?? 0.00M;
                     //第三方订单 不考虑外送费
-                    if (item.OrderFrom>0)
+                    if (item.OrderFrom > 0)
                     {
                         waisongfei = 0;
                     }
@@ -88,34 +113,34 @@ width: 100%;
                     //    yingshou = string.Format("[商家固定金额*订单数量+外送费*订单数量]<br/>[{0}*{1}+{2}*{3}]", item.CommissionFixValue, item.OrderCount, item.DistribSubsidy, item.OrderCount);
                     //}
                     string yingshou = string.Format("[订单金额*商配比例+(商配定额+代收客配)*订单数量]<br/>[{0}*{1}+({2}+{3})*{4}]", item.Amount, Decimal.Round(item.BusinessCommission * 1.00M / 100, 2), item.CommissionFixValue, waisongfei, item.OrderCount);
-                    
+
                     string yingshou_tipString = string.Format("  class=true style=color:blue; onmousemove=tip_show('{0}',event,'{1}'); onmouseout=tip_hide();", yingshouID, yingshou);
 
-                    
+
                     string yingfuID = "yingfu" + item.Id;
                     string yingfus = string.Format("[订单金额*佣金比例+外送费(或网站补贴)*订单数量]<br/>[{0}*{1}+{2}({3})*{4}]", item.Amount, item.CommissionRate, item.DistribSubsidy, item.WebsiteSubsidy, item.OrderCount);
-                    if (item.CommissionFormulaMode==3)
+                    if (item.CommissionFormulaMode == 3)
                     {
                         yingfus = string.Format("[满额补贴+订单金额*佣金比例+外送费(或网站补贴)*订单数量]<br/>[{0}+{1}*{2}+{3}({4})*{5}]", item.Adjustment, item.Amount, item.CommissionRate, item.DistribSubsidy, item.WebsiteSubsidy, item.OrderCount);
                     }
                     else if (item.CommissionFormulaMode == 4)
                     {
-                        yingfus = string.Format("[(基本佣金+网站补贴)*订单数量]<br/>[({0}+{1})*{2}]", item.BaseCommission,item.WebsiteSubsidy, item.OrderCount);
+                        yingfus = string.Format("[(基本佣金+网站补贴)*订单数量]<br/>[({0}+{1})*{2}]", item.BaseCommission, item.WebsiteSubsidy, item.OrderCount);
                     }
                     string yingfu_tipString = string.Format("  class=true style=color:blue; onmousemove=tip_show('{0}',event,'{1}'); onmouseout=tip_hide();", yingfuID, yingfus);
-                    bool canOperation=SuperMan.App_Start.UserContext.Current.HasAuthority(80) && 
-                                        item.FinishAll == 1 && 
-                                        item.IsJoinWithdraw == 0 && 
-                                        item.IsEnable == 1 && 
-                                        item.Status!=(byte)ETS.Enums.OrderStatusCommon.Cancel;
+                    bool canOperation = SuperMan.App_Start.UserContext.Current.HasAuthority(80) &&
+                                        item.FinishAll == 1 &&
+                                        item.IsJoinWithdraw == 0 &&
+                                        item.IsEnable == 1 &&
+                                        item.Status != (byte)ETS.Enums.OrderStatusCommon.Cancel;
 
                     <tr id="@item.Id" @timeoutStyle>
                         <td>
-                        @if (canOperation)
+                            @if (canOperation)
                             {
-                        <input type="checkbox" name="checkMenus" id="@item.OrderNo" value="@item.Id" />
-                        }
-                            </td>
+                                <input type="checkbox" name="checkMenus" id="@item.OrderNo" value="@item.Id" />
+                            }
+                        </td>
                         <td><a href="/Order/OrderDetail?OrderNo=@item.OrderNo&OrderId=@item.Id ">@item.OrderNo</a></td>
                         <td id="@realID" @real_tipString>@reals</td>
                         <td>@item.BusinessName <br> @item.BusinessPhoneNo</td>
@@ -136,22 +161,85 @@ width: 100%;
                         <td>
                             @if (canOperation)
                             {
-                        <a href="javascript:btnAuditOk('@item.Id','@item.OrderNo')">审核通过</a>
-                        <a href="javascript:btnAuditCancel('@item.Id','@item.OrderNo','@item.DeductCommissionReason')">审核拒绝</a> 
-                            }               
-    </td>
+                                <a href="javascript:btnAuditOk('@item.Id','@item.OrderNo')">审核通过</a>
+                                <a href="javascript:btnAuditCancel('@item.Id','@item.OrderNo','@item.DeductCommissionReason')">审核拒绝</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+        }
+    </tbody>
+    <tbody id="dataTbodyListImg">
+        @{
+            if (Model != null && Model.Records.Count > 0)
+            {
+                foreach (var item in Model.Records)
+                {
+                    bool canOperation = SuperMan.App_Start.UserContext.Current.HasAuthority(80) &&
+                                        item.FinishAll == 1 &&
+                                        item.IsJoinWithdraw == 0 &&
+                                        item.IsEnable == 1 &&
+                                        item.Status != (byte)ETS.Enums.OrderStatusCommon.Cancel;
+                    <tr id='@(item.Id + "img")'>
+                        <td style="width: 20px">
+                            @if (canOperation)
+                            {
+                                <input type="checkbox" name="checkMenus" id="@item.OrderNo" value="@item.Id" />
+                            }
+                        </td>
+                        <td colspan="5" style="text-align: left;">
+                            <span><b>任务订单号:</b>@item.OrderNo</span>&nbsp;&nbsp;
+                            <span><b>门店名称:</b>@item.BusinessPhoneNo</span>&nbsp;&nbsp;
+                            <span><b>订单数量:</b>@item.OrderCount</span>&nbsp;&nbsp;
+                            <span><b>发布时间:</b>@item.PubDate</span>&nbsp;&nbsp;
+                            <span><b>完成时间:</b>@item.ActualDoneDate</span>&nbsp;&nbsp;
+                            <span><b>骑士名称:</b>@item.ClienterName</span>&nbsp;&nbsp;
+                            <span><b>骑士电话:</b>@item.ClienterPhoneNo</span>&nbsp;&nbsp;
+                            @if (canOperation)
+                            {
+                                <a href="javascript:btnAuditOk('@item.Id','@item.OrderNo')">审核通过</a>
+                                <a href="javascript:btnAuditCancel('@item.Id','@item.OrderNo','@item.DeductCommissionReason')">审核拒绝</a>
+                            }
+                            <br />
+                            <span><b>异常原因:</b>@item.DeductCommissionReason</span>
+                        </td>
+                    </tr>
+                    <tr id='@(item.Id + "imgr")'>
+                        <td colspan="1"></td>
+                        <td id="images" class="portrait" style="text-align: left">
+                            <ul>
+                                @for (int k = 0; k < item.OrderChildList.Count; k++)
+                                {
+                                    string bigPicUrl = "";
+                                    if (!string.IsNullOrWhiteSpace(item.OrderChildList[k].TicketUrl))
+                                    {
+                                        bigPicUrl = item.OrderChildList[k].TicketUrl.Substring(0, item.OrderChildList[k].TicketUrl.LastIndexOf(".")) + "_0_0.jpg";
+                                        <li style="float: left; margin-left: 5px;">
+                                            <img class="pic" data-src-wide="@bigPicUrl" src="@item.OrderChildList[k].TicketUrl"/>
+                                            <span style="display: block;text-align:center"><b>订单金额:</b>@item.OrderChildList[k].GoodPrice</span>
+                                        </li>
+                                    }
+                                }
+                            </ul>
+                        </td>
                     </tr>
                 }
             }
         }
     </tbody>
 </table>
+
+<div id="receiptBigPic" class="carrousel">
+
+    <div class="wrapper"> <img src="" id="bigImg" alt="" /> </div>
+</div>
 <div id="rowTip" style="position: absolute; border: 1px solid #ccc; padding: 0px 3px; display: none;  background: #FFCCCC"></div>
 @{
     if (Model != null)
     {
- ViewBag.ActionName = "PostOrderAudit";
-@Html.Partial("~/views/shared/PagerControl.cshtml", Model)
+        ViewBag.ActionName = "PostOrderAudit";
+        @Html.Partial("~/views/shared/PagerControl.cshtml", Model)
     }
 }
 
@@ -160,20 +248,41 @@ width: 100%;
         showColumn();
         $("#selectAll").bind("change", checkAll);
         $("input[name='checkMenus']").bind("change", checkChange);
-        
+        if ($("#listMode").is(":hidden")) {
+            $("#dataTbodyListImg").show();
+            $("#dataTbodyList").hide();
+            $("#dttr #ckbox").siblings().hide();
+
+        } else {
+            $("#dataTbodyListImg").hide();
+            $("#dataTbodyList").show();
+            $("#dttr #ckbox").siblings().show();
+        }
+    });
+    var carrousel = $(".carrousel");
+    $(".portrait ul li").click(function (e) {
+        var src = $(this).find(".pic").attr("data-src-wide");
+        console.log(src);
+        if (typeof (src) != "undefined") {
+            carrousel.find("img").attr("src", src);
+            carrousel.fadeIn(100);
+        }
+    });
+    $("#receiptBigPic").click(function () {
+        adminjs.closewinbox('#receiptBigPic');
     });
     function funcViewOrder(id, pubDate, businessName, busiPhone, busiAddress, yongjin, disBuTie, WebBuTie, revPhone, revName, revAddress, Amount, isPay, superId, status, superManName) {
         var paramaters = { "OrderNo": id, "PubDate": pubDate, "BusinessName": businessName, "BusinessPhoneNo": busiPhone, "BusinessAddress": busiAddress, "OrderCommission": yongjin, "DistribSubsidy": disBuTie, "WebsiteSubsidy": WebBuTie, "RecevicePhoneNo": revPhone, "ReceviceName": revName, "ReceviceAddress": revAddress, "Amount": Amount, "IsPay": isPay, "clienterId": superId, "Status": status, "ClienterName": superManName };
         window.location.href = "/Order/OrderDetail";
     };
 
-    function tip_show(id,e, val1) {
+    function tip_show(id, e, val1) {
         var obj = $("#rowTip");
         obj.hide();
         obj.html(val1);
-        var targetObj=document.getElementById(id);
-        var left = targetObj.offsetLeft+250;
-        var top = targetObj.offsetTop+300;
+        var targetObj = document.getElementById(id);
+        var left = targetObj.offsetLeft + 250;
+        var top = targetObj.offsetTop + 300;
         //alert(top+","+left);
         //var left = e.clientX+10;
         //var top = e.clientY - 10;
@@ -190,38 +299,37 @@ width: 100%;
     }
     function checkChange() {
         var checkedLength = 0;
-        var all=$("input[name='checkMenus']").length;
+        var all = $("input[name='checkMenus']").length;
         $("input[name='checkMenus']").each(function (i, o) {
             if (o.checked) {
                 checkedLength++;
             }
         });
-        if(checkedLength<all)
-        {
-            document.getElementById("selectAll").checked = false;
+        if (checkedLength < all) { 
+            $("#selectAll").checked = false;
         }
-        else {
-            document.getElementById("selectAll").checked = true;
+        else { 
+            $("#selectAll").checked = true;
         }
     }
     function showColumn() {
         //只有待审核状态时，才显示全选全消和操作列
         var totalColumn = $("#dataTableRange").find("th").length;
         var hasAuth = "@SuperMan.App_Start.UserContext.Current.HasAuthority(80)";
-        if ($("#auditStatus").val() == "0" && hasAuth!="False") {
+        if ($("#auditStatus").val() == "0" && hasAuth != "False") {
             $("#batchAuditPass").show();
             $("#batchAuditCancel").show();
             $("#dataTableRange tr").find('th:eq(0)').show();
-            $("#dataTableRange tr").find("th:eq("+(totalColumn-1)+")").show();
+            $("#dataTableRange tr").find("th:eq(" + (totalColumn) + ")").show();
             $("#dataTableRange tr").find('td:eq(0)').show();
-            $("#dataTableRange tr").find("td:eq(" + (totalColumn - 1) + ")").show();
+            $("#dataTableRange tr").find("td:eq(" + (totalColumn) + ")").show();
         } else {
             $("#batchAuditPass").hide();
             $("#batchAuditCancel").hide();
             $("#dataTableRange tr").find('th:eq(0)').hide();
-            $("#dataTableRange tr").find("th:eq(" + (totalColumn - 1) + ")").hide();
+            $("#dataTableRange tr").find("th:eq(" + (totalColumn ) + ")").hide();
             $("#dataTableRange tr").find('td:eq(0)').hide();
-            $("#dataTableRange tr").find("td:eq(" + (totalColumn - 1) + ")").hide();
+            $("#dataTableRange tr").find("td:eq(" + (totalColumn ) + ")").hide();
         }
     }
 </script>

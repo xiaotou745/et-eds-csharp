@@ -179,4 +179,43 @@ namespace ETS.Enums
         [DisplayText("其它原因")]
         OtherReason = 6
     }
+
+    /// <summary>
+    /// 骑士等级1众包2全职3测试
+    /// 胡灵波
+    /// 2015年9月18日 16:57:22
+    /// </summary>   
+
+    public enum GradeType
+    {
+        /// <summary>
+        /// 众包
+        /// </summary>
+        [DisplayText("众包")]
+        Crowdsourcing = 1,
+        /// <summary>
+        /// 全职
+        /// </summary>
+        [DisplayText("全职")]
+        Fulltime = 2,
+        /// <summary>
+        /// 未审核
+        /// </summary>
+        [DisplayText("测试")]
+        Test = 3  
+    }
+
+    //public enum GradeType2
+    //{
+    //    /// <summary>
+    //    /// 众包
+    //    /// </summary>
+    //    [DisplayText("众包")]
+    //    Crowdsourcing = 1,
+    //    /// <summary>
+    //    /// 未审核
+    //    /// </summary>
+    //    [DisplayText("测试")]
+    //    Test = 3
+    //}
 }

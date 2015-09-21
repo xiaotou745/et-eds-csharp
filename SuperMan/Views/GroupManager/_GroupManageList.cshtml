@@ -5,10 +5,10 @@
 
         <tr class="tdbg">
             <th width="%5">序号</th>
-            <th>集团名称</th>
-            <th>集团创建时间</th>
-            <th>集团AppKey</th>
-            <th>集团AppSecret</th>
+            <th>第三方平台名称</th>
+            <th>第三方平台创建时间</th>
+            <th>第三方平台AppKey</th>
+            <th>第三方平台AppSecret</th>
             <th>APP版本</th>
             <th>状态</th>
             <th>操作人</th>
@@ -54,7 +54,7 @@
 @{ViewBag.ActionName = "PostGroupManager";}
 @Html.Partial("~/views/shared/PagerControl.cshtml", Model)
 <script type="text/javascript">
-    //显示修改集团弹出层
+    //显示修改第三方平台弹出层
     function funcGShowView(gid, gname) {
         $("#hiduGroupID").val(gid);
         $('#txtuGroupName').val(gname);

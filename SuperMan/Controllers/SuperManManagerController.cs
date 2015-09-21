@@ -39,7 +39,7 @@ namespace SuperMan.Controllers
         private readonly ITagProvider tagProvider = new TagProvider();
         private readonly ITagRelationProvider tagRelationProvider = new TagRelationProvider();
         // GET: BusinessManager
-        public ActionResult SuperManManager()
+        public ActionResult SuperManManager(int tagId =0)
         {
             //account account = HttpContext.Session["user"] as account;
             //if (account == null)
@@ -59,14 +59,14 @@ namespace SuperMan.Controllers
                 GroupId = SuperMan.App_Start.UserContext.Current.GroupId,
                 UserType = UserType,
                 AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType),
-                TagId = Request["TagId"] == null ? (int?) null : ParseHelper.ToInt(Request["TagId"])
+                TagId = tagId > 0 ? tagId : (Request["TagId"] == null ? (int?)null : ParseHelper.ToInt(Request["TagId"])) 
             };
             if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
             {
                 return View();
             }
             ViewBag.tags = tagProvider.GetTagsByTagType(TagType.Clienter.GetHashCode());
-            ViewBag.selectTag = Request["TagId"];
+            ViewBag.selectTag = tagId > 0 ? tagId.ToString() : Request["TagId"];
             //ViewBag.openCityList.Result.AreaModels;
             var pagedList = iDistributionProvider.GetClienteres(criteria);
             return View(pagedList);
@@ -387,6 +387,7 @@ namespace SuperMan.Controllers
         {
             clienterDetailModel.OptUserId = UserContext.Current.Id;
             clienterDetailModel.OptUserName = UserContext.Current.Name;
+            if (string.IsNullOrWhiteSpace(clienterDetailModel.Tags)) clienterDetailModel.Tags = "";
             var reg = cliterProvider.ModifyClienterDetail(clienterDetailModel);
             return Json(new ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.DenyGet);
         }

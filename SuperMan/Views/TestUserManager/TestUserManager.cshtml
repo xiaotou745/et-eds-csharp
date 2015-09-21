@@ -35,11 +35,11 @@
                         <tr>
                             <td>@item.Id</td> 
                             <td>@item.PhoneNo</td>
-                            <td>@(item.IsC==1?"骑士":"") - @(item.IsB==1?"商户":"")</td>
+                            <td>@(item.IsC==1?"骑士":"") - @(item.IsB==1?"门店":"")</td>
                             <td>
                                 <a href="javascript:void(0)" onclick="deleteClienter(@item.PhoneNo)">删除骑士</a>
                                 <a href="javascript:void(0)" onclick="deleteOrder(@item.PhoneNo);">删除订单</a>
-                                <a href="javascript:void(0)" onclick="deleteBusi(@item.PhoneNo);">删除商户</a> 
+                                <a href="javascript:void(0)" onclick="deleteBusi(@item.PhoneNo);">删除门店</a> 
                             </td>
                         </tr> 
                     }
@@ -127,9 +127,9 @@
         });
             }
     }
-    ///删除商户
+    ///删除门店
     function deleteBusi(phone) {
-        if (confirm("确定删除该商户?")) {
+        if (confirm("确定删除该门店?")) {
         var pars = { "phoneNo": phone };
         var url = "/TestUserManager/DeleteTestBusiness";
         $.ajax({

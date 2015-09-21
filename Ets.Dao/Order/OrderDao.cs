@@ -580,7 +580,7 @@ select @@IDENTITY ";
             }
             if (!string.IsNullOrWhiteSpace(criteria.businessPhone))
             {
-                sbSqlWhere.AppendFormat(" AND b.PhoneNo='{0}' ", criteria.businessPhone);
+                sbSqlWhere.AppendFormat(" AND b.PhoneNo='{0}' ", criteria.businessPhone.Trim());
             }
             if (!string.IsNullOrWhiteSpace(criteria.orderId))
             {
@@ -1587,6 +1587,7 @@ select top 1
         c.AccountBalance ,
         c.AllowWithdrawPrice,
         c.Id clienterId ,
+        c.GradeType,
         o.OrderCommission ,
         o.businessId ,
         b.GroupId ,
@@ -1609,8 +1610,7 @@ from    [order] o with ( nolock )
         join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
         join dbo.business b with ( nolock ) on o.businessId = b.Id
         join dbo.OrderOther oo with(nolock) on o.Id = oo.OrderId
-where  o.OrderNo = @OrderNo
-";
+where  o.OrderNo = @OrderNo";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@OrderNo", SqlDbType.NVarChar).Value = orderNo;
 
@@ -1659,6 +1659,7 @@ select top 1
         c.AccountBalance ,
         c.AllowWithdrawPrice, 
         c.Id clienterId ,
+        c.GradeType,
         o.OrderCommission ,
         o.businessId ,
         b.GroupId ,

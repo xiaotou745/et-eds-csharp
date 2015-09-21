@@ -197,7 +197,7 @@ namespace SuperMan.Controllers
             RecommendQuery recommendQuery=new RecommendQuery();
             recommendQuery.PageIndex = 1;
             recommendQuery.DataType = 1;
-            ViewBag.DataType = 1;//设置显示商户列表
+            ViewBag.DataType = 1;//设置显示门店列表
             recommendQuery.StartDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).ToString();
             var statisticsProvider = new StatisticsProvider();
             var pagelist = statisticsProvider.GetRecommendList(recommendQuery);
