@@ -44,8 +44,16 @@
                 @Html.DropDownList("deliveryCompany", new SelectList(ViewBag.deliveryCompanyList, "Id", "DeliveryCompanyName", Model.DeliveryCompanyId), "-请选择-", new { style = "width:167px" })
             </div>
             <div class="control-group" style="margin-top: 15px">
-                <label style="margin-left: 26px">所属等级：</label>               
-                @Html.DropDownList("gradeType", new SelectList(EnumExtenstion.GetEnumItems(typeof(GradeType)), "Value", "Text", Model.GradeType), null, new { @class = "selectw", style = "width:157px" })
+                <label style="margin-left: 26px">所属等级：</label>                     
+                @if (Model.DeliveryCompanyId > 0)
+                {
+                    @Html.DropDownList("gradeType", new SelectList(EnumExtenstion.GetEnumItems(typeof(GradeType2)), "Value", "Text", Model.GradeType), null, new { @class = "selectw", style = "width:157px" });
+                }
+                else
+                {
+                    @Html.DropDownList("gradeType", new SelectList(EnumExtenstion.GetEnumItems(typeof(GradeType)), "Value", "Text", Model.GradeType), null, new { @class = "selectw", style = "width:157px" });
+                }
+                
             </div>
         </div>
         @{
