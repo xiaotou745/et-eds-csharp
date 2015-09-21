@@ -60,7 +60,7 @@ namespace SuperMan.Controllers
         private readonly ITagRelationProvider tagRelationProvider = new TagRelationProvider();
         // GET: BusinessManager
         [HttpGet]
-        public ActionResult BusinessManager()
+        public ActionResult BusinessManager(string businessName="",string businessPhone="")
         {
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;//集团id
 
@@ -76,6 +76,10 @@ namespace SuperMan.Controllers
                 AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType),
                 TagId = Request["TagId"] == null ? (int?)null : ParseHelper.ToInt(Request["TagId"])
             };
+            criteria.businessName = businessName;
+            criteria.businessPhone = businessPhone;
+            ViewBag.busName = businessName;
+            ViewBag.busPhone = businessPhone;
             if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
             {
                 return View();
