@@ -59,7 +59,7 @@ namespace ETS.Util
             HttpCookie cookie = new HttpCookie(cookieName);
             if (HttpContext.Current.Request.Url.Host.ToLower().Contains(CookieHost))
             {
-                cookie.Domain = "." + CookieHost;
+                cookie.Domain = CookieHost;
             }
             cookie.Value = data;
             HttpContext.Current.Response.Cookies.Add(cookie);
@@ -74,7 +74,7 @@ namespace ETS.Util
             HttpCookie cookie = new HttpCookie(cookieName);
             if (HttpContext.Current.Request.Url.Host.ToLower().IndexOf(CookieHost) > -1)
             {
-                cookie.Domain = "." + CookieHost;
+                cookie.Domain = CookieHost;
             }
             cookie.Expires = DateTime.Now.AddDays(-1);
             cookie.Value = "";
