@@ -211,13 +211,10 @@ namespace Ets.Dao.MenuSet
                                     LEFT JOIN ( SELECT  k.MenuId ,
                                                         d.Id AS AccoutId
                                                 FROM    AuthorityRoleMentMenuSet k WITH ( NOLOCK )
-                                                        INNER JOIN account d WITH ( NOLOCK ) ON k.RoleId = d.RoleId
+                                                        INNER JOIN account d WITH ( NOLOCK ) ON k.RoleId = d.RoleId where k.MenuId=@menuID
                                               ) mb ON m.Id = mb.MenuId
                                                       OR m.ParId = mb.MenuId
-                            WHERE   ( m.Id = @menuID
-                                      OR m.ParId = @menuID
-                                    )
-                                    AND mb.AccoutId IS NOT NULL";
+                            WHERE   mb.AccoutId IS NOT NULL";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("menuID", menuID);
             var dt = DbHelper.ExecuteDataset(SuperMan_Read, sql, dbParameters).Tables[0];
