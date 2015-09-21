@@ -121,6 +121,7 @@ select
  left join t5 on convert(char(10),o.PubDate,120)  = convert(char(10),t5.PubDate,120) 
   where o.Status <> 3 and o.PubDate between @starttime and @endtime
 group by CONVERT(CHAR(10),o.PubDate,120)
+ order by CONVERT(CHAR(10),o.PubDate,120) asc 
 ", Day);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             if (!dt.HasData())
@@ -197,7 +198,7 @@ group by CONVERT(CHAR(10),o.PubDate,120)
         public bool CheckDateStatistics(string Time)
         {
             string sql = @"SELECT COUNT(1) FROM STATISTIC(nolock) WHERE CONVERT(CHAR(10),InsertTime,120)='" + Time + "'";
-            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql), 0) > 0 ? true : false;
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql), 0) > 0 ? true : false;
         }
 
         public DateTime MaxDate()

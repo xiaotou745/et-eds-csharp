@@ -65,13 +65,13 @@ namespace Ets.Service.Provider.Statistics
                     ETS.Util.LogHelper.LogWriter("出错了：" + ex.Message);
                 }
             }*/
-            TimeSpan timeSpanNow = new TimeSpan(DateTime.Now.Day, 0, 0, 0);
-            TimeSpan timeBack = new TimeSpan(statisticsDao.MaxDate().Day, 0, 0, 0);
-            TimeSpan cha = timeSpanNow - timeBack;
-            int Day = cha.Days - 1;
-            Day = Day <= 0 ? 1 : Day;
+            //TimeSpan timeSpanNow = new TimeSpan(DateTime.Now.Day, 0, 0, 0);
+            //TimeSpan timeBack = new TimeSpan(statisticsDao.MaxDate().Day, 0, 0, 0);
+            //TimeSpan cha = timeSpanNow - timeBack;
+            //int Day = cha.Days - 1;
+            //Day = Day <= 0 ? 1 : Day;
 
-            //int Day = 1;
+            int Day = 30;
             LogHelper.LogWriter("执行第几天：" + Day.ToString());
            
             IList<HomeCountTitleModel> list = statisticsDao.GetDayStatistics(Day);
