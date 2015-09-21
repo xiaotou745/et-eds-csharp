@@ -325,10 +325,20 @@
             }
         });
     });
-    $("#btnCommit").click(function() {
+
+    $("#btnCommit").click(function () {
         var pushWay;
         var messageType = $("#selMessageType").val();
         var content = $("#txtContent").val();
+
+        var szMsg="[#]";  
+        for(i=1;i<szMsg.length+1;i++){
+            if(content.indexOf(szMsg.substring(i-1,i))>-1){
+                alert("请勿包含非法字符如[#]");
+                return;
+            }
+        }
+
         var sentStatus;
         var pushType = $("#PushType").val();
         var pushTarget;

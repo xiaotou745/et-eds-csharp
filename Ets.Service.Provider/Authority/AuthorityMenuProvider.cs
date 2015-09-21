@@ -57,6 +57,22 @@ namespace Ets.Service.Provider.Authority
             try
             {
                 reslut = authoritySetDao.UpdateMenu(model);
+                //java中对用户的权限信息进行了redis缓存，因此当.net中对用户的权限进行更新时，需要清除java中的这个用户的权限缓存信息
+                //zhaohailong，20150916
+                if (reslut)
+                {
+                    List<AccountModel> accountIDList = authoritySetDao.GetAccountIDListByMenuID(model.Id);
+                    if (accountIDList != null && accountIDList.Count > 0)
+                    {
+                        string cacheKey = "";
+                        var redis = new ETS.NoSql.RedisCache.RedisCache();
+                        foreach (AccountModel item in accountIDList)
+                        {
+                            cacheKey = RedissCacheKey.Menu_Auth + item.Id;
+                            redis.Delete(cacheKey);
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {
