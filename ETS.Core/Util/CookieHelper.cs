@@ -13,7 +13,7 @@ namespace ETS.Util
     public class CookieHelper
     {
         //Cookie的主域
-        private const string CookieHost = ".eds.com";
+        private const string CookieHost = ConfigSettings.Instance.CookieHost;
 
         /// <summary>
         /// 读取指定Cookie
