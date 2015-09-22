@@ -453,7 +453,7 @@ and a.PhoneNo=@PhoneNo";
             }
             if (criteria.GroupBusinessId>0)
             {
-                tableList += " left join GroupBusinessRelation gbr(nolock) on b.id=gbr.businessid";
+                tableList += " left join GroupBusinessRelation gbr(nolock) on b.id=gbr.businessid ";
             }
             string orderByColumn = " b.Id DESC";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
