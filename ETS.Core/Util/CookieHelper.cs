@@ -13,7 +13,7 @@ namespace ETS.Util
     public class CookieHelper
     {
         //Cookie的主域
-        private const string CookieHost = ConfigSettings.Instance.CookieHost;
+        //private const string CookieHost = ConfigSettings.Instance.CookieHost;
 
         /// <summary>
         /// 读取指定Cookie
@@ -40,9 +40,9 @@ namespace ETS.Util
         public static void WriteCookie(string cookieName, string data, DateTime expires)
         {
             HttpCookie cookie = new HttpCookie(cookieName);
-            if (HttpContext.Current.Request.Url.Host.ToLower().Contains(CookieHost))
+            if (HttpContext.Current.Request.Url.Host.ToLower().Contains(ConfigSettings.Instance.CookieHost))
             {
-                cookie.Domain = CookieHost;
+                cookie.Domain = ConfigSettings.Instance.CookieHost;
             }
             cookie.Expires = expires;
             cookie.Value = data;
@@ -57,9 +57,9 @@ namespace ETS.Util
         public static void WriteCookie(string cookieName, string data)
         {
             HttpCookie cookie = new HttpCookie(cookieName);
-            if (HttpContext.Current.Request.Url.Host.ToLower().Contains(CookieHost))
+            if (HttpContext.Current.Request.Url.Host.ToLower().Contains(ConfigSettings.Instance.CookieHost))
             {
-                cookie.Domain = CookieHost;
+                cookie.Domain = ConfigSettings.Instance.CookieHost;
             }
             cookie.Value = data;
             HttpContext.Current.Response.Cookies.Add(cookie);
@@ -72,9 +72,9 @@ namespace ETS.Util
         public static void RemoveCookie(string cookieName)
         {
             HttpCookie cookie = new HttpCookie(cookieName);
-            if (HttpContext.Current.Request.Url.Host.ToLower().IndexOf(CookieHost) > -1)
+            if (HttpContext.Current.Request.Url.Host.ToLower().IndexOf(ConfigSettings.Instance.CookieHost) > -1)
             {
-                cookie.Domain = CookieHost;
+                cookie.Domain = ConfigSettings.Instance.CookieHost;
             }
             cookie.Expires = DateTime.Now.AddDays(-1);
             cookie.Value = "";
