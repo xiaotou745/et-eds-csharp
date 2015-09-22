@@ -70,11 +70,15 @@
                         <input id="txtRecommendPhone" type="text" name="RecommendPhone" />
                         <span class="">标签: </span>
                         @Html.DropDownList("TagId", new SelectList(ViewBag.tags, "Id", "TagName", ViewBag.selectTag), "全部", new { @class = "selectw", style = "width:143px" })
+                        <span class="">所属集团: </span>
+                        @Html.DropDownList("GroupBusinessId", new SelectList(ViewBag.GroupBusiness, "Id", "GroupBusiName", ViewBag.GroupBusiness), "全部", new { @class = "selectw" })
                         <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
                         @if (SuperMan.App_Start.UserContext.Current.HasAuthority(40))
                         {
                             <input type="submit" value="添加门店" onclick="showaddBusiness();" class="searchBtn" id="btnAddShop" />
                         }
+                        
+                      
                     </td>
                 </tr>
             </table>

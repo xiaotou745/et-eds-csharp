@@ -58,6 +58,8 @@ namespace SuperMan.Controllers
         readonly IDeliveryCompanyProvider iDeliveryCompanyProvider = new DeliveryCompanyProvider();
         private readonly ITagProvider tagProvider = new TagProvider();
         private readonly ITagRelationProvider tagRelationProvider = new TagRelationProvider();
+
+        GroupBusinessProvider groupBusinessProvider = new GroupBusinessProvider();
         // GET: BusinessManager
         [HttpGet]
         public ActionResult BusinessManager(string businessName = "", string businessPhone = "", int tagId = 0)
@@ -86,6 +88,9 @@ namespace SuperMan.Controllers
             }
             ViewBag.tags = tagProvider.GetTagsByTagType(TagType.Business.GetHashCode());
             ViewBag.selectTag =tagId>0?tagId.ToString(): Request["TagId"];
+
+            ViewBag.GroupBusiness = groupBusinessProvider.Get();//加载集团
+
             var pagedList = iBusinessProvider.GetBusinesses(criteria);
             return View(pagedList);
         }

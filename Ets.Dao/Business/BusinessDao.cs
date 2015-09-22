@@ -423,7 +423,10 @@ and a.PhoneNo=@PhoneNo";
             {
                 sbSqlWhere.AppendFormat(" AND TagR.TagId = {0} ", criteria.TagId);
             }
-
+            if (criteria.GroupBusinessId>0)
+            {
+                sbSqlWhere.AppendFormat(" and gbr.GroupId={0} ",criteria.GroupBusinessId);
+            }
 
             //else
             //{
@@ -447,6 +450,10 @@ and a.PhoneNo=@PhoneNo";
                                 LEFT JOIN dbo.[group] g WITH(NOLOCK) ON g.Id = b.GroupId 
                                 JOIN dbo.[BusinessGroup]  bg WITH ( NOLOCK ) ON  b.BusinessGroupId=bg.Id";
                  
+            }
+            if (criteria.GroupBusinessId>0)
+            {
+                tableList += " left join GroupBusinessRelation gbr(nolock) on b.id=gbr.businessid";
             }
             string orderByColumn = " b.Id DESC";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
