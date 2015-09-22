@@ -48,7 +48,7 @@
                         <span class="">骑士姓名: </span>
                         <input id="txtSuperManName" type="text" width="90px" name="superManName" />
                         <span class="">物流公司: </span>
-                        @Html.DropDownList("deliveryCompany", new SelectList(ViewBag.deliveryCompanyList, "CompanyId", "CompanyName"), new { style = "width:155px" })
+                        @Html.DropDownList("deliveryCompany", new SelectList(ViewBag.deliveryCompanyList, "CompanyId", "CompanyName", ViewBag.deliveryCompanyID), new { style = "width:155px" })
                     </td>
                 </tr>
                 <tr>

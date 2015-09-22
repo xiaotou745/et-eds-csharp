@@ -152,12 +152,22 @@ namespace SuperMan.Controllers
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(UserType));
             var dclist = new CompanyProvider().GetCompanyListByAccountID(UserContext.Current.Id);//获取物流公司
             ViewBag.deliveryCompanyList = dclist;
+            string deliveryCompanyID = "-1";
+            if (dclist.Count > 0)
+            {
+                deliveryCompanyID = dclist[0].CompanyId.ToString();
+            }
+            if (!string.IsNullOrEmpty(Request.QueryString["deliverID"]))
+            {
+                deliveryCompanyID = Request.QueryString["deliverID"];
+            }
+            ViewBag.deliveryCompanyID = deliveryCompanyID;
             var criteria = new OrderSearchCriteria()
             {
                 orderStatus = -1,
                 //GroupId = UserContext.Current.GroupId,
                 AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType),
-                deliveryCompany = dclist.Count > 0 ? dclist[0].CompanyId.ToString() : "-1",
+                deliveryCompany = deliveryCompanyID,
                 UserType = UserType
             };
             var pagedList = iDeliveryManagerProvider.GetOrderList(criteria);
