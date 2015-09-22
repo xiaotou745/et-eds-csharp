@@ -58,7 +58,7 @@ namespace Ets.Service.Provider.Order
         private OrderDao orderDao = new OrderDao();
         private IBusinessProvider iBusinessProvider = new BusinessProvider();
         private IGroupBusinessProvider iGroupBusinessProvider = new GroupBusinessProvider();
-        
+
         private IClienterProvider iClienterProvider = new ClienterProvider();
         readonly OrderOtherDao orderOtherDao = new OrderOtherDao();
         private ISubsidyProvider iSubsidyProvider = new SubsidyProvider();
@@ -287,12 +287,12 @@ namespace Ets.Service.Provider.Order
                 to.IsOrderChecked = business.IsOrderChecked;
                 to.IsAllowCashPay = business.IsAllowCashPay;
 
-                to.IsBindGroup=business.IsBindGroup;                
-                to.GroupBusiName = business.GroupBusiName;               
-                to.BussGroupAmount=business.BussGroupAmount;
-                to.BussGroupIsAllowOverdraft=business.BussGroupIsAllowOverdraft;
-                to.BalancePrice = business.BalancePrice;                
-            }       
+                to.IsBindGroup = business.IsBindGroup;
+                to.GroupBusiName = business.GroupBusiName;
+                to.BussGroupAmount = business.BussGroupAmount;
+                to.BussGroupIsAllowOverdraft = business.BussGroupIsAllowOverdraft;
+                to.BalancePrice = business.BalancePrice;
+            }
 
             if (ConfigSettings.Instance.IsGroupPush)
             {
@@ -401,9 +401,9 @@ namespace Ets.Service.Provider.Order
                 //                                            Remark = "配送费支出金额"
                 //                                        });
 
-                if (order.IsBindGroup==1 && order.SettleMoney > order.BalancePrice)
+                if (order.IsBindGroup == 1 && order.SettleMoney > order.BalancePrice)
                 {
-                     // 更新集团余额
+                    // 更新集团余额
                     iGroupBusinessProvider.UpdateGBalance(new GroupBusinessPM()
                                                             {
                                                                 BusinessId = order.businessId.Value,
@@ -416,7 +416,7 @@ namespace Ets.Service.Provider.Order
                                                                 RelationNo = order.OrderNo,
                                                                 Remark = "配送费支出金额"
                                                             });
-                    
+
                 }
                 else
                 {
@@ -432,8 +432,8 @@ namespace Ets.Service.Provider.Order
                                                                 RelationNo = order.OrderNo,
                                                                 Remark = "配送费支出金额"
                                                             });
-                }        
-                
+                }
+
 
                 if (order.Adjustment > 0)
                 {
@@ -1329,7 +1329,7 @@ namespace Ets.Service.Provider.Order
                         {
                             BusinessId = orderModel.businessId,//门店Id
                             GroupId = orderModel.GroupBusinessId,
-                            GroupAmount =orderModel.SettleMoney,
+                            GroupAmount = orderModel.SettleMoney,
                             Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
                             RecordType = BusinessBalanceRecordRecordType.CancelOrder.GetHashCode(),
                             Operator = orderModel.OptUserName,
@@ -1354,7 +1354,7 @@ namespace Ets.Service.Provider.Order
                                                                 });
 
                     }
-               
+
                     dealResultInfo.DealFlag = true;
                     dealResultInfo.DealMsg = "订单取消成功！";
                     tran.Complete();
@@ -2020,6 +2020,7 @@ namespace Ets.Service.Provider.Order
                 //int result = orderDao.CancelOrderStatus(paramodel.OrderNo, OrderStatus.Status3.GetHashCode(), "商家取消订单", OrderStatus.Status0.GetHashCode(), order.SettleMoney);
                 if (result > 0 && blCancelTime)
                 {
+                    BusinessModel businessModel = _businessDao.GetById(paramodel.BusinessId);
                     if (order.GroupBusinessId > 0)
                     {
                         // 更新集团余额
@@ -2030,7 +2031,7 @@ namespace Ets.Service.Provider.Order
                                 GroupAmount = order.SettleMoney,
                                 Status = BusinessBalanceRecordStatus.Success.GetHashCode(), //流水状态(1、交易成功 2、交易中）
                                 RecordType = BusinessBalanceRecordRecordType.CancelOrder.GetHashCode(),
-                                Operator = string.Format("门店:{0}", paramodel.BusinessId),
+                                Operator = string.Format("门店:{0}", businessModel.Name),
                                 WithwardId = paramodel.OrderId,
                                 RelationNo = order.OrderNo,
                                 Remark = "商户取消订单"
@@ -2045,13 +2046,13 @@ namespace Ets.Service.Provider.Order
                                                             Amount = order.SettleMoney,//流水金额  结算金额
                                                             Status = BusinessBalanceRecordStatus.Success.GetHashCode(), //流水状态(1、交易成功 2、交易中）
                                                             RecordType = BusinessBalanceRecordRecordType.CancelOrder.GetHashCode(),
-                                                            Operator = string.Format("门店:{0}", paramodel.BusinessId),
+                                                            Operator = string.Format("门店:{0}", businessModel.Name),
                                                             WithwardId = paramodel.OrderId,
                                                             RelationNo = paramodel.OrderNo,
                                                             Remark = "商户取消订单"
                                                         });
                     }
-               
+
                     tran.Complete();
                 }
                 else
@@ -2369,7 +2370,7 @@ namespace Ets.Service.Provider.Order
                                     tran.Complete();
                                 }
                             }
-                        
+
                         }
                     }
                 }

@@ -1,6 +1,7 @@
 
 ﻿using System;
 ﻿using System.Collections.Generic;
+﻿using System.ComponentModel;
 ﻿using System.Linq;
 ﻿using System.Text;
 ﻿using System.Threading.Tasks;
@@ -368,6 +369,7 @@ namespace SuperMan.Controllers
             ViewBag.orderPubEnd = endDate;
             criteria.AuditStatus = 0;
             criteria.UserType = UserType;
+            criteria.CaiWuAudit = 1;
             //criteria.GroupId = UserContext.Current.GroupId;
             criteria.AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType);
 
@@ -376,6 +378,7 @@ namespace SuperMan.Controllers
                 return View();
             }
             var pagedList = iOrderProvider.GetOrders(criteria);
+             
             pagedList = GetOrderContainOrderChild(pagedList);
             return View(pagedList);
         }
@@ -390,6 +393,7 @@ namespace SuperMan.Controllers
             criteria.AuthorityCityNameListStr =
                 iAreaProvider.GetAuthorityCityNameListStr(UserType);
             criteria.UserType = UserType; 
+            criteria.CaiWuAudit = 1;
             if (UserType > 0 && string.IsNullOrWhiteSpace(criteria.AuthorityCityNameListStr))
             {
                 return PartialView("_PartialOrderAuditList");
