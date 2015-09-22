@@ -1,0 +1,76 @@
+USE [superman]
+GO
+
+/****** Object:  Table [dbo].[GroupBusinessBindOptionLog]    Script Date: 09/22/2015 22:22:01 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[GroupBusinessBindOptionLog](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[GroupId] [int] NOT NULL,
+	[BusinessId] [int] NOT NULL,
+	[OptId] [int] NOT NULL,
+	[OptName] [nvarchar](50) NOT NULL,
+	[InsertTime] [datetime] NOT NULL,
+	[Remark] [nvarchar](500) NOT NULL,
+	[OptType] [smallint] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'自增主键' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'GroupBusinessBindOptionLog', @level2type=N'COLUMN',@level2name=N'Id'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'集团Id' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'GroupBusinessBindOptionLog', @level2type=N'COLUMN',@level2name=N'GroupId'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'商家Id' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'GroupBusinessBindOptionLog', @level2type=N'COLUMN',@level2name=N'BusinessId'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'操作人Id' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'GroupBusinessBindOptionLog', @level2type=N'COLUMN',@level2name=N'OptId'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'操作人名称' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'GroupBusinessBindOptionLog', @level2type=N'COLUMN',@level2name=N'OptName'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'操作时间' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'GroupBusinessBindOptionLog', @level2type=N'COLUMN',@level2name=N'InsertTime'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'操作描述' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'GroupBusinessBindOptionLog', @level2type=N'COLUMN',@level2name=N'Remark'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'1绑定   2解绑' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'GroupBusinessBindOptionLog', @level2type=N'COLUMN',@level2name=N'OptType'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'集团绑定商家操作日志' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'GroupBusinessBindOptionLog'
+GO
+
+ALTER TABLE [dbo].[GroupBusinessBindOptionLog] ADD  DEFAULT ((0)) FOR [GroupId]
+GO
+
+ALTER TABLE [dbo].[GroupBusinessBindOptionLog] ADD  DEFAULT ((0)) FOR [BusinessId]
+GO
+
+ALTER TABLE [dbo].[GroupBusinessBindOptionLog] ADD  DEFAULT ((0)) FOR [OptId]
+GO
+
+ALTER TABLE [dbo].[GroupBusinessBindOptionLog] ADD  DEFAULT ('') FOR [OptName]
+GO
+
+ALTER TABLE [dbo].[GroupBusinessBindOptionLog] ADD  DEFAULT (getdate()) FOR [InsertTime]
+GO
+
+ALTER TABLE [dbo].[GroupBusinessBindOptionLog] ADD  DEFAULT ('') FOR [Remark]
+GO
+
+ALTER TABLE [dbo].[GroupBusinessBindOptionLog] ADD  DEFAULT ((1)) FOR [OptType]
+GO
+
+
