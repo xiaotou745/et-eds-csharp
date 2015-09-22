@@ -20,6 +20,13 @@ namespace ETS.Util
                 return ConfigurationManager.AppSettings["JavaAdminUrl"];
             }
         }
+        public string CookieHost
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["CookieHost"];
+            }
+        }
         public string FileUploadPath
         {
             get
