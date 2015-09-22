@@ -726,7 +726,7 @@ values  (
         {
             string columnList = @"   bbr.[Id]
                                     ,bbr.[BusinessId]
-                                    ,bbr.[Amount]
+                                    ,ISNULL(bbr.[Amount],0) AS Amount
                                     ,bbr.[Status]
                                     ,bbr.[Balance]
                                     ,bbr.[RecordType]
@@ -734,7 +734,8 @@ values  (
                                     ,bbr.[OperateTime]
                                     ,bbr.[WithwardId]
                                     ,bbr.[RelationNo]
-                                    ,bbr.[Remark]";
+                                    ,bbr.[Remark]
+                                    ,ISNULL(bbr.GroupAmount,0) AS GroupAmount ";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (criteria.BusinessId != 0)
             {
