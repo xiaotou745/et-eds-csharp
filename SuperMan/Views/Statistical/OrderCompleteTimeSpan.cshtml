@@ -138,17 +138,19 @@
                     $("#tbodyTimeSpan").html("");
 
                     if (data.Data != null) {
+                        var mhtml = "";
                         for (var i = 0; i < data.Data.length; i++) {
                             var item = data.Data[i];
 
                             if (params.AsCityQuery) { //如果选择了城市，显示隐藏的三列
                                 $(".J_City").removeClass("none");
-                                appendCityRow(item);
+                                mhtml+=appendCityRow(item);
                             } else {
                                 $(".J_City").addClass("none");
-                                appendRow(item);
+                                mhtml += appendRow(item);
                             }
                         }
+                        $("#tbodyTimeSpan").html(mhtml);
                     }
                 },
                 beforeSend: function(xhr) {
@@ -186,24 +188,18 @@
         }
 
         function appendCityRow(item) {
-            var temp = "<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td>" +
-                "<td>{4}</td><td>{5}</td><td>{6}</td><td>{7}</td>" +
-                "<td>{8}</td><td>{9}</td><td>{10}</td><td>{11}</td><td>{12}</td><td>{13}</td><td>{14}</td></tr>";
+            return "<tr><td>"+item.Date+"</td><td>"+item.TaskCount+"</td><td>"+item.City+"</td><td>"+item.CityTaskCount+"</td>" +
+                "<td>"+(item.CityTaskRate * 100).toFixed(2) + "%"+"</td><td>"+item.LessThanFiveTaskCount+"</td><td>"+(item.LessThanFiveRate * 100).toFixed(2) + "%"+"</td><td>"+item.FiveToTenTaskCount+"</td>" +
+                "<td>"+ (item.FiveToTenRate * 100).toFixed(2) + "%"+"</td><td>"+item.TenToFifteenTaskCount+"</td><td>"+(item.TenToFifteenRate * 100).toFixed(2) + "%"+"</td><td>"+item.GreaterThanFifteenCount+"</td><td>"+(item.GreaterThanFifteenRate * 100).toFixed(2) + "%"+"</td><td>"+item.GreaterThanTwoHoursCount+"</td><td>"+item.GreaterThanOneDayCount+"</td></tr>";
 
-            $("#tbodyTimeSpan").append(temp.format(item.Date, item.TaskCount, item.City, item.CityTaskCount, (item.CityTaskRate * 100).toFixed(2) + "%",
-                item.LessThanFiveTaskCount, (item.LessThanFiveRate * 100).toFixed(2) + "%",
-                item.FiveToTenTaskCount, (item.FiveToTenRate * 100).toFixed(2) + "%", item.TenToFifteenTaskCount, (item.TenToFifteenRate * 100).toFixed(2) + "%",
-                item.GreaterThanFifteenCount, (item.GreaterThanFifteenRate * 100).toFixed(2) + "%", item.GreaterThanTwoHoursCount, item.GreaterThanOneDayCount));
         }
 
         function appendRow(item) {
-            var temp = "<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td>" +
-                "<td>{4}</td><td>{5}</td><td>{6}</td><td>{7}</td>" +
-                "<td>{8}</td><td>{9}</td><td>{10}</td><td>{11}</td></tr>";
+            return "<tr><td>"+item.Date+"</td><td>"+item.TaskCount+"</td><td>"+item.LessThanFiveTaskCount+"</td><td>"+ (item.LessThanFiveRate * 100).toFixed(2) + "%"+"</td>" +
+                "<td>"+item.FiveToTenTaskCount+"</td><td>"+(item.FiveToTenRate * 100).toFixed(2) + "%"+"</td><td>"+item.TenToFifteenTaskCount+"</td><td>"+(item.TenToFifteenRate * 100).toFixed(2) + "%"+"</td>" +
+                "<td>"+item.GreaterThanFifteenCount+"</td><td>"+(item.GreaterThanFifteenRate * 100).toFixed(2) + "%"+"</td><td>"+item.GreaterThanTwoHoursCount+"</td><td>"+item.GreaterThanOneDayCount+"</td></tr>";
 
-            $("#tbodyTimeSpan").append(temp.format(item.Date, item.TaskCount, item.LessThanFiveTaskCount, (item.LessThanFiveRate * 100).toFixed(2) + "%",
-                item.FiveToTenTaskCount, (item.FiveToTenRate * 100).toFixed(2) + "%", item.TenToFifteenTaskCount, (item.TenToFifteenRate * 100).toFixed(2) + "%",
-                item.GreaterThanFifteenCount, (item.GreaterThanFifteenRate * 100).toFixed(2) + "%", item.GreaterThanTwoHoursCount, item.GreaterThanOneDayCount));
+         
         }
     </script>
 }
