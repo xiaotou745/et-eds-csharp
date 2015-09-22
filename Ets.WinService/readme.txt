@@ -1,24 +1,40 @@
-1、首页跨店统计
+首页跨店统计
 	Ets.ClienterCrossShopLog
-2、跨店奖励金额发放到用户
+易宝自动打款、自动回调服务
+	Ets.AutoDealWithward
+跨店奖励金额发放到用户
 	Ets.CrossShop
-3、跨店奖励每天发送短信（暂未使用）
+对账单服务
+	Ets.GetAccountErr
+超时订单取消服务
+	Ets.AutoDealOverTimeOrder
+易宝对账单
+	WarnYeePayUser
+跨店奖励每天发送短信（暂未使用）
 	Ets.CrossShopShortMessage
-4、每日统计的数据服务
+每日统计的数据服务
 	Ets.Statistics
-5、时间补贴服务（3、5、8分钟增加一元）
+时间补贴服务（3、5、8分钟增加一元）
 	Ets.TaskPlatform
-6、骑士、商家可提现金额
-	Ets.BandCWithdraw
-7、对账服务
-	Ets.AccountCheck
-8、消息发送服务
-	Ets.SendMessage
-9、定时导出数据并发邮件服务
-	Ets.ExportData
-10、地址联想
+地址联想补全服务
 	Ets.AddressAssociate
-11、地址补全服务
+骑士、商家可提现金额
+	Ets.BandCWithdraw
+对账服务
+	Ets.AccountCheck
+消息发送服务
+	Ets.SendMessage
+定时导出数据并发邮件服务
+	Ets.ExportData
+一键发单补全订单地址
 	Ets.ReceiveAddressRepair
-12、新订单推送
+新订单推送
 	Ets.AutoPushOrder
+转移图片控制台（一次性）
+	Ets.UpdateBCPic
+变更可提现服务（已停止）
+	Ets.BandCWithdraw
+跨店奖励短消息（已废弃）
+	Ets.CrossShopShortMessage
+跨店奖励日志（已废弃）
+	Ets.CrossShopStatisticLog
