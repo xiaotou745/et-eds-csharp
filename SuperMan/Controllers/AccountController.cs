@@ -105,6 +105,7 @@ namespace SuperMan.Controllers
                     {
                         Id = account.Id,
                         LoginName = account.LoginName,
+                        UserName=account.UserName,
                         GroupId = account.GroupId,
                         RoleId = account.RoleId,
                         Password = model.Password,
