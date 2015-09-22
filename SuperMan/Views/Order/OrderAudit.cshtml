@@ -10,9 +10,8 @@
 }
 <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
 <script src="~/Scripts/jquery-1.8.2.js"></script>
-<script src="~/Scripts/jquery-ui-1.8.20.js"></script>
-<script type="text/javascript" src="~/Scripts/jquery-1.11.1.min.js"></script>
-<script src="~/Content/My97DatePicker/WdatePicker.js"></script>
+                                     <script src="~/Scripts/jquery-ui-1.8.20.js"></script>
+                                     <script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
 <div class="zpManage zpSh">
     <h2 class="crumbs">
         您所在位置：财务管理 > 订单审核管理
@@ -60,8 +59,8 @@
                         <input type="button" value="导出" class="searchBtn" id="btnExport" onclick="return orderAuditExport()" />
                         @if (SuperMan.App_Start.UserContext.Current.HasAuthority(80))
                         {
-                            <input type="button" value="批量审核通过" onclick="return batchAuditPass()" class="searchBtn" id="batchAuditPass" />
-                            <input type="button" value="批量审核拒绝" onclick="return batchAuditCancel()" class="searchBtn" id="batchAuditCancel" />
+                            <input type="button" value="批量审核通过" class="searchBtn" id="batchAuditPass" />
+                            <input type="button" value="批量审核拒绝"  class="searchBtn" id="batchAuditCancel" />
                         }&nbsp;&nbsp;&nbsp;
                         <a id="listMode" href="javascript:void(0)" onclick="changeDispalyMode(2)">切换小票模式</a>
                         <a id="receiptMode" href="javascript:void(0)" onclick="changeDispalyMode(1)" style="display: none">切换列表模式</a>
@@ -247,7 +246,8 @@
             type: 'POST',
             url: url,
             data: paramaters,
-            success: function(result) {
+            success: function (result) {
+                $("#opTipMsg").html("");
                 alert(result.Message);
                 //移除tr 
                 removeOrderTr(orderIdArray);
