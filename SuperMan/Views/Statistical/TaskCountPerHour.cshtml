@@ -149,20 +149,20 @@
         }
 
         function appendCityRow(item) {
-            var $tr = $("<tr><td>{0}</td><td>{1}</td></tr>".format(item.Date, item.City));
+            var $tr = $("<tr><td>"+item.Date+"</td><td>"+item.City+"</td></tr>");
 
             for (var i = 0; i < 24; i++) {
-                $tr.append("<td>{0}</td>".format(item.TaskCounts[i]));
+                $tr.append("<td>" + item.TaskCounts[i] + "</td>");
             }
 
             $tr.appendTo($("#tbodyTimeSpan"));
         }
 
         function appendRow(item) {
-            var $tr = $("<tr><td>{0}</td></tr>".format(item.Date));
+            var $tr = $("<tr><td>" + item.Date + "</td></tr>");
 
             for (var i = 0; i < 24; i++) {
-                $tr.append("<td>{0}</td>".format(item.TaskCounts[i]));
+                $tr.append("<td>" + item.TaskCounts[i] + "</td>");
             }
 
             $tr.appendTo($("#tbodyTimeSpan"));

@@ -248,6 +248,7 @@
                 data: paramaters,
                 success: function (result) {
                     $("#opTipMsg").html("");
+                    lockButton(false);
                     alert(result.Message);
                     //移除tr
                     removeOrderTr(orderIdArray);
@@ -357,6 +358,7 @@
                 success: function (result) {
                     if (result.IsSuccess) {
                         alert("审核成功！");
+                        lockButton(false);
                         removeOrderTr(orderId);
                     } else {
                         alert(result.Message);
@@ -377,6 +379,7 @@
             $("#deductWebSubsidyReason").val('任务完成时间小于5分钟');
             $("#selectreason").val("1");
             $('#reasontxtdiv').hide();
+            lockButton(false);
             adminjs.openwinbox('#deductWebSubsidyShow');
         }
 

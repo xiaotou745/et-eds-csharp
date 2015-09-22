@@ -127,15 +127,15 @@
                     if (data.Data != null) {
                         for (var i = 0; i < data.Data.length; i++) {
                             var item = data.Data[i];
-                            var $tr = $("<tr><td>{0}</td><td>{1}</td></tr>".format(item.Date, item.TaskCount));
-                            $("<td>{0}</td>".format(item.ClienterCount)).appendTo($tr);
-                            $("<td>{0}</td>".format(item.AvgClienterCount)).appendTo($tr);
-                            $("<td>{0}</td>".format(item.ActiveClienterCount)).appendTo($tr);
-                            $("<td>{0}</td>".format(item.AvgActiveClienterCount)).appendTo($tr);
-                            $("<td>{0}</td>".format(item.PubReciveTotalSeconds)).appendTo($tr);
-                            $("<td>{0}</td>".format(item.AvgPubReceiveMinutes)).appendTo($tr);
-                            $("<td>{0}</td>".format(item.PubCompleteTotalSeconds)).appendTo($tr);
-                            $("<td>{0}</td>".format(item.AvgPubCompleteMinutes)).appendTo($tr);
+                            var $tr = $("<tr><td>"+item.Date+"</td><td>"+item.TaskCount+"</td></tr>");
+                            $("<td>" + item.ClienterCount + "</td>").appendTo($tr);
+                            $("<td>" + item.AvgClienterCount + "</td>").appendTo($tr);
+                            $("<td>" + item.ActiveClienterCount + "</td>").appendTo($tr);
+                            $("<td>" + item.AvgActiveClienterCount + "</td>").appendTo($tr);
+                            $("<td>" + item.PubReciveTotalSeconds + "</td>").appendTo($tr);
+                            $("<td>" + item.AvgPubReceiveMinutes + "</td>").appendTo($tr);
+                            $("<td>" + item.PubCompleteTotalSeconds + "</td>").appendTo($tr);
+                            $("<td>" + item.AvgPubCompleteMinutes + "</td>").appendTo($tr);
 
                             $tr.appendTo($("#tbodyTimeSpan"));
                         }
