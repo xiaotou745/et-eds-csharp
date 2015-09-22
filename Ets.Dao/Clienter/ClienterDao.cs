@@ -1034,6 +1034,7 @@ where  Id=@Id ";
             ClienterDM clienterDM = new ClienterDM();
 
             #region 骑士表
+
 //            string queryClienterSql = @"
 //select  c.Id,PhoneNo,LoginName,recommendPhone,TrueName,IDCard,PicWithHandUrl,PicUrl,Status,
 //AccountBalance,InsertTime,InviteCode,City,CityId,GroupId,HealthCardID,InternalDepart,ProvinceCode

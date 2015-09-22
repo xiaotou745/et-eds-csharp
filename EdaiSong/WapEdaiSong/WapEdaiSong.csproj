@@ -194,6 +194,7 @@
     <Content Include="htmls\ios\qs.html" />
     <Content Include="htmls\ios\sh.html" />
     <Content Include="htmls\Register.html" />
+    <Content Include="htmls\rule.html" />
     <Content Include="Images\apk.png" />
     <Content Include="Images\back.png" />
     <Content Include="Images\btn-qs.jpg" />
