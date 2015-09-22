@@ -639,7 +639,10 @@ select @@IDENTITY ";
             {
                 sbSqlWhere.AppendFormat(" AND b.City IN({0}) ", criteria.AuthorityCityNameListStr.Trim());
             }
-
+            if (criteria.CaiWuAudit == 1)
+            {
+                sbSqlWhere.AppendFormat(" and o.FinishAll = 1 and oo.IsJoinWithdraw =0 and o.IsEnable = 1 and o.[Status] <> {0} ", (byte)OrderStatusCommon.Cancel);
+            }
           
             string tableList = @" [order] o WITH ( NOLOCK )
                                 LEFT JOIN clienter c WITH ( NOLOCK ) ON c.Id = o.clienterId
