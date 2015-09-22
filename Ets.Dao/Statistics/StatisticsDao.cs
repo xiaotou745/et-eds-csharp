@@ -40,7 +40,7 @@ print @starttime +','+ @endtime
 set @BusinessCount = (SELECT COUNT(Id) AS BusinessCount FROM dbo.business(NOLOCK) WHERE [status]=1)
 --print @starttime +','+@endtime
 set @RzqsCount = (SELECT count(1) RzqsCount from dbo.clienter (nolock) where Status =1 )--认证骑士数量
-set @DdrzqsCount = (SELECT count(1) RzqsCount from dbo.clienter (nolock) where Status =0 )--等待认证骑士
+set @DdrzqsCount = (SELECT count(1) RzqsCount from dbo.clienter (nolock) where Status =2 )--等待认证骑士
 set @businessPrice = (SELECT sum(BalancePrice) from dbo.business b where Status = 1 ) --商户余额总计（应付）
 --set @incomeTotal = (select sum(TotalPrice) from OrderChild(nolock) where ThirdPayStatus=1)--在线支付(扫码/代付)总计
 --set @rechargeTotal = (select sum(Amount) from BusinessBalanceRecord(nolock) where RecordType = 4 ) --商户充值总计
@@ -121,6 +121,7 @@ select
  left join t5 on convert(char(10),o.PubDate,120)  = convert(char(10),t5.PubDate,120) 
   where o.Status <> 3 and o.PubDate between @starttime and @endtime
 group by CONVERT(CHAR(10),o.PubDate,120)
+ order by CONVERT(CHAR(10),o.PubDate,120) asc 
 ", Day);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql);
             if (!dt.HasData())
@@ -197,7 +198,7 @@ group by CONVERT(CHAR(10),o.PubDate,120)
         public bool CheckDateStatistics(string Time)
         {
             string sql = @"SELECT COUNT(1) FROM STATISTIC(nolock) WHERE CONVERT(CHAR(10),InsertTime,120)='" + Time + "'";
-            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql), 0) > 0 ? true : false;
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql), 0) > 0 ? true : false;
         }
 
         public DateTime MaxDate()

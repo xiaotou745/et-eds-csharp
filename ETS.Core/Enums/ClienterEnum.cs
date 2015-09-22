@@ -205,17 +205,17 @@ namespace ETS.Enums
         Test = 3  
     }
 
-    public enum GradeType2
-    {
-        /// <summary>
-        /// 众包
-        /// </summary>
-        [DisplayText("众包")]
-        Crowdsourcing = 1,
-        /// <summary>
-        /// 未审核
-        /// </summary>
-        [DisplayText("测试")]
-        Test = 3
-    }
+    //public enum GradeType2
+    //{
+    //    /// <summary>
+    //    /// 众包
+    //    /// </summary>
+    //    [DisplayText("众包")]
+    //    Crowdsourcing = 1,
+    //    /// <summary>
+    //    /// 未审核
+    //    /// </summary>
+    //    [DisplayText("测试")]
+    //    Test = 3
+    //}
 }
