@@ -643,12 +643,20 @@ select @@IDENTITY ";
             {
                 sbSqlWhere.AppendFormat(" and o.FinishAll = 1 and oo.IsJoinWithdraw =0 and o.IsEnable = 1 and o.[Status] <> {0} ", (byte)OrderStatusCommon.Cancel);
             }
+            if (criteria.GroupBusinessId>0)
+            {
+                sbSqlWhere.AppendFormat(" and  gbr.GroupId={0}", criteria.GroupBusinessId);
+            }
           
             string tableList = @" [order] o WITH ( NOLOCK )
                                 LEFT JOIN clienter c WITH ( NOLOCK ) ON c.Id = o.clienterId
                                 JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                 LEFT JOIN [group] g WITH ( NOLOCK ) ON g.id = o.OrderFrom
                                 JOIN dbo.OrderOther oo (nolock) ON o.Id = oo.OrderId ";
+            if (criteria.GroupBusinessId>0)
+            {
+                tableList += " left join GroupBusinessRelation gbr(nolock) on o.BusinessId=b.id";
+            }
             if (criteria.TagId != null)
             {
                 if (criteria.TagType == TagUserType.Business.GetHashCode())

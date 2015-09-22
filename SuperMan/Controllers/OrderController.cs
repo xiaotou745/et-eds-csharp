@@ -35,6 +35,7 @@ using Ets.Service.IProvider.Business;
 using Ets.Model.DomainModel.Area;
 ﻿using Ets.Service.IProvider.Order;
 ﻿using ETS.Extension;
+using Ets.Model.DataModel.Business;
 
 namespace SuperMan.Controllers
 {
@@ -47,12 +48,13 @@ namespace SuperMan.Controllers
         IAuthorityMenuProvider iAuthorityMenuProvider = new AuthorityMenuProvider();
         IBusinessProvider iBusinessProvider = new BusinessProvider();
         private readonly ITagProvider tagProvider = new TagProvider();
+        IGroupBusinessProvider groupBusinessProvider=new GroupBusinessProvider();
         //Get: /Order  订单管理
         public ActionResult Order()
         {
             ViewBag.txtGroupId = SuperMan.App_Start.UserContext.Current.GroupId;//集团id
             ViewBag.GroupList = iBusinessProvider.GetGroups();
-
+           
             int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
             ViewBag.openCityList = iAreaProvider.GetOpenCityOfSingleCity(ParseHelper.ToInt(UserType));
             var superManModel = iDistributionProvider.GetClienterModelByGroupID(ViewBag.txtGroupId);
@@ -96,6 +98,7 @@ namespace SuperMan.Controllers
             }
             var pagedList = iOrderProvider.GetOrders(criteria);
             ViewBag.tags = tagProvider.GetTagsByTagType();  //加在所有标签
+            ViewBag.GroupBusiness = groupBusinessProvider.Get();//加载集团
             return View(pagedList);
         }
         [HttpPost]

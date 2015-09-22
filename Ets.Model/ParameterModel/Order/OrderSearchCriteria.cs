@@ -66,6 +66,11 @@ namespace Ets.Model.ParameterModel.Order
         /// 为1的时候，过滤一些条件，主要为了财务管理下的 订单审核页面 使用
         /// </summary>
         public int CaiWuAudit { get; set; }
+
+        /// <summary>
+        /// 集团ID
+        /// </summary>
+        public int GroupBusinessId { get; set; }
         }
 
     public class OrderByItem<Tentity>

@@ -42,8 +42,8 @@ namespace Ets.Service.Provider.Business
 
             //更新商户余额流水          
             businessBalanceRecordDao.InsertGroupRecord(new BusinessBalanceRecord()
-            {    
-                BusinessId=groupBusinessPM.BusinessId,
+            {
+                BusinessId = groupBusinessPM.BusinessId,
                 GroupId = groupBusinessPM.GroupId,
                 GroupAmount = groupBusinessPM.GroupAmount,
                 Status = groupBusinessPM.Status,
@@ -53,6 +53,17 @@ namespace Ets.Service.Provider.Business
                 RelationNo = groupBusinessPM.RelationNo,
                 Remark = groupBusinessPM.Remark
             });
+        }
+
+        /// <summary>
+        /// 获取所有集团下拉用
+        /// 窦海超
+        /// 2015年9月23日 02:13:56
+        /// </summary>
+        /// <returns></returns>
+        public IList<GroupBusinessModel> Get()
+        {
+            return groupBusinessDao.Get();
         }
     }
 }

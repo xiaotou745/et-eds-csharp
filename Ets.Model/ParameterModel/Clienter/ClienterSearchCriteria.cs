@@ -58,5 +58,10 @@ namespace Ets.Model.ParameterModel.Clienter
         /// </summary>
         public int? TagId { get; set; }
 
+        /// <summary>
+        /// 所属集团 
+        /// </summary>
+        public int GroupBusinessId { get; set; }
+
     }
 }

@@ -20,6 +20,14 @@ namespace Ets.Service.IProvider.Business
     public interface IGroupBusinessProvider
     {
         void UpdateGBalance(GroupBusinessPM groupBusinessPM);
+
+        /// <summary>
+        /// 获取所有集团下拉用
+        /// 窦海超
+        /// 2015年9月23日 02:13:56
+        /// </summary>
+        /// <returns></returns>
+        IList<GroupBusinessModel> Get();
     }
 }
 

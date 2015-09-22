@@ -85,6 +85,10 @@
                             }
                          </select>
                        
+
+                         所属集团：
+                         @Html.DropDownList("GroupBusinessId", new SelectList(ViewBag.GroupBusiness, "Id", "GroupBusiName", ViewBag.GroupBusiness), "全部", new { @class = "selectw" })
+
                          <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
                          <input type="button" value="订单数据导出" onclick="return DaoCHu()" class="searchBtn" id="btncDaochu" />
                      </td>
