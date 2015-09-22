@@ -10,8 +10,8 @@
 }
 <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
 <script src="~/Scripts/jquery-1.8.2.js"></script>
-                                     <script src="~/Scripts/jquery-ui-1.8.20.js"></script>
-                                     <script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
+<script src="~/Scripts/jquery-ui-1.8.20.js"></script>
+<script src="~/Scripts/jquery.ui.datepicker-zh-CN.js"></script>
 <div class="zpManage zpSh">
     <h2 class="crumbs">
         您所在位置：财务管理 > 订单审核管理
@@ -25,9 +25,9 @@
                 <tr>
                     <td>
                         <span class="">发布时间: </span>
-                        <input id="txtOrderPubStart" readonly="readonly" type="text" name="OrderPubStart" onfocus="WdatePicker({ maxDate: '#F{$dp.$D(\'txtOrderPubEnd\')||\'2020-10-01\'}' })" value="@ViewBag.orderPubStart" />
+                        <input id="txtOrderPubStart" readonly="readonly" type="text" name="OrderPubStart"  value="@ViewBag.orderPubStart" />
                         <span class="">到: </span>
-                        <input id="txtOrderPubEnd" readonly="readonly" type="text" name="OrderPubEnd" onfocus="WdatePicker({ minDate: '#F{$dp.$D(\'txtOrderPubStart\')}', maxDate: '2020-10-01' })" value="@ViewBag.orderPubEnd" />
+                        <input id="txtOrderPubEnd" readonly="readonly" type="text" name="OrderPubEnd"  value="@ViewBag.orderPubEnd" />
                         <span class="">城市筛选: </span>
                         @*@Html.DropDownList("businessCity", new SelectList(ViewBag.openCityList.Result.AreaModels, "Name", "Name"), "--无--", new { style = "width:155px" })*@
                         <input id="businessCity" name="businessCity" type="text">
