@@ -14,9 +14,9 @@
             <th>骑士姓名</th>
             <th>投诉类型</th>
             <th>投诉时间</th>
-            <th>投诉原因</th> 
-            <th>状态</th> 
-            <th>客服备注</th> 
+            <th>投诉原因</th>
+            <th>客服备注</th>  
+            <th>状态</th>             
             <th>操作</th> 
         </tr>
     </thead>
@@ -37,6 +37,17 @@
                         <td>@item.CreateTime</td>
                         <td title="@item.Reason.Replace("\n", "")">@(item.Reason.Length > 20 ? item.Reason.Substring(0, 20) + "..." : item.Reason)</td>
                         @{
+                            if (item.HandleOpinion == null)
+                            {
+                                <td></td>
+                            }
+                            else
+                            {
+                                <td title="@item.HandleOpinion.Replace("\n", "")">@(item.HandleOpinion.Length > 20 ? item.HandleOpinion.Substring(0, 20) + "..." : item.HandleOpinion)</td>
+                            }
+}
+                        
+                        @{
                             var statusView = "";
                             if (@item.IsHandle ==1)
                             {
@@ -49,7 +60,7 @@
                         }
                         <td>@statusView</td>
 
-                        <td>@item.HandleOpinion</td>
+              
                         <td>
                             @if (item.IsHandle == 1)
                             {

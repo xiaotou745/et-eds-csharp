@@ -343,7 +343,8 @@ where OrderId=@OrderId and ChildId=@ChildId and ThirdPayStatus!=@PayStatus";
 select  ChildId,TotalPrice,GoodPrice,DeliveryPrice,PayStyle,PayType,PayStatus,PayBy,
     PayTime,PayPrice,HasUploadTicket,TicketUrl
 from  OrderChild (nolock)
-where  OrderId=@OrderId ";
+where  OrderId=@OrderId 
+order by ChildId asc";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters("OrderId", DbType.Int64, 8, orderId);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, querySql, dbParameters);
