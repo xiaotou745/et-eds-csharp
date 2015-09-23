@@ -735,6 +735,7 @@ values  (
                                     ,bbr.[WithwardId]
                                     ,bbr.[RelationNo]
                                     ,bbr.[Remark]
+                                    ,bbr.GroupId
                                     ,ISNULL(bbr.GroupAmount,0) AS GroupAmount ";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (criteria.BusinessId != 0)
