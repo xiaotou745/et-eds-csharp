@@ -97,31 +97,7 @@ namespace Ets.Service.Provider.Business
                 model.OrderId = from.OrderId;
                 model.MealsSettleMode = from.MealsSettleMode;
                 model.TotalAmount = from.TotalAmount;
-                //修改该接口时需要把orderfrom的id join出name来，本次为了改一个聚网客居然要单独上线。。。。
-                if (from.OrderFrom == 0)
-                {
-                    model.OrderFromName = "B端";
-                }
-                else if (from.OrderFrom == 1)
-                {
-                    model.OrderFromName = "聚网客";
-                }
-                else if (from.OrderFrom == 2)
-                {
-                    model.OrderFromName = "万达";
-                }
-                else if (from.OrderFrom == 3)
-                {
-                    model.OrderFromName = "全时";
-                }
-                else if (from.OrderFrom == 4)
-                {
-                    model.OrderFromName = "美团";
-                }
-                else if (from.OrderFrom == 99)
-                {
-                    model.OrderFromName = "商户web版";
-                }
+                model.OrderFromName = from.OrderFromName;
                 model.OriginalOrderNo = from.OriginalOrderNo;
                 if (from.BusinessId > 0 && from.ReceviceLongitude != null && from.ReceviceLatitude != null)
                 {

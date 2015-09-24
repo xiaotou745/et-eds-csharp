@@ -1077,19 +1077,6 @@ namespace Ets.Service.Provider.Order
             var order = orderDao.GetOrderByNo(order_no);
             if (order != null)
             {
-                //修改该接口时需要把orderfrom的id join出name来，本次为了改一个聚网客居然要单独上线。。。。
-                if (order.OrderFrom == 0)
-                    order.OrderFromName = "B端";
-                else if (order.OrderFrom == 1)
-                    order.OrderFromName = "聚网客";
-                else if (order.OrderFrom == 2)
-                    order.OrderFromName = "万达";
-                else if (order.OrderFrom == 3)
-                    order.OrderFromName = "全时";
-                else if (order.OrderFrom == 4)
-                    order.OrderFromName = "美团";
-                else if (order.OrderFrom == 99)
-                    order.OrderFromName = "商户web版";
                 var list = orderDao.GetOrderDetail(order_no);
                 mo.order = order;
                 mo.orderDetails = list;

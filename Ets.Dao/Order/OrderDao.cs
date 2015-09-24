@@ -550,7 +550,8 @@ select @@IDENTITY ";
                                     ,b.Name BusinessName
                                     ,b.PhoneNo BusinessPhoneNo
                                     ,b.Address BusinessAddress
-                                    ,case when o.OrderFrom=0 then '客户端' else g.GroupName end GroupName
+                                    ,isnull(g.GroupName,'') as  GroupName
+                                    ,isnull(g.GroupName,'') as OrderFromName  
                                     ,o.[Adjustment]
                                     ,ISNULL(oo.HadUploadCount,0) HadUploadCount
                                     ,CASE ISNULL(oo.GrabLatitude, 0)
@@ -652,10 +653,10 @@ select @@IDENTITY ";
                                 LEFT JOIN clienter c WITH ( NOLOCK ) ON c.Id = o.clienterId
                                 JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                 LEFT JOIN [group] g WITH ( NOLOCK ) ON g.id = o.OrderFrom
-                                JOIN OrderOther oo (nolock) ON o.Id = oo.OrderId ";
+                                JOIN dbo.OrderOther oo (nolock) ON o.Id = oo.OrderId ";
             if (criteria.GroupBusinessId>0)
             {
-                tableList += " join GroupBusinessRelation gbr(nolock) on o.BusinessId=b.id ";
+                tableList += " left join GroupBusinessRelation gbr(nolock) on o.BusinessId=b.id";
             }
             if (criteria.TagId != null)
             {
@@ -756,7 +757,8 @@ select @@IDENTITY ";
                                         ,c.TrueName ClienterName
                                         ,c.AccountBalance AccountBalance
                                         ,b.GroupId
-                                        ,case when o.orderfrom=0 then '客户端' else g.GroupName end GroupName
+                                        ,isnull(g.GroupName,'') as  GroupName
+                                        ,isnull(g.GroupName,'') as OrderFromName  
                                         ,o.OriginalOrderNo
                                         ,oo.NeedUploadCount
                                         ,oo.HadUploadCount
@@ -945,7 +947,8 @@ select @@IDENTITY ";
                                         ,c.TrueName ClienterName
                                         ,c.AccountBalance AccountBalance                                      
                                         ,b.GroupId
-                                        ,case when o.orderfrom=0 then '客户端' else g.GroupName end GroupName
+                                        ,isnull(g.GroupName,'') as  GroupName
+                                        ,isnull(g.GroupName,'') as OrderFromName  
                                         ,o.OriginalOrderNo
                                         ,oo.NeedUploadCount
                                         ,oo.HadUploadCount
