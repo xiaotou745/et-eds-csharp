@@ -2491,7 +2491,9 @@ select top {0}
         b.Name as BusinessName, b.City as BusinessCity,
         b.Address as BusinessAddress, isnull(a.ReceviceCity, '') as UserCity,
         a.Remark,
-        isnull(a.ReceviceAddress, '附近3公里左右，由商户指定') as UserAddress,ISNULL(b.Longitude,0) as  Longitude,ISNULL(b.Latitude,0) as Latitude,
+ case  isnull(a.ReceviceAddress,'')  
+		when  '' then '附近3公里左右，由商户指定'
+		else a.ReceviceAddress end as  UserAddress,ISNULL(b.Longitude,0) as  Longitude,ISNULL(b.Latitude,0) as Latitude,
         case convert(varchar(100), PubDate, 23)
           when convert(varchar(100), getdate(), 23) then '今日 '
           else substring(convert(varchar(100), PubDate, 23), 6, 5)
@@ -2532,7 +2534,9 @@ select top {0} a.Id,a.OrderCommission,a.OrderCount,
         (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
         a.Amount CpAmount,
         b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
-        ISNULL(a.ReceviceCity,'') as UserCity,ISNULL(a.ReceviceAddress,'附近3公里左右，由商户指定') as UserAddress,
+ISNULL(a.ReceviceCity,'') as UserCity,case  isnull(a.ReceviceAddress,'')  
+		when  '' then '附近3公里左右，由商户指定'
+		else a.ReceviceAddress end as  UserAddress,
         a.Remark,
         ISNULL(b.Longitude,0) as  Longitude,ISNULL(b.Latitude,0) as Latitude,
         case convert(varchar(100), PubDate, 23) 
@@ -2584,7 +2588,9 @@ select top {0}
         b.Name as BusinessName, b.City as BusinessCity,
         b.Address as BusinessAddress, isnull(a.ReceviceCity, '') as UserCity,
        a.Remark,
-        isnull(a.ReceviceAddress, '附近3公里左右，由商户指定') as UserAddress,ISNULL(b.Longitude,0) as  Longitude,ISNULL(b.Latitude,0) as Latitude,
+ case  isnull(a.ReceviceAddress,'')  
+		when  '' then '附近3公里左右，由商户指定'
+		else a.ReceviceAddress end as  UserAddress,ISNULL(b.Longitude,0) as  Longitude,ISNULL(b.Latitude,0) as Latitude,
         case convert(varchar(100), PubDate, 23)
           when convert(varchar(100), getdate(), 23) then '今日 '
           else substring(convert(varchar(100), PubDate, 23), 6, 5)
@@ -2607,8 +2613,9 @@ select top {0}
         a.Amount CpAmount,
         b.Name as BusinessName, b.City as BusinessCity,
         b.Address as BusinessAddress, isnull(a.ReceviceCity, '') as UserCity,
-        a.Remark,
-        isnull(a.ReceviceAddress, '附近3公里左右，由商户指定') as UserAddress,ISNULL(b.Longitude,0) as  Longitude,ISNULL(b.Latitude,0) as Latitude,
+        a.Remark,case  isnull(a.ReceviceAddress,'')  
+		when  '' then '附近3公里左右，由商户指定'
+		else a.ReceviceAddress end as  UserAddress,ISNULL(b.Longitude,0) as  Longitude,ISNULL(b.Latitude,0) as Latitude,
         case convert(varchar(100), PubDate, 23)
           when convert(varchar(100), getdate(), 23) then '今日 '
           else substring(convert(varchar(100), PubDate, 23), 6, 5)
@@ -2663,7 +2670,9 @@ select top {0} a.Id,a.OrderCommission,a.OrderCount,
 a.Amount CpAmount,
 a.Remark,
 b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
-ISNULL(a.ReceviceCity,'') as UserCity,ISNULL(a.ReceviceAddress,'附近3公里左右，由商户指定') as UserAddress,
+ISNULL(a.ReceviceCity,'') as UserCity, case  isnull(a.ReceviceAddress,'')  
+		when  '' then '附近3公里左右，由商户指定'
+		else a.ReceviceAddress end as  UserAddress,
 ISNULL(b.Longitude,0) as  Longitude,ISNULL(b.Latitude,0) as Latitude,
 case convert(varchar(100), PubDate, 23) 
 	when convert(varchar(100), getdate(), 23) then '今日 '
@@ -2689,7 +2698,9 @@ select top {0} a.Id,a.OrderCommission,a.OrderCount,
 a.Amount CpAmount,
 a.Remark,
 b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
-ISNULL(a.ReceviceCity,'') as UserCity,ISNULL(a.ReceviceAddress,'附近3公里左右，由商户指定') as UserAddress,
+ISNULL(a.ReceviceCity,'') as UserCity, case  isnull(a.ReceviceAddress,'')  
+		when  '' then '附近3公里左右，由商户指定'
+		else a.ReceviceAddress end as  UserAddress,
 ISNULL(b.Longitude,0) as  Longitude,ISNULL(b.Latitude,0) as Latitude,
 case convert(varchar(100), PubDate, 23) 
 	when convert(varchar(100), getdate(), 23) then '今日 '
@@ -2745,7 +2756,9 @@ select top {0}  a.BusinessId, a.Id,a.OrderCommission,a.OrderCount,
  a.Amount CpAmount,
 a.Remark,
 b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
-ISNULL(a.ReceviceCity,'') as UserCity,ISNULL(a.ReceviceAddress,'附近3公里左右，由商户指定') as UserAddress,
+ISNULL(a.ReceviceCity,'') as UserCity, case  isnull(a.ReceviceAddress,'')  
+		when  '' then '附近3公里左右，由商户指定'
+		else a.ReceviceAddress end as  UserAddress,
 ISNULL(b.Longitude,0) as  Longitude,ISNULL(b.Latitude,0) as Latitude,
 case convert(varchar(100), PubDate, 23) 
 	when convert(varchar(100), getdate(), 23) then '今日 '
