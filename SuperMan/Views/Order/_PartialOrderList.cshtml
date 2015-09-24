@@ -117,7 +117,7 @@ width: 100%;
                              }
                             @commission
                         </td>
-                        <td>@item.GroupName</td>
+                        <td>@item.OrderFromName</td>
                         <td>@ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.OrderStatusCommon)item.Status).GetType(), (ETS.Enums.OrderStatusCommon)item.Status).Text</td>
                         <td>@item.HadUploadCount.ToString()/@item.OrderCount.ToString()</td>  
                         <td style="@grabToCompleteStyle">@grabToCompleteStr</td>

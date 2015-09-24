@@ -550,7 +550,7 @@ select @@IDENTITY ";
                                     ,b.Name BusinessName
                                     ,b.PhoneNo BusinessPhoneNo
                                     ,b.Address BusinessAddress
-                                    ,case when o.OrderFrom=0 then '客户端' else g.GroupName end GroupName
+                                    ,isnull(g.GroupName,'') as OrderFromName 
                                     ,o.[Adjustment]
                                     ,ISNULL(oo.HadUploadCount,0) HadUploadCount
                                     ,CASE ISNULL(oo.GrabLatitude, 0)
@@ -756,7 +756,7 @@ select @@IDENTITY ";
                                         ,c.TrueName ClienterName
                                         ,c.AccountBalance AccountBalance
                                         ,b.GroupId
-                                        ,case when o.orderfrom=0 then '客户端' else g.GroupName end GroupName
+                                         ,isnull(g.GroupName,'') as OrderFromName 
                                         ,o.OriginalOrderNo
                                         ,oo.NeedUploadCount
                                         ,oo.HadUploadCount
@@ -945,7 +945,7 @@ select @@IDENTITY ";
                                         ,c.TrueName ClienterName
                                         ,c.AccountBalance AccountBalance                                      
                                         ,b.GroupId
-                                        ,case when o.orderfrom=0 then '客户端' else g.GroupName end GroupName
+                                        ,isnull(g.GroupName,'') as OrderFromName 
                                         ,o.OriginalOrderNo
                                         ,oo.NeedUploadCount
                                         ,oo.HadUploadCount

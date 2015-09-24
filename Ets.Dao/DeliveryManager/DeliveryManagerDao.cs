@@ -203,7 +203,7 @@ namespace Ets.Dao.DeliveryManager
                                         ,c.TrueName ClienterName
                                         ,c.AccountBalance AccountBalance                                      
                                         ,b.GroupId
-                                        ,case when o.orderfrom=0 then '客户端' else g.GroupName end GroupName
+                                        ,isnull(g.GroupName,'') as OrderFromName  
                                         ,o.OriginalOrderNo
                                         ,oo.NeedUploadCount
                                         ,oo.HadUploadCount
