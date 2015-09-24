@@ -203,6 +203,7 @@ namespace Ets.Dao.DeliveryManager
                                         ,c.TrueName ClienterName
                                         ,c.AccountBalance AccountBalance                                      
                                         ,b.GroupId
+                                        ,isnull(g.GroupName,'') as  GroupName 
                                         ,isnull(g.GroupName,'') as OrderFromName  
                                         ,o.OriginalOrderNo
                                         ,oo.NeedUploadCount

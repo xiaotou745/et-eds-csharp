@@ -187,7 +187,10 @@ namespace Ets.Model.DataModel.Order
         /// 骑士手机号
         /// </summary>
         public string ClienterPhoneNo { get; set; }
-
+        /// <summary>
+        /// 订单所属商家的集团名称
+        /// </summary>
+        public string GroupName { get; set; }
         /// <summary>
         /// 商家所在城市
         /// </summary>

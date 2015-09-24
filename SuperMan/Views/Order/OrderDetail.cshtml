@@ -32,7 +32,7 @@
             <td>任务单号：@Model.OrderNo</td>
             <td>是否已付款:@payStatus</td>
             <td>订单状态：@ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.OrderStatusCommon)Model.Status).GetType(), (ETS.Enums.OrderStatusCommon)Model.Status).Text</td>
-            <td>订单来源：@Model.OrderFromName</td>
+            <td>订单来源：@Model.GroupName</td>
         </tr>
         <tr class="trclass">
             <td>发布时间：@Model.PubDate</td>
