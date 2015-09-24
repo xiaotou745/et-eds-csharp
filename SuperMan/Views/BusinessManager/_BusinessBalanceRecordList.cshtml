@@ -45,8 +45,32 @@
                                 <a href="/Order/OrderDetail?OrderNo=@item.RelationNo&OrderId=@item.WithwardId ">@item.RelationNo</a>
                             }
                         </td>
-                        <td>￥@ParseHelper.ToSplitByPercentile(false,item.Amount)</td>
-                        <td>@((item.GroupAmount==0||(item.GroupAmount==0&&item.Amount==0))?"门店支出":"集团支出")</td>
+                        <td> ￥
+                            @if (item.GroupId > 0)
+                            {
+                                @ParseHelper.ToSplitByPercentile(false, item.GroupAmount);
+                            }
+                            else
+                            {
+                                @ParseHelper.ToSplitByPercentile(false, item.Amount);
+                            }                        
+                        </td>
+                        @*<td>@((item.GroupAmount==0||(item.GroupAmount==0&&item.Amount==0))?"门店支出":"集团支出")</td>*@
+                        <td>           
+                            @{
+                                var disName = "";
+                                if (item.GroupId > 0)
+                                {
+                                    disName = "集团支出";
+                                }
+                                else
+                                {
+                                    disName = "门店支出";                         
+                                }
+                            }
+                            @disName                        
+                            
+                        </td>
                         <td>￥@ParseHelper.ToSplitByPercentile(false,item.Balance)</td>
                         <td>@(item.Status == ETS.Enums.BusinessBalanceRecordStatus.Success.GetHashCode() ? "交易成功" : "交易中")</td>
                         <td>@item.OperateTime</td>
