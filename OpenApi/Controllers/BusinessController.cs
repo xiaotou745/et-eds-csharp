@@ -79,10 +79,9 @@ namespace OpenApi.Controllers
                 //{
                 LogHelper.LogWriter("商户注册---：", new { busid = busi.Id,BusiStatus=BusiStatus.BusiNoPass.GetHashCode() });
 
-                BusinessAuditModel bamModel = new BusinessAuditModel() { AuditStatus = AuditStatus.Status0,OptionUserId = busi.Id,OptionUserName = busi.Name};
+                BusinessAuditModel bamModel = new BusinessAuditModel() { BusinessId=busi.Id, AuditStatus = AuditStatus.Status0,OptionUserId = busi.Id,OptionUserName = busi.Name};
                 bool upresult = iBusiProvider.UpdateAuditStatus(bamModel, paramodel.fields.Address);
-                
-                //}
+                 
                 if (upresult)
                 {
                     return ResultModel<object>.Conclude(CustomerRegisterStatus.Success, busi.Id);

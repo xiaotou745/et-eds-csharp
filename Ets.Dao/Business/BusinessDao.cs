@@ -425,9 +425,9 @@ and a.PhoneNo=@PhoneNo";
             {
                 sbSqlWhere.AppendFormat(" AND TagR.TagId = {0} ", criteria.TagId);
             }
-            if (criteria.GroupBusinessId>0)
+            if (criteria.GroupBusinessId > 0)
             {
-                sbSqlWhere.AppendFormat(" and gbr.GroupId={0} ",criteria.GroupBusinessId);
+                sbSqlWhere.AppendFormat(" and gbr.GroupId={0} ", criteria.GroupBusinessId);
             }
 
             //else
@@ -451,9 +451,9 @@ and a.PhoneNo=@PhoneNo";
                                 left join business  b WITH (NOLOCK)    on TagR.UserId=b.id and TagR.UserType=0 and IsEnable=1  
                                 LEFT JOIN dbo.[group] g WITH(NOLOCK) ON g.Id = b.GroupId 
                                 JOIN dbo.[BusinessGroup]  bg WITH ( NOLOCK ) ON  b.BusinessGroupId=bg.Id";
-                 
+
             }
-            if (criteria.GroupBusinessId>0)
+            if (criteria.GroupBusinessId > 0)
             {
                 tableList += " left join GroupBusinessRelation gbr(nolock) on b.id=gbr.businessid ";
             }
@@ -759,7 +759,7 @@ WHERE b.Id = @busiId";
                 dbParameters.AddWithValue("@OptId", bam.OptionUserId);
                 dbParameters.AddWithValue("@OptName", bam.OptionUserName);
                 dbParameters.AddWithValue("@Platform", 3);
-                dbParameters.AddWithValue("@Remark", remark);  
+                dbParameters.AddWithValue("@Remark", remark);
                 int i = DbHelper.ExecuteNonQuery(Config.SuperMan_Write, sql.ToString(), dbParameters);
 
                 if (i > 0)
@@ -782,7 +782,7 @@ WHERE b.Id = @busiId";
                             Remark = "更新审核状态:调用聚网客"
                         };
                         new HttpDao().LogThirdPartyInfo(httpModel);
-                    } 
+                    }
                     reslut = true;
                 }
             }
@@ -804,42 +804,45 @@ WHERE b.Id = @busiId";
         public bool UpdateAuditStatus(BusinessAuditModel bam, string busiAddress)
         {
             bool reslut = false;
+            IDbParameters parm = DbHelper.CreateDbParameters();
             try
             {
-                StringBuilder sql = new StringBuilder(@" update business set Status=@enumStatus OUTPUT 
-                                              Inserted.Id,
-                                              @OptId,
-                                              @OptName,
-                                              GETDATE(),
-                                              @Platform,
-                                              Deleted.[Address]+'修改为'+Inserted.[Address] 
-                                            INTO BusinessOptionLog 
-                                             (BusinessId,
-                                              OptId,
-                                              OptName,
-                                              InsertTime,
-                                              Platform,
-                                              Remark) ");
-
+                string sql = @" update business set Status=@enumStatus {0} ";
                 if (!string.IsNullOrWhiteSpace(busiAddress))  //当商户地址不为空的时候，修改商户地址
                 {
-                    sql.Append(" ,Address=@Address ");
+                    sql = sql.Replace("{0}", " ,Address=@Address ");
+                    parm.AddWithValue("@Remark", busiAddress); 
                 }
-                sql.Append(" where id=@id");
-                IDbParameters parm = DbHelper.CreateDbParameters();
+                else { parm.AddWithValue("@Remark", ""); }
+                sql += @" where id=@id;
+insert into dbo.BusinessOptionLog
+         ( BusinessId ,
+           OptId ,
+           OptName ,
+           InsertTime ,
+           Platform ,
+           Remark
+         )
+ values  ( @id , -- BusinessId - int
+           @OptId , -- OptId - int
+           @OptName , -- OptName - varchar(50)
+           getdate() , -- InsertTime - datetime
+           0 , -- Platform - int
+           @Remark  -- Remark - nvarchar(4000)
+         )";
+
                 parm.Add("@id", DbType.Int32, 4).Value = bam.BusinessId;
                 parm.Add("@Address", DbType.String).Value = busiAddress; //商户地址
                 parm.Add("@enumStatus", DbType.Int32, 4).Value = bam.AuditStatus.GetHashCode();
                 parm.AddWithValue("@OptId", bam.OptionUserId);
                 parm.AddWithValue("@OptName", bam.OptionUserName);
-                parm.AddWithValue("@Platform", 0); 
-                return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql.ToString(), parm)) > 0 ? true : false;
+                parm.AddWithValue("@Platform", 0);
+                return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm)) > 0;
             }
             catch (Exception ex)
             {
                 reslut = false;
                 LogHelper.LogWriter(ex, "更新审核状态");
-                throw;
             }
             return reslut;
         }
@@ -892,7 +895,7 @@ LEFT join dbo.[group] g on b.GroupId=g.Id
 where b.PhoneNo=@PhoneNo and isnull(g.IsModifyBind,1)=1";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("PhoneNo", DbType.String, 40).Value = PhoneNo;
-           // int tmpId = ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm), 0);
+            // int tmpId = ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Read, sql, parm), 0);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             IList<BusListResultModel> list = MapRows<BusListResultModel>(dt);
 
@@ -1065,7 +1068,7 @@ where b.PhoneNo=@PhoneNo and isnull(g.IsModifyBind,1)=1";
         /// <returns>商家信息</returns>
         public BusinessModel CheckExistBusiness(int bid, int groupid)
         {
-            string sql = @"select Id,Status from dbo.business where OriginalBusiId=@OriginalBusiId and GroupId=@GroupId";
+            string sql = @"select Id,Status,Name from dbo.business where OriginalBusiId=@OriginalBusiId and GroupId=@GroupId";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@OriginalBusiId", bid);
             parm.AddWithValue("@GroupId", groupid);
@@ -1169,7 +1172,7 @@ select SCOPE_IDENTITY() as id;
             dbParameters.AddWithValue("@GroupId", model.GroupId);
             dbParameters.AddWithValue("@OriginalBusiId", model.OriginalBusiId);
             dbParameters.Add("@IsAllowOverdraft", DbType.Int16).Value = model.IsAllowOverdraft;
-
+            LogHelper.LogWriter("注册sqlInsertOtherBusiness", new { insertSql = insertSql, dbParameters = dbParameters });
             return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters));
         }
         /// <summary>
@@ -1634,7 +1637,7 @@ where  Id IN({0})";
 
             }).ToDictionary(m => m.Id);
         }
-      
+
         /// <summary>
         /// 获取商家详情
         /// </summary>
@@ -2043,7 +2046,7 @@ ORDER BY btr.Id;";
         public bool ModifyBusinessDetail(BusinessDetailModel model)
         {
             BusListResultModel brm = GetBusiness(model.Id);
-            string remark = GetRemark(brm, model); 
+            string remark = GetRemark(brm, model);
             //商铺名称、联系电话、联系座机、配 送 费、城 市、地 址、经 纬 度、结算比例设置、补贴策略设置(应付)、
             //补贴策略、餐费结算方式、一键发单、余额可以透支、使用雇主任务时间限制、第三方ID 
             //结算类型去掉，以后这一列不在有用了
@@ -2073,7 +2076,7 @@ ORDER BY btr.Id;";
             if (model.GroupId > 0)
             {
                 sql += " ,GroupId=@GroupId, ";
-            }  
+            }
             sql += @" OUTPUT
                         Inserted.Id,
                         @OptId,
@@ -2184,12 +2187,12 @@ ORDER BY btr.Id;";
                 //补贴策略 BusinessGroupId
                 if (brm.BusinessGroupId != model.BusinessGroupId)
                 {
-                    remark.AppendFormat("补贴策略原值:{0},修改为{1};",brm.BusinessGroupId, model.BusinessGroupId);
+                    remark.AppendFormat("补贴策略原值:{0},修改为{1};", brm.BusinessGroupId, model.BusinessGroupId);
                 }
                 //餐费结算方式
                 if (brm.MealsSettleMode != model.MealsSettleMode)
                 {
-                    remark.AppendFormat("餐费结算方式原值:{0},修改为{1};",((MealsSettleMode) brm.MealsSettleMode).GetDisplayText(), ((MealsSettleMode) model.MealsSettleMode).GetDisplayText());
+                    remark.AppendFormat("餐费结算方式原值:{0},修改为{1};", ((MealsSettleMode)brm.MealsSettleMode).GetDisplayText(), ((MealsSettleMode)model.MealsSettleMode).GetDisplayText());
                 }
                 //一键发单
                 if (brm.OneKeyPubOrder != model.OneKeyPubOrder)
@@ -2213,7 +2216,7 @@ ORDER BY btr.Id;";
                     {
                         remark.AppendFormat("第三方ID原值:{0},修改为{1};", brm.OriginalBusiId, model.OriginalBusiId);
                     }
-                } 
+                }
                 if (brm.RecommendPhone != model.RecommendPhone)
                 {
                     remark.AppendFormat("推荐人手机号原值:{0},修改为{1};", brm.RecommendPhone, model.RecommendPhone);
@@ -2696,7 +2699,7 @@ MERGE INTO BusinessExpressRelation ber
         /// <param name="latitude"></param>
         /// <param name="platform"></param>
         /// <returns></returns>
-        public long InsertLocation(int businessId, decimal longitude, decimal latitude,string platform)
+        public long InsertLocation(int businessId, decimal longitude, decimal latitude, string platform)
         {
             const string insertSql = @"
 insert into BusinessLocation(Longitude,Latitude,BusinessId,Platform)
@@ -2963,7 +2966,7 @@ ORDER BY templc.WorkStatus;";
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             return MapRows<LocalClienterModel>(dt);
         }
-        
+
 
     }
 }
