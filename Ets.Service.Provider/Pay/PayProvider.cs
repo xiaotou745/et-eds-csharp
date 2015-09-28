@@ -1080,7 +1080,7 @@ namespace Ets.Service.Provider.Pay
             //HttpModel httpModel = new HttpModel();
             var retunModel = regisiter.RegSubaccount(para);
             //httpDao.LogThirdPartyInfo(httpModel);
-            //new YeePayUserDao().Insert(TranslateRegisterYeeModel(para));
+            new YeePayUserDao().Insert(TranslateRegisterYeeModel(para));
             return retunModel;
         }
 
