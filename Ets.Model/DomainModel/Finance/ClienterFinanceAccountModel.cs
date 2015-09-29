@@ -70,6 +70,11 @@ namespace Ets.Model.DomainModel.Finance
         /// 审核拒绝原因
         /// </summary>
         public string AuditFailedReason { get; set; }
+        /// <summary>
+        /// 实付金额
+        /// </summary>
+        public decimal PaidAmount { get; set; }
+        
         
         
     }

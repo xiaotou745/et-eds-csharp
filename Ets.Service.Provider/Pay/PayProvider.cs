@@ -642,6 +642,31 @@ namespace Ets.Service.Provider.Pay
             LogHelper.LogWriter(success);
             return "success";
         }
+        /// <summary>
+        /// 支付宝转账
+        /// danny-20150914
+        /// </summary>
+        public string AlipayTransfer(AlipayTransferParameter model)
+        {
+
+            var sParaTemp = new SortedDictionary<string, string>
+            {
+                {"partner", model.Partner},
+                {"_input_charset", model.InputCharset.ToLower()},
+                {"service", "batch_trans_notify"},
+                {"notify_url", model.NotifyUrl},
+                {"email", model.Email},
+                {"account_name", model.AccountName},
+                {"pay_date", model.PayDate},
+                {"batch_no", model.BatchNo},
+                {"batch_fee", model.BatchFee},
+                {"batch_num", model.BatchNum},
+                {"detail_data", model.DetailData}
+            };
+            //建立请求
+            string sHtmlText = Submit.BuildRequest(sParaTemp, "get", "确认");
+            return sHtmlText;
+        }
         #endregion
 
         #region 微信相关
@@ -1080,7 +1105,7 @@ namespace Ets.Service.Provider.Pay
             //HttpModel httpModel = new HttpModel();
             var retunModel = regisiter.RegSubaccount(para);
             //httpDao.LogThirdPartyInfo(httpModel);
-            //new YeePayUserDao().Insert(TranslateRegisterYeeModel(para));
+            new YeePayUserDao().Insert(TranslateRegisterYeeModel(para));
             return retunModel;
         }
 
@@ -1637,7 +1662,8 @@ namespace Ets.Service.Provider.Pay
                         string key = string.Format(RedissCacheKey.Ets_Withdraw_Deal_C, item.WithwardId);
                         var redis = new ETS.NoSql.RedisCache.RedisCache();
                         var dealStatus = ParseHelper.ToInt(redis.Get<int>(key));
-                        var amount = item.HandChargeOutlay == 0 ? item.Amount : item.Amount + item.HandCharge;//转账及提现金额（计算手续费）
+                        //var amount = item.HandChargeOutlay == 0 ? item.Amount : item.Amount + item.HandCharge;//转账及提现金额（计算手续费）
+                        var amount = ParseHelper.ToDecimal(item.PaidAmount); //转账及提现金额（新逻辑为实付金额）
 
                         #endregion
 
@@ -1780,6 +1806,7 @@ namespace Ets.Service.Provider.Pay
                 }
             });
             #endregion
+
         }
 
         /// <summary>

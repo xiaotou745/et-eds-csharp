@@ -144,6 +144,7 @@
     <Compile Include="Pay\AliPay\AlipayCore.cs" />
     <Compile Include="Pay\AliPay\AlipayNotify.cs" />
     <Compile Include="Pay\AliPay\AlipaySubmit.cs" />
+    <Compile Include="Pay\AliPay\AlipayTransferParameter.cs" />
     <Compile Include="Pay\AliPay\MD5.cs" />
     <Compile Include="Pay\YeePay\AESUtil.cs" />
     <Compile Include="Pay\YeePay\Digest.cs" />

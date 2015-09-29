@@ -1224,6 +1224,19 @@ namespace Ets.Service.Provider.Clienter
                 RelationNo = clienterMoneyPM.RelationNo,
                 Remark = clienterMoneyPM.Remark
             });
+            //更新骑士余额流水          
+            clienterBalanceRecordDao.Insert(new ClienterBalanceRecord()
+            {
+                ClienterId = clienterMoneyPM.ClienterId,
+                Amount = clienterMoneyPM.Amount,
+                Status = clienterMoneyPM.Status,
+                Balance = clienterMoneyPM.Balance,
+                RecordType = clienterMoneyPM.RecordType,
+                Operator = clienterMoneyPM.Operator,
+                WithwardId = clienterMoneyPM.WithwardId,
+                RelationNo = clienterMoneyPM.RelationNo,
+                Remark = clienterMoneyPM.Remark
+            });
             //更新骑士可提现流水          
             clienterAllowWithdrawRecordDao.Insert(new ClienterAllowWithdrawRecord()
             {
