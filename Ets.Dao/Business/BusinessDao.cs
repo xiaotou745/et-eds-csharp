@@ -1171,8 +1171,7 @@ select SCOPE_IDENTITY() as id;
             dbParameters.AddWithValue("@DistribSubsidy", model.DistribSubsidy);
             dbParameters.AddWithValue("@GroupId", model.GroupId);
             dbParameters.AddWithValue("@OriginalBusiId", model.OriginalBusiId);
-            dbParameters.Add("@IsAllowOverdraft", DbType.Int16).Value = model.IsAllowOverdraft;
-            LogHelper.LogWriter("注册sqlInsertOtherBusiness", new { insertSql = insertSql, dbParameters = dbParameters });
+            dbParameters.Add("@IsAllowOverdraft", DbType.Int16).Value = model.IsAllowOverdraft; 
             return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters));
         }
         /// <summary>
