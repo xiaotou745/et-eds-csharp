@@ -267,7 +267,7 @@ namespace Ets.Service.Provider.Finance
                 });
                 tran.Complete();
             }
-            return ResultModel<object>.Conclude(FinanceCardBindC.Success);
+            return ResultModel<object>.Conclude(FinanceCardBindC.Success, result);
         }
 
         /// <summary>
