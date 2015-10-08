@@ -401,52 +401,9 @@ INTO ClienterWithdrawLog
         /// <returns></returns>
         public bool ClienterWithdrawReturn(ClienterWithdrawLogModel model)
         {
-            string sql = @" 
-insert into ClienterBalanceRecord
-            ([ClienterId]
-           ,[Amount]
-           ,[Status]
-           ,[Balance]
-           ,[RecordType]
-           ,[Operator]
-           ,[OperateTime]
-           ,[WithwardId]
-           ,[RelationNo]
-           ,[Remark])
-select      cbr.[ClienterId]
-           ,-ISNULL(cbr.[Amount],0) Amount
-           ,@NewStatus [Status]
-           ,-ISNULL(cbr.[Amount],0)+ISNULL(c.AccountBalance,0) Balance
-           ,@NewRecordType [RecordType]
-           ,@Operator
-           ,getdate() OperateTime
-           ,cbr.[WithwardId]
-           ,cbr.[RelationNo]
-           ,@Remark
- from ClienterBalanceRecord cbr (nolock)
-    join clienter c (nolock) on c.Id=cbr.ClienterId
- where cbr.WithwardId=@WithwardId and cbr.Status=@Status and cbr.RecordType=@RecordType;";
-            var parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@Operator", model.Operator);
-            parm.AddWithValue("@Remark", model.Remark);
-            parm.AddWithValue("@WithwardId", model.WithwardId);
-            parm.AddWithValue("@Status", ClienterBalanceRecordStatus.Tradeing.GetHashCode());
-            parm.AddWithValue("@RecordType", ClienterBalanceRecordRecordType.WithdrawApply.GetHashCode());
-            parm.AddWithValue("@NewStatus", ClienterBalanceRecordStatus.Success.GetHashCode());
-            parm.AddWithValue("@NewRecordType", model.Status == ClienterWithdrawFormStatus.TurnDown.GetHashCode() ? ClienterBalanceRecordRecordType.WithdrawRefuse : ClienterBalanceRecordRecordType.PayFailure);
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
-        }
-        /// <summary>
-        /// 骑士可提现余额流水
-        /// danny-20150820
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public bool ClienterClienterAllowWithdrawRecordReturn(ClienterWithdrawLogModel model)
-        {
             #region 临时注释
-            //            string sql = string.Format(@" 
-            //insert into ClienterAllowWithdrawRecord
+            //            string sql = @" 
+            //insert into ClienterBalanceRecord
             //            ([ClienterId]
             //           ,[Amount]
             //           ,[Status]
@@ -460,19 +417,19 @@ select      cbr.[ClienterId]
             //select      cbr.[ClienterId]
             //           ,-ISNULL(cbr.[Amount],0) Amount
             //           ,@NewStatus [Status]
-            //           ,-ISNULL(cbr.[Amount],0)+ISNULL(c.AllowWithdrawPrice,0) Balance
+            //           ,-ISNULL(cbr.[Amount],0)+ISNULL(c.AccountBalance,0) Balance
             //           ,@NewRecordType [RecordType]
             //           ,@Operator
             //           ,getdate() OperateTime
             //           ,cbr.[WithwardId]
             //           ,cbr.[RelationNo]
             //           ,@Remark
-            // from ClienterAllowWithdrawRecord cbr (nolock)
+            // from ClienterBalanceRecord cbr (nolock)
             //    join clienter c (nolock) on c.Id=cbr.ClienterId
-            // where cbr.WithwardId=@WithwardId and cbr.Status=@Status and cbr.RecordType=@RecordType;");
+                        // where cbr.WithwardId=@WithwardId and cbr.Status=@Status and cbr.RecordType=@RecordType;";
             #endregion
-            string sql = string.Format(@" 
-insert into ClienterAllowWithdrawRecord
+            string sql = @" 
+insert into ClienterBalanceRecord
             ([ClienterId]
            ,[Amount]
            ,[Status]
@@ -483,16 +440,94 @@ insert into ClienterAllowWithdrawRecord
            ,[WithwardId]
            ,[RelationNo]
            ,[Remark])
-SELECT 
-    cwf.ClienterId,ISNULL(cwf.[Amount],0) Amount,
-    @NewStatus [Status],ISNULL(cwf.[Amount],0)+ISNULL(c2.AllowWithdrawPrice,0) Balance,
-    @NewRecordType [RecordType],@Operator,
-    getdate() OperateTime,cwf.Id WithwardId,
-    cwf.WithwardNo RelationNo,@Remark
-        FROM dbo.ClienterWithdrawForm cwf(nolock)
-join dbo.clienter c2(nolock) on cwf.ClienterId=c2.Id
-    where cwf.Id=@WithwardId");
-            IDbParameters parm = DbHelper.CreateDbParameters();
+select      cwf.[ClienterId]
+           ,ISNULL(cwf.[Amount],0) Amount
+           ,@NewStatus [Status]
+           ,ISNULL(cwf.[Amount],0)+ISNULL(c.AccountBalance,0) Balance
+           ,@NewRecordType [RecordType]
+           ,@Operator
+           ,getdate() OperateTime
+           ,cwf.Id WithwardId
+           ,cwf.WithwardNo RelationNo
+           ,@Remark
+ from ClienterWithdrawForm cwf(nolock)
+    join clienter c (nolock) on c.Id=cwf.ClienterId
+ where cwf.Id=@WithwardId ";
+            
+            var parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@Operator", model.Operator);
+            parm.AddWithValue("@Remark", model.Remark);
+            parm.AddWithValue("@WithwardId", model.WithwardId);
+            //parm.AddWithValue("@Status", ClienterBalanceRecordStatus.Tradeing.GetHashCode());
+            //parm.AddWithValue("@RecordType", ClienterBalanceRecordRecordType.WithdrawApply.GetHashCode());
+            parm.AddWithValue("@NewStatus", ClienterBalanceRecordStatus.Success.GetHashCode());
+            parm.AddWithValue("@NewRecordType", model.Status == ClienterWithdrawFormStatus.TurnDown.GetHashCode() ? ClienterBalanceRecordRecordType.WithdrawRefuse : ClienterBalanceRecordRecordType.PayFailure);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
+        }
+        /// <summary>
+        /// 骑士可提现余额流水
+        /// danny-20150820
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool ClienterClienterAllowWithdrawRecordReturn(ClienterWithdrawLogModel model)
+        {
+            #region 临时注释
+//            string sql = string.Format(@" 
+//            insert into ClienterAllowWithdrawRecord
+//                        ([ClienterId]
+//                       ,[Amount]
+//                       ,[Status]
+//                       ,[Balance]
+//                       ,[RecordType]
+//                       ,[Operator]
+//                       ,[OperateTime]
+//                       ,[WithwardId]
+//                       ,[RelationNo]
+//                       ,[Remark])
+//            select      cbr.[ClienterId]
+//                       ,-ISNULL(cbr.[Amount],0) Amount
+//                       ,@NewStatus [Status]
+//                       ,-ISNULL(cbr.[Amount],0)+ISNULL(c.AllowWithdrawPrice,0) Balance
+//                       ,@NewRecordType [RecordType]
+//                       ,@Operator
+//                       ,getdate() OperateTime
+//                       ,cbr.[WithwardId]
+//                       ,cbr.[RelationNo]
+//                       ,@Remark
+//             from ClienterBalanceRecord cbr (nolock)
+//                join clienter c (nolock) on c.Id=cbr.ClienterId
+//             where cbr.WithwardId=@WithwardId and cbr.Status=@Status and cbr.RecordType=@RecordType;");
+            #endregion
+
+            string sql = string.Format(@" 
+            insert into ClienterAllowWithdrawRecord
+                        ([ClienterId]
+                       ,[Amount]
+                       ,[Status]
+                       ,[Balance]
+                       ,[RecordType]
+                       ,[Operator]
+                       ,[OperateTime]
+                       ,[WithwardId]
+                       ,[RelationNo]
+                       ,[Remark])
+            SELECT 
+                cwf.ClienterId,
+                ISNULL(cwf.[Amount],0) Amount,
+                @NewStatus [Status],
+                ISNULL(cwf.[Amount],0)+ISNULL(c2.AllowWithdrawPrice,0) Balance,
+                @NewRecordType [RecordType],
+                @Operator Operator,
+                getdate() OperateTime,
+                cwf.Id WithwardId,
+                cwf.WithwardNo RelationNo,
+                @Remark Remark
+            FROM dbo.ClienterWithdrawForm cwf(nolock)
+                join dbo.clienter c2(nolock) on cwf.ClienterId=c2.Id
+            where cwf.Id=@WithwardId");
+            
+            var parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Operator", model.Operator);
             parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@WithwardId", model.WithwardId);
@@ -929,12 +964,14 @@ SELECT cwf.[ClienterId]
       ,cwf.Id WithwardId
       ,cwf.WithwardNo WithwardNo
       ,cwf.PayFailedReason
+      ,cwf.PaidAmount
   FROM ClienterWithdrawForm cwf with(nolock)
-  JOIN dbo.ClienterFinanceAccount cfa WITH(NOLOCK) ON cfa.ClienterId=cwf.ClienterId and cwf.Status=@cwfStatus and cwf.DealStatus=@DealStatus
+  JOIN dbo.ClienterFinanceAccount cfa WITH(NOLOCK) ON cfa.ClienterId=cwf.ClienterId and cwf.Status=@cwfStatus and cwf.DealStatus=@DealStatus and cwf.AccountType=cfa.AccountType
   LEFT JOIN ( SELECT tblypu.UserId,tblypu.Ledgerno,tblypu.BankName,tblypu.BankAccountNumber,tblypu.BalanceRecord,tblypu.YeeBalance
 			  FROM(
 			      SELECT UserId,BankName,BankAccountNumber,MAX(Addtime) Addtime
 			      FROM YeePayUser(NOLOCK) 
+                  WHERE UserType=0
 			      GROUP BY UserId,BankName,BankAccountNumber) tbl
 			  JOIN YeePayUser tblypu (NOLOCK) 
                 ON  tblypu.Addtime=tbl.Addtime 

@@ -51,5 +51,14 @@ namespace Ets.Model.ParameterModel.Order
         /// 描述
         /// </summary>
         public string Remark { get; set; }
+        /// <summary>
+        /// 骑士手续费金额
+        /// </summary>
+        public decimal WithdrawCommission { get; set; }
+        /// <summary>
+        /// 实付金额
+        /// </summary>
+        public decimal PaidAmount { get; set; }
+        
     }
 }

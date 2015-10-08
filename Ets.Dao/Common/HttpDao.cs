@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using ETS.Dao;
 using ETS.Data.Core;
 using Ets.Model.Common;
+using ETS.Util;
 
 namespace Ets.Dao.Common
 {
@@ -18,40 +19,51 @@ namespace Ets.Dao.Common
         /// <param name="model"></param>
         public void LogRequestInfo(HttpModel model)
         {
-            #region===异步记录数据
-            Task.Factory.StartNew(() =>
+            try
             {
-                string sql = @"INSERT INTO dbo.HttpLog
-        ( Url ,
-          Htype ,
-          RequestBody ,
-          ResponseBody ,
-          ReuqestMethod ,
-          ReuqestPlatForm ,
-          Status ,
+
+
+                #region===异步记录数据
+                Task.Factory.StartNew(() =>
+                {
+                    string sql = @"INSERT INTO dbo.HttpLog
+        ( Url,
+          Htype,
+          RequestBody,
+          ResponseBody,
+          ReuqestMethod,
+          ReuqestPlatForm,
+          Status,
           Remark 
         )
-VALUES  ( @Url ,
-          @Htype ,
-          @RequestBody ,
-          @ResponseBody ,
-          @ReuqestMethod ,
-          @ReuqestPlatForm ,
-          @Status ,
+VALUES  ( @Url,
+          @Htype,
+          @RequestBody,
+          @ResponseBody,
+          @ReuqestMethod,
+          @ReuqestPlatForm,
+          @Status,
           @Remark 
         )";
-                IDbParameters parm = DbHelper.CreateDbParameters();
-                parm.Add("@Url", DbType.String).Value = model.Url;
-                parm.Add("@Htype", DbType.Int32).Value = model.Htype;
-                parm.Add("@RequestBody", DbType.String).Value = model.RequestBody;
-                parm.Add("@ResponseBody", DbType.String).Value = model.ResponseBody;
-                parm.Add("@ReuqestMethod", DbType.String).Value = model.ReuqestMethod;
-                parm.Add("@ReuqestPlatForm", DbType.Int32).Value = model.ReuqestPlatForm;
-                parm.Add("@Status", DbType.Int32).Value = model.Status;
-                parm.Add("@Remark", DbType.String).Value = model.Remark;
-                DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm);
-            });
-            #endregion
+                    IDbParameters parm = DbHelper.CreateDbParameters();
+                    parm.Add("@Url", DbType.String).Value = model.Url;
+                    parm.Add("@Htype", DbType.Int32).Value = model.Htype;
+                    //parm.Add("@RequestBody", DbType.String).Value = model.RequestBody;
+                    //parm.Add("@ResponseBody", DbType.String).Value = model.ResponseBody;
+                    parm.Add("@RequestBody", DbType.String).Value = string.IsNullOrEmpty(model.RequestBody) ? "" : model.RequestBody;
+                    parm.Add("@ResponseBody", DbType.String).Value = string.IsNullOrEmpty(model.ResponseBody) ? "" : model.ResponseBody;
+                    parm.Add("@ReuqestMethod", DbType.String).Value = model.ReuqestMethod;
+                    parm.Add("@ReuqestPlatForm", DbType.Int32).Value = model.ReuqestPlatForm;
+                    parm.Add("@Status", DbType.Int32).Value = model.Status;
+                    parm.Add("@Remark", DbType.String).Value = model.Remark;
+                    DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm);
+                });
+                #endregion
+            }
+            catch (Exception ex) 
+            {
+                LogHelper.LogWriter(ex.Message);
+            }
         }
 
         /// <summary>
@@ -60,40 +72,47 @@ VALUES  ( @Url ,
         /// <param name="model"></param>
         public void LogThirdPartyInfo(HttpModel model)
         {
-            Task.Factory.StartNew(() =>
+            try
             {
-                #region===异步插入数据库
-                string sql = @"INSERT INTO dbo.HttpLog
-        ( Url ,
-          Htype ,
-          RequestBody ,
-          ResponseBody ,
-          ReuqestMethod ,
-          ReuqestPlatForm ,
-          Status ,
+                Task.Factory.StartNew(() =>
+                {
+                    #region===异步插入数据库
+                    string sql = @"INSERT INTO dbo.HttpLog
+        ( Url,
+          Htype,
+          RequestBody,
+          ResponseBody,
+          ReuqestMethod,
+          ReuqestPlatForm,
+          Status,
           Remark 
         )
-VALUES  ( @Url ,
-          @Htype ,
-          @RequestBody ,
-          @ResponseBody ,
-          @ReuqestMethod ,
-          @ReuqestPlatForm ,
-          @Status ,
+VALUES  ( @Url,
+          @Htype,
+          @RequestBody,
+          @ResponseBody,
+          @ReuqestMethod,
+          @ReuqestPlatForm,
+          @Status,
           @Remark 
         )";
-                IDbParameters parm = DbHelper.CreateDbParameters();
-                parm.Add("@Url", DbType.String).Value = model.Url;
-                parm.Add("@Htype", DbType.Int32).Value = model.Htype;
-                parm.Add("@RequestBody", DbType.String).Value = model.RequestBody;
-                parm.Add("@ResponseBody", DbType.String).Value = model.ResponseBody;
-                parm.Add("@ReuqestMethod", DbType.String).Value = model.ReuqestMethod;
-                parm.Add("@ReuqestPlatForm", DbType.Int32).Value = model.ReuqestPlatForm;
-                parm.Add("@Status", DbType.Int32).Value = model.Status;
-                parm.Add("@Remark", DbType.String).Value = model.Remark;
-                DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm);
-                #endregion
-            });
+                    IDbParameters parm = DbHelper.CreateDbParameters();
+                    parm.Add("@Url", DbType.String).Value = model.Url;
+                    parm.Add("@Htype", DbType.Int32).Value = model.Htype;
+                    parm.Add("@RequestBody", DbType.String).Value = string.IsNullOrEmpty(model.RequestBody) ? "" : model.RequestBody;
+                    parm.Add("@ResponseBody", DbType.String).Value = string.IsNullOrEmpty(model.ResponseBody) ? "" : model.ResponseBody;
+                    parm.Add("@ReuqestMethod", DbType.String).Value = model.ReuqestMethod;
+                    parm.Add("@ReuqestPlatForm", DbType.Int32).Value = model.ReuqestPlatForm;
+                    parm.Add("@Status", DbType.Int32).Value = model.Status;
+                    parm.Add("@Remark", DbType.String).Value = model.Remark;
+                    DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm);
+                    #endregion
+                });
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(ex.Message);
+            }
         }
     }
 }

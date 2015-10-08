@@ -54,10 +54,11 @@
                     <input type="hidden" name="oldEmployerTaskTimeSet" value="@globalConfigModel.EmployerTaskTimeSet" id="oldEmployerTaskTimeSet" />
                 </td>
                 <td>
-                    <span>提现小于等于X元支付手续费:</span>
-                    <input type="text" name="employerTaskTimeSet" value="@globalConfigModel.ClienterWithdrawCommissionAccordingMoney" id="clienterWithdrawCommissionAccordingMoney" style="width: 100px" />元
-                    <input type="hidden" name="oldEmployerTaskTimeSet" value="@globalConfigModel.ClienterWithdrawCommissionAccordingMoney" id="oldClienterWithdrawCommissionAccordingMoney" />
+                    <span>门店经纬度上传时间间隔:</span>
+                    <input type="text" name="businessUploadTimeInterval" value="@globalConfigModel.BusinessUploadTimeInterval" id="businessUploadTimeInterval" style="width: 100px" />秒
+                    <input type="hidden" name="oldBusinessUploadTimeInterval" value="@globalConfigModel.BusinessUploadTimeInterval" id="oldBusinessUploadTimeInterval" />
                 </td>
+                
             </tr>
             <tr>
                 <td>
@@ -83,9 +84,22 @@
                     <input type="hidden" name="oldYeeAccountActiveTime" value="@globalConfigModel.YeeAccountActiveTime" id="oldYeeAccountActiveTime" />
                 </td>*@
                 <td>
-                    <span>门店经纬度上传时间间隔:</span>
-                    <input type="text" name="businessUploadTimeInterval" value="@globalConfigModel.BusinessUploadTimeInterval" id="businessUploadTimeInterval" style="width: 100px" />秒
-                    <input type="hidden" name="oldBusinessUploadTimeInterval" value="@globalConfigModel.BusinessUploadTimeInterval" id="oldBusinessUploadTimeInterval" />
+                    <span>提现小于等于X元支付手续费:</span>
+                    <input type="text" name="employerTaskTimeSet" value="@globalConfigModel.ClienterWithdrawCommissionAccordingMoney" id="clienterWithdrawCommissionAccordingMoney" style="width: 100px" />元
+                    <input type="hidden" name="oldEmployerTaskTimeSet" value="@globalConfigModel.ClienterWithdrawCommissionAccordingMoney" id="oldClienterWithdrawCommissionAccordingMoney" />
+                
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>易宝实际手续费金额:</span>
+                    <input type="text" name="yeepayWithdrawCommission" value="@globalConfigModel.YeepayWithdrawCommission" id="yeepayWithdrawCommission" style="width: 100px" />元
+                    <input type="hidden" name="oldYeepayWithdrawCommission" value="@globalConfigModel.YeepayWithdrawCommission" id="oldYeepayWithdrawCommission" />
+                </td>
+                <td>
+                    <span>支付宝实际手续费金额:</span>
+                    <input type="text" name="alipayWithdrawCommission" value="@globalConfigModel.AlipayWithdrawCommission" id="alipayWithdrawCommission" style="width: 100px" />秒
+                    <input type="hidden" name="oldAlipayWithdrawCommission" value="@globalConfigModel.AlipayWithdrawCommission" id="oldAlipayWithdrawCommission" />
                 </td>
             </tr>
             <tr>
@@ -118,6 +132,8 @@
             var grabToCompleteDistance = $("#grabToCompleteDistance").val(); //无效订单判定时抢单点和完成点的距离
             var businessUploadTimeInterval = $("#businessUploadTimeInterval").val(); //门店经纬度上传时间间隔
             var searchClienterLocationTimeInterval = $("#searchClienterLocationTimeInterval").val(); //门店经纬度上传时间间隔
+            var yeepayWithdrawCommission = $("#yeepayWithdrawCommission").val(); //易宝实际手续费
+            var alipayWithdrawCommission = $("#alipayWithdrawCommission").val(); //支付宝实际手续费
             //var yeeAccountActiveTime = $("#yeeAccountActiveTime").val(); //易宝活跃账户时间配置
             var oldHasUnFinishedOrderUploadTimeInterval = $("#oldHasUnFinishedOrderUploadTimeInterval").val(); //骑士有待完成任务经纬度上传时间间隔（之前）
             var oldAllFinishedOrderUploadTimeInterval = $("#oldAllFinishedOrderUploadTimeInterval").val(); //骑士没有待完成任务经纬度上传时间间隔（之前）
@@ -128,10 +144,12 @@
             var oldEmployerTaskTimeSet = $("#oldEmployerTaskTimeSet").val(); //雇主任务时间限制（之前）
             var oldClienterWithdrawCommissionAccordingMoney = $("#oldClienterWithdrawCommissionAccordingMoney").val(); //骑士提现小于等于X元支付手续费（之前）
             var oldWithdrawCommission = $("#oldWithdrawCommission").val(); //易宝支付手续费金额（之前）
-            var oldOrderCountSetting = $("#oldOrderCountSetting").val(); //无效订单判定时累计完成订单数量
-            var oldGrabToCompleteDistance = $("#oldGrabToCompleteDistance").val(); //无效订单判定时抢单点和完成点的距离
+            var oldOrderCountSetting = $("#oldOrderCountSetting").val(); //无效订单判定时累计完成订单数量（之前）
+            var oldGrabToCompleteDistance = $("#oldGrabToCompleteDistance").val(); //无效订单判定时抢单点和完成点的距离（之前）
             var oldBusinessUploadTimeInterval = $("#oldBusinessUploadTimeInterval").val(); //门店经纬度上传时间间隔（之前）
-            var oldSearchClienterLocationTimeInterval = $("#oldSearchClienterLocationTimeInterval").val();
+            var oldSearchClienterLocationTimeInterval = $("#oldSearchClienterLocationTimeInterval").val();//商家经纬度上传时间间隔（之前）
+            var oldYeepayWithdrawCommission = $("#oldYeepayWithdrawCommission").val(); //易宝实际手续费（之前）
+            var oldAlipayWithdrawCommission = $("#oldAlipayWithdrawCommission").val(); //支付宝实际手续费（之前）
             //var oldYeeAccountActiveTime = $("#oldYeeAccountActiveTime").val(); //易宝活跃账户时间配置（之前）
 
             var pageOk = true;
@@ -269,6 +287,14 @@
                 alert('易宝支付手续费金额不合法!');
                 return;
             }
+            if (yeepayWithdrawCommission == "" || !reg2.test(yeepayWithdrawCommission)) {
+                alert('易宝实际手续费金额不合法!');
+                return;
+            }
+            if (alipayWithdrawCommission == "" || !reg2.test(alipayWithdrawCommission)) {
+                alert('支付宝实际手续费金额不合法!');
+                return;
+            }
 
             if (withdrawCommission==oldWithdrawCommission&&
                 clienterWithdrawCommissionAccordingMoney == oldClienterWithdrawCommissionAccordingMoney &&
@@ -282,7 +308,9 @@
 	            orderCountSetting == oldOrderCountSetting &&
                 grabToCompleteDistance == oldGrabToCompleteDistance && 
                 businessUploadTimeInterval == oldBusinessUploadTimeInterval && 
-                searchClienterLocationTimeInterval == oldSearchClienterLocationTimeInterval) {
+                searchClienterLocationTimeInterval == oldSearchClienterLocationTimeInterval &&
+                yeepayWithdrawCommission == oldYeepayWithdrawCommission &&
+                alipayWithdrawCommission == oldAlipayWithdrawCommission) {
                 alert("没有需要修改的信息!");
                 return;
             }
