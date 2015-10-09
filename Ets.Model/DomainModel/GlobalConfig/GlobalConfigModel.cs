@@ -191,6 +191,11 @@ namespace Ets.Model.DomainModel.GlobalConfig
         /// 支付宝实际手续费
         /// </summary>
         public string AlipayWithdrawCommission { get; set; }
+        /// <summary>
+        /// 支付宝转账密码
+        /// </summary>
+        public string AlipayPassword { get; set; }
+        
 
         
     }

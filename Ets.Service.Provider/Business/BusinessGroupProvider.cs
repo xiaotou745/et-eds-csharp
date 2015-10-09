@@ -333,6 +333,16 @@ namespace Ets.Service.Provider.Business
                         return false;
                     }
                 }
+                if (!string.IsNullOrWhiteSpace(globalConfigModel.AlipayPassword))
+                {
+                    globalConfig.KeyName = "AlipayPassword";
+                    globalConfig.Value = ParseHelper.ToAesEncrypt(globalConfigModel.AlipayPassword);
+                    reg = businessGroupDao.UpdateGlobalConfig(globalConfig);
+                    if (!reg)
+                    {
+                        return false;
+                    }
+                }
                 tran.Complete();
                 DeleteGlobalConfigRedisByGroupId(globalConfigModel.GroupId);
                 return true;

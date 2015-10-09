@@ -1,4 +1,5 @@
 ﻿@using Ets.Model.DomainModel.GlobalConfig
+@using ETS.Util
 @{
     Layout = "~/Views/Shared/_LayoutNew.cshtml";
     GlobalConfigModel globalConfigModel = ViewBag.GloglConfig;
@@ -98,7 +99,7 @@
                 </td>
                 <td>
                     <span>支付宝实际手续费金额:</span>
-                    <input type="text" name="alipayWithdrawCommission" value="@globalConfigModel.AlipayWithdrawCommission" id="alipayWithdrawCommission" style="width: 100px" />秒
+                    <input type="text" name="alipayWithdrawCommission" value="@globalConfigModel.AlipayWithdrawCommission" id="alipayWithdrawCommission" style="width: 100px" />元
                     <input type="hidden" name="oldAlipayWithdrawCommission" value="@globalConfigModel.AlipayWithdrawCommission" id="oldAlipayWithdrawCommission" />
                 </td>
             </tr>
@@ -108,6 +109,13 @@
                     <input type="text" name="bearchClienterLocationTimeInterval" value="@globalConfigModel.SearchClienterLocationTimeInterval" id="searchClienterLocationTimeInterval" style="width: 100px" />分
                     <input type="hidden" name="oldSearchClienterLocationTimeInterval" value="@globalConfigModel.SearchClienterLocationTimeInterval" id="oldSearchClienterLocationTimeInterval" />
                 </td>
+                <td>
+                    <span>支付宝转账密码:</span>
+                    <input type="password" name="alipayPassword" value="@ParseHelper.ToAesDecrypt(globalConfigModel.AlipayPassword)" id="alipayPassword" style="width: 100px" />
+                    <input type="hidden" name="oldAlipayPassword" value="@ParseHelper.ToAesDecrypt(globalConfigModel.AlipayPassword)" id="oldAlipayPassword" />
+                </td>
+            </tr>
+            <tr align="right">
                 <td>
                     <input type="button" value="提交修改" class="searchBtn" id="btnCommit" />
                 </td>
@@ -134,6 +142,7 @@
             var searchClienterLocationTimeInterval = $("#searchClienterLocationTimeInterval").val(); //门店经纬度上传时间间隔
             var yeepayWithdrawCommission = $("#yeepayWithdrawCommission").val(); //易宝实际手续费
             var alipayWithdrawCommission = $("#alipayWithdrawCommission").val(); //支付宝实际手续费
+            var alipayPassword = $("#alipayPassword").val(); //支付宝转账密码
             //var yeeAccountActiveTime = $("#yeeAccountActiveTime").val(); //易宝活跃账户时间配置
             var oldHasUnFinishedOrderUploadTimeInterval = $("#oldHasUnFinishedOrderUploadTimeInterval").val(); //骑士有待完成任务经纬度上传时间间隔（之前）
             var oldAllFinishedOrderUploadTimeInterval = $("#oldAllFinishedOrderUploadTimeInterval").val(); //骑士没有待完成任务经纬度上传时间间隔（之前）
@@ -150,6 +159,7 @@
             var oldSearchClienterLocationTimeInterval = $("#oldSearchClienterLocationTimeInterval").val();//商家经纬度上传时间间隔（之前）
             var oldYeepayWithdrawCommission = $("#oldYeepayWithdrawCommission").val(); //易宝实际手续费（之前）
             var oldAlipayWithdrawCommission = $("#oldAlipayWithdrawCommission").val(); //支付宝实际手续费（之前）
+            var oldAlipayPassword = $("#oldAlipayPassword").val(); //支付宝转账密码（之前）
             //var oldYeeAccountActiveTime = $("#oldYeeAccountActiveTime").val(); //易宝活跃账户时间配置（之前）
 
             var pageOk = true;
@@ -282,7 +292,7 @@
                 alert('对不起，您输入的雇主任务时间格式不正确!');
                 return;
             }
-            var reg2 = /^\d+$/;
+            var reg2 = /^(([0-9]|([1-9][0-9]{0,9}))((\.[0-9]{1,2})?))$/;
             if (withdrawCommission == "" || !reg2.test(withdrawCommission)) {
                 alert('易宝支付手续费金额不合法!');
                 return;
@@ -292,10 +302,13 @@
                 return;
             }
             if (alipayWithdrawCommission == "" || !reg2.test(alipayWithdrawCommission)) {
-                alert('支付宝实际手续费金额不合法!');
+                alert('支付宝实际手续费金额不合法!' + alipayWithdrawCommission);
                 return;
             }
-
+            if (alipayPassword == "") {
+                alert("支付宝转账密码不能为空!");
+                return;
+            }
             if (withdrawCommission==oldWithdrawCommission&&
                 clienterWithdrawCommissionAccordingMoney == oldClienterWithdrawCommissionAccordingMoney &&
 	            hasUnFinishedOrderUploadTimeInterval == oldHasUnFinishedOrderUploadTimeInterval &&
@@ -310,7 +323,8 @@
                 businessUploadTimeInterval == oldBusinessUploadTimeInterval && 
                 searchClienterLocationTimeInterval == oldSearchClienterLocationTimeInterval &&
                 yeepayWithdrawCommission == oldYeepayWithdrawCommission &&
-                alipayWithdrawCommission == oldAlipayWithdrawCommission) {
+                alipayWithdrawCommission == oldAlipayWithdrawCommission &&
+                alipayPassword == oldAlipayPassword) {
                 alert("没有需要修改的信息!");
                 return;
             }
@@ -329,7 +343,10 @@
                     "orderCountSetting": orderCountSetting,
                     "grabToCompleteDistance": grabToCompleteDistance,
                     "businessUploadTimeInterval": businessUploadTimeInterval,
-                    "searchClienterLocationTimeInterval": searchClienterLocationTimeInterval
+                    "searchClienterLocationTimeInterval": searchClienterLocationTimeInterval,
+                    "yeepayWithdrawCommission": yeepayWithdrawCommission,
+                    "alipayWithdrawCommission": alipayWithdrawCommission,
+                    "alipayPassword": alipayPassword
                 };
                 var url = "/AdminTools/ModifyGlobalConfig";
                 $.ajax({

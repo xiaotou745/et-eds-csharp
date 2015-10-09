@@ -287,6 +287,46 @@ namespace ETS.Util
         }
 
         /// <summary>
+        /// AES加密
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public static string ToAesEncrypt(string text)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(text))
+                    return "";
+                return Security.AESApp.AesEncrypt(text);
+            }
+            catch (Exception ex)
+            {
+                return text;
+            }
+
+        }
+
+        /// <summary>
+        /// AES解密
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public static string ToAesDecrypt(string text)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(text))
+                    return "";
+                return Security.AESApp.AesDecrypt(text);
+            }
+            catch (Exception ex)
+            {
+                return text;
+            }
+
+        }
+
+        /// <summary>
         /// JsonStr转集合
         /// </summary>
         /// <typeparam name="T"></typeparam>
