@@ -943,6 +943,7 @@ namespace Ets.Service.Provider.Clienter
         public ClienterDM GetDetails(int id)
         {
             var model = clienterDao.GetDetails(id);
+            model.HeadImgUrl = ImageCommon.GetUserImage(model.HeadImgUrl, ImageType.Clienter);
             model.HasMessage = new ClienterMessageDao().HasMessage(id);
             return model;
 

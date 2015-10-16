@@ -22,7 +22,7 @@ namespace Ets.Provider.Tests
     [TestFixture]
     public class ClienterTests
     {
-        IPayProvider payProvider = new PayProvider();
+        //IPayProvider payProvider = new PayProvider();
         [Test]
         public void ClienterTest()
         {
@@ -62,9 +62,9 @@ namespace Ets.Provider.Tests
             //    PushType = 1
             //});
 
-
-            OrderProvider orderProvider=new OrderProvider();
-            orderProvider.AutoPushOrder();
+            var model=new ClienterProvider().GetDetails(3120);
+            //OrderProvider orderProvider=new OrderProvider();
+            //orderProvider.AutoPushOrder();
         }
 
     }

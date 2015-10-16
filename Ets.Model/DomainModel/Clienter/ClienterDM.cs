@@ -134,5 +134,10 @@ namespace Ets.Model.DomainModel.Clienter
         /// </summary>
         public int IsReceivePush { get; set; }
 
+        /// <summary>
+        /// 骑士头像地址
+        /// </summary>
+        public string HeadImgUrl { get; set; }
+
     }
 }

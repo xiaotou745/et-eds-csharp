@@ -22,19 +22,19 @@ namespace Ets.Provider.Tests
         [Test]
         public void AlipayTransfer()
         {
-            var model = new PayProvider().AlipayTransfer(new AlipayTransferParameter()
-            {
-                Partner = "2088911703660069",//2088911703660069
-                InputCharset = "GBK",
-                NotifyUrl = "http://pay153.yitaoyun.net:8011",
-                Email = "info@edaisong.com",
-                AccountName = "宋桥",
-                PayDate = "20150914",
-                BatchNo = "2010080100000211",
-                BatchFee = "20",
-                BatchNum = "1",
-                DetailData = "10000001^dou631@163.com^白玉^1^测试转账"
-            });
+            //var model = new PayProvider().AlipayTransfer(new AlipayTransferParameter()
+            //{
+            //    Partner = "2088911703660069",//2088911703660069
+            //    InputCharset = "GBK",
+            //    NotifyUrl = "http://pay153.yitaoyun.net:8011",
+            //    Email = "info@edaisong.com",
+            //    AccountName = "宋桥",
+            //    PayDate = "20150914",
+            //    BatchNo = "2010080100000211",
+            //    BatchFee = "20",
+            //    BatchNum = "1",
+            //    DetailData = "10000001^dou631@163.com^白玉^1^测试转账"
+            //});
         }
     }
 }

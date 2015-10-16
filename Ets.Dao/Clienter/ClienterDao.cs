@@ -1056,7 +1056,8 @@ case when (c.DeliveryCompanyId>0 and dc.IsShowAccount=1) or
       when(c.DeliveryCompanyId<1 and c.GradeType=2) then 2
       when(c.DeliveryCompanyId>0 and dc.IsShowAccount=0) then 0
       end IsShowAccount,
-IsReceivePush
+IsReceivePush,
+HeadPhoto AS HeadImgUrl
 from  dbo.clienter c (nolock) 
 left join dbo.DeliveryCompany dc(nolock) on c.DeliveryCompanyId=dc.Id
 where c.Id=@Id";
@@ -1227,7 +1228,11 @@ where  id = @id";
                 {
                     result.IsReceivePush = ParseHelper.ToInt(obj.ToString());
                 }
-
+                obj = dataReader["HeadImgUrl"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.HeadImgUrl = dataReader["HeadImgUrl"].ToString();
+                }
                 return result;
             }
         }

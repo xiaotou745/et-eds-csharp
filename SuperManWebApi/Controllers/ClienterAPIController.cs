@@ -541,7 +541,7 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.UpFailed, new UploadIconModel() { Id = clienterId, ImagePath = "" });
             }
-            return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.Success, new UploadIconModel() { Id = clienterId, ImagePath = ImageCommon.ReceiptPicConvert(headPhotoInfo.PicUrl) });
+            return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.Success, new UploadIconModel() { Id = clienterId, ImagePath = ImageCommon.GetUserImage(headPhotoInfo.PicUrl,ImageType.Clienter) });
         }
     }
 }
