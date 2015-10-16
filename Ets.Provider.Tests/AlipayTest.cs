@@ -28,9 +28,9 @@ namespace Ets.Provider.Tests
             //    InputCharset = "GBK",
             //    NotifyUrl = "http://pay153.yitaoyun.net:8011",
             //    Email = "info@edaisong.com",
-            //    AccountName = "宋桥",
-            //    PayDate = "20150914",
-            //    BatchNo = "2010080100000211",
+            //    AccountName = "易代送网络科技（北京）有限公司",
+            //    PayDate = DateTime.Now.ToString("YYYYmmdd"),
+            //    BatchNo = DateTime.Now.ToString("YYYYmmdd")+"001",//"2010080100000211",
             //    BatchFee = "20",
             //    BatchNum = "1",
             //    DetailData = "10000001^dou631@163.com^白玉^1^测试转账"

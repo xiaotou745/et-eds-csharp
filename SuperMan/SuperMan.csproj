@@ -204,6 +204,7 @@
     <Compile Include="Authority\IAuthenticationService.cs" />
     <Compile Include="Common\ExcelUtility.cs" />
     <Compile Include="Controllers\AdminToolsController.cs" />
+    <Compile Include="Controllers\AlipayController.cs" />
     <Compile Include="Controllers\api\MonitoringController.cs" />
     <Compile Include="Controllers\api\StatisticalController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
@@ -716,6 +717,7 @@
     <Folder Include="Content\app\" />
     <Folder Include="Content\Template\" />
     <Folder Include="uploads\" />
+    <Folder Include="Views\Alipay\" />
     <Folder Include="Views\BusinessDistributionStatistical\" />
     <Folder Include="Views\Test\" />
   </ItemGroup>

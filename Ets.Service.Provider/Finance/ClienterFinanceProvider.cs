@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using ETS;
 using ETS.Const;
 using Ets.Dao.Clienter;
 using Ets.Dao.Finance;
@@ -17,6 +16,7 @@ using Ets.Model.DataModel.Finance;
 using Ets.Model.DomainModel.Finance;
 using Ets.Model.DomainModel.GlobalConfig;
 using Ets.Model.ParameterModel.Finance;
+using ETS.Pay.AliPay;
 using ETS.Pay.YeePay;
 using ETS.Security;
 using Ets.Service.IProvider.Finance;
@@ -32,6 +32,8 @@ using Ets.Model.ParameterModel.Order;
 using Ets.Dao.Message;
 using Ets.Model.DataModel.Message;
 using ETS.Const;
+using Config = ETS.Config;
+
 namespace Ets.Service.Provider.Finance
 {
     public class ClienterFinanceProvider : IClienterFinanceProvider
@@ -600,7 +602,24 @@ namespace Ets.Service.Provider.Finance
                 return dealResultInfo;
             }
             #endregion
-
+            //支付宝打款
+            if (cliFinanceAccount.AccountType == 2) //该提现单是支付宝
+            {
+                ////调用支付宝打款
+                //var alipaymodel = new PayProvider().AlipayTransfer(new AlipayTransferParameter()
+                //{
+                //    Partner = "2088911703660069",//2088911703660069
+                //    InputCharset = "GBK",
+                //    NotifyUrl = "http://pay153.yitaoyun.net:8011",
+                //    Email = "info@edaisong.com",
+                //    AccountName = "宋桥",
+                //    PayDate = "20150914",
+                //    BatchNo = "2010080100000211",
+                //    BatchFee = "20",
+                //    BatchNum = "1",
+                //    DetailData = "10000001^dou631@163.com^白玉^1^测试转账"
+                //});
+            }
             #region 回写数据库返回结果对象
             if (!clienterFinanceDao.ClienterWithdrawPayOk(model))
             {

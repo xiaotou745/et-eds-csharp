@@ -665,6 +665,7 @@ namespace Ets.Service.Provider.Pay
             };
             //建立请求
             string sHtmlText = Submit.BuildRequest(sParaTemp, "get", "确认");
+            //string sHtmlText = Submit.BuildRequest(sParaTemp, "get", "确认");
             return sHtmlText;
         }
         #endregion
