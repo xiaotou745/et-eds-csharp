@@ -153,6 +153,9 @@
     <Content Include="Content\img\help\img_05.jpg" />
     <Content Include="Content\img\help\img_06.jpg" />
     <Content Include="Content\img\help\img_07.jpg" />
+    <Content Include="htmls\renrenditui.html" />
+    <Content Include="Images\renrendituiandroid.png" />
+    <Content Include="Images\renrendituiios.jpg" />
     <Content Include="Content\page.css" />
     <Content Include="Content\rcg.css" />
     <Content Include="Content\style\box.css" />
