@@ -131,6 +131,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Pay\AliPay\" />
     <Folder Include="Util\" />
   </ItemGroup>
   <ItemGroup>

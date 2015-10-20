@@ -97,7 +97,12 @@ namespace ETS
         /// 微信商家充值回调地址
         /// </summary>
         public static string WXBusinessRecharge { get { return string.Concat(ConfigKey("YeePayNotifyUrl").TrimEnd('/'), "/Pay/BusinessRechargeWxNotify"); } }
-        
+
+        /// <summary>
+        /// 支付宝批量付款回调地址
+        /// </summary>
+        public static string AliPayBatch { get { return string.Concat(ConfigKey("YeePayNotifyUrl").TrimEnd('/'), "/Pay/AlipayForBatchCallBack"); } }
+
         #region 取Web.Config值
 
         /// <summary>

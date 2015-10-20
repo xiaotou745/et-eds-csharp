@@ -2,12 +2,34 @@
 @using ETS.Enums
 @using ETS.Util;
 <script src="~/Scripts/view/orderList.js"></script>
+
+@{
+    if (ViewBag.AccountType == 2 && ViewBag.WithdrawStatus == 2)
+    {
+//审核通过且支付宝
+        <script>
+            alert(1);
+            $('#btnBatchAuditPass').attr('disabled',true);//批审不可用
+            $('#btnBatchAlipay').attr('disabled',false); //批付可用
+        </script>
+    }
+    else
+    {
+        <script>
+            alert(2);
+            $('#btnBatchAlipay').attr('disabled', true);//批付不可用
+            $('#btnBatchAuditPass').attr('disabled',false); //批审可用
+        </script>
+    }
+}
+            
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
     <thead>
         <tr class="tdbg">
             <th><input type="checkbox" id="checkAll" />全选/全消</th>
             <th>编号</th>
             <th>提款单号</th>
+            <th>提款方式</th>
             <th>骑士姓名</th>
             <th>电话</th>
             <th>账户余额（提款前）</th>
@@ -36,14 +58,19 @@
                             {
                                 <input type="checkbox" name="checkItem" orderno="@item.WithwardNo" value="@item.Id" />
                             }
+                            else if (item.Status == (int) ETS.Enums.ClienterWithdrawFormStatus.Allow && ViewBag.AccountType == 2)
+                            {
+                                <input type="checkbox" name="checkItem"  value="@item.Id" />
+                            }
                             else
                             {
-                                <input type="checkbox" name="checkItem" disabled="disabled" />
+                               <input type="checkbox" name="checkItem" disabled="disabled" />  
                             }
                         </td>
 
                         <td>@i</td>
                         <td><a href="/ClienterWithdraw/ClienterWithdrawDetail?withwardId=@item.Id" style=" text-decoration-line: underline">@item.WithwardNo</a></td>
+                        <td>@ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.WithdrawAccountType)item.AccountType).GetType(), (ETS.Enums.WithdrawAccountType)item.AccountType).Text</td>
                         <td>@item.ClienterName</td>
                         <td>@item.ClienterPhoneNo</td>
                         <td>￥@ParseHelper.ToSplitByPercentile(false, item.BalancePrice)</td>

@@ -22,16 +22,18 @@ namespace ETS.Pay.AliPay
     /// 2.点击“商家服务”(https://b.alipay.com/order/myOrder.htm)
     /// 3.点击“查询合作者身份(PID)”、“查询安全校验码(Key)”
     /// </summary>
-    public class Config
+    public class AliPayConfig
     {
         #region 字段
         private static string partner = "";
         private static string key = "";
         private static string input_charset = "";
         private static string sign_type = "";
+        private static string email = "";
+        private static string account_name = "";
         #endregion
 
-        static Config()
+        static AliPayConfig()
         {
             //↓↓↓↓↓↓↓↓↓↓请在这里配置您的基本信息↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
 
@@ -43,8 +45,8 @@ namespace ETS.Pay.AliPay
 
             //↑↑↑↑↑↑↑↑↑↑请在这里配置您的基本信息↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
-
-
+            email = "info@edaisong.com";
+            account_name = "易代送网络科技（北京）有限公司";
             //字符编码格式 目前支持 gbk 或 utf-8
             input_charset = "utf-8";
 
@@ -86,6 +88,23 @@ namespace ETS.Pay.AliPay
         {
             get { return sign_type; }
         }
+
+        /// <summary>
+        /// 获取账户Email
+        /// </summary>
+        public static string Email
+        {
+            get { return email; }
+        }
+
+        /// <summary>
+        /// 获取账户名称
+        /// </summary>
+        public static string AccountName
+        {
+            get { return account_name; }
+        }
+
         #endregion
     }
 }

@@ -42,10 +42,10 @@ namespace ETS.Pay.AliPay
         public Notify()
         {
             //初始化基础配置信息
-            _partner = Config.Partner.Trim();
-            _key = Config.Key.Trim();
-            _input_charset = Config.Input_charset.Trim().ToLower();
-            _sign_type = Config.Sign_type.Trim().ToUpper();
+            _partner = AliPayConfig.Partner.Trim();
+            _key = AliPayConfig.Key.Trim();
+            _input_charset = AliPayConfig.Input_charset.Trim().ToLower();
+            _sign_type = AliPayConfig.Sign_type.Trim().ToUpper();
         }
 
         /// <summary>

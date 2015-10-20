@@ -41,7 +41,8 @@ namespace Ets.Dao.Finance
                                     cwf.AuditFailedReason,
                                     cwf.PayFailedReason,
                                     cwf.HandCharge,
-                                    cwf.HandChargeOutlay ";
+                                    cwf.HandChargeOutlay,
+                                    cwf.AccountType   ";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (!string.IsNullOrWhiteSpace(criteria.ClienterName))
             {
@@ -62,6 +63,10 @@ namespace Ets.Dao.Finance
             if (!string.IsNullOrEmpty(criteria.businessCity))
             {
                 sbSqlWhere.AppendFormat(" AND C.City='{0}' ", criteria.businessCity.Trim());
+            }
+            if (criteria.AccountType!=0)
+            {
+                sbSqlWhere.AppendFormat(" AND cwf.AccountType={0} ", criteria.AccountType);
             }
             if (criteria.ClientWithdrawDate > 0)
             {

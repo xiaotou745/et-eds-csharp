@@ -154,6 +154,7 @@
     <Compile Include="DomainModel\DeliveryCompany\CompanyModel.cs" />
     <Compile Include="DomainModel\DeliveryCompany\CompanyModelList.cs" />
     <Compile Include="DomainModel\DeliveryCompany\DeliveryCompanyResultModel.cs" />
+    <Compile Include="DomainModel\Finance\AlipayBatchCallBackModel.cs" />
     <Compile Include="DomainModel\Finance\AlipayBatchModel.cs" />
     <Compile Include="DomainModel\Finance\AlipayClienterWithdrawModel.cs" />
     <Compile Include="DomainModel\Finance\BusinessBalanceRecordModel.cs" />

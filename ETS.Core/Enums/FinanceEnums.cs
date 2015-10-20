@@ -296,6 +296,24 @@ namespace ETS.Enums
         [DisplayText("备用金")]
         Imprest = 6,
     }
+    /// <summary>
+    ///提现单账号类型：(1网银 2支付宝 3微信 4财付通 5百度钱包）枚举  茹化肖
+    /// </summary>
+    public enum WithdrawAccountType
+    {
+        [DisplayText("网银")]
+        WangYin = 1,
+        [DisplayText("支付宝")]
+        ZhiFuBao = 2,
+        //[DisplayText("微信")]
+        //WeiXin = 3,
+        //[DisplayText("财付通")]
+        //CaiFuTong = 4,
+        //[DisplayText("百度钱包")]
+        //BaiDuQinBao = 5,
+        [DisplayText("备用金")]
+        Imprest = 6,
+    }
 
     /// <summary>
     ///骑士金融账号 账号类别  0 个人账户 1 公司账户  

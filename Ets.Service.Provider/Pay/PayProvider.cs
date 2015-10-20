@@ -667,7 +667,6 @@ namespace Ets.Service.Provider.Pay
             };
             //建立请求
             string sHtmlText = Submit.BuildRequest(sParaTemp, "get", "确认");
-            //string sHtmlText = Submit.BuildRequest(sParaTemp, "get", "确认");
             return sHtmlText;
         }
         /// <summary>
@@ -2127,11 +2126,11 @@ namespace Ets.Service.Provider.Pay
                 {
                     html = new PayProvider().AlipayTransfer(new AlipayTransferParameter()
                     {
-                        Partner = "2088911703660069",//2088911703660069//TODO 这里需要配置
+                        Partner = AliPayConfig.Partner,
                         InputCharset = "utf-8",
-                        NotifyUrl = "http://pay153.yitaoyun.net:8011/Pay/AlipayForBatchCallBack",//TODO 这里需要配置
-                        Email = "info@edaisong.com",//TODO 这里需要配置
-                        AccountName = "易代送网络科技（北京）有限公司",//TODO 这里需要配置
+                        NotifyUrl = Config.AliPayBatch,
+                        Email = AliPayConfig.Email,
+                        AccountName = AliPayConfig.AccountName,
                         PayDate = DateTime.Now.ToString("YYYYmmdd"),
                         BatchNo = alipayBatchNo,//批次号不可重复
                         BatchFee = alipayPayAmount.ToString(),

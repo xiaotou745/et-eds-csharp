@@ -43,6 +43,7 @@ namespace SuperMan.Controllers
             var criteria = new Ets.Model.ParameterModel.Finance.ClienterWithdrawSearchCriteria()
             {
                 WithdrawStatus = 0,
+                AccountType = 0,
                 AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType)
             };
             var pagedList = iClienterFinanceProvider.GetClienterWithdrawList(criteria);
@@ -59,6 +60,8 @@ namespace SuperMan.Controllers
         {
             var criteria = new Ets.Model.ParameterModel.Finance.ClienterWithdrawSearchCriteria();
             TryUpdateModel(criteria);
+            ViewBag.AccountType = criteria.AccountType;//支付宝2
+            ViewBag.WithdrawStatus = criteria.WithdrawStatus;//审核通过2 
             int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;
             criteria.AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType);
             var pagedList = iClienterFinanceProvider.GetClienterWithdrawList(criteria);
