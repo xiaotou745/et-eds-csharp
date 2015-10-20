@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿using System.Text;
+using System.Web;
 using Ets.Dao.Common;
 using Ets.Model.Common;
 using Ets.Model.Common.AliPay;
@@ -100,6 +101,47 @@ namespace SuperManWebApi.Controllers
         public dynamic Notify()
         {
             return payProvider.Notify();
+        }
+        /// <summary>
+        /// 支付宝批量付款接受回调
+        /// 茹化肖
+        /// 2015年10月19日16:55:31
+        /// </summary>
+        [HttpGet]
+        [HttpPost]
+        public void AlipayForBatch()
+        {
+            //
+            HttpRequest req = HttpContext.Current.Request;
+            StringBuilder sb = new StringBuilder();
+            var notify_time = req.Form["notify_time"];
+            sb.Append(notify_time + "\r\n");
+            var notify_type = req.Form["notify_type"];
+            sb.Append(notify_type + "\r\n");
+            var notify_id = req.Form["notify_id"];
+            sb.Append(notify_id + "\r\n\n");
+            var sign_type = req.Form["sign_type"];
+            sb.Append(sign_type + "\r\n\n");
+            var sign = req.Form["sign"];
+            sb.Append(sign + "\r\n\n");
+            var batch_no = req.Form["batch_no"];
+            sb.Append(batch_no + "\r\n\n");
+            var pay_user_id = req.Form["pay_user_id"];
+            sb.Append(pay_user_id + "\r\n\n");
+            var pay_user_name = req.Form["pay_user_name"];
+            sb.Append(pay_user_name + "\r\n\n");
+            var pay_account_no = req.Form["pay_account_no"];
+            sb.Append(pay_account_no + "\r\n\n");
+            var success_details = req.Form["success_details"];
+            sb.Append(success_details + "\r\n\n");
+            var fail_details = req.Form["fail_details"];
+            sb.Append(fail_details + "\r\n\n");
+            LogHelper.LogWriterString(sb.ToString());
+            HttpContext.Current.Response.Clear();
+            HttpContext.Current.Response.Write("success");
+            HttpContext.Current.Response.End();
+            
+         
         }
 
         /// <summary>

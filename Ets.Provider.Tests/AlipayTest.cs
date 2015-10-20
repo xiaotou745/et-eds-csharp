@@ -36,5 +36,14 @@ namespace Ets.Provider.Tests
             //    DetailData = "10000001^dou631@163.com^白玉^1^测试转账"
             //});
         }
+
+        /// <summary>
+        /// 生成批次号
+        /// </summary>
+        [Test]
+        public void AlipayCreateNo()
+        {
+            //var no = new PayProvider().CreateAlipayBatchNo();
+        }
     }
 }
