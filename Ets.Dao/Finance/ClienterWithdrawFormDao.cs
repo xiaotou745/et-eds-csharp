@@ -231,7 +231,8 @@ from  ClienterWithdrawForm (nolock) where Status=" + status;
             List<AlipayClienterWithdrawModel> list = null;
             StringBuilder querystr =new StringBuilder(@"
 --查询提现单信息
-SELECT  id WithwardNo ,--体现单号
+SELECT  Id,--提现单ID
+        WithwardNo,--提现单号
         Amount ,--提现金额
         TrueName ,--真实姓名
         AccountNo ,--支付宝账户
@@ -316,6 +317,28 @@ WHERE   1 = 1  ");
             dbParameters.Add("CreateBy", DbType.String).Value = model.CreateBy;
             dbParameters.Add("LastOptUser", DbType.String).Value = model.LastOptUser;
             dbParameters.Add("Remarks", DbType.String).Value = model.Remarks;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, updatestr, dbParameters);
+        }
+
+        /// <summary>
+        /// 插入支付宝批次号
+        /// 茹化肖
+        /// 2015年10月20日13:06:11
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public int UpdateAlipayBatch(AlipayBatchModel model)
+        {
+            string updatestr = @" UPDATE  dbo.AlipayBatch
+SET     SuccessTimes = @SuccessTimes ,
+        FailTimes = @FailTimes ,
+        Status = 1 ,
+        CallbackTime = GETDATE()
+WHERE   BatchNo = @BatchNo";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("BatchNo", DbType.String).Value = model.BatchNo;
+            dbParameters.Add("FailTimes", DbType.Int32).Value = model.FailTimes;
+            dbParameters.Add("SuccessTimes", DbType.Int32).Value = model.SuccessTimes;
             return DbHelper.ExecuteNonQuery(SuperMan_Write, updatestr, dbParameters);
         }
 

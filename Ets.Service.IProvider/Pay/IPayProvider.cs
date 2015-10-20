@@ -2,6 +2,7 @@
 using Ets.Model.Common.AliPay;
 using Ets.Model.Common.YeePay;
 using Ets.Model.DomainModel.Business;
+using Ets.Model.DomainModel.Finance;
 using Ets.Model.ParameterModel.AliPay;
 using Ets.Model.ParameterModel.Business;
 using System;
@@ -146,5 +147,13 @@ namespace Ets.Service.IProvider.Pay
         /// <param name="data">type=1:以英文逗号分隔的提现单ID序列 type=2:已存在的批次号</param>
         /// <returns></returns>
         string AlipayBatchTransfer(AlipayBatchPM par);
+        /// <summary>
+        /// 支付宝转账回调
+        /// 茹化肖
+        /// 2015年10月20日14:20:24
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        bool AlipayTransferCallback(AlipayBatchCallBackModel model);
     }
 }

@@ -4,6 +4,7 @@ using Ets.Dao.Common;
 using Ets.Model.Common;
 using Ets.Model.Common.AliPay;
 using Ets.Model.DomainModel.Business;
+using Ets.Model.DomainModel.Finance;
 using Ets.Model.ParameterModel.AliPay;
 using Ets.Model.ParameterModel.Business;
 using ETS.Pay.YeePay;
@@ -107,38 +108,54 @@ namespace SuperManWebApi.Controllers
         /// 茹化肖
         /// 2015年10月19日16:55:31
         /// </summary>
-        [HttpGet]
         [HttpPost]
-        public void AlipayForBatch()
+        [HttpGet]
+        public void AlipayForBatchCallBack()
         {
-            //
             HttpRequest req = HttpContext.Current.Request;
+            #region===回调取参
             StringBuilder sb = new StringBuilder();
-            var notify_time = req.Form["notify_time"];
+            AlipayBatchCallBackModel model=new AlipayBatchCallBackModel();
+            var notify_time = req.Form["notify_time"];//异步通知时间
             sb.Append(notify_time + "\r\n");
-            var notify_type = req.Form["notify_type"];
+            model.NotifyTime = notify_time;
+            var notify_type = req.Form["notify_type"];//异步通知类型
             sb.Append(notify_type + "\r\n");
-            var notify_id = req.Form["notify_id"];
+            model.NotifyType = notify_type;
+            var notify_id = req.Form["notify_id"];//异步通知ID
             sb.Append(notify_id + "\r\n\n");
-            var sign_type = req.Form["sign_type"];
+            model.NotifyId = notify_id;
+            var sign_type = req.Form["sign_type"];//签名类型
             sb.Append(sign_type + "\r\n\n");
-            var sign = req.Form["sign"];
+            model.SignType = sign_type;
+            var sign = req.Form["sign"];//签名内容
             sb.Append(sign + "\r\n\n");
-            var batch_no = req.Form["batch_no"];
+            model.Sign = sign;
+            var batch_no = req.Form["batch_no"];//批次号
             sb.Append(batch_no + "\r\n\n");
-            var pay_user_id = req.Form["pay_user_id"];
+            model.BatchNo = batch_no;
+            var pay_user_id = req.Form["pay_user_id"];//付款账号ID
             sb.Append(pay_user_id + "\r\n\n");
-            var pay_user_name = req.Form["pay_user_name"];
+            model.PayUserId = pay_user_id;
+            var pay_user_name = req.Form["pay_user_name"];//付款账户名称
             sb.Append(pay_user_name + "\r\n\n");
-            var pay_account_no = req.Form["pay_account_no"];
+            model.PayUserName = pay_user_name;
+            var pay_account_no = req.Form["pay_account_no"];//付款账户
             sb.Append(pay_account_no + "\r\n\n");
-            var success_details = req.Form["success_details"];
+            model.PayAccountNo = pay_account_no;
+            var success_details = req.Form["success_details"];//付款成功列表
             sb.Append(success_details + "\r\n\n");
-            var fail_details = req.Form["fail_details"];
+            model.SuccessDetails = success_details;
+            var fail_details = req.Form["fail_details"];//付款失败列表
             sb.Append(fail_details + "\r\n\n");
+            model.FailDetails = fail_details;
             LogHelper.LogWriterString(sb.ToString());
+            #endregion
             HttpContext.Current.Response.Clear();
-            HttpContext.Current.Response.Write("success");
+            if (payProvider.AlipayTransferCallback(model))
+            {
+                HttpContext.Current.Response.Write("success");
+            }
             HttpContext.Current.Response.End();
             
          
