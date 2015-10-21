@@ -4,7 +4,7 @@ using System.Linq;
 using NServiceKit.Redis;
 using NServiceKit.Redis.Support;
 using ETS.Util;
-
+using System.Text;
 namespace ETS.NoSql.RedisCache
 {
     /// <summary>
@@ -64,15 +64,32 @@ namespace ETS.NoSql.RedisCache
         /// <exception cref="System.NotImplementedException"></exception>
         public void Add(string key, object value)
         {
-            using (IRedisClient Redis = RedisManager.GetClient())
-            {
-                if (Redis.ContainsKey(key))
+            if (value.GetType().ToString() != ("system.string"))
+            {             
+                using (IRedisClient Redis = RedisManager.GetClient())
                 {
-                    Redis.Set<byte[]>(key, new ObjectSerializer().Serialize(value));
+                    if (Redis.ContainsKey(key))
+                    {
+                        Redis.Set<byte[]>(key, Encoding.UTF8.GetBytes(value.ToString()));
+                    }
+                    else
+                    {
+                        Redis.Add<byte[]>(key, Encoding.UTF8.GetBytes(value.ToString()));
+                    }
                 }
-                else
+            }
+            else
+            {
+                using (IRedisClient Redis = RedisManager.GetClient())
                 {
-                    Redis.Add<byte[]>(key, new ObjectSerializer().Serialize(value));
+                    if (Redis.ContainsKey(key))
+                    {
+                        Redis.Set<byte[]>(key, new ObjectSerializer().Serialize(value));
+                    }
+                    else
+                    {
+                        Redis.Add<byte[]>(key, new ObjectSerializer().Serialize(value));
+                    }
                 }
             }
         }
@@ -91,30 +108,64 @@ namespace ETS.NoSql.RedisCache
         /// <exception cref="System.NotImplementedException"></exception>
         public void Add(string key, object value, System.DateTime expiredTime)
         {
-            using (IRedisClient Redis = RedisManager.GetClient())
+            if (value.GetType().ToString() != ("system.string"))
             {
-                if (Redis.ContainsKey(key))
+                using (IRedisClient Redis = RedisManager.GetClient())
                 {
-                    Redis.Set<byte[]>(key, new ObjectSerializer().Serialize(value), expiredTime);
+                    if (Redis.ContainsKey(key))
+                    {
+                        Redis.Set<byte[]>(key, Encoding.UTF8.GetBytes(value.ToString()), expiredTime);
+                    }
+                    else
+                    {
+                        Redis.Add<byte[]>(key, Encoding.UTF8.GetBytes(value.ToString()), expiredTime);
+                    }
                 }
-                else
+            }
+            else
+            {
+                using (IRedisClient Redis = RedisManager.GetClient())
                 {
-                    Redis.Add<byte[]>(key, new ObjectSerializer().Serialize(value), expiredTime);
+                    if (Redis.ContainsKey(key))
+                    {
+                        Redis.Set<byte[]>(key, new ObjectSerializer().Serialize(value), expiredTime);
+                    }
+                    else
+                    {
+                        Redis.Add<byte[]>(key, new ObjectSerializer().Serialize(value), expiredTime);
+                    }
                 }
             }
         }
 
         public void Add(string key, object value, TimeSpan timeSpan)
         {
-            using (IRedisClient Redis = RedisManager.GetClient())
+            if (value.GetType().ToString() != ("system.string"))
             {
-                if (Redis.ContainsKey(key))
+                using (IRedisClient Redis = RedisManager.GetClient())
                 {
-                    Redis.Set<byte[]>(key, new ObjectSerializer().Serialize(value), timeSpan);
+                    if (Redis.ContainsKey(key))
+                    {
+                        Redis.Set<byte[]>(key, Encoding.UTF8.GetBytes(value.ToString()), timeSpan);
+                    }
+                    else
+                    {
+                        Redis.Add<byte[]>(key, Encoding.UTF8.GetBytes(value.ToString()), timeSpan);
+                    }
                 }
-                else
+            }
+            else
+            {
+                using (IRedisClient Redis = RedisManager.GetClient())
                 {
-                    Redis.Add<byte[]>(key, new ObjectSerializer().Serialize(value), timeSpan);
+                    if (Redis.ContainsKey(key))
+                    {
+                        Redis.Set<byte[]>(key, new ObjectSerializer().Serialize(value), timeSpan);
+                    }
+                    else
+                    {
+                        Redis.Add<byte[]>(key, new ObjectSerializer().Serialize(value), timeSpan);
+                    }
                 }
             }
         }
@@ -149,10 +200,21 @@ namespace ETS.NoSql.RedisCache
         /// <exception cref="System.NotImplementedException"></exception>
         public void Replace(string key, object value)
         {
-            using (IRedisClient Redis = RedisManager.GetClient())
+            if (value.GetType().ToString() != ("system.string"))
             {
-                Redis.Replace<byte[]>(key, new ObjectSerializer().Serialize(value));
+                using (IRedisClient Redis = RedisManager.GetClient())
+                {
+                    Redis.Replace<byte[]>(key, Encoding.UTF8.GetBytes(value.ToString()));
+                }
             }
+            else
+            {
+                using (IRedisClient Redis = RedisManager.GetClient())
+                {
+                    Redis.Replace<byte[]>(key, new ObjectSerializer().Serialize(value));
+                }
+            }
+
         }
 
         /// <summary>
@@ -169,9 +231,19 @@ namespace ETS.NoSql.RedisCache
         /// <exception cref="System.NotImplementedException"></exception>
         public void Replace(string key, object value, System.DateTime expiredTime)
         {
-            using (IRedisClient Redis = RedisManager.GetClient())
+            if (value.GetType().ToString() != ("system.string"))
             {
-                Redis.Replace<byte[]>(key, new ObjectSerializer().Serialize(value), expiredTime);
+                using (IRedisClient Redis = RedisManager.GetClient())
+                {
+                    Redis.Replace<byte[]>(key, Encoding.UTF8.GetBytes(value.ToString()), expiredTime);                    
+                }
+            }
+            else
+            {
+                using (IRedisClient Redis = RedisManager.GetClient())
+                {
+                    Redis.Replace<byte[]>(key, new ObjectSerializer().Serialize(value), expiredTime);
+                }
             }
         }
 
@@ -188,9 +260,19 @@ namespace ETS.NoSql.RedisCache
         /// <exception cref="System.NotImplementedException"></exception>
         public void Set(string key, object value)
         {
-            using (IRedisClient Redis = RedisManager.GetClient())
+            if (value.GetType().ToString() != ("system.string"))
             {
-                Redis.Set<byte[]>(key, new ObjectSerializer().Serialize(value));
+                using (IRedisClient Redis = RedisManager.GetClient())
+                {
+                    Redis.Set<byte[]>(key, Encoding.UTF8.GetBytes(value.ToString()));
+                }
+            }
+            else
+            {
+                using (IRedisClient Redis = RedisManager.GetClient())
+                {
+                    Redis.Set<byte[]>(key, new ObjectSerializer().Serialize(value));
+                }
             }
         }
 
@@ -208,17 +290,37 @@ namespace ETS.NoSql.RedisCache
         /// <exception cref="System.NotImplementedException"></exception>
         public void Set(string key, object value, System.DateTime expiredTime)
         {
-            using (IRedisClient Redis = RedisManager.GetClient())
+            if (value.GetType().ToString() != ("system.string"))
             {
-                Redis.Set<byte[]>(key, new ObjectSerializer().Serialize(value), expiredTime);
+                using (IRedisClient Redis = RedisManager.GetClient())
+                {
+                    Redis.Set<byte[]>(key, Encoding.UTF8.GetBytes(value.ToString()), expiredTime);
+                }
+            }
+            else
+            {
+                using (IRedisClient Redis = RedisManager.GetClient())
+                {
+                    Redis.Set<byte[]>(key, new ObjectSerializer().Serialize(value), expiredTime);
+                }
             }
         }
 
         public void Set(string key, object value, System.TimeSpan timeSpan)
         {
-            using (IRedisClient Redis = RedisManager.GetClient())
+            if (value.GetType().ToString() != ("system.string"))
             {
-                Redis.Set<byte[]>(key, new ObjectSerializer().Serialize(value), timeSpan);
+                using (IRedisClient Redis = RedisManager.GetClient())
+                {
+                    Redis.Set<byte[]>(key,Encoding.UTF8.GetBytes(value.ToString()), timeSpan);                
+                }
+            }
+            else
+            {
+                using (IRedisClient Redis = RedisManager.GetClient())
+                {
+                    Redis.Set<byte[]>(key, new ObjectSerializer().Serialize(value), timeSpan);
+                }
             }
         }
 
@@ -264,11 +366,22 @@ namespace ETS.NoSql.RedisCache
         public T Get<T>(string key)
         {
             try
-            {
-                using (IRedisClient Redis = RedisManager.GetClient())
+            {      
+                if (typeof(T).ToString().ToLower() == ("system.string"))
                 {
-                    var obj = new ObjectSerializer().Deserialize(Redis.Get<byte[]>(key));
-                    return (T)obj;
+                    using (IRedisClient Redis = RedisManager.GetClient())
+                    {
+                        var obj = (object)System.Text.Encoding.UTF8.GetString(Redis.Get<byte[]>(key)); 
+                        return (T)obj;
+                    }
+                }
+                else
+                {
+                    using (IRedisClient Redis = RedisManager.GetClient())
+                    {
+                        var obj = new ObjectSerializer().Deserialize(Redis.Get<byte[]>(key));
+                        return (T)obj;
+                    }
                 }
             }
             catch (Exception ex)
