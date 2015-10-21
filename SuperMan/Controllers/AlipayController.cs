@@ -13,26 +13,7 @@ namespace SuperMan.Controllers
         // GET: Alipay
         public ActionResult Index()
         {
-            /// <summary>
-            /// 支付宝打款测试页面
-            /// 茹化肖
-            /// 2015年10月16日11:46:06  TODO 开发完之后删除
-            /// </summary>
-            /// <returns></returns>
-            var model = new PayProvider().AlipayTransfer(new AlipayTransferParameter()
-           {
-               Partner = "2088911703660069",//2088911703660069
-               InputCharset = "utf-8",
-               NotifyUrl = "http://pay153.yitaoyun.net:8011/pay/AlipayForBatch",
-               Email = "info@edaisong.com",
-               AccountName = "易代送网络科技（北京）有限公司",
-               PayDate = DateTime.Now.ToString("YYYYmmdd"),
-               BatchNo = DateTime.Now.ToString("YYYYmmddHHmmss") + "005",//"2010080100000211",批次号不可重复
-               BatchFee = "2",
-               BatchNum = "2",
-               DetailData = "10000008^dou631@163.com^白玉^1^测试转账给窦海超|10000009^dou631@163.com^白玉2^1^测试转账给窦海超2"//流水号必须在提现表记录下
-           });
-            return Content(model);
+            return null;
         }
 
     }

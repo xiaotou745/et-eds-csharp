@@ -8,17 +8,16 @@
     {
 //审核通过且支付宝
         <script>
-            //alert(1);
-            $('#btnBatchAuditPass').attr('disabled',true);//批审不可用
-            $('#btnBatchAlipay').attr('disabled',false); //批付可用
+            $('#btnBatchAuditPass').hide();//批审不可用
+            $('#btnBatchAlipay').show(); //批付可用
         </script>
     }
     else
     {
         <script>
            // alert(2);
-            $('#btnBatchAlipay').attr('disabled', true);//批付不可用
-            $('#btnBatchAuditPass').attr('disabled',false); //批审可用
+            $('#btnBatchAuditPass').show();//批审不可用
+            $('#btnBatchAlipay').hide(); //批付可用
         </script>
     }
 }
@@ -94,7 +93,7 @@
                             {
                                 <a href="javascript:void(0)" style="color:gray">审核通过</a>
                                 <a href="javascript:void(0)" style="color:gray">拒绝</a>
-                                <a href="javascript:funPayOk(@item.Id,@item.Amount)">确认打款</a>
+                                <a href="javascript:funPayOk(@item.Id,@item.Amount,@item.AccountType)">确认打款</a>
                                 <a href="javascript:funWithdrawPayFailed(@item.Id)">打款失败</a>
                             }
                             else if (item.Status == ClienterWithdrawFormStatus.Except.GetHashCode())
@@ -110,7 +109,7 @@
                                 <a href="javascript:void(0)" style="color:gray">拒绝</a>
                                 <a href="javascript:void(0)" style="color:gray">确认打款</a>
                                 <a href="javascript:funWithdrawPayFailed(@item.Id)">打款失败</a>
-                                <a href="javascript:funPayOk(@item.Id,@item.Amount)">线下打款</a>
+                                <a href="javascript:funPayOk(@item.Id,@item.Amount,@item.AccountType)">线下打款</a>
                             }
                             else
                             {
@@ -232,8 +231,17 @@
             }
         });
     }
-    //确认打款
-    function funPayOk(withwardId, amount) {
+    //确认打款 以及支付宝的打款
+    function funPayOk(withwardId, amount, accounttype) {
+        if (accounttype == 2 || accounttype == '2') {
+            //走支付宝逻辑
+            var url = "/ClienterWithdraw/AlipayBatchTransfer?type=1&data=" + withwardId;
+            window.open(url);
+            alert('请新打开的页面完成支付宝付款!');
+            $('#btnSearch').click();
+            return;
+        }
+
         if (!window.confirm("确认打款" + amount + "元？")) {
             return;
         }

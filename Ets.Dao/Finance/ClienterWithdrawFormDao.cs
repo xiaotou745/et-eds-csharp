@@ -36,8 +36,9 @@ namespace Ets.Dao.Finance
             //TODO 修改ADD
             const string insertSql = @"
 insert into ClienterWithdrawForm(WithwardNo,ClienterId,BalancePrice,AllowWithdrawPrice,Status,Amount,Balance,
-TrueName,AccountNo,AccountType,BelongType,OpenBank,OpenSubBank,OpenProvince,OpenCity,OpenProvinceCode,OpenCityCode,IDCard,HandChargeThreshold,HandCharge,HandChargeOutlay,PhoneNo) values(@WithwardNo,@ClienterId,@BalancePrice,@AllowWithdrawPrice,@Status,@Amount,@Balance,
-@TrueName,@AccountNo,@AccountType,@BelongType,@OpenBank,@OpenSubBank,@OpenProvince,@OpenCity,@OpenProvinceCode,@OpenCityCode,@IDCard,@HandChargeThreshold,@HandCharge,@HandChargeOutlay,@PhoneNo) ;select @@IDENTITY ";
+TrueName,AccountNo,AccountType,BelongType,OpenBank,OpenSubBank,OpenProvince,OpenCity,OpenProvinceCode,OpenCityCode,IDCard,HandChargeThreshold,HandCharge,HandChargeOutlay,PhoneNo,HandChargeShot,PaidAmount) 
+values(@WithwardNo,@ClienterId,@BalancePrice,@AllowWithdrawPrice,@Status,@Amount,@Balance,
+@TrueName,@AccountNo,@AccountType,@BelongType,@OpenBank,@OpenSubBank,@OpenProvince,@OpenCity,@OpenProvinceCode,@OpenCityCode,@IDCard,@HandChargeThreshold,@HandCharge,@HandChargeOutlay,@PhoneNo,@HandChargeShot,@PaidAmount) ;select @@IDENTITY ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("WithwardNo", clienterWithdrawForm.WithwardNo); //提现单号
             dbParameters.AddWithValue("ClienterId", clienterWithdrawForm.ClienterId);  //骑士ID(clienter表)
@@ -58,9 +59,11 @@ TrueName,AccountNo,AccountType,BelongType,OpenBank,OpenSubBank,OpenProvince,Open
             dbParameters.AddWithValue("OpenCityCode", clienterWithdrawForm.OpenCityCode); //易宝城市代码
             dbParameters.AddWithValue("IDCard", clienterWithdrawForm.IDCard);//身份证号
             dbParameters.AddWithValue("HandChargeThreshold", clienterWithdrawForm.HandChargeThreshold);//手续费阈值  
-            dbParameters.AddWithValue("HandCharge", clienterWithdrawForm.HandCharge); //手续费
+            dbParameters.AddWithValue("HandCharge", clienterWithdrawForm.HandCharge); //真实手续费
             dbParameters.AddWithValue("HandChargeOutlay", (object)clienterWithdrawForm.HandChargeOutlay);//手续费支付方
             dbParameters.Add("PhoneNo", DbType.String).Value = clienterWithdrawForm.PhoneNo; //手机号
+            dbParameters.Add("HandChargeShot", DbType.Decimal).Value = clienterWithdrawForm.HandChargeShot; //系统手续费快照
+            dbParameters.Add("PaidAmount", DbType.Decimal).Value = clienterWithdrawForm.PaidAmount; //财务打款实付金额
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters); //提现单号
             return ParseHelper.ToLong(result);
         }
@@ -321,7 +324,7 @@ WHERE   1 = 1  ");
         }
 
         /// <summary>
-        /// 插入支付宝批次号
+        /// 回调更新支付宝批次号
         /// 茹化肖
         /// 2015年10月20日13:06:11
         /// </summary>
@@ -340,6 +343,42 @@ WHERE   BatchNo = @BatchNo";
             dbParameters.Add("FailTimes", DbType.Int32).Value = model.FailTimes;
             dbParameters.Add("SuccessTimes", DbType.Int32).Value = model.SuccessTimes;
             return DbHelper.ExecuteNonQuery(SuperMan_Write, updatestr, dbParameters);
+        }
+
+        /// <summary>
+        /// 以批次号重新提交
+        /// 茹化肖
+        /// 2015年10月20日13:06:11
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public int UpdateAlipayBatchForAgain(AlipayBatchModel model)
+        {
+            string updatestr = @" UPDATE  dbo.AlipayBatch
+SET     LastOptUser=@LastOptUser,
+        LastOptTime = GETDATE(),
+        Remarks=@Remarks
+WHERE   BatchNo = @BatchNo";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("BatchNo", DbType.String).Value = model.BatchNo;
+            dbParameters.Add("LastOptUser", DbType.String).Value = model.LastOptUser;
+            dbParameters.Add("Remarks", DbType.String).Value = model.Remarks;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, updatestr, dbParameters);
+        }
+
+        /// <summary>
+        /// 以批次号重新提交
+        /// 茹化肖
+        /// 2015年10月20日13:06:11
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public int CheckAlipayBatch(AlipayBatchModel model)
+        {
+            string updatestr = @" SELECT COUNT(1) FROM dbo.AlipayBatch AS ab (NOLOCK) WHERE ab.BatchNo=@BatchNo AND ab.Status=1";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("BatchNo", DbType.String).Value = model.BatchNo;
+            return (int)DbHelper.ExecuteScalar(SuperMan_Write, updatestr, dbParameters);
         }
 
     }

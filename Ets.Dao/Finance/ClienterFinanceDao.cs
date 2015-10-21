@@ -399,7 +399,7 @@ INTO ClienterWithdrawLog
         }
 
         /// <summary>
-        /// 骑士提现失败后返现
+        /// 骑士提现失败后返现==增加骑士余额流水记录
         /// danny-20150513
         /// </summary>
         /// <param name="model"></param>
@@ -470,7 +470,8 @@ select      cwf.[ClienterId]
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
         /// <summary>
-        /// 骑士可提现余额流水
+        /// 骑士提现失败 
+        /// 可提现余额流水
         /// danny-20150820
         /// </summary>
         /// <param name="model"></param>

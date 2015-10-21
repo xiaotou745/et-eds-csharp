@@ -174,6 +174,8 @@ namespace Ets.Service.Provider.Business
         /// <returns></returns>
         public bool ModifyGlobalConfig(GlobalConfigModel globalConfigModel)
         {
+            var redis = new ETS.NoSql.RedisCache.RedisCachePublic();            
+
             var globalConfig = new Ets.Model.Common.GlobalConfig()
             {
                 OptName = globalConfigModel.OptName,
@@ -192,6 +194,9 @@ namespace Ets.Service.Provider.Business
                     {
                         return false;
                     }
+                    string cacheKey = string.Format(RedissCacheKey.GlobalConfig_PushRadius, globalConfigModel.GroupId);
+                    redis.Set(cacheKey, globalConfigModel.PushRadius);
+
                 }
                 if (globalConfigModel.AllFinishedOrderUploadTimeInterval != "0")
                 {
@@ -202,6 +207,8 @@ namespace Ets.Service.Provider.Business
                     {
                         return false;
                     }
+                    string cacheKey = string.Format(RedissCacheKey.GlobalConfig_AllFinishedOrderUploadTimeInterval, globalConfigModel.GroupId);
+                    redis.Set(cacheKey, globalConfigModel.AllFinishedOrderUploadTimeInterval);
                 }
                 if (globalConfigModel.SearchClienterLocationTimeInterval != "0")
                 {
@@ -212,6 +219,8 @@ namespace Ets.Service.Provider.Business
                     {
                         return false;
                     }
+                    string cacheKey = string.Format(RedissCacheKey.GlobalConfig_SearchClienterLocationTimeInterval, globalConfigModel.GroupId);
+                    redis.Set(cacheKey, globalConfigModel.SearchClienterLocationTimeInterval);
                 }
                 if (globalConfigModel.HasUnFinishedOrderUploadTimeInterval != "0")
                 {
@@ -222,6 +231,8 @@ namespace Ets.Service.Provider.Business
                     {
                         return false;
                     }
+                    string cacheKey = string.Format(RedissCacheKey.GlobalConfig_HasUnFinishedOrderUploadTimeInterval, globalConfigModel.GroupId);
+                    redis.Set(cacheKey, globalConfigModel.HasUnFinishedOrderUploadTimeInterval);
                 }
                 if (globalConfigModel.BusinessUploadTimeInterval != "0")
                 {
@@ -232,6 +243,8 @@ namespace Ets.Service.Provider.Business
                     {
                         return false;
                     }
+                    string cacheKey = string.Format(RedissCacheKey.GlobalConfig_BusinessUploadTimeInterval, globalConfigModel.GroupId);
+                    redis.Set(cacheKey, globalConfigModel.BusinessUploadTimeInterval);
                 }
                 if (globalConfigModel.ClienterWithdrawCommissionAccordingMoney != "0")
                 {
@@ -242,6 +255,8 @@ namespace Ets.Service.Provider.Business
                     {
                         return false;
                     }
+                    string cacheKey = string.Format(RedissCacheKey.GlobalConfig_ClienterWithdrawCommissionAccordingMoney, globalConfigModel.GroupId);
+                    redis.Set(cacheKey, globalConfigModel.ClienterWithdrawCommissionAccordingMoney);
                 }
                 if (globalConfigModel.ExclusiveOrderTime != "0")
                 {
@@ -252,6 +267,8 @@ namespace Ets.Service.Provider.Business
                     {
                         return false;
                     }
+                    string cacheKey = string.Format(RedissCacheKey.GlobalConfig_ExclusiveOrderTime, globalConfigModel.GroupId);
+                    redis.Set(cacheKey, globalConfigModel.ExclusiveOrderTime);
                 }
                 if (globalConfigModel.ClienterOrderPageSize != "0")
                 {
@@ -262,6 +279,8 @@ namespace Ets.Service.Provider.Business
                     {
                         return false;
                     }
+                    string cacheKey = string.Format(RedissCacheKey.GlobalConfig_ClienterOrderPageSize, globalConfigModel.GroupId);
+                    redis.Set(cacheKey, globalConfigModel.ClienterOrderPageSize);
                 }
                 if (ParseHelper.ToInt(globalConfigModel.CompleteTimeSet) >= 0)
                 {
@@ -272,6 +291,8 @@ namespace Ets.Service.Provider.Business
                     {
                         return false;
                     }
+                    string cacheKey = string.Format(RedissCacheKey.GlobalConfig_CompleteTimeSet, globalConfigModel.GroupId);
+                    redis.Set(cacheKey, globalConfigModel.CompleteTimeSet);
                 }
                 if (!string.IsNullOrEmpty(globalConfigModel.EmployerTaskTimeSet))
                 {
@@ -282,6 +303,8 @@ namespace Ets.Service.Provider.Business
                     {
                         return false;
                     }
+                    string cacheKey = string.Format(RedissCacheKey.GlobalConfig_EmployerTaskTimeSet, globalConfigModel.GroupId);
+                    redis.Set(cacheKey, globalConfigModel.EmployerTaskTimeSet);
                 }
                 if (!string.IsNullOrWhiteSpace(globalConfigModel.WithdrawCommission))
                 {
@@ -292,6 +315,8 @@ namespace Ets.Service.Provider.Business
                     {
                         return false;
                     }
+                    string cacheKey = string.Format(RedissCacheKey.GlobalConfig_WithdrawCommission, globalConfigModel.GroupId);
+                    redis.Set(cacheKey, globalConfigModel.WithdrawCommission);
                 }
                 if (ParseHelper.ToInt(globalConfigModel.OrderCountSetting) >= 0)
                 {
@@ -302,6 +327,8 @@ namespace Ets.Service.Provider.Business
                     {
                         return false;
                     }
+                    string cacheKey = string.Format(RedissCacheKey.GlobalConfig_OrderCountSetting, globalConfigModel.GroupId);
+                    redis.Set(cacheKey, globalConfigModel.OrderCountSetting);
                 }
                 if (ParseHelper.ToInt(globalConfigModel.GrabToCompleteDistance) >= 0)
                 {
@@ -312,6 +339,8 @@ namespace Ets.Service.Provider.Business
                     {
                         return false;
                     }
+                    string cacheKey = string.Format(RedissCacheKey.GlobalConfig_GrabToCompleteDistance, globalConfigModel.GroupId);
+                    redis.Set(cacheKey, globalConfigModel.GrabToCompleteDistance);
                 }
                 if (ParseHelper.ToInt(globalConfigModel.YeepayWithdrawCommission) >= 0)
                 {
@@ -322,6 +351,8 @@ namespace Ets.Service.Provider.Business
                     {
                         return false;
                     }
+                    string cacheKey = string.Format(RedissCacheKey.GlobalConfig_YeepayWithdrawCommission, globalConfigModel.GroupId);
+                    redis.Set(cacheKey, globalConfigModel.YeepayWithdrawCommission);
                 }
                 if (ParseHelper.ToInt(globalConfigModel.AlipayWithdrawCommission) >= 0)
                 {
@@ -332,6 +363,8 @@ namespace Ets.Service.Provider.Business
                     {
                         return false;
                     }
+                    string cacheKey = string.Format(RedissCacheKey.GlobalConfig_AlipayWithdrawCommission, globalConfigModel.GroupId);
+                    redis.Set(cacheKey, globalConfigModel.AlipayWithdrawCommission);
                 }
                 if (!string.IsNullOrWhiteSpace(globalConfigModel.AlipayPassword))
                 {
@@ -342,9 +375,11 @@ namespace Ets.Service.Provider.Business
                     {
                         return false;
                     }
+                    string cacheKey = string.Format(RedissCacheKey.GlobalConfig_AlipayPassword, globalConfigModel.GroupId);
+                    redis.Set(cacheKey, globalConfigModel.AlipayPassword);
                 }
                 tran.Complete();
-                DeleteGlobalConfigRedisByGroupId(globalConfigModel.GroupId);
+                //DeleteGlobalConfigRedisByGroupId(globalConfigModel.GroupId);
                 return true;
             }
         }
