@@ -2112,8 +2112,8 @@ namespace Ets.Service.Provider.Pay
                     BatchNo = alipayBatchNo,
                     TotalWithdraw = alipayPayAmount,
                     OptTimes = alipayBatchCount,
-                    WithdrawIds = wids.ToString().Substring(0,wids.Length),
-                    WithdrawNos = wnos.ToString().Substring(0,wnos.Length),
+                    WithdrawIds = wids.ToString().Substring(0,wids.Length-1),
+                    WithdrawNos = wnos.ToString().Substring(0,wnos.Length-1),
                     Remarks = "创建支付宝批次",
                     CreateBy = pmmodel.OptName,
                     LastOptUser = pmmodel.OptName
