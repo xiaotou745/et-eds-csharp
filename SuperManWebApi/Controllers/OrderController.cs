@@ -38,14 +38,14 @@ namespace SuperManWebApi.Controllers
         /// <UpdateTime>20150511</UpdateTime>
         /// <param name="model">订单参数实体</param>
         /// <returns></returns> 
-        //[Token]
+        [Token]
         [HttpPost]
         public ResultModel<BusiOrderResultModel> Push(BussinessOrderInfoPM model)
         {
             try
             {
                 //通过传过来的字符串序列化对象                
-                //model.listOrderChlid = ParseHelper.Deserialize<List<OrderChlidPM>>(model.OrderChlidJson);
+                model.listOrderChlid = ParseHelper.Deserialize<List<OrderChlidPM>>(model.OrderChlidJson);
 
                 order order;
                 ResultModel<BusiOrderResultModel> currResModel = Verification(model, out order);
