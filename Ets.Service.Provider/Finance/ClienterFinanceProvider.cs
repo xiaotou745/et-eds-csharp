@@ -93,12 +93,11 @@ namespace Ets.Service.Provider.Finance
                 var withwardNo = Helper.generateOrderCode(model.ClienterId);
                 var globalConfig = GlobalConfigDao.GlobalConfigGet(0);
                 //金融机构实扣手续费
-                //var handCharge = clienterFinanceAccount.AccountType == ClienterFinanceAccountType.WangYin.GetHashCode()
-                //    ? Convert.ToDecimal(globalConfig.YeepayWithdrawCommission)
-                //    : (clienterFinanceAccount.AccountType == ClienterFinanceAccountType.ZhiFuBao.GetHashCode()
-                //        ? Convert.ToDecimal(globalConfig.AlipayWithdrawCommission)
-                //        : 0);
-                var handCharge = Convert.ToDecimal(globalConfig.WithdrawCommission);
+                var handCharge = clienterFinanceAccount.AccountType == ClienterFinanceAccountType.WangYin.GetHashCode()
+                    ? Convert.ToDecimal(globalConfig.YeepayWithdrawCommission)
+                    : (clienterFinanceAccount.AccountType == ClienterFinanceAccountType.ZhiFuBao.GetHashCode()
+                        ? Convert.ToDecimal(globalConfig.AlipayWithdrawCommission)
+                        : 0);
                 //实付金额配算除了易宝 给配加一个真实手续费,其他都是0  暂时
                 var peiMoney = clienterFinanceAccount.AccountType == ClienterFinanceAccountType.WangYin.GetHashCode()
                     ? Convert.ToDecimal(globalConfig.YeepayWithdrawCommission)
