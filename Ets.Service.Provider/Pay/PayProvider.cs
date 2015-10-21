@@ -2042,7 +2042,7 @@ namespace Ets.Service.Provider.Pay
         public string AlipayBatchTransfer(AlipayBatchPM pmmodel)
         {
             #region===0.参数校验准备变量
-            if (pmmodel.Type != 1 || pmmodel.Type != 2)
+            if (pmmodel.Type != 1 && pmmodel.Type != 2)
             {
                 return "<html><body>Type参数有误</body></html>";
             }
@@ -2056,7 +2056,6 @@ namespace Ets.Service.Provider.Pay
             string alipayBatchNo = "";//批次号
             string html = "";//返回的html
             int updateCount = 0;//事务修改数据量
-            int insertCount = 0;//插入日志量
             StringBuilder wids = new StringBuilder("");//
             StringBuilder wnos = new StringBuilder("");
             #endregion
@@ -2095,11 +2094,11 @@ namespace Ets.Service.Provider.Pay
                     toatlChargeAmount += item.HandCharge;//手续费
                     //提现单号,支付宝账号,支付宝账户名,金额,备注
                     //注意此处用提现单ID作为流水号穿给支付宝,方便支付宝回调后对数据处理
-                    DetailData.AppendFormat("{0}^{1}^{2}^{3}^骑士申请提现打款|", item.Id, DES.Decrypt(item.AccountNo), item.TrueName, item.PaidAmount);
+                    DetailData.AppendFormat("{0}^{1}^{2}^{3}^骑士申请提现打款|", item.Id, DES.Decrypt(item.AccountNo), item.TrueName, item.PaidAmount.ToString("#0.00"));
                     //修改状态为打款中,添加批次号
                     updateCount+=clienterWithDao.AddAlipayBatchNo(item.Id, alipayBatchNo);
                     //插入提现单表修改日志
-                    insertCount+=(int)clienterWithdrawLogDao.Insert(new ClienterWithdrawLog()
+                    clienterWithdrawLogDao.Insert(new ClienterWithdrawLog()
                     {
                         Status = ClienterWithdrawFormStatus.Paying.GetHashCode(),
                         WithwardId = item.Id,
@@ -2122,7 +2121,7 @@ namespace Ets.Service.Provider.Pay
                 #endregion
 
                 #region===3.构建表单
-                if (updateCount == alipayBatchCount && alipayBatchCount == insertCount)//更新数据量,插入数据量和数据总数一致
+                if (updateCount == alipayBatchCount)//更新数据量,插入数据量和数据总数一致
                 {
                     html = new PayProvider().AlipayTransfer(new AlipayTransferParameter()
                     {
@@ -2145,6 +2144,7 @@ namespace Ets.Service.Provider.Pay
                 }
                 #endregion
             }
+            LogHelper.LogWriterString(html);
             return html;
         }
         /// <summary>

@@ -239,7 +239,7 @@ SELECT  Id,--提现单ID
         PaidAmount ,--实付金额
         HandCharge,--手续费
         AlipayBatchNo
-FROM    dbo.ClienterWithdrawForm AS cwf
+FROM    dbo.ClienterWithdrawForm AS cwf(NOLOCK)
 WHERE   1 = 1  ");
             string where = "";
             if (pm.Type == 1) //拼接id
