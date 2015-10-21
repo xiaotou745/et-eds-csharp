@@ -44,5 +44,9 @@ namespace Ets.Model.ParameterModel.Finance
         /// 提现、审核、提款日期类型
         /// </summary>
         public int ClientWithdrawDate { get; set; }
+        /// <summary>
+        /// 提现单账户类型
+        /// </summary>
+        public int AccountType { get; set; }
     }
 }

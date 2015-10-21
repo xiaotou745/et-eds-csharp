@@ -26,28 +26,29 @@ namespace SuperManWebApi.App_Start.Filters
         /// <param name="actionContext"></param>
         public override void OnActionExecuting(HttpActionContext actionContext)
         {
-            var token = HttpContext.Current.Request.Headers["token"];
-            var ssid = HttpContext.Current.Request.Headers["ssid"];
-            var appkey = HttpContext.Current.Request.Headers["appkey"];
-            if (string.IsNullOrWhiteSpace(token) || string.IsNullOrWhiteSpace(ssid) || string.IsNullOrWhiteSpace(appkey))
-            {
-                actionContext.Response = actionContext.ActionDescriptor.ResultConverter.Convert
-                    (actionContext.ControllerContext, null);
-            }
-            else
-            {
-                var redis = new ETS.NoSql.RedisCache.RedisCache();
-                var model = redis.Get<string>(ssid + "_" + appkey);
-                var oldemodel=redis.Get<string>(ssid + "_" + appkey+"_old");
+            //TODO暂时注释TOKEN验证 茹化肖
+            //var token = HttpContext.Current.Request.Headers["token"];
+            //var ssid = HttpContext.Current.Request.Headers["ssid"];
+            //var appkey = HttpContext.Current.Request.Headers["appkey"];
+            //if (string.IsNullOrWhiteSpace(token) || string.IsNullOrWhiteSpace(ssid) || string.IsNullOrWhiteSpace(appkey))
+            //{
+            //    actionContext.Response = actionContext.ActionDescriptor.ResultConverter.Convert
+            //        (actionContext.ControllerContext, null);
+            //}
+            //else
+            //{
+            //    var redis = new ETS.NoSql.RedisCache.RedisCache();
+            //    var model = redis.Get<string>(ssid + "_" + appkey);
+            //    var oldemodel=redis.Get<string>(ssid + "_" + appkey+"_old");
 
-                if ((string.IsNullOrWhiteSpace(model) && string.IsNullOrWhiteSpace(oldemodel))
-                    ||(token != model && oldemodel != token))
-                {
-                    actionContext.Response = actionContext.ActionDescriptor.ResultConverter.Convert
-                        (actionContext.ControllerContext, null);
-                }
+            //    if ((string.IsNullOrWhiteSpace(model) && string.IsNullOrWhiteSpace(oldemodel))
+            //        ||(token != model && oldemodel != token))
+            //    {
+            //        actionContext.Response = actionContext.ActionDescriptor.ResultConverter.Convert
+            //            (actionContext.ControllerContext, null);
+            //    }
              
-            }
+            //}
 
         }
     }

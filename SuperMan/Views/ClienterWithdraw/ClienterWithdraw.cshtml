@@ -26,6 +26,8 @@
                         <input id="clienterPhoneNo" type="tel" name="clienterPhoneNo" />
                         <span class="">审核状态: </span>
                         @Html.DropDownList("withdrawStatus", new SelectList(EnumExtenstion.GetEnumItems(typeof(ClienterWithdrawFormStatus)), "Value", "Text"), "全部", new { @class = "selectw", style = "width:157px" })
+                        <span class="">提现方式: </span>
+                        @Html.DropDownList("accountType", new SelectList(EnumExtenstion.GetEnumItems(typeof(WithdrawAccountType)), "Value", "Text"), "全部", new { @class = "selectw", style = "width:157px" })
                     </td>
                 </tr>
                 <tr>
@@ -44,9 +46,15 @@
                         <span class="">筛选城市: </span>
                         @*@Html.DropDownList("businessCity", new SelectList(ViewBag.openCityList.Result.AreaModels, "Name", "Name"), "--无--", new { style = "width:155px" })*@
                         <input id="businessCity" name="businessCity" type="text">
-                        <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
-                        <input type="button" value="导出" onclick="return funExport()" class="searchBtn" id="btnExport" />
-                        <input type="button" value="批量审核通过" onclick="return funBatchAuditPass()" class="searchBtn" id="btnBatchAuditPass" />
+
+                            <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
+                            <input type="button" value="导出" onclick="return funExport()" class="searchBtn" id="btnExport" />
+                            <input type="button" value="批量审核通过" onclick="return funBatchAuditPass()" class="searchBtn" id="btnBatchAuditPass" />
+                            <input type="button" value="批量支付宝付款" onclick="return BatchAlipay()" class="searchBtn" id="btnBatchAlipay" />
+
+                        
+                        
+                       
                     </td>
                 </tr>
             </table>
@@ -114,6 +122,25 @@
                 //alert(a.responseText);
             }
         });
+    }
+    //批量支付宝付款
+    function BatchAlipay() {
+        var ids = "";
+        $('input[type="checkbox"][name="checkItem"]:checked').each(function (index, obj) {
+            if (!obj.disabled) {
+                ids += (obj.value + ",");
+            }
+        });
+        if (ids == "") {
+            alert("请选择要批量付款的提现单");
+            return;
+        }
+        ids = ids.substring(0, ids.length - 1);
+        var url = "/ClienterWithdraw/AlipayBatchTransfer?type=1&data=" + ids;
+        //alert(url);
+        window.open(url);
+        alert('请新打开的页面完成支付宝付款!');
+        $('#btnSearch').click();
     }
 
     $("#businessCity").autocomplete(

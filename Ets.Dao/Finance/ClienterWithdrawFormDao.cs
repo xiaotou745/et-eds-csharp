@@ -9,6 +9,7 @@ using ETS.Data.Core;
 using ETS.Enums;
 using ETS.Extension;
 using Ets.Model.DataModel.Finance;
+using Ets.Model.DomainModel.Finance;
 using Ets.Model.ParameterModel.Finance;
 using ETS.Util;
 
@@ -216,5 +217,151 @@ from  ClienterWithdrawForm (nolock) where Status=" + status;
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql));
             return dt;
         }
+
+        /// <summary>
+        /// 支付宝批量付款到账(写串)
+        /// 茹化肖
+        /// 2015年10月20日09:19:06
+        /// </summary>
+        /// <param name="type">1根据提现单ID进行打款.2 将已有批次号再次提交</param>
+        /// <param name="data">type=1:以英文逗号分隔的提现单ID序列 type=2:已存在的批次号</param>
+        /// <returns></returns>
+        public List<AlipayClienterWithdrawModel> GetWithdrawListForAlipay(AlipayBatchPM pm)
+        {
+            List<AlipayClienterWithdrawModel> list = null;
+            StringBuilder querystr =new StringBuilder(@"
+--查询提现单信息
+SELECT  Id,--提现单ID
+        WithwardNo,--提现单号
+        Amount ,--提现金额
+        TrueName ,--真实姓名
+        AccountNo ,--支付宝账户
+        PaidAmount ,--实付金额
+        HandCharge,--手续费
+        AlipayBatchNo
+FROM    dbo.ClienterWithdrawForm AS cwf(NOLOCK)
+WHERE   1 = 1  ");
+            string where = "";
+            if (pm.Type == 1) //拼接id
+            {
+                 where = string.Format(@"AND cwf.Status = 2 --审核通过
+                                               AND AccountType = 2 --支付宝账户
+                                               AND ISNULL(cwf.AlipayBatchNo, '') = ''
+                                               AND cwf.id IN ({0})", pm.Data);
+            }
+            else //拼接批次号
+            {
+                where = string.Format(@"AND cwf.Status = 20 --打款中
+                                        AND AccountType = 2 --支付宝账户
+                                        AND ISNULL(cwf.AlipayBatchNo, '') = '{0}'", pm.Data);
+            }
+            querystr.Append(where);
+            DataTable dt= DbHelper.ExecuteDataTable(SuperMan_Write,querystr.ToString());
+            if (!dt.HasData())
+            {
+                return null;
+            }
+            return MapRows<AlipayClienterWithdrawModel>(dt).ToList();
+        }
+
+        /// <summary>
+        /// 添加批次号且修改状态为打款中
+        /// 茹化肖
+        /// 2015年10月20日11:40:03
+        /// </summary>
+        /// <returns>影响行数</returns>
+        public int AddAlipayBatchNo(long id,string batchNo)
+        {
+            string updatestr = @"UPDATE ClienterWithdrawForm SET AlipayBatchNo=@AlipayBatchNo,Status=@Status WHERE id=@ID";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("AlipayBatchNo", DbType.String).Value = batchNo;
+            dbParameters.Add("Status", DbType.Int32).Value = ClienterWithdrawFormStatus.Paying.GetHashCode();
+            dbParameters.Add("ID", DbType.Int32).Value = id;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, updatestr, dbParameters);
+        }
+        /// <summary>
+        /// 插入支付宝批次号
+        /// 茹化肖
+        /// 2015年10月20日13:06:11
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public int InsertAlipayBatch(AlipayBatchModel model)
+        {
+            string updatestr = @"  INSERT INTO dbo.AlipayBatch
+              ( BatchNo ,
+                TotalWithdraw ,
+                OptTimes ,
+                WithdrawNos ,
+                WithdrawIds ,
+                CreateBy ,
+                LastOptUser ,
+                Remarks
+              )
+      VALUES  ( 
+				@BatchNo ,
+                @TotalWithdraw ,
+                @OptTimes ,
+                @WithdrawNos ,
+                @WithdrawIds ,
+                @CreateBy ,
+                @LastOptUser ,
+                @Remarks
+              )";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("BatchNo", DbType.String).Value = model.BatchNo;
+            dbParameters.Add("TotalWithdraw", DbType.Decimal).Value = model.TotalWithdraw;
+            dbParameters.Add("OptTimes", DbType.Int32).Value = model.OptTimes;
+            dbParameters.Add("WithdrawNos", DbType.String).Value = model.WithdrawNos;
+            dbParameters.Add("WithdrawIds", DbType.String).Value = model.WithdrawIds;
+            dbParameters.Add("CreateBy", DbType.String).Value = model.CreateBy;
+            dbParameters.Add("LastOptUser", DbType.String).Value = model.LastOptUser;
+            dbParameters.Add("Remarks", DbType.String).Value = model.Remarks;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, updatestr, dbParameters);
+        }
+
+        /// <summary>
+        /// 回调更新支付宝批次号
+        /// 茹化肖
+        /// 2015年10月20日13:06:11
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public int UpdateAlipayBatch(AlipayBatchModel model)
+        {
+            string updatestr = @" UPDATE  dbo.AlipayBatch
+SET     SuccessTimes = @SuccessTimes ,
+        FailTimes = @FailTimes ,
+        Status = 1 ,
+        CallbackTime = GETDATE()
+WHERE   BatchNo = @BatchNo";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("BatchNo", DbType.String).Value = model.BatchNo;
+            dbParameters.Add("FailTimes", DbType.Int32).Value = model.FailTimes;
+            dbParameters.Add("SuccessTimes", DbType.Int32).Value = model.SuccessTimes;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, updatestr, dbParameters);
+        }
+
+        /// <summary>
+        /// 以批次号重新提交
+        /// 茹化肖
+        /// 2015年10月20日13:06:11
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public int UpdateAlipayBatchForAgain(AlipayBatchModel model)
+        {
+            string updatestr = @" UPDATE  dbo.AlipayBatch
+SET     LastOptUser=@LastOptUser,
+        LastOptTime = GETDATE(),
+        Remarks=@Remarks
+WHERE   BatchNo = @BatchNo";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("BatchNo", DbType.String).Value = model.BatchNo;
+            dbParameters.Add("LastOptUser", DbType.String).Value = model.LastOptUser;
+            dbParameters.Add("Remarks", DbType.String).Value = model.Remarks;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, updatestr, dbParameters);
+        }
+
     }
 }

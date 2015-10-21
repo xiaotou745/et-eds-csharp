@@ -154,6 +154,9 @@
     <Compile Include="DomainModel\DeliveryCompany\CompanyModel.cs" />
     <Compile Include="DomainModel\DeliveryCompany\CompanyModelList.cs" />
     <Compile Include="DomainModel\DeliveryCompany\DeliveryCompanyResultModel.cs" />
+    <Compile Include="DomainModel\Finance\AlipayBatchCallBackModel.cs" />
+    <Compile Include="DomainModel\Finance\AlipayBatchModel.cs" />
+    <Compile Include="DomainModel\Finance\AlipayClienterWithdrawModel.cs" />
     <Compile Include="DomainModel\Finance\BusinessBalanceRecordModel.cs" />
     <Compile Include="DomainModel\Finance\BusinessFinanceAccountModel.cs" />
     <Compile Include="DomainModel\Finance\BusinessWithdrawFormModel.cs" />
@@ -316,6 +319,7 @@
     <Compile Include="ParameterModel\Complain\ComplainParameter.cs" />
     <Compile Include="ParameterModel\DeliveryCompany\DoBatchImportClienterPM.cs" />
     <Compile Include="ParameterModel\DeliveryCompany\DeliveryCompanyCriteria.cs" />
+    <Compile Include="ParameterModel\Finance\AlipayBatchPM.cs" />
     <Compile Include="ParameterModel\Finance\BankCriteria.cs" />
     <Compile Include="ParameterModel\Finance\BankProvinceCityPM.cs" />
     <Compile Include="ParameterModel\Finance\BusinessBalanceRecordSerchCriteria.cs" />

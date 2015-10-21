@@ -47,8 +47,8 @@ namespace ETS.Pay.AliPay
 
             //把请求参数打包成数组
             SortedDictionary<string, string> sParaTemp = new SortedDictionary<string, string>();
-            sParaTemp.Add("partner", Config.Partner);
-            sParaTemp.Add("_input_charset", Config.Input_charset.ToLower());
+            sParaTemp.Add("partner", AliPayConfig.Partner);
+            sParaTemp.Add("_input_charset", AliPayConfig.Input_charset.ToLower());
             sParaTemp.Add("service", "alipay.acquire.precreate");
             sParaTemp.Add("notify_url", notify_url);
             sParaTemp.Add("out_trade_no", out_trade_no);

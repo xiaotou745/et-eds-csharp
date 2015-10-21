@@ -1,4 +1,5 @@
-﻿using ETS.Const;
+﻿using System.Data;
+using ETS.Const;
 using Ets.Dao.Common;
 using Ets.Dao.Common.YeePay;
 using Ets.Model.Common.YeePay;
@@ -61,6 +62,7 @@ namespace Ets.Service.Provider.Pay
         private readonly OrderDao orderDao = new OrderDao();
         private readonly HttpDao httpDao = new HttpDao();
         ClienterMessageDao clienterMessageDao = new ClienterMessageDao();
+        private readonly ClienterWithdrawLogDao clienterWithdrawLogDao= new ClienterWithdrawLogDao();
         #region 生成支付宝、微信二维码订单
 
         /// <summary>
@@ -646,7 +648,7 @@ namespace Ets.Service.Provider.Pay
         /// 支付宝转账
         /// danny-20150914
         /// </summary>
-        public string AlipayTransfer(AlipayTransferParameter model)
+        private string AlipayTransfer(AlipayTransferParameter model)
         {
 
             var sParaTemp = new SortedDictionary<string, string>
@@ -667,6 +669,7 @@ namespace Ets.Service.Provider.Pay
             string sHtmlText = Submit.BuildRequest(sParaTemp, "get", "确认");
             return sHtmlText;
         }
+
         #endregion
 
         #region 微信相关
@@ -2009,8 +2012,287 @@ namespace Ets.Service.Provider.Pay
         {
             return yeePayRecordDao.GetRequestId(withdrawId);
         }
+        /// <summary>
+        /// 支付宝批量付款到账
+        /// 茹化肖
+        /// 2015年10月20日09:19:06
+        /// </summary>
+        /// <param name="type">1根据提现单ID进行打款.2 将已有批次号再次提交</param>
+        /// <param name="data">type=1:以英文逗号分隔的提现单ID序列 type=2:已存在的批次号</param>
+        /// <returns></returns>
+        public string AlipayBatchTransfer(AlipayBatchPM pmmodel)
+        {
+            #region===0.参数校验准备变量
+            if (pmmodel.Type != 1 && pmmodel.Type != 2)
+            {
+                return "<html><body>Type参数有误</body></html>";
+            }
+            if (string.IsNullOrWhiteSpace(pmmodel.Data))
+            {
+                return "<html><body>Data参数有误</body></html>";
+            }
+            int alipayBatchCount = 0;//总笔数
+            decimal alipayPayAmount = 0;//该批次总付款金额
+            decimal toatlChargeAmount = 0;//该批次总手续费
+            string alipayBatchNo = "";//批次号
+            string html = "";//返回的html
+            int updateCount = 0;//事务修改数据量
+            StringBuilder wids = new StringBuilder("");//
+            StringBuilder wnos = new StringBuilder("");
+            #endregion
 
+            #region===1.准备批次号
+            if (pmmodel.Type == 1)//根据提现单ID进行打款
+            {
+                alipayBatchNo = CreateAlipayBatchNo();
+                if (string.IsNullOrWhiteSpace(alipayBatchNo))//生成失败
+                {
+                    return "<html><body>支付宝批量付款批次号生成失败,请重试</body></html>";
+                }
+
+            }
+            else if (pmmodel.Type == 2)//已存在的批次号
+            {
+                alipayBatchNo = pmmodel.Data.Trim();
+            }
+            #endregion
+           
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                #region===2.获取提现单数据
+                StringBuilder DetailData = new StringBuilder();
+                //获取提现单列表信息
+                List<AlipayClienterWithdrawModel> withdrawList = clienterWithDao.GetWithdrawListForAlipay(pmmodel);
+                if(withdrawList==null)
+                    return "<html><body>无提现单数据,请重试</body></html>";
+
+                alipayBatchCount = withdrawList.Count;//总笔数
+                foreach (var item in withdrawList)//foreach start
+                {
+                    wids.Append(item.Id + ",");
+                    wnos.Append(item.WithwardNo + ",");
+                    alipayPayAmount += item.PaidAmount;//实际付款金额
+                    toatlChargeAmount += item.HandCharge;//手续费
+                    //提现单号,支付宝账号,支付宝账户名,金额,备注
+                    //注意此处用提现单ID作为流水号穿给支付宝,方便支付宝回调后对数据处理
+                    DetailData.AppendFormat("{0}^{1}^{2}^{3}^骑士申请提现打款|", item.Id, DES.Decrypt(item.AccountNo), item.TrueName, item.PaidAmount.ToString("#0.00"));
+                    
+                    if (pmmodel.Type == 1)//第一次提交
+                    {   //修改状态为打款中,添加批次号
+                        updateCount += clienterWithDao.AddAlipayBatchNo(item.Id, alipayBatchNo);
+                        //插入提现单表修改日志
+                        clienterWithdrawLogDao.Insert(new ClienterWithdrawLog()
+                        {
+                            Status = ClienterWithdrawFormStatus.Paying.GetHashCode(),
+                            WithwardId = item.Id,
+                            Remark = "支付宝批量打款",
+                            Operator = pmmodel.OptName
+                        });
+                    }
+                    
+                }//foreach end
+                if (pmmodel.Type == 1)//插入批次号表
+                {
+                    clienterWithDao.InsertAlipayBatch(new AlipayBatchModel()
+                    {
+                        BatchNo = alipayBatchNo,
+                        TotalWithdraw = alipayPayAmount,
+                        OptTimes = alipayBatchCount,
+                        WithdrawIds = wids.ToString().Substring(0, wids.Length - 1),
+                        WithdrawNos = wnos.ToString().Substring(0, wnos.Length - 1),
+                        Remarks = "创建支付宝批次",
+                        CreateBy = pmmodel.OptName,
+                        LastOptUser = pmmodel.OptName
+                    });
+                }
+                else if(pmmodel.Type==2)//更新批次号信息
+                {
+                    clienterWithDao.UpdateAlipayBatchForAgain(new AlipayBatchModel()
+                    {
+                        LastOptUser = pmmodel.OptName,
+                        Remarks = "重新提交一次批次号进行支付",
+                        BatchNo = alipayBatchNo
+                    });
+                }
+               
+                #endregion
+
+                #region===3.构建表单
+                if ((updateCount == alipayBatchCount&&pmmodel.Type==1)||(pmmodel.Type==2&&updateCount==0))//更新数据量,插入数据量和数据总数一致
+                {
+                    html = new PayProvider().AlipayTransfer(new AlipayTransferParameter()
+                    {
+                        Partner = AliPayConfig.Partner,
+                        InputCharset = "utf-8",
+                        NotifyUrl = Config.AliPayBatch,
+                        Email = AliPayConfig.Email,
+                        AccountName = AliPayConfig.AccountName,
+                        PayDate = DateTime.Now.ToString("YYYYmmdd"),
+                        BatchNo = alipayBatchNo,//批次号不可重复
+                        BatchFee = alipayPayAmount.ToString(),
+                        BatchNum = alipayBatchCount.ToString(),
+                        DetailData = DetailData.ToString().Substring(0, DetailData.Length - 1)//去掉最后一个|符号
+                    });
+                    tran.Complete();
+                }
+                else
+                {
+                    return "<html><body>提交提现单事务异常,请重试</body></html>";
+                }
+                #endregion
+            }
+            LogHelper.LogWriterString(html);
+            return html;
+        }
+        /// <summary>
+        /// 生成支付宝批量付款批次号
+        /// 茹化肖
+        /// 2015年10月20日13:29:52
+        /// </summary>
+        /// <param name="count">次数</param>
+        /// <returns>批次号</returns>
+        private string CreateAlipayBatchNo(int count=0)
+        {
+            try
+            {
+                count = count + 1;
+                if (count > 3)//避免无限递归
+                {
+                    return "";
+                }
+                Random r = new Random();
+                int ran = r.Next(10000, 99999);//10000-99999随机取一位
+                string batchno = DateTime.Now.ToString("yyyyMMddhhmmssfff") + ran.ToString();
+                string key = string.Format(RedissCacheKey.Ets_AlipayBatchNo, batchno);
+                var redis = new ETS.NoSql.RedisCache.RedisCache();
+                //bool keyisexists= redis.Exists(key);
+                string redisBatchNo = redis.Get<String>(key);
+                if (string.IsNullOrEmpty(redisBatchNo))//批次号可用
+                {
+                    redis.Set(key, batchno, new TimeSpan(25, 0, 0));//将该批次号写入缓存25小时
+                }
+                else
+                {
+                    batchno = CreateAlipayBatchNo(count);//重新生成批次号
+                }
+                return batchno;
+            }
+            catch (Exception e)//避免异常引起的错误
+            {
+                LogHelper.LogWriter(e);
+                return  "";
+            }
+          
+        }
+
+        /// <summary>
+        /// 支付宝批量转账回调接口处理
+        /// 茹化肖
+        /// </summary>
+        /// <param name="alipaymodel"></param>
+        public bool AlipayTransferCallback(AlipayBatchCallBackModel alipaymodel)
+        {
+            try
+            {
+                #region===1.序列化数据
+                List<AlipayCallBackData> successlist = ConvertAlipayDetails(alipaymodel.SuccessDetails);
+                List<AlipayCallBackData> faillist = ConvertAlipayDetails(alipaymodel.FailDetails);
+                #endregion
+                using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+                { 
+                    //更新批次表信息
+                   clienterWithDao.UpdateAlipayBatch(new AlipayBatchModel()
+                    {
+                        SuccessTimes = successlist.Count,
+                        FailTimes = faillist.Count,
+                        BatchNo = alipaymodel.BatchNo
+                    });
+
+                    #region===2.处理成功的提现单
+                    foreach (var succ in successlist)
+                    {
+                        iClienterFinanceProvider.ClienterWithdrawPayOk(new ClienterWithdrawLog()
+                        {
+                            Operator = "system",
+                            Remark = "支付宝提现打款成功，支付宝账号" + succ.AccountNo,
+                            Status = ClienterWithdrawFormStatus.Success.GetHashCode(),
+                            OldStatus = ClienterWithdrawFormStatus.Paying.GetHashCode(),
+                            WithwardId = succ.WithdrawId,//提现单ID
+                            IsCallBack = 1,
+                            CallBackRequestId = succ.AlipayInnerNo//支付宝内部流水号
+                        });
+                        //发送消息
+                        ClienterFinanceAccountModel clienterFinanceAccountModel = clienterFinanceDao.GetClienterFinanceAccount(succ.WithdrawId.ToString());
+                        AddCPlayMoneySuccessMessage(clienterFinanceAccountModel);
+                    }
+                    #endregion
+
+                    #region===3.处理失败的提现单
+                    foreach (var fail in faillist)
+                    {
+                        iClienterFinanceProvider.ClienterWithdrawPayFailedForCallBack(new ClienterWithdrawLogModel()
+                        {
+                            Operator = "system",
+                            Remark = "支付宝提现打款失败，支付宝失败代码:" + fail.Reason,
+                            Status = ClienterWithdrawFormStatus.Error.GetHashCode(),
+                            OldStatus = ClienterWithdrawFormStatus.Paying.GetHashCode(),
+                            WithwardId = fail.WithdrawId,
+                            PayFailedReason = "支付宝失败代码:" + fail.Reason,
+                            IsCallBack = 1,
+                            CallBackRequestId = fail.AlipayInnerNo
+                        });
+                        //发送消息
+                        ClienterFinanceAccountModel clienterFinanceAccountModel = clienterFinanceDao.GetClienterFinanceAccount(fail.WithdrawId.ToString());
+                        clienterFinanceAccountModel.PayFailedReason = fail.Reason;
+                        AddCPlayMoneyFailureMessage(clienterFinanceAccountModel);
+                    }
+                    #endregion
+                    tran.Complete();
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                EmailHelper.SendEmailTo("支付宝批量转账回调处理失败,数据为：" + JsonHelper.JsonConvertToString(alipaymodel) + ",异常信息为：" + ex.Message,
+                ConfigSettings.Instance.EmailToAdress);
+                return false;
+            }
+        }
         #endregion
+        /// <summary>
+        /// 将支付宝回调数据转为list对象集合
+        /// 茹化肖
+        /// 2015年10月20日14:38:55
+        /// </summary>
+        /// <param name="str">details</param>
+        /// <returns>LIST</returns>
+        private List<AlipayCallBackData> ConvertAlipayDetails(String str)
+        {
+            List<AlipayCallBackData> list = new List<AlipayCallBackData>();
+            if (string.IsNullOrWhiteSpace(str))
+            {
+                return list;
+            }
+            //10000009^dou631@163.com^白玉2^1.00^F^ACCOUN_NAME_NOT_MATCH^20151020528661961^20151020090839|
+            //10000008^dou631@163.com^白玉^1.00^S^aaaaaaaaaaaaaaaaaaaaaa^20151020528661960^20151020090839|
+            string[] dataArr = str.Split('|');//单个数据
+            for (int i = 0; i < dataArr.Length; i++)
+            {
+                var propArr = dataArr[i].Split('^');
+                var model=new AlipayCallBackData
+                {
+                    WithdrawId = Convert.ToInt32(propArr[0]),
+                    AccountNo = propArr[1],
+                    TrueName = propArr[2],
+                    PaidAmount = Convert.ToDecimal(propArr[3]),
+                    Status = propArr[4],
+                    Reason = propArr[5],
+                    AlipayInnerNo = propArr[6]
+                };
+                list.Add(model);
+            }
+            return list;
+        }
 
         #region
         /// <summary>

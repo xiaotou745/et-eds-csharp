@@ -201,6 +201,11 @@ namespace ETS.Const
         //java中在redis中缓存用户权限的key
         //java中redis接口会自动给所有key添加前缀：java_20150508_
         public const string Menu_Auth = "java_20150508_Menu_Auth_";
+        /// <summary>
+        /// 支付宝批次号缓存
+        /// 茹化肖
+        /// </summary>
+        public const string Ets_AlipayBatchNo = "Ets_AlipayBatchNo_{0}";
 
     }
 }

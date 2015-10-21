@@ -1,5 +1,7 @@
 ﻿using Ets.Model.DataModel.Finance;
 using Ets.Model.DomainModel.Finance;
+using Ets.Model.ParameterModel.Finance;
+using ETS.Pay.AliPay;
 using Ets.Service.IProvider.Common;
 using Ets.Service.IProvider.Finance;
 using Ets.Service.Provider.Common;
@@ -41,6 +43,7 @@ namespace SuperMan.Controllers
             var criteria = new Ets.Model.ParameterModel.Finance.ClienterWithdrawSearchCriteria()
             {
                 WithdrawStatus = 0,
+                AccountType = 0,
                 AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType)
             };
             var pagedList = iClienterFinanceProvider.GetClienterWithdrawList(criteria);
@@ -57,6 +60,8 @@ namespace SuperMan.Controllers
         {
             var criteria = new Ets.Model.ParameterModel.Finance.ClienterWithdrawSearchCriteria();
             TryUpdateModel(criteria);
+            ViewBag.AccountType = criteria.AccountType;//支付宝2
+            ViewBag.WithdrawStatus = criteria.WithdrawStatus;//审核通过2 
             int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;
             criteria.AuthorityCityNameListStr = iAreaProvider.GetAuthorityCityNameListStr(UserType);
             var pagedList = iClienterFinanceProvider.GetClienterWithdrawList(criteria);
@@ -307,5 +312,23 @@ namespace SuperMan.Controllers
             }
             return cwExcels;
         }
+        /// <summary>
+        /// 支付宝批量付款到账
+        /// 茹化肖
+        /// 2015年10月20日09:19:06
+        /// </summary>
+        /// <param name="type">1根据提现单ID进行打款.2 将已有批次号再次提交</param>
+        /// <param name="data">type=1:以英文逗号分隔的提现单ID序列 type=2:已存在的批次号</param>
+        /// <returns></returns>
+        public ActionResult AlipayBatchTransfer(int type ,string data)
+        {
+            AlipayBatchPM par=new AlipayBatchPM();
+            par.Data = data;
+            par.Type = type;
+            par.OptName = UserContext.Current.Name;
+            String html = iPayProvider.AlipayBatchTransfer(par);
+            return Content(html);
+        }
+
     }
 }
