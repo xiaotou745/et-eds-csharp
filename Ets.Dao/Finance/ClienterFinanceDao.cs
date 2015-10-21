@@ -938,6 +938,7 @@ where Ledgerno=@YeepayKey;";
         /// <summary>
         /// 获取状态为打款中的骑士提款申请单（待自动服务处理）
         /// danny-20150804
+        /// 茹化肖修改只查账户类型为网银的 2015年10月21日11:24:25
         /// </summary>
         /// <returns></returns>
         public IList<ClienterFinanceAccountModel> GetClienterFinanceAccountList()
@@ -971,7 +972,7 @@ SELECT cwf.[ClienterId]
       ,cwf.PayFailedReason
       ,cwf.PaidAmount
   FROM ClienterWithdrawForm cwf with(nolock)
-  JOIN dbo.ClienterFinanceAccount cfa WITH(NOLOCK) ON cfa.ClienterId=cwf.ClienterId and cwf.Status=@cwfStatus and cwf.DealStatus=@DealStatus and cwf.AccountType=cfa.AccountType
+  JOIN dbo.ClienterFinanceAccount cfa WITH(NOLOCK) ON cfa.ClienterId=cwf.ClienterId and cwf.Status=@cwfStatus and cwf.DealStatus=@DealStatus and cwf.AccountType=cfa.AccountType AND cwf.AccountType=1
   LEFT JOIN ( SELECT tblypu.UserId,tblypu.Ledgerno,tblypu.BankName,tblypu.BankAccountNumber,tblypu.BalanceRecord,tblypu.YeeBalance
 			  FROM(
 			      SELECT UserId,BankName,BankAccountNumber,MAX(Addtime) Addtime
