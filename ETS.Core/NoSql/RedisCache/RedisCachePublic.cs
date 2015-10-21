@@ -65,7 +65,7 @@ namespace ETS.NoSql.RedisCache
         public void Add(string key, object value)
         {
             key = key + "_" + Config.GlobalVersion;
-            if (value.GetType().ToString() == ("system.string"))
+            if (value.GetType().ToString().ToLower() == ("system.string"))
             {             
                 using (IRedisClient Redis = RedisManager.GetClient())
                 {
@@ -110,7 +110,7 @@ namespace ETS.NoSql.RedisCache
         public void Add(string key, object value, System.DateTime expiredTime)
         {
             key = key + "_" + Config.GlobalVersion;
-            if (value.GetType().ToString() == ("system.string"))
+            if (value.GetType().ToString().ToLower() == ("system.string"))
             {
                 using (IRedisClient Redis = RedisManager.GetClient())
                 {
@@ -143,7 +143,7 @@ namespace ETS.NoSql.RedisCache
         public void Add(string key, object value, TimeSpan timeSpan)
         {
             key = key + "_" + Config.GlobalVersion;
-            if (value.GetType().ToString() == ("system.string"))
+            if (value.GetType().ToString().ToLower() == ("system.string"))
             {
                 using (IRedisClient Redis = RedisManager.GetClient())
                 {
@@ -204,7 +204,7 @@ namespace ETS.NoSql.RedisCache
         public void Replace(string key, object value)
         {
             key = key + "_" + Config.GlobalVersion;
-            if (value.GetType().ToString() == ("system.string"))
+            if (value.GetType().ToString().ToLower() == ("system.string"))
             {
                 using (IRedisClient Redis = RedisManager.GetClient())
                 {
@@ -236,7 +236,7 @@ namespace ETS.NoSql.RedisCache
         public void Replace(string key, object value, System.DateTime expiredTime)
         {
             key = key + "_" + Config.GlobalVersion;
-            if (value.GetType().ToString() == ("system.string"))
+            if (value.GetType().ToString().ToLower() == ("system.string"))
             {
                 using (IRedisClient Redis = RedisManager.GetClient())
                 {
@@ -266,7 +266,7 @@ namespace ETS.NoSql.RedisCache
         public void Set(string key, object value)
         {
             key = key + "_" + Config.GlobalVersion;
-            if (value.GetType().ToString() == ("system.string"))
+            if (value.GetType().ToString().ToLower() == ("system.string"))
             {
                 using (IRedisClient Redis = RedisManager.GetClient())
                 {
@@ -297,7 +297,7 @@ namespace ETS.NoSql.RedisCache
         public void Set(string key, object value, System.DateTime expiredTime)
         {
             key = key+"_"+Config.GlobalVersion;
-            if (value.GetType().ToString() == ("system.string"))
+            if (value.GetType().ToString().ToLower() == ("system.string"))
             {
                 using (IRedisClient Redis = RedisManager.GetClient())
                 {
@@ -316,7 +316,7 @@ namespace ETS.NoSql.RedisCache
         public void Set(string key, object value, System.TimeSpan timeSpan)
         {
             key = key + "_" + Config.GlobalVersion;
-            if (value.GetType().ToString() == ("system.string"))
+            if (value.GetType().ToString().ToLower() == ("system.string"))
             {
                 using (IRedisClient Redis = RedisManager.GetClient())
                 {
