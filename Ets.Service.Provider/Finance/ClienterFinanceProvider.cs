@@ -93,11 +93,12 @@ namespace Ets.Service.Provider.Finance
                 var withwardNo = Helper.generateOrderCode(model.ClienterId);
                 var globalConfig = GlobalConfigDao.GlobalConfigGet(0);
                 //金融机构实扣手续费
-                var handCharge = clienterFinanceAccount.AccountType == ClienterFinanceAccountType.WangYin.GetHashCode()
-                    ? Convert.ToDecimal(globalConfig.YeepayWithdrawCommission)
-                    : (clienterFinanceAccount.AccountType == ClienterFinanceAccountType.ZhiFuBao.GetHashCode()
-                        ? Convert.ToDecimal(globalConfig.AlipayWithdrawCommission)
-                        : 0);
+                //var handCharge = clienterFinanceAccount.AccountType == ClienterFinanceAccountType.WangYin.GetHashCode()
+                //    ? Convert.ToDecimal(globalConfig.YeepayWithdrawCommission)
+                //    : (clienterFinanceAccount.AccountType == ClienterFinanceAccountType.ZhiFuBao.GetHashCode()
+                //        ? Convert.ToDecimal(globalConfig.AlipayWithdrawCommission)
+                //        : 0);
+                var handCharge = Convert.ToDecimal(globalConfig.WithdrawCommission);
                 //实付金额配算除了易宝 给配加一个真实手续费,其他都是0  暂时
                 var peiMoney = clienterFinanceAccount.AccountType == ClienterFinanceAccountType.WangYin.GetHashCode()
                     ? Convert.ToDecimal(globalConfig.YeepayWithdrawCommission)
@@ -129,8 +130,9 @@ namespace Ets.Service.Provider.Finance
                     //HandChargeOutlay = model.WithdrawPrice > Convert.ToInt32(globalConfig.ClienterWithdrawCommissionAccordingMoney) ? HandChargeOutlay.EDaiSong : HandChargeOutlay.Private,//手续费支出方
                     HandChargeOutlay = HandChargeOutlay.Private, //手续费支出方（新版需求改为手续费统一由骑士支付）
                     PhoneNo = clienter.PhoneNo, //手机号 //PhoneNo = clienterFinanceAccount.CreateBy, //手机号
-                    HandChargeThreshold = 0 //手续费阈值（新版需求改为不设阀值）
-                    //HandChargeThreshold = Convert.ToInt32(globalConfig.ClienterWithdrawCommissionAccordingMoney)//手续费阈值
+                    HandChargeThreshold = 0, //手续费阈值（新版需求改为不设阀值） //HandChargeThreshold = Convert.ToInt32(globalConfig.ClienterWithdrawCommissionAccordingMoney)//手续费阈值
+                    HandChargeShot = Convert.ToDecimal(globalConfig.WithdrawCommission)//系统手续费快照
+
                 });
 
                 _clienterWithdrawLogDao.Insert(new ClienterWithdrawLog()

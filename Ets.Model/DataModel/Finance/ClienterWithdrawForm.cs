@@ -141,6 +141,10 @@ namespace Ets.Model.DataModel.Finance
         /// 实付金额
         /// </summary>
         public decimal PaidAmount { get; set; }
+        /// <summary>
+        /// 生成提现单的系统配置手续费快照
+        /// </summary>
+        public decimal HandChargeShot { get; set; }
     }
 
 }
