@@ -8,17 +8,16 @@
     {
 //审核通过且支付宝
         <script>
-            //alert(1);
-            $('#btnBatchAuditPass').attr('disabled',true);//批审不可用
-            $('#btnBatchAlipay').attr('disabled',false); //批付可用
+            $('#btnBatchAuditPass').hide();//批审不可用
+            $('#btnBatchAlipay').show(); //批付可用
         </script>
     }
     else
     {
         <script>
            // alert(2);
-            $('#btnBatchAlipay').attr('disabled', true);//批付不可用
-            $('#btnBatchAuditPass').attr('disabled',false); //批审可用
+            $('#btnBatchAuditPass').show();//批审不可用
+            $('#btnBatchAlipay').hide(); //批付可用
         </script>
     }
 }

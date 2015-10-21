@@ -46,10 +46,15 @@
                         <span class="">筛选城市: </span>
                         @*@Html.DropDownList("businessCity", new SelectList(ViewBag.openCityList.Result.AreaModels, "Name", "Name"), "--无--", new { style = "width:155px" })*@
                         <input id="businessCity" name="businessCity" type="text">
-                        <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
-                        <input type="button" value="导出" onclick="return funExport()" class="searchBtn" id="btnExport" />
-                        <input type="button" value="批量审核通过" onclick="return funBatchAuditPass()" class="searchBtn" id="btnBatchAuditPass" />
-                        <input type="button" value="批量支付宝付款" onclick="return BatchAlipay()" class="searchBtn" id="btnBatchAlipay" />
+
+                            <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
+                            <input type="button" value="导出" onclick="return funExport()" class="searchBtn" id="btnExport" />
+                            <input type="button" value="批量审核通过" onclick="return funBatchAuditPass()" class="searchBtn" id="btnBatchAuditPass" />
+                            <input type="button" value="批量支付宝付款" onclick="return BatchAlipay()" class="searchBtn" id="btnBatchAlipay" />
+
+                        
+                        
+                       
                     </td>
                 </tr>
             </table>
