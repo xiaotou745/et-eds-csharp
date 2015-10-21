@@ -321,7 +321,7 @@ WHERE   1 = 1  ");
         }
 
         /// <summary>
-        /// 插入支付宝批次号
+        /// 回调更新支付宝批次号
         /// 茹化肖
         /// 2015年10月20日13:06:11
         /// </summary>
@@ -339,6 +339,27 @@ WHERE   BatchNo = @BatchNo";
             dbParameters.Add("BatchNo", DbType.String).Value = model.BatchNo;
             dbParameters.Add("FailTimes", DbType.Int32).Value = model.FailTimes;
             dbParameters.Add("SuccessTimes", DbType.Int32).Value = model.SuccessTimes;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, updatestr, dbParameters);
+        }
+
+        /// <summary>
+        /// 以批次号重新提交
+        /// 茹化肖
+        /// 2015年10月20日13:06:11
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public int UpdateAlipayBatchForAgain(AlipayBatchModel model)
+        {
+            string updatestr = @" UPDATE  dbo.AlipayBatch
+SET     LastOptUser=@LastOptUser,
+        LastOptTime = GETDATE(),
+        Remarks=@Remarks
+WHERE   BatchNo = @BatchNo";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("BatchNo", DbType.String).Value = model.BatchNo;
+            dbParameters.Add("LastOptUser", DbType.String).Value = model.LastOptUser;
+            dbParameters.Add("Remarks", DbType.String).Value = model.Remarks;
             return DbHelper.ExecuteNonQuery(SuperMan_Write, updatestr, dbParameters);
         }
 

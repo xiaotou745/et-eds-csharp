@@ -648,7 +648,7 @@ namespace Ets.Service.Provider.Pay
         /// 支付宝转账
         /// danny-20150914
         /// </summary>
-        public string AlipayTransfer(AlipayTransferParameter model)
+        private string AlipayTransfer(AlipayTransferParameter model)
         {
 
             var sParaTemp = new SortedDictionary<string, string>
@@ -668,25 +668,6 @@ namespace Ets.Service.Provider.Pay
             //建立请求
             string sHtmlText = Submit.BuildRequest(sParaTemp, "get", "确认");
             return sHtmlText;
-        }
-        /// <summary>
-        /// 支付宝批量转账(财务==确认打款)
-        /// 茹化肖
-        /// 2015年10月19日09:46:18
-        /// </summary>
-        /// <param name="withwardId">提现单ID数组</param>
-        /// <returns>转账HTML页</returns>
-        public object AlipayBatchTransferOk(int[] withwardId)
-        {
-            int totalRecord = 0;//总记录条数
-            double totalPayAmount = 0;//总打款金额
-            double totalHandCharge = 0;//总手续费金额
-            //1.获取提现单信息
-            //2.生成提现单批次号(生成之后匹配redis看看是否存在 不存在写入redis 存在重新生成 最多三次)
-            //3.
-
-
-            return null;
         }
 
         #endregion
@@ -2095,33 +2076,49 @@ namespace Ets.Service.Provider.Pay
                     //提现单号,支付宝账号,支付宝账户名,金额,备注
                     //注意此处用提现单ID作为流水号穿给支付宝,方便支付宝回调后对数据处理
                     DetailData.AppendFormat("{0}^{1}^{2}^{3}^骑士申请提现打款|", item.Id, DES.Decrypt(item.AccountNo), item.TrueName, item.PaidAmount.ToString("#0.00"));
-                    //修改状态为打款中,添加批次号
-                    updateCount+=clienterWithDao.AddAlipayBatchNo(item.Id, alipayBatchNo);
-                    //插入提现单表修改日志
-                    clienterWithdrawLogDao.Insert(new ClienterWithdrawLog()
-                    {
-                        Status = ClienterWithdrawFormStatus.Paying.GetHashCode(),
-                        WithwardId = item.Id,
-                        Remark = "支付宝批量打款",
-                        Operator = pmmodel.OptName
-                    });
+                    
+                    if (pmmodel.Type == 1)//第一次提交
+                    {   //修改状态为打款中,添加批次号
+                        updateCount += clienterWithDao.AddAlipayBatchNo(item.Id, alipayBatchNo);
+                        //插入提现单表修改日志
+                        clienterWithdrawLogDao.Insert(new ClienterWithdrawLog()
+                        {
+                            Status = ClienterWithdrawFormStatus.Paying.GetHashCode(),
+                            WithwardId = item.Id,
+                            Remark = "支付宝批量打款",
+                            Operator = pmmodel.OptName
+                        });
+                    }
+                    
                 }//foreach end
-                //插入批次号表
-                clienterWithDao.InsertAlipayBatch(new AlipayBatchModel()
+                if (pmmodel.Type == 1)//插入批次号表
                 {
-                    BatchNo = alipayBatchNo,
-                    TotalWithdraw = alipayPayAmount,
-                    OptTimes = alipayBatchCount,
-                    WithdrawIds = wids.ToString().Substring(0,wids.Length-1),
-                    WithdrawNos = wnos.ToString().Substring(0,wnos.Length-1),
-                    Remarks = "创建支付宝批次",
-                    CreateBy = pmmodel.OptName,
-                    LastOptUser = pmmodel.OptName
-                });
+                    clienterWithDao.InsertAlipayBatch(new AlipayBatchModel()
+                    {
+                        BatchNo = alipayBatchNo,
+                        TotalWithdraw = alipayPayAmount,
+                        OptTimes = alipayBatchCount,
+                        WithdrawIds = wids.ToString().Substring(0, wids.Length - 1),
+                        WithdrawNos = wnos.ToString().Substring(0, wnos.Length - 1),
+                        Remarks = "创建支付宝批次",
+                        CreateBy = pmmodel.OptName,
+                        LastOptUser = pmmodel.OptName
+                    });
+                }
+                else if(pmmodel.Type==2)//更新批次号信息
+                {
+                    clienterWithDao.UpdateAlipayBatchForAgain(new AlipayBatchModel()
+                    {
+                        LastOptUser = pmmodel.OptName,
+                        Remarks = "重新提交一次批次号进行支付",
+                        BatchNo = alipayBatchNo
+                    });
+                }
+               
                 #endregion
 
                 #region===3.构建表单
-                if (updateCount == alipayBatchCount)//更新数据量,插入数据量和数据总数一致
+                if ((updateCount == alipayBatchCount&&pmmodel.Type==1)||(pmmodel.Type==2&&updateCount==0))//更新数据量,插入数据量和数据总数一致
                 {
                     html = new PayProvider().AlipayTransfer(new AlipayTransferParameter()
                     {

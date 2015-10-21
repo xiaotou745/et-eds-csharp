@@ -134,7 +134,8 @@
         var url = "/ClienterWithdraw/AlipayBatchTransfer?type=1&data=" + ids;
         //alert(url);
         window.open(url);
-        alert('请重新刷新界面');
+        alert('请新打开的页面完成支付宝付款!');
+        $('#btnSearch').click();
     }
 
     $("#businessCity").autocomplete(
