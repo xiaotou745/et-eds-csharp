@@ -53,6 +53,10 @@ namespace Ets.Model.Common
         /// <returns></returns>
         public static string GetUserImage(string imagePic,ImageType imageType)
         {
+            if (string.IsNullOrWhiteSpace(imagePic))
+            {
+                return "";
+            }
             if (imageType == ImageType.Business)
             {
                 return ETS.Util.ConfigSettings.Instance.PicHost +
