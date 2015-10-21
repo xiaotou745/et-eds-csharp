@@ -365,5 +365,20 @@ WHERE   BatchNo = @BatchNo";
             return DbHelper.ExecuteNonQuery(SuperMan_Write, updatestr, dbParameters);
         }
 
+        /// <summary>
+        /// 以批次号重新提交
+        /// 茹化肖
+        /// 2015年10月20日13:06:11
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public int CheckAlipayBatch(AlipayBatchModel model)
+        {
+            string updatestr = @" SELECT COUNT(1) FROM dbo.AlipayBatch AS ab (NOLOCK) WHERE ab.BatchNo=@BatchNo AND ab.Status=1";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("BatchNo", DbType.String).Value = model.BatchNo;
+            return (int)DbHelper.ExecuteScalar(SuperMan_Write, updatestr, dbParameters);
+        }
+
     }
 }

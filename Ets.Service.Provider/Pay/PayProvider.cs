@@ -2200,6 +2200,14 @@ namespace Ets.Service.Provider.Pay
                 #endregion
                 using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
                 { 
+                    //验证批次号是否已经处理
+                    if (clienterWithDao.CheckAlipayBatch(new AlipayBatchModel()
+                    {
+                        BatchNo = alipaymodel.BatchNo
+                    })>0)//以及处理了该批次
+                    {
+                        return false;
+                    }
                     //更新批次表信息
                    clienterWithDao.UpdateAlipayBatch(new AlipayBatchModel()
                     {
