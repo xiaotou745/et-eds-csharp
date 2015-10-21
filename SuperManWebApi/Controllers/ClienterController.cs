@@ -112,6 +112,6 @@ namespace SuperManWebApi.Controllers
         public ResultModel<object> PushLocaltion(ClienterPushLocaltionPM model)
         {
             return clienterLocationProvider.InsertLocaltion(model);
-        }
+        }       
     }
 }

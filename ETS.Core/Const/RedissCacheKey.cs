@@ -8,6 +8,25 @@ namespace ETS.Const
 {
     public class RedissCacheKey
     {
+        public const string GlobalConfig_PushRadius = "GlobalConfig_PushRadius_{0}";
+        public const string GlobalConfig_AllFinishedOrderUploadTimeInterval = "GlobalConfig_AllFinishedOrderUploadTimeInterval_{0}";
+        public const string GlobalConfig_SearchClienterLocationTimeInterval = "GlobalConfig_SearchClienterLocationTimeInterval_{0}";
+        public const string GlobalConfig_HasUnFinishedOrderUploadTimeInterval = "GlobalConfig_HasUnFinishedOrderUploadTimeInterval_{0}";
+        public const string GlobalConfig_BusinessUploadTimeInterval = "GlobalConfig_BusinessUploadTimeInterval_{0}";
+
+        public const string GlobalConfig_ClienterWithdrawCommissionAccordingMoney = "GlobalConfig_ClienterWithdrawCommissionAccordingMoney_{0}";
+        public const string GlobalConfig_ExclusiveOrderTime = "GlobalConfig_ExclusiveOrderTime_{0}";
+        public const string GlobalConfig_ClienterOrderPageSize = "GlobalConfig_ClienterOrderPageSize_{0}";
+        public const string GlobalConfig_CompleteTimeSet = "GlobalConfig_CompleteTimeSet_{0}";
+        public const string GlobalConfig_EmployerTaskTimeSet = "GlobalConfig_EmployerTaskTimeSet_{0}";
+
+        public const string GlobalConfig_WithdrawCommission = "GlobalConfig_WithdrawCommission_{0}";
+        public const string GlobalConfig_OrderCountSetting = "GlobalConfig_OrderCountSetting_{0}";
+        public const string GlobalConfig_YeepayWithdrawCommission = "GlobalConfig_YeepayWithdrawCommission_{0}";
+        public const string GlobalConfig_GrabToCompleteDistance = "GlobalConfig_GrabToCompleteDistance_{0}";
+        public const string GlobalConfig_AlipayWithdrawCommission = "GlobalConfig_AlipayWithdrawCommission_{0}";
+        public const string GlobalConfig_AlipayPassword = "GlobalConfig_AlipayPassword_{0}";
+
         /// <summary>
         /// 商户用户状态缓存key
         /// </summary>
