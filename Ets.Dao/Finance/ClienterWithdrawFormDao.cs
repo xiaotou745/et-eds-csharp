@@ -36,9 +36,9 @@ namespace Ets.Dao.Finance
             //TODO 修改ADD
             const string insertSql = @"
 insert into ClienterWithdrawForm(WithwardNo,ClienterId,BalancePrice,AllowWithdrawPrice,Status,Amount,Balance,
-TrueName,AccountNo,AccountType,BelongType,OpenBank,OpenSubBank,OpenProvince,OpenCity,OpenProvinceCode,OpenCityCode,IDCard,HandChargeThreshold,HandCharge,HandChargeOutlay,PhoneNo,HandChargeShot) 
+TrueName,AccountNo,AccountType,BelongType,OpenBank,OpenSubBank,OpenProvince,OpenCity,OpenProvinceCode,OpenCityCode,IDCard,HandChargeThreshold,HandCharge,HandChargeOutlay,PhoneNo,HandChargeShot,PaidAmount) 
 values(@WithwardNo,@ClienterId,@BalancePrice,@AllowWithdrawPrice,@Status,@Amount,@Balance,
-@TrueName,@AccountNo,@AccountType,@BelongType,@OpenBank,@OpenSubBank,@OpenProvince,@OpenCity,@OpenProvinceCode,@OpenCityCode,@IDCard,@HandChargeThreshold,@HandCharge,@HandChargeOutlay,@PhoneNo,@HandChargeShot) ;select @@IDENTITY ";
+@TrueName,@AccountNo,@AccountType,@BelongType,@OpenBank,@OpenSubBank,@OpenProvince,@OpenCity,@OpenProvinceCode,@OpenCityCode,@IDCard,@HandChargeThreshold,@HandCharge,@HandChargeOutlay,@PhoneNo,@HandChargeShot,@PaidAmount) ;select @@IDENTITY ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("WithwardNo", clienterWithdrawForm.WithwardNo); //提现单号
             dbParameters.AddWithValue("ClienterId", clienterWithdrawForm.ClienterId);  //骑士ID(clienter表)
@@ -59,10 +59,11 @@ values(@WithwardNo,@ClienterId,@BalancePrice,@AllowWithdrawPrice,@Status,@Amount
             dbParameters.AddWithValue("OpenCityCode", clienterWithdrawForm.OpenCityCode); //易宝城市代码
             dbParameters.AddWithValue("IDCard", clienterWithdrawForm.IDCard);//身份证号
             dbParameters.AddWithValue("HandChargeThreshold", clienterWithdrawForm.HandChargeThreshold);//手续费阈值  
-            dbParameters.AddWithValue("HandCharge", clienterWithdrawForm.HandCharge); //手续费
+            dbParameters.AddWithValue("HandCharge", clienterWithdrawForm.HandCharge); //真实手续费
             dbParameters.AddWithValue("HandChargeOutlay", (object)clienterWithdrawForm.HandChargeOutlay);//手续费支付方
             dbParameters.Add("PhoneNo", DbType.String).Value = clienterWithdrawForm.PhoneNo; //手机号
-            dbParameters.Add("HandChargeShot", DbType.Decimal).Value = clienterWithdrawForm.HandChargeShot; //手机号
+            dbParameters.Add("HandChargeShot", DbType.Decimal).Value = clienterWithdrawForm.HandChargeShot; //系统手续费快照
+            dbParameters.Add("PaidAmount", DbType.Decimal).Value = clienterWithdrawForm.PaidAmount; //财务打款实付金额
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters); //提现单号
             return ParseHelper.ToLong(result);
         }

@@ -301,7 +301,7 @@ namespace ETS.Enums
     /// </summary>
     public enum WithdrawAccountType
     {
-        [DisplayText("网银")]
+        [DisplayText("银行卡")]
         WangYin = 1,
         [DisplayText("支付宝")]
         ZhiFuBao = 2,

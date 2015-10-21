@@ -2327,6 +2327,7 @@ namespace Ets.Service.Provider.Order
                         {
                             if (orderListModel.GroupBusinessId > 0)
                             {
+                                LogHelper.LogWriter("更新集团余额：" + orderListModel.GroupBusinessId);
                                 // 更新集团余额
                                 iGroupBusinessProvider.UpdateGBalance(new GroupBusinessPM()
                                 {
@@ -2340,6 +2341,7 @@ namespace Ets.Service.Provider.Order
                                     RelationNo = orderListModel.OrderNo,
                                     Remark = "E代送客服处理超时未完成订单"
                                 });
+                                tran.Complete();
                             }
                             else
                             {
@@ -2355,9 +2357,8 @@ namespace Ets.Service.Provider.Order
                                 }))
                                 {
                                     tran.Complete();
-                                }
-                            }
-
+                                } 
+                            } 
                         }
                     }
                 }
