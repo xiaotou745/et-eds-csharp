@@ -86,6 +86,8 @@ namespace Ets.Service.Provider.Finance
                 var globalConfig = GlobalConfigDao.GlobalConfigGet(0);
                 //金融机构实扣手续费
                 var handCharge = clienterFinanceAccount.AccountType == ClienterFinanceAccountType.WangYin.GetHashCode() ? Convert.ToDecimal(globalConfig.YeepayWithdrawCommission) : (clienterFinanceAccount.AccountType == ClienterFinanceAccountType.ZhiFuBao.GetHashCode() ? Convert.ToDecimal(globalConfig.AlipayWithdrawCommission) : 0);
+                //实付金额配算除了易宝 给配加一个真实手续费,其他都是0  暂时
+                var peiMoney = clienterFinanceAccount.AccountType == ClienterFinanceAccountType.WangYin.GetHashCode()?Convert.ToDecimal(globalConfig.YeepayWithdrawCommission):0;
                 var withwardId = _clienterWithdrawFormDao.Insert(new ClienterWithdrawForm()
                 {
                     WithwardNo = withwardNo,//单号 规则待定
@@ -108,7 +110,7 @@ namespace Ets.Service.Provider.Finance
                     OpenProvinceCode = clienterFinanceAccount.OpenProvinceCode,//省份代码
                     //HandCharge = Convert.ToInt32(globalConfig.WithdrawCommission),//手续费
                     HandCharge = handCharge,//手续费
-                    PaidAmount = model.WithdrawPrice-Convert.ToDecimal(globalConfig.WithdrawCommission)+handCharge,//实付金额
+                    PaidAmount = model.WithdrawPrice - Convert.ToDecimal(globalConfig.WithdrawCommission) + peiMoney,//实付金额=提现金额-手续费(3元)+配算金额(易宝1元其他0元)
                     //HandChargeOutlay = model.WithdrawPrice > Convert.ToInt32(globalConfig.ClienterWithdrawCommissionAccordingMoney) ? HandChargeOutlay.EDaiSong : HandChargeOutlay.Private,//手续费支出方
                     HandChargeOutlay = HandChargeOutlay.Private,//手续费支出方（新版需求改为手续费统一由骑士支付）
                     PhoneNo = clienter.PhoneNo, //手机号 //PhoneNo = clienterFinanceAccount.CreateBy, //手机号

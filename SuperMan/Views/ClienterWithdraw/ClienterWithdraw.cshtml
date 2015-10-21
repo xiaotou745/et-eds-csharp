@@ -49,7 +49,7 @@
                         <input type="submit" value="查询" class="searchBtn" id="btnSearch" />
                         <input type="button" value="导出" onclick="return funExport()" class="searchBtn" id="btnExport" />
                         <input type="button" value="批量审核通过" onclick="return funBatchAuditPass()" class="searchBtn" id="btnBatchAuditPass" />
-                        <input type="button" value="批量支付宝付款" onclick="return funBatchAuditPass()" class="searchBtn" id="btnBatchAlipay" />
+                        <input type="button" value="批量支付宝付款" onclick="return BatchAlipay()" class="searchBtn" id="btnBatchAlipay" />
                     </td>
                 </tr>
             </table>
@@ -131,8 +131,12 @@
             return;
         }
         ids = ids.substring(0, ids.length - 1);
-        var url = "/ClienterWithdraw/ClienterWithdraw";
+        var url = "/ClienterWithdraw/AlipayBatchTransfer?type=1&data=" + ids;
+        //alert(url);
+        window.open(url);
+        alert('请重新刷新界面');
     }
+
     $("#businessCity").autocomplete(
                {
                    source: function (request, response) {
