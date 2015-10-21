@@ -39,29 +39,37 @@ namespace Ets.Service.Provider.Finance
     public class ClienterFinanceProvider : IClienterFinanceProvider
     {
         #region 声明对象
+
         private readonly ClienterDao _clienterDao = new ClienterDao();
+
         /// <summary>
         /// 骑士余额流水表
         /// </summary>
         private readonly ClienterBalanceRecordDao _clienterBalanceRecordDao = new ClienterBalanceRecordDao();
+
         /// <summary>
         /// 骑士提现表
         /// </summary>
         private readonly ClienterWithdrawFormDao _clienterWithdrawFormDao = new ClienterWithdrawFormDao();
 
-        readonly ClienterAllowWithdrawRecordDao clienterAllowWithdrawRecordDao = new ClienterAllowWithdrawRecordDao();
+        private readonly ClienterAllowWithdrawRecordDao clienterAllowWithdrawRecordDao =
+            new ClienterAllowWithdrawRecordDao();
+
         /// <summary>
         /// 骑士提现日志
         /// </summary>
         private readonly ClienterWithdrawLogDao _clienterWithdrawLogDao = new ClienterWithdrawLogDao();
+
         /// <summary>
         /// 骑士金融账号表
         /// </summary>
         private readonly ClienterFinanceAccountDao _clienterFinanceAccountDao = new ClienterFinanceAccountDao();
-        ClienterFinanceDao clienterFinanceDao = new ClienterFinanceDao();
+
+        private ClienterFinanceDao clienterFinanceDao = new ClienterFinanceDao();
 
         private IClienterProvider iClienterProvider = new ClienterProvider();
-        ClienterMessageDao clienterMessageDao = new ClienterMessageDao();
+        private ClienterMessageDao clienterMessageDao = new ClienterMessageDao();
+
         #endregion
 
         #region 骑士提现功能  add by caoheyang 20150509
@@ -76,52 +84,59 @@ namespace Ets.Service.Provider.Finance
             using (var tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 var clienter = new clienter();
-                var clienterFinanceAccount = new ClienterFinanceAccount();//骑士金融账号信息
+                var clienterFinanceAccount = new ClienterFinanceAccount(); //骑士金融账号信息
                 var checkbool = CheckWithdrawC(model, ref clienter, ref clienterFinanceAccount);
-                if (checkbool != FinanceWithdrawC.Success)  //验证失败 此次提款操作无效 直接返回相关错误信息
+                if (checkbool != FinanceWithdrawC.Success) //验证失败 此次提款操作无效 直接返回相关错误信息
                 {
                     return ResultModel<object>.Conclude(checkbool);
                 }
                 var withwardNo = Helper.generateOrderCode(model.ClienterId);
                 var globalConfig = GlobalConfigDao.GlobalConfigGet(0);
                 //金融机构实扣手续费
-                var handCharge = clienterFinanceAccount.AccountType == ClienterFinanceAccountType.WangYin.GetHashCode() ? Convert.ToDecimal(globalConfig.YeepayWithdrawCommission) : (clienterFinanceAccount.AccountType == ClienterFinanceAccountType.ZhiFuBao.GetHashCode() ? Convert.ToDecimal(globalConfig.AlipayWithdrawCommission) : 0);
+                var handCharge = clienterFinanceAccount.AccountType == ClienterFinanceAccountType.WangYin.GetHashCode()
+                    ? Convert.ToDecimal(globalConfig.YeepayWithdrawCommission)
+                    : (clienterFinanceAccount.AccountType == ClienterFinanceAccountType.ZhiFuBao.GetHashCode()
+                        ? Convert.ToDecimal(globalConfig.AlipayWithdrawCommission)
+                        : 0);
                 //实付金额配算除了易宝 给配加一个真实手续费,其他都是0  暂时
-                var peiMoney = clienterFinanceAccount.AccountType == ClienterFinanceAccountType.WangYin.GetHashCode()?Convert.ToDecimal(globalConfig.YeepayWithdrawCommission):0;
+                var peiMoney = clienterFinanceAccount.AccountType == ClienterFinanceAccountType.WangYin.GetHashCode()
+                    ? Convert.ToDecimal(globalConfig.YeepayWithdrawCommission)
+                    : 0;
                 var withwardId = _clienterWithdrawFormDao.Insert(new ClienterWithdrawForm()
                 {
-                    WithwardNo = withwardNo,//单号 规则待定
-                    ClienterId = model.ClienterId,//骑士Id(Clienter表）
-                    BalancePrice = clienter.AccountBalance,//提现前骑士余额
-                    AllowWithdrawPrice = clienter.AllowWithdrawPrice,//提现前骑士可提现金额
-                    Status = (int)ClienterWithdrawFormStatus.WaitAllow,//待审核
-                    Amount = model.WithdrawPrice,//提现金额
+                    WithwardNo = withwardNo, //单号 规则待定
+                    ClienterId = model.ClienterId, //骑士Id(Clienter表）
+                    BalancePrice = clienter.AccountBalance, //提现前骑士余额
+                    AllowWithdrawPrice = clienter.AllowWithdrawPrice, //提现前骑士可提现金额
+                    Status = (int)ClienterWithdrawFormStatus.WaitAllow, //待审核
+                    Amount = model.WithdrawPrice, //提现金额
                     Balance = clienter.AccountBalance - model.WithdrawPrice, //提现后余额
-                    TrueName = clienterFinanceAccount.TrueName,//骑士收款户名
+                    TrueName = clienterFinanceAccount.TrueName, //骑士收款户名
                     AccountNo = clienterFinanceAccount.AccountNo, //卡号(DES加密)
                     AccountType = clienterFinanceAccount.AccountType, //账号类型：
-                    BelongType = clienterFinanceAccount.BelongType,//账号类别  0 个人账户 1 公司账户  
-                    OpenBank = clienterFinanceAccount.OpenBank,//开户行
+                    BelongType = clienterFinanceAccount.BelongType, //账号类别  0 个人账户 1 公司账户  
+                    OpenBank = clienterFinanceAccount.OpenBank, //开户行
                     OpenSubBank = clienterFinanceAccount.OpenSubBank, //开户支行
-                    IDCard = clienterFinanceAccount.IDCard,//申请提款身份证号
-                    OpenCity = clienterFinanceAccount.OpenCity,//城市
-                    OpenCityCode = clienterFinanceAccount.OpenCityCode,//城市代码
-                    OpenProvince = clienterFinanceAccount.OpenProvince,//省份
-                    OpenProvinceCode = clienterFinanceAccount.OpenProvinceCode,//省份代码
+                    IDCard = clienterFinanceAccount.IDCard, //申请提款身份证号
+                    OpenCity = clienterFinanceAccount.OpenCity, //城市
+                    OpenCityCode = clienterFinanceAccount.OpenCityCode, //城市代码
+                    OpenProvince = clienterFinanceAccount.OpenProvince, //省份
+                    OpenProvinceCode = clienterFinanceAccount.OpenProvinceCode, //省份代码
                     //HandCharge = Convert.ToInt32(globalConfig.WithdrawCommission),//手续费
-                    HandCharge = handCharge,//手续费
-                    PaidAmount = model.WithdrawPrice - Convert.ToDecimal(globalConfig.WithdrawCommission) + peiMoney,//实付金额=提现金额-手续费(3元)+配算金额(易宝1元其他0元)
+                    HandCharge = handCharge, //手续费
+                    PaidAmount = model.WithdrawPrice - Convert.ToDecimal(globalConfig.WithdrawCommission) + peiMoney,
+                    //实付金额=提现金额-手续费(3元)+配算金额(易宝1元其他0元)
                     //HandChargeOutlay = model.WithdrawPrice > Convert.ToInt32(globalConfig.ClienterWithdrawCommissionAccordingMoney) ? HandChargeOutlay.EDaiSong : HandChargeOutlay.Private,//手续费支出方
-                    HandChargeOutlay = HandChargeOutlay.Private,//手续费支出方（新版需求改为手续费统一由骑士支付）
+                    HandChargeOutlay = HandChargeOutlay.Private, //手续费支出方（新版需求改为手续费统一由骑士支付）
                     PhoneNo = clienter.PhoneNo, //手机号 //PhoneNo = clienterFinanceAccount.CreateBy, //手机号
-                    HandChargeThreshold = 0//手续费阈值（新版需求改为不设阀值）
+                    HandChargeThreshold = 0 //手续费阈值（新版需求改为不设阀值）
                     //HandChargeThreshold = Convert.ToInt32(globalConfig.ClienterWithdrawCommissionAccordingMoney)//手续费阈值
                 });
 
                 _clienterWithdrawLogDao.Insert(new ClienterWithdrawLog()
                 {
                     WithwardId = withwardId,
-                    Status = (int)ClienterWithdrawFormStatus.WaitAllow,//待审核
+                    Status = (int)ClienterWithdrawFormStatus.WaitAllow, //待审核
                     Remark = "骑士发起提现操作",
                     Operator = clienter.TrueName
                 });
@@ -130,8 +145,8 @@ namespace Ets.Service.Provider.Finance
                 //更新骑士余额、可提现余额（实际到账金额）  
                 iClienterProvider.UpdateCBalanceAndWithdraw(new ClienterMoneyPM()
                 {
-                    ClienterId = model.ClienterId,//骑士Id(Clienter表）
-                    Amount = -(model.WithdrawPrice - Convert.ToDecimal(globalConfig.WithdrawCommission)),//流水金额(实际到账金额)
+                    ClienterId = model.ClienterId, //骑士Id(Clienter表）
+                    Amount = -(model.WithdrawPrice - Convert.ToDecimal(globalConfig.WithdrawCommission)), //流水金额(实际到账金额)
                     Status = ClienterAllowWithdrawRecordStatus.Tradeing.GetHashCode(), //流水状态(1、交易成功 2、交易中）
                     RecordType = ClienterAllowWithdrawRecordType.WithdrawApply.GetHashCode(),
                     Operator = clienter.TrueName,
@@ -142,8 +157,8 @@ namespace Ets.Service.Provider.Finance
                 //更新骑士余额、可提现余额(手续费)  
                 iClienterProvider.UpdateCBalanceAndWithdraw(new ClienterMoneyPM()
                 {
-                    ClienterId = model.ClienterId,//骑士Id(Clienter表）
-                    Amount = -Convert.ToDecimal(globalConfig.WithdrawCommission),//流水金额（手续费）
+                    ClienterId = model.ClienterId, //骑士Id(Clienter表）
+                    Amount = -Convert.ToDecimal(globalConfig.WithdrawCommission), //流水金额（手续费）
                     Status = ClienterAllowWithdrawRecordStatus.Tradeing.GetHashCode(), //流水状态(1、交易成功 2、交易中）
                     RecordType = ClienterAllowWithdrawRecordType.ProcedureFee.GetHashCode(),
                     Operator = clienter.TrueName,
@@ -153,7 +168,8 @@ namespace Ets.Service.Provider.Finance
                 });
 
                 tran.Complete();
-                return ResultModel<object>.Conclude(FinanceWithdrawC.Success); ;
+                return ResultModel<object>.Conclude(FinanceWithdrawC.Success);
+                ;
             }
         }
 
@@ -165,7 +181,7 @@ namespace Ets.Service.Provider.Finance
         /// <param name="clienterFinanceAccount">骑士金融账号信息</param>
         /// <returns></returns>
         private FinanceWithdrawC CheckWithdrawC(WithdrawCriteria withdrawCpm, ref clienter clienter,
-            ref  ClienterFinanceAccount clienterFinanceAccount)
+            ref ClienterFinanceAccount clienterFinanceAccount)
         {
             if (withdrawCpm == null)
             {
@@ -176,9 +192,9 @@ namespace Ets.Service.Provider.Finance
             {
                 return FinanceWithdrawC.MoneyDoubleError;
             }
-            clienter = _clienterDao.GetById(withdrawCpm.ClienterId);//获取超人信息
+            clienter = _clienterDao.GetById(withdrawCpm.ClienterId); //获取超人信息
             if (clienter == null || clienter.Status == null
-                || clienter.Status != ClienteStatus.Status1.GetHashCode())  //骑士状态为非 审核通过不允许 提现
+                || clienter.Status != ClienteStatus.Status1.GetHashCode()) //骑士状态为非 审核通过不允许 提现
             {
                 return FinanceWithdrawC.ClienterError;
             }
@@ -190,16 +206,21 @@ namespace Ets.Service.Provider.Finance
             {
                 return FinanceWithdrawC.FinanceAccountError;
             }
-            clienterFinanceAccount = _clienterFinanceAccountDao.GetById(withdrawCpm.FinanceAccountId);//获取超人金融账号信息
+            clienterFinanceAccount = _clienterFinanceAccountDao.GetById(withdrawCpm.FinanceAccountId); //获取超人金融账号信息
             if (clienterFinanceAccount == null || clienterFinanceAccount.ClienterId != withdrawCpm.ClienterId)
             {
                 return FinanceWithdrawC.FinanceAccountError;
             }
             //如果是支付宝,不走下面的判断,因为支付宝没有身份证和银行信息 add by pengyi 20150914
-            if (clienterFinanceAccount.AccountType!= 2 && (string.IsNullOrEmpty(clienterFinanceAccount.IDCard) || !Regex.IsMatch(clienterFinanceAccount.IDCard, Config.IDCARD_REG, RegexOptions.IgnoreCase) ||
-                string.IsNullOrEmpty(clienterFinanceAccount.OpenCity) || string.IsNullOrEmpty(clienterFinanceAccount.OpenProvince) ||
-                string.IsNullOrEmpty(clienterFinanceAccount.OpenBank) || string.IsNullOrEmpty(clienterFinanceAccount.OpenSubBank) ||
-                string.IsNullOrEmpty(clienterFinanceAccount.OpenSubBank) || !Regex.IsMatch(clienterFinanceAccount.OpenSubBank, Config.OPEN_SUB_BANK_REG))
+            if (clienterFinanceAccount.AccountType != 2 &&
+                (string.IsNullOrEmpty(clienterFinanceAccount.IDCard) ||
+                 !Regex.IsMatch(clienterFinanceAccount.IDCard, Config.IDCARD_REG, RegexOptions.IgnoreCase) ||
+                 string.IsNullOrEmpty(clienterFinanceAccount.OpenCity) ||
+                 string.IsNullOrEmpty(clienterFinanceAccount.OpenProvince) ||
+                 string.IsNullOrEmpty(clienterFinanceAccount.OpenBank) ||
+                 string.IsNullOrEmpty(clienterFinanceAccount.OpenSubBank) ||
+                 string.IsNullOrEmpty(clienterFinanceAccount.OpenSubBank) ||
+                 !Regex.IsMatch(clienterFinanceAccount.OpenSubBank, Config.OPEN_SUB_BANK_REG))
                 )
             {
                 return FinanceWithdrawC.BankInfoError;
@@ -220,11 +241,12 @@ namespace Ets.Service.Provider.Finance
         public ResultModel<object> CardBindC(CardBindCPM cardBindCpm)
         {
             #region 参数验证
+
             var accountType = cardBindCpm.AccountType == 0
                 ? (int)ClienterFinanceAccountType.WangYin
                 : cardBindCpm.AccountType;
             cardBindCpm.AccountType = accountType;
-            FinanceCardBindC checkbool = CheckCardBindC(cardBindCpm);  //验证数据合法性
+            FinanceCardBindC checkbool = CheckCardBindC(cardBindCpm); //验证数据合法性
             if (checkbool != FinanceCardBindC.Success)
             {
                 return ResultModel<object>.Conclude(checkbool);
@@ -246,28 +268,30 @@ namespace Ets.Service.Provider.Finance
                     return ResultModel<object>.Conclude(FinanceCardBindC.IDCardNoMatch);
                 }
             }
+
             #endregion
+
             var result = 0;
 
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 result = _clienterFinanceAccountDao.Insert(new ClienterFinanceAccount()
                 {
-                    ClienterId = cardBindCpm.ClienterId,//骑士ID
+                    ClienterId = cardBindCpm.ClienterId, //骑士ID
                     TrueName = cardBindCpm.TrueName, //户名
                     AccountNo = DES.Encrypt(cardBindCpm.AccountNo), //卡号(DES加密)  
-                    IsEnable = true,// 是否有效(true：有效 0：无效）  新增时true 
-                    AccountType = accountType,  //账号类型 
-                    BelongType = cardBindCpm.BelongType,//账号类别  0 个人账户 1 公司账户  
+                    IsEnable = true, // 是否有效(true：有效 0：无效）  新增时true 
+                    AccountType = accountType, //账号类型 
+                    BelongType = cardBindCpm.BelongType, //账号类别  0 个人账户 1 公司账户  
                     OpenBank = cardBindCpm.OpenBank, //开户行
                     OpenSubBank = cardBindCpm.OpenSubBank, //开户支行
-                    CreateBy = cardBindCpm.CreateBy,//创建人  当前登录人
-                    UpdateBy = cardBindCpm.CreateBy,//新增时最后修改人与新增人一致  当前登录人
-                    OpenCity = cardBindCpm.OpenCity,//开户行
-                    OpenProvince = cardBindCpm.OpenProvince,//开户市
-                    IDCard = cardBindCpm.IDCard,//身份证号
-                    OpenCityCode = cardBindCpm.OpenCityCode,//市编码
-                    OpenProvinceCode = cardBindCpm.OpenProvinceCode,//省编码
+                    CreateBy = cardBindCpm.CreateBy, //创建人  当前登录人
+                    UpdateBy = cardBindCpm.CreateBy, //新增时最后修改人与新增人一致  当前登录人
+                    OpenCity = cardBindCpm.OpenCity, //开户行
+                    OpenProvince = cardBindCpm.OpenProvince, //开户市
+                    IDCard = cardBindCpm.IDCard, //身份证号
+                    OpenCityCode = cardBindCpm.OpenCityCode, //市编码
+                    OpenProvinceCode = cardBindCpm.OpenProvinceCode, //省编码
                 });
                 tran.Complete();
             }
@@ -305,7 +329,7 @@ namespace Ets.Service.Provider.Finance
         /// <returns></returns>
         public ResultModel<object> CardModifyC(CardModifyCPM cardModifyCpm)
         {
-            FinanceCardModifyC checkbool = CheckCardModifyC(cardModifyCpm);  //验证数据合法性
+            FinanceCardModifyC checkbool = CheckCardModifyC(cardModifyCpm); //验证数据合法性
             if (checkbool != FinanceCardModifyC.Success)
             {
                 return ResultModel<object>.Conclude(checkbool);
@@ -353,7 +377,7 @@ namespace Ets.Service.Provider.Finance
                             OpenBank = cardModifyCpm.OpenBank, //开户行
                             OpenSubBank = cardModifyCpm.OpenSubBank, //开户支行
                             UpdateBy = cardModifyCpm.UpdateBy, //修改人  当前登录人
-                            YeepayStatus = 1,//0正常1失败
+                            YeepayStatus = 1, //0正常1失败
                             OpenProvince = cardModifyCpm.OpenProvince, //省名称
                             OpenProvinceCode = cardModifyCpm.OpenProvinceCode,
                             OpenCity = cardModifyCpm.OpenCity, //市区名称
@@ -374,6 +398,7 @@ namespace Ets.Service.Provider.Finance
             }
 
             #region 2.异步调用注册ebao
+
             //var cYeeRegisterParameter = new YeeRegisterParameter()
             //{
             //    AccountName = cardModifyCpm.TrueName,
@@ -410,6 +435,7 @@ namespace Ets.Service.Provider.Finance
             //                registResult.code, registResult.ledgerno, registResult.hmac, registResult.msg));
             //    }
             //}
+
             #endregion
 
 
@@ -447,7 +473,7 @@ namespace Ets.Service.Provider.Finance
         {
             IList<FinanceRecordsDM> records = _clienterBalanceRecordDao.GetByClienterId(clienterId);
             return ResultModel<object>.Conclude(SystemState.Success,
-              TranslateRecords(records));
+                TranslateRecords(records));
         }
 
         /// <summary>
@@ -473,13 +499,18 @@ namespace Ets.Service.Provider.Finance
                 }
                 else
                 {
-                    datas.Add(new FinanceRecordsDMList() { MonthIfo = temp.MonthInfo, Datas = new List<FinanceRecordsDM>() });
+                    datas.Add(new FinanceRecordsDMList()
+                    {
+                        MonthIfo = temp.MonthInfo,
+                        Datas = new List<FinanceRecordsDM>()
+                    });
                     index = index + 1;
                     datas[index].Datas.Add(temp);
                 }
             }
             return datas;
         }
+
         /// <summary>
         /// 根据参数获取骑士提现申请单列表
         /// danny-20150513
@@ -490,6 +521,7 @@ namespace Ets.Service.Provider.Finance
         {
             return clienterFinanceDao.GetClienterWithdrawList<ClienterWithdrawFormModel>(criteria);
         }
+
         /// <summary>
         /// 根据申请单Id获取骑士提现申请单
         /// danny-20150513
@@ -500,6 +532,7 @@ namespace Ets.Service.Provider.Finance
         {
             return clienterFinanceDao.GetClienterWithdrawListById(withwardId);
         }
+
         /// <summary>
         /// 获取骑士提款单操作日志
         /// danny-20150513
@@ -510,6 +543,7 @@ namespace Ets.Service.Provider.Finance
         {
             return clienterFinanceDao.GetClienterWithdrawOptionLog(withwardId);
         }
+
         /// <summary>
         /// 审核骑士提现申请单
         /// danny-20150513
@@ -525,6 +559,7 @@ namespace Ets.Service.Provider.Finance
             }
             throw new Exception("提款单对应的骑士已经被取消资格，请联系客服");
         }
+
         /// <summary>
         /// 骑士提现申请单确认打款
         /// danny-20150513
@@ -550,6 +585,7 @@ namespace Ets.Service.Provider.Finance
             }
             return reg;
         }
+
         /// <summary>
         /// 确认打款时间锁
         /// 2015年8月1日 21:44:12
@@ -566,6 +602,7 @@ namespace Ets.Service.Provider.Finance
         public DealResultInfo ClienterWithdrawPaying(ClienterWithdrawLog model)
         {
             #region 时间锁
+
             lock (mylock)
             {
                 string key = string.Format(RedissCacheKey.Ets_Withdraw_Lock_C, model.WithwardId);
@@ -580,9 +617,11 @@ namespace Ets.Service.Provider.Finance
                 }
                 redis.Set(key, 1, new TimeSpan(0, 1, 0));
             }
+
             #endregion
 
             #region 对象声明及初始化
+
             var dealResultInfo = new DealResultInfo
             {
                 DealFlag = false
@@ -595,15 +634,20 @@ namespace Ets.Service.Provider.Finance
             }
             model.IsCallBack = 0;
             //历史单据走之前逻辑
-            if ((cliFinanceAccount.WithdrawTime < ParseHelper.ToDatetime(Config.WithdrawTime)) || (cliFinanceAccount.WithdrawStatus == ClienterWithdrawFormStatus.Paying.GetHashCode()))
+            if ((cliFinanceAccount.WithdrawTime < ParseHelper.ToDatetime(Config.WithdrawTime)) ||
+                (cliFinanceAccount.WithdrawStatus == ClienterWithdrawFormStatus.Paying.GetHashCode()))
             {
                 model.Status = ClienterWithdrawFormStatus.Success.GetHashCode();
-                model.OldStatus = cliFinanceAccount.WithdrawStatus == ClienterWithdrawFormStatus.Paying.GetHashCode() ? ClienterWithdrawFormStatus.Paying.GetHashCode() : ClienterWithdrawFormStatus.Allow.GetHashCode();
+                model.OldStatus = cliFinanceAccount.WithdrawStatus == ClienterWithdrawFormStatus.Paying.GetHashCode()
+                    ? ClienterWithdrawFormStatus.Paying.GetHashCode()
+                    : ClienterWithdrawFormStatus.Allow.GetHashCode();
                 dealResultInfo.DealFlag = ClienterWithdrawPayOk(model);
                 dealResultInfo.DealMsg = dealResultInfo.DealFlag ? "打款成功！" : "打款失败！";
                 return dealResultInfo;
             }
+
             #endregion
+
             //支付宝打款
             if (cliFinanceAccount.AccountType == 2) //该提现单是支付宝
             {
@@ -622,7 +666,9 @@ namespace Ets.Service.Provider.Finance
                 //    DetailData = "10000001^dou631@163.com^白玉^1^测试转账"
                 //});
             }
+
             #region 回写数据库返回结果对象
+
             if (!clienterFinanceDao.ClienterWithdrawPayOk(model))
             {
                 dealResultInfo.DealMsg = "更改提现单状态为打款中失败！";
@@ -635,8 +681,10 @@ namespace Ets.Service.Provider.Finance
             dealResultInfo.DealFlag = true;
             dealResultInfo.DealMsg = "骑士提现单确认打款处理成功，等待银行打款！";
             return dealResultInfo;
+
             #endregion
         }
+
         /// <summary>
         /// 骑士提现申请单审核拒绝
         /// danny-20150513
@@ -648,7 +696,8 @@ namespace Ets.Service.Provider.Finance
             bool reg = false;
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                if (clienterFinanceDao.ClienterWithdrawReturn(model) && clienterFinanceDao.ClienterClienterAllowWithdrawRecordReturn(model))
+                if (clienterFinanceDao.ClienterWithdrawReturn(model) &&
+                    clienterFinanceDao.ClienterClienterAllowWithdrawRecordReturn(model))
                 {
                     if (clienterFinanceDao.ClienterWithdrawAuditRefuse(model))
                     {
@@ -657,7 +706,8 @@ namespace Ets.Service.Provider.Finance
                             if (clienterFinanceDao.ModifyClienterAmountInfo(model.WithwardId.ToString()))
                             {
                                 //生成消息
-                                var cliFinanceAccount = clienterFinanceDao.GetClienterFinanceAccount(model.WithwardId.ToString());
+                                var cliFinanceAccount =
+                                    clienterFinanceDao.GetClienterFinanceAccount(model.WithwardId.ToString());
                                 cliFinanceAccount.AuditFailedReason = model.AuditFailedReason;
                                 AddCAuditRejectionMessage(cliFinanceAccount);
 
@@ -670,6 +720,7 @@ namespace Ets.Service.Provider.Finance
             }
             return reg;
         }
+
         /// <summary>
         /// 骑士提现申请单打款失败
         /// danny-20150513
@@ -681,13 +732,15 @@ namespace Ets.Service.Provider.Finance
             bool reg = false;
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                if (clienterFinanceDao.ClienterWithdrawReturn(model) && clienterFinanceDao.ClienterClienterAllowWithdrawRecordReturn(model)
+                if (clienterFinanceDao.ClienterWithdrawReturn(model) &&
+                    clienterFinanceDao.ClienterClienterAllowWithdrawRecordReturn(model)
                     && clienterFinanceDao.ClienterWithdrawPayFailed(model)
                     && clienterFinanceDao.ModifyClienterBalanceRecordStatus(model.WithwardId.ToString())
                     && clienterFinanceDao.ModifyClienterAmountInfo(model.WithwardId.ToString()))
                 {
 
-                    ClienterFinanceAccountModel clienterFinanceAccountModel = clienterFinanceDao.GetClienterFinanceAccount(model.WithwardId.ToString());
+                    ClienterFinanceAccountModel clienterFinanceAccountModel =
+                        clienterFinanceDao.GetClienterFinanceAccount(model.WithwardId.ToString());
                     int month = clienterFinanceAccountModel.WithdrawTime.Month;
                     int day = clienterFinanceAccountModel.WithdrawTime.Day;
 
@@ -723,39 +776,37 @@ namespace Ets.Service.Provider.Finance
 
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                if (clienterFinanceDao.ClienterWithdrawReturn(model) && clienterFinanceDao.ClienterClienterAllowWithdrawRecordReturn(model)
-                    && clienterFinanceDao.ClienterWithdrawPayFailed(model)
+                if (clienterFinanceDao.ClienterWithdrawReturn(model) //增加骑士余额流水
+                    && clienterFinanceDao.ClienterClienterAllowWithdrawRecordReturn(model) //增加骑士可提现金额流水
+                    && clienterFinanceDao.ClienterWithdrawPayFailed(model) //更新骑士提现单状态为失败
                     && clienterFinanceDao.ModifyClienterBalanceRecordStatus(model.WithwardId.ToString())
-                    && clienterFinanceDao.ModifyClienterAmountInfo(model.WithwardId.ToString()))
+                    //更新骑士提现单对应的已有余额流水状态
+                    && clienterFinanceDao.ModifyClienterAmountInfo(model.WithwardId.ToString())) //加骑士余额可提现余额
                 {
-                    _clienterDao.UpdateCBalanceAndWithdraw(new UpdateForWithdrawPM
-                    {
-                        Id = withdraw.ClienterId,
-                        Money = -withdraw.HandCharge
-                    }); //更新骑士表的余额，可提现余额
-                    if (withdraw.HandChargeOutlay == 0) //打款失败返回余额增加流水记录
-                    {
-                        _clienterBalanceRecordDao.Insert(new ClienterBalanceRecord()
-                        {
-                            ClienterId = withdraw.ClienterId, //骑士Id(Clienter表）
-                            Amount = withdraw.Amount, //流水金额
-                            Status = (int)ClienterBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
-                            RecordType = (int)ClienterBalanceRecordRecordType.PayFailure,
-                            Operator = "易宝系统回调",
-                            WithwardId = withdraw.Id,
-                            RelationNo = withdraw.WithwardNo,
-                            Remark = "打款失败"
-                        });
-                    }
+                    /*2.1.7添加支付宝时候的需求==打款失败不再由骑士支付手续费 此外 下面代码逻辑有问题*/
+                    //_clienterDao.UpdateCBalanceAndWithdraw(new UpdateForWithdrawPM
+                    //{
+                    //    Id = withdraw.ClienterId,
+                    //    Money = -withdraw.HandCharge
+                    //}); //更新骑士表的余额，可提现余额
+                    //if (withdraw.HandChargeOutlay == 0) //打款失败返回余额增加流水记录
+                    //{
+                    //    _clienterBalanceRecordDao.Insert(new ClienterBalanceRecord()
+                    //    {
+                    //        ClienterId = withdraw.ClienterId, //骑士Id(Clienter表）
+                    //        Amount = withdraw.Amount, //流水金额
+                    //        Status = (int)ClienterBalanceRecordStatus.Success, //流水状态(1、交易成功 2、交易中）
+                    //        RecordType = (int)ClienterBalanceRecordRecordType.PayFailure,
+                    //        Operator = "易宝系统回调",
+                    //        WithwardId = withdraw.Id,
+                    //        RelationNo = withdraw.WithwardNo,
+                    //        Remark = "打款失败"
+                    //    });
+                    // }
                     reg = true;
                     tran.Complete();
                 }
             }
-            //}
-            //else
-            //{
-            //    LogHelper.LogWriterString("易宝子账户到主账户打款导致失败，提现单号为:" + model.WithwardId);
-            //}
             return reg;
         }
         /// <summary>
