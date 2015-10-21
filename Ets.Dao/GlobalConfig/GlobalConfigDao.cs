@@ -35,8 +35,8 @@ namespace Ets.Dao.GlobalConfig
             //}
 
 
-            #region redis判断，如果没有加到redis中           
-            var redis = new ETS.NoSql.RedisCache.RedisCache();
+            #region redis判断，如果没有加到redis中                
+            var redis = new ETS.NoSql.RedisCache.RedisCachePublic();
             string PushRadius= redis.Get<string>(string.Format(RedissCacheKey.GlobalConfig_PushRadius,GroupId));
             string AllFinishedOrderUploadTimeInterval= redis.Get<string>(string.Format(RedissCacheKey.GlobalConfig_AllFinishedOrderUploadTimeInterval,GroupId));
             string SearchClienterLocationTimeInterval= redis.Get<string>(string.Format(RedissCacheKey.GlobalConfig_SearchClienterLocationTimeInterval,GroupId));

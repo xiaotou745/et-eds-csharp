@@ -174,7 +174,7 @@ namespace Ets.Service.Provider.Business
         /// <returns></returns>
         public bool ModifyGlobalConfig(GlobalConfigModel globalConfigModel)
         {
-            var redis = new ETS.NoSql.RedisCache.RedisCache();            
+            var redis = new ETS.NoSql.RedisCache.RedisCachePublic();            
 
             var globalConfig = new Ets.Model.Common.GlobalConfig()
             {

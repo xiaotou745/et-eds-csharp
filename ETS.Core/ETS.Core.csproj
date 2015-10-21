@@ -132,6 +132,7 @@
     <Compile Include="IO\INIFileManager.cs" />
     <Compile Include="IO\IniParser.cs" />
     <Compile Include="NoSql\RedisCache\ISoaCacheService.cs" />
+    <Compile Include="NoSql\RedisCache\RedisCachePublic.cs" />
     <Compile Include="NoSql\RedisCache\RedisCache.cs" />
     <Compile Include="NoSql\RedisCache\RedisManager.cs" />
     <Compile Include="Page\IPagedDataTable.cs" />
