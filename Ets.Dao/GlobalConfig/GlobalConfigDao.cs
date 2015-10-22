@@ -23,6 +23,7 @@ namespace Ets.Dao.GlobalConfig
         public static GlobalConfigModel GlobalConfigGet(int GroupId)
         {
             GlobalConfigModel model = new GlobalConfigModel();
+            model = new GlobalConfigDao().GlobalConfigMethod(GroupId);
             //#region redis判断，如果没有加到redis中
             //var redis = new ETS.NoSql.RedisCache.RedisCache();
             //string cacheKey =string.Format(RedissCacheKey.Ets_Dao_GlobalConfig_GlobalConfigGet, GroupId);//缓存的KEY
@@ -35,7 +36,8 @@ namespace Ets.Dao.GlobalConfig
             //}
 
 
-            #region redis判断，如果没有加到redis中                
+            #region redis判断，如果没有加到redis中              
+           
             var redis = new ETS.NoSql.RedisCache.RedisCachePublic();
             string PushRadius= redis.Get<string>(string.Format(RedissCacheKey.GlobalConfig_PushRadius,GroupId));
             string AllFinishedOrderUploadTimeInterval= redis.Get<string>(string.Format(RedissCacheKey.GlobalConfig_AllFinishedOrderUploadTimeInterval,GroupId));
@@ -53,8 +55,10 @@ namespace Ets.Dao.GlobalConfig
             string GrabToCompleteDistance= redis.Get<string>(string.Format(RedissCacheKey.GlobalConfig_GrabToCompleteDistance,GroupId));
             string AlipayWithdrawCommission= redis.Get<string>(string.Format(RedissCacheKey.GlobalConfig_AlipayWithdrawCommission,GroupId));
             string AlipayPassword = redis.Get<string>(string.Format(RedissCacheKey.GlobalConfig_AlipayPassword, GroupId));
-            if (PushRadius == null)
+            if (string.IsNullOrEmpty(PushRadius))
             {
+                
+
                 string value= new GlobalConfigDao().GetSubsidies("PushRadius", GroupId);
                 if(value!=null)
                 redis.Set(string.Format(RedissCacheKey.GlobalConfig_PushRadius, GroupId), value);
@@ -63,7 +67,7 @@ namespace Ets.Dao.GlobalConfig
             {
                 model.PushRadius = PushRadius;
             }
-            if(AllFinishedOrderUploadTimeInterval == null)
+            if (string.IsNullOrEmpty(AllFinishedOrderUploadTimeInterval))
             {
                 string value= new GlobalConfigDao().GetSubsidies("AllFinishedOrderUploadTimeInterval", GroupId);
                 if (value != null)
@@ -73,7 +77,7 @@ namespace Ets.Dao.GlobalConfig
             {
                 model.AllFinishedOrderUploadTimeInterval=AllFinishedOrderUploadTimeInterval;
             }
-            if(SearchClienterLocationTimeInterval==null)
+            if(string.IsNullOrEmpty(SearchClienterLocationTimeInterval))
             {
                 string value= new GlobalConfigDao().GetSubsidies("SearchClienterLocationTimeInterval", GroupId);
                 if (value != null)
@@ -83,7 +87,7 @@ namespace Ets.Dao.GlobalConfig
             {
                 model.SearchClienterLocationTimeInterval = SearchClienterLocationTimeInterval;
             }
-            if(HasUnFinishedOrderUploadTimeInterval==null)
+            if (string.IsNullOrEmpty(HasUnFinishedOrderUploadTimeInterval))
             {
                 string value= new GlobalConfigDao().GetSubsidies("HasUnFinishedOrderUploadTimeInterval", GroupId);
                 if (value != null)
@@ -93,7 +97,7 @@ namespace Ets.Dao.GlobalConfig
             {
                 model.HasUnFinishedOrderUploadTimeInterval = HasUnFinishedOrderUploadTimeInterval;
             }
-            if(BusinessUploadTimeInterval==null)
+            if(string.IsNullOrEmpty(BusinessUploadTimeInterval))
             {
                 string value= new GlobalConfigDao().GetSubsidies("BusinessUploadTimeInterval", GroupId);
                 if (value != null)
@@ -103,7 +107,7 @@ namespace Ets.Dao.GlobalConfig
             {
                 model.BusinessUploadTimeInterval = BusinessUploadTimeInterval;
             }
-            if(ClienterWithdrawCommissionAccordingMoney==null)
+            if(string.IsNullOrEmpty(ClienterWithdrawCommissionAccordingMoney))
             {
                 string value= new GlobalConfigDao().GetSubsidies("ClienterWithdrawCommissionAccordingMoney", GroupId);
                 if (value != null)
@@ -113,7 +117,7 @@ namespace Ets.Dao.GlobalConfig
             {
                 model.ClienterWithdrawCommissionAccordingMoney =ClienterWithdrawCommissionAccordingMoney;
             }
-            if(ExclusiveOrderTime==null)
+            if(string.IsNullOrEmpty(ExclusiveOrderTime))
             {
                 string value= new GlobalConfigDao().GetSubsidies("ExclusiveOrderTime", GroupId);
                 if (value != null)
@@ -123,7 +127,7 @@ namespace Ets.Dao.GlobalConfig
             {
                 model.ExclusiveOrderTime = ExclusiveOrderTime;
             }
-            if (ClienterOrderPageSize == null)
+            if (string.IsNullOrEmpty(ClienterOrderPageSize))
             {
                 string value = new GlobalConfigDao().GetSubsidies("ClienterOrderPageSize", GroupId);
                 if (value != null)
@@ -133,7 +137,7 @@ namespace Ets.Dao.GlobalConfig
             {
                 model.ClienterOrderPageSize = ClienterOrderPageSize;
             }            
-            if (CompleteTimeSet == null)
+            if (string.IsNullOrEmpty(CompleteTimeSet))
             {
                 string value = new GlobalConfigDao().GetSubsidies("CompleteTimeSet", GroupId);
                 if (value != null)
@@ -143,7 +147,7 @@ namespace Ets.Dao.GlobalConfig
             {
                 model.CompleteTimeSet = CompleteTimeSet;
             }            
-            if (EmployerTaskTimeSet == null)
+            if (string.IsNullOrEmpty(EmployerTaskTimeSet))
             {
                 string value = new GlobalConfigDao().GetSubsidies("EmployerTaskTimeSet", GroupId);
                 if (value != null)
@@ -153,7 +157,7 @@ namespace Ets.Dao.GlobalConfig
             {
                 model.EmployerTaskTimeSet = EmployerTaskTimeSet;
             }            
-            if (WithdrawCommission == null)
+            if (string.IsNullOrEmpty(WithdrawCommission))
             {
                 string value = new GlobalConfigDao().GetSubsidies("WithdrawCommission", GroupId);
                 if (value != null)
@@ -163,7 +167,7 @@ namespace Ets.Dao.GlobalConfig
             {
                 model.WithdrawCommission = WithdrawCommission;
             }            
-            if (OrderCountSetting == null)
+            if (string.IsNullOrEmpty(OrderCountSetting))
             {
                 string value = new GlobalConfigDao().GetSubsidies("OrderCountSetting", GroupId);
                 if (value != null)
@@ -173,7 +177,7 @@ namespace Ets.Dao.GlobalConfig
             {
                 model.OrderCountSetting = OrderCountSetting;
             }            
-            if (YeepayWithdrawCommission == null)
+            if (string.IsNullOrEmpty(YeepayWithdrawCommission))
             {
                 string value = new GlobalConfigDao().GetSubsidies("YeepayWithdrawCommission", GroupId);
                 if (value != null)
@@ -183,7 +187,7 @@ namespace Ets.Dao.GlobalConfig
             {
                 model.YeepayWithdrawCommission = YeepayWithdrawCommission;
             }            
-            if (GrabToCompleteDistance == null)
+            if (string.IsNullOrEmpty(GrabToCompleteDistance))
             {
                 string value = new GlobalConfigDao().GetSubsidies("GrabToCompleteDistance", GroupId);
                 if (value != null)
@@ -192,9 +196,8 @@ namespace Ets.Dao.GlobalConfig
             else
             {
                 model.GrabToCompleteDistance = GrabToCompleteDistance;
-            }
-            //
-            if (AlipayWithdrawCommission == null)
+            }            
+            if (string.IsNullOrEmpty(AlipayWithdrawCommission))
             {
                 string value = new GlobalConfigDao().GetSubsidies("AlipayWithdrawCommission", GroupId);
                 if (value != null)
@@ -204,7 +207,7 @@ namespace Ets.Dao.GlobalConfig
             {
                 model.AlipayWithdrawCommission = AlipayWithdrawCommission;
             }
-            if (AlipayPassword == null)
+            if (string.IsNullOrEmpty(AlipayPassword))
             {
                 string value = new GlobalConfigDao().GetSubsidies("AlipayPassword", GroupId);
                 if (value != null)
