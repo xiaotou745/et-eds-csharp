@@ -105,7 +105,8 @@ namespace Ets.Dao.MenuSet
         /// <returns></returns>
         public bool AddMenu(AuthorityMenuModel model)
         {
-            string sql = @" INSERT INTO AuthorityMenuClass (ParId,MenuName,BeLock,Url,IsButton) VALUES (@ParId,@MenuName,@BeLock,@Url,@IsButton);select @@IDENTITY as InsertId; ";
+            string sql = @" INSERT INTO AuthorityMenuClass (ParId,MenuName,BeLock,Url,IsButton,JavaUrl)
+VALUES (@ParId,@MenuName,@BeLock,@Url,@IsButton,@JavaUrl);select @@IDENTITY as InsertId; ";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("ParId", model.ParId);
@@ -113,6 +114,7 @@ namespace Ets.Dao.MenuSet
             dbParameters.AddWithValue("BeLock", model.BeLock);
             dbParameters.AddWithValue("Url", model.Url);
             dbParameters.AddWithValue("IsButton", model.IsButton);
+            dbParameters.AddWithValue("JavaUrl", model.JavaUrl);
             object i = DbHelper.ExecuteScalar(SuperMan_Write, sql, dbParameters);
             if (i != null)
             {
@@ -128,12 +130,13 @@ namespace Ets.Dao.MenuSet
         /// <returns></returns>
         public bool UpdateMenu(AuthorityMenuModel model)
         {
-            string sql = @" UPDATE AuthorityMenuClass set MenuName=@MenuName,Url=@Url,IsButton=@IsButton where id=@id ";
+            string sql = @" UPDATE AuthorityMenuClass set MenuName=@MenuName,Url=@Url,IsButton=@IsButton,JavaUrl=@JavaUrl where id=@id ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("id", model.Id);
             dbParameters.AddWithValue("MenuName", model.MenuName);
             dbParameters.AddWithValue("Url", model.Url);
             dbParameters.AddWithValue("IsButton", model.IsButton);
+            dbParameters.AddWithValue("JavaUrl", model.JavaUrl);
             int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
             return i > 0;
         }
@@ -171,7 +174,7 @@ namespace Ets.Dao.MenuSet
         /// <returns></returns>
         public List<AuthorityMenuModel> GetListMenu(int parId)
         {
-            string sql = @" SELECT Id,ParId,MenuName,BeLock,Url,IsButton FROM AuthorityMenuClass with(nolock) where ParId=@ParId ";
+            string sql = @" SELECT Id,ParId,MenuName,BeLock,Url,IsButton,JavaUrl FROM AuthorityMenuClass with(nolock) where ParId=@ParId ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("ParId", parId);
             var dt = DbHelper.ExecuteDataset(SuperMan_Read, sql, dbParameters).Tables[0];
