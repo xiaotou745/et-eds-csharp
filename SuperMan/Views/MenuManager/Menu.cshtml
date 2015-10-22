@@ -38,7 +38,8 @@
                 <th>菜单名称</th>
                 @if (ViewBag.ParId > 0)
                 {
-                    <th>菜单地址</th>
+                    <th>net菜单地址</th>
+                     <th>java菜单地址</th>
                     <th>父级菜单</th>
                     <th>是否按钮</th>
                 } 
@@ -58,6 +59,7 @@
                     @if (ViewBag.ParId > 0)
                     {
                         <td>@item.Url</td>
+                         <td>@item.JavaUrl</td>
                         <td>@partMenu.MenuName</td>
                         <td>@item.IsButton</td>
                     } 
@@ -69,7 +71,7 @@
                     }
                     else
                     {
-                        <a href="javascript:void(0)" onclick="showUpdateChild('@item.MenuName','@item.Url','@isButton',@item.Id)">修改</a>
+                        <a href="javascript:void(0)" onclick="showUpdateChild('@item.MenuName','@item.Url','@isButton',@item.Id,'@item.JavaUrl')">修改</a>
                         <a   href="/MenuManager/MenuButton?pid=@item.Id">添加按钮</a>
                     }
                     </td> 
@@ -90,8 +92,12 @@
         <input type="hidden" value="@ViewBag.ParId" id="hidParId"/>
         <fieldset>
             <div class="control-group" style="width: 250px;margin: 0 auto;">
-                <label >菜单名称</label> 
+                <label >net菜单名称</label> 
                 <input  name="txtName" id="txtName" type="text">
+            </div> 
+            <div class="control-group" style="width: 250px;margin: 0 auto;">
+                <label>java菜单名称</label>
+                <input name="txtJavaUrl" id="txtJavaUrl" type="text">
             </div> 
             @if (ViewBag.ParId > 0)
             {
@@ -127,8 +133,12 @@
             @if (ViewBag.ParId > 0)
             {
                 <div class="control-group" style="width: 250px;margin: 0 auto;">
-                    <label >菜单Url</label> 
+                    <label >net菜单Url</label> 
                     <input  name="txtuUrl" id="txtuUrl" type="text">
+                </div> 
+                <div class="control-group" style="width: 250px;margin: 0 auto;">
+                    <label >java菜单Url</label> 
+                    <input name="txtuJavaUrl" id="txtuJavaUrl" type="text">
                 </div> 
                 <div class="control-group" style="width: 250px;margin: 0 auto;">
                     <label >是否按钮</label> 
@@ -150,6 +160,7 @@
     $("#btnConfim").on('click', function () {  
         var txtName = $("#txtName").val(); //菜单名称
         var txtUrl = $("#txtUrl").val(); //菜单Url
+        var txtJavaUrl = $("#txtJavaUrl").val(); //java菜单Url  
         var hidParId = $("#hidParId").val();
         var radval = $("input[name='radBtn']:checked").val();
         var isbutton = false;
@@ -161,11 +172,11 @@
             return;
         }
         
-        if (hidParId!="" && txtUrl == "") {
+        if (hidParId!="" &&(txtUrl == "" && txtJavaUrl=="")){
             alert("请输入菜单Url!");
             return;
         }
-        var pars = { "ParId": hidParId, "BeLock": 0, "IsButton": isbutton, "MenuName": txtName, "Url": txtUrl };
+        var pars = { "ParId": hidParId, "BeLock": 0, "IsButton": isbutton, "MenuName": txtName, "Url": txtUrl,"JavaUrl":txtJavaUrl };
         var url = "/MenuManager/AddMenu";
         $.ajax({
             type: 'POST',
@@ -189,6 +200,7 @@
         var hidParId = $("#hidParId").val();
         var hidId = $("#hidId").val(); //菜单id
         var radval = $("input[name='radBtnu']:checked").val();
+        var txtJavaUrl = $("#txtuJavaUrl").val(); //java菜单Url  
         var isbutton = false;
         if (radval==1) {
             isbutton = true;
@@ -198,11 +210,11 @@
             return;
         }
 
-        if (hidParId != "" && txtUrl == "") {
+        if (hidParId != "" && (txtUrl == ""&&txtJavaUrl=="")) {
             alert("请输入菜单Url!");
             return;
         }
-        var pars = { "Id": hidId, "ParId": hidParId, "IsButton": isbutton, "MenuName": txtName, "Url": txtUrl };
+        var pars = { "Id": hidId, "ParId": hidParId, "IsButton": isbutton, "MenuName": txtName, "Url": txtUrl,"JavaUrl":txtJavaUrl };
         var url = "/MenuManager/UpdateMenu";
         $.ajax({
             type: 'POST',
@@ -219,13 +231,18 @@
         });
     });
     
-    function showUpdateChild(name,url,isbutton,id) {
+    function showUpdateChild(name,url,isbutton,id,javaUrl) {
         $("#txtuName").val(name); //菜单名称
         $("#txtuUrl").val(url); //菜单Url
         $("#hidId").val(id); //菜单id
-        //$("#radBtnu1").removeAttr("checked");
-        //$("#radBtnu0").removeAttr("checked");
-        //$("#radBtnu"+isbutton).attr("checked", 'checked');
+        $("#txtuJavaUrl").val(javaUrl); //菜单Url
+        if (isbutton == "False") {
+            $("#radBtnu0").attr("checked", 'checked');
+            $("#radBtnu1").attr("checked", 'checked');
+        } else {
+            $("#radBtnu1").attr("checked", 'checked');
+            $("#radBtnu0").attr("checked", 'checked');
+        }
         adminjs.openwinbox('#updateDiv');
     }
     function showUpdate(name,id) {
