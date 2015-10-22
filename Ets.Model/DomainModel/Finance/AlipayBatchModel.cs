@@ -131,6 +131,10 @@ namespace Ets.Model.DomainModel.Finance
 		/// </summary>
 
 		public string Remarks { get; set; }
+        /// <summary>
+        /// 新的批次号
+        /// </summary>
+        public string NewBatchNo { get; set; }
 
 
     }

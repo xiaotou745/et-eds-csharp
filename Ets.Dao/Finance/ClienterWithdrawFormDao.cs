@@ -346,7 +346,7 @@ WHERE   BatchNo = @BatchNo";
         }
 
         /// <summary>
-        /// 以批次号重新提交
+        /// 更换批次号重新提交
         /// 茹化肖
         /// 2015年10月20日13:06:11
         /// </summary>
@@ -357,17 +357,19 @@ WHERE   BatchNo = @BatchNo";
             string updatestr = @" UPDATE  dbo.AlipayBatch
 SET     LastOptUser=@LastOptUser,
         LastOptTime = GETDATE(),
-        Remarks=@Remarks
+        Remarks=Remarks+@Remarks+'',
+        BatchNo=@NewBatchNo
 WHERE   BatchNo = @BatchNo";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("BatchNo", DbType.String).Value = model.BatchNo;
             dbParameters.Add("LastOptUser", DbType.String).Value = model.LastOptUser;
             dbParameters.Add("Remarks", DbType.String).Value = model.Remarks;
+            dbParameters.Add("NewBatchNo", DbType.String).Value = model.NewBatchNo;
             return DbHelper.ExecuteNonQuery(SuperMan_Write, updatestr, dbParameters);
         }
 
         /// <summary>
-        /// 以批次号重新提交
+        /// 验证批次号状态
         /// 茹化肖
         /// 2015年10月20日13:06:11
         /// </summary>
@@ -375,11 +377,13 @@ WHERE   BatchNo = @BatchNo";
         /// <returns></returns>
         public int CheckAlipayBatch(AlipayBatchModel model)
         {
-            string updatestr = @" SELECT COUNT(1) FROM dbo.AlipayBatch AS ab (NOLOCK) WHERE ab.BatchNo=@BatchNo AND ab.Status=1";
+            string updatestr = @" SELECT COUNT(1) FROM dbo.AlipayBatch AS ab  WHERE ab.BatchNo=@BatchNo AND ab.Status=@Status";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("BatchNo", DbType.String).Value = model.BatchNo;
+            dbParameters.Add("Status", DbType.Int32).Value = model.Status;
             return (int)DbHelper.ExecuteScalar(SuperMan_Write, updatestr, dbParameters);
         }
+
 
     }
 }
