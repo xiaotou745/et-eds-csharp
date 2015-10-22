@@ -37,7 +37,7 @@ namespace SuperMan.App_Start
                 return new UserContext
                 {
                     Id = userInfo.Id,
-                    Name = userInfo.LoginName,
+                    Name = userInfo.UserName,
                     RoleId = userInfo.RoleId,
                     GroupId = ETS.Util.ParseHelper.ToInt(userInfo.GroupId, 0),
                     AccountType = userInfo.AccountType

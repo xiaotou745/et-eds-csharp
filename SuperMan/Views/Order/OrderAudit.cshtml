@@ -125,11 +125,31 @@
         <div class="add-openbox add-form" id="batchCancelReasion" style="width:500px">
             <fieldset>
                 <div class="control-group">
-                    <label class="control-label" for="batchReason">扣除网站补贴原因</label>
-                    <div class="controls">
+                    <label><h4 style="padding-left: 137px">扣除网站补贴原因</h4></label>
+                    <hr style="margin-top: 0px; margin-bottom: -5px;" />
+                    <br />
+                    @*<div class="controls">
                         <textarea cols="45" rows="5" id="batchReason"></textarea>
                         <p class="help-block"></p>
+                    </div>*@
+                    <div class="controls" style="padding: 8px"> 
+                        <select id="selectCancelreason">
+                            <option value="1">任务完成时间小于5分钟</option>
+                            <option value="2">任务完成时间大于120分钟</option>
+                            <option value="3">接单完成位置重合</option>
+                            <option value="4">完成订单超过50个</option>
+                            <option value="5">上传小票不符要求</option>
+                            <option value="6">任务超时完成，系统自动处理</option>
+                            <option value="7">其它原因</option>
+                        </select>
                     </div>
+                    <div class="controls" id="reasonCanceltxtdiv" style="display: none">
+                        <input value="" type="hidden" id="cancelCancelID" />
+                        <input value="" type="hidden" id="cancelCancelNo" />
+                        <span>请输入原因:</span><br />
+                        <textarea cols="45" rows="5" id="deductWebSubsidyCancelReason"></textarea>
+                        <p class="help-block"></p>
+                    </div> 
                 </div>
             </fieldset>
             <p class="btnbox">
@@ -163,6 +183,17 @@
                     //其他
                     $('#deductWebSubsidyReason').val('');
                     $('#reasontxtdiv').show();
+                }
+            });
+
+            $('#selectCancelreason').change(function () {
+                $('#reasonCanceltxtdiv').hide();
+                var reasoncancelvalue = $('#selectCancelreason option:selected').html(); 
+                $('#deductWebSubsidyCancelReason').val(reasoncancelvalue);
+                if (reasoncancelvalue == '其它原因') {
+                    //其他
+                    $('#deductWebSubsidyCancelReason').val('');
+                    $('#reasonCanceltxtdiv').show();
                 }
             });
         });
@@ -302,7 +333,13 @@
             if (!window.confirm("确认批量审核拒绝？")) {
                 return false;
             }
-            var remark = $('#batchReason').val();
+            var reasoncancelvalue = $('#selectCancelreason option:selected').html();
+            var remark = "";
+            if (reasoncancelvalue != '其它原因') {
+                remark = reasoncancelvalue;
+            } else {
+                remark=$('#deductWebSubsidyCancelReason').val();
+            } 
             if (remark.trim() == "") {
                 alert("扣除网站补贴原因不能为空！");
                 return false;
