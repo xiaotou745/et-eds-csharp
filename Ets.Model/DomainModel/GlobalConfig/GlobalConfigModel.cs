@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using System.Reflection;
+using System.Runtime.CompilerServices;
+
 namespace Ets.Model.DomainModel.GlobalConfig
 {
     [Serializable]
@@ -30,17 +33,17 @@ namespace Ets.Model.DomainModel.GlobalConfig
         /// <summary>
         /// 佣金方式计算方式
         /// </summary>
-        public string CommissionFormulaMode { get; set; } 
-         
+        public string CommissionFormulaMode { get; set; }
+
         /// <summary>
         /// 满足金额补贴利润比例
         /// </summary>
-        public string PriceCommissionRatio { get; set; } 
-         
+        public string PriceCommissionRatio { get; set; }
+
         /// <summary>
         /// 满足金额网站补贴
         /// </summary>
-        public string PriceSiteSubsidies { get; set; } 
+        public string PriceSiteSubsidies { get; set; }
 
         /// <summary>
         /// 是否开启动态时间补贴(0不开启,1开启)
@@ -54,7 +57,7 @@ namespace Ets.Model.DomainModel.GlobalConfig
         /// 80补贴3元 
         /// </summary>
         public string PriceSubsidies { get; set; }
-         
+
         /// <summary>
         ///普通补贴佣金比例
         /// </summary>
@@ -64,23 +67,23 @@ namespace Ets.Model.DomainModel.GlobalConfig
         /// 普通网站补贴
         /// </summary>
         public string CommonSiteSubsidies { get; set; }
-        
+
         /// <summary>
         ///时间段佣金比例
         /// </summary>
         public string TimeSpanCommissionRatio { get; set; }
 
-           
+
         /// <summary>
         ///时间段之内补贴价钱(（A）	上午10：00-13:00 下午16：00-19:00补贴N员)
         /// </summary>
         public string TimeSpanInPrice { get; set; }
-            
+
         /// <summary>
         ///时间段之外补贴价钱 （B）	其他时间段补贴2元或者更低
         /// </summary>
         public string TimeSpanOutPrice { get; set; }
-          
+
         /// <summary>
         ///跨店抢单补贴
         /// </summary>
@@ -162,12 +165,12 @@ namespace Ets.Model.DomainModel.GlobalConfig
         /// </summary>
         public string EmployerTaskTimeSet { get; set; }
 
-		/// <summary>
+        /// <summary>
         /// 无效订单判定时抢单点和完成点的距离(米)
         /// </summary>
         public string GrabToCompleteDistance { get; set; }
-		
-		/// <summary>
+
+        /// <summary>
         /// 无效订单判定时累计完成订单数量
         /// </summary>
         public string OrderCountSetting { get; set; }
@@ -195,8 +198,45 @@ namespace Ets.Model.DomainModel.GlobalConfig
         /// 支付宝转账密码
         /// </summary>
         public string AlipayPassword { get; set; }
-        
 
-        
+        private Dictionary<int, string> _indexedInstanceProperty =
+            new Dictionary<int, string>();
+         [IndexerNameAttribute("IndexedInstanceProperty")]
+
+        public string this[int key]
+        {
+            get
+            {
+                string returnValue = null;
+                if (_indexedInstanceProperty.TryGetValue(key, out returnValue))
+                {
+                    return returnValue;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            set
+            {
+                if (value == null)
+                {
+                    throw new ApplicationException("IndexedInstanceProperty value can be the empty string, but it cannot be Nothing.");
+                }
+                else
+                {
+                    if (_indexedInstanceProperty.ContainsKey(key))
+                    {
+                        _indexedInstanceProperty[key] = value;
+                    }
+                    else
+                    {
+                        _indexedInstanceProperty.Add(key, value);
+                    }
+                }
+            }
+
+
+        }
     }
 }
