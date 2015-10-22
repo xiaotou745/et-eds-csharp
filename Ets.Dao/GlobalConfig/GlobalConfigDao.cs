@@ -21,203 +21,51 @@ namespace Ets.Dao.GlobalConfig
         /// 2015年4月2日 13:15:02
         /// </summary>
         public static GlobalConfigModel GlobalConfigGet(int GroupId)
-        {
-            GlobalConfigModel model = new GlobalConfigModel();
-            //#region redis判断，如果没有加到redis中
-            //var redis = new ETS.NoSql.RedisCache.RedisCache();
-            //string cacheKey =string.Format(RedissCacheKey.Ets_Dao_GlobalConfig_GlobalConfigGet, GroupId);//缓存的KEY
-            //model = redis.Get<GlobalConfigModel>(cacheKey);
-            //if (model == null)
-            //{
-            //    //CurrentGlobalVersion = ETS.Config.GlobalVersion;
-            //    model = new GlobalConfigDao().GlobalConfigMethod(GroupId);
-            //    redis.Set(cacheKey, model);
-            //}
+        {        
 
-
-            #region redis判断，如果没有加到redis中                
+                //model = new GlobalConfigDao().GlobalConfigMethod(GroupId);
+                //#region redis判断，如果没有加到redis中
+                //var redis = new ETS.NoSql.RedisCache.RedisCache();
+                //string cacheKey =string.Format(RedissCacheKey.Ets_Dao_GlobalConfig_GlobalConfigGet, GroupId);//缓存的KEY
+                //model = redis.Get<GlobalConfigModel>(cacheKey);
+                //if (model == null)
+                //{
+                //    //CurrentGlobalVersion = ETS.Config.GlobalVersion;
+                //    model = new GlobalConfigDao().GlobalConfigMethod(GroupId);
+                //    redis.Set(cacheKey, model);
+                //}
+            
             var redis = new ETS.NoSql.RedisCache.RedisCachePublic();
-            string PushRadius= redis.Get<string>(string.Format(RedissCacheKey.GlobalConfig_PushRadius,GroupId));
-            string AllFinishedOrderUploadTimeInterval= redis.Get<string>(string.Format(RedissCacheKey.GlobalConfig_AllFinishedOrderUploadTimeInterval,GroupId));
-            string SearchClienterLocationTimeInterval= redis.Get<string>(string.Format(RedissCacheKey.GlobalConfig_SearchClienterLocationTimeInterval,GroupId));
-            string HasUnFinishedOrderUploadTimeInterval= redis.Get<string>(string.Format(RedissCacheKey.GlobalConfig_HasUnFinishedOrderUploadTimeInterval,GroupId));
-            string BusinessUploadTimeInterval= redis.Get<string>(string.Format(RedissCacheKey.GlobalConfig_BusinessUploadTimeInterval,GroupId));
-            string ClienterWithdrawCommissionAccordingMoney= redis.Get<string>(string.Format(RedissCacheKey.GlobalConfig_ClienterWithdrawCommissionAccordingMoney,GroupId));
-            string ExclusiveOrderTime= redis.Get<string>(string.Format(RedissCacheKey.GlobalConfig_ExclusiveOrderTime,GroupId));
-            string ClienterOrderPageSize= redis.Get<string>(string.Format(RedissCacheKey.GlobalConfig_ClienterOrderPageSize,GroupId));
-            string CompleteTimeSet= redis.Get<string>(string.Format(RedissCacheKey.GlobalConfig_CompleteTimeSet,GroupId));
-            string EmployerTaskTimeSet= redis.Get<string>(string.Format(RedissCacheKey.GlobalConfig_EmployerTaskTimeSet,GroupId));
-            string WithdrawCommission= redis.Get<string>(string.Format(RedissCacheKey.GlobalConfig_WithdrawCommission,GroupId));
-            string OrderCountSetting= redis.Get<string>(string.Format(RedissCacheKey.GlobalConfig_OrderCountSetting,GroupId));
-            string YeepayWithdrawCommission= redis.Get<string>(string.Format(RedissCacheKey.GlobalConfig_YeepayWithdrawCommission,GroupId));
-            string GrabToCompleteDistance= redis.Get<string>(string.Format(RedissCacheKey.GlobalConfig_GrabToCompleteDistance,GroupId));
-            string AlipayWithdrawCommission= redis.Get<string>(string.Format(RedissCacheKey.GlobalConfig_AlipayWithdrawCommission,GroupId));
-            string AlipayPassword = redis.Get<string>(string.Format(RedissCacheKey.GlobalConfig_AlipayPassword, GroupId));
-            if (PushRadius == null)
-            {
-                string value= new GlobalConfigDao().GetSubsidies("PushRadius", GroupId);
-                if(value!=null)
-                redis.Set(string.Format(RedissCacheKey.GlobalConfig_PushRadius, GroupId), value);
-            }
-            else
-            {
-                model.PushRadius = PushRadius;
-            }
-            if(AllFinishedOrderUploadTimeInterval == null)
-            {
-                string value= new GlobalConfigDao().GetSubsidies("AllFinishedOrderUploadTimeInterval", GroupId);
-                if (value != null)
-                redis.Set(string.Format(RedissCacheKey.GlobalConfig_AllFinishedOrderUploadTimeInterval,GroupId), value);
-            }
-            else
-            {
-                model.AllFinishedOrderUploadTimeInterval=AllFinishedOrderUploadTimeInterval;
-            }
-            if(SearchClienterLocationTimeInterval==null)
-            {
-                string value= new GlobalConfigDao().GetSubsidies("SearchClienterLocationTimeInterval", GroupId);
-                if (value != null)
-                redis.Set(string.Format(RedissCacheKey.GlobalConfig_SearchClienterLocationTimeInterval,GroupId), value);
-            }
-            else
-            {
-                model.SearchClienterLocationTimeInterval = SearchClienterLocationTimeInterval;
-            }
-            if(HasUnFinishedOrderUploadTimeInterval==null)
-            {
-                string value= new GlobalConfigDao().GetSubsidies("HasUnFinishedOrderUploadTimeInterval", GroupId);
-                if (value != null)
-                redis.Set(string.Format(RedissCacheKey.GlobalConfig_HasUnFinishedOrderUploadTimeInterval,GroupId), value);
-            }
-            else
-            {
-                model.HasUnFinishedOrderUploadTimeInterval = HasUnFinishedOrderUploadTimeInterval;
-            }
-            if(BusinessUploadTimeInterval==null)
-            {
-                string value= new GlobalConfigDao().GetSubsidies("BusinessUploadTimeInterval", GroupId);
-                if (value != null)
-                redis.Set(string.Format(RedissCacheKey.GlobalConfig_BusinessUploadTimeInterval,GroupId), value);
-            }
-            else
-            {
-                model.BusinessUploadTimeInterval = BusinessUploadTimeInterval;
-            }
-            if(ClienterWithdrawCommissionAccordingMoney==null)
-            {
-                string value= new GlobalConfigDao().GetSubsidies("ClienterWithdrawCommissionAccordingMoney", GroupId);
-                if (value != null)
-                redis.Set(string.Format(RedissCacheKey.GlobalConfig_ClienterWithdrawCommissionAccordingMoney,GroupId), value);
-            }
-            else
-            {
-                model.ClienterWithdrawCommissionAccordingMoney =ClienterWithdrawCommissionAccordingMoney;
-            }
-            if(ExclusiveOrderTime==null)
-            {
-                string value= new GlobalConfigDao().GetSubsidies("ExclusiveOrderTime", GroupId);
-                if (value != null)
-                redis.Set(string.Format(RedissCacheKey.GlobalConfig_ExclusiveOrderTime,GroupId), value);
-            }
-            else
-            {
-                model.ExclusiveOrderTime = ExclusiveOrderTime;
-            }
-            if (ClienterOrderPageSize == null)
-            {
-                string value = new GlobalConfigDao().GetSubsidies("ClienterOrderPageSize", GroupId);
-                if (value != null)
-                redis.Set(string.Format(RedissCacheKey.GlobalConfig_ClienterOrderPageSize, GroupId), value);
-            }
-            else
-            {
-                model.ClienterOrderPageSize = ClienterOrderPageSize;
-            }            
-            if (CompleteTimeSet == null)
-            {
-                string value = new GlobalConfigDao().GetSubsidies("CompleteTimeSet", GroupId);
-                if (value != null)
-                redis.Set(string.Format(RedissCacheKey.GlobalConfig_CompleteTimeSet, GroupId), value);
-            }
-            else
-            {
-                model.CompleteTimeSet = CompleteTimeSet;
-            }            
-            if (EmployerTaskTimeSet == null)
-            {
-                string value = new GlobalConfigDao().GetSubsidies("EmployerTaskTimeSet", GroupId);
-                if (value != null)
-                redis.Set(string.Format(RedissCacheKey.GlobalConfig_EmployerTaskTimeSet, GroupId), value);
-            }
-            else
-            {
-                model.EmployerTaskTimeSet = EmployerTaskTimeSet;
-            }            
-            if (WithdrawCommission == null)
-            {
-                string value = new GlobalConfigDao().GetSubsidies("WithdrawCommission", GroupId);
-                if (value != null)
-                redis.Set(string.Format(RedissCacheKey.GlobalConfig_WithdrawCommission, GroupId), value);
-            }
-            else
-            {
-                model.WithdrawCommission = WithdrawCommission;
-            }            
-            if (OrderCountSetting == null)
-            {
-                string value = new GlobalConfigDao().GetSubsidies("OrderCountSetting", GroupId);
-                if (value != null)
-                redis.Set(string.Format(RedissCacheKey.GlobalConfig_OrderCountSetting, GroupId), value);
-            }
-            else
-            {
-                model.OrderCountSetting = OrderCountSetting;
-            }            
-            if (YeepayWithdrawCommission == null)
-            {
-                string value = new GlobalConfigDao().GetSubsidies("YeepayWithdrawCommission", GroupId);
-                if (value != null)
-                redis.Set(string.Format(RedissCacheKey.GlobalConfig_YeepayWithdrawCommission, GroupId), value);
-            }
-            else
-            {
-                model.YeepayWithdrawCommission = YeepayWithdrawCommission;
-            }            
-            if (GrabToCompleteDistance == null)
-            {
-                string value = new GlobalConfigDao().GetSubsidies("GrabToCompleteDistance", GroupId);
-                if (value != null)
-                redis.Set(string.Format(RedissCacheKey.GlobalConfig_GrabToCompleteDistance, GroupId), value);
-            }
-            else
-            {
-                model.GrabToCompleteDistance = GrabToCompleteDistance;
-            }
-            //
-            if (AlipayWithdrawCommission == null)
-            {
-                string value = new GlobalConfigDao().GetSubsidies("AlipayWithdrawCommission", GroupId);
-                if (value != null)
-                redis.Set(string.Format(RedissCacheKey.GlobalConfig_AlipayWithdrawCommission, GroupId), value);
-            }
-            else
-            {
-                model.AlipayWithdrawCommission = AlipayWithdrawCommission;
-            }
-            if (AlipayPassword == null)
-            {
-                string value = new GlobalConfigDao().GetSubsidies("AlipayPassword", GroupId);
-                if (value != null)
-                redis.Set(string.Format(RedissCacheKey.GlobalConfig_AlipayPassword, GroupId), value);
-            }
-            else
-            {
-                model.AlipayPassword = AlipayPassword;
-            }                       
-        
-            #endregion
 
-            return model;
+            GlobalConfigModel model = new GlobalConfigModel();
+            PropertyInfo[] pi = model.GetType().GetProperties();
+            for (int i = 0; i < pi.Length; i++)
+            {
+                string propertyName = pi[i].Name;
+                if (propertyName == "Item" ||
+                    propertyName == "StrategyId" || propertyName == "GroupId"
+                    || propertyName == "GroupName" || propertyName == "OptName")
+                    continue;
+
+                string redisKey = "GlobalConfig_" + propertyName + "_" + GroupId.ToString();
+                string redisValue = redis.Get<string>(redisKey);
+
+                if (string.IsNullOrEmpty(redisValue))
+                {
+                    string tableValue = new GlobalConfigDao().GetSubsidies(propertyName, GroupId);
+                    if (!string.IsNullOrEmpty(tableValue))
+                    {
+                        pi[i].SetValue(model, tableValue, null);
+                        redis.Set(redisKey, tableValue);
+                    }
+                }
+                else
+                {
+                    pi[i].SetValue(model, redisValue, null);
+                }
+            }
+
+                return model;
         }
 
         /// <summary>

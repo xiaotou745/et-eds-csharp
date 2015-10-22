@@ -50,5 +50,7 @@ namespace Ets.Model.DomainModel.Finance
         /// 易宝子账户
         /// </summary>
         public string Ledgerno { get; set; }
+
+        public int AccountType { get; set; }
     }
 }

@@ -120,7 +120,8 @@ select cwf.Id,
        cwf.OpenBank,
        cwf.OpenSubBank,
        cwf.TrueName,
-       cwf.AccountNo
+       cwf.AccountNo,
+       cwf.AccountType
 from ClienterWithdrawForm cwf with(nolock)
   join clienter c with(nolock) on cwf.ClienterId=c.Id and cwf.Id=@Id  ";
             var parm = DbHelper.CreateDbParameters();

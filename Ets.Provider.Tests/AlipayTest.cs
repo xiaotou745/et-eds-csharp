@@ -22,6 +22,11 @@ namespace Ets.Provider.Tests
         [Test]
         public void AlipayTransfer()
         {
+            //SortedDictionary<string, string> sParaTemp = new SortedDictionary<string, string>();
+            //sParaTemp.Add("service ", "btn_status_query");
+            //sParaTemp.Add("batch_no", "2015102210312566318226");
+            //string s = ETS.Pay.AliPay.Submit.BuildRequest(sParaTemp);
+
             //var model = new PayProvider().AlipayTransfer(new AlipayTransferParameter()
             //{
             //    Partner = "2088911703660069",//2088911703660069

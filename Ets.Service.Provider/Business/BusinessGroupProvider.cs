@@ -9,7 +9,7 @@ using Ets.Model.DomainModel.GlobalConfig;
 using Ets.Service.IProvider.Business;
 using Ets.Dao.Business;
 using ETS.Util;
-
+using System.Reflection;
 namespace Ets.Service.Provider.Business
 {
     /// <summary>
@@ -146,7 +146,9 @@ namespace Ets.Service.Provider.Business
 
                 #endregion
 
+
                 DeleteGlobalConfigRedisByGroupId(globalConfigModel.GroupId);
+                //删除缓存              
                 tran.Complete();
 
             }
@@ -157,13 +159,28 @@ namespace Ets.Service.Provider.Business
         /// <summary>
         /// 根据分组Id删除公共配置缓存
         /// danny-20150506
+        /// 修改人：胡灵波 2015年10月22日 17:29:32
         /// </summary>
         /// <param name="GroupId"></param>
         private void DeleteGlobalConfigRedisByGroupId(int GroupId)
         {
-            var redis = new ETS.NoSql.RedisCache.RedisCache();
-            string cacheKey = string.Format(RedissCacheKey.Ets_Dao_GlobalConfig_GlobalConfigGet, GroupId); //缓存的KEY
-            redis.Delete(cacheKey);
+            var redis = new ETS.NoSql.RedisCache.RedisCachePublic();
+            //string cacheKey = string.Format(RedissCacheKey.Ets_Dao_GlobalConfig_GlobalConfigGet, GroupId); //缓存的KEY
+            //redis.Delete(cacheKey);
+
+            GlobalConfigModel model = new GlobalConfigModel();
+            PropertyInfo[] pi = model.GetType().GetProperties();
+            for (int i = 0; i < pi.Length; i++)
+            {
+                string propertyName = pi[i].Name;
+                if (propertyName == "Item" ||
+                    propertyName == "StrategyId" || propertyName == "GroupId"
+                    || propertyName == "GroupName" || propertyName == "OptName")
+                    continue;
+
+                string redisKey = "GlobalConfig_" + propertyName + "_" + GroupId.ToString();
+                redis.Delete(redisKey);                
+            }
         }
 
         /// <summary>
