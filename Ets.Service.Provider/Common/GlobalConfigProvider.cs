@@ -52,12 +52,13 @@ namespace Ets.Service.Provider.Common
                 {
                     result = _dao.UpdateTimeSubsidies(value, GroupId);
                 }
-                var redis = new ETS.NoSql.RedisCache.RedisCache();
-                string cacheKey = string.Format(RedissCacheKey.Ets_Dao_GlobalConfig_GlobalConfigGet, GroupId);
-                redis.Delete(cacheKey);
-                var model = new GlobalConfigDao().GlobalConfigMethod(GroupId);
-                redis.Set(cacheKey, model);
+                //var redis = new ETS.NoSql.RedisCache.RedisCache();
+                //string cacheKey = string.Format(RedissCacheKey.Ets_Dao_GlobalConfig_GlobalConfigGet, GroupId);
+                //redis.Delete(cacheKey);
+                //var model = new GlobalConfigDao().GlobalConfigMethod(GroupId);
+                //redis.Set(cacheKey, model);                
                 tran.Complete();
+                _dao.DeleteRedisByGroupId(GroupId);
             }
             return result;
         }
@@ -113,12 +114,14 @@ namespace Ets.Service.Provider.Common
                 {
                     result = _dao.UpdatePriceSubsidies(value, GroupId);
                 }
-                var redis = new ETS.NoSql.RedisCache.RedisCache();
-                string cacheKey = string.Format(RedissCacheKey.Ets_Dao_GlobalConfig_GlobalConfigGet, GroupId);
-                redis.Delete(cacheKey);
-                var model = new GlobalConfigDao().GlobalConfigMethod(GroupId);
-                redis.Set(cacheKey, model);
+                //var redis = new ETS.NoSql.RedisCache.RedisCache();
+                //string cacheKey = string.Format(RedissCacheKey.Ets_Dao_GlobalConfig_GlobalConfigGet, GroupId);
+                //redis.Delete(cacheKey);
+                //var model = new GlobalConfigDao().GlobalConfigMethod(GroupId);
+                //redis.Set(cacheKey, model);
                 tran.Complete();
+
+                _dao.DeleteRedisByGroupId(GroupId);
             }
             return result;
         }
@@ -197,12 +200,14 @@ namespace Ets.Service.Provider.Common
                 {
                     result = _dao.UpdateCommissionFormulaMode(value, GroupId);
                 }
-                var redis = new ETS.NoSql.RedisCache.RedisCache();
-                string cacheKey = string.Format(RedissCacheKey.Ets_Dao_GlobalConfig_GlobalConfigGet, GroupId);
-                redis.Delete(cacheKey);
-                var model = new GlobalConfigDao().GlobalConfigMethod(GroupId);
-                redis.Set(cacheKey, model);
+                //var redis = new ETS.NoSql.RedisCache.RedisCache();
+                //string cacheKey = string.Format(RedissCacheKey.Ets_Dao_GlobalConfig_GlobalConfigGet, GroupId);
+                //redis.Delete(cacheKey);
+                //var model = new GlobalConfigDao().GlobalConfigMethod(GroupId);
+                //redis.Set(cacheKey, model);
                 tran.Complete();
+
+                _dao.DeleteRedisByGroupId(GroupId);
             }
             return result;
         }
@@ -224,10 +229,12 @@ namespace Ets.Service.Provider.Common
                 {
                     result = _dao.UpdateSubsidies(value, keyName, GroupId);
                 }
-                var redis = new ETS.NoSql.RedisCache.RedisCache();
-                string cacheKey = string.Format(RedissCacheKey.Ets_Dao_GlobalConfig_GlobalConfigGet,0);
-                redis.Delete(cacheKey);
+                //var redis = new ETS.NoSql.RedisCache.RedisCache();
+                //string cacheKey = string.Format(RedissCacheKey.Ets_Dao_GlobalConfig_GlobalConfigGet,0);
+                //redis.Delete(cacheKey);
                 tran.Complete();
+
+                _dao.DeleteRedisByGroupId(GroupId);
             }
             return result;
         }

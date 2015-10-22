@@ -272,5 +272,31 @@ namespace Ets.Dao.GlobalConfig
             return i > 0;
         }
 
+
+        /// <summary>
+        /// 根据分组Id删除公共配置缓存        
+        /// 修改人：胡灵波 2015年10月22日 17:29:32
+        /// </summary>
+        /// <param name="GroupId"></param>
+        public void DeleteRedisByGroupId(int GroupId)
+        {
+            var redis = new ETS.NoSql.RedisCache.RedisCachePublic();
+            //string cacheKey = string.Format(RedissCacheKey.Ets_Dao_GlobalConfig_GlobalConfigGet, GroupId); //缓存的KEY
+            //redis.Delete(cacheKey);
+
+            GlobalConfigModel model = new GlobalConfigModel();
+            PropertyInfo[] pi = model.GetType().GetProperties();
+            for (int i = 0; i < pi.Length; i++)
+            {
+                string propertyName = pi[i].Name;
+                if (propertyName == "Item" ||
+                    propertyName == "StrategyId" || propertyName == "GroupId"
+                    || propertyName == "GroupName" || propertyName == "OptName")
+                    continue;
+
+                string redisKey = "GlobalConfig_" + propertyName + "_" + GroupId.ToString();
+                redis.Delete(redisKey);
+            }
+        }
     }
 }
