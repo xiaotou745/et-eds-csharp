@@ -2127,9 +2127,9 @@ namespace Ets.Service.Provider.Pay
                         NotifyUrl = Config.AliPayBatch,
                         Email = AliPayConfig.Email,
                         AccountName = AliPayConfig.AccountName,
-                        PayDate = DateTime.Now.ToString("YYYYmmdd"),
+                        PayDate = DateTime.Now.ToString("yyyyMMdd"),
                         BatchNo = alipayBatchNo,//批次号不可重复
-                        BatchFee = alipayPayAmount.ToString(),
+                        BatchFee = alipayPayAmount.ToString("#0.00"),
                         BatchNum = alipayBatchCount.ToString(),
                         DetailData = DetailData.ToString().Substring(0, DetailData.Length - 1)//去掉最后一个|符号
                     });
@@ -2286,6 +2286,10 @@ namespace Ets.Service.Provider.Pay
             string[] dataArr = str.Split('|');//单个数据
             for (int i = 0; i < dataArr.Length; i++)
             {
+                if (string.IsNullOrWhiteSpace(dataArr[i]))
+                {
+                    continue;
+                }
                 var propArr = dataArr[i].Split('^');
                 var model=new AlipayCallBackData
                 {
