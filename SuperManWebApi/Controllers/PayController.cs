@@ -116,37 +116,37 @@ namespace SuperManWebApi.Controllers
             #region===回调取参
             StringBuilder sb = new StringBuilder();
             AlipayBatchCallBackModel model=new AlipayBatchCallBackModel();
-            var notify_time = req.Form["notify_time"];//异步通知时间
+            var notify_time = req["notify_time"];//异步通知时间
             sb.Append(notify_time + "\r\n");
             model.NotifyTime = notify_time;
-            var notify_type = req.Form["notify_type"];//异步通知类型
+            var notify_type = req["notify_type"];//异步通知类型
             sb.Append(notify_type + "\r\n");
             model.NotifyType = notify_type;
-            var notify_id = req.Form["notify_id"];//异步通知ID
+            var notify_id = req["notify_id"];//异步通知ID
             sb.Append(notify_id + "\r\n\n");
             model.NotifyId = notify_id;
-            var sign_type = req.Form["sign_type"];//签名类型
+            var sign_type = req["sign_type"];//签名类型
             sb.Append(sign_type + "\r\n\n");
             model.SignType = sign_type;
-            var sign = req.Form["sign"];//签名内容
+            var sign = req["sign"];//签名内容
             sb.Append(sign + "\r\n\n");
             model.Sign = sign;
-            var batch_no = req.Form["batch_no"];//批次号
+            var batch_no = req["batch_no"];//批次号
             sb.Append(batch_no + "\r\n\n");
             model.BatchNo = batch_no;
-            var pay_user_id = req.Form["pay_user_id"];//付款账号ID
+            var pay_user_id = req["pay_user_id"];//付款账号ID
             sb.Append(pay_user_id + "\r\n\n");
             model.PayUserId = pay_user_id;
-            var pay_user_name = req.Form["pay_user_name"];//付款账户名称
+            var pay_user_name = req["pay_user_name"];//付款账户名称
             sb.Append(pay_user_name + "\r\n\n");
             model.PayUserName = pay_user_name;
-            var pay_account_no = req.Form["pay_account_no"];//付款账户
+            var pay_account_no = req["pay_account_no"];//付款账户
             sb.Append(pay_account_no + "\r\n\n");
             model.PayAccountNo = pay_account_no;
-            var success_details = req.Form["success_details"];//付款成功列表
+            var success_details = req["success_details"];//付款成功列表
             sb.Append(success_details + "\r\n\n");
             model.SuccessDetails = success_details;
-            var fail_details = req.Form["fail_details"];//付款失败列表
+            var fail_details = req["fail_details"];//付款失败列表
             sb.Append(fail_details + "\r\n\n");
             model.FailDetails = fail_details;
             LogHelper.LogWriterString(sb.ToString());
