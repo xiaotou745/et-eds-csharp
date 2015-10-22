@@ -2244,7 +2244,7 @@ namespace Ets.Service.Provider.Pay
                         iClienterFinanceProvider.ClienterWithdrawPayFailedForCallBack(new ClienterWithdrawLogModel()
                         {
                             Operator = "system",
-                            Remark = "支付宝提现打款失败.",
+                            Remark = "支付宝提现打款失败",
                             Status = ClienterWithdrawFormStatus.Error.GetHashCode(),
                             OldStatus = ClienterWithdrawFormStatus.Paying.GetHashCode(),
                             WithwardId = fail.WithdrawId,
