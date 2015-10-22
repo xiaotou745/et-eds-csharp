@@ -68,7 +68,7 @@ namespace Ets.Service.Provider.Authority
                         var redis = new ETS.NoSql.RedisCache.RedisCache();
                         foreach (AccountModel item in accountIDList)
                         {
-                            cacheKey = RedissCacheKey.Menu_Auth + item.Id;
+                            cacheKey = String.Format(RedissCacheKey.Menu_Auth, ETS.Config.GlobalVersion, item.Id);
                             redis.Delete(cacheKey);
                         }
                     }
@@ -461,7 +461,7 @@ namespace Ets.Service.Provider.Authority
                     //java中对用户的权限信息进行了redis缓存，因此当.net中对用户的权限进行更新时，需要清除java中的这个用户的权限缓存信息
                     //zhaohailong，20150916
                     var redis = new ETS.NoSql.RedisCache.RedisCache();
-                    string cacheKey = RedissCacheKey.Menu_Auth+accoutId;
+                    string cacheKey = String.Format(RedissCacheKey.Menu_Auth, ETS.Config.GlobalVersion, accoutId);
                     redis.Delete(cacheKey);
                 }
 
