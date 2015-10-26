@@ -2049,11 +2049,11 @@ namespace Ets.Service.Provider.Pay
             }
             if (pmmodel.Type == 2)//已存在的批次号,再次付款
             {
-                //判断旧的批次号是否在打款中&&支付宝处理结果
-                if (pmmodel.OptName != "douhaichao" || pmmodel.OptName != "admin")
-                {
-                    return "<html><body>再次提交打款功能暂时不开放,请联系窦海超!</body></html>";
-                }
+                //判断旧的批次号是否在打款中&&支付宝处理结果  暂时注释掉
+                //if (pmmodel.OptName != "douhaichao" || pmmodel.OptName != "admin")
+                //{
+                //    return "<html><body>再次提交打款功能暂时不开放,请联系陈凯!</body></html>";
+                //}
                 //查询批次号是否在打款中
                 var res =clienterWithDao.CheckAlipayBatch(new AlipayBatchModel() {BatchNo = pmmodel.Data.Trim(), Status = 0});
                 if (res!= 1)
