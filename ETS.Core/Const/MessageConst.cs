@@ -23,7 +23,7 @@ namespace ETS.Const
         /// <summary>
         /// 审核拒绝
         /// </summary>
-        public const string AuditRejection = "尊敬的骑士您好，您{0}月{1}日提现申请已被拒绝，相应余额已退回账户，具体原因为：{2}！如有疑问请致电010-57462756";
+        public const string AuditRejection = "尊敬的E代送骑士您好，您{0}月{1}日提现申请已被拒绝，相应余额已退回账户，具体原因为：{2}！如有疑问请致电010-57462756";
 
     }
 }
