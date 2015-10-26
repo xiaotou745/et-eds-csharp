@@ -2248,7 +2248,7 @@ namespace Ets.Service.Provider.Pay
                         iClienterFinanceProvider.ClienterWithdrawPayFailedForCallBack(new ClienterWithdrawLogModel()
                         {
                             Operator = "system",
-                            Remark = "支付宝提现打款失败" + (fail.Reason.Trim().ToUpper() == "ACCOUN_NAME_NOT_MATCH" ? ",支付宝账户和姓名不匹配" : ""),
+                            Remark = "支付宝提现:打款失败" + (fail.Reason.Trim().ToUpper() == "ACCOUN_NAME_NOT_MATCH" ? ",支付宝账户和姓名不匹配" : ""),
                             Status = ClienterWithdrawFormStatus.Error.GetHashCode(),
                             OldStatus = ClienterWithdrawFormStatus.Paying.GetHashCode(),
                             WithwardId = fail.WithdrawId,
@@ -2258,7 +2258,7 @@ namespace Ets.Service.Provider.Pay
                         });
                         //发送消息
                         ClienterFinanceAccountModel clienterFinanceAccountModel = clienterFinanceDao.GetClienterFinanceAccount(fail.WithdrawId.ToString());
-                        clienterFinanceAccountModel.PayFailedReason = "支付宝提现打款失败" + (fail.Reason.Trim().ToUpper() == "ACCOUN_NAME_NOT_MATCH" ? ",支付宝账户和姓名不匹配" : "");
+                        clienterFinanceAccountModel.PayFailedReason = "支付宝提现:打款失败" + (fail.Reason.Trim().ToUpper() == "ACCOUN_NAME_NOT_MATCH" ? ",支付宝账户和姓名不匹配" : "");
                         AddCPlayMoneyFailureMessage(clienterFinanceAccountModel);
                     }
                     #endregion
