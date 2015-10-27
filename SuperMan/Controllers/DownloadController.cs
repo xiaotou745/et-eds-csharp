@@ -117,7 +117,7 @@ namespace SuperMan.Controllers
                 //排除 苹果桌面系统                
                 if (!agent.Contains("Windows NT") && !agent.Contains("Macintosh"))
                 {
-                    foreach (string item in keywords)
+                    foreach (string item in keywords) 
                     {
                         if (agent.Contains(item))
                         {
