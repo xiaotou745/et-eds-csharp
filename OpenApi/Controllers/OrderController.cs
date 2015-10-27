@@ -237,7 +237,7 @@ namespace OpenApi.Controllers
         public ResultModel<object> CanOrder(ParaModel<GetStatusPM_OpenApi> paramodel)
         {
             LogHelper.LogWriter("取消订单信息：", new { paramodel = paramodel });
-            string kk = new OrderProvider().CanOrder(paramodel.fields.order_no, paramodel.group);
+            string kk = new OrderProvider().CanOrder(paramodel.fields.order_no, paramodel.group,paramodel.fields.cancelReason);
             HttpModel httpModel = new HttpModel()
             {
                 Url = HttpContext.Current.Request.Url.AbsoluteUri,

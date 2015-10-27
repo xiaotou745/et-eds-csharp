@@ -1686,12 +1686,12 @@ namespace Ets.Service.Provider.Order
             return ETS.Config.OrderCancelReasons;
         }
 
-        public string CanOrder(string originalOrderNo, int group)
+        public string CanOrder(string originalOrderNo, int group, string cancelReason="")
         {
             var order = orderDao.GetOrderByOrderNoAndOrderFrom(originalOrderNo, group, 0);
             if (order.Status == OrderStatus.Status0.GetHashCode())
             {
-                CancelOrderModel comModel = new CancelOrderModel() { OrderNo = order.OrderNo, OrderStatus = OrderStatus.Status3.GetHashCode(), Remark = "第三方取消订单", Status = null };
+                CancelOrderModel comModel = new CancelOrderModel() { OrderNo = order.OrderNo, OrderStatus = OrderStatus.Status3.GetHashCode(), Remark = "第三方取消订单"+cancelReason, Status = null };
                 var k = orderDao.CancelOrderStatus(comModel);
                 //var k = orderDao.CancelOrderStatus(order.OrderNo, OrderStatus.Status3.GetHashCode(), "第三方取消订单", null);
                 if (k > 0)

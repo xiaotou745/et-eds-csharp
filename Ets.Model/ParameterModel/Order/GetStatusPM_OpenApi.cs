@@ -23,5 +23,9 @@ namespace Ets.Model.ParameterModel.Order
         /// 默认0表示E代送B端订单，1易淘食,2万达，3全时，4美团 
         /// </summary>
         public int orderfrom { get; set; }
+        /// <summary>
+        /// 取消订单原因
+        /// </summary>
+        public string cancelReason { get; set; }
     }
 }
