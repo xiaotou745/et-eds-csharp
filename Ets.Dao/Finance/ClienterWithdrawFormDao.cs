@@ -171,7 +171,7 @@ where  Id=@Id ";
             {
                 return stringBuilder.ToString();
             }
-            if (clienterWithdrawFormPm.Status>-100 )
+            if (clienterWithdrawFormPm.Status > -100)
             {
                 stringBuilder.Append(" and Status=" + clienterWithdrawFormPm.Status);
             }
@@ -196,8 +196,8 @@ SELECT ypr.RequestId,cwf.Id,cwf.Amount,
  join dbo.YeePayRecord ypr(nolock) on cwf.Id=ypr.WithdrawId and TransferType=1 and ypr.UserType=0 and cwf.AccountType=@AccountType
   where cwf.Status=20 ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("@AccountType", ClienterFinanceAccountType.WangYin.GetHashCode());//账号类型：(1网银 2支付宝 3微信 4财付通 5百度钱包）
-            DataTable dt= DbHelper.ExecuteDataTable(SuperMan_Read,sql);
+            dbParameters.Add("AccountType", DbType.Int32).Value = ClienterFinanceAccountType.WangYin.GetHashCode();//账号类型：(1网银 2支付宝 3微信 4财付通 5百度钱包）
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql,dbParameters);
             if (!dt.HasData())
             {
                 return null;
@@ -232,7 +232,7 @@ from  ClienterWithdrawForm (nolock) where Status=" + status;
         public List<AlipayClienterWithdrawModel> GetWithdrawListForAlipay(AlipayBatchPM pm)
         {
             List<AlipayClienterWithdrawModel> list = null;
-            StringBuilder querystr =new StringBuilder(@"
+            StringBuilder querystr = new StringBuilder(@"
 --查询提现单信息
 SELECT  Id,--提现单ID
         WithwardNo,--提现单号
@@ -247,7 +247,7 @@ WHERE   1 = 1  ");
             string where = "";
             if (pm.Type == 1) //拼接id
             {
-                 where = string.Format(@"AND cwf.Status = 2 --审核通过
+                where = string.Format(@"AND cwf.Status = 2 --审核通过
                                                AND AccountType = 2 --支付宝账户
                                                AND ISNULL(cwf.AlipayBatchNo, '') = ''
                                                AND cwf.id IN ({0})", pm.Data);
@@ -259,7 +259,7 @@ WHERE   1 = 1  ");
                                         AND ISNULL(cwf.AlipayBatchNo, '') = '{0}'", pm.Data);
             }
             querystr.Append(where);
-            DataTable dt= DbHelper.ExecuteDataTable(SuperMan_Write,querystr.ToString());
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, querystr.ToString());
             if (!dt.HasData())
             {
                 return null;
@@ -273,7 +273,7 @@ WHERE   1 = 1  ");
         /// 2015年10月20日11:40:03
         /// </summary>
         /// <returns>影响行数</returns>
-        public int AddAlipayBatchNo(long id,string batchNo)
+        public int AddAlipayBatchNo(long id, string batchNo)
         {
             string updatestr = @"UPDATE ClienterWithdrawForm SET AlipayBatchNo=@AlipayBatchNo,Status=@Status WHERE id=@ID";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
