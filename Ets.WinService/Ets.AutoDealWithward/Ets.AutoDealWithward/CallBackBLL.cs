@@ -28,7 +28,7 @@ namespace Ets.AutoDealWithward
             {
                 var iPayProvider = new PayProvider();
                 iPayProvider.YeePayCashTransferClienterCallBack();//骑士提现单状态变更
-                iPayProvider.YeePayCashTransferBusinessCallBack();//商家提现单状态变更
+                //iPayProvider.YeePayCashTransferBusinessCallBack();//商家提现单状态变更
             }
             catch (Exception ex)
             {
