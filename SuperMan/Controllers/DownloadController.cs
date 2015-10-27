@@ -42,7 +42,7 @@ namespace SuperMan.Controllers
                     };
                     var result = appVersionProvider.VersionCheck(model);
                     //Response.Redirect("/Content/app/eds_B.apk?v=" + ETS.Util.TimeHelper.GetTimeStamp());
-                    Response.Redirect(result.UpdateUrl + "?v=" + ETS.Util.TimeHelper.GetTimeStamp());
+                    Response.Redirect(result.UpdateUrl.Trim() + "?v=" + ETS.Util.TimeHelper.GetTimeStamp());
                 }
                 return null;
             }
@@ -57,7 +57,7 @@ namespace SuperMan.Controllers
             AppVerionModel resultModel = appversion.VersionCheck(model);
             if (resultModel != null)
             {
-                Response.Write("<script>window.location='" + resultModel.UpdateUrl + "';</script>");//这里要把易淘食的下载地址放过来 
+                Response.Write("<script>window.location='" + resultModel.UpdateUrl.Trim() + "';</script>");//这里要把易淘食的下载地址放过来 
             }
         }
 
@@ -91,7 +91,7 @@ namespace SuperMan.Controllers
                         UserType = 1
                     };
                     var result = appVersionProvider.VersionCheck(model);
-                    Response.Redirect(result.UpdateUrl + "?v=" + ETS.Util.TimeHelper.GetTimeStamp());
+                    Response.Redirect(result.UpdateUrl.Trim() + "?v=" + ETS.Util.TimeHelper.GetTimeStamp());
                     //Response.Redirect("/Content/app/eds_C.apk?v=" + ETS.Util.TimeHelper.GetTimeStamp());
                 }
                 return null;
@@ -117,7 +117,7 @@ namespace SuperMan.Controllers
                 //排除 苹果桌面系统                
                 if (!agent.Contains("Windows NT") && !agent.Contains("Macintosh"))
                 {
-                    foreach (string item in keywords)
+                    foreach (string item in keywords) 
                     {
                         if (agent.Contains(item))
                         {
