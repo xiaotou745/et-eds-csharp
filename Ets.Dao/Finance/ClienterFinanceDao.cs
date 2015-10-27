@@ -166,11 +166,13 @@ ORDER BY Id;";
         /// <returns></returns>
         public bool ClienterWithdrawAudit(ClienterWithdrawLog model)
         {
+            //TODO : 2015年10月27日11:09:24 为了修正旧版接口的提现实付金额字段,特在审核的时候更新 PaidAmount 字段.切记在IOS C端上线后删除这个字段更新
             string sql = @" 
 UPDATE ClienterWithdrawForm
  SET    [Status] = @Status,
 		Auditor=@Operator,
-		AuditTime=getdate()
+		AuditTime=getdate(),
+        PaidAmount=CASE WHEN PaidAmount>0 THEN PaidAmount ELSE(Amount-HandCharge) END
 OUTPUT
   Inserted.Id,
   Inserted.[Status],
