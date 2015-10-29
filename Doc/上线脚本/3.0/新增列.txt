@@ -1,0 +1,74 @@
+--------------------------------------新增订单表相关列
+alter table [Order] add [Platform] int not null  default 1 ;
+EXEC sys.sp_addextendedproperty @name=N'MS_Description',
+  @value=N'来源（默认1、旧后台，2新后台）' ,
+  @level0type=N'SCHEMA',
+  @level0name=N'dbo', 
+  @level1type=N'TABLE',
+  @level1name=N'Order', 
+  @level2type=N'COLUMN',
+  @level2name=N'Platform'
+  
+ alter table [Order] add OrderRegionOneId int not null  default 0 ;
+EXEC sys.sp_addextendedproperty @name=N'MS_Description',
+  @value=N'订单区域一级ID' ,
+  @level0type=N'SCHEMA',
+  @level0name=N'dbo', 
+  @level1type=N'TABLE',
+  @level1name=N'Order', 
+  @level2type=N'COLUMN',
+  @level2name=N'OrderRegionOneId'
+
+alter table [Order] add OrderRegionTwoId int not null  default 0 ;
+EXEC sys.sp_addextendedproperty @name=N'MS_Description',
+  @value=N'订单区域二级ID' ,
+  @level0type=N'SCHEMA',
+  @level0name=N'dbo', 
+  @level1type=N'TABLE',
+  @level1name=N'Order', 
+  @level2type=N'COLUMN',
+  @level2name=N'OrderRegionTwoId'
+--------------------------------------新增订单子表相关列
+
+alter table OrderChild add [Status] tinyint not null  default 0 ;
+EXEC sys.sp_addextendedproperty @name=N'MS_Description',
+  @value=N'(订单状态  默认0:订单新增 1：订单已完成 2：订单已接单 3：订单已取消  4:取货中  30 待接入订单)' ,
+  @level0type=N'SCHEMA',
+  @level0name=N'dbo', 
+  @level1type=N'TABLE',
+  @level1name=N'OrderChild', 
+  @level2type=N'COLUMN',
+  @level2name=N'Status'
+
+alter table OrderChild add OrderCommission float not null  default 0 ;
+EXEC sys.sp_addextendedproperty @name=N'MS_Description',
+  @value=N'订单佣金-应付' ,
+  @level0type=N'SCHEMA',
+  @level0name=N'dbo', 
+  @level1type=N'TABLE',
+  @level1name=N'OrderChild', 
+  @level2type=N'COLUMN',
+  @level2name=N'OrderCommission'
+  
+
+alter table OrderChild add SettleMoney float not null  default 0 ;
+EXEC sys.sp_addextendedproperty @name=N'MS_Description',
+  @value=N'结算金额-应收' ,
+  @level0type=N'SCHEMA',
+  @level0name=N'dbo', 
+  @level1type=N'TABLE',
+  @level1name=N'OrderChild', 
+  @level2type=N'COLUMN',
+  @level2name=N'SettleMoney'
+ 
+--------------------------------------新增店内绑定修改相关列
+
+alter table BusinessClienterRelation add AuditStatus tinyint not null  default 0 ;
+EXEC sys.sp_addextendedproperty @name=N'MS_Description',
+  @value=N'（默认0待审核，1审核通过，2审核拒绝）' ,
+  @level0type=N'SCHEMA',
+  @level0name=N'dbo', 
+  @level1type=N'TABLE',
+  @level1name=N'BusinessClienterRelation', 
+  @level2type=N'COLUMN',
+  @level2name=N'AuditStatus'

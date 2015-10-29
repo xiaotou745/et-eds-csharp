@@ -1,0 +1,122 @@
+USE [superman]
+GO
+
+/****** Object:  Table [dbo].[OrderGrab]    Script Date: 10/29/2015 15:35:25 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+CREATE TABLE [dbo].[OrderGrab](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[OrderId] [int] NOT NULL,
+	[GrabOrderNo] [varchar](50) NOT NULL,
+	[BusinessId] [int] NOT NULL,
+	[ClienterId] [int] NOT NULL,
+	[OrderCount] [nchar](10) NOT NULL,
+	[Status] [tinyint] NOT NULL,
+	[ActualDoneDate] [datetime] NULL,
+	[GrabTime] [datetime] NULL,
+	[PickUpTime] [datetime] NULL,
+	[PickUpLongitude] [float] NOT NULL,
+	[PickUpLatitude] [float] NOT NULL,
+	[GrabLongitude] [float] NOT NULL,
+	[GrabLatitude] [float] NOT NULL,
+	[DoneLongitude] [float] NOT NULL,
+	[DoneLatitude] [float] NOT NULL,
+	[OrderCommission] [float] NOT NULL,
+	[SettleMoney] [float] NOT NULL,
+ CONSTRAINT [PK_OrderGrab] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+SET ANSI_PADDING OFF
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'订单表ID' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderGrab', @level2type=N'COLUMN',@level2name=N'OrderId'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'新生成的订单号' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderGrab', @level2type=N'COLUMN',@level2name=N'GrabOrderNo'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'商家ID' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderGrab', @level2type=N'COLUMN',@level2name=N'BusinessId'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'骑士ID' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderGrab', @level2type=N'COLUMN',@level2name=N'ClienterId'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'抢单数量' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderGrab', @level2type=N'COLUMN',@level2name=N'OrderCount'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'(默认0:订单新增 1：订单已完成 2：订单已接单 3：订单已取消  4:取货中  30 待接入订单)' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderGrab', @level2type=N'COLUMN',@level2name=N'Status'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'实际完成时间' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderGrab', @level2type=N'COLUMN',@level2name=N'ActualDoneDate'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'抢单时间' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderGrab', @level2type=N'COLUMN',@level2name=N'GrabTime'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'取货时间' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderGrab', @level2type=N'COLUMN',@level2name=N'PickUpTime'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'取货经度' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderGrab', @level2type=N'COLUMN',@level2name=N'PickUpLongitude'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'取货纬度' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderGrab', @level2type=N'COLUMN',@level2name=N'PickUpLatitude'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'抢单经度' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderGrab', @level2type=N'COLUMN',@level2name=N'GrabLongitude'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'抢单纬度' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderGrab', @level2type=N'COLUMN',@level2name=N'GrabLatitude'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'完成经度' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderGrab', @level2type=N'COLUMN',@level2name=N'DoneLongitude'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'完成纬度' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderGrab', @level2type=N'COLUMN',@level2name=N'DoneLatitude'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'订单佣金-应付(sum OrderChild)' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderGrab', @level2type=N'COLUMN',@level2name=N'OrderCommission'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'结算金额-应收(sum OrderChild)' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderGrab', @level2type=N'COLUMN',@level2name=N'SettleMoney'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'抢单表' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderGrab'
+GO
+
+ALTER TABLE [dbo].[OrderGrab] ADD  CONSTRAINT [DF_OrderGrab_PickUpLongitude]  DEFAULT ((0)) FOR [PickUpLongitude]
+GO
+
+ALTER TABLE [dbo].[OrderGrab] ADD  CONSTRAINT [DF_OrderGrab_PickUpLatitude]  DEFAULT ((0)) FOR [PickUpLatitude]
+GO
+
+ALTER TABLE [dbo].[OrderGrab] ADD  CONSTRAINT [DF_OrderGrab_GrabLongitude]  DEFAULT ((0)) FOR [GrabLongitude]
+GO
+
+ALTER TABLE [dbo].[OrderGrab] ADD  CONSTRAINT [DF_OrderGrab_GrabLatitude]  DEFAULT ((0)) FOR [GrabLatitude]
+GO
+
+ALTER TABLE [dbo].[OrderGrab] ADD  CONSTRAINT [DF_OrderGrab_DoneLongitude]  DEFAULT ((0)) FOR [DoneLongitude]
+GO
+
+ALTER TABLE [dbo].[OrderGrab] ADD  CONSTRAINT [DF_OrderGrab_DoneLatitude]  DEFAULT ((0)) FOR [DoneLatitude]
+GO
+
+ALTER TABLE [dbo].[OrderGrab] ADD  CONSTRAINT [DF_OrderGrab_OrderCommission]  DEFAULT ((0)) FOR [OrderCommission]
+GO
+
+ALTER TABLE [dbo].[OrderGrab] ADD  CONSTRAINT [DF_OrderGrab_SettleMoney]  DEFAULT ((0)) FOR [SettleMoney]
+GO
+
+
