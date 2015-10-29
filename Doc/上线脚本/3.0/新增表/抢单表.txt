@@ -1,7 +1,7 @@
 USE [superman]
 GO
 
-/****** Object:  Table [dbo].[OrderGrab]    Script Date: 10/29/2015 15:35:25 ******/
+/****** Object:  Table [dbo].[OrderGrab]    Script Date: 10/29/2015 17:01:07 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -30,6 +30,10 @@ CREATE TABLE [dbo].[OrderGrab](
 	[DoneLatitude] [float] NOT NULL,
 	[OrderCommission] [float] NOT NULL,
 	[SettleMoney] [float] NOT NULL,
+	[OrderRegionOneId] [int] NOT NULL,
+	[OrderRegionOneName] [nvarchar](50) NOT NULL,
+	[OrderRegionTwoId] [int] NOT NULL,
+	[OrderRegionTwoName] [nvarchar](50) NOT NULL,
  CONSTRAINT [PK_OrderGrab] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
@@ -92,6 +96,18 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'结算金额-应收(sum OrderChild)' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderGrab', @level2type=N'COLUMN',@level2name=N'SettleMoney'
 GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'订单区域一级ID' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderGrab', @level2type=N'COLUMN',@level2name=N'OrderRegionOneId'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'一级区域名称' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderGrab', @level2type=N'COLUMN',@level2name=N'OrderRegionOneName'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'订单区域二级ID' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderGrab', @level2type=N'COLUMN',@level2name=N'OrderRegionTwoId'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'二级区域名称' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderGrab', @level2type=N'COLUMN',@level2name=N'OrderRegionTwoName'
+GO
+
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'抢单表' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderGrab'
 GO
 
@@ -117,6 +133,9 @@ ALTER TABLE [dbo].[OrderGrab] ADD  CONSTRAINT [DF_OrderGrab_OrderCommission]  DE
 GO
 
 ALTER TABLE [dbo].[OrderGrab] ADD  CONSTRAINT [DF_OrderGrab_SettleMoney]  DEFAULT ((0)) FOR [SettleMoney]
+GO
+
+ALTER TABLE [dbo].[OrderGrab] ADD  CONSTRAINT [DF_OrderGrab_OrderRegionOneName]  DEFAULT ('') FOR [OrderRegionOneName]
 GO
 
 
