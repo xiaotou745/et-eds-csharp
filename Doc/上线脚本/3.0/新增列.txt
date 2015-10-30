@@ -72,3 +72,17 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description',
   @level1name=N'BusinessClienterRelation', 
   @level2type=N'COLUMN',
   @level2name=N'AuditStatus'
+  
+  
+  
+--------------------------------------新增商家表相关字段
+
+alter table dbo.business add IsAllowInputMoney smallint not null  default 0 ;
+EXEC sys.sp_addextendedproperty @name=N'MS_Description',
+  @value=N'是否需要录入金额才可以发单 0 需要 1 不需要  默认0' ,
+  @level0type=N'SCHEMA',
+  @level0name=N'dbo', 
+  @level1type=N'TABLE',
+  @level1name=N'Business', 
+  @level2type=N'COLUMN',
+  @level2name=N'IsAllowInputMoney'
