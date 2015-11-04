@@ -168,6 +168,11 @@ namespace Ets.Model.DataModel.Business
         /// 是否允许现金支付
         /// </summary>
         public int IsAllowCashPay { get; set; }
+
+        /// <summary>
+        /// 是否允许现金支付
+        /// </summary>
+        public int PushOrderType { get; set; }
     }
 
 }

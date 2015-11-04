@@ -217,7 +217,8 @@ namespace SuperMan.Controllers
         /// <param name="oldBusGroupId">之前的集团Id</param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult ModifyBusiness(int id, string businessName, string businessPhone, int businessSourceId, int groupId, int oldBusiSourceId, int oldBusGroupId, int mealsSettleMode)
+        public JsonResult ModifyBusiness(int id, string businessName, string businessPhone, int businessSourceId, int groupId,
+            int oldBusiSourceId, int oldBusGroupId, int mealsSettleMode)
         {
             IBusinessProvider iBus = new BusinessProvider();
             //操作日志
