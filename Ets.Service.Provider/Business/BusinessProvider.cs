@@ -1227,7 +1227,10 @@ namespace Ets.Service.Provider.Business
             };
             using (var tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                if (orderRegionDao.GetOrderCountInfoByBusinessId(model.Id)) {
+                 BusinessDetailModel old=businessDao.GetBusinessDetailById(model.Id.ToString());
+                 if ((old.BusinessCommission != model.BusinessCommission|| old.CommissionFixValue != model.CommissionFixValue||
+                        old.DistribSubsidy != model.DistribSubsidy ||old.BusinessGroupId != model.BusinessGroupId) && orderRegionDao.GetOrderCountInfoByBusinessId(model.Id))
+                 {
                     dealResultInfo.DealMsg = "当前商家有待接单订单尚未处理，不能修改商户结算（应收）和补贴设置（应付）";
                     return dealResultInfo;
                 }

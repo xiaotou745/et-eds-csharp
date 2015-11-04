@@ -85,12 +85,6 @@
                 <div class="control-group" style="margin-top: 10px">
                     <label style="font-size: 15px">应收门店</label>
                 </div>
-                <div class="control-group">
-                    <label>订单金额*</label>
-                    <label title="应收门店配送费比例">商配比例</label>
-                    <input id="bussinessDeliveryRatio" name="bussinessDeliveryRatio" style="width:100px" type="text" value="@Model.BusinessCommission" @(Model.PushOrderType == 1 ? "disabled='disabled'" : "") />%&nbsp;+&nbsp;<label title="应收门店配送费定额">商配定额</label><input id="bussinessFixValue" name="bussinessFixValue" style="width:100px" value="@Model.CommissionFixValue" />&nbsp;+&nbsp;
-                    <label title="代收客户配送费">代收客配</label><input id="customerDeliveryMoney" name="customerDeliveryMoney" style="width:100px" value="@Model.DistribSubsidy" />
-                </div>
                 <div class="control-group" style="margin-bottom: 10px">
                     <label>发单模式：</label>
                     <label>
@@ -99,8 +93,14 @@
                     </label>
                     <label>
                         <input id="rPushOrderTypeN" name="PushOrderType" type="radio" value="1" style="margin-left: 30px" @(Model.PushOrderType == 1 ? "checked" : "")>
-                       快单模式
+                        快单模式
                     </label>
+                </div>
+                <div class="control-group">
+                    <label>订单金额*</label>
+                    <label title="应收门店配送费比例">商配比例</label>
+                    <input id="bussinessDeliveryRatio" name="bussinessDeliveryRatio" style="width:100px" type="text" value="@Model.BusinessCommission" @(Model.PushOrderType == 1 ? "disabled='disabled'" : "") />%&nbsp;+&nbsp;<label title="应收门店配送费定额">商配定额</label><input id="bussinessFixValue" name="bussinessFixValue" style="width:100px" value="@Model.CommissionFixValue" />&nbsp;+&nbsp;
+                    <label title="代收客户配送费">代收客配</label><input id="customerDeliveryMoney" name="customerDeliveryMoney" style="width:100px" value="@Model.DistribSubsidy" />
                 </div>
             </div>
             <div style="width:750px;height: auto;border-bottom:solid 1px #dcdcdc;padding-left:10px;">
