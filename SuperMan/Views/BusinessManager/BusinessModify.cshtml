@@ -112,7 +112,19 @@
                 </div>
                 <div class="control-group">
                     <label style="margin-left:74px">补贴策略：</label>
-                    @Html.DropDownList("businessGroupID", new SelectList(new BusinessGroupProvider().GetBusinessGroupList(), "Id", "Name", @Model.BusinessGroupId), new { @class = "selectw", style = "width:143px" })
+                    <select class="selectw"  id="businessGroupID" name="businessGroupID" style="width:143px">
+                        @foreach (BusinessGroupModel temp in new BusinessGroupProvider().GetBusinessGroupList())
+                        {
+                            if (Model.BusinessGroupId == temp.Id)
+                            {
+                                <option selected="selected" value="@temp.Id" data-strategy="@temp.StrategyId">@temp.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@temp.Id" data-strategy="@temp.StrategyId">@temp.Name</option>
+                            }
+                        }
+                    </select>
                 </div>
                 <div class="control-group" style="margin-left:2px">
                     <label style="margin-left: 48px">餐费结算方式：</label>
