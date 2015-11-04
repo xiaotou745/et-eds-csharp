@@ -170,7 +170,7 @@ namespace Ets.Model.DataModel.Business
         public int IsAllowCashPay { get; set; }
 
         /// <summary>
-        /// 是否允许现金支付
+        /// 发单模式：0 普通模式（默认），1 快单模式   默认0
         /// </summary>
         public int PushOrderType { get; set; }
     }

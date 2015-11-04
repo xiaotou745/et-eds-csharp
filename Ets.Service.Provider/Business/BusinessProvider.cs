@@ -56,6 +56,7 @@ namespace Ets.Service.Provider.Business
         readonly ITokenProvider iTokenProvider = new TokenProvider();
         readonly BusinessLoginLogDao businessLoginLogDao = new BusinessLoginLogDao();
         readonly OrderRegionDao orderRegionDao = new OrderRegionDao();
+        readonly BusinessGroupDao businessGroupDao = new BusinessGroupDao();
         /// <summary>
         /// app端商户获取订单   add by caoheyang 20150311
         /// </summary>
@@ -1227,10 +1228,18 @@ namespace Ets.Service.Provider.Business
             };
             using (var tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                 BusinessDetailModel old=businessDao.GetBusinessDetailById(model.Id.ToString());
-                 if ((old.BusinessCommission != model.BusinessCommission|| old.CommissionFixValue != model.CommissionFixValue||
+                if (model.PushOrderType == 1) {  //快单模式
+                    BusinessGroupModel groupModel = businessGroupDao.GetCurrenBusinessGroupByGroupId(model.BusinessGroupId);
+                    if (groupModel.StrategyId != 4)//  所选的补贴策略不是基本佣金+网站补贴类型的策略
+                    {
+                        dealResultInfo.DealMsg = "选择快单模式时补贴策略只能选择基本佣金+网站补贴类型的策略！";
+                        return dealResultInfo;
+                    }
+                }
+                BusinessDetailModel old=businessDao.GetBusinessDetailById(model.Id.ToString());
+                if ((old.BusinessCommission != model.BusinessCommission|| old.CommissionFixValue != model.CommissionFixValue||
                         old.DistribSubsidy != model.DistribSubsidy ||old.BusinessGroupId != model.BusinessGroupId) && orderRegionDao.GetOrderCountInfoByBusinessId(model.Id))
-                 {
+                {
                     dealResultInfo.DealMsg = "当前商家有待接单订单尚未处理，不能修改商户结算（应收）和补贴设置（应付）";
                     return dealResultInfo;
                 }
