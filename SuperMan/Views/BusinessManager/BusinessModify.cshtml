@@ -561,7 +561,11 @@
             alert("商配定额必须在0-100之间");
             return;
         }
-        alert("wad")
+        if (pushOrderType == 1 && $('#businessGroupID option:selected').attr("data-strategy") != 4)//快单模式时 只能选择基本佣金+网站补贴类型的策略 逻辑
+        {
+            alert("选择快单模式时补贴策略只能选择基本佣金+网站补贴类型的策略");
+            return;
+        }
         //商配比例为0，则结算类型为2;商配定额为0，则结算类型为1，都不为0，默认2
         //if (parseFloat(bussinessDeliveryRatio) == 0) {
         //    commissionType = 2;
