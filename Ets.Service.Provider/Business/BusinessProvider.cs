@@ -41,6 +41,7 @@ using Ets.Model.ParameterModel.Common;
 using ETS.Security;
 using Ets.Dao.Authority;
 using Ets.Model.DomainModel.Authority;
+using Ets.Dao.Order;
 namespace Ets.Service.Provider.Business
 {
 
@@ -54,6 +55,7 @@ namespace Ets.Service.Provider.Business
         readonly BusinessBalanceRecordDao businessBalanceRecordDao = new BusinessBalanceRecordDao();
         readonly ITokenProvider iTokenProvider = new TokenProvider();
         readonly BusinessLoginLogDao businessLoginLogDao = new BusinessLoginLogDao();
+        readonly OrderRegionDao orderRegionDao = new OrderRegionDao();
         /// <summary>
         /// app端商户获取订单   add by caoheyang 20150311
         /// </summary>
@@ -1225,6 +1227,10 @@ namespace Ets.Service.Provider.Business
             };
             using (var tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
+                if (orderRegionDao.GetOrderCountInfoByBusinessId(model.Id)) {
+                    dealResultInfo.DealMsg = "当前商家有待接单订单尚未处理，不能修改商户结算（应收）和补贴设置（应付）";
+                    return dealResultInfo;
+                }
                 if (!businessDao.ModifyBusinessDetail(model))
                 {
                     dealResultInfo.DealMsg = "修改商户信息失败！";
