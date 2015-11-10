@@ -20,7 +20,7 @@
     </h2>
 
     <div id="left" style="float: left;width:700px;height: auto;border-right: 1px #dcdcdc solid;margin-top: -10px; ">
-        <div style="float: left;width:350px;height: 200px;  border-bottom:solid 0px #dcdcdc;padding-left:10px;">
+        <div style="float: left;width:350px;height: 250px;  border-bottom:solid 0px #dcdcdc;padding-left:10px;">
             <div class="control-group" style="margin-top: 15px">
                 <label style="margin-left: 29px">手 机 号：</label>
                 <label id="phoneNo">@Model.PhoneNo</label>
@@ -43,6 +43,10 @@
             <div class="control-group" style="margin-top: 15px">
                 <label style="margin-left: 26px">所属等级：</label>                    
                     @Html.DropDownList("gradeType", new SelectList(EnumExtenstion.GetEnumItems(typeof(GradeType)), "Value", "Text", Model.GradeType), null, new { @class = "selectw", style = "width:157px", onchange = "fungRadeType()" })
+            </div>
+            <div class="control-group" style="margin-top: 15px">
+                <label style="margin-left: 26px">骑士类别：</label>
+                @Html.DropDownList("IsCooperation", new SelectList(EnumExtenstion.GetEnumItems(typeof(Cooperation)), "Value", "Text", Model.IsCooperation), null, new { @class = "selectw", style = "width:157px" })
             </div>
             <div id="divDeliveryCompany" class="control-group" style="margin-top: 15px">
                 <label>所属物流公司：</label>
@@ -122,6 +126,8 @@
         var idCard = $('#idCard').val();
         var deliveryCompany ;         
         var gradeType = $('#gradeType').val();
+
+        var IsCooperation = $('#IsCooperation').val();
         if (gradeType == 2)
         {
             deliveryCompany = -1;
@@ -176,7 +182,7 @@
         }
 
         var paramaters = {
-            "Id": id, "TrueName": trueName, "IDcard": idCard, "DeliveryCompanyId": deliveryCompany, "recommendPhone": recommendPhone,"gradeType":gradeType,
+            "Id": id, "TrueName": trueName, "IDcard": idCard, "DeliveryCompanyId": deliveryCompany, "recommendPhone": recommendPhone, "gradeType": gradeType, "IsCooperation": IsCooperation,
             "Tags": tags
         };
         var url = "/SuperManManager/ModifyClienterDetail";

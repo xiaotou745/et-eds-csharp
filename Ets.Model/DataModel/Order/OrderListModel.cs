@@ -408,6 +408,8 @@ namespace Ets.Model.DataModel.Order
         /// 骑士等级
         /// </summary>
         public int GradeType { get; set; }
+
+        public string GroupBusiName { get; set; }
         
     }
 }

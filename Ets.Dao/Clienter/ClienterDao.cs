@@ -206,7 +206,7 @@ where   c.PhoneNo = @PhoneNo
         /// <returns></returns>
         public ClienterModel GetUserInfoByUserId(int UserId)
         {
-            string sql = "SELECT ID,TrueName,PhoneNo,AccountBalance,AllowWithdrawPrice,Status,IDCard  FROM dbo.clienter(NOLOCK) WHERE Id=" + UserId;
+            string sql = "SELECT ID,TrueName,PhoneNo,AccountBalance,AllowWithdrawPrice,Status,IDCard,IsCooperation  FROM dbo.clienter(NOLOCK) WHERE Id=" + UserId;
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql);
             IList<ClienterModel> list = MapRows<ClienterModel>(dt);
             if (list == null || list.Count <= 0)
@@ -1498,7 +1498,7 @@ SELECT IDENT_CURRENT('clienter')"
             string sql = @"UPDATE clienter 
                             SET IDCard=@IDCard,
                                 TrueName=@TrueName,
-                                DeliveryCompanyId=@DeliveryCompanyId,recommendPhone=@recommendPhone,GradeType=@GradeType ";
+                                DeliveryCompanyId=@DeliveryCompanyId,recommendPhone=@recommendPhone,GradeType=@GradeType,IsCooperation=@IsCooperation ";
 
             sql += @" OUTPUT
                         Inserted.Id,
@@ -1522,7 +1522,8 @@ SELECT IDENT_CURRENT('clienter')"
             parm.AddWithValue("@IDCard", model.IDCard);
             parm.AddWithValue("@TrueName", model.TrueName);
             parm.AddWithValue("@DeliveryCompanyId", model.DeliveryCompanyId);
-            parm.AddWithValue("@GradeType", model.GradeType);            
+            parm.AddWithValue("@GradeType", model.GradeType);
+            parm.AddWithValue("@IsCooperation", model.IsCooperation);   
             parm.AddWithValue("@Id", model.Id);
             parm.AddWithValue("@OptId", model.OptUserId);
             parm.AddWithValue("@OptName", model.OptUserName);
@@ -1694,6 +1695,7 @@ SELECT   c.[Id],
          c.[WorkStatus], 
          c.DeliveryCompanyId,
          c.GradeType,
+         c.IsCooperation,
          cfa.TrueName AccountName,
          cfa.AccountNo,
          cfa.AccountType,
