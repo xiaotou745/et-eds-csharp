@@ -1,0 +1,11 @@
+USE [superman]
+GO             
+
+UPDATE BusinessClienterRelation SET IsEnable=1 WHERE AuditStatus IN(0,1) 
+            
+            --删除的，改为没绑定，审核决绝
+             UPDATE BusinessClienterRelation SET IsBind=0,AuditStatus=2 WHERE IsEnable=0
+             --待审核和审核拒绝的，改为没绑定
+             UPDATE BusinessClienterRelation SET IsBind=0 WHERE AuditStatus IN(0,2)
+               --审核通过的，isbind=1
+             UPDATE BusinessClienterRelation SET IsBind=1 WHERE AuditStatus=1
