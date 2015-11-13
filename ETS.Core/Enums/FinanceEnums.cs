@@ -470,7 +470,12 @@ namespace ETS.Enums
         /// 充值赠送
         /// </summary>
         [DisplayText("赠送")]
-        Present = 12
+        Present = 12,
+        /// <summary>
+        /// 返还配送费
+        /// </summary>
+        [DisplayText("返还配送费")]
+        ReturnDeliveryFee = 13,
     }
 
     /// <summary>
