@@ -71,6 +71,7 @@ namespace Ets.Service.Provider.Clienter
         private IBusinessProvider iBusinessProvider = new BusinessProvider();
         readonly ClienterLoginLogDao clienterLoginLogDao = new ClienterLoginLogDao();
         private TagRelationDao tagRelationDao = new TagRelationDao();
+        private IGroupBusinessProvider iGroupBusinessProvider = new GroupBusinessProvider();
 
         /// <summary>
         /// 骑士上下班功能 add by caoheyang 20150312
@@ -1012,6 +1013,54 @@ namespace Ets.Service.Provider.Clienter
             };
             bool bResult = orderDao.RushOrder(model);
             ///TODO 同步第三方状态和jpush 以后放到后台服务或mq进行。
+            
+
+            //不属于物流公司同时属于合作骑士
+            if (parmodel.DeliveryCompanyID <= 0 && clienterModel.IsCooperation==1)
+            {
+                OrderListModel currOrderListModel= orderDao.GetByOrderNo(parmodel.orderNo);
+                if (currOrderListModel.GroupBusinessId > 0)
+                {
+                     //更新集团余额
+                        iGroupBusinessProvider.UpdateGBalance(new GroupBusinessPM()
+                        {
+                            BusinessId = currOrderListModel.businessId,
+                            GroupId = currOrderListModel.GroupBusinessId,
+                            GroupAmount = currOrderListModel.SettleMoney,
+                            Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
+                            RecordType = BusinessBalanceRecordRecordType.ReturnDeliveryFee.GetHashCode(),
+                            Operator = currOrderListModel.GroupBusiName,
+                            WithwardId = currOrderListModel.Id,
+                            RelationNo = currOrderListModel.OrderNo,
+                            Remark = "返还配送费支出金额"
+                        });
+                }
+                else
+                {
+                    // 更新商户余额、可提现余额                        
+                    iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
+                    {
+                        BusinessId = currOrderListModel.businessId,
+                        Amount = currOrderListModel.SettleMoney,
+                        Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
+                        RecordType = BusinessBalanceRecordRecordType.ReturnDeliveryFee.GetHashCode(),
+                        Operator = currOrderListModel.BusinessName,
+                        WithwardId = currOrderListModel.Id,
+                        RelationNo = currOrderListModel.OrderNo,
+                        Remark = "返还配送费支出金额"
+                    });
+                }
+
+                //更新订单状态 FinishAll=1
+                CheckOrderPay(currOrderListModel.Id);
+
+                //将订单标记为加入已提现
+                orderOtherDao.UpdateJoinWithdraw(currOrderListModel.Id);
+                //更新订单审核通过 
+                orderOtherDao.UpdateAuditStatus(currOrderListModel.Id, OrderAuditStatusCommon.Through.GetHashCode(), clienterModel.TrueName);
+             
+            }
+
             if (bResult)
             {
                 //异步回调第三方，推送通知

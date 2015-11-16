@@ -48,6 +48,11 @@ namespace Ets.Model.DomainModel.Clienter
         /// </summary>
         public int GradeType { get; set; }
 
+        /// <summary>
+        /// 是否店内骑士
+        /// </summary>
+        public int IsCooperation { get; set; }
+
  
     }
 }
