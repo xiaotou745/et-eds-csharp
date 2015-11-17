@@ -1623,7 +1623,7 @@ select top 1
         GroupBusinessId,
        isnull(gb.GroupBusiName,'') as GroupBusiName
 from    [order] o with ( nolock )
-        join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
+        left join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
         join dbo.business b with ( nolock ) on o.businessId = b.Id
         join dbo.OrderOther oo with(nolock) on o.Id = oo.OrderId
         LEFT JOIN GroupBusinessRelation gbr WITH(NOLOCK) ON b.Id=gbr.BusinessId  
