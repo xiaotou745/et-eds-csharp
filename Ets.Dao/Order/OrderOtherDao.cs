@@ -153,13 +153,8 @@ update OrderOther set CancelTime=getdate() where orderId=@orderId";
         /// <returns></returns>
         public OrderOther GetByOrderNo(string orderNo)
         {
-            string sql = @"SELECT o.Id
-,o.OrderId
-,o.NeedUploadCount
-,o.ReceiptPic
-,o.HadUploadCount
-,o.IsJoinWithdraw
-,o.PubLongitude
+            string sql = @"SELECT 
+o.PubLongitude
 ,o.PubLatitude
 ,o.GrabTime
 ,o.GrabLongitude
@@ -169,35 +164,20 @@ update OrderOther set CancelTime=getdate() where orderId=@orderId";
 ,o.TakeTime
 ,o.TakeLongitude
 ,o.TakeLatitude
-,o.PubToGrabDistance
-,o.GrabToCompleteDistance
-,o.PubToCompleteDistance
-,o.OneKeyPubOrder
-,o.IsNotRealOrder
-,o.DeductCommissionReason
 ,o.DeductCommissionType
 ,o.AuditStatus
-,o.IsOrderChecked
 ,o.CancelTime
-,o.IsAllowCashPay
-,o.IsPubDateTimely
-,o.IsGrabTimely
-,o.IsTakeTimely
-,o.IsCompleteTimely
 ,o.AuditDate
-,o.AuditOptName  FROM dbo.OrderOther (nolock )  o   join [order](nolock ) a  on o.OrderId=a.Id  where  o.OrderNo=@OrderNo";
+,o.AuditOptName  FROM dbo.OrderOther (nolock )  o   join [order](nolock ) a  on o.OrderId=a.Id  where  a.OrderNo=  @OrderNo ";
+
             IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("@OrderNo", SqlDbType.NVarChar);
             parm.SetValue("@OrderNo", orderNo);
-            var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
-            var list = ConvertDataTableList<OrderOther>(dt);
-            if (list != null && list.Count > 0)
-            {
-                return list[0];
-            }
-            else
-            {
+       
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            if (dt == null || dt.Rows.Count <= 0)
                 return null;
-            }
+            return ConvertDataTableList<OrderOther>(dt)[0];
 
         }
     }

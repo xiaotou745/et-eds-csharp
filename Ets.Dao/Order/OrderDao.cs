@@ -3290,6 +3290,55 @@ where   Id = @OrderId and FinishAll = 0";
         }
 
         /// <summary>
+        /// 根据orderID获取订单地图数据
+        /// </summary>
+        /// <param name="orderID"></param>
+        /// <returns></returns>
+        public OrderMapDetail GetOrderMapDetail(string orderNo)
+        {
+
+            string sql = @" 
+                            SELECT  ord.OrderId,
+                                    isnull(c.Longitude,0) PubLongitude,
+                                    isnull(c.Latitude,0) PubLatitude,           
+                                    ISNULL(ab.PubDate, '') AS PubDate,
+                                    ISNULL(GrabLongitude, 0) AS GrabLongitude,
+                                    ISNULL(GrabLatitude, 0) AS GrabLatitude,
+                                    ISNULL(GrabTime, '') AS GrabTime,
+                                    ISNULL(TakeLongitude, 0) AS TakeLongitude ,
+                                    ISNULL(TakeLatitude, 0) AS TakeLatitude,
+                                    ISNULL(TakeTime, '') AS TakeTime,
+                                    ISNULL(CompleteLongitude, 0) AS CompleteLongitude,
+                                    ISNULL(CompleteLatitude, 0) AS CompleteLatitude,
+                                    ISNULL(ab.ActualDoneDate, '') AS ActualDoneDate,
+                                    CASE ISNULL(ord.GrabLatitude, 0)
+                                        WHEN 0 THEN -1
+                                        ELSE CASE ISNULL(ord.CompleteLatitude, 0)
+                                                WHEN 0 THEN -1
+                                                ELSE ord.GrabToCompleteDistance
+                                            END
+                                    END AS GrabToCompleteDistance,
+                                    ISNULL(ord.IsPubDateTimely, 0 ) as IsPubDateTimely,
+                                    ISNULL(ord.IsGrabTimely, 0) as IsGrabTimely,
+                                    ISNULL(ord.IsTakeTimely, 0) as IsTakeTimely ,
+                                    ISNULL(ord.IsCompleteTimely, 0) as IsCompleteTimely,
+                                    ISNULL(ab.clienterId, 0) clienterId
+                            FROM  [order] (NOLOCK) ab  
+                                    JOIN OrderOther (NOLOCK) ord ON ord.OrderId = ab.Id
+                                    JOIN business (NOLOCK) c ON c.id = ab.businessId 
+                            WHERE   ab.orderNo = @OrderNo
+                            ";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@OrderNo", orderNo);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, dbParameters);
+            if (dt == null || dt.Rows.Count <= 0)
+            {
+                return null;
+            }
+            return MapRows<OrderMapDetail>(dt)[0];
+        }
+
+        /// <summary>
         /// 一键发单修改地址和电话
         /// </summary>
         /// <param name="orderId"></param>
