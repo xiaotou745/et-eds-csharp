@@ -36,5 +36,9 @@ namespace ETS.Const
         /// </summary>
         public const int Group6 = 6;
 
+        /// <summary>
+        /// 淘点点
+        /// </summary>
+        public const int Group8 = 8;
     }
 }

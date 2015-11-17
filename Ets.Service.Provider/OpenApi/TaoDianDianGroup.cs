@@ -32,8 +32,8 @@ namespace Ets.Service.Provider.OpenApi
                      url = ConfigurationManager.AppSettings["TaoBaoConfirmAsyncStatus"];
                      break;
                 case OrderConst.OrderStatus2:  //骑士接单
-                     jsonData = Ask(paramodel.fields);
-                     url = ConfigurationManager.AppSettings["TaoBaoAskAsyncStatus"];
+                     jsonData = Update(paramodel.fields);
+                     url = ConfigurationManager.AppSettings["TaoBaoUpdateAsyncStatus"];
                      break;
                 case OrderConst.OrderStatus4:  //订单已取货 配送中
                      jsonData = PickUp(paramodel.fields);
@@ -46,15 +46,6 @@ namespace Ets.Service.Provider.OpenApi
             string json = HTTPHelper.HttpPost(url, reqpar);
             Log(url, reqpar, json); //记录日志
             TaoBaoResponseBase res = JsonHelper.JsonConvertToObject<TaoBaoResponseBase>(json);
-            if (paramodel.fields.status == OrderConst.OrderStatus1&&res.is_success)   //骑士接单 记录坐标
-            {
-                jsonData = Update(paramodel.fields);
-                url = ConfigurationManager.AppSettings["TaoBaoUpdateAsyncStatus"];
-                reqpar = "data=" + AESApp.AesEncrypt(jsonData);
-                json = HTTPHelper.HttpPost(url, reqpar);
-                Log(url, reqpar, json); //记录日志
-                res = JsonHelper.JsonConvertToObject<TaoBaoResponseBase>(json);
-            }
             return res.is_success ? OrderApiStatusType.Success : OrderApiStatusType.SystemError;
         }
 
@@ -80,27 +71,6 @@ namespace Ets.Service.Provider.OpenApi
                 Remark = "调用淘点点:同步订单状态"
             });
         }
-
-
-
-
-        /// <summary>
-        /// 确认接单接口(API)  骑士接单
-        /// caoheyang  20151116
-        /// </summary>
-        /// <param name="p"></param>
-        /// <returns></returns>
-
-        private string Ask(AsyncStatusPM_OpenApi p)
-        {
-
-            WaimaiOrderAckRequest temp = new WaimaiOrderAckRequest
-            {
-                DeliveryOrderNo = ParseHelper.ToLong(p.OriginalOrderNo)
-            };
-            return JsonHelper.JsonConvertToString(temp);
-        }
-
 
         /// <summary>
         /// 更新配送员信息接口（API） 
