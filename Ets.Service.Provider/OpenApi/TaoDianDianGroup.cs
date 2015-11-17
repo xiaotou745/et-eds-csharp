@@ -1,19 +1,14 @@
 ﻿using System.Configuration;
 using ETS.Const;
 using Ets.Dao.Common;
+using Ets.Dao.Order;
 using ETS.Enums;
 using Ets.Model.Common;
 using Ets.Model.Common.TaoBao;
 using Ets.Model.ParameterModel.Order;
 using ETS.Security;
 using Ets.Service.IProvider.OpenApi;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ETS.Util;
-using Newtonsoft.Json.Linq;
 using Top.Api.Request;
 
 namespace Ets.Service.Provider.OpenApi
@@ -33,8 +28,8 @@ namespace Ets.Service.Provider.OpenApi
             switch (paramodel.fields.status)
             {
                 case OrderConst.OrderStatus1:  //完成
-                    jsonData = Confirm(paramodel.fields);
-                    url = ConfigurationManager.AppSettings["TaoBaoConfirmAsyncStatus"];
+                     jsonData = Confirm(paramodel.fields);
+                     url = ConfigurationManager.AppSettings["TaoBaoConfirmAsyncStatus"];
                      break;
                 case OrderConst.OrderStatus2:  //骑士接单
                      jsonData = Ask(paramodel.fields);
@@ -47,30 +42,47 @@ namespace Ets.Service.Provider.OpenApi
                 default:
                     return OrderApiStatusType.Success;
             }
-            if (url == null)
-            {
-                return OrderApiStatusType.SystemError;
-            }
             var reqpar = "data=" + AESApp.AesEncrypt(jsonData);
             string json = HTTPHelper.HttpPost(url, reqpar);
+            Log(url, reqpar, json); //记录日志
+            TaoBaoResponseBase res = JsonHelper.JsonConvertToObject<TaoBaoResponseBase>(json);
+            if (paramodel.fields.status == OrderConst.OrderStatus1&&res.is_success)   //骑士接单 记录坐标
+            {
+                jsonData = Update(paramodel.fields);
+                url = ConfigurationManager.AppSettings["TaoBaoUpdateAsyncStatus"];
+                reqpar = "data=" + AESApp.AesEncrypt(jsonData);
+                json = HTTPHelper.HttpPost(url, reqpar);
+                Log(url, reqpar, json); //记录日志
+                res = JsonHelper.JsonConvertToObject<TaoBaoResponseBase>(json);
+            }
+            return res.is_success ? OrderApiStatusType.Success : OrderApiStatusType.SystemError;
+        }
+
+
+        /// <summary>
+        /// 记录第三方调用日志
+        /// caoheyang  20151117
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="request"></param>
+        /// <param name="response"></param>
+        private void Log(string url,string request, string response)
+        {
             new HttpDao().LogThirdPartyInfo(new HttpModel()
             {
                 Url = url,
                 Htype = HtypeEnum.ReqType.GetHashCode(),
-                RequestBody = reqpar,
-                ResponseBody = json,
+                RequestBody = request,
+                ResponseBody = response,
                 ReuqestPlatForm = RequestPlatFormEnum.OpenApiPlat.GetHashCode(),
                 ReuqestMethod = "Ets.Service.Provider.OpenApi.TaoDianDianGroup.AsyncStatus",
                 Status = 1,
-                Remark = "调用全时:同步订单状态"
+                Remark = "调用淘点点:同步订单状态"
             });
-            if (string.IsNullOrWhiteSpace(json))
-            {
-                return OrderApiStatusType.ParaError;
-            }
-            TaoBaoResponseBase res = JsonHelper.JsonConvertToObject<TaoBaoResponseBase>(json);
-            return res.is_success ? OrderApiStatusType.Success : OrderApiStatusType.SystemError;
         }
+
+
+
 
         /// <summary>
         /// 确认接单接口(API)  骑士接单
@@ -81,6 +93,7 @@ namespace Ets.Service.Provider.OpenApi
 
         private string Ask(AsyncStatusPM_OpenApi p)
         {
+
             WaimaiOrderAckRequest temp = new WaimaiOrderAckRequest
             {
                 DeliveryOrderNo = ParseHelper.ToLong(p.OriginalOrderNo)
@@ -90,6 +103,27 @@ namespace Ets.Service.Provider.OpenApi
 
 
         /// <summary>
+        /// 更新配送员信息接口（API） 
+        /// caoheyang  20151116
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
+
+        private string Update(AsyncStatusPM_OpenApi p)
+        {
+            var order = new OrderOtherDao().GetByOrderNo(p.order_no);
+            WaimaiDeliveryUpdateRequest temp = new WaimaiDeliveryUpdateRequest
+            {
+                DeliveryOrderNo = ParseHelper.ToLong(p.OriginalOrderNo),
+                DelivererPhone=p.ClienterPhoneNo,
+                DelivererName=p.ClienterTrueName,
+                Lng = order.GrabLongitude.ToString(),
+                Lat = order.GrabLatitude.ToString()
+            };
+            return JsonHelper.JsonConvertToString(temp);
+        }
+
+        /// <summary>
         /// 取件（API）  配送中
         /// caoheyang  20151116
         /// </summary>
@@ -97,11 +131,12 @@ namespace Ets.Service.Provider.OpenApi
         /// <returns></returns>
         private string PickUp(AsyncStatusPM_OpenApi p)
         {
+            var order = new OrderOtherDao().GetByOrderNo(p.order_no);
             WaimaiDeliveryPickupRequest temp = new WaimaiDeliveryPickupRequest
             {
                 DeliveryOrderNo = ParseHelper.ToLong(p.OriginalOrderNo),
-                Lng = p.Longitude.ToString(),
-                Lat = p.Latitude.ToString()
+                Lng = order.TakeLongitude.ToString(),
+                Lat = order.TakeLatitude.ToString()
             };
             return JsonHelper.JsonConvertToString(temp);
         }
@@ -114,11 +149,12 @@ namespace Ets.Service.Provider.OpenApi
         /// <returns></returns>
         private string Confirm(AsyncStatusPM_OpenApi p)
         {
+            var order = new OrderOtherDao().GetByOrderNo(p.order_no);
             WaimaiDeliveryConfirmRequest temp = new WaimaiDeliveryConfirmRequest
             {
                 DeliveryOrderNo = ParseHelper.ToLong(p.OriginalOrderNo),
-                Lng = p.Longitude.ToString(),
-                Lat = p.Latitude.ToString()
+                Lng = order.CompleteLongitude.ToString(),
+                Lat = order.CompleteLatitude.ToString()
             };
             return JsonHelper.JsonConvertToString(temp);
         }
@@ -130,8 +166,6 @@ namespace Ets.Service.Provider.OpenApi
         /// <returns></returns>
         public CreatePM_OpenApi SetCommissonInfo(CreatePM_OpenApi paramodel)
         {
-            paramodel.store_info.delivery_fee = 0;//全时目前外送费统一0
-            paramodel.store_info.businesscommission = 9;//全时目前结算比例统一9
             return paramodel;
         }
     }
