@@ -63,6 +63,7 @@
   <ItemGroup>
     <Compile Include="AlipayTest.cs" />
     <Compile Include="ClienterTests.cs" />
+    <Compile Include="TaoDianDianTest.cs" />
     <Compile Include="XmlTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="YeePayTest.cs" />

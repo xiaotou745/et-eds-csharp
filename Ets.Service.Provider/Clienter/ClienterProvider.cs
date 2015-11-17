@@ -1069,6 +1069,7 @@ namespace Ets.Service.Provider.Clienter
 
             if (bResult)
             {
+                new OrderProvider().AsyncOrderStatus(parmodel.orderNo);//同步第三方订单
                 //异步回调第三方，推送通知
                 Task.Factory.StartNew(() =>
                 {
@@ -1080,7 +1081,7 @@ namespace Ets.Service.Provider.Clienter
                                                 Latitude = parmodel.Latitude,
                                                 IsTimely = parmodel.IsTimely
                                             });
-                    new OrderProvider().AsyncOrderStatus(parmodel.orderNo);//同步第三方订单
+
                     Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", parmodel.businessId.ToString(), string.Empty);
                 });
 
