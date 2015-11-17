@@ -145,7 +145,8 @@
                                 }*@
                             @if (SuperMan.App_Start.UserContext.Current.HasAuthority(60))
                             {
-                                <a href="/BusinessManager/QueryBusinessDetail?businessId=@item.Id">修改信息</a>
+                                @*<a href="/BusinessManager/QueryBusinessDetail?businessId=@item.Id">修改信息</a>*@
+                                <a target="_blank" href="@ConfigSettings.Instance.JavaAdminUrl/business/detail?businessID=@item.Id">修改信息</a>
                                 @*<a href="javascript:void(0)" onclick="funcUpdateBusinessInfo(@item.Id,'@item.Name','@item.PhoneNo','@item.OriginalBusiId','@item.GroupId','@item.MealsSettleMode')">修改信息</a>*@
                             }
                             @if (SuperMan.App_Start.UserContext.Current.HasAuthority(52))
@@ -154,7 +155,8 @@
                             }
                             @if (SuperMan.App_Start.UserContext.Current.HasAuthority(75))
                             {
-                                <a href="/BusinessManager/ClienterBindManage?businessId=@item.Id">骑士绑定</a>
+                                 <a href="@ConfigSettings.Instance.JavaAdminUrl/business/clienterbindlist?businessId=@item.Id">骑士绑定</a>
+                                @*<a href="/BusinessManager/ClienterBindManage?businessId=@item.Id">骑士绑定</a>*@
                                 @*<a href="javascript:void(0)" onclick="funcUpdateBusinessInfo(@item.Id,'@item.Name','@item.PhoneNo','@item.OriginalBusiId','@item.GroupId','@item.MealsSettleMode')">修改信息</a>*@
                             }
                             @if (SuperMan.App_Start.UserContext.Current.HasAuthority(61))

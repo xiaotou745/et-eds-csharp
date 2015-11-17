@@ -1964,7 +1964,7 @@ SELECT   b.Id ,
          b.IsAllowOverdraft,
          b.IsEmployerTask,
          ISNULL(b.RecommendPhone,'') AS RecommendPhone,
-         b.IsOrderChecked ,b.IsAllowCashPay 
+         b.IsOrderChecked ,b.IsAllowCashPay,b.PushOrderType
 FROM business b WITH(NOLOCK) 
 	Left join BusinessFinanceAccount bfa WITH(NOLOCK) ON b.Id=bfa.BusinessId AND bfa.IsEnable=1
     Left join [group] g WITH(NOLOCK) on g.Id=b.GroupId 
@@ -2070,7 +2070,8 @@ ORDER BY btr.Id;";
                                 IsOrderChecked=@IsOrderChecked,
                                 RecommendPhone=@RecommendPhone,
                                 BusinessCommission=@BusinessCommission,
-                                CommissionFixValue=@CommissionFixValue,IsAllowCashPay=@IsAllowCashPay                                  
+                                CommissionFixValue=@CommissionFixValue,IsAllowCashPay=@IsAllowCashPay,
+                                PushOrderType=@PushOrderType                                  
                                            ";
             if (model.GroupId > 0)
             {
@@ -2125,6 +2126,7 @@ ORDER BY btr.Id;";
             parm.Add("@RecommendPhone", DbType.String).Value = model.RecommendPhone ?? ""; //推荐人手机号 
             parm.Add("@IsOrderChecked", DbType.Int32).Value = model.IsOrderChecked;
             parm.Add("@IsAllowCashPay", DbType.Int32).Value = model.IsAllowCashPay;
+            parm.Add("@PushOrderType", DbType.Int32).Value = model.PushOrderType;
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
         /// <summary>

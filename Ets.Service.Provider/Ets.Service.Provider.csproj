@@ -57,6 +57,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="TopSdk">
+      <HintPath>..\lib\TopSdk.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Account\AccountLoginLogProvider.cs" />
@@ -106,6 +109,7 @@
     <Compile Include="MyPush\Push.cs" />
     <Compile Include="OpenApi\OpenApiGroupFactory.cs" />
     <Compile Include="OpenApi\FulltimeGroup.cs" />
+    <Compile Include="OpenApi\TaoDianDianGroup.cs" />
     <Compile Include="OpenApi\TourismGroup.cs" />
     <Compile Include="OpenApi\WanDaGroup.cs" />
     <Compile Include="Order\AmountOrPriceProvider.cs" />

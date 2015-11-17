@@ -65,11 +65,10 @@ namespace SuperMan.Controllers
         [HttpGet]
         public ActionResult Login(string returnUrl)
         {
-            string userinfo = CookieHelper.ReadCookie(SystemConst.cookieName);
-            if (!string.IsNullOrEmpty(userinfo))
-            {
+            if (UserContext.Current.Id > 0){
                 return RedirectToAction("Index", "HomeCount");
             }
+            _authenticationService.SignOut();
             return View();
         }
 

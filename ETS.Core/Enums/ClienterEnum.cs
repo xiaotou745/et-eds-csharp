@@ -205,6 +205,21 @@ namespace ETS.Enums
         Test = 3  
     }
 
+    public enum Cooperation
+    {
+        /// <summary>
+        /// 店内骑士
+        /// </summary>
+        [DisplayText("店内骑士")]
+        CooperationTrue = 1,
+        /// <summary>
+        /// 合作骑士
+        /// </summary>
+        [DisplayText("合作骑士")]
+        Shop = 0
+    
+    }
+
     //public enum GradeType2
     //{
     //    /// <summary>

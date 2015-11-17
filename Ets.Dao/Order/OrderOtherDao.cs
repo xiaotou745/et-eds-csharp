@@ -143,5 +143,62 @@ update OrderOther set CancelTime=getdate() where orderId=@orderId";
 
             return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters) > 0 ? true : false;
         }
+
+
+        /// <summary>
+        /// 根据订单号查子订单信息
+        /// caoheyang 2015117
+        /// </summary>
+        /// <param name="orderNo"></param>
+        /// <returns></returns>
+        public OrderOther GetByOrderNo(string orderNo)
+        {
+            string sql = @"SELECT o.Id
+,o.OrderId
+,o.NeedUploadCount
+,o.ReceiptPic
+,o.HadUploadCount
+,o.IsJoinWithdraw
+,o.PubLongitude
+,o.PubLatitude
+,o.GrabTime
+,o.GrabLongitude
+,o.GrabLatitude
+,o.CompleteLongitude
+,o.CompleteLatitude
+,o.TakeTime
+,o.TakeLongitude
+,o.TakeLatitude
+,o.PubToGrabDistance
+,o.GrabToCompleteDistance
+,o.PubToCompleteDistance
+,o.OneKeyPubOrder
+,o.IsNotRealOrder
+,o.DeductCommissionReason
+,o.DeductCommissionType
+,o.AuditStatus
+,o.IsOrderChecked
+,o.CancelTime
+,o.IsAllowCashPay
+,o.IsPubDateTimely
+,o.IsGrabTimely
+,o.IsTakeTimely
+,o.IsCompleteTimely
+,o.AuditDate
+,o.AuditOptName  FROM dbo.OrderOther (nolock )  o   join [order](nolock ) a  on o.OrderId=a.Id  where  o.OrderNo=@OrderNo";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.SetValue("@OrderNo", orderNo);
+            var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
+            var list = ConvertDataTableList<OrderOther>(dt);
+            if (list != null && list.Count > 0)
+            {
+                return list[0];
+            }
+            else
+            {
+                return null;
+            }
+
+        }
     }
 }

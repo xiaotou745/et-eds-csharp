@@ -60,6 +60,7 @@
     <Compile Include="Common\OpenCityModel.cs" />
     <Compile Include="Common\OrderCountManageList.cs" />
     <Compile Include="Common\PagedList.cs" />
+    <Compile Include="Common\TaoBao\TaoBaoResponseBase.cs" />
     <Compile Include="Common\TestUserModel.cs" />
     <Compile Include="Common\TokenModel.cs" />
     <Compile Include="Common\VersionCheckModel.cs" />
@@ -105,6 +106,7 @@
     <Compile Include="DataModel\Order\OrderChildPayModel.cs" />
     <Compile Include="DataModel\Order\OrderMapDetail.cs" />
     <Compile Include="DataModel\Order\OrderPushRecord.cs" />
+    <Compile Include="DataModel\Order\OrderRegion.cs" />
     <Compile Include="DataModel\Order\OverTimeOrderModel.cs" />
     <Compile Include="DataModel\Order\PayStatusModel.cs" />
     <Compile Include="DataModel\Order\ReceviceAddress.cs" />

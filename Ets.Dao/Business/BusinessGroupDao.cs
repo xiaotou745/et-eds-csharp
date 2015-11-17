@@ -47,6 +47,29 @@ namespace Ets.Dao.Business
             }
             return MapRows<BusinessGroupModel>(dt)[0];
         }
+        /// <summary>
+        /// 获取商家分组实体
+        /// </summary>
+        /// <param name="businessId"></param>
+        /// <returns></returns>
+        public BusinessGroupModel GetCurrenBusinessGroupByGroupId(int groupId)
+        {
+            string sql = @"select BusinessGroup.ID,BusinessGroup.Name,BusinessGroup.StrategyId,BusinessGroup.CreateBy,
+                           BusinessGroup.CreateTime,BusinessGroup.UpdateBy,BusinessGroup.UpdateTime 
+                           from Business WITH ( NOLOCK )
+                           left join BusinessGroup WITH ( NOLOCK ) on BusinessGroupId=BusinessGroup.Id                        
+                           WHERE  BusinessGroup.Id= @GroupId ";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("@GroupId", SqlDbType.Int);
+            dbParameters.SetValue("@GroupId", groupId);
+
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, dbParameters);
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                return null;
+            }
+            return MapRows<BusinessGroupModel>(dt)[0];
+        }
 
         /// <summary>
         /// 添加商家分组

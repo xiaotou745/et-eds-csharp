@@ -72,7 +72,20 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description',
   @level1name=N'BusinessClienterRelation', 
   @level2type=N'COLUMN',
   @level2name=N'AuditStatus'
+  
+  
+  
+--------------------------------------新增商家表相关字段
 
+alter table dbo.business add PushOrderType smallint not null  default 0 ;
+EXEC sys.sp_addextendedproperty @name=N'MS_Description',
+  @value=N'发单模式：0 普通模式（默认），1 快单模式   默认0' ,
+  @level0type=N'SCHEMA',
+  @level0name=N'dbo', 
+  @level1type=N'TABLE',
+  @level1name=N'Business', 
+  @level2type=N'COLUMN',
+  @level2name=N'PushOrderType'
 
 
 alter table dbo.BusinessClienterRelation add IsCooperation smallint not null default 0;

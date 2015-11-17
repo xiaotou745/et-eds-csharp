@@ -85,26 +85,23 @@
                 <div class="control-group" style="margin-top: 10px">
                     <label style="font-size: 15px">应收门店</label>
                 </div>
+                <div class="control-group" style="margin-bottom: 10px">
+                    <label>发单模式：</label>
+                    <label>
+                        <input id="rPushOrderTypeY" name="PushOrderType" type="radio" value="0" @(Model.PushOrderType == 0 ? "checked" : "")>
+                        普通模式（默认）
+                    </label>
+                    <label>
+                        <input id="rPushOrderTypeN" name="PushOrderType" type="radio" value="1" style="margin-left: 30px" @(Model.PushOrderType == 1 ? "checked" : "")>
+                        快单模式
+                    </label>
+                </div>
                 <div class="control-group">
                     <label>订单金额*</label>
-                    <label title="应收门店配送费比例">商配比例</label><input id="bussinessDeliveryRatio" name="bussinessDeliveryRatio" style="width:100px" type="text" value="@Model.BusinessCommission" />%&nbsp;+&nbsp;<label title="应收门店配送费定额">商配定额</label><input id="bussinessFixValue" name="bussinessFixValue" style="width:100px" value="@Model.CommissionFixValue" />&nbsp;+&nbsp;
+                    <label title="应收门店配送费比例">商配比例</label>
+                    <input id="bussinessDeliveryRatio" name="bussinessDeliveryRatio" style="width:100px" type="text" value="@Model.BusinessCommission" @(Model.PushOrderType == 1 ? "disabled='disabled'" : "") />%&nbsp;+&nbsp;<label title="应收门店配送费定额">商配定额</label><input id="bussinessFixValue" name="bussinessFixValue" style="width:100px" value="@Model.CommissionFixValue" />&nbsp;+&nbsp;
                     <label title="代收客户配送费">代收客配</label><input id="customerDeliveryMoney" name="customerDeliveryMoney" style="width:100px" value="@Model.DistribSubsidy" />
                 </div>
-                @*<div class="control-group">
-                    <input id="rCommissionFormulaMode0" name="rCommissionFormulaMode" type="radio" value="1" @(Model.CommissionType == 1 ? "checked" : "")>
-                    <label for="rCommissionFormulaMode0">结算比例：</label>
-                    <input id="rCommissionFormulaMode1" name="rCommissionFormulaMode" type="radio" value="2" style="margin-left:30px" @(Model.CommissionType == 2 ? "checked" : "")>
-                    <label for="rCommissionFormulaMode1">固定金额：</label>
-                    <input type="hidden" id="oldCommissionType" name="oldCommissionType">
-                </div>
-                <div class="control-group" style="margin-bottom: 10px">
-                    <div id="divbusCommissionText" @(Model.CommissionType == 2 ? "hidden" : "")>
-                        <input name="busCommissionText" id="busCommissionText" style="width: 120px;" type="text" value="@Model.BusinessCommission">%
-                    </div>
-                    <div id="divCommissionFixValue" @(Model.CommissionType == 1 ? "hidden" : "")>
-                        <input name="CommissionFixValue" id="CommissionFixValue" style="width: 120px;" type="text" value="@Model.CommissionFixValue">元/单
-                    </div>
-                </div>*@
             </div>
             <div style="width:750px;height: auto;border-bottom:solid 1px #dcdcdc;padding-left:10px;">
                 <div class="control-group" style="margin-top: 10px">
@@ -115,7 +112,19 @@
                 </div>
                 <div class="control-group">
                     <label style="margin-left:74px">补贴策略：</label>
-                    @Html.DropDownList("businessGroupID", new SelectList(new BusinessGroupProvider().GetBusinessGroupList(), "Id", "Name", @Model.BusinessGroupId), new { @class = "selectw", style = "width:143px" })
+                    <select class="selectw"  id="businessGroupID" name="businessGroupID" style="width:143px">
+                        @foreach (BusinessGroupModel temp in new BusinessGroupProvider().GetBusinessGroupList())
+                        {
+                            if (Model.BusinessGroupId == temp.Id)
+                            {
+                                <option selected="selected" value="@temp.Id" data-strategy="@temp.StrategyId">@temp.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@temp.Id" data-strategy="@temp.StrategyId">@temp.Name</option>
+                            }
+                        }
+                    </select>
                 </div>
                 <div class="control-group" style="margin-left:2px">
                     <label style="margin-left: 48px">餐费结算方式：</label>
@@ -542,6 +551,7 @@
         var bussinessDeliveryRatio = $('#bussinessDeliveryRatio').val();//商配比例
         var bussinessFixValue = $('#bussinessFixValue').val(); // 商配定额
         var customerDeliveryMoney = $('#customerDeliveryMoney').val(); //代收客配
+        var pushOrderType = $("input[name='PushOrderType']:checked").val(); //发单模式：普通模式（默认），快单模式
        // if (bussinessDeliveryRatio.trim() == '' || Number(bussinessDeliveryRatio) < 0 || Number(bussinessDeliveryRatio) > 100) {
         if (isNaN(parseFloat(bussinessDeliveryRatio)) || parseFloat(bussinessDeliveryRatio) < 0 || parseFloat(bussinessDeliveryRatio) > 100) {
             alert("商配比例数值必须在0-100之间");
@@ -549,6 +559,11 @@
         }
         if (isNaN(parseFloat(bussinessFixValue)) || parseFloat(bussinessFixValue) < 0 || parseFloat(bussinessFixValue)>100) {
             alert("商配定额必须在0-100之间");
+            return;
+        }
+        if (pushOrderType == 1 && $('#businessGroupID option:selected').attr("data-strategy") != 4)//快单模式时 只能选择基本佣金+网站补贴类型的策略 逻辑
+        {
+            alert("选择快单模式时补贴策略只能选择基本佣金+网站补贴类型的策略");
             return;
         }
         //商配比例为0，则结算类型为2;商配定额为0，则结算类型为1，都不为0，默认2
@@ -679,7 +694,8 @@
             "isAllowOverdraft": isAllowOverdraft,
             "RecommendPhone": recomPhone,
             "IsAllowCashPay": isAllowCashPay,
-            "IsOrderChecked":$('#OrderChecked input[name="IsCheckOrder"]:checked ').val()
+            "IsOrderChecked": $('#OrderChecked input[name="IsCheckOrder"]:checked ').val(),
+            "pushOrderType": pushOrderType
         };
         var url = "/BusinessManager/ModifyBusinessDetail";
         $.ajax({
@@ -803,6 +819,16 @@
             }
         });
     }
+    //更新 设置 发单模式功能 add by caoheyang 20151104
+    $("input[name='PushOrderType']").change(function () {
+        if ($("input[name='PushOrderType']:checked").val() == 0) {
+            $("#bussinessDeliveryRatio").val('0.00');
+            $("#bussinessDeliveryRatio").removeAttr("disabled");
+        } else if ($("input[name='PushOrderType']:checked").val() == 1) {
+            $("#bussinessDeliveryRatio").val('0.00');
+            $("#bussinessDeliveryRatio").attr("disabled", "disabled");
+        }
+    });
 </script>
 @* ReSharper restore Html.CssIdNotUsed *@
 <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=dAeaG6HwIFGlkbqtyKkyFGEC"></script>
