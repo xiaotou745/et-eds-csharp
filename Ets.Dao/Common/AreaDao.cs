@@ -323,5 +323,22 @@ where   IsPublic = 1;
             }
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql) > 0 ? true : false;
         }
+
+        public long Insert(AreaM areaRecord)
+        {
+            const string insertSql = @"
+insert into PublicProvinceCityNew(code,name,parentCode,JiBie)
+values( @code,@name,@parentid,@JiBie)
+select @@IDENTITY";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("code", areaRecord.id);
+            dbParameters.AddWithValue("name", areaRecord.name);
+            dbParameters.AddWithValue("parentid", areaRecord.parent_id);         
+            dbParameters.AddWithValue("JiBie", areaRecord.type);
+         
+            object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters);
+            return ParseHelper.ToLong(result);
+        }
     }
 }

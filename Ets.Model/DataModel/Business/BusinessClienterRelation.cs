@@ -48,6 +48,11 @@ namespace Ets.Model.DataModel.Business
         /// 是否绑定(0:否 1:是)
         /// </summary>
         public int IsBind { get; set; }
+        /// <summary>
+        /// 绑定店内1店内骑士,默认0合作骑士
+        /// </summary>
+        public int IsCooperation { get; set; }
+        
 
     }
 }

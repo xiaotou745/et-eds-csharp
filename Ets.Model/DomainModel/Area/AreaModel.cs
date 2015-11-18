@@ -56,6 +56,16 @@ namespace Ets.Model.DomainModel.Area
 
     }
 
+    public class AreaM
+    {
+        public long id { get; set; }
+        public string name { get; set; }
+
+        public long parent_id { get; set; }
+
+        public long type { get; set; }
+        public string zip { get; set; }
+    }
     /// <summary>
     /// 根据第三方调用的省市区 转换 为 国标
     /// wc

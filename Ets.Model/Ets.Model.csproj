@@ -60,6 +60,7 @@
     <Compile Include="Common\OpenCityModel.cs" />
     <Compile Include="Common\OrderCountManageList.cs" />
     <Compile Include="Common\PagedList.cs" />
+    <Compile Include="Common\TaoBao\TaoBaoResponseBase.cs" />
     <Compile Include="Common\TestUserModel.cs" />
     <Compile Include="Common\TokenModel.cs" />
     <Compile Include="Common\VersionCheckModel.cs" />

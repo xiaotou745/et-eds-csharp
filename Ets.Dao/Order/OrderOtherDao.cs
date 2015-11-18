@@ -143,5 +143,42 @@ update OrderOther set CancelTime=getdate() where orderId=@orderId";
 
             return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters) > 0 ? true : false;
         }
+
+
+        /// <summary>
+        /// 根据订单号查子订单信息
+        /// caoheyang 2015117
+        /// </summary>
+        /// <param name="orderNo"></param>
+        /// <returns></returns>
+        public OrderOther GetByOrderNo(string orderNo)
+        {
+            string sql = @"SELECT 
+o.PubLongitude
+,o.PubLatitude
+,o.GrabTime
+,o.GrabLongitude
+,o.GrabLatitude
+,o.CompleteLongitude
+,o.CompleteLatitude
+,o.TakeTime
+,o.TakeLongitude
+,o.TakeLatitude
+,o.DeductCommissionType
+,o.AuditStatus
+,o.CancelTime
+,o.AuditDate
+,o.AuditOptName  FROM dbo.OrderOther (nolock )  o   join [order](nolock ) a  on o.OrderId=a.Id  where  a.OrderNo=  @OrderNo ";
+
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("@OrderNo", SqlDbType.NVarChar);
+            parm.SetValue("@OrderNo", orderNo);
+       
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            if (dt == null || dt.Rows.Count <= 0)
+                return null;
+            return ConvertDataTableList<OrderOther>(dt)[0];
+
+        }
     }
 }

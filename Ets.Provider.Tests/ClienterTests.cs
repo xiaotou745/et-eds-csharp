@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ETS.Pay.YeePay;
 
 namespace Ets.Provider.Tests
 {
@@ -26,6 +27,14 @@ namespace Ets.Provider.Tests
         [Test]
         public void ClienterTest()
         {
+            //PayProvider p = new PayProvider();
+            //var reg = p.QueryBalanceYee(new YeeQueryBalanceParameter() { Ledgerno = "10012628673" });
+
+
+            var iPayProvider = new PayProvider();
+            iPayProvider.YeePayReconciliation();
+
+
             //ClienterProvider order = new ClienterProvider();
 
             //order.GetDetails(6381);
@@ -62,7 +71,7 @@ namespace Ets.Provider.Tests
             //    PushType = 1
             //});
 
-            var model=new ClienterProvider().GetDetails(3120);
+            //var model=new ClienterProvider().GetDetails(3120);
             //OrderProvider orderProvider=new OrderProvider();
             //orderProvider.AutoPushOrder();
         }

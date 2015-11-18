@@ -57,8 +57,7 @@ namespace Ets.Model.DomainModel.Clienter
         /// 骑士头像信息
         /// </summary>
         public string HeadPhotoUrl { get; set; }
-
-        public int IsCooperation { get; set; }
+      
     }
 
     public class ClienterViewModel

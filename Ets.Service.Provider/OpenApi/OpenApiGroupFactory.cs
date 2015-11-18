@@ -32,7 +32,9 @@ namespace Ets.Service.Provider.OpenApi
                 case GroupConst.Group4: //美团
                     return new MeiTuanGroup();
                 case GroupConst.Group6: //首旅集团
-                    return new TourismGroup(); 
+                    return new TourismGroup();
+                case GroupConst.Group8: //淘点点
+                    return new TaoDianDianGroup(); 
                 default:
                     return null;
             }
