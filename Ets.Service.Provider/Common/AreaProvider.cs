@@ -291,6 +291,7 @@ namespace Ets.Service.Provider.Common
             //}
             AreaModelTranslate areaModel = new AreaModelTranslate();
             AreaModelTranslate resultAreaModel = new AreaModelTranslate();
+            from.JiBie++;//由于对接了口碑，区域信息的级别都加了1，为了不改其他地方，此处都加1，即可，zhaohl,20151118
             if (from.JiBie == 2)
             {
                 if (from.Name.Contains("北京")) { from.Name = "北京市"; }
