@@ -114,54 +114,57 @@ namespace Ets.Service.Provider.Order
         /// <param name="startTime"></param>
         /// <param name="endTime"></param>
         public void AutoCancelOrder(string startTime, string endTime)
-        {    
-            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+        {
+            IList<OrderChild> orderChildList = _orderChildDao.GetListByTime(startTime, endTime);
+            foreach (OrderChild item in orderChildList)
             {
-                OrderChild orderChild = _orderChildDao.GetListByTime(startTime, endTime);
-
-                long id = orderChild.Id;//子订单id
-                int orderId = orderChild.OrderId;//订单id
-                int orderCount = orderChild.OrderCount;//订单数据
-
-                //更新子订
-                OrderChild ocModel = new OrderChild();
-                ocModel.Id = id;
-                ocModel.Status = 3;
-                ocModel.UpdateBy = "服务";
-                ocModel.UpdateTime = DateTime.Now;
-                _orderChildDao.UpdateStatus(ocModel);
-
-                 //更新订单数量
-                order order = new order();
-                order.Id = orderId;
-                order.OrderCount = orderCount - 1;
-                orderDao.UpdateOrderCount(order);       
-
-                 // 更新商户余额、可提现余额                        
-                businessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
+                using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
                 {
-                    BusinessId = orderChild.businessId,
-                    Amount = -orderChild.SettleMoney,
-                    Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
-                    RecordType = BusinessBalanceRecordRecordType.CancelOrder.GetHashCode(),
-                    Operator = orderChild.BusinessName,
-                    WithwardId = orderChild.OrderId,
-                    RelationNo = orderChild.OrderNo,
-                    Remark = "返还配送费支出金额"
-                 });
+                    long id = item.Id;//子订单id
+                    int orderId = item.OrderId;//订单id
+                    int orderCount = item.OrderCount;//订单数据
 
-                OrderSubsidiesLog oslModel = new OrderSubsidiesLog();
-                oslModel.OrderId = orderId;
-                oslModel.OptId = 0;
-                oslModel.OptName = "服务";
-                oslModel.Remark = "子订单id" + id.ToString();
-                oslModel.OrderStatus = ETS.Const.OrderConst.CancelOrder.GetHashCode();
-                oslModel.Platform = SuperPlatform.ServicePlatform.GetHashCode();
-                int oslId = orderSubsidiesLogDao.Insert(oslModel);
+                    //更新子订
+                    OrderChild ocModel = new OrderChild();
+                    ocModel.Id = id;
+                    ocModel.Status = 3;
+                    ocModel.UpdateBy = "服务";
+                    ocModel.UpdateTime = DateTime.Now;
+                    _orderChildDao.UpdateStatus(ocModel);
 
-                if(oslId>0)
-                    tran.Complete();
-                }              
-            }            
+                    //更新订单数量
+                    order order = new order();
+                    order.Id = orderId;
+                    order.OrderCount = orderCount - 1;
+                    orderDao.UpdateOrderCount(order);       
+
+                    // 更新商户余额、可提现余额                        
+                    businessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
+                    {
+                        BusinessId = item.businessId,
+                        Amount = -item.SettleMoney,
+                        Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
+                        RecordType = BusinessBalanceRecordRecordType.CancelOrder.GetHashCode(),
+                        Operator = item.BusinessName,
+                        WithwardId = orderId,
+                        RelationNo = id.ToString(),
+                        Remark = "返还配送费支出金额"
+                     });
+
+                    OrderSubsidiesLog oslModel = new OrderSubsidiesLog();
+                    oslModel.OrderId = orderId;
+                    oslModel.OptId = 0;
+                    oslModel.OptName = "服务";
+                    oslModel.Remark = "子订单id" + id.ToString();
+                    oslModel.OrderStatus = ETS.Const.OrderConst.CancelOrder.GetHashCode();
+                    oslModel.Platform = SuperPlatform.ServicePlatform.GetHashCode();
+                    int oslId = orderSubsidiesLogDao.Insert(oslModel);
+
+                    if(oslId>0)
+                          tran.Complete();
+                    }             
+               }
+            }    
+                
     }
 }

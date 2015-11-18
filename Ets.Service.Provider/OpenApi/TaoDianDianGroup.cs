@@ -215,7 +215,7 @@ namespace Ets.Service.Provider.OpenApi
 
                 #region 订单表
                 order oModel=new order();
-                //oModel.OrderNo = Helper.generateOrderCode(blrModel.userId, busiOrderInfoModel.TimeSpan);  //根据userId生成订单号(15位)
+                oModel.OrderNo = Helper.generateOrderCode(blrModel.Id, "");  //根据userId生成订单号(15位)
                 int oId=orderDao.Insert(oModel);
                 #endregion               
 

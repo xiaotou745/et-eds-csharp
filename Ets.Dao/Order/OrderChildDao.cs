@@ -443,10 +443,10 @@ from  OrderChild (nolock) where OrderId IN ({0})", String.Join(",", orderIdList.
         /// 胡灵波
         /// 2015年11月19日 20:27:33
         /// </summary>
-        public OrderChild GetListByTime(string startTime, string endTime)
+        public IList<OrderChild> GetListByTime(string startTime, string endTime)
         {            
             string querySql = @" 
- select top 1  oc.Id,oc.OrderId,o.OrderNo,o.ordercount,o.businessId,oc.SettleMoney,b.Name as BusinessName  from  orderchild oc 
+ select  oc.Id,oc.OrderId,o.OrderNo,o.ordercount,o.businessId,oc.SettleMoney,b.Name as BusinessName  from  orderchild oc 
 left join [order] o on oc.orderid=o.id
 left join dbo.business b on o.businessid=b.id
 where  oc.platform=2 and oc.status=0 
@@ -456,7 +456,8 @@ and oc.CreateTime>=@startTime and oc.CreateTime<=@endTime";
             dbParameters.Add("startTime", DbType.String, 100).Value = startTime;
             dbParameters.Add("endTime", DbType.String, 100).Value = endTime;
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, querySql, dbParameters);
-            return MapRows<OrderChild>(dt)[0];
+            IList<OrderChild> list= MapRows<OrderChild>(dt);
+            return list;
         }
 
         /// <summary>
