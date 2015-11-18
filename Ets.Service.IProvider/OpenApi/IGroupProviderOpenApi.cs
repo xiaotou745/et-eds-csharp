@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Ets.Model.Common.TaoBao;
 namespace Ets.Service.IProvider.OpenApi
 {
     /// <summary>
@@ -27,6 +27,14 @@ namespace Ets.Service.IProvider.OpenApi
         /// <param name="paramodel"></param>
         /// <returns></returns>
         CreatePM_OpenApi SetCommissonInfo(CreatePM_OpenApi paramodel);
+
+        /// <summary>
+        ///  发布订单
+        ///  胡灵波
+        ///  2015年11月18日 13:14:19
+        /// </summary>
+        /// <param name="info"></param>
+        void TaoBaoPushOrder(OrderDispatch p);
 
     }
 }

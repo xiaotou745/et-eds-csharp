@@ -139,5 +139,16 @@ namespace Ets.Service.Provider.OpenApi
         {
             return paramodel;
         }
+
+        /// <summary>
+        ///  发布订单 
+        ///  胡灵波
+        ///  2015年11月18日 13:14:19
+        /// </summary>
+        /// <param name="info"></param>
+        public void TaoBaoPushOrder(OrderDispatch p)
+        { 
+         
+        }
     }
 }

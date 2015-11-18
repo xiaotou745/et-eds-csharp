@@ -12,7 +12,7 @@ using ETS.Security;
 using Ets.Service.Provider.Order;
 using Newtonsoft.Json.Linq;
 using OpenApi;
-
+using Ets.Model.Common.TaoBao;
 namespace OpenApi.Controllers
 {
 
@@ -37,6 +37,25 @@ namespace OpenApi.Controllers
             JObject jobject = JObject.Parse(json);
             string delivery_order_no = jobject.Value<string>("delivery_order_no"); //接口调用状态 区分大小写
             return ResultModel<object>.Conclude(new OrderProvider().TaoBaoCancelOrder(delivery_order_no));
+        }
+
+        /// <summary>
+        /// 淘宝发布订单
+        /// caoheyang 2015118
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+
+        [HttpPost]
+        public ResultModel<object> Push(OrderDispatch p)
+        {
+            
+            //string json = AESApp.AesDecrypt(p.data);
+            //JObject jobject = JObject.Parse(json);
+            //string delivery_order_no = jobject.Value<string>("delivery_order_no"); //接口调用状态 区分大小写
+            //return ResultModel<object>.Conclude(new OrderProvider().TaoBaoCancelOrder(delivery_order_no));
+
+            return ResultModel<object>.Conclude(null);
         }
     }
 }
