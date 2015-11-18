@@ -96,7 +96,7 @@ where  BusinessId=@BusinessId  and ClienterId=@ClienterId";
             BusinessClienterRelation model=null ;
             
             string querySql = @" 
-select Id,BusinessId,ClienterId,IsEnable,CreateBy,CreateTime,UpdateBy,UpdateTime,IsBind
+select Id,BusinessId,ClienterId,IsEnable,CreateBy,CreateTime,UpdateBy,UpdateTime,IsBind,IsCooperation
  from   dbo.[BusinessClienterRelation] (nolock ) 
  where IsEnable=1 and  BusinessId=@BusinessId  and ClienterId=@ClienterId";
 

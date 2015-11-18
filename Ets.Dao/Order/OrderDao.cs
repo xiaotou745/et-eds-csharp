@@ -1623,7 +1623,7 @@ select top 1
         GroupBusinessId,
        isnull(gb.GroupBusiName,'') as GroupBusiName
 from    [order] o with ( nolock )
-        join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
+        left join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
         join dbo.business b with ( nolock ) on o.businessId = b.Id
         join dbo.OrderOther oo with(nolock) on o.Id = oo.OrderId
         LEFT JOIN GroupBusinessRelation gbr WITH(NOLOCK) ON b.Id=gbr.BusinessId  
@@ -1869,7 +1869,7 @@ DateDiff(MINUTE,PubDate, GetDate()) in ({0})", IntervalMinute);
         /// <returns></returns>
         public bool CancelOrder(OrderListModel model, OrderOptionModel orderOptionModel)
         {
-            string remark = orderOptionModel.OptUserName + "通过后台管理系统取消订单";
+            string remark =orderOptionModel.Remark;
             string sql = string.Format(@" UPDATE dbo.[order]
                                              SET    [Status] = @Status
                                             OUTPUT
@@ -1898,7 +1898,7 @@ DateDiff(MINUTE,PubDate, GetDate()) in ({0})", IntervalMinute);
             parm.AddWithValue("@OptName", orderOptionModel.OptUserName);
             parm.AddWithValue("@Status", 3);
             parm.AddWithValue("@OrderNo", model.OrderNo);
-            parm.AddWithValue("@Platform", 3);
+            parm.AddWithValue("@Platform", orderOptionModel.Platform);
             parm.AddWithValue("@Remark", remark + "，用户操作描述：【" + orderOptionModel.OptLog + "】");
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
@@ -3281,6 +3281,55 @@ where   Id = @OrderId and FinishAll = 0";
                             ";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@orderID", orderID);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, dbParameters);
+            if (dt == null || dt.Rows.Count <= 0)
+            {
+                return null;
+            }
+            return MapRows<OrderMapDetail>(dt)[0];
+        }
+
+        /// <summary>
+        /// 根据orderID获取订单地图数据
+        /// </summary>
+        /// <param name="orderID"></param>
+        /// <returns></returns>
+        public OrderMapDetail GetOrderMapDetail(string orderNo)
+        {
+
+            string sql = @" 
+                            SELECT  ord.OrderId,
+                                    isnull(c.Longitude,0) PubLongitude,
+                                    isnull(c.Latitude,0) PubLatitude,           
+                                    ISNULL(ab.PubDate, '') AS PubDate,
+                                    ISNULL(GrabLongitude, 0) AS GrabLongitude,
+                                    ISNULL(GrabLatitude, 0) AS GrabLatitude,
+                                    ISNULL(GrabTime, '') AS GrabTime,
+                                    ISNULL(TakeLongitude, 0) AS TakeLongitude ,
+                                    ISNULL(TakeLatitude, 0) AS TakeLatitude,
+                                    ISNULL(TakeTime, '') AS TakeTime,
+                                    ISNULL(CompleteLongitude, 0) AS CompleteLongitude,
+                                    ISNULL(CompleteLatitude, 0) AS CompleteLatitude,
+                                    ISNULL(ab.ActualDoneDate, '') AS ActualDoneDate,
+                                    CASE ISNULL(ord.GrabLatitude, 0)
+                                        WHEN 0 THEN -1
+                                        ELSE CASE ISNULL(ord.CompleteLatitude, 0)
+                                                WHEN 0 THEN -1
+                                                ELSE ord.GrabToCompleteDistance
+                                            END
+                                    END AS GrabToCompleteDistance,
+                                    ISNULL(ord.IsPubDateTimely, 0 ) as IsPubDateTimely,
+                                    ISNULL(ord.IsGrabTimely, 0) as IsGrabTimely,
+                                    ISNULL(ord.IsTakeTimely, 0) as IsTakeTimely ,
+                                    ISNULL(ord.IsCompleteTimely, 0) as IsCompleteTimely,
+                                    ISNULL(ab.clienterId, 0) clienterId
+                            FROM  [order] (NOLOCK) ab  
+                                    JOIN OrderOther (NOLOCK) ord ON ord.OrderId = ab.Id
+                                    JOIN business (NOLOCK) c ON c.id = ab.businessId 
+                            WHERE   ab.orderNo = @OrderNo
+                            ";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@OrderNo", orderNo);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, dbParameters);
             if (dt == null || dt.Rows.Count <= 0)
             {

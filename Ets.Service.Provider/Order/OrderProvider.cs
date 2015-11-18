@@ -1246,6 +1246,83 @@ namespace Ets.Service.Provider.Order
         //}
         #endregion
 
+
+
+        /// <summary>
+        /// 淘宝通过订单号取消订单（新）  caoheyang 20151118
+        /// </summary>
+        /// <returns></returns>
+        public TaoBaoCancelOrderReturn TaoBaoCancelOrder(string thirdNo)
+        {
+            var r =TaoBaoCancelOrderReturn.Error;
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            {
+                var order= orderDao.GetOrderByOrderNoAndOrderFrom(thirdNo, GroupConst.Group8, 0);
+                OrderOptionModel orderOptionModel = new OrderOptionModel
+                {
+                    OptUserId=0,
+                    OptUserName="淘宝回调系统自动",
+                    OrderNo=order.OriginalOrderNo,
+                    OptLog = "淘宝回调取消订单",
+                    OrderId=order.Id,
+                    Remark = "淘宝回调系统自动取消订单",
+                    Platform= SuperPlatform.ThirdParty.GetHashCode()
+                };
+                var orderModel = orderDao.GetOrderByIdWithNolock(orderOptionModel.OrderId);
+                if (orderModel == null)
+                {
+                    return TaoBaoCancelOrderReturn.NoExist;
+                }
+                orderModel.OptUserName = orderOptionModel.OptUserName;
+                orderModel.Remark = orderOptionModel.OptLog;
+                var orderTaskPayStatus = orderDao.GetOrderTaskPayStatus(orderModel.Id);
+                if (orderModel.Status == OrderStatus.Status3.GetHashCode())//订单已为取消状态
+                {
+                    return TaoBaoCancelOrderReturn.Success;
+                }
+                #region  淘宝订单会在要求送达时间后三小时进行自动确认收货，我们的淘宝订单三天后分账，所以不可能出现淘宝在我们已经分账还取消的情况
+                //if (orderModel.IsJoinWithdraw == 1)//订单已分账
+                //{
+                //    dealResultInfo.DealMsg = "订单已分账，不能取消订单！";
+                //    return dealResultInfo;
+                //}
+                #endregion  
+                #region 淘宝的订单一定都是 线上支付 ，也就是我们的线下支付，不可能出现这种情况
+                //我们的线上支付是指扫码支付  
+                //if (orderModel.MealsSettleMode == 1 && orderTaskPayStatus > 0 && !orderModel.IsPay.Value)//餐费未线上支付模式并且餐费有支付
+                //{
+                //    dealResultInfo.DealMsg = "餐费有支付，不能取消订单！";
+                //    return dealResultInfo;
+                //}
+                #endregion
+
+                if (orderDao.CancelOrder(orderModel, orderOptionModel)
+                    && orderOtherDao.UpdateCancelTime(orderModel.Id))
+                {
+                    if (orderModel.Status == 1 && orderTaskPayStatus == 2 &&
+                        orderModel.HadUploadCount == orderModel.NeedUploadCount) //已完成订单
+                    {
+                        //更新骑士余额
+                        iClienterProvider.UpdateCAccountBalance(new ClienterMoneyPM()
+                        {
+                            ClienterId = orderModel.clienterId,
+                            Amount = -orderModel.OrderCommission.Value,
+                            Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
+                            RecordType = ClienterBalanceRecordRecordType.CancelOrder.GetHashCode(),
+                            Operator = orderModel.OptUserName,
+                            WithwardId = orderModel.Id,
+                            RelationNo = orderModel.OrderNo,
+                            Remark = orderModel.Remark
+                        });
+                    }
+                    r = TaoBaoCancelOrderReturn.Success;
+                    tran.Complete();
+                }
+                return r;
+            }
+        }
+
+
         /// <summary>
         /// 通过订单号取消订单（新）
         /// danny-20150419
@@ -1261,6 +1338,9 @@ namespace Ets.Service.Provider.Order
             };
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
+                orderOptionModel.Remark = orderOptionModel.OptUserName + "通过后台管理系统取消订单";
+                orderOptionModel.Platform = SuperPlatform.ManagementBackground.GetHashCode();
+
                 var orderModel = orderDao.GetOrderByIdWithNolock(orderOptionModel.OrderId);
                 if (orderModel == null)
                 {
@@ -1281,6 +1361,7 @@ namespace Ets.Service.Provider.Order
                     dealResultInfo.DealMsg = "订单已分账，不能取消订单！";
                     return dealResultInfo;
                 }
+                //我们的线上支付是指扫码支付
                 if (orderModel.MealsSettleMode == 1 && orderTaskPayStatus > 0 && !orderModel.IsPay.Value)//餐费未线上支付模式并且餐费有支付
                 {
                     dealResultInfo.DealMsg = "餐费有支付，不能取消订单！";

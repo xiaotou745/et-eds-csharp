@@ -999,6 +999,13 @@ namespace Ets.Service.Provider.Clienter
             ///TODO 骑士是否有资格抢单放前面
             ClienterModel clienterModel = new Ets.Dao.Clienter.ClienterDao().GetUserInfoByUserId(parmodel.ClienterId);
 
+            BusinessClienterRelation bcrModel= new Ets.Dao.Business.BusinessClienterRelationDao().GetDetails(new BusinessClienterRelationPM() 
+                                { 
+                                    BusinessId = parmodel.businessId, 
+                                    ClienterId = parmodel.ClienterId 
+                                }   
+            );
+
             if (clienterModel.Status != 1)  //判断 该骑士 是否 有资格 抢单 wc
             {
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.HadCancelQualification);
@@ -1012,11 +1019,10 @@ namespace Ets.Service.Provider.Clienter
                 DeliveryCompanyID = parmodel.DeliveryCompanyID//物流公司ID
             };
             bool bResult = orderDao.RushOrder(model);
-            ///TODO 同步第三方状态和jpush 以后放到后台服务或mq进行。
-            
+            ///TODO 同步第三方状态和jpush 以后放到后台服务或mq进行。            
 
             //不属于物流公司同时属于合作骑士
-            if (parmodel.DeliveryCompanyID <= 0 && clienterModel.IsCooperation==1)
+            if (parmodel.DeliveryCompanyID <= 0 && bcrModel != null && bcrModel.IsCooperation == 1)
             {
                 OrderListModel currOrderListModel= orderDao.GetByOrderNo(parmodel.orderNo);
                 if (currOrderListModel.GroupBusinessId > 0)
@@ -1060,6 +1066,8 @@ namespace Ets.Service.Provider.Clienter
                 orderOtherDao.UpdateAuditStatus(currOrderListModel.Id, OrderAuditStatusCommon.Through.GetHashCode(), clienterModel.TrueName);
              
             }
+
+
 
             if (bResult)
             {
