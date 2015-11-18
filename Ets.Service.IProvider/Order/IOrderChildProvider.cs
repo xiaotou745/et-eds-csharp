@@ -61,6 +61,15 @@ namespace Ets.Service.IProvider.Order
         /// <param name="childId">子订单ID</param>
         /// <returns>成功返回1，支付中未支付返回0</returns>
         ResultModel<PayStatusModel> GetPayStatus(int orderId, int childId);
+
+        /// <summary>
+        /// 自动取消订单
+        /// </summary>
+        /// 胡灵波
+        /// 2015年11月19日 20:32:06
+        /// <param name="startTime"></param>
+        /// <param name="endTime"></param>
+        void AutoCancelOrder(string startTime, string endTime);
         
     }
 }
