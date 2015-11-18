@@ -1869,7 +1869,7 @@ DateDiff(MINUTE,PubDate, GetDate()) in ({0})", IntervalMinute);
         /// <returns></returns>
         public bool CancelOrder(OrderListModel model, OrderOptionModel orderOptionModel)
         {
-            string remark = orderOptionModel.OptUserName + "通过后台管理系统取消订单";
+            string remark =orderOptionModel.Remark;
             string sql = string.Format(@" UPDATE dbo.[order]
                                              SET    [Status] = @Status
                                             OUTPUT
@@ -1898,7 +1898,7 @@ DateDiff(MINUTE,PubDate, GetDate()) in ({0})", IntervalMinute);
             parm.AddWithValue("@OptName", orderOptionModel.OptUserName);
             parm.AddWithValue("@Status", 3);
             parm.AddWithValue("@OrderNo", model.OrderNo);
-            parm.AddWithValue("@Platform", 3);
+            parm.AddWithValue("@Platform", orderOptionModel.Platform);
             parm.AddWithValue("@Remark", remark + "，用户操作描述：【" + orderOptionModel.OptLog + "】");
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }

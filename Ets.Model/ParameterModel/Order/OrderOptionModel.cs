@@ -30,6 +30,17 @@ namespace Ets.Model.ParameterModel.Order
         /// 订单号
         /// </summary>
         public string OrderNo { get; set; }
+
+        /// <summary>
+        /// 备注
+        /// </summary>
+        public string Remark { get; set; }
+
+        /// <summary>
+        /// 平台属性：0：商家端;1：配送端;2：服务平台;3：管理后台 4 第三方对接平台
+        /// </summary>
+        public int Platform { get; set; }
+        
        
     }
 }

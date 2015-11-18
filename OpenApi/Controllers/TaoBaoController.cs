@@ -4,7 +4,13 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using ETS.Enums;
 using Ets.Model.Common;
+using Ets.Model.ParameterModel.Common;
+using Ets.Model.ParameterModel.Order;
+using ETS.Security;
+using Ets.Service.Provider.Order;
+using Newtonsoft.Json.Linq;
 using OpenApi;
 
 namespace OpenApi.Controllers
@@ -19,14 +25,18 @@ namespace OpenApi.Controllers
     {
         /// <summary>
         /// 淘宝取消订单
+        /// caoheyang 2015118
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
 
         [HttpPost]
-        public ResultModel<object> CaonelOrder(string data)
+        public ResultModel<object> CancelOrder(ParamModel p)
         {
-            return null;
+            string json = AESApp.AesDecrypt(p.data);
+            JObject jobject = JObject.Parse(json);
+            string delivery_order_no = jobject.Value<string>("delivery_order_no"); //接口调用状态 区分大小写
+            return ResultModel<object>.Conclude(new OrderProvider().TaoBaoCancelOrder(delivery_order_no));
         }
     }
 }
