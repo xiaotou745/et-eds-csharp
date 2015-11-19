@@ -153,7 +153,10 @@
     <Content Include="Content\img\help\img_05.jpg" />
     <Content Include="Content\img\help\img_06.jpg" />
     <Content Include="Content\img\help\img_07.jpg" />
-    <Content Include="htmls\renrenditui.html" />
+    <Content Include="1.html" />
+    <Content Include="Images\qqs.png" />
+    <Content Include="Images\qqsan.png" />
+    <Content Include="Images\renrendituiandroid.jpg" />
     <Content Include="Images\renrendituiandroid.png" />
     <Content Include="Images\renrendituiios.jpg" />
     <Content Include="Content\page.css" />
@@ -246,6 +249,8 @@
     <Content Include="Images\t5.png" />
     <Content Include="Images\t5_db.jpg" />
     <Content Include="Images\top.png" />
+    <Content Include="Images\zndd.png" />
+    <Content Include="Images\znddan.png" />
     <Content Include="Scripts\swiper.jquery.js" />
     <Content Include="Scripts\zepto.js" />
     <Content Include="Scripts\_references.js" />
