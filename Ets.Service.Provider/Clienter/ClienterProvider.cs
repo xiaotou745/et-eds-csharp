@@ -1143,6 +1143,15 @@ namespace Ets.Service.Provider.Clienter
             {
                 DealFlag = false
             };
+            if (model.GradeType == (int)GradeType.Fulltime)
+            {
+                int internalNum = businessClienterDao.GetBusinessInternalNum(model.Id);
+                if (internalNum > 0)
+                {
+                    dealResultInfo.DealMsg = "当前骑士已经是其他商家的店内骑士，不能改为全职骑士！";
+                    return dealResultInfo;
+                }
+            }
             if (!string.IsNullOrWhiteSpace(model.recommendPhone))
             {
                 int result = clienterDao.CheckRecommendPhone(model.recommendPhone); //判断推荐人号码在 骑士或者物流公司中是否存在

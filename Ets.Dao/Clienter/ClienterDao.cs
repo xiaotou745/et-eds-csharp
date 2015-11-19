@@ -1694,7 +1694,7 @@ SELECT   c.[Id],
          c.[WorkStatus], 
          c.DeliveryCompanyId,
          c.GradeType,
-         c.IsCooperation,
+       
          cfa.TrueName AccountName,
          cfa.AccountNo,
          cfa.AccountType,
