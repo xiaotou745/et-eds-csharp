@@ -180,5 +180,60 @@ o.PubLongitude
             return ConvertDataTableList<OrderOther>(dt)[0];
 
         }
+  
+
+        public int Insert(OrderOtherModel orderOther)
+        {
+
+            const string insertSql = @"
+insert into OrderOther(OrderId,NeedUploadCount,ReceiptPic,HadUploadCount,IsJoinWithdraw,PubLongitude,PubLatitude,GrabTime,GrabLongitude,GrabLatitude,CompleteLongitude,CompleteLatitude,TakeTime,TakeLongitude,TakeLatitude,PubToGrabDistance,GrabToCompleteDistance,PubToCompleteDistance,OneKeyPubOrder,IsNotRealOrder,DeductCommissionReason,DeductCommissionType,AuditStatus,IsOrderChecked,CancelTime,IsAllowCashPay,IsPubDateTimely,IsGrabTimely,IsTakeTimely,IsCompleteTimely,AuditDate,AuditOptName)
+values(@OrderId,@NeedUploadCount,@ReceiptPic,@HadUploadCount,@IsJoinWithdraw,@PubLongitude,@PubLatitude,@GrabTime,@GrabLongitude,@GrabLatitude,@CompleteLongitude,@CompleteLatitude,@TakeTime,@TakeLongitude,@TakeLatitude,@PubToGrabDistance,@GrabToCompleteDistance,@PubToCompleteDistance,@OneKeyPubOrder,@IsNotRealOrder,@DeductCommissionReason,@DeductCommissionType,@AuditStatus,@IsOrderChecked,@CancelTime,@IsAllowCashPay,@IsPubDateTimely,@IsGrabTimely,@IsTakeTimely,@IsCompleteTimely,@AuditDate,@AuditOptName)
+
+select @@IDENTITY";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("OrderId", orderOther.OrderId);
+            dbParameters.AddWithValue("NeedUploadCount", orderOther.NeedUploadCount);
+            dbParameters.AddWithValue("ReceiptPic", orderOther.ReceiptPic);
+            dbParameters.AddWithValue("HadUploadCount", orderOther.HadUploadCount);
+            dbParameters.AddWithValue("IsJoinWithdraw", orderOther.IsJoinWithdraw);
+            dbParameters.AddWithValue("PubLongitude", orderOther.PubLongitude);
+            dbParameters.AddWithValue("PubLatitude", orderOther.PubLatitude);
+            dbParameters.AddWithValue("GrabTime", orderOther.GrabTime);
+            dbParameters.AddWithValue("GrabLongitude", orderOther.GrabLongitude);
+            dbParameters.AddWithValue("GrabLatitude", orderOther.GrabLatitude);
+            dbParameters.AddWithValue("CompleteLongitude", orderOther.CompleteLongitude);
+            dbParameters.AddWithValue("CompleteLatitude", orderOther.CompleteLatitude);
+            dbParameters.AddWithValue("TakeTime", orderOther.TakeTime);
+            dbParameters.AddWithValue("TakeLongitude", orderOther.TakeLongitude);
+            dbParameters.AddWithValue("TakeLatitude", orderOther.TakeLatitude);
+            dbParameters.AddWithValue("PubToGrabDistance", orderOther.PubToGrabDistance);
+            dbParameters.AddWithValue("GrabToCompleteDistance", orderOther.GrabToCompleteDistance);
+            dbParameters.AddWithValue("PubToCompleteDistance", orderOther.PubToCompleteDistance);
+            dbParameters.AddWithValue("OneKeyPubOrder", orderOther.OneKeyPubOrder);
+            dbParameters.AddWithValue("IsNotRealOrder", orderOther.IsNotRealOrder);
+            dbParameters.AddWithValue("DeductCommissionReason", orderOther.DeductCommissionReason);
+            dbParameters.AddWithValue("DeductCommissionType", orderOther.DeductCommissionType);
+            dbParameters.AddWithValue("AuditStatus", orderOther.AuditStatus);
+            dbParameters.AddWithValue("IsOrderChecked", orderOther.IsOrderChecked);
+            dbParameters.AddWithValue("CancelTime", orderOther.CancelTime);
+            dbParameters.AddWithValue("IsAllowCashPay", orderOther.IsAllowCashPay);
+            dbParameters.AddWithValue("IsPubDateTimely", orderOther.IsPubDateTimely);
+            dbParameters.AddWithValue("IsGrabTimely", orderOther.IsGrabTimely);
+            dbParameters.AddWithValue("IsTakeTimely", orderOther.IsTakeTimely);
+            dbParameters.AddWithValue("IsCompleteTimely", orderOther.IsCompleteTimely);
+            dbParameters.AddWithValue("AuditDate", orderOther.AuditDate);
+            dbParameters.AddWithValue("AuditOptName", orderOther.AuditOptName);
+
+
+            object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters);
+            if (result == null)
+            {
+                return 0;
+            }
+            return int.Parse(result.ToString());            
+        }
+
+
     }
 }

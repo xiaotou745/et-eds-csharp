@@ -83,6 +83,8 @@ namespace Ets.Model.DataModel.Business
         /// 第三方平台推送过来的商家Id
         /// </summary>
         public int? OriginalBusiId { get; set; }
+
+        public string OriginalBusiUnitId { get; set; }
         /// <summary>
         /// 省份编码
         /// </summary>
@@ -173,6 +175,19 @@ namespace Ets.Model.DataModel.Business
         /// 发单模式：0 普通模式（默认），1 快单模式   默认0
         /// </summary>
         public int PushOrderType { get; set; }
+
+        public string RecommendPhone { get; set; }
+
+        public string Timespan { get; set; }
+
+        public string Appkey { get; set; }
+
+        public int IsOrderChecked { get; set; }
+
+        public DateTime LastLoginTime { get; set; }
+
+        
+        
     }
 
 }
