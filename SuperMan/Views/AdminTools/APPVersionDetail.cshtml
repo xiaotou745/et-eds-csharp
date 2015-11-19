@@ -11,6 +11,12 @@
         <div style="width:450px;height:auto;padding-left:10px;border:1px #dcdcdc solid;border-left:hidden;border-right:hidden;border-top:hidden">
             <div style="width:430px;height:25px;">
                 <div style="float: left">
+                    <label>所属平台：</label>
+                    @(Model.AppSource == 0 ? "易代送商户版" : "智能调度平台 ")
+                </div>
+            </div>
+            <div style="width:430px;height:25px;">
+                <div style="float: left">
                     <label>客户端类型：</label>
                     @(Model.PlatForm == 1 ? "Android" : "IOS ")
                 </div>

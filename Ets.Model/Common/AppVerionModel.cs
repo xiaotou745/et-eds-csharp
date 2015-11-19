@@ -35,6 +35,11 @@ namespace Ets.Model.Common
         /// 客户端类型 1:Android 2 :IOS 默认Android
         /// </summary>
         public int PlatForm { get; set; }
+
+        /// <summary>
+        /// 所属平台1智能调度平台,默认0易代送商户版
+        /// </summary>
+        public int AppSource { get; set; }
         /// <summary>
         /// 用户版本 1 骑士 2 商家 默认1骑士
         /// </summary>

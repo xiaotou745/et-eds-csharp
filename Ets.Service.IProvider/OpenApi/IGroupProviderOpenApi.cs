@@ -28,13 +28,13 @@ namespace Ets.Service.IProvider.OpenApi
         /// <returns></returns>
         CreatePM_OpenApi SetCommissonInfo(CreatePM_OpenApi paramodel);
 
-        /// <summary>
-        ///  发布订单
-        ///  胡灵波
-        ///  2015年11月18日 13:14:19
-        /// </summary>
-        /// <param name="info"></param>
-        void TaoBaoPushOrder(OrderDispatch p);
+        ///// <summary>
+        /////  发布订单
+        /////  胡灵波
+        /////  2015年11月18日 13:14:19
+        ///// </summary>
+        ///// <param name="info"></param>
+        //void TaoBaoPushOrder(OrderDispatch p);
 
     }
 }

@@ -13,7 +13,23 @@
     <h2 class="crumbs">
         您所在位置：管理员 > APP版本控制 > 添加新版本
     </h2>
+    <input type="hidden" id="hidDealType" name="hidDealType" value="@dealType" />
+    <input type="hidden" id="hidId" name="hidId" value="@(Model!=null?Model.ID:0)" />
     <div style="width:798px;height:auto;padding-left:10px;border:1px #dcdcdc solid;border-left:hidden;border-right:hidden;border-top:hidden">
+        
+        <div style="width:780px;height:25px;margin-top:10px">
+            <div style="float: left;margin-left: 27px">
+                <label>所属平台：</label>
+            </div>
+            <div style="float:left;width:650px">
+                <input name="rAppSource" id="rold" type="radio" value="0" checked="checked" /> 易代送商户版
+                <input name="rAppSource" id="rnew" type="radio" value="1" /> 智能调度版
+                @if (dealType == 1)
+                {
+                    <input type="hidden" id="hidAppSrouce" name="hidAppSrouce" value="@Model.AppSource" />
+                }
+            </div>
+        </div>
         <div style="width:780px;height:25px;margin-top:10px">
             <div style="float: left;margin-left: 15px">
                 <label>客户端类型：</label>
@@ -21,8 +37,6 @@
             <div style="float:left;width:650px">
                 <input name="rPlatForm" id="rAndroid" type="radio" value="1" checked="checked" /> Android
                 <input name="rPlatForm" id="rIOS" type="radio" value="2" /> IOS
-                <input type="hidden" id="hidDealType" name="hidDealType" value="@dealType" />
-                <input type="hidden" id="hidId" name="hidId" value="@(Model!=null?Model.ID:0)" />
                 @if (dealType == 1)
                 {
                     <input type="hidden" id="hidPlatForm" name="hidPlatForm" value="@Model.PlatForm" />
@@ -135,6 +149,13 @@
             var hidMessage = $("#hidMessage").val();
             var hidSendType = $("#hidSendType").val();
             var hidSendTime = $("#hidSendTime").val();
+            var hidAppSrouce = $("#hidAppSrouce").val();
+            if (hidAppSrouce == 0) {
+                $("#rold").attr("checked", "checked");
+            }
+            else {
+                $("#rnew").attr("checked", "checked");
+            }
             if (hidPlatForm == 1) {
                 $("#rAndroid").attr("checked", "checked");
             }
@@ -191,6 +212,7 @@
         var timingDate = $("#txtSendTime").val();
         var dealType = $("#hidDealType").val();
         var hidId = $("#hidId").val();
+        var appSource = $('input[name="rAppSource"]:checked').val();
         if (version.trim().length == 0) {
             alert("版本号不能为空！");
             return;
@@ -215,7 +237,7 @@
         }
         if (confirm(remStr)) {
             var paramaters = {
-                "ID": hidId, "platForm": platForm, "userType": userType, "version": version, "isMust": isMust, "updateUrl": updateUrl, "message": message, "isTiming": isTiming, "timingDate": timingDate, "dealType": dealType
+                "ID": hidId, "platForm": platForm, "appSource": appSource, "userType": userType, "version": version, "isMust": isMust, "updateUrl": updateUrl, "message": message, "isTiming": isTiming, "timingDate": timingDate, "dealType": dealType
             };
             var url = "/AdminTools/EditAPPVersion";
             $.ajax({

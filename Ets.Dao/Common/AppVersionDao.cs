@@ -27,11 +27,12 @@ namespace Ets.Dao.Common
         {
             const string querysql = @"
 SELECT TOP 1 [Version],IsMust,UpdateUrl,[Message] FROM dbo.AppVersion 
-WHERE  PubStatus<>2 and [PlatForm]=@PlatForm AND UserType=@UserType and TimingDate<getdate()
+WHERE  PubStatus<>2 and [PlatForm]=@PlatForm AND UserType=@UserType and TimingDate<getdate() and AppSource=@AppSource
 ORDER BY [Version] DESC";
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.AddWithValue("@PlatForm", vcmodel.PlatForm);
-            parm.AddWithValue("@UserType", vcmodel.UserType);
+            parm.Add("@PlatForm", DbType.Int32, 4).Value = vcmodel.PlatForm;
+            parm.Add("@UserType", DbType.Int32, 4).Value = vcmodel.UserType;
+            parm.Add("@AppSource", DbType.Int32, 4).Value = vcmodel.AppSource;
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, querysql, parm);
             if (!dt.HasData())
             {
@@ -62,7 +63,8 @@ ORDER BY [Version] DESC";
       ,[UpdateBy]
       ,[IsTiming]
       ,[TimingDate]
-      ,[PubStatus]";
+      ,[PubStatus]
+      ,AppSource";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             string tableList = @" AppVersion WITH (NOLOCK) ";
             string orderByColumn = " Id DESC";
@@ -89,7 +91,9 @@ INSERT INTO [AppVersion]
            ,[UpdateBy]
            ,[IsTiming]
            ,[PubStatus]
-           ,[TimingDate])
+           ,[TimingDate]
+            ,AppSource
+            )
      VALUES
            (@Version
            ,@IsMust
@@ -101,6 +105,7 @@ INSERT INTO [AppVersion]
            ,@UpdateBy
            ,@IsTiming
            ,@PubStatus
+           ,@AppSource 
            ,");
             if (model.TimingDate != null)
             {
@@ -120,8 +125,9 @@ INSERT INTO [AppVersion]
             parm.AddWithValue("@CreateBy", model.OptUserName);
             parm.AddWithValue("@UpdateBy", model.OptUserName);
             parm.AddWithValue("@IsTiming", model.IsTiming);
-            parm.AddWithValue("@TimingDate",model.TimingDate);
-            parm.AddWithValue("@PubStatus", model.IsTiming==0?1:0);
+            parm.AddWithValue("@TimingDate", model.TimingDate);
+            parm.AddWithValue("@PubStatus", model.IsTiming == 0 ? 1 : 0);
+            parm.AddWithValue("@AppSource", model.AppSource);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
         /// <summary>
@@ -140,6 +146,7 @@ INSERT INTO [AppVersion]
                                 UpdateUrl=@UpdateUrl,
                                 Message=@Message,
                                 UpdateBy=@UpdateBy,
+                                AppSource=@AppSource,
                                 UpdateDate=getdate(),";
             if (model.IsTiming == 1)
             {
@@ -158,6 +165,7 @@ INSERT INTO [AppVersion]
             parm.AddWithValue("@IsTiming", model.IsTiming);
             parm.AddWithValue("@UpdateBy", model.OptUserName);
             parm.AddWithValue("@Id", model.ID);
+            parm.AddWithValue("@AppSource", model.AppSource);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
 
@@ -196,6 +204,7 @@ SELECT [ID]
       ,[IsTiming]
       ,[TimingDate]
       ,[PubStatus]
+      ,AppSource
  FROM [AppVersion] WITH(NOLOCK)
 WHERE ID=@Id;";
             IDbParameters parm = DbHelper.CreateDbParameters();
