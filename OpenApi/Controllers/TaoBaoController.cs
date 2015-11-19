@@ -13,6 +13,8 @@ using Ets.Service.Provider.Order;
 using Newtonsoft.Json.Linq;
 using OpenApi;
 using Ets.Model.Common.TaoBao;
+using Ets.Service.IProvider.OpenApi;
+using Ets.Service.Provider.OpenApi;
 namespace OpenApi.Controllers
 {
 
@@ -23,6 +25,8 @@ namespace OpenApi.Controllers
     [OpenApiActionError] 
     public class TaoBaoController : ApiController
     {
+
+        TaoDianDianGroup taoDianDianGroup = new TaoDianDianGroup();
         /// <summary>
         /// 淘宝取消订单
         /// caoheyang 2015118
@@ -54,7 +58,7 @@ namespace OpenApi.Controllers
             //JObject jobject = JObject.Parse(json);
             //string delivery_order_no = jobject.Value<string>("delivery_order_no"); //接口调用状态 区分大小写
             //return ResultModel<object>.Conclude(new OrderProvider().TaoBaoCancelOrder(delivery_order_no));
-
+            taoDianDianGroup.TaoBaoPushOrder(p);
             return ResultModel<object>.Conclude(null);
         }
     }

@@ -15,6 +15,7 @@ using Ets.Model.DomainModel.Order;
 using Ets.Model.ParameterModel.AliPay;
 using ETS.Enums;
 using Letao.Util;
+using System.Data.SqlClient;
 
 namespace Ets.Dao.Order
 {
@@ -488,6 +489,69 @@ where   OrderId = @OrderId
             parm.Add("BefPayStatus", SqlDbType.Int, 4).Value = PayStatusEnum.WaitPay; //待支付
 
             return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm), 0);
+        }
+
+
+
+        /// <summary>
+        /// 写入订单子表
+        /// </summary>
+        /// <returns>订单实体</returns>
+        public void InsertList(order order)
+        {            
+            using (SqlBulkCopy bulk = new SqlBulkCopy(SuperMan_Write))
+            {
+                try
+                {
+                    bulk.BatchSize = 1000;
+                    bulk.DestinationTableName = "OrderChild";
+                    bulk.NotifyAfter = order.listOrderChild.Count;
+                    bulk.ColumnMappings.Add("OrderId", "OrderId");
+                    bulk.ColumnMappings.Add("ChildId", "ChildId");
+                    bulk.ColumnMappings.Add("TotalPrice", "TotalPrice");
+                    bulk.ColumnMappings.Add("GoodPrice", "GoodPrice");
+                    bulk.ColumnMappings.Add("DeliveryPrice", "DeliveryPrice");
+                    bulk.ColumnMappings.Add("PayStatus", "PayStatus");
+                    bulk.ColumnMappings.Add("CreateBy", "CreateBy");
+                    bulk.ColumnMappings.Add("UpdateBy", "UpdateBy");
+
+                    DataTable dt = new DataTable();
+                    dt.Columns.Add(new DataColumn("OrderId", typeof(int)));
+                    dt.Columns.Add(new DataColumn("ChildId", typeof(int)));
+                    dt.Columns.Add(new DataColumn("TotalPrice", typeof(decimal)));
+                    dt.Columns.Add(new DataColumn("GoodPrice", typeof(decimal)));
+                    dt.Columns.Add(new DataColumn("DeliveryPrice", typeof(decimal)));
+                    dt.Columns.Add(new DataColumn("PayStatus", typeof(int)));
+                    dt.Columns.Add(new DataColumn("CreateBy", typeof(string)));
+                    dt.Columns.Add(new DataColumn("UpdateBy", typeof(string)));
+
+                    for (int i = 0; i < order.listOrderChild.Count; i++)
+                    {
+                        DataRow dr = dt.NewRow();
+                        dr["OrderId"] = order.Id;                        
+                        int num = i + 1;
+                        dr["ChildId"] = num;
+                        decimal totalPrice = order.listOrderChild[i].GoodPrice + Convert.ToDecimal(order.DistribSubsidy);
+                        dr["TotalPrice"] = totalPrice;
+                        dr["GoodPrice"] = order.listOrderChild[i].GoodPrice;
+                        dr["DeliveryPrice"] = order.DistribSubsidy;
+                        if ((bool)order.IsPay ||
+                            (!(bool)order.IsPay && order.MealsSettleMode == MealsSettleMode.LineOff.GetHashCode())
+                            )//已付款 未付款线下付款
+                            dr["PayStatus"] = 1;
+                        else
+                            dr["PayStatus"] = 0;
+                        dr["CreateBy"] = order.BusinessName;
+                        dr["UpdateBy"] = order.BusinessName;
+                        dt.Rows.Add(dr);
+                    }
+                    bulk.WriteToServer(dt);
+                }
+                catch (Exception err)
+                {
+                    throw err;
+                }
+            }        
         }
     }
 

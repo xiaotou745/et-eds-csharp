@@ -11,11 +11,20 @@ using ETS.Security;
 using Ets.Service.IProvider.OpenApi;
 using ETS.Util;
 using Top.Api.Request;
-
+using Ets.Dao.Business;
+using Ets.Model.DataModel.Business;
+using System;
+using Ets.Model.DataModel.Order;
 namespace Ets.Service.Provider.OpenApi
 {
     public class TaoDianDianGroup : IGroupProviderOpenApi
     {
+        BusinessDao businessDao=new BusinessDao();
+        OrderDao orderDao = new OrderDao();
+        OrderSubsidiesLogDao orderSubsidiesLogDao = new OrderSubsidiesLogDao();
+        OrderOtherDao orderOtherDao = new OrderOtherDao();
+        OrderChildDao orderChildDao = new OrderChildDao();
+
         /// <summary>
         /// 回调万达接口同步订单状态  add by caoheyang 20150326
         /// 茹化肖修改
@@ -147,8 +156,88 @@ namespace Ets.Service.Provider.OpenApi
         /// </summary>
         /// <param name="info"></param>
         public void TaoBaoPushOrder(OrderDispatch p)
-        { 
-         
+        {
+            try
+            {
+                #region 商户
+                //查询商户是否存在
+                BusListResultModel blrModel = businessDao.GetBusiness(p.store_id, GroupType.Group7.GetHashCode());
+                if (blrModel == null)
+                {
+                    BusinessModel bModel = new BusinessModel();
+                    bModel.Name = p.store_name;
+                    bModel.City = p.city_name;
+                    bModel.district = "";
+                    bModel.PhoneNo = p.shipper_phone;
+                    bModel.PhoneNo2 = p.shipper_phone;
+                    bModel.Password = "";
+                    bModel.CheckPicUrl = "";
+                    bModel.IDCard = "";
+                    bModel.Address = p.store_address;
+                    string starting_point = p.starting_point;
+                    bModel.Landline = "";
+                    bModel.Longitude = 0;
+                    bModel.Latitude = 0;
+                    bModel.Status = 1;
+                    bModel.districtId = "";
+                    bModel.CityId = p.city_code;
+                    bModel.GroupId = GroupType.Group7.GetHashCode();
+                    bModel.OriginalBusiId = 0;
+                    bModel.OriginalBusiUnitId = p.store_id;
+                    bModel.ProvinceCode = "";
+                    bModel.CityCode = "";
+                    bModel.AreaCode = "";
+                    bModel.Province = "";
+                    bModel.CommissionTypeId = 0;//佣金类型
+                    bModel.DistribSubsidy = 0;
+                    bModel.BusinessCommission = 0;
+                    bModel.CommissionType = 1;
+                    bModel.BusinessGroupId = 1;//默认组
+                    bModel.BalancePrice = 0;
+                    bModel.AllowWithdrawPrice = 0;
+                    bModel.HasWithdrawPrice = 0;
+                    bModel.MealsSettleMode = 0;//线下结算
+                    bModel.BusinessLicensePic = "";
+                    bModel.IsBind = 0;
+                    bModel.OneKeyPubOrder = 0;
+                    bModel.IsAllowOverdraft = 0;
+                    bModel.IsEmployerTask = 0;
+                    bModel.RecommendPhone = "";
+                    bModel.Timespan = "";
+                    bModel.Appkey = Guid.NewGuid().ToString();
+                    bModel.IsOrderChecked = 1;
+                    bModel.IsAllowCashPay = 1;
+                    bModel.LastLoginTime = System.DateTime.Now;
+
+                    int businessId = businessDao.Insert(bModel);
+                }
+                #endregion
+
+                #region 订单表
+                order oModel=new order();
+                //oModel.OrderNo = Helper.generateOrderCode(blrModel.userId, busiOrderInfoModel.TimeSpan);  //根据userId生成订单号(15位)
+                int oId=orderDao.Insert(oModel);
+                #endregion               
+
+                #region 订单日志
+                OrderSubsidiesLog oslModel=new OrderSubsidiesLog();
+                int oslId= orderSubsidiesLogDao.Insert(oslModel);
+                #endregion
+
+                #region 订单Other
+                OrderOtherModel ooModel=new OrderOtherModel();
+                int ooId=orderOtherDao.Insert(ooModel);
+                #endregion
+
+                #region 子订单
+                orderChildDao.InsertList(oModel);
+                #endregion
+
+            }
+            catch (Exception err)
+            {
+                string str = err.Message;
+            }
         }
     }
 }
