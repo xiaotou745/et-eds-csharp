@@ -1,24 +1,18 @@
 USE [superman]
 GO
 
-/****** Object:  Table [dbo].[OrderRegionLog]    Script Date: 10/29/2015 15:40:07 ******/
+/****** Object:  Table [dbo].[OrderRegionLog]    Script Date: 11/19/2015 21:33:51 ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
 
-SET ANSI_PADDING ON
-GO
-
 CREATE TABLE [dbo].[OrderRegionLog](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[OrderRegionId] [int] NOT NULL,
 	[BusinessId] [int] NOT NULL,
-	[Name] [nvarchar](50) NOT NULL,
-	[Coordinate] [varchar](500) NOT NULL,
-	[ParentId] [int] NOT NULL,
-	[Status] [tinyint] NOT NULL,
+	[Remark] [nvarchar](500) NOT NULL,
 	[OptType] [int] NOT NULL,
 	[OptTime] [datetime] NOT NULL,
 	[OptName] [nvarchar](50) NOT NULL,
@@ -30,25 +24,13 @@ CREATE TABLE [dbo].[OrderRegionLog](
 
 GO
 
-SET ANSI_PADDING OFF
-GO
-
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'订单区域表主键' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderRegionLog', @level2type=N'COLUMN',@level2name=N'OrderRegionId'
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'商家id' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderRegionLog', @level2type=N'COLUMN',@level2name=N'BusinessId'
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'区域名称' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderRegionLog', @level2type=N'COLUMN',@level2name=N'Name'
-GO
-
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'坐标集' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderRegionLog', @level2type=N'COLUMN',@level2name=N'Coordinate'
-GO
-
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'父类ID' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderRegionLog', @level2type=N'COLUMN',@level2name=N'ParentId'
-GO
-
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'区域状态（2：无效，默认1有效）' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderRegionLog', @level2type=N'COLUMN',@level2name=N'Status'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'区域名称' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderRegionLog', @level2type=N'COLUMN',@level2name=N'Remark'
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'操作类型（默认1新增，2修改，3删除）' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderRegionLog', @level2type=N'COLUMN',@level2name=N'OptType'
@@ -61,9 +43,6 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'操作人' , @lev
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'订单区域日志表' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderRegionLog'
-GO
-
-ALTER TABLE [dbo].[OrderRegionLog] ADD  CONSTRAINT [DF_OrderRegionLog_Status]  DEFAULT ((1)) FOR [Status]
 GO
 
 ALTER TABLE [dbo].[OrderRegionLog] ADD  CONSTRAINT [DF_OrderRegionLog_OptType]  DEFAULT ((1)) FOR [OptType]
