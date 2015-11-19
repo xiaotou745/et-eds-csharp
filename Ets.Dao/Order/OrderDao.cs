@@ -701,6 +701,23 @@ select @@IDENTITY ";
         }
 
         /// <summary>
+        /// 修改订单数量
+        /// </summary>
+        /// <param name="order"></param>
+        public void UpdateOrderCount(order order)
+        {
+            const string updateSql = @"
+update  [order]
+set  OrderCount=@OrderCount
+where  Id=@Id ";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("Id", order.Id);
+            dbParameters.AddWithValue("OrderCount", order.OrderCount);             
+            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+        }
+
+        /// <summary>
         /// 根据订单号查订单信息
         /// danny-20150320
         /// </summary>

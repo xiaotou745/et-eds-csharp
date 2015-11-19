@@ -101,6 +101,27 @@ where  Id=@Id ";
         }
 
         /// <summary>
+        /// 更新状态
+        /// </summary>
+        /// 胡灵波
+        /// 2015年11月19日 20:46:34
+        /// <param name="orderChild"></param>
+        public void UpdateStatus(OrderChild orderChild)
+        {
+            const string updateSql = @"
+update  OrderChild
+set  Status=@Status,UpdateBy=@UpdateBy,UpdateTime=@UpdateTime
+where  Id=@Id ";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("Id", orderChild.Id);
+            dbParameters.AddWithValue("Status", orderChild.Status);
+            dbParameters.AddWithValue("UpdateBy", orderChild.UpdateBy);
+            dbParameters.AddWithValue("UpdateTime", orderChild.UpdateTime);
+            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+        }
+
+        /// <summary>
         /// 删除一条记录
         /// </summary>
         public void Delete(long id)
@@ -225,7 +246,7 @@ where   1=1 and o.Id = @OrderId
             parm.Add("WxCodeUrl", DbType.String, 256).Value = wxCodeUrl;
             parm.Add("OrderId", DbType.Int32, 4).Value = orderId;
             parm.Add("ChildId", DbType.Int32, 4).Value = orderChildId;
-            return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm)) > 0 ? true : false;
+            return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm)) > 0 ? true : false;            
         }
 
         /// <summary>
@@ -415,6 +436,27 @@ from  OrderChild (nolock) where OrderId IN ({0})", String.Join(",", orderIdList.
                 list.Add(ochildInfo);
             }
             return list;
+        }
+
+        /// <summary>
+        /// 查询对象(获取智能调度,未抢单数据)
+        /// 胡灵波
+        /// 2015年11月19日 20:27:33
+        /// </summary>
+        public OrderChild GetListByTime(string startTime, string endTime)
+        {            
+            string querySql = @" 
+ select top 1  oc.Id,oc.OrderId,o.OrderNo,o.ordercount,o.businessId,oc.SettleMoney,b.Name as BusinessName  from  orderchild oc 
+left join [order] o on oc.orderid=o.id
+left join dbo.business b on o.businessid=b.id
+where  oc.platform=2 and oc.status=0 
+and oc.CreateTime>=@startTime and oc.CreateTime<=@endTime";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("startTime", DbType.String, 100).Value = startTime;
+            dbParameters.Add("endTime", DbType.String, 100).Value = endTime;
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, querySql, dbParameters);
+            return MapRows<OrderChild>(dt)[0];
         }
 
         /// <summary>
