@@ -1,0 +1,71 @@
+---------------------订单表
+--来源
+CREATE INDEX [IX_Order_Platform] ON [dbo].[Order]([Platform] ASC) ;
+go
+
+---------------------子订单
+--商户Id
+CREATE INDEX [IX_OrderChild_businessId] ON [dbo].[OrderChild]([businessId] ASC) ;
+go
+--一级区域Id
+CREATE INDEX [IX_OrderChild_OrderRegionOneId] ON [dbo].[OrderChild]([OrderRegionOneId] ASC) ;
+go
+--二级区域Id
+CREATE INDEX [IX_OrderChild_OrderRegionTwoId] ON [dbo].[OrderChild]([OrderRegionTwoId] ASC) ;
+go
+--来源
+CREATE INDEX [IX_OrderChild_Platform] ON [dbo].[OrderChild]([Platform] ASC) ;
+go
+
+---------------------抢单表
+--商户id
+CREATE INDEX [IX_OrderGrab_BusinessId] ON [dbo].[OrderGrab]([BusinessId] ASC) ;
+go
+
+--骑士id
+CREATE INDEX [IX_OrderGrab_ClienterId] ON [dbo].[OrderGrab]([ClienterId] ASC) ;
+go
+
+--状态
+CREATE INDEX [IX_OrderGrab_Status] ON [dbo].[OrderGrab]([Status] ASC) ;
+go
+
+--一级区域Id
+CREATE INDEX [IX_OrderGrab_OrderRegionOneId] ON [dbo].[OrderGrab]([OrderRegionOneId] ASC) ;
+go
+
+--二级区域Id
+CREATE INDEX [IX_OrderGrab_OrderRegionTwoId] ON [dbo].[OrderGrab]([OrderRegionTwoId] ASC) ;
+go
+
+
+---------------------订单子表
+--抢单主表Id
+CREATE INDEX [IX_OrderGrabChild_GrabOrderId] ON [dbo].[OrderGrabChild]([GrabOrderId] ASC) ;
+go
+
+--订单主表Id
+CREATE INDEX [IX_OrderGrabChild_OrderId] ON [dbo].[OrderGrabChild]([OrderId] ASC) ;
+go
+
+--订单子表Id
+CREATE INDEX [IX_OrderGrabChild_OrderChildId] ON [dbo].[OrderGrabChild]([OrderChildId] ASC) ;
+go
+
+--抢单主表Id
+CREATE INDEX [IX_OrderGrabChild_BusinessId] ON [dbo].[OrderGrabChild]([BusinessId] ASC) ;
+go
+
+--状态
+CREATE INDEX [IX_OrderGrabChild_Status] ON [dbo].[OrderGrabChild]([Status] ASC) ;
+go
+
+---------------------区域表
+--商户id
+CREATE INDEX [IX_OrderRegion_BusinessId] ON [dbo].[OrderRegion]([BusinessId] ASC) ;
+go
+
+--状态
+CREATE INDEX [IX_OrderRegion_Status] ON [dbo].[OrderRegion]([Status] ASC) ;
+go
+

@@ -1,7 +1,7 @@
 USE [superman]
 GO
 
-/****** Object:  Table [dbo].[OrderRegion]    Script Date: 10/29/2015 15:38:51 ******/
+/****** Object:  Table [dbo].[OrderRegion]    Script Date: 11/19/2015 09:44:59 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -17,13 +17,15 @@ CREATE TABLE [dbo].[OrderRegion](
 	[Name] [nvarchar](50) NOT NULL,
 	[Coordinate] [varchar](500) NOT NULL,
 	[ParentId] [int] NOT NULL,
+	[HasChild] [bit] NOT NULL,
 	[Status] [tinyint] NOT NULL,
 	[WaitingCount] [int] NOT NULL,
+	[GrabCount] [int] NOT NULL,
 	[Distributioning] [int] NOT NULL,
 	[DoneCount] [int] NOT NULL,
 	[CreateTime] [datetime] NOT NULL,
 	[CreateName] [nvarchar](50) NOT NULL,
-	[OptTime] [datetime] NULL,
+	[OptTime] [datetime] NOT NULL,
 	[OptName] [nvarchar](50) NOT NULL,
  CONSTRAINT [PK_OrderRegion] PRIMARY KEY CLUSTERED 
 (
@@ -78,10 +80,16 @@ GO
 ALTER TABLE [dbo].[OrderRegion] ADD  CONSTRAINT [DF_OrderRegion_Coordinate]  DEFAULT ('') FOR [Coordinate]
 GO
 
+ALTER TABLE [dbo].[OrderRegion] ADD  CONSTRAINT [DF_OrderRegion_HasChild]  DEFAULT ((0)) FOR [HasChild]
+GO
+
 ALTER TABLE [dbo].[OrderRegion] ADD  CONSTRAINT [DF_OrderRegion_Status]  DEFAULT ((1)) FOR [Status]
 GO
 
 ALTER TABLE [dbo].[OrderRegion] ADD  CONSTRAINT [DF_OrderRegion_WaitingCount]  DEFAULT ((0)) FOR [WaitingCount]
+GO
+
+ALTER TABLE [dbo].[OrderRegion] ADD  CONSTRAINT [DF_OrderRegion_GrabCount]  DEFAULT ((0)) FOR [GrabCount]
 GO
 
 ALTER TABLE [dbo].[OrderRegion] ADD  CONSTRAINT [DF_OrderRegion_Distributioning]  DEFAULT ((0)) FOR [Distributioning]
@@ -94,6 +102,9 @@ ALTER TABLE [dbo].[OrderRegion] ADD  CONSTRAINT [DF_OrderRegion_CreateTime]  DEF
 GO
 
 ALTER TABLE [dbo].[OrderRegion] ADD  CONSTRAINT [DF_OrderRegion_CreateName]  DEFAULT ('') FOR [CreateName]
+GO
+
+ALTER TABLE [dbo].[OrderRegion] ADD  CONSTRAINT [DF_OrderRegion_OptTime]  DEFAULT (getdate()) FOR [OptTime]
 GO
 
 ALTER TABLE [dbo].[OrderRegion] ADD  CONSTRAINT [DF_OrderRegion_OptName]  DEFAULT ('') FOR [OptName]
