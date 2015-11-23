@@ -51,7 +51,7 @@ namespace OpenApi.Controllers
         /// <returns></returns>
 
         [HttpPost]
-        public ResultModel<object> Push(OrderDispatch p)
+        public ResultModel<object> OrderDispatch(OrderDispatch p)
         {
             
             //string json = AESApp.AesDecrypt(p.data);
@@ -59,6 +59,7 @@ namespace OpenApi.Controllers
             //string delivery_order_no = jobject.Value<string>("delivery_order_no"); //接口调用状态 区分大小写
             //return ResultModel<object>.Conclude(new OrderProvider().TaoBaoCancelOrder(delivery_order_no));
             taoDianDianGroup.TaoBaoPushOrder(p);
+            //调用确认订单接口
             return ResultModel<object>.Conclude(null);
         }
     }

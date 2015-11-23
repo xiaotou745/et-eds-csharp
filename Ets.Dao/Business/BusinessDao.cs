@@ -715,9 +715,9 @@ WHERE b.Id = @busiId";
         /// </summary>
         /// <param name="busiId"></param>
         /// <returns></returns>
-        public BusListResultModel GetBusiness(string originalBusiUnitId, int groupId)
+        public BusinessModel GetBusiness(string originalBusiUnitId, int groupId)
         {
-            BusListResultModel busi = new BusListResultModel();
+            BusinessModel busi = new BusinessModel();
             string querySql = @" SELECT  
          Id ,
          Name ,
@@ -751,7 +751,7 @@ WHERE b.Id = @busiId";
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querySql, parm));
             if (dt != null && dt.Rows.Count > 0)
             {
-                busi = DataTableHelper.ConvertDataTableList<BusListResultModel>(dt)[0];
+                busi = DataTableHelper.ConvertDataTableList<BusinessModel>(dt)[0];
                 return busi;
             }
             else

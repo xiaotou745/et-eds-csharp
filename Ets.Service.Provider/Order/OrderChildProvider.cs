@@ -114,8 +114,9 @@ namespace Ets.Service.Provider.Order
         /// <param name="startTime"></param>
         /// <param name="endTime"></param>
         public void AutoCancelOrder(string startTime, string endTime)
-        {
+        {          
             IList<OrderChild> orderChildList = _orderChildDao.GetListByTime(startTime, endTime);
+            ETS.Util.LogHelper.LogWriter("条数：" + startTime+" "+endTime+" "+orderChildList.Count.ToString());
             foreach (OrderChild item in orderChildList)
             {
                 using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())

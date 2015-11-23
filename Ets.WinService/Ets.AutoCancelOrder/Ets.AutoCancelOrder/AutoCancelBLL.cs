@@ -31,8 +31,8 @@ namespace Ets.AutoCancelOrder
                 DateTime endTime = currTime;
                 string strStartTime = startTime.ToShortDateString();
                 string strEndTime = endTime.ToShortDateString();
-                OrderChildProvider orderChildProvider = new OrderChildProvider();
-                orderChildProvider.AutoCancelOrder(strStartTime, strEndTime);
+                OrderChildProvider orderChildProvider = new OrderChildProvider();             
+                orderChildProvider.AutoCancelOrder(strStartTime, strEndTime);              
             }
             catch (Exception ex)
             {

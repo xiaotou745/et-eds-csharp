@@ -126,14 +126,6 @@ namespace Ets.Model.DataModel.Business
         /// </summary>
         public int BusinessGroupId { get; set; }
         /// <summary>
-        /// 余额
-        /// </summary>
-        public decimal BalancePrice { get; set; }
-        /// <summary>
-        /// 可提现金额
-        /// </summary>
-        public decimal AllowWithdrawPrice { get; set; }
-        /// <summary>
         /// 累计提现金额
         /// </summary>
         public decimal HasWithdrawPrice { get; set; }
@@ -152,20 +144,9 @@ namespace Ets.Model.DataModel.Business
         /// 是否绑定了骑士（0：否 1：是）
         /// </summary>
         public int IsBind { get; set; }
-        /// <summary>
-        /// 是否一键发单（0：否 1：是）
-        /// </summary>
-        public int OneKeyPubOrder { get; set; }
+           
 
-        /// <summary>
-        /// 是否允许透支 0不可透支，1可以透支
-        /// </summary>
-        public int IsAllowOverdraft { get; set; }
-
-        /// <summary>
-        ///  是否雇主任务
-        /// </summary>
-        public int IsEmployerTask { get; set; }
+  
         /// <summary>
         /// 是否允许现金支付
         /// </summary>
@@ -176,16 +157,75 @@ namespace Ets.Model.DataModel.Business
         /// </summary>
         public int PushOrderType { get; set; }
 
-        public string RecommendPhone { get; set; }
-
         public string Timespan { get; set; }
 
         public string Appkey { get; set; }
 
-        public int IsOrderChecked { get; set; }
-
         public DateTime LastLoginTime { get; set; }
 
+        /// <summary>
+        /// 策略ID
+        /// </summary>
+        public int StrategyId { get; set; }
+        /// <summary>
+        /// 分组名称
+        /// </summary>
+        public string BusinessGroupName { get; set; }
+  
+        /// <summary>
+        /// 账户余额
+        /// </summary>
+        public decimal BalancePrice { get; set; }
+        /// <summary>
+        /// 可提现余额
+        /// </summary>
+        public decimal AllowWithdrawPrice { get; set; }
+        /// <summary>
+        /// 是否一键发单
+        /// </summary>
+        public int OneKeyPubOrder { get; set; }
+        /// <summary>
+        /// 推荐人手机
+        /// </summary>
+        public string RecommendPhone { get; set; }
+        /// <summary>
+        /// 是否允许透支 0不可透支，1可以透支
+        /// </summary>
+        public int IsAllowOverdraft { get; set; }
+
+        /// <summary>
+        ///  是否雇主任务
+        /// </summary>
+        public int IsEmployerTask { get; set; }
+        /// <summary>
+        /// 是否需要审核
+        /// </summary>
+        public int IsOrderChecked { get; set; }
+
+        /// <summary>
+        /// 是否绑定集团
+        /// </summary>
+        public int IsBindGroup { get; set; }
+
+        /// <summary>
+        /// 集团Id
+        /// </summary>
+        public int BussGroupId { get; set; }
+
+        /// <summary>
+        /// 集团名称
+        /// </summary>
+        public string GroupBusiName { get; set; }
+
+        /// <summary>
+        /// 集团金额
+        /// </summary>
+        public decimal BussGroupAmount { get; set; }
+
+        /// <summary>
+        /// 是否允许集团透支
+        /// </summary>
+        public int BussGroupIsAllowOverdraft { get; set; }      
         
         
     }
