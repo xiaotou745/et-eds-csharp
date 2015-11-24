@@ -463,11 +463,13 @@ and oc.CreateTime>=@startTime and oc.CreateTime<=@endTime";
                 OrderChild ochildInfo = new OrderChild();
                 ochildInfo.Id = ParseHelper.ToInt(dataRow["Id"]);
                 ochildInfo.OrderId = ParseHelper.ToInt(dataRow["OrderId"]);
-                ochildInfo.OrderNo = dataRow["OrderNo"].ToString();
+                if (dataRow["OrderNo"]!=null)
+                    ochildInfo.OrderNo = dataRow["OrderNo"].ToString();
                 ochildInfo.OrderCount = ParseHelper.ToInt(dataRow["ordercount"]);
                 ochildInfo.businessId = ParseHelper.ToInt(dataRow["businessId"]);
                 ochildInfo.SettleMoney = ParseHelper.ToDecimal(dataRow["SettleMoney"]);
-                ochildInfo.BusinessName = dataRow["BusinessName"].ToString();              
+                if (dataRow["BusinessName"] != null)
+                    ochildInfo.BusinessName = dataRow["BusinessName"].ToString();              
                 list.Add(ochildInfo);
             }
             return list;            
