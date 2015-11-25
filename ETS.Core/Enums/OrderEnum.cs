@@ -159,8 +159,11 @@ namespace ETS.Enums
         [DisplayText("请传递版本号")]
         NoVersion = -3,
         [DisplayText("请传递骑士Id")]
-        ClienterIdEmpty = -4
-
+        ClienterIdEmpty = -4,
+        [DisplayText("取货码不能为空")]
+        PickupCodeIsEmpty =-5,
+        [DisplayText("取货码不正确")]
+        PickupCodeError =-6
     }
 
     public enum PubOrderStatus

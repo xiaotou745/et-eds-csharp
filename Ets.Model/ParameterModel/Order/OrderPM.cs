@@ -47,5 +47,9 @@ namespace Ets.Model.ParameterModel.Order
         /// 是否及时上传坐标
         /// </summary>
         public int IsTimely { get; set; }
+        /// <summary>
+        /// 取货码
+        /// </summary>
+        public string pickupCode { get; set; }
     }
 }

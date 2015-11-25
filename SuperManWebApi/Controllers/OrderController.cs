@@ -292,6 +292,20 @@ namespace SuperManWebApi.Controllers
             }
             #endregion
 
+            OrderListModel olm = iOrderProvider.GetOrderInfoByOrderNo("",modelPM.OrderId);
+            if (olm != null && olm.Platform == PlatformEnum.FlashToSendModel.GetHashCode()) // 闪送模式
+            {
+                //验证取货码
+                if (string.IsNullOrWhiteSpace(modelPM.pickupCode)) 
+                {
+                    return ResultModel<string>.Conclude(ConfirmTakeStatus.PickupCodeIsEmpty);
+                }
+                //验证取货码是否正确
+                if (modelPM.pickupCode.Trim() != olm.PickupCode.Trim())
+                {
+                    return ResultModel<string>.Conclude(ConfirmTakeStatus.PickupCodeError);
+                } 
+            }
             try
             {
                 iOrderProvider.UpdateTake(modelPM);

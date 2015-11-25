@@ -1568,7 +1568,8 @@ select top 1
         b.GroupId ,
         o.PickupCode ,
         o.OrderCount,
-        ISNULL(oo.HadUploadCount,0) HadUploadCount
+        ISNULL(oo.HadUploadCount,0) HadUploadCount,
+        Platform 
 from    [order] o with ( nolock )
         join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
         join dbo.business b with ( nolock ) on o.businessId = b.Id

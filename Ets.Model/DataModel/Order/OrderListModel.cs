@@ -410,6 +410,9 @@ namespace Ets.Model.DataModel.Order
         public int GradeType { get; set; }
 
         public string GroupBusiName { get; set; }
-        
+        /// <summary>
+        /// 来源（默认1、旧后台，2新后台,3闪送模式）
+        /// </summary>
+        public int Platform { get; set; }
     }
 }
