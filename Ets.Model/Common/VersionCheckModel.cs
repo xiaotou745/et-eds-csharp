@@ -19,5 +19,10 @@ namespace Ets.Model.Common
         /// 用户版本 1 骑士 2 商家 默认1骑士
         /// </summary>
         public int UserType { get; set; }
+
+        /// <summary>
+        /// 所属平台1智能调度平台,默认0易代送商户版
+        /// </summary>
+        public int AppSource { get; set; }
     }
 }

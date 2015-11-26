@@ -485,6 +485,82 @@ select @@IDENTITY";
             dbParameters.AddWithValue("@Appkey", model.Appkey);
             return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters));
         }
+        /// <summary>
+        /// 增加一条记录
+        /// </summary>
+        public int Insert(BusinessModel businessModel)
+        {
+            const string insertSql = @"
+insert into business(Name,City,district,PhoneNo,PhoneNo2,
+Password,CheckPicUrl,IDCard,Address,Landline,Longitude,Latitude,
+Status,districtId,CityId,GroupId,OriginalBusiId,OriginalBusiUnitId,
+ProvinceCode,CityCode,AreaCode,Province,CommissionTypeId,DistribSubsidy,
+BusinessCommission,CommissionType,CommissionFixValue,BusinessGroupId,
+BalancePrice,AllowWithdrawPrice,HasWithdrawPrice,MealsSettleMode,
+BusinessLicensePic,IsBind,OneKeyPubOrder,IsAllowOverdraft,IsEmployerTask,
+RecommendPhone,Timespan,Appkey,IsOrderChecked,IsAllowCashPay,LastLoginTime,PushOrderType)
+values(@Name,@City,@district,@PhoneNo,@PhoneNo2,@Password,@CheckPicUrl,
+@IDCard,@Address,@Landline,@Longitude,@Latitude,@Status,@districtId,
+@CityId,@GroupId,@OriginalBusiId,@OriginalBusiUnitId,@ProvinceCode,@CityCode,@AreaCode,@Province,
+@CommissionTypeId,@DistribSubsidy,@BusinessCommission,@CommissionType,
+@CommissionFixValue,@BusinessGroupId,@BalancePrice,@AllowWithdrawPrice,
+@HasWithdrawPrice,@MealsSettleMode,@BusinessLicensePic,
+@IsBind,@OneKeyPubOrder,@IsAllowOverdraft,@IsEmployerTask,@RecommendPhone,
+@Timespan,@Appkey,@IsOrderChecked,@IsAllowCashPay,@LastLoginTime,@PushOrderType)
+
+select @@IDENTITY";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("Name", businessModel.Name);
+            dbParameters.AddWithValue("City", businessModel.City);
+            dbParameters.AddWithValue("district", businessModel.district);
+            dbParameters.AddWithValue("PhoneNo", businessModel.PhoneNo);
+            dbParameters.AddWithValue("PhoneNo2", businessModel.PhoneNo2);
+            dbParameters.AddWithValue("Password", businessModel.Password);
+            dbParameters.AddWithValue("CheckPicUrl", businessModel.CheckPicUrl);
+            dbParameters.AddWithValue("IDCard", businessModel.IDCard);
+            dbParameters.AddWithValue("Address", businessModel.Address);
+            dbParameters.AddWithValue("Landline", businessModel.Landline);
+            dbParameters.AddWithValue("Longitude", businessModel.Longitude);
+            dbParameters.AddWithValue("Latitude", businessModel.Latitude);
+            dbParameters.AddWithValue("Status", businessModel.Status);            
+            dbParameters.AddWithValue("districtId", businessModel.districtId);
+            dbParameters.AddWithValue("CityId", businessModel.CityId);
+            dbParameters.AddWithValue("GroupId", businessModel.GroupId);
+            dbParameters.AddWithValue("OriginalBusiId", businessModel.OriginalBusiId);
+            dbParameters.AddWithValue("OriginalBusiUnitId", businessModel.OriginalBusiUnitId);
+            dbParameters.AddWithValue("ProvinceCode", businessModel.ProvinceCode);
+            dbParameters.AddWithValue("CityCode", businessModel.CityCode);
+            dbParameters.AddWithValue("AreaCode", businessModel.AreaCode);
+            dbParameters.AddWithValue("Province", businessModel.Province);
+            dbParameters.AddWithValue("CommissionTypeId", businessModel.CommissionTypeId);
+            dbParameters.AddWithValue("DistribSubsidy", businessModel.DistribSubsidy);
+            dbParameters.AddWithValue("BusinessCommission", businessModel.BusinessCommission);
+            dbParameters.AddWithValue("CommissionType", businessModel.CommissionType);
+            dbParameters.AddWithValue("CommissionFixValue", businessModel.CommissionFixValue);
+            dbParameters.AddWithValue("BusinessGroupId", businessModel.BusinessGroupId);
+            dbParameters.AddWithValue("BalancePrice", businessModel.BalancePrice);
+            dbParameters.AddWithValue("AllowWithdrawPrice", businessModel.AllowWithdrawPrice);
+            dbParameters.AddWithValue("HasWithdrawPrice", businessModel.HasWithdrawPrice);
+            dbParameters.AddWithValue("MealsSettleMode", businessModel.MealsSettleMode);
+            //dbParameters.AddWithValue("ContactWay", businessModel.ContactWay);
+            dbParameters.AddWithValue("BusinessLicensePic", businessModel.BusinessLicensePic);
+            dbParameters.AddWithValue("IsBind", businessModel.IsBind);
+            dbParameters.AddWithValue("OneKeyPubOrder", businessModel.OneKeyPubOrder);
+            dbParameters.AddWithValue("IsAllowOverdraft", businessModel.IsAllowOverdraft);
+            dbParameters.AddWithValue("IsEmployerTask", businessModel.IsEmployerTask);
+            dbParameters.AddWithValue("RecommendPhone", businessModel.RecommendPhone);
+            dbParameters.AddWithValue("Timespan", businessModel.Timespan);
+            dbParameters.AddWithValue("Appkey", businessModel.Appkey);
+            dbParameters.AddWithValue("IsOrderChecked", businessModel.IsOrderChecked);
+            dbParameters.AddWithValue("IsAllowCashPay", businessModel.IsAllowCashPay);
+            dbParameters.AddWithValue("LastLoginTime", businessModel.LastLoginTime);
+            dbParameters.AddWithValue("PushOrderType", businessModel.PushOrderType);
+
+
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters));
+        }
+
 
         /// <summary>
         /// 商户是否已注册
@@ -626,6 +702,56 @@ WHERE b.Id = @busiId";
             if (dt != null && dt.Rows.Count > 0)
             {
                 busi = DataTableHelper.ConvertDataTableList<BusListResultModel>(dt)[0];
+                return busi;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// 根据商户id获取商户
+        /// </summary>
+        /// <param name="busiId"></param>
+        /// <returns></returns>
+        public BusinessModel GetBusiness(string originalBusiUnitId, int groupId)
+        {
+            BusinessModel busi = new BusinessModel();
+            string querySql = @" SELECT  
+         Id ,
+         Name ,
+         City ,
+         district ,
+         PhoneNo ,
+         PhoneNo2 ,
+         IDCard ,
+         [Address] ,
+         Landline ,
+         Longitude ,
+         Latitude ,
+         [Status] ,
+         InsertTime ,
+         districtId ,
+         CityId ,
+         GroupId , 
+         ProvinceCode ,
+         CityCode ,
+         AreaCode ,
+         Province ,
+         DistribSubsidy,
+         BusinessCommission ,
+         OriginalBusiId
+         FROM dbo.business WITH(NOLOCK) WHERE OriginalBusiUnitId = @busiId AND GroupId=@groupId";
+
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.AddWithValue("@busiId", originalBusiUnitId);
+            parm.AddWithValue("@GroupId", groupId);
+
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querySql, parm));
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                busi = DataTableHelper.ConvertDataTableList<BusinessModel>(dt)[0];
                 return busi;
             }
             else

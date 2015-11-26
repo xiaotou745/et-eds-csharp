@@ -112,5 +112,24 @@ select Id,BusinessId,ClienterId,IsEnable,CreateBy,CreateTime,UpdateBy,UpdateTime
             return model;
         }
 
+        /// <summary>
+        /// 获取当前骑士绑定了店内的关系的个数
+        /// zhaohl
+        /// 20151119
+        /// </summary>
+        /// <param name="clienterId"></param>
+        /// <returns></returns>
+        public int GetBusinessInternalNum(int clienterId) {
+            string querySql = @" 
+select count(0) as num 
+ from   dbo.[BusinessClienterRelation] (nolock ) 
+ where ClienterId=@ClienterId and  IsEnable=1 and  isbind=1 and  IsCooperation=1";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("ClienterId", clienterId);
+          object obj=  DbHelper.ExecuteScalar(SuperMan_Read, querySql, dbParameters);
+          return int.Parse(obj.ToString());
+        }
+
     }
 }

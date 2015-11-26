@@ -27,6 +27,27 @@ namespace Ets.Dao.Order
         }
 
         #region IOrderdetailRepos  Members  
+        
+        /// <summary>
+        /// 增加一条记录
+        /// </summary>
+        public long Insert(OrderDetail orderDetail)
+        {
+            const string insertSql = @"
+ INSERT INTO dbo.OrderDetail
+                 (OrderNo ,ProductName , UnitPrice ,Quantity,FormDetailID,GroupID)
+                 VALUES  (@OrderNo ,@ProductName ,@UnitPrice ,@Quantity,@FormDetailID,@GroupID)
+select @@IDENTITY";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@OrderNo", orderDetail.OrderNo);
+            dbParameters.AddWithValue("@ProductName", orderDetail.ProductName);
+            dbParameters.AddWithValue("@UnitPrice", orderDetail.UnitPrice);
+            dbParameters.AddWithValue("@Quantity", orderDetail.Quantity);
+            dbParameters.AddWithValue("@FormDetailID", orderDetail.FormDetailID);
+            dbParameters.AddWithValue("@GroupID", orderDetail.GroupID);      
+            object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters); //提现单号
+            return ParseHelper.ToLong(result);
+        }
 
 
         /// <summary>

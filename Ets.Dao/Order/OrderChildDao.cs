@@ -15,6 +15,7 @@ using Ets.Model.DomainModel.Order;
 using Ets.Model.ParameterModel.AliPay;
 using ETS.Enums;
 using Letao.Util;
+using System.Data.SqlClient;
 
 namespace Ets.Dao.Order
 {
@@ -94,6 +95,27 @@ where  Id=@Id ";
             dbParameters.AddWithValue("TicketUrl", orderChild.TicketUrl);
             dbParameters.AddWithValue("CreateBy", orderChild.CreateBy);
             dbParameters.AddWithValue("CreateTime", orderChild.CreateTime);
+            dbParameters.AddWithValue("UpdateBy", orderChild.UpdateBy);
+            dbParameters.AddWithValue("UpdateTime", orderChild.UpdateTime);
+            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+        }
+
+        /// <summary>
+        /// 更新状态
+        /// </summary>
+        /// 胡灵波
+        /// 2015年11月19日 20:46:34
+        /// <param name="orderChild"></param>
+        public void UpdateStatus(OrderChild orderChild)
+        {
+            const string updateSql = @"
+update  OrderChild
+set  Status=@Status,UpdateBy=@UpdateBy,UpdateTime=@UpdateTime
+where  Id=@Id ";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("Id", orderChild.Id);
+            dbParameters.AddWithValue("Status", orderChild.Status);
             dbParameters.AddWithValue("UpdateBy", orderChild.UpdateBy);
             dbParameters.AddWithValue("UpdateTime", orderChild.UpdateTime);
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
@@ -224,7 +246,7 @@ where   1=1 and o.Id = @OrderId
             parm.Add("WxCodeUrl", DbType.String, 256).Value = wxCodeUrl;
             parm.Add("OrderId", DbType.Int32, 4).Value = orderId;
             parm.Add("ChildId", DbType.Int32, 4).Value = orderChildId;
-            return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm)) > 0 ? true : false;
+            return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm)) > 0 ? true : false;            
         }
 
         /// <summary>
@@ -417,6 +439,43 @@ from  OrderChild (nolock) where OrderId IN ({0})", String.Join(",", orderIdList.
         }
 
         /// <summary>
+        /// 查询对象(获取智能调度,未抢单数据)
+        /// 胡灵波
+        /// 2015年11月19日 20:27:33
+        /// </summary>
+        public IList<OrderChild> GetListByTime(string startTime, string endTime)
+        {
+            IList<OrderChild> list = new List<OrderChild>(); 
+            string querySql = @" 
+ select  oc.Id,oc.OrderId,o.OrderNo,o.ordercount,o.businessId,oc.SettleMoney,b.Name as BusinessName  from  orderchild oc 
+left join [order] o on oc.orderid=o.id
+left join dbo.business b on o.businessid=b.id
+where  oc.platform=2 and oc.status=0 
+and oc.CreateTime>=@startTime and oc.CreateTime<=@endTime";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("startTime", DbType.String, 100).Value = startTime;
+            dbParameters.Add("endTime", DbType.String, 100).Value = endTime;
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, querySql, dbParameters);
+          
+            foreach (DataRow dataRow in dt.Rows)
+            {
+                OrderChild ochildInfo = new OrderChild();
+                ochildInfo.Id = ParseHelper.ToInt(dataRow["Id"]);
+                ochildInfo.OrderId = ParseHelper.ToInt(dataRow["OrderId"]);
+                if (dataRow["OrderNo"]!=null)
+                    ochildInfo.OrderNo = dataRow["OrderNo"].ToString();
+                ochildInfo.OrderCount = ParseHelper.ToInt(dataRow["ordercount"]);
+                ochildInfo.businessId = ParseHelper.ToInt(dataRow["businessId"]);
+                ochildInfo.SettleMoney = ParseHelper.ToDecimal(dataRow["SettleMoney"]);
+                if (dataRow["BusinessName"] != null)
+                    ochildInfo.BusinessName = dataRow["BusinessName"].ToString();              
+                list.Add(ochildInfo);
+            }
+            return list;            
+        }
+
+        /// <summary>
         /// 通过订单ID获取是否有子订单未支付
         /// 窦海超
         /// 2015年5月27日 18:04:53
@@ -488,6 +547,69 @@ where   OrderId = @OrderId
             parm.Add("BefPayStatus", SqlDbType.Int, 4).Value = PayStatusEnum.WaitPay; //待支付
 
             return ParseHelper.ToInt(DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm), 0);
+        }
+
+
+
+        /// <summary>
+        /// 写入订单子表
+        /// </summary>
+        /// <returns>订单实体</returns>
+        public void InsertList(order order)
+        {            
+            using (SqlBulkCopy bulk = new SqlBulkCopy(SuperMan_Write))
+            {
+                try
+                {
+                    bulk.BatchSize = 1000;
+                    bulk.DestinationTableName = "OrderChild";
+                    bulk.NotifyAfter = order.listOrderChild.Count;
+                    bulk.ColumnMappings.Add("OrderId", "OrderId");
+                    bulk.ColumnMappings.Add("ChildId", "ChildId");
+                    bulk.ColumnMappings.Add("TotalPrice", "TotalPrice");
+                    bulk.ColumnMappings.Add("GoodPrice", "GoodPrice");
+                    bulk.ColumnMappings.Add("DeliveryPrice", "DeliveryPrice");
+                    bulk.ColumnMappings.Add("PayStatus", "PayStatus");
+                    bulk.ColumnMappings.Add("CreateBy", "CreateBy");
+                    bulk.ColumnMappings.Add("UpdateBy", "UpdateBy");
+
+                    DataTable dt = new DataTable();
+                    dt.Columns.Add(new DataColumn("OrderId", typeof(int)));
+                    dt.Columns.Add(new DataColumn("ChildId", typeof(int)));
+                    dt.Columns.Add(new DataColumn("TotalPrice", typeof(decimal)));
+                    dt.Columns.Add(new DataColumn("GoodPrice", typeof(decimal)));
+                    dt.Columns.Add(new DataColumn("DeliveryPrice", typeof(decimal)));
+                    dt.Columns.Add(new DataColumn("PayStatus", typeof(int)));
+                    dt.Columns.Add(new DataColumn("CreateBy", typeof(string)));
+                    dt.Columns.Add(new DataColumn("UpdateBy", typeof(string)));
+
+                    for (int i = 0; i < order.listOrderChild.Count; i++)
+                    {
+                        DataRow dr = dt.NewRow();
+                        dr["OrderId"] = order.Id;                        
+                        int num = i + 1;
+                        dr["ChildId"] = num;
+                        decimal totalPrice = order.listOrderChild[i].GoodPrice + Convert.ToDecimal(order.DistribSubsidy);
+                        dr["TotalPrice"] = totalPrice;
+                        dr["GoodPrice"] = order.listOrderChild[i].GoodPrice;
+                        dr["DeliveryPrice"] = order.DistribSubsidy;
+                        if ((bool)order.IsPay ||
+                            (!(bool)order.IsPay && order.MealsSettleMode == MealsSettleMode.LineOff.GetHashCode())
+                            )//已付款 未付款线下付款
+                            dr["PayStatus"] = 1;
+                        else
+                            dr["PayStatus"] = 0;
+                        dr["CreateBy"] = order.BusinessName;
+                        dr["UpdateBy"] = order.BusinessName;
+                        dt.Rows.Add(dr);
+                    }
+                    bulk.WriteToServer(dt);
+                }
+                catch (Exception err)
+                {
+                    throw err;
+                }
+            }        
         }
     }
 

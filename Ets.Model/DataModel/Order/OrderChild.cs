@@ -95,6 +95,37 @@ namespace Ets.Model.DataModel.Order
         /// </summary>
         public string WxCodeUrl { get; set; }
 
+        /// <summary>
+        /// 状态
+        /// </summary>
+        public int Status { get; set; }
+
+        /// <summary>
+        /// 订单数量
+        /// </summary>
+        public int OrderCount { get; set; }
+
+        /// <summary>
+        /// 订单编号
+        /// </summary>
+        public string OrderNo { get; set; }
+
+        /// <summary>
+        /// 商户id
+        /// </summary>
+        public int businessId { get; set; }
+
+        /// <summary>
+        /// 配送费
+        /// </summary>
+        public decimal SettleMoney { get; set; }
+
+        /// <summary>
+        /// 商户名称
+        /// </summary>
+        public string BusinessName { get; set; }
+        
+
     }   
 
 }

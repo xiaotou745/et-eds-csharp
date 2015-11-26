@@ -1,7 +1,7 @@
 USE [superman]
 GO
 
-/****** Object:  Table [dbo].[OrderGrabChild]    Script Date: 10/29/2015 15:38:10 ******/
+/****** Object:  Table [dbo].[OrderGrabChild]    Script Date: 11/19/2015 09:59:06 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -14,10 +14,18 @@ CREATE TABLE [dbo].[OrderGrabChild](
 	[OrderId] [int] NOT NULL,
 	[OrderChildId] [int] NOT NULL,
 	[ChildId] [int] NOT NULL,
+	[BusinessId] [int] NOT NULL,
 	[Status] [tinyint] NOT NULL,
 	[ActualDoneDate] [datetime] NULL,
 	[DoneLongitude] [float] NOT NULL,
 	[DoneLatitude] [float] NOT NULL,
+	[OrderCommission] [decimal](18, 0) NOT NULL,
+	[SettleMoney] [float] NOT NULL,
+	[CommissionRate] [decimal](18, 0) NOT NULL,
+	[BaseCommission] [decimal](18, 2) NOT NULL,
+	[WebsiteSubsidy] [decimal](18, 2) NOT NULL,
+	[Adjustment] [decimal](18, 2) NOT NULL,
+	[DistribSubsidy] [numeric](18, 2) NOT NULL,
  CONSTRAINT [PK_OrderGrabChild] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
@@ -50,10 +58,22 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'完成纬度' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderGrabChild', @level2type=N'COLUMN',@level2name=N'DoneLatitude'
 GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'订单佣金-应付' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderGrabChild', @level2type=N'COLUMN',@level2name=N'OrderCommission'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'结算金额-应收' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderGrabChild', @level2type=N'COLUMN',@level2name=N'SettleMoney'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'外送费' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderGrabChild', @level2type=N'COLUMN',@level2name=N'DistribSubsidy'
+GO
+
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'抢单明细表' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderGrabChild'
 GO
 
 ALTER TABLE [dbo].[OrderGrabChild] ADD  CONSTRAINT [DF_OrderGrabChild_ChildId]  DEFAULT ((1)) FOR [ChildId]
+GO
+
+ALTER TABLE [dbo].[OrderGrabChild] ADD  CONSTRAINT [DF_OrderGrabChild_BusinessId]  DEFAULT ((0)) FOR [BusinessId]
 GO
 
 ALTER TABLE [dbo].[OrderGrabChild] ADD  CONSTRAINT [DF_OrderGrabChild_Status]  DEFAULT ((0)) FOR [Status]
@@ -63,6 +83,27 @@ ALTER TABLE [dbo].[OrderGrabChild] ADD  CONSTRAINT [DF_OrderGrabChild_DoneLongit
 GO
 
 ALTER TABLE [dbo].[OrderGrabChild] ADD  CONSTRAINT [DF_OrderGrabChild_DoneLatitude]  DEFAULT ((0)) FOR [DoneLatitude]
+GO
+
+ALTER TABLE [dbo].[OrderGrabChild] ADD  CONSTRAINT [DF_OrderGrabChild_OrderCommission]  DEFAULT ((0)) FOR [OrderCommission]
+GO
+
+ALTER TABLE [dbo].[OrderGrabChild] ADD  CONSTRAINT [DF_OrderGrabChild_SettleMoney]  DEFAULT ((0)) FOR [SettleMoney]
+GO
+
+ALTER TABLE [dbo].[OrderGrabChild] ADD  CONSTRAINT [DF_OrderGrabChild_CommissionRate]  DEFAULT ((0)) FOR [CommissionRate]
+GO
+
+ALTER TABLE [dbo].[OrderGrabChild] ADD  CONSTRAINT [DF_OrderGrabChild_BaseCommission]  DEFAULT ((0)) FOR [BaseCommission]
+GO
+
+ALTER TABLE [dbo].[OrderGrabChild] ADD  CONSTRAINT [DF_OrderGrabChild_WebsiteSubsidy]  DEFAULT ((0)) FOR [WebsiteSubsidy]
+GO
+
+ALTER TABLE [dbo].[OrderGrabChild] ADD  CONSTRAINT [DF_OrderGrabChild_Adjustment]  DEFAULT ((0)) FOR [Adjustment]
+GO
+
+ALTER TABLE [dbo].[OrderGrabChild] ADD  CONSTRAINT [DF_OrderGrabChild_DistribSubsidy]  DEFAULT ((0)) FOR [DistribSubsidy]
 GO
 
 

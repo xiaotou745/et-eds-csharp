@@ -20,7 +20,9 @@ namespace ETS.Enums
         [DisplayText("回家吃饭")]
         Group5 = 5,
         [DisplayText("首旅")]
-        Group6 = 6     
+        Group6 = 6 ,
+        [DisplayText("口碑外卖")]
+        Group7 =7     
     }
    
 }

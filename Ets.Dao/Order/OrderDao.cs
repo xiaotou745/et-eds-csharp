@@ -701,6 +701,23 @@ select @@IDENTITY ";
         }
 
         /// <summary>
+        /// 修改订单数量
+        /// </summary>
+        /// <param name="order"></param>
+        public void UpdateOrderCount(order order)
+        {
+            const string updateSql = @"
+update  [order]
+set  OrderCount=@OrderCount
+where  Id=@Id ";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("Id", order.Id);
+            dbParameters.AddWithValue("OrderCount", order.OrderCount);             
+            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+        }
+
+        /// <summary>
         /// 根据订单号查订单信息
         /// danny-20150320
         /// </summary>
@@ -4077,5 +4094,139 @@ where    o.Id = @Id
             }
             return list[0];
         }
+
+
+        /// <summary>
+        /// 新增订单       
+        /// </summary>
+        /// 胡灵波
+        /// 2015年11月18日 16:43:36
+        /// <param name="order">订单实体</param>
+        /// <returns></returns>
+        public int Insert(order order)
+        {
+            string insertSql = @"
+insert  into dbo.[order]
+        ( OrderNo , PickUpAddress ,PubDate , ReceviceName , RecevicePhoneNo ,
+          ReceviceAddress ,IsPay , Amount , OrderCommission ,       DistribSubsidy ,
+          WebsiteSubsidy ,Remark ,OrderFrom , Status , businessId ,
+          ReceviceCity ,
+          ReceviceLongitude ,
+          ReceviceLatitude ,
+          OrderCount ,
+          CommissionRate ,
+          BaseCommission ,
+          CommissionFormulaMode ,
+          SongCanDate ,
+          [Weight] ,
+          Quantity ,
+          ReceiveProvince ,
+          ReceiveProvinceCode ,
+          ReceiveCityCode ,
+          ReceiveArea ,
+          ReceiveAreaCode ,
+          OriginalOrderNo ,
+          BusinessCommission ,
+          SettleMoney ,
+          Adjustment ,
+          CommissionType,
+          CommissionFixValue,
+          BusinessGroupId,
+          TimeSpan,
+          MealsSettleMode,
+          BusinessReceivable,
+          GroupBusinessId
+        )
+values  ( @OrderNo ,
+          @PickUpAddress ,
+          getdate() ,
+          @ReceviceName ,
+          @RecevicePhoneNo ,
+          @ReceviceAddress ,
+          @IsPay ,
+          @Amount ,
+          @OrderCommission ,
+          @DistribSubsidy ,
+          @WebsiteSubsidy ,
+          @Remark ,
+          @OrderFrom ,
+          @Status ,
+          @businessId ,
+          @ReceviceCity ,
+          @ReceviceLongitude ,
+          @ReceviceLatitude ,
+          @OrderCount ,
+          @CommissionRate ,
+          @BaseCommission,
+          @CommissionFormulaMode ,
+          @SongCanDate ,
+          @Weight1 ,
+          @Quantity1 ,
+          @ReceiveProvince ,
+          @ReceiveProvinceCode ,
+          @ReceiveCityCode ,
+          @ReceiveArea ,
+          @ReceiveAreaCode ,
+          @OriginalOrderNo ,
+          @BusinessCommission ,
+          @SettleMoney ,
+          @Adjustment ,
+          @CommissionType,
+          @CommissionFixValue,
+          @BusinessGroupId,
+          @TimeSpan,
+          @MealsSettleMode,
+          @BusinessReceivable,
+          @GroupBusinessId
+        )
+select @@identity";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@OrderNo", order.OrderNo);
+            dbParameters.AddWithValue("@PickUpAddress", order.PickUpAddress);
+            dbParameters.AddWithValue("@ReceviceName", order.ReceviceName);
+            dbParameters.AddWithValue("@RecevicePhoneNo", order.RecevicePhoneNo);
+            dbParameters.AddWithValue("@ReceviceAddress", order.ReceviceAddress);
+            dbParameters.AddWithValue("@IsPay", order.IsPay);
+            dbParameters.AddWithValue("@Amount", order.Amount);
+            dbParameters.AddWithValue("@OrderCommission", order.OrderCommission);
+            dbParameters.AddWithValue("@DistribSubsidy", order.DistribSubsidy);
+            dbParameters.AddWithValue("@WebsiteSubsidy", order.WebsiteSubsidy);
+            dbParameters.AddWithValue("@Remark", order.Remark);
+            dbParameters.AddWithValue("@OrderFrom", order.OrderFrom);
+            dbParameters.AddWithValue("@Status", order.Status);
+            dbParameters.AddWithValue("@businessId", order.businessId);
+            dbParameters.AddWithValue("@ReceviceCity", order.ReceviceCity);
+            dbParameters.AddWithValue("@ReceviceLongitude", order.ReceviceLongitude);
+            dbParameters.AddWithValue("@ReceviceLatitude", order.ReceviceLatitude);
+            dbParameters.AddWithValue("@OrderCount", order.OrderCount);
+            dbParameters.AddWithValue("@CommissionRate", order.CommissionRate);
+            dbParameters.AddWithValue("@BaseCommission", order.BaseCommission);
+            dbParameters.AddWithValue("@CommissionFormulaMode", order.CommissionFormulaMode);
+            dbParameters.AddWithValue("@SongCanDate", order.SongCanDate);
+            dbParameters.AddWithValue("@Weight1", order.Weight);
+            dbParameters.AddWithValue("@Quantity1", order.Quantity);
+            dbParameters.AddWithValue("@ReceiveProvince", order.ReceiveProvince);
+            dbParameters.AddWithValue("@ReceiveProvinceCode", order.ReceiveProvinceCode);
+            dbParameters.AddWithValue("@ReceiveCityCode", order.ReceiveCityCode);
+            dbParameters.AddWithValue("@ReceiveArea", order.ReceiveArea);
+            dbParameters.AddWithValue("@ReceiveAreaCode", order.ReceiveAreaCode);
+            dbParameters.AddWithValue("@OriginalOrderNo", order.OriginalOrderNo);
+            dbParameters.AddWithValue("@BusinessCommission", order.BusinessCommission);
+            dbParameters.AddWithValue("@SettleMoney", order.SettleMoney);
+            dbParameters.AddWithValue("@Adjustment", order.Adjustment);
+            dbParameters.AddWithValue("@CommissionType", order.CommissionType);
+            dbParameters.AddWithValue("@CommissionFixValue", order.CommissionFixValue);
+            dbParameters.AddWithValue("@BusinessGroupId", order.BusinessGroupId);
+            dbParameters.AddWithValue("@TimeSpan", order.TimeSpan);
+            dbParameters.AddWithValue("@MealsSettleMode", order.MealsSettleMode);
+            dbParameters.AddWithValue("@BusinessReceivable", order.BusinessReceivable);
+            dbParameters.AddWithValue("@GroupBusinessId", order.GroupBusinessId);
+
+            object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters);      
+            return ParseHelper.ToInt(result, 0);
+        }
+
+
     }
 }

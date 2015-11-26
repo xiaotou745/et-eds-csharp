@@ -1,0 +1,111 @@
+--订单子表
+--微信支付生订微信订单号
+alter table OrderChild add [prepay_id] varchar(200) not null  default '' ;
+EXEC sys.sp_addextendedproperty @name=N'MS_Description',
+  @value=N'微信支付生订微信订单号' ,
+  @level0type=N'SCHEMA',
+  @level0name=N'dbo', 
+  @level1type=N'TABLE',
+  @level1name=N'OrderChild', 
+  @level2type=N'COLUMN',
+  @level2name=N'prepay_id'
+
+--商家Id
+alter table OrderChild add businessId int not null  default 0 ;
+EXEC sys.sp_addextendedproperty @name=N'MS_Description',
+  @value=N'商家Id' ,
+  @level0type=N'SCHEMA',
+  @level0name=N'dbo', 
+  @level1type=N'TABLE',
+  @level1name=N'OrderChild', 
+  @level2type=N'COLUMN',
+  @level2name=N'businessId'
+  
+--一级区域Id
+alter table OrderChild add OrderRegionOneId int not null  default 0 ;
+EXEC sys.sp_addextendedproperty @name=N'MS_Description',
+  @value=N'一级区域Id' ,
+  @level0type=N'SCHEMA',
+  @level0name=N'dbo', 
+  @level1type=N'TABLE',
+  @level1name=N'OrderChild', 
+  @level2type=N'COLUMN',
+  @level2name=N'OrderRegionOneId'
+  
+--二级区域id
+alter table OrderChild add OrderRegionTwoId int  not null  default 0 ;
+EXEC sys.sp_addextendedproperty @name=N'MS_Description',
+  @value=N'二级区域Id' ,
+  @level0type=N'SCHEMA',
+  @level0name=N'dbo', 
+  @level1type=N'TABLE',
+  @level1name=N'OrderChild', 
+  @level2type=N'COLUMN',
+  @level2name=N'OrderRegionTwoId'
+  
+--订单佣金比例
+alter table OrderChild add CommissionRate decimal(18, 2) not null  default 0 ;
+EXEC sys.sp_addextendedproperty @name=N'MS_Description',
+  @value=N'订单佣金比例' ,
+  @level0type=N'SCHEMA',
+  @level0name=N'dbo', 
+  @level1type=N'TABLE',
+  @level1name=N'OrderChild', 
+  @level2type=N'COLUMN',
+  @level2name=N'CommissionRate'
+  
+--基础佣金
+alter table OrderChild add BaseCommission2 decimal(18, 2) not null  default 0 ;
+EXEC sys.sp_addextendedproperty @name=N'MS_Description',
+  @value=N'基础佣金' ,
+  @level0type=N'SCHEMA',
+  @level0name=N'dbo', 
+  @level1type=N'TABLE',
+  @level1name=N'OrderChild', 
+  @level2type=N'COLUMN',
+  @level2name=N'BaseCommission2'
+  
+--网站补贴
+alter table OrderChild add WebsiteSubsidy decimal(18, 2) not null  default 0 ;
+EXEC sys.sp_addextendedproperty @name=N'MS_Description',
+  @value=N'网站补贴' ,
+  @level0type=N'SCHEMA',
+  @level0name=N'dbo', 
+  @level1type=N'TABLE',
+  @level1name=N'OrderChild', 
+  @level2type=N'COLUMN',
+  @level2name=N'WebsiteSubsidy'
+  
+--额外补贴金额
+alter table OrderChild add Adjustment decimal(18, 2) not null  default 0 ;
+EXEC sys.sp_addextendedproperty @name=N'MS_Description',
+  @value=N'额外补贴金额' ,
+  @level0type=N'SCHEMA',
+  @level0name=N'dbo', 
+  @level1type=N'TABLE',
+  @level1name=N'OrderChild', 
+  @level2type=N'COLUMN',
+  @level2name=N'Adjustment'
+  
+--来源
+alter table OrderChild add Platform int not null  default 1 ;
+EXEC sys.sp_addextendedproperty @name=N'MS_Description',
+  @value=N'来源' ,
+  @level0type=N'SCHEMA',
+  @level0name=N'dbo', 
+  @level1type=N'TABLE',
+  @level1name=N'OrderChild', 
+  @level2type=N'COLUMN',
+  @level2name=N'Platform'
+  
+--外送费
+alter table OrderChild add DistribSubsidy decimal(18, 2) not null  default 0 ;
+EXEC sys.sp_addextendedproperty @name=N'MS_Description',
+  @value=N'外送费' ,
+  @level0type=N'SCHEMA',
+  @level0name=N'dbo', 
+  @level1type=N'TABLE',
+  @level1name=N'OrderChild', 
+  @level2type=N'COLUMN',
+  @level2name=N'DistribSubsidy'  
+   

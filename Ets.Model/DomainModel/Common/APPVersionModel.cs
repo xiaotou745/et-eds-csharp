@@ -26,5 +26,9 @@ namespace Ets.Model.DomainModel.Common
         /// 操作类型（1：新增 2：修改）
         /// </summary>
         public int DealType { get; set; }
+        /// <summary>
+        /// 所属平台1智能调度平台,默认0易代送商户版
+        /// </summary>
+        public int AppSource { get; set; }
     }
 }

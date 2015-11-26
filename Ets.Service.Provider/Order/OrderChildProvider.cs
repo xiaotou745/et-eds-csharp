@@ -11,6 +11,10 @@ using Ets.Model.DomainModel.Order;
 using Ets.Model.Common;
 using Ets.Model.Common.AliPay;
 using ETS.Enums;
+using  Ets.Service.Provider.Business;
+using Ets.Model.ParameterModel.Business;
+using ETS.Transaction.Common;
+using ETS.Transaction;
 namespace Ets.Service.Provider.Order
 {
     /// <summary>
@@ -22,6 +26,10 @@ namespace Ets.Service.Provider.Order
     public class OrderChildProvider : IOrderChildProvider
     {
         private readonly OrderChildDao _orderChildDao = new OrderChildDao();
+        private readonly OrderDao orderDao = new OrderDao();
+        private readonly OrderSubsidiesLogDao orderSubsidiesLogDao = new OrderSubsidiesLogDao();
+        BusinessProvider businessProvider=new BusinessProvider();
+
         public OrderChildProvider()
         {
         }
@@ -97,5 +105,67 @@ namespace Ets.Service.Provider.Order
             //return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
             return ResultModel<PayStatusModel>.Conclude(AliPayStatus.success, model);
         }
+
+        /// <summary>
+        /// 自动取消订单
+        /// </summary>
+        /// 胡灵波
+        /// 2015年11月19日 20:32:06
+        /// <param name="startTime"></param>
+        /// <param name="endTime"></param>
+        public void AutoCancelOrder(string startTime, string endTime)
+        {          
+            IList<OrderChild> orderChildList = _orderChildDao.GetListByTime(startTime, endTime);
+            ETS.Util.LogHelper.LogWriter("条数：" + startTime+" "+endTime+" "+orderChildList.Count.ToString());
+            foreach (OrderChild item in orderChildList)
+            {
+                using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+                {
+                    long id = item.Id;//子订单id
+                    int orderId = item.OrderId;//订单id
+                    int orderCount = item.OrderCount;//订单数据
+                    ETS.Util.LogHelper.LogWriter("子订单id" + item.Id + "商户id" + item.businessId + "返还金额：" + item.SettleMoney);
+                    //更新子订
+                    OrderChild ocModel = new OrderChild();
+                    ocModel.Id = id;
+                    ocModel.Status = 3;
+                    ocModel.UpdateBy = "服务";
+                    ocModel.UpdateTime = DateTime.Now;
+                    _orderChildDao.UpdateStatus(ocModel);
+
+                    //更新订单数量
+                    order order = new order();
+                    order.Id = orderId;
+                    order.OrderCount = orderCount - 1;
+                    orderDao.UpdateOrderCount(order);
+
+                    // 更新商户余额、可提现余额                        
+                    businessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
+                    {
+                        BusinessId = item.businessId,
+                        Amount = -item.SettleMoney,
+                        Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
+                        RecordType = BusinessBalanceRecordRecordType.CancelOrder.GetHashCode(),
+                        Operator = item.BusinessName,
+                        WithwardId = orderId,
+                        RelationNo = id.ToString(),
+                        Remark = "返还配送费支出金额"
+                    });
+
+                    OrderSubsidiesLog oslModel = new OrderSubsidiesLog();
+                    oslModel.OrderId = orderId;
+                    oslModel.OptId = 0;
+                    oslModel.OptName = "服务";
+                    oslModel.Remark = "子订单id" + id.ToString();
+                    oslModel.OrderStatus = ETS.Const.OrderConst.CancelOrder.GetHashCode();
+                    oslModel.Platform = SuperPlatform.ServicePlatform.GetHashCode();
+                    int oslId = orderSubsidiesLogDao.Insert(oslModel);
+
+                    if (oslId > 0)
+                        tran.Complete();
+                    }             
+               }
+            }    
+                
     }
 }

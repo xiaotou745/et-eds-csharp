@@ -1498,7 +1498,7 @@ SELECT IDENT_CURRENT('clienter')"
             string sql = @"UPDATE clienter 
                             SET IDCard=@IDCard,
                                 TrueName=@TrueName,
-                                DeliveryCompanyId=@DeliveryCompanyId,recommendPhone=@recommendPhone,GradeType=@GradeType,IsCooperation=@IsCooperation ";
+                                DeliveryCompanyId=@DeliveryCompanyId,recommendPhone=@recommendPhone,GradeType=@GradeType ";
 
             sql += @" OUTPUT
                         Inserted.Id,
@@ -1522,8 +1522,7 @@ SELECT IDENT_CURRENT('clienter')"
             parm.AddWithValue("@IDCard", model.IDCard);
             parm.AddWithValue("@TrueName", model.TrueName);
             parm.AddWithValue("@DeliveryCompanyId", model.DeliveryCompanyId);
-            parm.AddWithValue("@GradeType", model.GradeType);
-            parm.AddWithValue("@IsCooperation", model.IsCooperation);   
+            parm.AddWithValue("@GradeType", model.GradeType);           
             parm.AddWithValue("@Id", model.Id);
             parm.AddWithValue("@OptId", model.OptUserId);
             parm.AddWithValue("@OptName", model.OptUserName);
@@ -1694,8 +1693,7 @@ SELECT   c.[Id],
          c.[BussinessID],
          c.[WorkStatus], 
          c.DeliveryCompanyId,
-         c.GradeType,
-         c.IsCooperation,
+         c.GradeType,       
          cfa.TrueName AccountName,
          cfa.AccountNo,
          cfa.AccountType,

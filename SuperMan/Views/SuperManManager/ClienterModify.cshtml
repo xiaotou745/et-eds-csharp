@@ -43,11 +43,7 @@
             <div class="control-group" style="margin-top: 15px">
                 <label style="margin-left: 26px">所属等级：</label>                    
                     @Html.DropDownList("gradeType", new SelectList(EnumExtenstion.GetEnumItems(typeof(GradeType)), "Value", "Text", Model.GradeType), null, new { @class = "selectw", style = "width:157px", onchange = "fungRadeType()" })
-            </div>
-            <div class="control-group" style="margin-top: 15px">
-                <label style="margin-left: 26px">骑士类别：</label>
-                @Html.DropDownList("IsCooperation", new SelectList(EnumExtenstion.GetEnumItems(typeof(Cooperation)), "Value", "Text", Model.IsCooperation), null, new { @class = "selectw", style = "width:157px" })
-            </div>
+            </div>      
             <div id="divDeliveryCompany" class="control-group" style="margin-top: 15px">
                 <label>所属物流公司：</label>
                 @Html.DropDownList("deliveryCompany", new SelectList(ViewBag.deliveryCompanyList, "Id", "DeliveryCompanyName", Model.DeliveryCompanyId), "-请选择-", new { style = "width:167px" })
@@ -127,7 +123,7 @@
         var deliveryCompany ;         
         var gradeType = $('#gradeType').val();
 
-        var IsCooperation = $('#IsCooperation').val();
+      
         if (gradeType == 2)
         {
             deliveryCompany = -1;
@@ -182,7 +178,7 @@
         }
 
         var paramaters = {
-            "Id": id, "TrueName": trueName, "IDcard": idCard, "DeliveryCompanyId": deliveryCompany, "recommendPhone": recommendPhone, "gradeType": gradeType, "IsCooperation": IsCooperation,
+            "Id": id, "TrueName": trueName, "IDcard": idCard, "DeliveryCompanyId": deliveryCompany, "recommendPhone": recommendPhone, "gradeType": gradeType,
             "Tags": tags
         };
         var url = "/SuperManManager/ModifyClienterDetail";
