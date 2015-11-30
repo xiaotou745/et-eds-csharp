@@ -57,17 +57,17 @@ namespace Ets.Model.DomainModel.Order
         /// </summary>
         public string UserAddress { get; set; }
         /// <summary>
-        /// 骑士距离商户地址的距离
+        /// 骑士距离商户/发单地址的距离
         /// </summary>
         public string DistanceToBusiness { get; set; }
 
         /// <summary>
-        ///  商家经度
+        ///  商家经度/发单经度
         /// </summary>
         public decimal Longitude { get; set; }
 
         /// <summary>
-        /// 商家纬度
+        /// 商家纬度/发单纬度
         /// </summary>
         public decimal Latitude { get; set; }
 
@@ -75,6 +75,31 @@ namespace Ets.Model.DomainModel.Order
         /// 备注
         /// </summary>
         public string Remark { get; set; }
+
+        /// <summary>
+        /// 来源（默认1、旧后台，2新后台）
+        /// </summary>
+        public int Platform { get; set; }
+
+        /// <summary>
+        /// 订单总重量
+        /// </summary>
+        public float Weight { get; set; }
+
+        /// <summary>
+        /// 送餐距离
+        /// </summary>
+        public float KM { get; set; }
+
+        /// <summary>
+        /// 取货状态默认0立即，1预约
+        /// </summary>
+        public int TakeType { get; set; }
+
+        /// <summary>
+        /// 送餐时间,客户要求送餐时间
+        /// </summary>
+        public DateTime? SongCanDate { get; set; }
 
     }
 }
