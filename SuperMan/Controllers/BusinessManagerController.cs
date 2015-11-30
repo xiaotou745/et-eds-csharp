@@ -127,12 +127,32 @@ namespace SuperMan.Controllers
             BusinessAuditModel bam = new BusinessAuditModel() { BusinessId = id, AuditStatus = AuditStatus.Status1, OptionUserId = UserContext.Current.Id, OptionUserName = UserContext.Current.Name };
             bool b = iBusinessProvider.UpdateAuditStatus(bam);
             return Json(new ResultModel(b, string.Empty), JsonRequestBehavior.DenyGet);
-        }
+        } 
         [HttpPost]
         public JsonResult AuditCel(int id)
         {
             BusinessAuditModel bam = new BusinessAuditModel() { BusinessId = id, AuditStatus = AuditStatus.Status0, OptionUserId = UserContext.Current.Id, OptionUserName = UserContext.Current.Name };
             bool b = iBusinessProvider.UpdateAuditStatus(bam);
+            return Json(new ResultModel(b, string.Empty), JsonRequestBehavior.DenyGet);
+        }
+        /// <summary>
+        /// 启用禁用
+        /// wangchao
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult IsEnableOK(int id)
+        {
+            BusinessAuditModel bam = new BusinessAuditModel() { BusinessId = id,IsEnable = 1,AuditStatus = AuditStatus.Status1, OptionUserId = UserContext.Current.Id, OptionUserName = UserContext.Current.Name };
+            bool b = iBusinessProvider.UpdateBusinessIsEnable(bam);
+            return Json(new ResultModel(b, string.Empty), JsonRequestBehavior.DenyGet);
+        }
+        [HttpPost]
+        public JsonResult IsEnableDel(int id)
+        {
+            BusinessAuditModel bam = new BusinessAuditModel() { BusinessId = id,IsEnable = 0,AuditStatus = AuditStatus.Status0, OptionUserId = UserContext.Current.Id, OptionUserName = UserContext.Current.Name };
+            bool b = iBusinessProvider.UpdateBusinessIsEnable(bam);
             return Json(new ResultModel(b, string.Empty), JsonRequestBehavior.DenyGet);
         }
         /// <summary>

@@ -1574,5 +1574,10 @@ namespace Ets.Service.Provider.Business
                 Remark = businessMoneyPM.Remark
             });
         }
+
+        public bool UpdateBusinessIsEnable(BusinessAuditModel bam)
+        {
+            return businessDao.UpdateBusinessIsEnable(bam);
+        }
     }
 }
