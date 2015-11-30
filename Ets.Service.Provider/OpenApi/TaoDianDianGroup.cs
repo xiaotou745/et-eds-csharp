@@ -176,11 +176,28 @@ namespace Ets.Service.Provider.OpenApi
                     bModel.Password = "";
                     bModel.CheckPicUrl = "";
                     bModel.IDCard = "";
-                    bModel.Address = p.store_address;
-                    string starting_point = p.starting_point;//临时 转化
+                    bModel.Address = p.store_address;                           
                     bModel.Landline = "";
+
+                    //转换坐标
                     bModel.Longitude = 0;
                     bModel.Latitude = 0;
+                    string starting_point = p.starting_point;
+                    if (!string.IsNullOrEmpty(p.starting_point))
+                    {
+                        string[] sp = p.starting_point.Replace("LngLatAlt", "").Replace("{", "").Replace("}", "").Split(',');
+                        if(sp.Length>0)
+                        {
+                            string sp0 = sp[0].Split('=')[1];
+                            string sp1 = sp[1].Split('=')[1];
+                            if (!string.IsNullOrEmpty(sp0) && !string.IsNullOrEmpty(sp1))
+                            {
+                                bModel.Longitude =Convert.ToDouble(sp0);
+                                bModel.Latitude = Convert.ToDouble(sp1);
+                            }
+                        }
+                    }
+                 
                     bModel.Status = 1;
                     bModel.districtId = "";
                     bModel.CityId = p.city_code;

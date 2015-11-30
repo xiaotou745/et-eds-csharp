@@ -362,19 +362,19 @@ namespace Ets.Service.Provider.Business
             model.B_Password = MD5Helper.MD5(string.IsNullOrEmpty(model.B_Password) ? "abc123" : model.B_Password);
             #region 转换省市区
             //转换省
-            var _province = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = model.B_Province, JiBie = 1 });
+            var _province = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = model.B_Province, JiBie = 2 });
             if (_province != null)
             {
                 model.B_ProvinceCode = _province.NationalCode.ToString();
             }
             //转换市 
-            var _city = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = model.B_City, JiBie = 2 });
+            var _city = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = model.B_City, JiBie = 3 });
             if (_city != null)
             {
                 model.B_CityCode = _city.NationalCode.ToString();
             }
             //转换区
-            var _area = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = model.B_Area, JiBie = 3 });
+            var _area = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = model.B_Area, JiBie = 4 });
             if (_area != null)
             {
                 model.B_AreaCode = _area.NationalCode.ToString();
@@ -766,21 +766,21 @@ namespace Ets.Service.Provider.Business
             //修改地址转换 区域编码
             if (!string.IsNullOrWhiteSpace(businessModel.districtName))
             {
-                AreaModelTranslate areaModel = iAreaProvider.GetNationalAreaInfo(new AreaModelTranslate() { Name = businessModel.districtName.Trim(), JiBie = 3 });
+                AreaModelTranslate areaModel = iAreaProvider.GetNationalAreaInfo(new AreaModelTranslate() { Name = businessModel.districtName.Trim(), JiBie = 4 });
                 to.districtId = areaModel != null ? areaModel.NationalCode.ToString() : "";
                 to.AreaCode = areaModel != null ? areaModel.NationalCode.ToString() : "";
             }
             //修改地址转换 市编码
             if (!string.IsNullOrWhiteSpace(businessModel.City))
             {
-                AreaModelTranslate areaModel = iAreaProvider.GetNationalAreaInfo(new AreaModelTranslate() { Name = businessModel.City.Trim(), JiBie = 2 });
+                AreaModelTranslate areaModel = iAreaProvider.GetNationalAreaInfo(new AreaModelTranslate() { Name = businessModel.City.Trim(), JiBie = 3 });
                 to.CityId = areaModel != null ? areaModel.NationalCode.ToString() : "";
                 to.CityCode = areaModel != null ? areaModel.NationalCode.ToString() : "";
             }
             //修改地址转换 省份编码
             if (!string.IsNullOrWhiteSpace(businessModel.Province))
             {
-                AreaModelTranslate areaModel = iAreaProvider.GetNationalAreaInfo(new AreaModelTranslate() { Name = businessModel.Province.Trim(), JiBie = 1 });
+                AreaModelTranslate areaModel = iAreaProvider.GetNationalAreaInfo(new AreaModelTranslate() { Name = businessModel.Province.Trim(), JiBie = 2 });
                 to.ProvinceCode = areaModel != null ? areaModel.NationalCode.ToString() : "";
             }
 
@@ -829,7 +829,7 @@ namespace Ets.Service.Provider.Business
             //修改地址转换 区域编码
             if (!string.IsNullOrWhiteSpace(businessModel.districtName))
             {
-                Ets.Model.DomainModel.Area.AreaModelTranslate areaModel = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = businessModel.districtName.Trim(), JiBie = 3 });
+                Ets.Model.DomainModel.Area.AreaModelTranslate areaModel = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = businessModel.districtName.Trim(), JiBie = 4 });
                 if (areaModel != null)
                 {
                     to.districtId = areaModel.NationalCode.ToString();

@@ -51,7 +51,17 @@ namespace Ets.Service.Provider.Common
             {
                 IList<AreaModel> list = dao.GetOpenCitySql();
                 areaList = new AreaModelList();
-                areaList.AreaModels = list;
+                #region 重新组装，本来是想写lambda表达式的，着急上线没改 窦海超 2015年11月30日 15:54:32
+                List<AreaModel> newlist = new List<AreaModel>();
+                foreach (var item in list)
+                {
+                    AreaModel model = item;
+                    model.JiBie -= 1;
+                    newlist.Add(model);
+                }
+                #endregion
+
+                areaList.AreaModels = newlist;
                 //areaList.Version = Config.ApiVersion;
                 if (list != null)
                 {
@@ -114,21 +124,21 @@ namespace Ets.Service.Provider.Common
                     Code = 32,
                     Name = "香港",
                     ParentId = 0,
-                    JiBie = 1
+                    JiBie = 2
                 };
                 AreaModel am = new AreaModel()
                 {
                     Code = 33,
                     Name = "澳门",
                     ParentId = 0,
-                    JiBie = 1
+                    JiBie = 2
                 };
                 AreaModel tw = new AreaModel()
                 {
                     Code = 34,
                     Name = "台湾",
                     ParentId = 0,
-                    JiBie = 1
+                    JiBie = 2
                 };
                 list.Add(xg);
                 list.Add(am);
@@ -175,7 +185,7 @@ namespace Ets.Service.Provider.Common
             var areaList = new AreaModelList();
             if (accountId == 0)
             {
-                var openCityList = GetOpenCity("").Result.AreaModels.Where(t => t.JiBie == 2).ToList();
+                var openCityList = GetOpenCity("").Result.AreaModels.Where(t => t.JiBie == 3).ToList();
                 areaList.AreaModels = openCityList;
                 areaList.Version = Config.ApiVersion;
                 return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.UnNewest, areaList);
@@ -183,7 +193,7 @@ namespace Ets.Service.Provider.Common
             else
             {
                 var authorityCityList = authoritySetDao.GetAccountCityRel(accountId).Select(i => i.CityId);
-                var openCityList = GetOpenCity("").Result.AreaModels.Where(t => t.JiBie == 2).Where(k => authorityCityList.Contains(k.Code)).ToList();
+                var openCityList = GetOpenCity("").Result.AreaModels.Where(t => t.JiBie == 3).Where(k => authorityCityList.Contains(k.Code)).ToList();
                 areaList.AreaModels = openCityList;
                 areaList.Version = Config.ApiVersion;
                 return ResultModel<AreaModelList>.Conclude(ETS.Enums.CityStatus.UnNewest, areaList);
@@ -195,18 +205,18 @@ namespace Ets.Service.Provider.Common
             var areaList = new AreaModelList();
             if (accountId == 0)
             {
-                var openCityList = GetOpenCity("").Result.AreaModels.Where(t => t.JiBie == 2).ToList();
+                var openCityList = GetOpenCity("").Result.AreaModels.Where(t => t.JiBie == 3).ToList();
                 areaList.AreaModels = openCityList;
                 areaList.Version = Config.ApiVersion;
-                return areaList;                
+                return areaList;
             }
             else
             {
                 var authorityCityList = authoritySetDao.GetAccountCityRel(accountId).Select(i => i.CityId);
-                var openCityList = GetOpenCity("").Result.AreaModels.Where(t => t.JiBie == 2).Where(k => authorityCityList.Contains(k.Code)).ToList();
+                var openCityList = GetOpenCity("").Result.AreaModels.Where(t => t.JiBie == 3).Where(k => authorityCityList.Contains(k.Code)).ToList();
                 areaList.AreaModels = openCityList;
                 areaList.Version = Config.ApiVersion;
-                return areaList;                
+                return areaList;
             }
         }
 
@@ -242,7 +252,7 @@ namespace Ets.Service.Provider.Common
             }
             string authorityCityNameListStr = string.Empty;
             var authorityCityList = authoritySetDao.GetAccountCityRel(accountId).Select(i => i.CityId);
-            var openCityNameList = GetOpenCity("").Result.AreaModels.Where(t => t.JiBie == 2).Where(k => authorityCityList.Contains(k.Code)).Select(i => i.Name).ToList();
+            var openCityNameList = GetOpenCity("").Result.AreaModels.Where(t => t.JiBie == 3).Where(k => authorityCityList.Contains(k.Code)).Select(i => i.Name).ToList();
             if (openCityNameList.Count > 0)
             {
                 foreach (var openCityName in openCityNameList)
@@ -291,8 +301,8 @@ namespace Ets.Service.Provider.Common
             //}
             AreaModelTranslate areaModel = new AreaModelTranslate();
             AreaModelTranslate resultAreaModel = new AreaModelTranslate();
-            from.JiBie++;//由于对接了口碑，区域信息的级别都加了1，为了不改其他地方，此处都加1，即可，zhaohl,20151118
-            if (from.JiBie == 2)
+            //from.JiBie++;//由于对接了口碑，区域信息的级别都加了1，为了不改其他地方，此处都加1，即可，zhaohl,20151118
+            if (from.JiBie == 3)
             {
                 if (from.Name.Contains("北京")) { from.Name = "北京市"; }
                 if (from.Name.Contains("上海")) { from.Name = "上海市"; }
@@ -404,7 +414,7 @@ namespace Ets.Service.Provider.Common
         /// <returns></returns>
         public IList<AreaModel> GetOpenCityDistrict(int cityId)
         {
-            return GetOpenCity("").Result.AreaModels.Where(t => t.JiBie == 3 && t.ParentId == cityId).ToList();
+            return GetOpenCity("").Result.AreaModels.Where(t => t.JiBie == 4 && t.ParentId == cityId).ToList();
         }
     }
 }
