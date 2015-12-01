@@ -29,7 +29,7 @@ namespace Ets.Model.ParameterModel.AliPay
         public int productId { get; set; }
 
         /// <summary>
-        /// 支付方式(1 用户支付 2 骑士代付)
+        /// 支付方式(1 用户支付 2 骑士代付 3商户支付)
         /// </summary>
         public int payStyle { get; set; }
 
