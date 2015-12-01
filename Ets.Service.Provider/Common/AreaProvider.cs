@@ -50,18 +50,9 @@ namespace Ets.Service.Provider.Common
             if (areaList.AreaModels == null || areaList.AreaModels.Count <= 0)
             {
                 IList<AreaModel> list = dao.GetOpenCitySql();
-                areaList = new AreaModelList();
-                #region 重新组装，本来是想写lambda表达式的，着急上线没改 窦海超 2015年11月30日 15:54:32
-                List<AreaModel> newlist = new List<AreaModel>();
-                foreach (var item in list)
-                {
-                    AreaModel model = item;
-                    model.JiBie -= 1;
-                    newlist.Add(model);
-                }
-                #endregion
+             
 
-                areaList.AreaModels = newlist;
+                areaList.AreaModels = list;
                 //areaList.Version = Config.ApiVersion;
                 if (list != null)
                 {
