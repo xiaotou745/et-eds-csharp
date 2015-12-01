@@ -28,6 +28,10 @@ namespace Ets.Model.ParameterModel.Business
         /// </summary>
         public string Version { get; set; }
 
+        /// <summary>
+        /// 支付类型：0旧版商家，1闪送模式 
+        /// </summary>
+        public int CType { get; set; }
 
     }
 }

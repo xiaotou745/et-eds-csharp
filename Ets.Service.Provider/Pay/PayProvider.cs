@@ -62,7 +62,7 @@ namespace Ets.Service.Provider.Pay
         private readonly OrderDao orderDao = new OrderDao();
         private readonly HttpDao httpDao = new HttpDao();
         ClienterMessageDao clienterMessageDao = new ClienterMessageDao();
-        private readonly ClienterWithdrawLogDao clienterWithdrawLogDao= new ClienterWithdrawLogDao();
+        private readonly ClienterWithdrawLogDao clienterWithdrawLogDao = new ClienterWithdrawLogDao();
         #region 生成支付宝、微信二维码订单
 
         /// <summary>
@@ -101,6 +101,11 @@ namespace Ets.Service.Provider.Pay
             {
                 //微信支付
                 LogHelper.LogWriter("=============微信支付：");
+                if (model.cType == PayModelEnum.EDS.GetHashCode())//闪送模式
+                {
+                    orderNo += "_" + model.oType;//把订单类型放到最后，回调的时候拆分
+                    return CreateWxSSPayOrder(orderNo, payStatusModel.TotalPrice, model.orderId);
+                }
                 return CreateWxPayOrder(orderNo, payStatusModel.TotalPrice, model.orderId, model.payStyle);
             }
             return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
@@ -418,11 +423,25 @@ namespace Ets.Service.Provider.Pay
             BusinessRechargeResultModel resultModel = new BusinessRechargeResultModel();
             if (model.PayType == PayTypeEnum.WeiXin.GetHashCode())
             {
-                ETS.Library.Pay.BWxPay.NativePay nativePay = new ETS.Library.Pay.BWxPay.NativePay();
-                string prepayId = nativePay.GetPayPrepayId(model.Businessid, orderNo, model.payAmount, "E代送商家充值", Config.WXBusinessRecharge);
+                if (model.CType == PayModelEnum.EDS.GetHashCode())//如果是闪送模式
+                {
+                    #region 闪送模式
+                    ETS.Library.Pay.SSBWxPay.NativePay nativePay = new ETS.Library.Pay.SSBWxPay.NativePay();
+                    string prepayId = nativePay.GetPayPrepayId(model.Businessid, orderNo, model.payAmount, "E代送商家充值", Config.WXBusinessRecharge);
+                    resultModel.prepayId = prepayId;
+                    resultModel.notifyUrl = ETS.Config.SSBusinessRechargeWxNotify;//闪送模式回调地址
+                    #endregion
+                }
+                else
+                {
+                    #region 旧版商家充值
+                    ETS.Library.Pay.BWxPay.NativePay nativePay = new ETS.Library.Pay.BWxPay.NativePay();
+                    string prepayId = nativePay.GetPayPrepayId(model.Businessid, orderNo, model.payAmount, "E代送商家充值", Config.WXBusinessRecharge);
+                    resultModel.prepayId = prepayId;
+                    resultModel.notifyUrl = ETS.Config.WXBusinessRecharge;
+                    #endregion
 
-                resultModel.prepayId = prepayId;
-                resultModel.notifyUrl = ETS.Config.WXBusinessRecharge;
+                }
             }
             else
             {
@@ -451,6 +470,85 @@ namespace Ets.Service.Provider.Pay
             {
                 #region 参数绑定
                 ETS.Library.Pay.BWxPay.WxNotifyResultModel notify = new ETS.Library.Pay.BWxPay.ResultNotify().ProcessNotify();
+                #endregion
+                //如果状态为空或状态不等于同步成功和异步成功就认为是错误
+
+                #region 回调完成状态
+                if (notify.return_code.ToUpper() == "SUCCESS")
+                {
+                    string orderNo = notify.order_no;//订单号
+                    int businessid = ParseHelper.ToInt(notify.attach);
+                    if (string.IsNullOrEmpty(notify.order_no))
+                    {
+                        string fail = string.Concat("商家微信充值错误啦orderNo：", notify.order_no, "businessid:", businessid);
+                        LogHelper.LogWriter(fail);
+                        return;
+                    }
+                    #region 微信锁
+                    //因为最后更新数据库日志时需要时间，但支付宝第二次更新状态访问过来，解决套圈问题.
+                    string key = string.Format(RedissCacheKey.AlipayLock, orderNo);
+                    var redis = new ETS.NoSql.RedisCache.RedisCache();
+                    var aliLock = ParseHelper.ToInt(redis.Get<int>(key));
+                    if (aliLock > 0)
+                    {
+                        return;
+                    }
+                    redis.Set(key, 1, new TimeSpan(0, 0, 10));
+                    #endregion
+
+                    ETS.Library.Pay.BWxPay.WxPayData res = new ETS.Library.Pay.BWxPay.WxPayData();
+                    res.SetValue("return_code", "SUCCESS");
+                    res.SetValue("return_msg", "订单成功");
+
+                    //检查该充值单是否已经更新
+                    if (new BusinessRechargeDao().Check(notify.transaction_id))
+                    {
+                        HttpContext.Current.Response.Write(res.ToXml());
+                        HttpContext.Current.Response.End();
+                        return;
+                    }
+
+                    Ets.Model.DataModel.Business.BusinessRechargeModel businessRechargeModel = new Ets.Model.DataModel.Business.BusinessRechargeModel()
+                    {
+                        BusinessId = businessid,
+                        OrderNo = orderNo,
+                        OriginalOrderNo = notify.transaction_id,//第三方的订单号
+                        PayAmount = ParseHelper.ToDecimal(notify.total_fee),
+                        PayBy = notify.openid,
+                        PayStatus = 1,
+                        PayType = 2
+                    };
+                    //写充值单
+                    string result = BusinessRechargeSusess(businessRechargeModel);
+                    if (result.ToLower() == "success")
+                    {
+                        HttpContext.Current.Response.Write(res.ToXml());
+                        HttpContext.Current.Response.End();
+                        return;
+                    }
+                }
+                #endregion
+
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(ex, "微信自动返回异常");
+                HttpContext.Current.Response.Write("<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>");
+                HttpContext.Current.Response.End();
+            }
+        }
+        /// <summary>
+        /// 闪送模式 微信商家充值回调方法 
+        /// 窦海超
+        /// 2015年8月6日 23:06:02
+        /// </summary>
+        /// <returns></returns>
+        public void SSBusinessRechargeWxNotify()
+        {
+            try
+            {
+                #region 参数绑定
+                ETS.Library.Pay.SSBWxPay.WxNotifyResultModel notify = new ETS.Library.Pay.SSBWxPay.ResultNotify().ProcessNotify();
                 #endregion
                 //如果状态为空或状态不等于同步成功和异步成功就认为是错误
 
@@ -674,6 +772,29 @@ namespace Ets.Service.Provider.Pay
 
         #region 微信相关
 
+
+        /// <summary>
+        /// 支付闪送模式订单
+        /// 窦海超
+        /// 2015年12月1日 14:56:14
+        /// </summary>
+        /// <param name="orderNo">订单号</param>
+        /// <param name="WxCodeUrl">微信地址</param>
+        /// <param name="TotalPrice">总金额，注意:微信要乘以100=最后支付的金额，这里传值前不要乘以100</param>
+        /// <returns></returns>
+        public ResultModel<PayResultModel> CreateWxSSPayOrder(string orderNo, decimal totalPrice, int orderId)
+        {
+            //支付方式-主订单ID-子订单ID
+            PayResultModel resultModel = new PayResultModel();
+            resultModel.orderNo = orderNo;//订单号
+            resultModel.payAmount = totalPrice;//总金额，没乘以100的值
+            resultModel.payType = PayTypeEnum.WeiXin.GetHashCode();//微信
+            resultModel.notifyUrl = ETS.Config.SSWxNotify;//回调地址
+
+            return ResultModel<PayResultModel>.Conclude(AliPayStatus.success, resultModel);
+        }
+
+
         /// <summary>
         /// 生成微信二维码订单
         /// 窦海超
@@ -772,6 +893,76 @@ namespace Ets.Service.Provider.Pay
             #endregion
         }
 
+
+        /// <summary>
+        /// 闪送模式  微信支付回调方法 
+        /// 窦海超
+        /// 2015年5月13日 15:03:45
+        /// </summary>
+        /// <returns></returns>
+        public void SSWxNotify()
+        {
+
+            #region 参数绑定
+            ETS.Library.Pay.SSBWxPay.WxNotifyResultModel notify = new ETS.Library.Pay.SSBWxPay.ResultNotify().ProcessNotify();
+            string errmsg = "<xml><return_code><![CDATA[FAIL]]></return_code><return_msg><![CDATA[{0}]]></return_msg></xml>";
+            #region 回调完成状态
+            if (notify.return_code == "SUCCESS")
+            {
+                string orderNo = notify.order_no;
+                if (string.IsNullOrEmpty(orderNo) || !orderNo.Contains("_"))
+                {
+                    string fail = string.Concat("错误啦orderNo：", orderNo);
+                    LogHelper.LogWriter(fail);
+                    HttpContext.Current.Response.Write(string.Format(errmsg, fail));
+                    HttpContext.Current.Response.End();
+                    return;
+                }
+                int productId = ParseHelper.ToInt(orderNo.Split('_')[0]);//产品编号
+                int orderId = ParseHelper.ToInt(orderNo.Split('_')[1]);//主订单号
+                int orderChildId = ParseHelper.ToInt(orderNo.Split('_')[2]);//子订单号
+                int payStyle = ParseHelper.ToInt(orderNo.Split('_')[3]);//支付方式(1 用户支付 2 骑士代付)
+                int oType = ParseHelper.ToInt(orderNo.Split('_')[4]);//订单状态0订单支付，1小费
+                //在这里写支付相关+小费 业务逻辑
+
+
+                //if (orderId <= 0 || orderChildId <= 0)
+                //{
+                //    string fail = string.Concat("错误啦orderId：", orderId, ",orderChildId:", orderChildId);
+                //    LogHelper.LogWriter(fail);
+                //    HttpContext.Current.Response.Write(string.Format(errmsg, fail));
+                //    HttpContext.Current.Response.End();
+                //    return;
+                //}
+
+                //OrderChildFinishModel model = new OrderChildFinishModel()
+                //{
+                //    orderChildId = orderChildId,
+                //    orderId = orderId,
+                //    payBy = notify.openid,
+                //    payStyle = payStyle,
+                //    payType = PayTypeEnum.ZhiFuBao.GetHashCode(),
+                //    originalOrderNo = notify.transaction_id,
+                //};
+
+                //if (orderChildDao.FinishPayStatus(model))
+                //{
+                //    //jpush
+                //    //Ets.Service.Provider.MyPush.Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", myorder.businessId.ToString(), string.Empty);
+                //    FinishOrderPushMessage(model);//完成后发送jpush消息
+                //    string success = string.Concat("成功，当前订单OrderId:", orderId, ",OrderChild:", orderChildId);
+                //    LogHelper.LogWriter(success);
+                //    HttpContext.Current.Response.Write("<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>");
+                //    HttpContext.Current.Response.End();
+                //    return;
+                //}
+            }
+            #endregion
+            LogHelper.LogWriter("支付回调异常", notify);
+            HttpContext.Current.Response.Write(errmsg);
+            HttpContext.Current.Response.End();
+            #endregion
+        }
         #endregion
 
         #region 易宝相关
@@ -2055,21 +2246,21 @@ namespace Ets.Service.Provider.Pay
                 //    return "<html><body>再次提交打款功能暂时不开放,请联系陈凯!</body></html>";
                 //}
                 //查询批次号是否在打款中
-                var res =clienterWithDao.CheckAlipayBatch(new AlipayBatchModel() {BatchNo = pmmodel.Data.Trim(), Status = 0});
-                if (res!= 1)
+                var res = clienterWithDao.CheckAlipayBatch(new AlipayBatchModel() { BatchNo = pmmodel.Data.Trim(), Status = 0 });
+                if (res != 1)
                 {
                     return "<html><body>批次号:" + pmmodel.Data.Trim() + "状态不为打款中,不能再次发起付款</body></html>";
                 }
             }
             #endregion
-           
+
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 #region===2.获取提现单数据
                 StringBuilder DetailData = new StringBuilder();
                 //获取提现单列表信息
                 List<AlipayClienterWithdrawModel> withdrawList = clienterWithDao.GetWithdrawListForAlipay(pmmodel);
-                if(withdrawList==null)
+                if (withdrawList == null)
                     return "<html><body>无提现单数据,请重试</body></html>";
 
                 alipayBatchCount = withdrawList.Count;//总笔数
@@ -2083,7 +2274,7 @@ namespace Ets.Service.Provider.Pay
                     //注意此处用提现单ID作为流水号穿给支付宝,方便支付宝回调后对数据处理
                     DetailData.AppendFormat("{0}^{1}^{2}^{3}^骑士申请提现打款|", item.Id, DES.Decrypt(item.AccountNo), item.TrueName, item.PaidAmount.ToString("#0.00"));
                     if (pmmodel.Type == 1)//第一次提交
-                    {   
+                    {
                         //插入提现单表修改日志
                         clienterWithdrawLogDao.Insert(new ClienterWithdrawLog()
                         {
@@ -2105,12 +2296,12 @@ namespace Ets.Service.Provider.Pay
                         OptTimes = alipayBatchCount,
                         WithdrawIds = wids.ToString().Substring(0, wids.Length - 1),
                         WithdrawNos = wnos.ToString().Substring(0, wnos.Length - 1),
-                        Remarks = DateTime.Now.ToString()+"创建支付宝批次;",
+                        Remarks = DateTime.Now.ToString() + "创建支付宝批次;",
                         CreateBy = pmmodel.OptName,
                         LastOptUser = pmmodel.OptName
                     });
                 }
-                else if(pmmodel.Type==2)//更新批次号信息
+                else if (pmmodel.Type == 2)//更新批次号信息
                 {
                     clienterWithDao.UpdateAlipayBatchForAgain(new AlipayBatchModel()
                     {
@@ -2120,7 +2311,7 @@ namespace Ets.Service.Provider.Pay
                         NewBatchNo = alipayBatchNo
                     });
                 }
-               
+
                 #endregion
 
                 #region===3.构建表单
@@ -2157,7 +2348,7 @@ namespace Ets.Service.Provider.Pay
         /// </summary>
         /// <param name="count">次数</param>
         /// <returns>批次号</returns>
-        private string CreateAlipayBatchNo(int count=0)
+        private string CreateAlipayBatchNo(int count = 0)
         {
             try
             {
@@ -2186,9 +2377,9 @@ namespace Ets.Service.Provider.Pay
             catch (Exception e)//避免异常引起的错误
             {
                 LogHelper.LogWriter(e);
-                return  "";
+                return "";
             }
-          
+
         }
 
         /// <summary>
@@ -2205,23 +2396,23 @@ namespace Ets.Service.Provider.Pay
                 List<AlipayCallBackData> faillist = ConvertAlipayDetails(alipaymodel.FailDetails);
                 #endregion
                 using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
-                { 
+                {
                     //验证批次号是否已经处理
                     if (clienterWithDao.CheckAlipayBatch(new AlipayBatchModel()
                     {
                         BatchNo = alipaymodel.BatchNo,
-                        Status =1//打款完成
-                    })>0)//已经处理了该批次
+                        Status = 1//打款完成
+                    }) > 0)//已经处理了该批次
                     {
                         return false;
                     }
                     //更新批次表信息
-                   clienterWithDao.UpdateAlipayBatch(new AlipayBatchModel()
-                    {
-                        SuccessTimes = successlist.Count,
-                        FailTimes = faillist.Count,
-                        BatchNo = alipaymodel.BatchNo
-                    });
+                    clienterWithDao.UpdateAlipayBatch(new AlipayBatchModel()
+                     {
+                         SuccessTimes = successlist.Count,
+                         FailTimes = faillist.Count,
+                         BatchNo = alipaymodel.BatchNo
+                     });
 
                     #region===2.处理成功的提现单
                     foreach (var succ in successlist)
@@ -2252,7 +2443,7 @@ namespace Ets.Service.Provider.Pay
                             Status = ClienterWithdrawFormStatus.Error.GetHashCode(),
                             OldStatus = ClienterWithdrawFormStatus.Paying.GetHashCode(),
                             WithwardId = fail.WithdrawId,
-                            PayFailedReason = "支付宝失败代码:" + (fail.Reason.Trim().ToUpper() == "ACCOUN_NAME_NOT_MATCH"?"支付宝账户和姓名不匹配":fail.Reason),
+                            PayFailedReason = "支付宝失败代码:" + (fail.Reason.Trim().ToUpper() == "ACCOUN_NAME_NOT_MATCH" ? "支付宝账户和姓名不匹配" : fail.Reason),
                             IsCallBack = 1,
                             CallBackRequestId = fail.AlipayInnerNo
                         });
@@ -2298,7 +2489,7 @@ namespace Ets.Service.Provider.Pay
                     continue;
                 }
                 var propArr = dataArr[i].Split('^');
-                var model=new AlipayCallBackData
+                var model = new AlipayCallBackData
                 {
                     WithdrawId = Convert.ToInt32(propArr[0]),
                     AccountNo = propArr[1],

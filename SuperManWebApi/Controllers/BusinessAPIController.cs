@@ -20,7 +20,7 @@ using Ets.Service.IProvider.Common;
 using Ets.Model.DataModel.Business;
 using Ets.Model.ParameterModel.Business;
 using Ets.Service.IProvider.Business;
-using Ets.Service.Provider.Business; 
+using Ets.Service.Provider.Business;
 using Ets.Model.DomainModel.Business;
 using Ets.Model.ParameterModel.Clienter;
 using Ets.Model.DomainModel.Area;
@@ -59,7 +59,7 @@ namespace SuperManWebApi.Controllers
         {
             return new BusinessProvider().PostLogin_B(model);
         }
-       
+
 
         /// <summary>
         /// 验证图片(审核)
@@ -124,7 +124,7 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public ResultModel<BusiModifyPwdResultModel> PostForgetPwd_B(ParamModel model)
         {
-            return new BusinessProvider().PostForgetPwd_B(model,1);
+            return new BusinessProvider().PostForgetPwd_B(model, 1);
         }
 
         /// <summary>
@@ -184,11 +184,11 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>        
         [HttpGet]
         [Token]
-        public ResultModel<BusiGetOrderModel[]> GetOrderList_B(int userId, int? pagedSize, int? pagedIndex, sbyte? Status, int? orderfrom,int isCheckStatus=0)
+        public ResultModel<BusiGetOrderModel[]> GetOrderList_B(int userId, int? pagedSize, int? pagedIndex, sbyte? Status, int? orderfrom, int isCheckStatus = 0)
         {
-            if (isCheckStatus==1)
+            if (isCheckStatus == 1)
             {
-                BussinessStatusModel bStatusModel= iBusinessProvider.GetUserStatus(userId);
+                BussinessStatusModel bStatusModel = iBusinessProvider.GetUserStatus(userId);
                 if (bStatusModel.status != 1)
                 {
                     return ResultModel<BusiGetOrderModel[]>.Conclude(GetOrdersStatus.ErrStatus);
@@ -275,8 +275,13 @@ namespace SuperManWebApi.Controllers
         public ResultModel<AreaModelList> GetOpenCity(string Version)
         {
             AreaProvider area = new AreaProvider();
-
-            return area.GetOpenCity(Version, false);
+            ResultModel<AreaModelList> resultModel = area.GetOpenCity(Version, false);
+            IList<AreaModel> list = resultModel.Result.AreaModels;
+            if (list != null)
+            {
+                list.ToList().ForEach(t => t.JiBie -= 1);
+            }
+            return resultModel;
         }
 
         #region 第三方调用
