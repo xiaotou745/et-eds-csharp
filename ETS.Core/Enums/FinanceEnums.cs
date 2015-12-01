@@ -611,7 +611,9 @@ namespace ETS.Enums
         [DisplayText("用户支付")]
         BuyerPay = 1,
         [DisplayText("骑士支付")]
-        ClienterPay = 2 
+        ClienterPay = 2 ,
+        [DisplayText("商家支付")]
+        BusinessPay=3
     }
     /// <summary>
     /// 支付类型

@@ -219,14 +219,6 @@ namespace Ets.Service.IProvider.Order
         OrderDM GetDetails(OrderPM modelPM);
 
         /// <summary>
-        /// 闪送模式 订单付款后回调方法 
-        /// </summary>
-        /// 胡灵波
-        /// 2015年11月30日 10:39:14
-        /// <param name="id">订单查询实体</param>
-        /// <returns></returns>
-        int ReturnFlashPush(OrderReturnPM modelPM);
-        /// <summary>
         /// 骑士端获取任务列表（最新/最近）任务   add by caoheyang 20150519
         /// </summary>
         /// <param name="model">订单查询实体</param>
