@@ -376,7 +376,7 @@ and a.PhoneNo=@PhoneNo";
                                     ,b.CommissionFixValue
                                     ,b.BusinessGroupId
                                     ,bg.Name BusinessGroupName
-                                    ,b.RegisterFrom,b.IsEnable
+                                    ,b.IsEnable
                                     ,ISNULL(b.MealsSettleMode,0) MealsSettleMode
                                     ,ISNULL(b.BalancePrice,0) BalancePrice
                                     ,ISNULL(b.AllowWithdrawPrice,0) AllowWithdrawPrice

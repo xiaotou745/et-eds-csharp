@@ -33,11 +33,7 @@ namespace Ets.Model.DataModel.Business
         public string CityCode { get; set; }
         public string AreaCode { get; set; }
         public string Province { get; set; }
-        public int? CommissionTypeId { get; set; }
-        /// <summary>
-        /// 注册来源,默认1原注册商户;2闪送商户
-        /// </summary>
-        public int RegisterFrom { get; set; }
+        public int? CommissionTypeId { get; set; } 
         /// <summary>
         /// 启用禁用  1启用0禁用
         /// </summary>

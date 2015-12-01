@@ -1,6 +1,7 @@
 ﻿@using System.Activities.Expressions
 @using System.Text.RegularExpressions
 @using Ets.Service.Provider.User
+@using ETS.Enums
 @using ETS.Util
 @model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Business.BusListResultModel>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
@@ -126,7 +127,7 @@
                         int checkAddress = string.IsNullOrEmpty(item.Address) ? 0 : 1;
                         int checkImage = string.IsNullOrEmpty(item.CheckPicUrl) ? 0 : 1;
 
-                        if (@item.RegisterFrom == 1 || (@item.RegisterFrom == 2 && !string.IsNullOrWhiteSpace(@item.Name)))
+                        if (@item.GroupId != GroupType.Group110.GetHashCode() || (@item.GroupId == GroupType.Group110.GetHashCode() && !string.IsNullOrWhiteSpace(@item.Name)))
                         {
                             if (@item.Status == 1)
                             {
@@ -148,7 +149,7 @@
                                 }*@
                             @if (SuperMan.App_Start.UserContext.Current.HasAuthority(60))
                             {
-                                if (@item.RegisterFrom == 1 || (@item.RegisterFrom == 2 && !string.IsNullOrWhiteSpace(@item.Name)))
+                                if (@item.GroupId != GroupType.Group110.GetHashCode() || (@item.GroupId == GroupType.Group110.GetHashCode() && !string.IsNullOrWhiteSpace(@item.Name)))
                                 {
                                 @*<a href="/BusinessManager/QueryBusinessDetail?businessId=@item.Id">修改信息</a>*@
                                     <a target="_blank" href="@ConfigSettings.Instance.JavaAdminUrl/business/detail?businessID=@item.Id">修改信息</a>
@@ -157,14 +158,14 @@
                             }
                             @if (SuperMan.App_Start.UserContext.Current.HasAuthority(52))
                             {
-                                if (@item.RegisterFrom == 1 || (@item.RegisterFrom == 2 && !string.IsNullOrWhiteSpace(@item.Name)))
+                                if (@item.GroupId != GroupType.Group110.GetHashCode() || (@item.GroupId == GroupType.Group110.GetHashCode() && !string.IsNullOrWhiteSpace(@item.Name)))
                                 {
                                     <a href="javascript:void(0)" onclick="funcBusinessRecharge(@item.Id, '@item.Name', '@item.PhoneNo') ">充值</a>
                                 }
                             }
                             @if (SuperMan.App_Start.UserContext.Current.HasAuthority(75))
                             {
-                                if (@item.RegisterFrom == 1 || (@item.RegisterFrom == 2 && !string.IsNullOrWhiteSpace(@item.Name)))
+                                if (@item.GroupId != GroupType.Group110.GetHashCode() || (@item.GroupId == GroupType.Group110.GetHashCode() && !string.IsNullOrWhiteSpace(@item.Name)))
                                 {
                                     <a href="@ConfigSettings.Instance.JavaAdminUrl/business/clienterbindlist?businessId=@item.Id">骑士绑定</a>
                                 @*<a href="/BusinessManager/ClienterBindManage?businessId=@item.Id">骑士绑定</a>*@
@@ -173,7 +174,7 @@
                             }
                             @if (SuperMan.App_Start.UserContext.Current.HasAuthority(61))
                             {
-                                if (@item.RegisterFrom == 1 || (@item.RegisterFrom == 2 && !string.IsNullOrWhiteSpace(@item.Name)))
+                                if (@item.GroupId != GroupType.Group110.GetHashCode() || (@item.GroupId == GroupType.Group110.GetHashCode() && !string.IsNullOrWhiteSpace(@item.Name)))
                                 {
                                     <a href="javascript:void(0)" onclick="funcBusinessWithdraw(@item.Id, '@item.Name', '@item.PhoneNo') ">提款申请</a>
                                 }
@@ -181,13 +182,14 @@
                             @if (SuperMan.App_Start.UserContext.Current.HasAuthority(102))  //启用禁用
                             {
                                 int checkBusinessName = string.IsNullOrEmpty(item.Name) ? 0 : 1;
+                                int groupIdBool = item.GroupId == GroupType.Group110.GetHashCode() ? 1 : 0;
                                 if (@item.IsEnable == 1)
                                 {
-                                    <a href="javascript:void(0)" onclick="funcBusinessIsEnable(@item.Id, 0, @checkBusinessName)">禁用</a>
+                                    <a href="javascript:void(0)" onclick="funcBusinessIsEnable(@item.Id, 0, @checkBusinessName,@groupIdBool)">禁用</a>
                                 }
                                 else
                                 {
-                                    <a href="javascript:void(0)" onclick="funcBusinessIsEnable(@item.Id, 1, @checkBusinessName) ">启用</a>
+                                    <a href="javascript:void(0)" onclick="funcBusinessIsEnable(@item.Id, 1, @checkBusinessName,@groupIdBool) ">启用</a>
                                 }
                             }
                         </td>
@@ -231,18 +233,18 @@
         });
     });
     //启用禁用
-    function funcBusinessIsEnable(businessId, isEnable, checkBusinessName)
+    function funcBusinessIsEnable(businessId, isEnable, checkBusinessName,groupIdBool)
     {
         var paramaters = { "id": businessId };
         var url = "";
         if (isEnable == 1) {
-            if (!window.confirm("请再次确认是否启用？")) {
-                return;
-            }
-            if (checkBusinessName == 0) {
+            if (groupIdBool == 0 && checkBusinessName == 0) {
                 alert("该门店未填写商户名称，无法启用");
                 return;
             }
+            if (!window.confirm("请再次确认是否启用？")) {
+                return;
+            } 
             url = "/BusinessManager/IsEnableOK";
 
         } else {

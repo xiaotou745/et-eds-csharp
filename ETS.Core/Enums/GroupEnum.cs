@@ -22,7 +22,9 @@ namespace ETS.Enums
         [DisplayText("首旅")]
         Group6 = 6 ,
         [DisplayText("口碑外卖")]
-        Group7 =7     
+        Group7 =7,
+        [DisplayText("闪送模式")]
+        Group110 =110
     }
    
 }
