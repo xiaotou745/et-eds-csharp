@@ -904,7 +904,7 @@ namespace Ets.Service.Provider.Pay
         {
 
             #region 参数绑定
-            WxNotifyResultModel notify = new ResultNotify().ProcessNotify();
+            ETS.Library.Pay.SSBWxPay.WxNotifyResultModel notify = new ETS.Library.Pay.SSBWxPay.ResultNotify().ProcessNotify();
             string errmsg = "<xml><return_code><![CDATA[FAIL]]></return_code><return_msg><![CDATA[{0}]]></return_msg></xml>";
             #region 回调完成状态
             if (notify.return_code == "SUCCESS")
