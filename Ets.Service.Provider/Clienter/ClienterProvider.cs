@@ -403,7 +403,7 @@ namespace Ets.Service.Provider.Clienter
             //新版的 骑士 注册， 城市 非 必填
             if (!string.IsNullOrWhiteSpace(clienter.City))
             {
-                Model.DomainModel.Area.AreaModelTranslate areaModel = iAreaProvider.GetNationalAreaInfo(new Model.DomainModel.Area.AreaModelTranslate() { Name = clienter.City.Trim(), JiBie = 2 });
+                Model.DomainModel.Area.AreaModelTranslate areaModel = iAreaProvider.GetNationalAreaInfo(new Model.DomainModel.Area.AreaModelTranslate() { Name = clienter.City.Trim(), JiBie = 3 });
                 if (areaModel != null)
                 {
                     clienter.CityId = areaModel.NationalCode.ToString();

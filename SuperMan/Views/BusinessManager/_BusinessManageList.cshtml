@@ -1,6 +1,7 @@
 ﻿@using System.Activities.Expressions
 @using System.Text.RegularExpressions
 @using Ets.Service.Provider.User
+@using ETS.Enums
 @using ETS.Util
 @model ETS.Data.PageData.PageInfo<Ets.Model.DataModel.Business.BusListResultModel>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
@@ -126,15 +127,18 @@
                         int checkAddress = string.IsNullOrEmpty(item.Address) ? 0 : 1;
                         int checkImage = string.IsNullOrEmpty(item.CheckPicUrl) ? 0 : 1;
 
-                        if (@item.Status == 1)
+                        if (@item.GroupId != GroupType.Group110.GetHashCode() || (@item.GroupId == GroupType.Group110.GetHashCode() && !string.IsNullOrWhiteSpace(@item.Name)))
                         {
-                            <a href="javascript:void(0)" onclick="businessOk(@checkAddress,@item.Id,@commission,@checkImage,@item.CommissionType,@item.Latitude,@item.Longitude)" style="color:gray" businessid="@item.Id" class="businessOk">审核通过</a>
+                            if (@item.Status == 1)
+                            {
+                                <a href="javascript:void(0)" onclick="businessOk(@checkAddress, @item.Id, @commission, @checkImage, @item.CommissionType, @item.Latitude, @item.Longitude) " style="color: gray" businessid="@item.Id" class="businessOk">审核通过</a>
                                 <a href="javascript:void(0)" businessid="@item.Id" class="businessCel">取消资格</a>
-                        }
-                        else
-                        {
-                            <a href="javascript:void(0)" onclick="businessOk(@checkAddress,@item.Id,@commission,@checkImage,@item.CommissionType,@item.Latitude,@item.Longitude)" businessid="@item.Id" class="businessOk">审核通过</a>
-                                <a href="javascript:void(0)" style="color:gray" businessid="@item.Id" class="businessCel">取消资格</a>
+                            }
+                            else
+                            {
+                                <a href="javascript:void(0)" onclick="businessOk(@checkAddress, @item.Id, @commission, @checkImage, @item.CommissionType, @item.Latitude, @item.Longitude) " businessid="@item.Id" class="businessOk">审核通过</a>
+                                <a href="javascript:void(0)" style="color: gray" businessid="@item.Id" class="businessCel">取消资格</a>
+                            }
                         }
 
                     }
@@ -145,23 +149,48 @@
                                 }*@
                             @if (SuperMan.App_Start.UserContext.Current.HasAuthority(60))
                             {
+                                if (@item.GroupId != GroupType.Group110.GetHashCode() || (@item.GroupId == GroupType.Group110.GetHashCode() && !string.IsNullOrWhiteSpace(@item.Name)))
+                                {
                                 @*<a href="/BusinessManager/QueryBusinessDetail?businessId=@item.Id">修改信息</a>*@
-                                <a target="_blank" href="@ConfigSettings.Instance.JavaAdminUrl/business/detail?businessID=@item.Id">修改信息</a>
+                                    <a target="_blank" href="@ConfigSettings.Instance.JavaAdminUrl/business/detail?businessID=@item.Id">修改信息</a>
                                 @*<a href="javascript:void(0)" onclick="funcUpdateBusinessInfo(@item.Id,'@item.Name','@item.PhoneNo','@item.OriginalBusiId','@item.GroupId','@item.MealsSettleMode')">修改信息</a>*@
+                                }
                             }
                             @if (SuperMan.App_Start.UserContext.Current.HasAuthority(52))
                             {
-                                <a href="javascript:void(0)" onclick="funcBusinessRecharge(@item.Id,'@item.Name', '@item.PhoneNo')">充值</a>
+                                if (@item.GroupId != GroupType.Group110.GetHashCode() || (@item.GroupId == GroupType.Group110.GetHashCode() && !string.IsNullOrWhiteSpace(@item.Name)))
+                                {
+                                    <a href="javascript:void(0)" onclick="funcBusinessRecharge(@item.Id, '@item.Name', '@item.PhoneNo') ">充值</a>
+                                }
                             }
                             @if (SuperMan.App_Start.UserContext.Current.HasAuthority(75))
                             {
-                                 <a href="@ConfigSettings.Instance.JavaAdminUrl/business/clienterbindlist?businessId=@item.Id">骑士绑定</a>
+                                if (@item.GroupId != GroupType.Group110.GetHashCode() || (@item.GroupId == GroupType.Group110.GetHashCode() && !string.IsNullOrWhiteSpace(@item.Name)))
+                                {
+                                    <a href="@ConfigSettings.Instance.JavaAdminUrl/business/clienterbindlist?businessId=@item.Id">骑士绑定</a>
                                 @*<a href="/BusinessManager/ClienterBindManage?businessId=@item.Id">骑士绑定</a>*@
                                 @*<a href="javascript:void(0)" onclick="funcUpdateBusinessInfo(@item.Id,'@item.Name','@item.PhoneNo','@item.OriginalBusiId','@item.GroupId','@item.MealsSettleMode')">修改信息</a>*@
+                                }
                             }
                             @if (SuperMan.App_Start.UserContext.Current.HasAuthority(61))
                             {
-                            <a href="javascript:void(0)" onclick="funcBusinessWithdraw(@item.Id,'@item.Name', '@item.PhoneNo')">提款申请</a>
+                                if (@item.GroupId != GroupType.Group110.GetHashCode() || (@item.GroupId == GroupType.Group110.GetHashCode() && !string.IsNullOrWhiteSpace(@item.Name)))
+                                {
+                                    <a href="javascript:void(0)" onclick="funcBusinessWithdraw(@item.Id, '@item.Name', '@item.PhoneNo') ">提款申请</a>
+                                }
+                            }
+                            @if (SuperMan.App_Start.UserContext.Current.HasAuthority(102))  //启用禁用
+                            {
+                                int checkBusinessName = string.IsNullOrEmpty(item.Name) ? 0 : 1;
+                                int groupIdBool = item.GroupId == GroupType.Group110.GetHashCode() ? 1 : 0;
+                                if (@item.IsEnable == 1)
+                                {
+                                    <a href="javascript:void(0)" onclick="funcBusinessIsEnable(@item.Id, 0, @checkBusinessName,@groupIdBool)">禁用</a>
+                                }
+                                else
+                                {
+                                    <a href="javascript:void(0)" onclick="funcBusinessIsEnable(@item.Id, 1, @checkBusinessName,@groupIdBool) ">启用</a>
+                                }
                             }
                         </td>
                     </tr>
@@ -203,6 +232,41 @@
             });
         });
     });
+    //启用禁用
+    function funcBusinessIsEnable(businessId, isEnable, checkBusinessName,groupIdBool)
+    {
+        var paramaters = { "id": businessId };
+        var url = "";
+        if (isEnable == 1) {
+            if (groupIdBool == 0 && checkBusinessName == 0) {
+                alert("该门店未填写商户名称，无法启用");
+                return;
+            }
+            if (!window.confirm("请再次确认是否启用？")) {
+                return;
+            } 
+            url = "/BusinessManager/IsEnableOK";
+
+        } else {
+            if (!window.confirm("请再次确认是否禁用？")) {
+                return;
+            }
+            url = "/BusinessManager/IsEnableDel";
+        }
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: paramaters,
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert("操作成功");
+                    window.location.href = "/BusinessManager/BusinessManager";
+                } else {
+                    alert(result.Message);
+                }
+            }
+        });
+    }
     ///操作审核验证
     function businessOk(checkAddress, businessId, Proportion, checkImage, commissionType, Latitude, Longitude) {
         if (!window.confirm("是否审核通过？")) {

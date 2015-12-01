@@ -400,6 +400,8 @@ namespace Ets.Service.IProvider.Business
         /// 2015年8月13日 16:41:11
         /// </summary> 
         void UpdateBBalanceAndWithdraw(BusinessMoneyPM businessMoneyPM);
+
+        bool UpdateBusinessIsEnable(BusinessAuditModel bam);
     }
 }
 

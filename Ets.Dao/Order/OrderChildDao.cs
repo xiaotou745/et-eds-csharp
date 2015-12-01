@@ -459,7 +459,8 @@ from  OrderChild (nolock) where OrderId IN ({0})", String.Join(",", orderIdList.
         /// 2015年11月19日 20:27:33
         /// </summary>
         public IList<OrderChild> GetListByTime(string startTime, string endTime)
-        {            
+        {
+            IList<OrderChild> list = new List<OrderChild>(); 
             string querySql = @" 
  select  oc.Id,oc.OrderId,o.OrderNo,o.ordercount,o.businessId,oc.SettleMoney,b.Name as BusinessName  from  orderchild oc 
 left join [order] o on oc.orderid=o.id
@@ -471,8 +472,22 @@ and oc.CreateTime>=@startTime and oc.CreateTime<=@endTime";
             dbParameters.Add("startTime", DbType.String, 100).Value = startTime;
             dbParameters.Add("endTime", DbType.String, 100).Value = endTime;
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, querySql, dbParameters);
-            IList<OrderChild> list= MapRows<OrderChild>(dt);
-            return list;
+          
+            foreach (DataRow dataRow in dt.Rows)
+            {
+                OrderChild ochildInfo = new OrderChild();
+                ochildInfo.Id = ParseHelper.ToInt(dataRow["Id"]);
+                ochildInfo.OrderId = ParseHelper.ToInt(dataRow["OrderId"]);
+                if (dataRow["OrderNo"]!=null)
+                    ochildInfo.OrderNo = dataRow["OrderNo"].ToString();
+                ochildInfo.OrderCount = ParseHelper.ToInt(dataRow["ordercount"]);
+                ochildInfo.businessId = ParseHelper.ToInt(dataRow["businessId"]);
+                ochildInfo.SettleMoney = ParseHelper.ToDecimal(dataRow["SettleMoney"]);
+                if (dataRow["BusinessName"] != null)
+                    ochildInfo.BusinessName = dataRow["BusinessName"].ToString();              
+                list.Add(ochildInfo);
+            }
+            return list;            
         }
 
         /// <summary>

@@ -149,18 +149,19 @@ namespace Ets.SendMessage
             {
                 ClienterDao clienterDao = new ClienterDao();
                 DataTable dt = clienterDao.GetPhoneNoList(model.PushCity);
-
+                if (dt == null || dt.Rows.Count <= 0)
+                {
+                    return;
+                }
                 for (int i = 0; i < dt.Rows.Count; i++)
                 {
-                    if (dt.Rows[i]["PhoneNo"] == null || dt.Rows[i]["PhoneNo"].ToString() == "") continue;
+                    string phoneNo = ParseHelper.ToString(dt.Rows[i]["PhoneNo"]);
+                    if (phoneNo == "" || StringHelper.CheckPhone(phoneNo)) continue;
 
-                    string phoneNo = "";
-                    if (StringHelper.CheckPhone(dt.Rows[i]["PhoneNo"].ToString()))
-                        phoneNo = dt.Rows[i]["PhoneNo"].ToString();
                     Task.Factory.StartNew(() =>
                     {
-                        SendSmsHelper.SendSendSmsSaveLog(phoneNo, model.Content,SystemConst.SMSSOURCE);
-                        //写日志                    
+                        SendSmsHelper.SendSendSmsSaveLog(phoneNo, model.Content, SystemConst.SMSSOURCE);
+                        //写日志
                         LogHelper.LogTraceWriterPhone(model.Id + "  骑士:" + phoneNo);
 
                     });
@@ -175,23 +176,23 @@ namespace Ets.SendMessage
         void SendMessImport(MessageModel model)
         {
             try
-            { 
+            {
                 if (!string.IsNullOrEmpty(model.PushPhone))
-                {                
-                    string[] sp = model.PushPhone.Split(',');                 
+                {
+                    string[] sp = model.PushPhone.Split(',');
                     for (int i = 0; i < sp.Length; i++)
-                    {               
+                    {
                         if (sp[i] == null || sp[i].ToString() == "") continue;
 
                         string phoneNo = "";
                         if (StringHelper.CheckPhone(sp[i].ToString()))
                             phoneNo = sp[i].ToString();
-                        
+
                         Task.Factory.StartNew(() =>
                         {
                             SendSmsHelper.SendSendSmsSaveLog(phoneNo, model.Content, SystemConst.SMSSOURCE);
                             //写日志
-                            LogHelper.LogTraceWriterPhone(model.Id+"  指定对象:"+phoneNo);
+                            LogHelper.LogTraceWriterPhone(model.Id + "  指定对象:" + phoneNo);
                         });
                     }
                 }
