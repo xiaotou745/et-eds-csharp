@@ -192,17 +192,6 @@ namespace SuperManWebApi.Controllers
         }
 
         /// <summary>
-        /// 商家充值微信回调方法回调
-        /// 窦海超
-        /// 2015年5月29日 15:09:29
-        /// </summary>
-        /// <returns></returns>
-        public void BusinessRechargeWxNotify()
-        {
-            payProvider.BusinessRechargeWxNotify();
-        }
-
-        /// <summary>
         /// 商家充值回调方法回调
         /// 窦海超
         /// 2015年5月29日 15:17:07
@@ -212,10 +201,32 @@ namespace SuperManWebApi.Controllers
         {
             payProvider.BusinessRechargeNotify();
         }
+
         #endregion
 
         #region 微信
 
+        /// <summary>
+        /// 商家充值微信回调方法回调
+        /// 窦海超
+        /// 2015年5月29日 15:09:29
+        /// </summary>
+        /// <returns></returns>
+        public void SSBusinessRechargeWxNotify()
+        {
+            payProvider.SSBusinessRechargeWxNotify();
+        }
+
+        /// <summary>
+        /// 商家充值微信回调方法回调
+        /// 窦海超
+        /// 2015年5月29日 15:09:29
+        /// </summary>
+        /// <returns></returns>
+        public void BusinessRechargeWxNotify()
+        {
+            payProvider.BusinessRechargeWxNotify();
+        }
         /// <summary>
         /// 微信支付 回调
         /// 窦海超
@@ -226,6 +237,17 @@ namespace SuperManWebApi.Controllers
         public void WxNotify()
         {
             payProvider.WxNotify();
+        }
+
+        /// <summary>
+        /// 闪送模式 微信支付 回调
+        /// 窦海超
+        /// 2015年5月13日 15:02:42
+        /// </summary>
+        /// <returns></returns>
+        //[HttpGet]
+        public void SSWxNotify() {
+            payProvider.SSWxNotify();
         }
         #endregion
 
