@@ -1637,6 +1637,7 @@ select top 1
         o.Amount,
         o.DeliveryCompanySettleMoney,
         o.DeliveryCompanyID,
+        o.Platform,
         ISNULL(oo.IsOrderChecked,1) as IsOrderChecked,
         GroupBusinessId,
        isnull(gb.GroupBusiName,'') as GroupBusiName
@@ -1711,6 +1712,7 @@ select top 1
         o.DeliveryCompanySettleMoney,
         o.DeliveryCompanyID,
         o.MealsSettleMode,
+        o.Platform,
         ISNULL(oo.IsOrderChecked,1) AS IsOrderChecked,
 		oo.PubLatitude,
 		oo.PubLongitude       
