@@ -72,7 +72,7 @@ namespace Ets.Service.Provider.Clienter
         readonly ClienterLoginLogDao clienterLoginLogDao = new ClienterLoginLogDao();
         private TagRelationDao tagRelationDao = new TagRelationDao();
         private IGroupBusinessProvider iGroupBusinessProvider = new GroupBusinessProvider();
-
+        OrderSubsidiesLogDao orderSubsidiesLogDao = new OrderSubsidiesLogDao();
         /// <summary>
         /// 骑士上下班功能 add by caoheyang 20150312
         /// </summary>
@@ -1770,6 +1770,44 @@ namespace Ets.Service.Provider.Clienter
         {
             return clienterDao.UpdateClientHeadPhotoInfo(clienterModel);
         }
+
+        /// <summary>
+        /// 更新骑士可提现 
+        /// 闪送模式 服务调用
+        /// </summary>
+        public void UpdateCAllowWithdrawPrice(NonJoinWithdrawModel njwModel)
+        {
+            //更新骑士可提现余额
+            UpdateCAllowWithdrawPrice(new ClienterMoneyPM()
+            {
+                ClienterId = njwModel.clienterId,
+                Amount = njwModel.clienterPrice,
+                Status = ClienterAllowWithdrawRecordStatus.Success.GetHashCode(),
+                RecordType = ClienterAllowWithdrawRecordType.OrderCommission.GetHashCode(),
+                Operator = njwModel.clienterId.ToString(),
+                WithwardId = njwModel.id,
+                RelationNo = njwModel.OrderNo,
+                Remark = "闪送模式服务加提现"
+            });
+
+            //更新已提现状态
+            orderOtherDao.UpdateJoinWithdraw(njwModel.id);
+            //更新审核状态
+            orderOtherDao.UpdateAuditStatus(njwModel.id, OrderAuditStatusCommon.Through.GetHashCode(), "系统");
+            //写入订单日志                
+            orderSubsidiesLogDao.Insert(new OrderSubsidiesLog()
+            {
+                OrderId = njwModel.id,
+                Price = njwModel.clienterPrice,
+                OptName = njwModel.clienterId.ToString(),
+                Remark = "闪送模式服务自动审核通过，增加" + njwModel.clienterPrice + "元可提现金额",
+                OptId = njwModel.clienterId,
+                OrderStatus = OrderOperationCommon.AuditStatusOk.GetHashCode(),
+                Platform = SuperPlatform.ManagementBackground.GetHashCode()
+            });
+
+        }
+
     }
 
 }

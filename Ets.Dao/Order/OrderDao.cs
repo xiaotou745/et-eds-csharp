@@ -2476,15 +2476,15 @@ where businessId=@businessId and TimeSpan=@TimeSpan ";
             string sql = @"
 select 
 o.id,o.OrderNo, o.amount, 
-o.RealOrderCommission clienterPrice, --给骑士
+o.OrderCommission clienterPrice, --给骑士
 o.Amount-o.SettleMoney businessPrice,--给商家
 o.clienterId, o.businessId
 from    dbo.[order] o ( nolock )
         join dbo.OrderOther oo ( nolock ) on o.Id = oo.OrderId
-where   oo.IsJoinWithdraw = 0
-        and oo.HadUploadCount >= o.OrderCount --订单量=已上传
+where   oo.IsJoinWithdraw = 0    
         and o.Status = 1 --已完成订单
         and o.FinishAll=1
+        and o.platform=3
         and datediff(hour, o.ActualDoneDate, getdate()) >= @hour";
             IDbParameters parm = DbHelper.CreateDbParameters("@hour", DbType.Int64, 4, hour);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);

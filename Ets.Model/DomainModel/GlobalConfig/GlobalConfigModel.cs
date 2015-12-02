@@ -199,6 +199,11 @@ namespace Ets.Model.DomainModel.GlobalConfig
         /// </summary>
         public string AlipayPassword { get; set; }
 
+        /// <summary>
+        /// 闪送模式 n小时后加可提现
+        /// </summary>
+        public string CashAndTime { get; set; }
+
         private Dictionary<int, string> _indexedInstanceProperty =
             new Dictionary<int, string>();
          [IndexerNameAttribute("IndexedInstanceProperty")]
