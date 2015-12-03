@@ -15,6 +15,7 @@ using OpenApi;
 using Ets.Model.Common.TaoBao;
 using Ets.Service.IProvider.OpenApi;
 using Ets.Service.Provider.OpenApi;
+using ETS.Util;
 namespace OpenApi.Controllers
 {
 
@@ -44,24 +45,18 @@ namespace OpenApi.Controllers
         }
 
         /// <summary>
-        /// 淘宝发布订单
-        /// caoheyang 2015118
+        /// 淘宝发布订单        
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
 
         [HttpPost]
-        public ResultModel<object> OrderDispatch(OrderDispatch p)
-        {
-            
-            //string json = AESApp.AesDecrypt(p.data);
-            //JObject jobject = JObject.Parse(json);
-            //string delivery_order_no = jobject.Value<string>("delivery_order_no"); //接口调用状态 区分大小写
-            //return ResultModel<object>.Conclude(new OrderProvider().TaoBaoCancelOrder(delivery_order_no));
-            taoDianDianGroup.TaoBaoPushOrder(p);
-            //调用确认订单接口
+        public ResultModel<object> OrderDispatch(ParamModel p)
+        {      
+            string json = AESApp.AesDecrypt(p.data);
+            OrderDispatch odModel=ParseHelper.Deserialize<OrderDispatch>(json);
 
-            return ResultModel<object>.Conclude(null);
+            return ResultModel<object>.Conclude(taoDianDianGroup.TaoBaoPushOrder(odModel));
         }
     }
 }

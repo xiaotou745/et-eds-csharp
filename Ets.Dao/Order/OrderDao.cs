@@ -4183,7 +4183,8 @@ insert  into dbo.[order]
           TimeSpan,
           MealsSettleMode,
           BusinessReceivable,
-          GroupBusinessId
+          GroupBusinessId,
+          ProductName
         )
 values  ( @OrderNo ,
           @PickUpAddress ,
@@ -4225,7 +4226,8 @@ values  ( @OrderNo ,
           @TimeSpan,
           @MealsSettleMode,
           @BusinessReceivable,
-          @GroupBusinessId
+          @GroupBusinessId,
+          @ProductName
         )
 select @@identity";
 
@@ -4270,6 +4272,7 @@ select @@identity";
             dbParameters.AddWithValue("@MealsSettleMode", order.MealsSettleMode);
             dbParameters.AddWithValue("@BusinessReceivable", order.BusinessReceivable);
             dbParameters.AddWithValue("@GroupBusinessId", order.GroupBusinessId);
+            dbParameters.AddWithValue("@ProductName", order.ProductName);
 
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters);      
             return ParseHelper.ToInt(result, 0);
