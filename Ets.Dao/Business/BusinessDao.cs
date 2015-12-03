@@ -376,6 +376,7 @@ and a.PhoneNo=@PhoneNo";
                                     ,b.CommissionFixValue
                                     ,b.BusinessGroupId
                                     ,bg.Name BusinessGroupName
+                                    ,b.IsEnable
                                     ,ISNULL(b.MealsSettleMode,0) MealsSettleMode
                                     ,ISNULL(b.BalancePrice,0) BalancePrice
                                     ,ISNULL(b.AllowWithdrawPrice,0) AllowWithdrawPrice
@@ -3093,7 +3094,57 @@ ORDER BY templc.WorkStatus;";
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             return MapRows<LocalClienterModel>(dt);
         }
+        
+        public bool UpdateBusinessIsEnable(BusinessAuditModel bam)
+        {
+            bool reslut = false;
+            string remark = "";
+            try
+            {
+                StringBuilder sql = new StringBuilder();
+                if (bam.IsEnable == 1)
+                {
+                    remark = "启用状态修改为禁用";
+                }
+                else
+                {
+                    remark = "启用状态修改为启用";
+                } 
+                sql.AppendFormat(@" update business set Status={0},IsEnable ={1} OUTPUT
+                                              Inserted.Id,
+                                              @OptId,
+                                              @OptName,
+                                              GETDATE(),
+                                              @Platform,
+                                              @Remark
+                                            INTO BusinessOptionLog
+                                             (BusinessId,
+                                              OptId,
+                                              OptName,
+                                              InsertTime,
+                                              Platform,
+                                              Remark) ", bam.AuditStatus.GetHashCode(),bam.IsEnable);
 
+                sql.Append(" where id=@id;");
+                IDbParameters dbParameters = DbHelper.CreateDbParameters();
+                dbParameters.AddWithValue("id", bam.BusinessId);
+                dbParameters.AddWithValue("@OptId", bam.OptionUserId);
+                dbParameters.AddWithValue("@OptName", bam.OptionUserName);
+                dbParameters.AddWithValue("@Platform", 3);
+                dbParameters.AddWithValue("@Remark", remark);
+                int i = DbHelper.ExecuteNonQuery(Config.SuperMan_Write, sql.ToString(), dbParameters);
 
+                if (i > 0)
+                { 
+                    reslut = true;
+                }
+            }
+            catch (Exception ex)
+            { 
+                LogHelper.LogWriter(ex, "更新启用状态");
+                throw;
+            }
+            return reslut;
+        }
     }
 }

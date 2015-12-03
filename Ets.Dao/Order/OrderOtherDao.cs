@@ -186,8 +186,20 @@ o.PubLongitude
         {
 
             const string insertSql = @"
-insert into OrderOther(OrderId,NeedUploadCount,ReceiptPic,HadUploadCount,IsJoinWithdraw,PubLongitude,PubLatitude,GrabTime,GrabLongitude,GrabLatitude,CompleteLongitude,CompleteLatitude,TakeTime,TakeLongitude,TakeLatitude,PubToGrabDistance,GrabToCompleteDistance,PubToCompleteDistance,OneKeyPubOrder,IsNotRealOrder,DeductCommissionReason,DeductCommissionType,AuditStatus,IsOrderChecked,CancelTime,IsAllowCashPay,IsPubDateTimely,IsGrabTimely,IsTakeTimely,IsCompleteTimely,AuditDate,AuditOptName)
-values(@OrderId,@NeedUploadCount,@ReceiptPic,@HadUploadCount,@IsJoinWithdraw,@PubLongitude,@PubLatitude,@GrabTime,@GrabLongitude,@GrabLatitude,@CompleteLongitude,@CompleteLatitude,@TakeTime,@TakeLongitude,@TakeLatitude,@PubToGrabDistance,@GrabToCompleteDistance,@PubToCompleteDistance,@OneKeyPubOrder,@IsNotRealOrder,@DeductCommissionReason,@DeductCommissionType,@AuditStatus,@IsOrderChecked,@CancelTime,@IsAllowCashPay,@IsPubDateTimely,@IsGrabTimely,@IsTakeTimely,@IsCompleteTimely,@AuditDate,@AuditOptName)
+insert into OrderOther(OrderId,NeedUploadCount,ReceiptPic,HadUploadCount,IsJoinWithdraw,
+PubLongitude,PubLatitude,GrabTime,GrabLongitude,GrabLatitude,CompleteLongitude,CompleteLatitude,
+TakeTime,TakeLongitude,TakeLatitude,
+OneKeyPubOrder,IsNotRealOrder,DeductCommissionReason,DeductCommissionType,AuditStatus,IsOrderChecked,
+CancelTime,IsAllowCashPay,IsPubDateTimely,IsGrabTimely,IsTakeTimely,IsCompleteTimely,AuditDate,AuditOptName,
+DeliveryOrderNo,NotifyTime,EndTime,ExpectedTakeTime,ExpectedDelivery,ReceiptId
+)
+values(@OrderId,@NeedUploadCount,@ReceiptPic,@HadUploadCount,@IsJoinWithdraw,@PubLongitude,
+@PubLatitude,@GrabTime,@GrabLongitude,@GrabLatitude,@CompleteLongitude,@CompleteLatitude
+,@TakeTime,@TakeLongitude,@TakeLatitude,
+@OneKeyPubOrder,@IsNotRealOrder,@DeductCommissionReason,@DeductCommissionType,@AuditStatus,@IsOrderChecked,
+@CancelTime,@IsAllowCashPay,@IsPubDateTimely,@IsGrabTimely,@IsTakeTimely,@IsCompleteTimely,@AuditDate,@AuditOptName,
+@DeliveryOrderNo,@NotifyTime,@EndTime,@ExpectedTakeTime,@ExpectedDelivery,@ReceiptId
+)
 
 select @@IDENTITY";
 
@@ -206,10 +218,7 @@ select @@IDENTITY";
             dbParameters.AddWithValue("CompleteLatitude", orderOther.CompleteLatitude);
             dbParameters.AddWithValue("TakeTime", orderOther.TakeTime);
             dbParameters.AddWithValue("TakeLongitude", orderOther.TakeLongitude);
-            dbParameters.AddWithValue("TakeLatitude", orderOther.TakeLatitude);
-            dbParameters.AddWithValue("PubToGrabDistance", orderOther.PubToGrabDistance);
-            dbParameters.AddWithValue("GrabToCompleteDistance", orderOther.GrabToCompleteDistance);
-            dbParameters.AddWithValue("PubToCompleteDistance", orderOther.PubToCompleteDistance);
+            dbParameters.AddWithValue("TakeLatitude", orderOther.TakeLatitude);      
             dbParameters.AddWithValue("OneKeyPubOrder", orderOther.OneKeyPubOrder);
             dbParameters.AddWithValue("IsNotRealOrder", orderOther.IsNotRealOrder);
             dbParameters.AddWithValue("DeductCommissionReason", orderOther.DeductCommissionReason);
@@ -224,7 +233,12 @@ select @@IDENTITY";
             dbParameters.AddWithValue("IsCompleteTimely", orderOther.IsCompleteTimely);
             dbParameters.AddWithValue("AuditDate", orderOther.AuditDate);
             dbParameters.AddWithValue("AuditOptName", orderOther.AuditOptName);
-
+            dbParameters.AddWithValue("DeliveryOrderNo", orderOther.DeliveryOrderNo);
+            dbParameters.AddWithValue("NotifyTime", orderOther.NotifyTime);
+            dbParameters.AddWithValue("EndTime", orderOther.EndTime);
+            dbParameters.AddWithValue("ExpectedTakeTime", orderOther.ExpectedTakeTime);
+            dbParameters.AddWithValue("ExpectedDelivery", orderOther.ExpectedDelivery);
+            dbParameters.AddWithValue("ReceiptId", orderOther.ReceiptId);
 
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters);
             if (result == null)

@@ -66,6 +66,7 @@ namespace Ets.Service.IProvider.Pay
         /// <returns></returns>
         dynamic BusinessRechargeNotify();
 
+
         /// <summary>
         /// 查询支付状态
         /// 窦海超
@@ -81,6 +82,23 @@ namespace Ets.Service.IProvider.Pay
         /// </summary>
         /// <returns></returns>
         void WxNotify();
+
+
+        /// <summary>
+        /// 闪送模式 微信支付回调方法 
+        /// 窦海超
+        /// 2015年5月13日 15:03:45
+        /// </summary>
+        /// <returns></returns>
+        void SSWxNotify();
+
+        /// <summary>
+        /// 微信商家充值回调方法 
+        /// 窦海超
+        /// 2015年8月6日 23:06:02
+        /// </summary>
+        /// <returns></returns>
+        void SSBusinessRechargeWxNotify();
 
         /// <summary>
         /// 微信商家充值回调方法 

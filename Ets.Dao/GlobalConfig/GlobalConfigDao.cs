@@ -21,20 +21,7 @@ namespace Ets.Dao.GlobalConfig
         /// 2015年4月2日 13:15:02
         /// </summary>
         public static GlobalConfigModel GlobalConfigGet(int GroupId)
-        {        
-
-                //model = new GlobalConfigDao().GlobalConfigMethod(GroupId);
-                //#region redis判断，如果没有加到redis中
-                //var redis = new ETS.NoSql.RedisCache.RedisCache();
-                //string cacheKey =string.Format(RedissCacheKey.Ets_Dao_GlobalConfig_GlobalConfigGet, GroupId);//缓存的KEY
-                //model = redis.Get<GlobalConfigModel>(cacheKey);
-                //if (model == null)
-                //{
-                //    //CurrentGlobalVersion = ETS.Config.GlobalVersion;
-                //    model = new GlobalConfigDao().GlobalConfigMethod(GroupId);
-                //    redis.Set(cacheKey, model);
-                //}
-            
+        {       
             var redis = new ETS.NoSql.RedisCache.RedisCachePublic();
 
             GlobalConfigModel model = new GlobalConfigModel();

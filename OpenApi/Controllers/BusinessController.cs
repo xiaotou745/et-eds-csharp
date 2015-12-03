@@ -97,19 +97,19 @@ namespace OpenApi.Controllers
             paramodel.fields.B_Password = MD5Helper.MD5(string.IsNullOrEmpty(paramodel.fields.B_Password) ? "abc123" : paramodel.fields.B_Password);
             #region 转换省市区
             //转换省
-            var _province = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = paramodel.fields.B_Province, JiBie = 1 });
+            var _province = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = paramodel.fields.B_Province, JiBie = 2 });
             if (_province != null)
             {
                 paramodel.fields.B_ProvinceCode = _province.NationalCode.ToString();
             }
             //转换市 
-            var _city = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = paramodel.fields.B_City, JiBie = 2 });
+            var _city = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = paramodel.fields.B_City, JiBie = 3 });
             if (_city != null)
             {
                 paramodel.fields.B_CityCode = _city.NationalCode.ToString();
             }
             //转换区
-            var _area = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = paramodel.fields.B_Area, JiBie = 3 });
+            var _area = iAreaProvider.GetNationalAreaInfo(new Ets.Model.DomainModel.Area.AreaModelTranslate() { Name = paramodel.fields.B_Area, JiBie = 4 });
             if (_area != null)
             {
                 paramodel.fields.B_AreaCode = _area.NationalCode.ToString();

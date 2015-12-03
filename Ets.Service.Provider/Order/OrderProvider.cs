@@ -938,7 +938,7 @@ namespace Ets.Service.Provider.Order
 
                 #region 转换省市区
                 //转换省
-                var _province = iAreaProvider.GetNationalAreaInfo(new AreaModelTranslate() { Name = model.Receive_Province, JiBie = 1 });
+                var _province = iAreaProvider.GetNationalAreaInfo(new AreaModelTranslate() { Name = model.Receive_Province, JiBie = 2 });
                 if (_province != null)
                 {
                     model.Receive_ProvinceCode = _province.NationalCode.ToString();
@@ -946,14 +946,14 @@ namespace Ets.Service.Provider.Order
                 string cityName = model.Receive_City;
                 model.Receive_City = string.IsNullOrEmpty(cityName) ? string.Empty : cityName.Trim().Replace("城区", "市").Replace("郊区", "市");
                 //转换市
-                var _city = iAreaProvider.GetNationalAreaInfo(new AreaModelTranslate() { Name = model.Receive_City, JiBie = 2 });
+                var _city = iAreaProvider.GetNationalAreaInfo(new AreaModelTranslate() { Name = model.Receive_City, JiBie = 3 });
                 if (_city != null)
                 {
 
                     model.Receive_CityCode = _city.NationalCode.ToString();
                 }
                 //转换区
-                var _area = iAreaProvider.GetNationalAreaInfo(new AreaModelTranslate() { Name = model.Receive_Area, JiBie = 3 });
+                var _area = iAreaProvider.GetNationalAreaInfo(new AreaModelTranslate() { Name = model.Receive_Area, JiBie = 4 });
                 if (_area != null)
                 {
                     model.Receive_AreaCode = _area.NationalCode.ToString();

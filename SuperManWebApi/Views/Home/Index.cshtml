@@ -22,26 +22,26 @@
     //    error: function () { }
     //});
    
-    $.ajax({
-        type: 'POST',
-        dataType: 'json',
-        url: '/Order/TicketUpload',
-        //contentType: "application/x-www-form-urlencoded; charset=utf-8"//默认
-        //contentType: "application/json; charset=utf-8",
-        //contentType: "text/json; charset=utf-8",         
-        data: {
-            "OrderId": 142392,
-            "ClienterId":3087,
-            "NeedUploadCount": 5,
-            "ReceiptPicAddress": "/2015/05/22/22/142392/1348249.jpg",
-            "Version": "1.1.0",
-            "OrderChildId": 330947
-        },
-        success: function (data) {
-            console.log(data);
-        },
-        error: function () { }
-    });
+    //$.ajax({
+    //    type: 'POST',
+    //    dataType: 'json',
+    //    url: '/Order/TicketUpload',
+    //    //contentType: "application/x-www-form-urlencoded; charset=utf-8"//默认
+    //    //contentType: "application/json; charset=utf-8",
+    //    //contentType: "text/json; charset=utf-8",         
+    //    data: {
+    //        "OrderId": 142392,
+    //        "ClienterId":3087,
+    //        "NeedUploadCount": 5,
+    //        "ReceiptPicAddress": "/2015/05/22/22/142392/1348249.jpg",
+    //        "Version": "1.1.0",
+    //        "OrderChildId": 330947
+    //    },
+    //    success: function (data) {
+    //        console.log(data);
+    //    },
+    //    error: function () { }
+    //});
 
     //$.ajax({
     //    type: 'POST',
@@ -132,9 +132,9 @@
     //    dataType: 'json',
     //    url: '/Order/Complete',
     //    data: {
-    //        "userId": 3231,
-    //        "orderId": 145167,
-    //        "orderNo": "2092150813155518704",
+    //        "ClienterId": 3263,
+    //        "orderId": 147626,
+    //        "orderNo": "2092151125140311048",
     //        "pickupCode": "",
     //        "version": "1.0",
     //        "longitude":0.201,

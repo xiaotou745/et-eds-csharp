@@ -141,6 +141,31 @@ namespace Ets.Model.DataModel.Order
         /// </summary>
         public string AuditOptName { get; set; }
 
+        /// <summary>
+        /// 物流单号
+        /// </summary>
+        public long DeliveryOrderNo { get;set; }
+
+        /// <summary>
+        /// 点点送通知时间
+        /// </summary>
+        public DateTime NotifyTime { get; set; }
+        /// <summary>
+        /// 点点送订单确认结束时间
+        /// </summary>
+        public DateTime EndTime { get; set; }
+        /// <summary>
+        /// 点点送期望取件时间
+        /// </summary>
+        public DateTime ExpectedTakeTime { get; set; }
+        /// <summary>
+        /// 点点送期望送达时间
+        /// </summary>
+        public DateTime ExpectedDelivery { get; set; }
+        /// <summary>
+        /// 点点送小票ID
+        /// </summary>
+        public string ReceiptId { get; set; }
 
     }
 }

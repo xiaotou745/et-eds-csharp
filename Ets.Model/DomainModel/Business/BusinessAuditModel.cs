@@ -29,5 +29,9 @@ namespace Ets.Model.DomainModel.Business
         /// 操作人姓名
         /// </summary>
         public string OptionUserName { get; set; }
+        /// <summary>
+        /// 1启用0禁用
+        /// </summary>
+        public int IsEnable { get; set; }
     }
 }

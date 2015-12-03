@@ -20,4 +20,16 @@ namespace ETS.Enums
         [DisplayText("内部错误")]
         Error = 102,
     }
+
+
+    /// <summary>
+    /// 淘宝发布订单    
+    /// </summary>
+    public enum TaoBaoPushOrder
+    {
+        [DisplayText("成功")]
+        Success = 1,   
+        [DisplayText("系统错误")]
+        Error = -1,
+    }
 }

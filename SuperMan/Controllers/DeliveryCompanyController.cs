@@ -228,7 +228,7 @@ namespace SuperMan.Controllers
                     iAreaProvider.GetNationalAreaInfo(new AreaModelTranslate()
                     {
                         Name = city.Trim(),
-                        JiBie = 2
+                        JiBie = 3
                     });
                 if (areaModel == null)
                 {

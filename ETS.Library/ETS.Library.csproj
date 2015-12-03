@@ -68,6 +68,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Pay\SSBWxPay\Config.cs" />
+    <Compile Include="Pay\SSBWxPay\Data.cs" />
+    <Compile Include="Pay\SSBWxPay\Exception.cs" />
+    <Compile Include="Pay\SSBWxPay\HttpService.cs" />
+    <Compile Include="Pay\SSBWxPay\Log.cs" />
+    <Compile Include="Pay\SSBWxPay\NativePay.cs" />
+    <Compile Include="Pay\SSBWxPay\Notify.cs" />
+    <Compile Include="Pay\SSBWxPay\ResultNotify.cs" />
+    <Compile Include="Pay\SSBWxPay\WxNotifyResultModel.cs" />
+    <Compile Include="Pay\SSBWxPay\WxPayApi.cs" />
     <Compile Include="Pay\CWxPay\Config.cs" />
     <Compile Include="Pay\CWxPay\Data.cs" />
     <Compile Include="Pay\CWxPay\Exception.cs" />

@@ -595,6 +595,14 @@ namespace ETS.Enums
 
 
     #region 支付相关
+    public enum PayModelEnum
+    { 
+        [DisplayText("易代送商户")]
+        Business=0,
+        [DisplayText("易代送")]
+        EDS=1
+    }
+
     /// <summary>
     /// 支付方式
     /// </summary>
@@ -603,7 +611,9 @@ namespace ETS.Enums
         [DisplayText("用户支付")]
         BuyerPay = 1,
         [DisplayText("骑士支付")]
-        ClienterPay = 2 
+        ClienterPay = 2 ,
+        [DisplayText("商家支付")]
+        BusinessPay=3
     }
     /// <summary>
     /// 支付类型

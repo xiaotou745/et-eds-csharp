@@ -124,7 +124,7 @@ namespace Ets.Service.Provider.Order
                     long id = item.Id;//子订单id
                     int orderId = item.OrderId;//订单id
                     int orderCount = item.OrderCount;//订单数据
-
+                    ETS.Util.LogHelper.LogWriter("子订单id" + item.Id + "商户id" + item.businessId + "返还金额：" + item.SettleMoney);
                     //更新子订
                     OrderChild ocModel = new OrderChild();
                     ocModel.Id = id;
@@ -137,7 +137,7 @@ namespace Ets.Service.Provider.Order
                     order order = new order();
                     order.Id = orderId;
                     order.OrderCount = orderCount - 1;
-                    orderDao.UpdateOrderCount(order);       
+                    orderDao.UpdateOrderCount(order);
 
                     // 更新商户余额、可提现余额                        
                     businessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
@@ -150,7 +150,7 @@ namespace Ets.Service.Provider.Order
                         WithwardId = orderId,
                         RelationNo = id.ToString(),
                         Remark = "返还配送费支出金额"
-                     });
+                    });
 
                     OrderSubsidiesLog oslModel = new OrderSubsidiesLog();
                     oslModel.OrderId = orderId;
@@ -161,8 +161,8 @@ namespace Ets.Service.Provider.Order
                     oslModel.Platform = SuperPlatform.ServicePlatform.GetHashCode();
                     int oslId = orderSubsidiesLogDao.Insert(oslModel);
 
-                    if(oslId>0)
-                          tran.Complete();
+                    if (oslId > 0)
+                        tran.Complete();
                     }             
                }
             }    
