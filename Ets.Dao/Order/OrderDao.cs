@@ -574,7 +574,7 @@ select @@IDENTITY ";
                                     ,o.FinishAll
                                     ,ISNULL(oo.IsJoinWithdraw,0) IsJoinWithdraw
                                     ";
-            var sbSqlWhere = new StringBuilder(" 1=1 ");
+            var sbSqlWhere = new StringBuilder(" 1=1 and o.Platform<=2"); // and o.Platform<=2 老订单列表不显示闪送订单
             if (!string.IsNullOrWhiteSpace(criteria.businessName))
             {
                 sbSqlWhere.AppendFormat(" AND b.Name='{0}' ", criteria.businessName);
