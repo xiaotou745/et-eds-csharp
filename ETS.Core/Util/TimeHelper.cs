@@ -42,6 +42,21 @@ namespace ETS.Util
                 return dtZone.AddSeconds(Convert.ToDouble(timestamp));
             else
                 return dtZone.AddMilliseconds(Convert.ToDouble(timestamp));
+        }
+
+        /// <summary>
+        /// 13位时间戳转时间
+        /// </summary>
+        /// <param name="timestamp"></param>
+        /// <param name="bflag"></param>
+        /// <returns></returns>
+        public static DateTime TimeStampToCurrDateTime(double timestamp)
+        {            
+            System.DateTime time = System.DateTime.MinValue;
+            System.DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new System.DateTime(1970, 1, 1));
+            time = startTime.AddMilliseconds(timestamp);
+            return time;
         }  
+
     }
 }

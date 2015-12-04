@@ -47,5 +47,13 @@ namespace Ets.Model.DataModel.Order
 		/// </summary>
 		public int GroupID { get; set; }
 
+        public string Unit { get; set; }   
+        
+        public string UnitWeight { get; set; }
+        public string TotalWeight { get; set; }
+
+        public decimal TotalPrice { get; set; }
+        
+
         }   
 }

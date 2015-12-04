@@ -50,13 +50,26 @@ namespace OpenApi.Controllers
         /// <param name="data"></param>
         /// <returns></returns>
 
-        [HttpPost]
-        public ResultModel<object> OrderDispatch(ParamModel p)
-        {      
-            string json = AESApp.AesDecrypt(p.data);
-            OrderDispatch odModel=ParseHelper.Deserialize<OrderDispatch>(json);
+        //[HttpPost]
+        //public ResultModel<object> OrderDispatch(ParamModel p)
+        //{      
+        //    string json = AESApp.AesDecrypt(p.data);
+        //    OrderDispatch odModel=ParseHelper.Deserialize<OrderDispatch>(json);
 
-            return ResultModel<object>.Conclude(taoDianDianGroup.TaoBaoPushOrder(odModel));
+        //    return ResultModel<object>.Conclude(taoDianDianGroup.TaoBaoPushOrder(odModel));
+        //}
+        [HttpPost]
+        public ResultModel<object> OrderDispatch(OrderDispatch p)
+        {
+            try
+            {
+                p.itemsList = ParseHelper.Deserialize<List<Commodity>>(p.items);
+            }
+            catch (Exception err)
+            {
+                string str = err.Message;
+            }
+            return ResultModel<object>.Conclude(taoDianDianGroup.TaoBaoPushOrder(p));
         }
     }
 }

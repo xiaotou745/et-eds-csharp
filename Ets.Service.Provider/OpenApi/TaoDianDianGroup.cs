@@ -326,6 +326,7 @@ namespace Ets.Service.Provider.OpenApi
                     }
 
                     oModel.ProductName = p.title;//产品名称
+                    
                     int oId = orderDao.Insert(oModel);
                     #endregion
 
@@ -352,10 +353,10 @@ namespace Ets.Service.Provider.OpenApi
                     ooModel.IsAllowCashPay = bModel.IsAllowCashPay;
                     ooModel.IsPubDateTimely = 0;
                     ooModel.DeliveryOrderNo = p.delivery_order_no;
-                    ooModel.NotifyTime = new DateTime(p.notify_time);
-                    ooModel.EndTime = new DateTime(p.end_time);
-                    ooModel.ExpectedTakeTime = new DateTime(p.expected_take_time);
-                    ooModel.ExpectedDelivery = new DateTime(p.expected_delivery);
+                    ooModel.NotifyTime = TimeHelper.TimeStampToCurrDateTime(Convert.ToDouble(p.notify_time));
+                    ooModel.EndTime = TimeHelper.TimeStampToCurrDateTime(Convert.ToDouble(p.end_time));
+                    ooModel.ExpectedTakeTime = TimeHelper.TimeStampToCurrDateTime(Convert.ToDouble(p.expected_take_time));
+                    ooModel.ExpectedDelivery = TimeHelper.TimeStampToCurrDateTime(Convert.ToDouble(p.expected_delivery));
                     ooModel.ReceiptId = p.receipt_id;
                     int ooId = orderOtherDao.Insert(ooModel);
                     #endregion
@@ -383,18 +384,31 @@ namespace Ets.Service.Provider.OpenApi
                     #endregion
 
                     #region 订单明细 临时
-                    Ets.Model.DataModel.Order.OrderDetail odModel = new Ets.Model.DataModel.Order.OrderDetail();
-                    odModel.OrderNo = "";
-                    odModel.ProductName = "";//商品名称
-                    odModel.UnitPrice = 0;
-                    odModel.Quantity = 0;
-                    odModel.FormDetailID = 0;
-                    odModel.GroupID = 0;
-                    long odId = orderDetailDao.Insert(odModel);
+                    for (int i = 0; i < p.itemsList.Count; i++)
+                    {                        
+                        Ets.Model.DataModel.Order.OrderDetail odModel = new Ets.Model.DataModel.Order.OrderDetail();
+                        odModel.OrderNo = oModel.OrderNo;
+                        odModel.ProductName = p.itemsList[i].itemName;//商品名称
+                        odModel.UnitPrice = p.itemsList[i].unitPrice/100;
+                        odModel.Quantity = p.itemsList[i].quantity;
+                        odModel.FormDetailID = 0;
+                        odModel.GroupID = 0;
+                        odModel.Unit=p.itemsList[i].unit;
+                        if (p.itemsList[i].unitWeight!=null)
+                            odModel.UnitWeight=p.itemsList[i].unitWeight;
+                        else
+                            odModel.UnitWeight ="";
+                        if (p.itemsList[i].totalWeight != null)
+                            odModel.TotalWeight = p.itemsList[i].totalWeight;
+                        else
+                            odModel.TotalWeight = "";
+                        odModel.TotalPrice = p.itemsList[i].totalPrice / 100; 
+                        long odId = orderDetailDao.Insert(odModel);
+                    }
 
                     #endregion
 
-                    if (oId > 0 && oslId > 0 && ooId > 0 && ocId > 0 && odId > 0)
+                    if (oId > 0 && oslId > 0 && ooId > 0 && ocId > 0)
                     {
                         tran.Complete();
                     }
