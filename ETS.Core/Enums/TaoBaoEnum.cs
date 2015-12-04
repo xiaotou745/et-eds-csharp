@@ -31,5 +31,7 @@ namespace ETS.Enums
         Success = 1,   
         [DisplayText("系统错误")]
         Error = -1,
+        [DisplayText("订单已存在")]
+        OrderId = -2
     }
 }

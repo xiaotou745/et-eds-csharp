@@ -44,20 +44,22 @@ namespace OpenApi.Controllers
             return ResultModel<object>.Conclude(new OrderProvider().TaoBaoCancelOrder(delivery_order_no));
         }
 
-        /// <summary>
-        /// 淘宝发布订单        
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
+        ///// <summary>
+        ///// 淘宝发布订单        
+        ///// </summary>
+        ///// <param name="data"></param>
+        ///// <returns></returns>
 
         //[HttpPost]
-        //public ResultModel<object> OrderDispatch(ParamModel p)
-        //{      
-        //    string json = AESApp.AesDecrypt(p.data);
-        //    OrderDispatch odModel=ParseHelper.Deserialize<OrderDispatch>(json);
+        //public ResultModel<object> OrderDispatch(ParamModel pm)
+        //{
+        //    string json = AESApp.AesDecrypt(pm.data);
+        //    OrderDispatch p = ParseHelper.Deserialize<OrderDispatch>(json);
+        //    p.itemsList = ParseHelper.Deserialize<List<Commodity>>(p.items);
 
-        //    return ResultModel<object>.Conclude(taoDianDianGroup.TaoBaoPushOrder(odModel));
+        //    return ResultModel<object>.Conclude(taoDianDianGroup.TaoBaoPushOrder(p));
         //}
+
         [HttpPost]
         public ResultModel<object> OrderDispatch(OrderDispatch p)
         {

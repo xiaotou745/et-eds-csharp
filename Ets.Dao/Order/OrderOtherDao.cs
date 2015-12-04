@@ -248,6 +248,22 @@ select @@IDENTITY";
             return int.Parse(result.ToString());            
         }
 
+        public bool IsExistByOrderNo(string deliveryOrderNo)
+        {
+            bool isExist;
+
+            const string querysql = @"
+select  count(1) 
+from  dbo.[orderother]  
+where DeliveryOrderNo=@DeliveryOrderNo";
+            IDbParameters dbSelectParameters = DbHelper.CreateDbParameters();
+            dbSelectParameters.AddWithValue("DeliveryOrderNo", deliveryOrderNo);            
+            object executeScalar = DbHelper.ExecuteScalar(SuperMan_Write, querysql, dbSelectParameters);
+            isExist = ParseHelper.ToInt(executeScalar, 0) > 0;
+
+            return isExist;
+        }
+
 
     }
 }

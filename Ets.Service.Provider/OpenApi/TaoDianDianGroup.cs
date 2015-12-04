@@ -235,6 +235,12 @@ namespace Ets.Service.Provider.OpenApi
 
                 using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
                 {
+
+                    bool isExist=orderOtherDao.IsExistByOrderNo(p.delivery_order_no.ToString());
+                    if (isExist)
+                    {
+                        return ETS.Enums.TaoBaoPushOrder.Error;    
+                    }
                     #region 订单表
                     order oModel = new order();
                     TimeSpan ts = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0);
@@ -393,7 +399,10 @@ namespace Ets.Service.Provider.OpenApi
                         odModel.Quantity = p.itemsList[i].quantity;
                         odModel.FormDetailID = 0;
                         odModel.GroupID = 0;
-                        odModel.Unit=p.itemsList[i].unit;
+                        if (p.itemsList[i].unit != null)
+                            odModel.Unit = p.itemsList[i].unit;
+                        else
+                            odModel.Unit = "";
                         if (p.itemsList[i].unitWeight!=null)
                             odModel.UnitWeight=p.itemsList[i].unitWeight;
                         else
