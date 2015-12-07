@@ -120,6 +120,21 @@ where  Id=@Id ";
             dbParameters.AddWithValue("UpdateTime", orderChild.UpdateTime);
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
+        /// <summary>
+        /// 更新是否已付款
+        /// </summary>
+        /// <param name="orderId"></param>
+        public bool UpdateIsPay(int id, int payType)
+        {
+            const string updateSql = @"
+update  [OrderChild]
+set PayStatus = 1,PayType=@PayType
+where   id = @id";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("id", DbType.Int32, 4).Value = id;
+            dbParameters.Add("PayType", DbType.Int32, 4).Value = payType;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters) == 1 ? true : false;
+        }
 
         /// <summary>
         /// 删除一条记录

@@ -15,6 +15,7 @@ using OpenApi;
 using Ets.Model.Common.TaoBao;
 using Ets.Service.IProvider.OpenApi;
 using Ets.Service.Provider.OpenApi;
+using ETS.Util;
 namespace OpenApi.Controllers
 {
 
@@ -44,24 +45,33 @@ namespace OpenApi.Controllers
         }
 
         /// <summary>
-        /// 淘宝发布订单
-        /// caoheyang 2015118
+        /// 淘宝发布订单        
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
 
         [HttpPost]
-        public ResultModel<object> OrderDispatch(OrderDispatch p)
+        public ResultModel<long> OrderDispatch(ParamModel pm)
         {
-            
-            //string json = AESApp.AesDecrypt(p.data);
-            //JObject jobject = JObject.Parse(json);
-            //string delivery_order_no = jobject.Value<string>("delivery_order_no"); //接口调用状态 区分大小写
-            //return ResultModel<object>.Conclude(new OrderProvider().TaoBaoCancelOrder(delivery_order_no));
-            taoDianDianGroup.TaoBaoPushOrder(p);
-            //调用确认订单接口
-
-            return ResultModel<object>.Conclude(null);
+            //return ResultModel<long>.Conclude(TaoBaoPushOrder.Success, 20151203006096421);
+            string json = AESApp.AesDecrypt(pm.data);
+            OrderDispatch p = ParseHelper.Deserialize<OrderDispatch>(json);
+            p.itemsList = ParseHelper.Deserialize<List<Commodity>>(p.items);
+            return ResultModel<long>.Conclude(taoDianDianGroup.TaoBaoPushOrder(p), p.delivery_order_no);
         }
+
+        //[HttpPost]
+        //public ResultModel<object> OrderDispatch(OrderDispatch p)
+        //{
+        //    try
+        //    {
+        //        p.itemsList = ParseHelper.Deserialize<List<Commodity>>(p.items);
+        //    }
+        //    catch (Exception err)
+        //    {
+        //        string str = err.Message;
+        //    }
+        //    return ResultModel<object>.Conclude(taoDianDianGroup.TaoBaoPushOrder(p));
+        //}
     }
 }

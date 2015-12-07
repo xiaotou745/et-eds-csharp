@@ -574,7 +574,7 @@ select @@IDENTITY ";
                                     ,o.FinishAll
                                     ,ISNULL(oo.IsJoinWithdraw,0) IsJoinWithdraw
                                     ";
-            var sbSqlWhere = new StringBuilder(" 1=1 ");
+            var sbSqlWhere = new StringBuilder(" 1=1 and o.Platform<=2"); // and o.Platform<=2 老订单列表不显示闪送订单
             if (!string.IsNullOrWhiteSpace(criteria.businessName))
             {
                 sbSqlWhere.AppendFormat(" AND b.Name='{0}' ", criteria.businessName);
@@ -1637,6 +1637,7 @@ select top 1
         o.Amount,
         o.DeliveryCompanySettleMoney,
         o.DeliveryCompanyID,
+        o.Platform,
         ISNULL(oo.IsOrderChecked,1) as IsOrderChecked,
         GroupBusinessId,
        isnull(gb.GroupBusiName,'') as GroupBusiName
@@ -1711,6 +1712,7 @@ select top 1
         o.DeliveryCompanySettleMoney,
         o.DeliveryCompanyID,
         o.MealsSettleMode,
+        o.Platform,
         ISNULL(oo.IsOrderChecked,1) AS IsOrderChecked,
 		oo.PubLatitude,
 		oo.PubLongitude       
@@ -2474,15 +2476,15 @@ where businessId=@businessId and TimeSpan=@TimeSpan ";
             string sql = @"
 select 
 o.id,o.OrderNo, o.amount, 
-o.RealOrderCommission clienterPrice, --给骑士
+o.OrderCommission clienterPrice, --给骑士
 o.Amount-o.SettleMoney businessPrice,--给商家
 o.clienterId, o.businessId
 from    dbo.[order] o ( nolock )
         join dbo.OrderOther oo ( nolock ) on o.Id = oo.OrderId
-where   oo.IsJoinWithdraw = 0
-        and oo.HadUploadCount >= o.OrderCount --订单量=已上传
+where   oo.IsJoinWithdraw = 0    
         and o.Status = 1 --已完成订单
         and o.FinishAll=1
+        and o.platform=3
         and datediff(hour, o.ActualDoneDate, getdate()) >= @hour";
             IDbParameters parm = DbHelper.CreateDbParameters("@hour", DbType.Int64, 4, hour);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
@@ -3310,6 +3312,21 @@ where b.Id=@BusinessId;");
 update  [order]
 set FinishAll = 1 
 where   Id = @OrderId and FinishAll = 0";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("OrderId", DbType.Int32, 4).Value = orderId;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters) == 1 ? true : false;
+        }
+
+        /// <summary>
+        /// 更新是否已付款
+        /// </summary>
+        /// <param name="orderId"></param>
+        public bool UpdateIsPay(int orderId)
+        {
+            const string updateSql = @"
+update  [order]
+set IsPay = 1 
+where   Id = @OrderId";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("OrderId", DbType.Int32, 4).Value = orderId;
             return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters) == 1 ? true : false;
@@ -4192,7 +4209,8 @@ insert  into dbo.[order]
           TimeSpan,
           MealsSettleMode,
           BusinessReceivable,
-          GroupBusinessId
+          GroupBusinessId,
+          ProductName
         )
 values  ( @OrderNo ,
           @PickUpAddress ,
@@ -4234,7 +4252,8 @@ values  ( @OrderNo ,
           @TimeSpan,
           @MealsSettleMode,
           @BusinessReceivable,
-          @GroupBusinessId
+          @GroupBusinessId,
+          @ProductName
         )
 select @@identity";
 
@@ -4279,6 +4298,7 @@ select @@identity";
             dbParameters.AddWithValue("@MealsSettleMode", order.MealsSettleMode);
             dbParameters.AddWithValue("@BusinessReceivable", order.BusinessReceivable);
             dbParameters.AddWithValue("@GroupBusinessId", order.GroupBusinessId);
+            dbParameters.AddWithValue("@ProductName", order.ProductName);
 
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters);      
             return ParseHelper.ToInt(result, 0);

@@ -1,0 +1,1 @@
+insert into GlobalConfig(KeyName,Value,Remark) values('CashAndTime',72,'闪送模式加可提现时间')

@@ -35,8 +35,8 @@ namespace Ets.Dao.Order
         {
             const string insertSql = @"
  INSERT INTO dbo.OrderDetail
-                 (OrderNo ,ProductName , UnitPrice ,Quantity,FormDetailID,GroupID)
-                 VALUES  (@OrderNo ,@ProductName ,@UnitPrice ,@Quantity,@FormDetailID,@GroupID)
+                 (OrderNo ,ProductName , UnitPrice ,Quantity,FormDetailID,GroupID,Unit,UnitWeight,TotalWeight,TotalPrice)
+                 VALUES  (@OrderNo ,@ProductName ,@UnitPrice ,@Quantity,@FormDetailID,@GroupID,@Unit,@UnitWeight,@TotalWeight,@TotalPrice)
 select @@IDENTITY";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@OrderNo", orderDetail.OrderNo);
@@ -44,7 +44,11 @@ select @@IDENTITY";
             dbParameters.AddWithValue("@UnitPrice", orderDetail.UnitPrice);
             dbParameters.AddWithValue("@Quantity", orderDetail.Quantity);
             dbParameters.AddWithValue("@FormDetailID", orderDetail.FormDetailID);
-            dbParameters.AddWithValue("@GroupID", orderDetail.GroupID);      
+            dbParameters.AddWithValue("@GroupID", orderDetail.GroupID);
+            dbParameters.AddWithValue("@Unit", orderDetail.Unit);
+            dbParameters.AddWithValue("@UnitWeight", orderDetail.UnitWeight);
+            dbParameters.AddWithValue("@TotalWeight", orderDetail.TotalWeight);
+            dbParameters.AddWithValue("@TotalPrice", orderDetail.TotalPrice);      
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters); //提现单号
             return ParseHelper.ToLong(result);
         }
