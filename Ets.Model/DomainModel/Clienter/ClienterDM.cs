@@ -138,6 +138,10 @@ namespace Ets.Model.DomainModel.Clienter
         /// 骑士头像地址
         /// </summary>
         public string HeadImgUrl { get; set; }
-
+        /// <summary>
+        /// 交通工具
+        /// </summary>
+        public string VehicleName { get; set; }
+        public string VehicleId { get; set; }
     }
 }

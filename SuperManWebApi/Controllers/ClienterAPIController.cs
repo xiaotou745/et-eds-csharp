@@ -75,6 +75,7 @@ namespace SuperManWebApi.Controllers
             int UserId = ParseHelper.ToInt(HttpContext.Current.Request.Form["userId"], 0); //用户Id
             var strIdCard = HttpContext.Current.Request.Form["IDCard"]; //身份证号
             var trueName = HttpContext.Current.Request.Form["trueName"]; //真实姓名
+            int vehicleId = ParseHelper.ToInt(HttpContext.Current.Request.Form["VehicleId"], 0); //交通工具Id
             if (UserId == 0 || !iClienterProvider.CheckClienterExistById(UserId))
             {
                 return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.InvalidUserId);
@@ -96,7 +97,15 @@ namespace SuperManWebApi.Controllers
             //身份证照片
             ImgInfo sfhImg = ih.UploadImg(file, UserId, ImageType.Clienter);
 
-            var upResult = iClienterProvider.UpdateClientPicInfo(new ClienterModel { Id = UserId, PicUrl = sfhImg.PicUrl, PicWithHandUrl = handImg.PicUrl, TrueName = trueName, IDCard = strIdCard });
+            var upResult = iClienterProvider.UpdateClientPicInfo(new ClienterModel
+            {
+                Id = UserId,
+                PicUrl = sfhImg.PicUrl,
+                PicWithHandUrl = handImg.PicUrl,
+                TrueName = trueName,
+                IDCard = strIdCard,
+                VehicleName = EnumUtils.GetEnumDescription((VehicleEnum)vehicleId)
+            });
             if (!upResult)
             {
                 return ResultModel<UploadIconModel>.Conclude(UploadIconStatus.UpFailed, new UploadIconModel() { Id = UserId, ImagePath = "" });
