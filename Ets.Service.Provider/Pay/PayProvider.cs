@@ -63,6 +63,7 @@ namespace Ets.Service.Provider.Pay
         private readonly HttpDao httpDao = new HttpDao();
         ClienterMessageDao clienterMessageDao = new ClienterMessageDao();
         private readonly ClienterWithdrawLogDao clienterWithdrawLogDao = new ClienterWithdrawLogDao();
+        readonly BusinessBalanceRecordDao businessBalanceRecordDao = new BusinessBalanceRecordDao();
         #region 生成支付宝、微信二维码订单
 
         /// <summary>
@@ -86,7 +87,7 @@ namespace Ets.Service.Provider.Pay
                 return ResultModel<PayResultModel>.Conclude(AliPayStatus.success);
             }
             //所属产品_主订单号_子订单号_支付方式
-            string orderNo = string.Concat(model.productId, "_", model.orderId, "_", model.childId, "_", model.payStyle);
+            string orderNo = string.Concat(model.productId, "_", model.orderId, "_", model.childId, "_", model.payStyle, "_", model.oType);
             if (model.payType == PayTypeEnum.ZhiFuBao.GetHashCode())
             {
                 LogHelper.LogWriter("=============支付宝支付：");
@@ -101,9 +102,9 @@ namespace Ets.Service.Provider.Pay
             {
                 //微信支付
                 LogHelper.LogWriter("=============微信支付：");
-                if (model.cType == PayModelEnum.EDS.GetHashCode())//闪送模式
+                if (model.payStyle == PayStyleEnum.BusinessPay.GetHashCode())//闪送模式
                 {
-                    orderNo += "_" + model.oType;//把订单类型放到最后，回调的时候拆分
+                    //orderNo += "_" + model.oType;//把订单类型放到最后，回调的时候拆分
                     return CreateWxSSPayOrder(orderNo, payStatusModel.TotalPrice, model.orderId);
                 }
                 return CreateWxPayOrder(orderNo, payStatusModel.TotalPrice, model.orderId, model.payStyle);
@@ -359,7 +360,8 @@ namespace Ets.Service.Provider.Pay
                     int productId = ParseHelper.ToInt(orderNo.Split('_')[0]);//产品编号
                     int orderId = ParseHelper.ToInt(orderNo.Split('_')[1]);//主订单号
                     int orderChildId = ParseHelper.ToInt(orderNo.Split('_')[2]);//子订单号
-                    int payStyle = ParseHelper.ToInt(orderNo.Split('_')[3]);//支付方式(1 用户支付 2 骑士代付)
+                    int payStyle = ParseHelper.ToInt(orderNo.Split('_')[3]);//支付方式(1 用户支付 2 骑士代付 3商户支付)
+                    int oType = ParseHelper.ToInt(orderNo.Split('_')[4]);// 订单状态0订单支付，1小费
                     if (orderId <= 0 || orderChildId <= 0)
                     {
                         string fail = string.Concat("错误啦orderId：", orderId, ",orderChildId:", orderChildId);
@@ -376,15 +378,41 @@ namespace Ets.Service.Provider.Pay
                         payType = PayTypeEnum.ZhiFuBao.GetHashCode(),
                         originalOrderNo = notify.trade_no,
                     };
-
-                    if (orderChildDao.FinishPayStatus(model))
+                    if (payStyle == 3)
                     {
-                        //jpush
-                        //Ets.Service.Provider.MyPush.Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", myorder.businessId.ToString(), string.Empty);
-                        FinishOrderPushMessage(model);//完成后发送jpush消息
-                        string success = string.Concat("成功，当前订单OrderId:", orderId, ",OrderChild:", orderChildId);
-                        LogHelper.LogWriter(success);
-                        return "success";
+                        //如果oType==小费
+                        //else 订单支付
+                        //获取订单
+                        OrderListModel olModel= orderDao.GetByOrderId(orderId);
+                        //更新订单状态
+                        orderDao.UpdateIsPay(orderId);             
+                        //更新子订单状态
+                        orderChildDao.UpdateIsPay(orderChildId, PayTypeEnum.ZhiFuBao.GetHashCode());//支付宝支付
+                        
+                        //更新商户余额流水 不更新商户表                                  
+                        businessBalanceRecordDao.Insert(new BusinessBalanceRecord()
+                        {
+                            BusinessId = olModel.businessId,
+                            Amount = olModel.Amount.Value,
+                            Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
+                            RecordType = BusinessBalanceRecordRecordType.PublishOrder.GetHashCode(),
+                            Operator = "系统",
+                            WithwardId = orderId,
+                            RelationNo = olModel.OrderNo,
+                            Remark = "支付宝支付"
+                        });
+                    }
+                    else
+                    {
+                        if (orderChildDao.FinishPayStatus(model))
+                        {
+                            //jpush
+                            //Ets.Service.Provider.MyPush.Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", myorder.businessId.ToString(), string.Empty);
+                            FinishOrderPushMessage(model);//完成后发送jpush消息
+                            string success = string.Concat("成功，当前订单OrderId:", orderId, ",OrderChild:", orderChildId);
+                            LogHelper.LogWriter(success);
+                            return "success";
+                        }
                     }
                 }
                 #endregion
@@ -855,6 +883,7 @@ namespace Ets.Service.Provider.Pay
                 int orderId = ParseHelper.ToInt(orderNo.Split('_')[1]);//主订单号
                 int orderChildId = ParseHelper.ToInt(orderNo.Split('_')[2]);//子订单号
                 int payStyle = ParseHelper.ToInt(orderNo.Split('_')[3]);//支付方式(1 用户支付 2 骑士代付)
+
                 if (orderId <= 0 || orderChildId <= 0)
                 {
                     string fail = string.Concat("错误啦orderId：", orderId, ",orderChildId:", orderChildId);
@@ -872,19 +901,18 @@ namespace Ets.Service.Provider.Pay
                     payStyle = payStyle,
                     payType = PayTypeEnum.ZhiFuBao.GetHashCode(),
                     originalOrderNo = notify.transaction_id,
-                };
-
+                };                
                 if (orderChildDao.FinishPayStatus(model))
-                {
-                    //jpush
-                    //Ets.Service.Provider.MyPush.Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", myorder.businessId.ToString(), string.Empty);
-                    FinishOrderPushMessage(model);//完成后发送jpush消息
-                    string success = string.Concat("成功，当前订单OrderId:", orderId, ",OrderChild:", orderChildId);
-                    LogHelper.LogWriter(success);
-                    HttpContext.Current.Response.Write("<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>");
-                    HttpContext.Current.Response.End();
-                    return;
-                }
+                 {
+                        //jpush
+                        //Ets.Service.Provider.MyPush.Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", myorder.businessId.ToString(), string.Empty);
+                        FinishOrderPushMessage(model);//完成后发送jpush消息
+                        string success = string.Concat("成功，当前订单OrderId:", orderId, ",OrderChild:", orderChildId);
+                        LogHelper.LogWriter(success);
+                        HttpContext.Current.Response.Write("<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>");
+                        HttpContext.Current.Response.End();
+                        return;
+                }                
             }
             #endregion
             LogHelper.LogWriter("支付回调异常", notify);
@@ -924,7 +952,28 @@ namespace Ets.Service.Provider.Pay
                 int payStyle = ParseHelper.ToInt(orderNo.Split('_')[3]);//支付方式(1 用户支付 2 骑士代付)
                 int oType = ParseHelper.ToInt(orderNo.Split('_')[4]);//订单状态0订单支付，1小费
                 //在这里写支付相关+小费 业务逻辑
+                if (payStyle == 3)
+                {
+                    //获取订单
+                    OrderListModel olModel = orderDao.GetByOrderId(orderId);
+                    //更新订单状态
+                    orderDao.UpdateIsPay(orderId);
+                    //更新子订单状态
+                    orderChildDao.UpdateIsPay(orderChildId, PayTypeEnum.WangYin.GetHashCode());//支付宝支付
 
+                    //更新商户余额流水 不更新商户表                                  
+                    businessBalanceRecordDao.Insert(new BusinessBalanceRecord()
+                    {
+                        BusinessId = olModel.businessId,
+                        Amount = olModel.Amount.Value,
+                        Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
+                        RecordType = BusinessBalanceRecordRecordType.PublishOrder.GetHashCode(),
+                        Operator = "系统",
+                        WithwardId = orderId,
+                        RelationNo = olModel.OrderNo,
+                        Remark = "微信支付"
+                    });
+                }
 
                 //if (orderId <= 0 || orderChildId <= 0)
                 //{

@@ -759,7 +759,7 @@ where c.Id=@clienterId ";
             orderOther.OrderStatus = oo.OrderStatus;
             orderOther.OrderCreateTime = oo.OrderCreateTime;
             return orderOther;
-        }   
+        }
 
         /// <summary>
         /// 添加小票信息
@@ -1036,16 +1036,16 @@ where  Id=@Id ";
 
             #region 骑士表
 
-//            string queryClienterSql = @"
-//select  c.Id,PhoneNo,LoginName,recommendPhone,TrueName,IDCard,PicWithHandUrl,PicUrl,Status,
-//AccountBalance,InsertTime,InviteCode,City,CityId,GroupId,HealthCardID,InternalDepart,ProvinceCode
-//,AreaCode,CityCode,Province,BussinessID,WorkStatus,AllowWithdrawPrice,HasWithdrawPrice,
-//(case when (select count(1) from dbo.ClienterMessage cm(nolock) where cm.ClienterId=c.id and cm.IsRead=0)=0 then 0 else 1 end) HasMessage,
-//--(case when dc.SettleType=1 and ClienterSettleRatio>0 or dc.SettleType=2 and dc.ClienterFixMoney>0 then 1 else 0 end) IsDisplayDeliveryMoney
-//isnull(dc.IsShowAccount,1) IsShowAccount,IsReceivePush
-//from  dbo.clienter c (nolock) 
-//left join dbo.DeliveryCompany dc(nolock) on c.DeliveryCompanyId=dc.Id
-//where c.Id=@Id";
+            //            string queryClienterSql = @"
+            //select  c.Id,PhoneNo,LoginName,recommendPhone,TrueName,IDCard,PicWithHandUrl,PicUrl,Status,
+            //AccountBalance,InsertTime,InviteCode,City,CityId,GroupId,HealthCardID,InternalDepart,ProvinceCode
+            //,AreaCode,CityCode,Province,BussinessID,WorkStatus,AllowWithdrawPrice,HasWithdrawPrice,
+            //(case when (select count(1) from dbo.ClienterMessage cm(nolock) where cm.ClienterId=c.id and cm.IsRead=0)=0 then 0 else 1 end) HasMessage,
+            //--(case when dc.SettleType=1 and ClienterSettleRatio>0 or dc.SettleType=2 and dc.ClienterFixMoney>0 then 1 else 0 end) IsDisplayDeliveryMoney
+            //isnull(dc.IsShowAccount,1) IsShowAccount,IsReceivePush
+            //from  dbo.clienter c (nolock) 
+            //left join dbo.DeliveryCompany dc(nolock) on c.DeliveryCompanyId=dc.Id
+            //where c.Id=@Id";
             string queryClienterSql = @"
 select  c.Id,PhoneNo,ISNULL(LoginName,'') LoginName,recommendPhone,TrueName,IDCard,PicWithHandUrl,PicUrl,Status,
 AccountBalance,InsertTime,InviteCode,City,CityId,GroupId,HealthCardID,InternalDepart,ProvinceCode
@@ -1523,15 +1523,15 @@ SELECT IDENT_CURRENT('clienter')"
             parm.AddWithValue("@IDCard", model.IDCard);
             parm.AddWithValue("@TrueName", model.TrueName);
             parm.AddWithValue("@DeliveryCompanyId", model.DeliveryCompanyId);
-            parm.AddWithValue("@GradeType", model.GradeType);           
+            parm.AddWithValue("@GradeType", model.GradeType);
             parm.AddWithValue("@Id", model.Id);
             parm.AddWithValue("@OptId", model.OptUserId);
             parm.AddWithValue("@OptName", model.OptUserName);
             parm.AddWithValue("@Platform", 3);
-            parm.Add("@recommendPhone", DbType.String).Value = model.recommendPhone??"";            
+            parm.Add("@recommendPhone", DbType.String).Value = model.recommendPhone ?? "";
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
         }
-   
+
 
         #region 更新骑士余额 可提现
         /// <summary>
@@ -1612,7 +1612,7 @@ where  Id=@Id ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.AddWithValue("@Money", Money);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
-        }               
+        }
 
         #endregion
 
@@ -1624,7 +1624,7 @@ where  Id=@Id ";
         /// <param></param>
         /// <returns></returns>
         public IList<ClienterModel> QueryIdList()
-        {              
+        {
             IList<ClienterModel> models = new List<ClienterModel>();
             string querysql = @"
 select  Id,TrueName,PhoneNo
@@ -1786,6 +1786,21 @@ WHERE id=@ID";
                 throw ex;
             }
             return reslut;
+        }
+
+        /// <summary>
+        /// 通过城市获取该城市的骑士
+        /// 窦海超
+        /// 2015年12月1日 16:21:17
+        /// </summary>
+        /// <param name="cityName"></param>
+        /// <returns></returns>
+        public DataTable GetPhoneNoList(string cityName)
+        {
+            string sql = "SELECT Id,PhoneNo FROM dbo.clienter c(nolock) where City=@CityName";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.Add("@CityName", DbType.String, 20).Value = cityName;
+            return DbHelper.ExecuteDataTable(SuperMan_Read, sql, dbParameters);
         }
     }
 }

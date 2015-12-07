@@ -101,10 +101,15 @@ namespace Ets.Model.Common.TaoBao
         /// 配送费（单位：分）
         /// </summary>
         public long delivery_fee { get; set; }
+
+        /// <summary>
+        /// 复杂对象json
+        /// </summary>
+        public string items { get; set; }
         /// <summary>
         /// 复杂对象json	订单商品信息
         /// </summary>
-        public Commodity items { get; set; }
+        public List<Commodity> itemsList { get; set; }
         /// <summary>
         /// 小票ID
         /// </summary>
@@ -116,37 +121,41 @@ namespace Ets.Model.Common.TaoBao
     }
 
     public class Commodity
-    {
+    {    
         /// <summary>
         /// 商品名称
         /// </summary>
-        public string item_name { get; set; }
+        public string itemName { get; set; }
         /// <summary>
         /// 商品单位
         /// </summary>
         public string unit { get; set; }
+        
         /// <summary>
         /// 单位重量
         /// </summary>
-        public double unit_weight { get; set; }
-
+        public string unitWeight { get; set; }
+        
         /// <summary>
         /// 单位价格（分）
         /// </summary>
-        public long unit_price { get; set; }        	
-
+        public long unitPrice { get; set; }
+        
         /// <summary>
         /// 商品数量
         /// </summary>
-        public int quantity { get; set; } 
+        public int quantity { get; set; }
+        
         /// <summary>
         /// 总重量
         /// </summary>
-        public double total_weight { get; set; } 
+        public string totalWeight { get; set; }
+        
         /// <summary>
         /// 总价格（分）
         /// </summary>
-        public long total_price { get; set; } 
+        public long totalPrice { get; set; }
+
 
     }
 }

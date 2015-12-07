@@ -281,5 +281,10 @@ namespace Ets.Model.DataModel.Order
         /// 集团Id
         /// </summary>
         public int GroupBusinessId { get; set; }
+
+        /// <summary>
+        /// 产品名称 
+        /// </summary>
+        public string ProductName { get; set; }
     }
 }

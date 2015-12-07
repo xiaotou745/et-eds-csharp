@@ -29,7 +29,7 @@ namespace Ets.Model.ParameterModel.AliPay
         public int productId { get; set; }
 
         /// <summary>
-        /// 支付方式(1 用户支付 2 骑士代付)
+        /// 支付方式(1 用户支付 2 骑士代付 3商户支付)
         /// </summary>
         public int payStyle { get; set; }
 
@@ -38,10 +38,10 @@ namespace Ets.Model.ParameterModel.AliPay
         /// </summary>
         public string version { get; set; }
 
-        /// <summary>
-        /// 支付类型 0旧版易代送，1闪送模式
-        /// </summary>
-        public int cType { get; set; }
+        ///// <summary>
+        ///// 支付类型 0旧版易代送，1闪送模式
+        ///// </summary>
+        //public int cType { get; set; }
         /// <summary>
         /// 订单状态0订单支付，1小费
         /// </summary>
