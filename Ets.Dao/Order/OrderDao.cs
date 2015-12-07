@@ -2608,17 +2608,31 @@ select top {0}
         ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,
         a.Amount CpAmount,
         b.Name as BusinessName, b.City as BusinessCity,
-        b.Address as BusinessAddress, isnull(a.ReceviceCity, '') as UserCity,
+        isnull(a.ReceviceCity, '') as UserCity,
        a.Remark,
  case  isnull(a.ReceviceAddress,'')  
 		when  '' then '附近3公里左右，由商户指定'
-		else a.ReceviceAddress end as  UserAddress,ISNULL(b.Longitude,0) as  Longitude,ISNULL(b.Latitude,0) as Latitude,
+		else a.ReceviceAddress end as  UserAddress,
+	
         case convert(varchar(100), PubDate, 23)
           when convert(varchar(100), getdate(), 23) then '今日 '
           else substring(convert(varchar(100), PubDate, 23), 6, 5)
         end + '  ' + substring(convert(varchar(100), PubDate, 24), 1, 5) as PubDate,
-		round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) as DistanceToBusiness 
+        
+[Platform], --来源（默认1、旧后台，2、智能调度，3新后台）
+(case when [Platform]=1 then ISNULL(b.Longitude,0) when [Platform]=2 then oo.PubLongitude else '' end) as  Longitude,--商户发单经度
+(case when [Platform]=1 then ISNULL(b.Latitude,0) when [Platform]=2 then oo.PubLatitude else '' end) as  Latitude,--商户发单纬度
+(case when [Platform]=1 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) when [Platform]=2 then 
+round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0)
+else '' end)  as DistanceToBusiness,--距离
+(case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress, --发货地址
+[Weight],
+KM,
+TakeType,
+SongCanDate
+        
 from    dbo.[order] a ( nolock )
+		join dbo.OrderOther oo(nolock) on a.Id=oo.OrderId
         join dbo.business b ( nolock ) on a.businessId = b.Id
 where   a.status = 0 and a.IsEnable=1  and( b.IsBind=0 or (b.IsBind=1 and DATEDIFF(minute,a.PubDate,GETDATE())>{1}))
         {2}
@@ -2634,15 +2648,27 @@ select top {0}
         ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,
         a.Amount CpAmount,
         b.Name as BusinessName, b.City as BusinessCity,
-        b.Address as BusinessAddress, isnull(a.ReceviceCity, '') as UserCity,
+         isnull(a.ReceviceCity, '') as UserCity,
         a.Remark,case  isnull(a.ReceviceAddress,'')  
 		when  '' then '附近3公里左右，由商户指定'
-		else a.ReceviceAddress end as  UserAddress,ISNULL(b.Longitude,0) as  Longitude,ISNULL(b.Latitude,0) as Latitude,
+		else a.ReceviceAddress end as  UserAddress,
         case convert(varchar(100), PubDate, 23)
           when convert(varchar(100), getdate(), 23) then '今日 '
           else substring(convert(varchar(100), PubDate, 23), 6, 5)
         end + '  ' + substring(convert(varchar(100), PubDate, 24), 1, 5) as PubDate,
-		round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) as DistanceToBusiness 
+        
+[Platform], --来源（默认1、旧后台，2、智能调度，3新后台）
+(case when [Platform]=1 then ISNULL(b.Longitude,0) when [Platform]=2 then oo.PubLongitude else '' end) as  Longitude,--商户发单经度
+(case when [Platform]=1 then ISNULL(b.Latitude,0) when [Platform]=2 then oo.PubLatitude else '' end) as  Latitude,--商户发单纬度
+(case when [Platform]=1 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) when [Platform]=2 then 
+	round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0)
+else '' end)  as DistanceToBusiness,--距离
+(case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress, --发货地址
+[Weight],
+KM,
+TakeType,
+SongCanDate
+
 from    dbo.[order] a ( nolock )
         join dbo.business b ( nolock ) on a.businessId = b.Id
         left join ( select  distinct
@@ -2703,13 +2729,13 @@ end
 +'  '+substring(convert(varchar(100),PubDate,24),1,5)
 as PubDate,
 
-[Platform], --来源（默认1、旧后台，2新后台）
+[Platform], --来源（默认1、旧后台，2、智能调度，3新后台）
 (case when [Platform]=1 then ISNULL(b.Longitude,0) when [Platform]=2 then oo.PubLongitude else '' end) as  Longitude,--商户发单经度
 (case when [Platform]=1 then ISNULL(b.Latitude,0) when [Platform]=2 then oo.PubLatitude else '' end) as  Latitude,--商户发单纬度
 (case when [Platform]=1 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) when [Platform]=2 then 
 		round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0)
 	 else '' end)  as DistanceToBusiness,--距离
-(case when [Platform]=1 then b.Address when [Platform]=2 then a.PickUpAddress else '' end) as BusinessAddress, --发货地址
+(case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress, --发货地址
 [Weight],
 KM,
 TakeType,
@@ -2743,13 +2769,13 @@ end
 +'  '+substring(convert(varchar(100),PubDate,24),1,5)
 as PubDate,
 
-[Platform], --来源（默认1、旧后台，2新后台）
+[Platform], --来源（默认1、旧后台，2、智能调度，3新后台）
 (case when [Platform]=1 then ISNULL(b.Longitude,0) when [Platform]=2 then oo.PubLongitude else '' end) as  Longitude,--商户发单经度
 (case when [Platform]=1 then ISNULL(b.Latitude,0) when [Platform]=2 then oo.PubLatitude else '' end) as  Latitude,--商户发单纬度
 (case when [Platform]=1 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) when [Platform]=2 then 
 		round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0)
 	 else '' end)  as DistanceToBusiness,--距离
-(case when [Platform]=1 then b.Address when [Platform]=2 then a.PickUpAddress else '' end) as BusinessAddress, --发货地址
+(case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress, --发货地址
 [Weight],
 KM,
 TakeType,
