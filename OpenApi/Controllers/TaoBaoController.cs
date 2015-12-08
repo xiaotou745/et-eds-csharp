@@ -53,11 +53,15 @@ namespace OpenApi.Controllers
         [HttpPost]
         public ResultModel<long> OrderDispatch(ParamModel pm)
         {
-            //return ResultModel<long>.Conclude(TaoBaoPushOrder.Success, 20151203006096421);
-            string json = AESApp.AesDecrypt(pm.data);
+            string json = AESApp.AesDecrypt(pm.data.Replace(' ', '+')/*TODO 暂时用Replace*/);
             OrderDispatch p = ParseHelper.Deserialize<OrderDispatch>(json);
             p.itemsList = ParseHelper.Deserialize<List<Commodity>>(p.items);
-            return ResultModel<long>.Conclude(taoDianDianGroup.TaoBaoPushOrder(p), p.delivery_order_no);
+            if (p.store_name.IndexOf("代送") > 0)
+            {
+                return ResultModel<long>.Conclude(taoDianDianGroup.TaoBaoPushOrder(p), p.delivery_order_no);
+            }
+            return ResultModel<long>.Conclude(TaoBaoPushOrder.Error);
+
         }
 
         //[HttpPost]
