@@ -2509,7 +2509,7 @@ where   oo.IsJoinWithdraw = 0
 declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0}
-        a.Id, a.OrderCommission, a.OrderCount,
+        a.Id, a.OrderCommission, a.OrderCount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
         ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,
         a.Amount CpAmount,
         b.Name as BusinessName, b.City as BusinessCity,
@@ -2554,7 +2554,7 @@ order by a.Id desc", model.TopNum);
             string querysql = string.Format(@"
 declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
-select top {0} a.Id,a.OrderCommission,a.OrderCount,   
+select top {0} a.Id,a.OrderCommission,a.OrderCount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
         (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
         a.Amount CpAmount,
         b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
@@ -2607,7 +2607,7 @@ declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0}
         a.Id, a.OrderCommission, a.OrderCount,
-        ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,
+        ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
         a.Amount CpAmount,
         b.Name as BusinessName, b.City as BusinessCity,
         isnull(a.ReceviceCity, '') as UserCity,
@@ -2620,18 +2620,12 @@ select top {0}
           when convert(varchar(100), getdate(), 23) then '今日 '
           else substring(convert(varchar(100), PubDate, 23), 6, 5)
         end + '  ' + substring(convert(varchar(100), PubDate, 24), 1, 5) as PubDate,
-        
-[Platform], --来源（默认1、旧后台，2、智能调度，3新后台）
 (case when [Platform]=1 then ISNULL(b.Longitude,0) when [Platform]=2 then oo.PubLongitude else '' end) as  Longitude,--商户发单经度
 (case when [Platform]=1 then ISNULL(b.Latitude,0) when [Platform]=2 then oo.PubLatitude else '' end) as  Latitude,--商户发单纬度
 (case when [Platform]=1 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) when [Platform]=2 then 
 round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0)
 else '' end)  as DistanceToBusiness,--距离
-(case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress, --发货地址
-[Weight],
-KM,
-TakeType,
-SongCanDate
+(case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress --发货地址
         
 from    dbo.[order] a ( nolock )
 		join dbo.OrderOther oo(nolock) on a.Id=oo.OrderId
@@ -2647,7 +2641,7 @@ declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0}
         a.Id, a.OrderCommission, a.OrderCount,
-        ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,
+        ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
         a.Amount CpAmount,
         b.Name as BusinessName, b.City as BusinessCity,
          isnull(a.ReceviceCity, '') as UserCity,
@@ -2665,11 +2659,7 @@ select top {0}
 (case when [Platform]=1 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) when [Platform]=2 then 
 	round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0)
 else '' end)  as DistanceToBusiness,--距离
-(case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress, --发货地址
-[Weight],
-KM,
-TakeType,
-SongCanDate
+(case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress --发货地址
 
 from    dbo.[order] a ( nolock )
         join dbo.business b ( nolock ) on a.businessId = b.Id
@@ -2717,7 +2707,7 @@ order by a.Id desc", model.TopNum, model.ClienterId, model.ExclusiveOrderTime, w
 declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0} a.Id,a.OrderCommission,a.OrderCount,   
-(a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
+(a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
 a.Amount CpAmount,
 a.Remark,
 b.Name as BusinessName,b.City as BusinessCity,
@@ -2730,18 +2720,12 @@ case convert(varchar(100), PubDate, 23)
 end
 +'  '+substring(convert(varchar(100),PubDate,24),1,5)
 as PubDate,
-
-[Platform], --来源（默认1、旧后台，2、智能调度，3新后台）
 (case when [Platform]=1 then ISNULL(b.Longitude,0) when [Platform]=2 then oo.PubLongitude else '' end) as  Longitude,--商户发单经度
 (case when [Platform]=1 then ISNULL(b.Latitude,0) when [Platform]=2 then oo.PubLatitude else '' end) as  Latitude,--商户发单纬度
 (case when [Platform]=1 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) when [Platform]=2 then 
 		round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0)
 	 else '' end)  as DistanceToBusiness,--距离
-(case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress, --发货地址
-[Weight],
-KM,
-TakeType,
-SongCanDate
+(case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress --发货地址
  
 from dbo.[order] a (nolock)
 join dbo.OrderOther oo(nolock) on a.Id=oo.OrderId
@@ -2757,7 +2741,7 @@ order by geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDis
 declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0} a.Id,a.OrderCommission,a.OrderCount,   
-(a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
+(a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
 a.Amount CpAmount,
 a.Remark,
 b.Name as BusinessName,b.City as BusinessCity,
@@ -2771,17 +2755,12 @@ end
 +'  '+substring(convert(varchar(100),PubDate,24),1,5)
 as PubDate,
 
-[Platform], --来源（默认1、旧后台，2、智能调度，3新后台）
 (case when [Platform]=1 then ISNULL(b.Longitude,0) when [Platform]=2 then oo.PubLongitude else '' end) as  Longitude,--商户发单经度
 (case when [Platform]=1 then ISNULL(b.Latitude,0) when [Platform]=2 then oo.PubLatitude else '' end) as  Latitude,--商户发单纬度
 (case when [Platform]=1 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) when [Platform]=2 then 
 		round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0)
 	 else '' end)  as DistanceToBusiness,--距离
-(case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress, --发货地址
-[Weight],
-KM,
-TakeType,
-SongCanDate
+(case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress --发货地址
 
 from dbo.[order] a (nolock)
 join dbo.OrderOther oo(nolock) on a.Id=oo.OrderId
@@ -2827,7 +2806,7 @@ order by geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDis
 declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0}  a.BusinessId, a.Id,a.OrderCommission,a.OrderCount,   
-(a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
+(a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
  a.Amount CpAmount,
 a.Remark,
 b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
@@ -3029,7 +3008,6 @@ SELECT CASE SUM(oc.PayStatus)
             string sql = @"select  o.Id ,
         o.OrderNo ,
         o.SettleMoney ,isnull(o.GroupBusinessId,0) as GroupBusinessId,
-        b.Name BusinessName
 from    [order] o ( nolock )
         join dbo.business b ( nolock ) on o.businessId = b.Id
 where   o.Id = @OrderId
