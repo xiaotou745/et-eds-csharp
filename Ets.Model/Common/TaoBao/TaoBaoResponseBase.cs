@@ -15,7 +15,7 @@ namespace Ets.Model.Common.TaoBao
         /// <summary>
         ///  调用是否成功
         /// </summary>
-        public bool is_success { get; set; }
+        public bool? is_success { get; set; }
         /// <summary>
         /// 错误代码
         /// </summary>

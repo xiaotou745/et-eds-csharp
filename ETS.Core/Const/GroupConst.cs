@@ -40,5 +40,10 @@ namespace ETS.Const
         /// 淘点点
         /// </summary>
         public const int Group8 = 8;
+
+        /// <summary>
+        /// 闪送模式
+        /// </summary>
+        public const int Group110 = 110;
     }
 }

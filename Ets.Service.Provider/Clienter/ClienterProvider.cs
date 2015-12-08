@@ -169,7 +169,7 @@ namespace Ets.Service.Provider.Clienter
                     model.OrderCount = item.OrderCount;
                     model.GroupId = item.GroupId;
                     model.HadUploadCount = item.HadUploadCount;
-                    if (item.GroupId == GroupType.Group3.GetHashCode()) //全时 需要做验证码验证
+                    if (item.GroupId == GroupConst.Group3) //全时 需要做验证码验证
                         model.NeedPickupCode = 1;
                     #region 计算经纬度     待封装  add by caoheyang 20150313
 
@@ -682,7 +682,7 @@ namespace Ets.Service.Provider.Clienter
                 return model;
             }
             //获取该订单信息和该  骑士现在的 收入金额
-            if (myOrderInfo.GroupId == GroupType.Group3.GetHashCode() && !string.IsNullOrWhiteSpace(myOrderInfo.PickupCode)
+            if (myOrderInfo.GroupId == GroupConst.Group3 && !string.IsNullOrWhiteSpace(myOrderInfo.PickupCode)
                 && pickupCode != myOrderInfo.PickupCode) //全时订单 判断 取货码是否正确             
             {
                 model.FinishOrderStatus = FinishOrderStatus.PickupCodeError;

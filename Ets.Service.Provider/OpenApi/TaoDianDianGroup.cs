@@ -60,7 +60,7 @@ namespace Ets.Service.Provider.OpenApi
             string json = new HttpClient().PostAsJsonAsync(url, new { data = AESApp.AesEncrypt(jsonData) }).Result.Content.ReadAsStringAsync().Result;
             Log(url, reqpar, json); //记录日志
             TaoBaoResponseBase res = JsonHelper.JsonConvertToObject<TaoBaoResponseBase>(json);
-            return res.is_success ? OrderApiStatusType.Success : OrderApiStatusType.SystemError;
+            return res.is_success!=null&&res.is_success==true ? OrderApiStatusType.Success : OrderApiStatusType.SystemError;
         }
 
 
@@ -165,7 +165,7 @@ namespace Ets.Service.Provider.OpenApi
             {
                 #region 商户
                 //查询商户是否存在
-                BusinessModel bModel = businessDao.GetBusiness(p.store_id, GroupType.Group7.GetHashCode());
+                BusinessModel bModel = businessDao.GetBusiness(p.store_id, GroupConst.Group8);
                 
                 if (bModel == null)
                 {
@@ -202,7 +202,7 @@ namespace Ets.Service.Provider.OpenApi
                     bModel.Status = 1;//默认审核通过
                     bModel.districtId = "";
                     bModel.CityId = p.city_code;
-                    bModel.GroupId = GroupType.Group7.GetHashCode();
+                    bModel.GroupId = GroupConst.Group8;
                     bModel.OriginalBusiId = 0;
                     bModel.OriginalBusiUnitId = p.store_id;
                     bModel.ProvinceCode = "";
@@ -239,7 +239,7 @@ namespace Ets.Service.Provider.OpenApi
                     bool isExist=orderOtherDao.IsExistByOrderNo(p.delivery_order_no.ToString());
                     if (isExist)
                     {
-                        return ETS.Enums.TaoBaoPushOrder.Error;    
+                        return ETS.Enums.TaoBaoPushOrder.OrderId;    
                     }
                     #region 订单表
                     order oModel = new order();
@@ -265,17 +265,19 @@ namespace Ets.Service.Provider.OpenApi
                     oModel.BussGroupAmount = 0;
                     oModel.BussGroupIsAllowOverdraft = 0;
                     oModel.BalancePrice = bModel.BalancePrice;
-                    oModel.OrderFrom = 0;//订单来源
+                    oModel.OrderFrom = GroupConst.Group8;//订单来源
                     oModel.Remark = p.order_ext_info;//
                     oModel.ReceviceName = p.consignee_name;
                     oModel.RecevicePhoneNo = p.consignee_phone;
                     oModel.ReceviceAddress = p.consignee_address;
                     oModel.IsPay = true;
-                    oModel.Amount = p.actually_paid / 100;
+                    oModel.Amount = ParseHelper.ToDecimal(p.actually_paid)/100;
                     oModel.OrderCount = p.quantity;  //订单数量
                     //收货 经纬度            
                     oModel.ReceviceLongitude = 0;
                     oModel.ReceviceLatitude = 0;
+                    oModel.OriginalOrderNo = p.delivery_order_no.ToString();
+                    oModel.OriginalOrderId = p.delivery_order_no;
                     if (!string.IsNullOrEmpty(p.destination_point))
                     {
                         string[] sp = p.starting_point.Replace("LngLatAlt", "").Replace("{", "").Replace("}", "").Split(',');

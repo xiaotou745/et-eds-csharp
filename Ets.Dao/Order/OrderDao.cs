@@ -2920,7 +2920,7 @@ order by a.id desc
         /// </summary>
         /// <UpdateBy>hulingbo</UpdateBy>
         /// <UpdateTime>20150701</UpdateTime>
-        public void UpdateTake(OrderPM modelPM)
+        public int UpdateTake(OrderPM modelPM)
         {
             // string clienterTrueName = "";
             //clienter c = clienterDao.GetById(modelPM.ClienterId);
@@ -2967,7 +2967,7 @@ end
             dbParameters.AddWithValue("IsTakeTimely", modelPM.IsTimely);            
             dbParameters.AddWithValue("clienterId", modelPM.ClienterId);
             dbParameters.AddWithValue("Platform", SuperPlatform.FromClienter.GetHashCode());
-            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+            return  DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
         /// <summary>
         /// 获取任务支付状态（0：未支付 1：部分支付 2：已支付）
