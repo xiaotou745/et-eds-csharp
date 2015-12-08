@@ -112,6 +112,7 @@
     <Compile Include="Enums\TagEnum.cs" />
     <Compile Include="Enums\TaoBaoEnum.cs" />
     <Compile Include="Enums\UserLoginResults.cs" />
+    <Compile Include="Enums\VehicleEnum.cs" />
     <Compile Include="Expand\ActionStatusAttribute.cs" />
     <Compile Include="Const\OrderConst.cs" />
     <Compile Include="Expand\AttribDescription.cs" />
