@@ -2509,7 +2509,7 @@ where   oo.IsJoinWithdraw = 0
 declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0}
-        a.Id, a.OrderCommission, a.OrderCount,a.Platform,a.Weight,a.KM,a.TakeType,
+        a.Id, a.OrderCommission, a.OrderCount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
         ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,
         a.Amount CpAmount,
         b.Name as BusinessName, b.City as BusinessCity,
@@ -2554,7 +2554,7 @@ order by a.Id desc", model.TopNum);
             string querysql = string.Format(@"
 declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
-select top {0} a.Id,a.OrderCommission,a.OrderCount,a.Platform,a.Weight,a.KM,a.TakeType,
+select top {0} a.Id,a.OrderCommission,a.OrderCount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
         (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
         a.Amount CpAmount,
         b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
@@ -2607,7 +2607,7 @@ declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0}
         a.Id, a.OrderCommission, a.OrderCount,
-        ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,
+        ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
         a.Amount CpAmount,
         b.Name as BusinessName, b.City as BusinessCity,
         isnull(a.ReceviceCity, '') as UserCity,
@@ -2625,8 +2625,7 @@ select top {0}
 (case when [Platform]=1 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) when [Platform]=2 then 
 round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0)
 else '' end)  as DistanceToBusiness,--距离
-(case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress, --发货地址
-SongCanDate
+(case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress --发货地址
         
 from    dbo.[order] a ( nolock )
 		join dbo.OrderOther oo(nolock) on a.Id=oo.OrderId
@@ -2642,7 +2641,7 @@ declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0}
         a.Id, a.OrderCommission, a.OrderCount,
-        ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,
+        ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
         a.Amount CpAmount,
         b.Name as BusinessName, b.City as BusinessCity,
          isnull(a.ReceviceCity, '') as UserCity,
@@ -2660,8 +2659,7 @@ select top {0}
 (case when [Platform]=1 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) when [Platform]=2 then 
 	round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0)
 else '' end)  as DistanceToBusiness,--距离
-(case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress, --发货地址
-SongCanDate
+(case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress --发货地址
 
 from    dbo.[order] a ( nolock )
         join dbo.business b ( nolock ) on a.businessId = b.Id
@@ -2709,7 +2707,7 @@ order by a.Id desc", model.TopNum, model.ClienterId, model.ExclusiveOrderTime, w
 declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0} a.Id,a.OrderCommission,a.OrderCount,   
-(a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,
+(a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
 a.Amount CpAmount,
 a.Remark,
 b.Name as BusinessName,b.City as BusinessCity,
@@ -2727,8 +2725,7 @@ as PubDate,
 (case when [Platform]=1 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) when [Platform]=2 then 
 		round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0)
 	 else '' end)  as DistanceToBusiness,--距离
-(case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress, --发货地址
-SongCanDate
+(case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress --发货地址
  
 from dbo.[order] a (nolock)
 join dbo.OrderOther oo(nolock) on a.Id=oo.OrderId
@@ -2744,7 +2741,7 @@ order by geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDis
 declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0} a.Id,a.OrderCommission,a.OrderCount,   
-(a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,
+(a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
 a.Amount CpAmount,
 a.Remark,
 b.Name as BusinessName,b.City as BusinessCity,
@@ -2763,8 +2760,7 @@ as PubDate,
 (case when [Platform]=1 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) when [Platform]=2 then 
 		round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0)
 	 else '' end)  as DistanceToBusiness,--距离
-(case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress, --发货地址
-SongCanDate
+(case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress --发货地址
 
 from dbo.[order] a (nolock)
 join dbo.OrderOther oo(nolock) on a.Id=oo.OrderId
@@ -2810,7 +2806,7 @@ order by geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDis
 declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0}  a.BusinessId, a.Id,a.OrderCommission,a.OrderCount,   
-(a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,
+(a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
  a.Amount CpAmount,
 a.Remark,
 b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
