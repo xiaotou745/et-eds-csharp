@@ -208,19 +208,21 @@
     //});
 
 
-    //$.ajax({
-    //    type: 'POST',
-    //    dataType: 'json',
-    //    url: '/Business/GetDistribSubsidy',
-    //    data: {
-    //        "BussinessId": 172,
-    //        "Version": "1.0.1"
-    //    },
-    //    success: function (data) {
-    //        console.log(data);
-    //    },
-    //    error: function () { }
-    //});
+    $.ajax({
+        type: 'POST',
+        dataType: 'json',
+        url: '/Business/GetDistribSubsidy',
+        data: {
+            "BussinessId": 2125,
+           "OrderCount":1,
+           "Amount":12.00,
+           "Version": "1.0.1"
+        },
+        success: function (data) {
+            console.log(data);
+        },
+        error: function () { }
+    });
 
     //$.ajax({
     //    type: 'POST',

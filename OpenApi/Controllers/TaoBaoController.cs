@@ -50,28 +50,28 @@ namespace OpenApi.Controllers
         ///// <param name="data"></param>
         ///// <returns></returns>
 
-        //[HttpPost]
-        //public ResultModel<object> OrderDispatch(ParamModel pm)
-        //{
-        //    string json = AESApp.AesDecrypt(pm.data);
-        //    OrderDispatch p = ParseHelper.Deserialize<OrderDispatch>(json);
-        //    p.itemsList = ParseHelper.Deserialize<List<Commodity>>(p.items);
-
-        //    return ResultModel<object>.Conclude(taoDianDianGroup.TaoBaoPushOrder(p));
-        //}
-
         [HttpPost]
-        public ResultModel<object> OrderDispatch(OrderDispatch p)
+        public ResultModel<object> OrderDispatch(ParamModel pm)
         {
-            try
-            {
-                p.itemsList = ParseHelper.Deserialize<List<Commodity>>(p.items);
-            }
-            catch (Exception err)
-            {
-                string str = err.Message;
-            }
+            string json = AESApp.AesDecrypt(pm.data);
+            OrderDispatch p = ParseHelper.Deserialize<OrderDispatch>(json);
+            p.itemsList = ParseHelper.Deserialize<List<Commodity>>(p.items);
+
             return ResultModel<object>.Conclude(taoDianDianGroup.TaoBaoPushOrder(p));
         }
+
+        //[HttpPost]
+        //public ResultModel<object> OrderDispatch(OrderDispatch p)
+        //{
+        //    try
+        //    {
+        //        p.itemsList = ParseHelper.Deserialize<List<Commodity>>(p.items);
+        //    }
+        //    catch (Exception err)
+        //    {
+        //        string str = err.Message;
+        //    }
+        //    return ResultModel<object>.Conclude(taoDianDianGroup.TaoBaoPushOrder(p));
+        //}
     }
 }
