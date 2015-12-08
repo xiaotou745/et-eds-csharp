@@ -112,7 +112,115 @@ namespace Ets.Service.Provider.Pay
             return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
         }
 
+        #region 闪送
+        /// <summary>
+        /// 生成闪送订单
+        /// 胡灵波
+        /// 2015年12月8日 11:19:41
+        /// </summary>
+        /// <param name="model"></param>       
+        public ResultModel<PayResultModel> CreateFlashPay(Model.ParameterModel.AliPay.PayModel model)
+        {
+            LogHelper.LogWriter("=============支付请求数据：", model);
+            PayStatusModel payStatusModel = orderChildDao.GetPayStatus(model.orderId, model.childId);
+            if (payStatusModel == null)
+            {
+                string err = string.Concat("订单不存在,主订单号：", model.orderId, ",子订单号:", model.childId);
+                LogHelper.LogWriter(err);
+                return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
+            }
+            if (payStatusModel.PayStatus == PayStatusEnum.HadPay.GetHashCode())  //已经支付的话，直接返回支付成功
+            {
+                return ResultModel<PayResultModel>.Conclude(AliPayStatus.success);
+            }
+            //所属产品_主订单号_子订单号_支付方式
+            string orderNo = string.Concat(model.productId, "_", model.orderId, "_", model.childId, "_", model.payStyle, "_", model.oType);
+            if (model.payType == PayTypeEnum.ZhiFuBao.GetHashCode())
+            {
+                LogHelper.LogWriter("=============支付宝支付：");          
+                return CreateAliFlashPayOrder(orderNo, payStatusModel.TotalPrice, model.orderId, model.payStyle);           
+            }
+            if (model.payType == PayTypeEnum.WeiXin.GetHashCode())
+            {
+                //微信支付
+                LogHelper.LogWriter("=============微信支付：");          
+                return CreateWxSSPayOrder(orderNo, payStatusModel.TotalPrice, model.orderId);      
+            }
 
+            return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
+        }
+
+        /// <summary>
+        /// 生成支付宝二维码
+        /// 窦海超
+        /// 2015年5月12日 14:36:37
+        /// </summary>
+        /// <param name="orderNo">订单号</param>
+        /// <param name="payAmount">支付金额</param>
+        /// <param name="orderId">订单ID，用于查询商家信息用</param>
+        /// <returns></returns>
+        private ResultModel<PayResultModel> CreateAliFlashPayOrder(string orderNo, decimal payAmount, int orderId, int payStyle)
+        {
+            #region 通过订单ID，用于查询商家信息用
+            BusinessDM businessModel = new BusinessDao().GetByOrderId(orderId);
+            string businessName = string.Empty;
+            if (businessModel == null || string.IsNullOrEmpty(businessModel.Name))
+            {
+                businessName = "E代送收款";
+            }
+            else
+            {
+                businessName = businessModel.Name;
+            }
+            #endregion
+            PayResultModel resultModel = new PayResultModel();
+            string qrcodeUrl = string.Empty;
+            if (payStyle == 1)//用户扫二维码
+            {
+                //qrcodeUrl = alipayIntegrate.GetQRCodeUrl(orderNo, payAmount, businessName);
+                AliModel aliModel = new AliModel()
+                {
+                    body = string.Empty,
+                    orderNo = orderNo,
+                    payMoney = payAmount,
+                    productName = businessName
+                };
+                qrcodeUrl = new AliCallBack().GetOrder(aliModel);
+                if (string.IsNullOrEmpty(qrcodeUrl))
+                {
+                    return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
+                }
+            }
+            resultModel.aliQRCode = qrcodeUrl;
+            resultModel.orderNo = orderNo;
+            resultModel.payAmount = payAmount;
+            resultModel.payType = PayTypeEnum.ZhiFuBao.GetHashCode();
+            resultModel.notifyUrl = ETS.Config.NotifyUrl;
+            return ResultModel<PayResultModel>.Conclude(AliPayStatus.success, resultModel);
+        }
+
+
+        /// <summary>
+        /// 支付闪送模式订单
+        /// 窦海超
+        /// 2015年12月1日 14:56:14
+        /// </summary>
+        /// <param name="orderNo">订单号</param>
+        /// <param name="WxCodeUrl">微信地址</param>
+        /// <param name="TotalPrice">总金额，注意:微信要乘以100=最后支付的金额，这里传值前不要乘以100</param>
+        /// <returns></returns>
+        public ResultModel<PayResultModel> CreateWxSSPayOrder(string orderNo, decimal totalPrice, int orderId)
+        {
+            //支付方式-主订单ID-子订单ID
+            PayResultModel resultModel = new PayResultModel();
+            resultModel.orderNo = orderNo;//订单号
+            resultModel.payAmount = totalPrice;//总金额，没乘以100的值
+            resultModel.payType = PayTypeEnum.WeiXin.GetHashCode();//微信
+            resultModel.notifyUrl = ETS.Config.SSWxNotify;//回调地址
+
+            return ResultModel<PayResultModel>.Conclude(AliPayStatus.success, resultModel);
+        }
+        #endregion
 
         #region 现金支付
         /// <summary>
@@ -799,28 +907,6 @@ namespace Ets.Service.Provider.Pay
         #endregion
 
         #region 微信相关
-
-
-        /// <summary>
-        /// 支付闪送模式订单
-        /// 窦海超
-        /// 2015年12月1日 14:56:14
-        /// </summary>
-        /// <param name="orderNo">订单号</param>
-        /// <param name="WxCodeUrl">微信地址</param>
-        /// <param name="TotalPrice">总金额，注意:微信要乘以100=最后支付的金额，这里传值前不要乘以100</param>
-        /// <returns></returns>
-        public ResultModel<PayResultModel> CreateWxSSPayOrder(string orderNo, decimal totalPrice, int orderId)
-        {
-            //支付方式-主订单ID-子订单ID
-            PayResultModel resultModel = new PayResultModel();
-            resultModel.orderNo = orderNo;//订单号
-            resultModel.payAmount = totalPrice;//总金额，没乘以100的值
-            resultModel.payType = PayTypeEnum.WeiXin.GetHashCode();//微信
-            resultModel.notifyUrl = ETS.Config.SSWxNotify;//回调地址
-
-            return ResultModel<PayResultModel>.Conclude(AliPayStatus.success, resultModel);
-        }
 
 
         /// <summary>

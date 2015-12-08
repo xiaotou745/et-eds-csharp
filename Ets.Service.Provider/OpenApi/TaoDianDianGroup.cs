@@ -250,7 +250,7 @@ namespace Ets.Service.Provider.OpenApi
                     oModel.PickUpAddress = bModel.Address;  //取货地址
                     oModel.PubDate = DateTime.Now; //取货时间
                     oModel.ReceviceCity = bModel.City; //城市
-                    oModel.DistribSubsidy = p.delivery_fee;//外送费
+                    oModel.DistribSubsidy = p.delivery_fee/100;//外送费
                     oModel.BusinessCommission = ParseHelper.ToDecimal(bModel.BusinessCommission);//商户结算比例
                     oModel.BusinessName = bModel.Name;
                     oModel.CommissionType = bModel.CommissionType;//结算类型：1：固定比例 2：固定金额
@@ -296,8 +296,8 @@ namespace Ets.Service.Provider.OpenApi
 
                     OrderCommission orderComm = new OrderCommission()
                     {
-                        Amount = p.actually_paid, /*订单金额*/
-                        DistribSubsidy = bModel.DistribSubsidy,/*外送费*/
+                        Amount = oModel.Amount, /*订单金额*/
+                        DistribSubsidy = oModel.DistribSubsidy,/*外送费*/
                         OrderCount = p.quantity/*订单数量*/,
                         BusinessCommission = bModel.BusinessCommission.Value, /*商户结算比例*/
                         CommissionType = bModel.CommissionType,/*结算类型：1：固定比例 2：固定金额*/
@@ -308,15 +308,13 @@ namespace Ets.Service.Provider.OpenApi
 
                     OrderPriceProvider commProvider = CommissionFactory.GetCommission(bModel.StrategyId);
                     oModel.CommissionFormulaMode = bModel.StrategyId;
-                    oModel.CommissionRate = commProvider.GetCommissionRate(orderComm); //佣金比例 
-                    oModel.BaseCommission = commProvider.GetBaseCommission(orderComm);//基本佣金
-                    oModel.OrderCommission = commProvider.GetCurrenOrderCommission(orderComm); //订单佣金
-                    oModel.WebsiteSubsidy = commProvider.GetOrderWebSubsidy(orderComm);//网站补贴
-                    oModel.SettleMoney = OrderSettleMoneyProvider.GetSettleMoney(orderComm.Amount ?? 0, orderComm.BusinessCommission,
-                        orderComm.CommissionFixValue ?? 0, orderComm.OrderCount ?? 0,
-                        orderComm.DistribSubsidy ?? 0, 0);//订单结算金额          
+                    oModel.CommissionRate =0; //佣金比例 
+                    oModel.BaseCommission =0;//基本佣金
+                    oModel.OrderCommission = p.delivery_fee / 100; //订单佣金
+                    oModel.WebsiteSubsidy = 0;//网站补贴
+                    oModel.SettleMoney = 0;      
 
-                    oModel.Adjustment = commProvider.GetAdjustment(orderComm);//订单额外补贴金额           
+                    oModel.Adjustment = 0;//订单额外补贴金额           
                     oModel.Status = Convert.ToByte(OrderStatus.Status0.GetHashCode());
                     oModel.TimeSpan = bModel.Timespan;
 
