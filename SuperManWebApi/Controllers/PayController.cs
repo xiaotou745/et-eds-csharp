@@ -69,6 +69,17 @@ namespace SuperManWebApi.Controllers
             return payProvider.CreatePay(model);
         }
 
+        /// <summary>
+        /// 生成订单 闪送
+        /// 胡灵波
+        /// 2015年12月8日 11:14:04
+        /// </summary>
+        [Token]
+        public ResultModel<PayResultModel> CreateFlashPay(PayModel model)
+        {
+            return payProvider.CreateFlashPay(model);
+        }
+
 
         /// <summary>
         /// 现金支付
