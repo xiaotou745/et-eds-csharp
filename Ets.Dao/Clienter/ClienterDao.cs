@@ -352,13 +352,14 @@ SELECT PhoneNo AS Phone,0 AS PemType FROM clienter(NOLOCK) WHERE Status=1
             bool reslut = false;
             try
             {
-                string sql = @" update clienter set PicUrl=@PicUrl,PicWithHandUrl=@PicWithHandUrl,TrueName=@TrueName,IDCard=@IDCard,Status=@Status where Id=@Id ";
+                string sql = @" update clienter set PicUrl=@PicUrl,PicWithHandUrl=@PicWithHandUrl,TrueName=@TrueName,IDCard=@IDCard,Status=@Status,VehicleName=@VehicleName where Id=@Id ";
                 IDbParameters dbParameters = DbHelper.CreateDbParameters();
                 dbParameters.AddWithValue("@PicUrl", clienter.PicUrl);
                 dbParameters.AddWithValue("@PicWithHandUrl", clienter.PicWithHandUrl);
                 dbParameters.AddWithValue("@TrueName", clienter.TrueName);
                 dbParameters.AddWithValue("@IDCard", clienter.IDCard);
                 dbParameters.AddWithValue("@Status", ClienteStatus.Status3.GetHashCode());
+                dbParameters.AddWithValue("@VehicleName", DbType.String).Value = clienter.VehicleName;
                 dbParameters.AddWithValue("@Id", clienter.Id);
                 int i = DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
                 if (i > 0)
@@ -1056,7 +1057,7 @@ case when (c.DeliveryCompanyId>0 and dc.IsShowAccount=1) or
       when(c.DeliveryCompanyId<1 and c.GradeType=2) then 2
       when(c.DeliveryCompanyId>0 and dc.IsShowAccount=0) then 0
       end IsShowAccount,
-IsReceivePush,
+IsReceivePush,c.VehicleName,
 ISNULL(HeadPhoto,'') HeadImgUrl
 from  dbo.clienter c (nolock) 
 left join dbo.DeliveryCompany dc(nolock) on c.DeliveryCompanyId=dc.Id

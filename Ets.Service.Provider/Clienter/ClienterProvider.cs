@@ -50,6 +50,8 @@ using ETS.Security;
 using ETS;
 using Ets.Dao.Authority;
 using Ets.Model.DomainModel.Authority;
+using ETS.Extension;
+
 namespace Ets.Service.Provider.Clienter
 {
     public class ClienterProvider : IClienterProvider
@@ -945,7 +947,9 @@ namespace Ets.Service.Provider.Clienter
         {
             var model = clienterDao.GetDetails(id);
             model.HeadImgUrl = ImageCommon.GetUserImage(model.HeadImgUrl, ImageType.Clienter);
-            model.HasMessage = new ClienterMessageDao().HasMessage(id);
+            model.HasMessage = new ClienterMessageDao().HasMessage(id); 
+            model.VehicleId = EnumUtils.GetEnumHashCode(typeof (VehicleEnum), model.VehicleName);
+              
             return model;
 
         }
