@@ -619,7 +619,7 @@ namespace Ets.Service.Provider.Order
             #region 设置用户的省市区编码信息 add by caoheyang 20150407
             string orderCodeInfo = new AreaProvider().GetOpenCode(new Ets.Model.ParameterModel.Area.ParaAreaNameInfo()
             {
-                ProvinceName = paramodel.address.province,
+                ProvinceName = paramodel.address.province.Replace("市",""),
                 CityName = paramodel.address.city,
                 AreaName = paramodel.address.area
             });
