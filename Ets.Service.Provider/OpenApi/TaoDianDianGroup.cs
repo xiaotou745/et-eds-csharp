@@ -59,8 +59,17 @@ namespace Ets.Service.Provider.OpenApi
             var reqpar = "data=" + AESApp.AesEncrypt(jsonData);
             string json = new HttpClient().PostAsJsonAsync(url, new { data = AESApp.AesEncrypt(jsonData) }).Result.Content.ReadAsStringAsync().Result;
             Log(url, reqpar, json); //记录日志
-            TaoBaoResponseBase res = JsonHelper.JsonConvertToObject<TaoBaoResponseBase>(json);
-            return res.is_success!=null&&res.is_success==true ? OrderApiStatusType.Success : OrderApiStatusType.SystemError;
+            if (json != null && json != "")
+            {
+                TaoBaoResponseBase res = JsonHelper.JsonConvertToObject<TaoBaoResponseBase>(json);
+                return res.is_success == true || res.result == true
+                    ? OrderApiStatusType.Success
+                    : OrderApiStatusType.SystemError;
+            }
+            else
+            {
+                return OrderApiStatusType.SystemError;
+            }
         }
 
 
