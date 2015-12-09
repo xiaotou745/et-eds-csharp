@@ -385,15 +385,15 @@ namespace Ets.Service.Provider.OpenApi
                     ocMode.DeliveryPrice = p.delivery_fee;//配送费
                     ocMode.PayStyle = 1;//用户支付
                     ocMode.PayType = 0;//支付类型
-                    ocMode.PayStatus = 2;//动漫付状态
+                    ocMode.PayStatus = 1;//已支付
                     ocMode.PayBy = p.consignee_name;//支付人
                     ocMode.PayTime = DateTime.Now;//支付时间
                     ocMode.PayPrice = p.actually_paid;//支付金额
                     ocMode.HasUploadTicket = false;//是否上传小票
                     ocMode.TicketUrl = "";//小票地址
-                    ocMode.CreateBy = "admin";//创建人
+                    ocMode.CreateBy = "淘宝推送订单";//创建人
                     ocMode.CreateTime = DateTime.Now;
-                    ocMode.UpdateBy = "admin";
+                    ocMode.UpdateBy = "淘宝推送订单";
                     ocMode.UpdateTime = DateTime.Now;
                     long ocId = orderChildDao.Insert(ocMode);
                     #endregion

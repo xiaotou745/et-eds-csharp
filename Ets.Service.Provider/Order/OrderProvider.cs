@@ -1258,6 +1258,10 @@ namespace Ets.Service.Provider.Order
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 var order= orderDao.GetOrderByOrderNoAndOrderFrom(thirdNo, GroupConst.Group8, 0);
+                if (order == null)
+                {
+                    return TaoBaoCancelOrderReturn.NoExist;
+                }
                 OrderOptionModel orderOptionModel = new OrderOptionModel
                 {
                     OptUserId=0,
