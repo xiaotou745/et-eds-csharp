@@ -1234,6 +1234,11 @@ where  id = @id";
                 {
                     result.HeadImgUrl = dataReader["HeadImgUrl"].ToString();
                 }
+                obj = dataReader["VehicleName"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.VehicleName = dataReader["VehicleName"].ToString();
+                }
                 return result;
             }
         }

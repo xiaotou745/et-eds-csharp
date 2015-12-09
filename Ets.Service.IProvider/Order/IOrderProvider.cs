@@ -231,7 +231,7 @@ namespace Ets.Service.IProvider.Order
         /// <UpdateBy>hulingbo</UpdateBy>
         /// <UpdateTime>20150701</UpdateTime>
         /// <param name="modelPM"></param>
-        void UpdateTake(OrderPM modelPM);
+        int UpdateTake(OrderPM modelPM);
 
         /// <summary>
         /// 获取订单状态

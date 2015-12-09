@@ -24,6 +24,8 @@ namespace Ets.Service.IProvider.Pay
         /// </summary>
         /// <param name="model"></param>
         ResultModel<PayResultModel> CreatePay(PayModel model);
+
+        ResultModel<PayResultModel> CreateFlashPay(PayModel model);
         /// <summary>
         /// 现金支付 wc
         /// </summary>
