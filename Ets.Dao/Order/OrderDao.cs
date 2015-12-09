@@ -2664,6 +2664,7 @@ else '' end)  as DistanceToBusiness,--距离
 SongCanDate
 
 from    dbo.[order] a ( nolock )
+join dbo.OrderOther oo(nolock) on a.Id=oo.OrderId 
         join dbo.business b ( nolock ) on a.businessId = b.Id
         left join ( select  distinct
                             ( temp.BusinessId )
