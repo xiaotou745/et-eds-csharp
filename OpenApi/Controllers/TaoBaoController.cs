@@ -38,7 +38,7 @@ namespace OpenApi.Controllers
         [HttpPost]
         public ResultModel<object> CancelOrder(ParamModel p)
         {
-            string json = AESApp.AesDecrypt(p.data);
+            string json = AESApp.AesDecrypt(p.data.Replace(' ', '+')/*TODO 暂时用Replace*/);
             JObject jobject = JObject.Parse(json);
             string delivery_order_no = jobject.Value<string>("delivery_order_no"); //接口调用状态 区分大小写
             return ResultModel<object>.Conclude(new OrderProvider().TaoBaoCancelOrder(delivery_order_no));

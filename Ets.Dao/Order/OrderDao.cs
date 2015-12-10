@@ -2662,6 +2662,7 @@ else '' end)  as DistanceToBusiness,--距离
 (case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress --发货地址
 
 from    dbo.[order] a ( nolock )
+join dbo.OrderOther oo(nolock) on a.Id=oo.OrderId 
         join dbo.business b ( nolock ) on a.businessId = b.Id
         left join ( select  distinct
                             ( temp.BusinessId )
@@ -2920,7 +2921,7 @@ order by a.id desc
         /// </summary>
         /// <UpdateBy>hulingbo</UpdateBy>
         /// <UpdateTime>20150701</UpdateTime>
-        public void UpdateTake(OrderPM modelPM)
+        public int UpdateTake(OrderPM modelPM)
         {
             // string clienterTrueName = "";
             //clienter c = clienterDao.GetById(modelPM.ClienterId);
@@ -2967,7 +2968,7 @@ end
             dbParameters.AddWithValue("IsTakeTimely", modelPM.IsTimely);            
             dbParameters.AddWithValue("clienterId", modelPM.ClienterId);
             dbParameters.AddWithValue("Platform", SuperPlatform.FromClienter.GetHashCode());
-            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+            return  DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
         /// <summary>
         /// 获取任务支付状态（0：未支付 1：部分支付 2：已支付）
@@ -4203,7 +4204,8 @@ insert  into dbo.[order]
           MealsSettleMode,
           BusinessReceivable,
           GroupBusinessId,
-          ProductName
+          ProductName,
+          OriginalOrderId
         )
 values  ( @OrderNo ,
           @PickUpAddress ,
@@ -4246,7 +4248,8 @@ values  ( @OrderNo ,
           @MealsSettleMode,
           @BusinessReceivable,
           @GroupBusinessId,
-          @ProductName
+          @ProductName,
+          @OriginalOrderId
         )
 select @@identity";
 
@@ -4292,7 +4295,8 @@ select @@identity";
             dbParameters.AddWithValue("@BusinessReceivable", order.BusinessReceivable);
             dbParameters.AddWithValue("@GroupBusinessId", order.GroupBusinessId);
             dbParameters.AddWithValue("@ProductName", order.ProductName);
-
+            dbParameters.AddWithValue("@OriginalOrderId", order.OriginalOrderId);
+            
             object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters);      
             return ParseHelper.ToInt(result, 0);
         }

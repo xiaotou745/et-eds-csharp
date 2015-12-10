@@ -1,4 +1,5 @@
-﻿using ETS.Enums;
+﻿using System.Threading.Tasks;
+using ETS.Enums;
 using Ets.Model.DataModel.Order;
 using Ets.Model.ParameterModel.Order;
 using System;
@@ -293,7 +294,11 @@ namespace SuperManWebApi.Controllers
             #endregion
 
             OrderListModel olm = iOrderProvider.GetOrderInfoByOrderNo("",modelPM.OrderId);
-            if (olm != null && olm.Platform == PlatformEnum.FlashToSendModel.GetHashCode()) // 闪送模式
+            if (olm == null)
+            {
+                return ResultModel<string>.Conclude(ConfirmTakeStatus.FailedGet);
+            }
+            if (olm.Platform == PlatformEnum.FlashToSendModel.GetHashCode()) // 闪送模式
             {
                 //验证取货码
                 if (string.IsNullOrWhiteSpace(modelPM.pickupCode)) 
@@ -308,7 +313,13 @@ namespace SuperManWebApi.Controllers
             }
             try
             {
-                iOrderProvider.UpdateTake(modelPM);
+                if (iOrderProvider.UpdateTake(modelPM) > 0)
+                {
+                    Task.Factory.StartNew(() =>
+                    {
+                        iOrderProvider.AsyncOrderStatus(olm.OrderNo);
+                    });
+                }
                 return ResultModel<string>.Conclude(ConfirmTakeStatus.Success, "");
             }
             catch (Exception ex)

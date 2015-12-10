@@ -126,7 +126,7 @@ namespace Ets.Service.Provider.Order
                     resultModel.Status = from.Status.Value;
                     resultModel.HadUploadCount = from.HadUploadCount;
                     resultModel.GroupId = from.GroupId;
-                    if (from.GroupId == GroupType.Group3.GetHashCode()) //全时 需要做验证码验证
+                    if (from.GroupId == GroupConst.Group3) //全时 需要做验证码验证
                         resultModel.NeedPickupCode = 1;
 
                     if (from.BusiLatitude == null || from.BusiLatitude == 0 || from.BusiLongitude == null || from.BusiLongitude == 0)
@@ -195,7 +195,7 @@ namespace Ets.Service.Provider.Order
                     resultModel.businessPhone2 = from.BusinessPhone2;
                     resultModel.HadUploadCount = from.HadUploadCount;
                     resultModel.GroupId = from.GroupId;
-                    if (from.GroupId == GroupType.Group3.GetHashCode())
+                    if (from.GroupId == GroupConst.Group3)
                         resultModel.NeedPickupCode = 1;
 
                     if (from.PickUpCity != null)
@@ -1194,7 +1194,7 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public OrderListModel GetOrderInfoByOrderNo(string orderNo, int orderId = 0)
         {
-            return orderDao.GetOrderInfoByOrderNo(orderNo);
+            return orderDao.GetOrderInfoByOrderNo(orderNo,orderId);
         }
 
         #region 旧方法已弃用
@@ -1258,6 +1258,10 @@ namespace Ets.Service.Provider.Order
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 var order= orderDao.GetOrderByOrderNoAndOrderFrom(thirdNo, GroupConst.Group8, 0);
+                if (order == null)
+                {
+                    return TaoBaoCancelOrderReturn.NoExist;
+                }
                 OrderOptionModel orderOptionModel = new OrderOptionModel
                 {
                     OptUserId=0,
@@ -2049,9 +2053,9 @@ namespace Ets.Service.Provider.Order
         /// <UpdateBy>hulingbo</UpdateBy>
         /// <UpdateTime>20150701</UpdateTime>
         /// <param name="modelPM"></param>
-        public void UpdateTake(OrderPM modelPM)
+        public int UpdateTake(OrderPM modelPM)
         {
-            orderDao.UpdateTake(modelPM);
+            return orderDao.UpdateTake(modelPM);
         }
 
         /// <summary>
