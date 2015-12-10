@@ -40,5 +40,10 @@ namespace Ets.Model.DataModel.Order
         /// 微信二维码支付地址
         /// </summary>
         public string WxCodeUrl { get; set; }
+
+        /// <summary>
+        /// 小费金额
+        /// </summary>
+        public decimal TipAmount { get; set; }
     }
 }

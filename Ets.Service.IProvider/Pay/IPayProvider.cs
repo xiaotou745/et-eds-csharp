@@ -26,6 +26,8 @@ namespace Ets.Service.IProvider.Pay
         ResultModel<PayResultModel> CreatePay(PayModel model);
 
         ResultModel<PayResultModel> CreateFlashPay(PayModel model);
+
+        dynamic NotifyTip();
         /// <summary>
         /// 现金支付 wc
         /// </summary>

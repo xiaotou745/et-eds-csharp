@@ -30,6 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AopSdk">
+      <HintPath>..\lib\AopSdk.dll</HintPath>
+    </Reference>
     <Reference Include="jpush-api">
       <HintPath>..\packages\JPush.NET.1.2.3.27974\lib\jpush-api.dll</HintPath>
     </Reference>
@@ -68,6 +71,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Pay\SSAliPay\AliNativePay.cs" />
+    <Compile Include="Pay\SSAliPay\AliPayApi.cs" />
     <Compile Include="Pay\SSBWxPay\Config.cs" />
     <Compile Include="Pay\SSBWxPay\Data.cs" />
     <Compile Include="Pay\SSBWxPay\Exception.cs" />

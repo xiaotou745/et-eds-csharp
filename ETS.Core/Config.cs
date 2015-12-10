@@ -88,6 +88,9 @@ namespace ETS
         /// </summary>
         public static string NotifyUrl { get { return ConfigKey("NotifyUrl"); } }
 
+
+        public static string NotifyTipUrl { get { return ConfigKey("NotifyTipUrl"); } }
+
         /// <summary>
         /// 微信订单支付回调地址
         /// </summary>
@@ -96,7 +99,7 @@ namespace ETS
         /// <summary>
         /// 闪送模式 微信订单支付回调地址
         /// </summary>
-        public static string SSWxNotify { get { return string.Concat(ConfigKey("YeePayNotifyUrl").TrimEnd('/'), "/Pay/SSWxNotify"); } }
+        public static string SSWxNotify { get { return string.Concat(ConfigKey("SSWxNotifyUrl").TrimEnd('/'), "/Pay/SSWxNotify"); } }
 
 
         /// <summary>

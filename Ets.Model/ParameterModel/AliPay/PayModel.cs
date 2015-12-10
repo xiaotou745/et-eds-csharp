@@ -46,5 +46,15 @@ namespace Ets.Model.ParameterModel.AliPay
         /// 订单状态0订单支付，1小费
         /// </summary>
         public int oType { get; set; }
+
+        /// <summary>
+        /// 订单编号
+        /// </summary>
+        public string orderNo { get; set; }
+        /// <summary>
+        /// 小费金额
+        /// </summary>
+        public decimal tipAmount { get; set; }
+        
     }
 }

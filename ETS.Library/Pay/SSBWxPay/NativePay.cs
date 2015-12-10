@@ -67,6 +67,55 @@ namespace ETS.Library.Pay.SSBWxPay
             return prepay_id;
         }
 
+        /// <summary>
+        /// 取消订单 闪送模式        
+        /// </summary>
+        /// 胡灵波
+        /// 2015年12月9日 17:08:21
+        /// <param name="orderNo"></param>
+        /// <returns></returns>
+        public bool CloseOrder(string orderNo)
+        {           
+            WxPayData data = new WxPayData();
+            data.SetValue("out_trade_no", orderNo);//商户订单号        
+            WxPayData result = WxPayApi.CloseOrder(data);//调用统一下单接口
+            if (result.GetValue("return_code").ToString().ToUpper() == "FAIL")
+            {
+                return false;
+            }
+  
+            return true;
+        }
+
+        /// <summary>
+        /// 退款 闪送模式
+        /// </summary>
+        /// 胡灵波
+        /// 2015年12月9日 17:36:08
+        /// <param name="orderNo"></param>
+        /// <param name="out_refund_no"></param>
+        /// <param name="total_fee"></param>
+        /// <param name="refund_fee"></param>
+        /// <param name="op_user_id"></param>
+        /// <returns></returns>
+        public bool Refund(string orderNo, string out_refund_no, int total_fee, int refund_fee, string op_user_id)
+        {
+            WxPayData data = new WxPayData();
+            data.SetValue("out_trade_no", orderNo);//商户订单号        
+            data.SetValue("out_refund_no", out_refund_no);//商户退款单号        
+            data.SetValue("total_fee", total_fee);//总金额        
+            data.SetValue("refund_fee", refund_fee);//退款金额        
+            data.SetValue("out_trade_no", orderNo);//商户订单号        
+            data.SetValue("op_user_id", op_user_id);//商户订单号        
+            WxPayData result = WxPayApi.Refund(data);//调用统一下单接口
+            if (result.GetValue("return_code").ToString().ToUpper() == "FAIL")
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         /**
         * 参数数组转换为url格式
         * @param map 参数名与参数值的映射表

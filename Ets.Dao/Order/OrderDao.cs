@@ -3303,9 +3303,24 @@ where   Id = @OrderId and FinishAll = 0";
         {
             const string updateSql = @"
 update  [order]
-set IsPay = 1 
+set IsPay = 1,Status=0
+where   Id = @OrderId";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();            
+            dbParameters.Add("OrderId", DbType.Int32, 4).Value = orderId;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters) == 1 ? true : false;
+        }
+        /// <summary>
+        /// 更新是否已付款
+        /// </summary>
+        /// <param name="orderId"></param>
+        public bool UpdateTipAmount(int orderId, decimal tipAmount)
+        {
+            const string updateSql = @"
+update  [order]
+set  TipAmount=TipAmount+@TipAmount
 where   Id = @OrderId";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("TipAmount", tipAmount);
             dbParameters.Add("OrderId", DbType.Int32, 4).Value = orderId;
             return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters) == 1 ? true : false;
         }

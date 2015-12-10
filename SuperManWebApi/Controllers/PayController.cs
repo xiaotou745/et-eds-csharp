@@ -68,19 +68,6 @@ namespace SuperManWebApi.Controllers
         {
             return payProvider.CreatePay(model);
         }
-
-        /// <summary>
-        /// 生成订单 闪送
-        /// 胡灵波
-        /// 2015年12月8日 11:14:04
-        /// </summary>
-        [Token]
-        public ResultModel<PayResultModel> CreateFlashPay(PayModel model)
-        {
-            return payProvider.CreateFlashPay(model);
-        }
-
-
         /// <summary>
         /// 现金支付
         /// wc
@@ -249,17 +236,7 @@ namespace SuperManWebApi.Controllers
         {
             payProvider.WxNotify();
         }
-
-        /// <summary>
-        /// 闪送模式 微信支付 回调
-        /// 窦海超
-        /// 2015年5月13日 15:02:42
-        /// </summary>
-        /// <returns></returns>
-        //[HttpGet]
-        public void SSWxNotify() {
-            payProvider.SSWxNotify();
-        }
+ 
         #endregion
 
 
@@ -280,5 +257,44 @@ namespace SuperManWebApi.Controllers
             //    HttpContext.Current.Response.End();
             //}
         }
+
+        #region  闪送模式
+        /// <summary>
+        /// 生成订单 闪送
+        /// 胡灵波
+        /// 2015年12月8日 11:14:04
+        /// </summary>
+        [Token]
+        public ResultModel<PayResultModel> CreateFlashPay(PayModel model)
+        {
+            return payProvider.CreateFlashPay(model);
+        }
+
+
+        /// <summary>
+        /// 支付宝回调 闪送模式
+        /// 发单商家加小费 抢单商家加小费
+        /// 胡灵波
+        /// 2015年12月8日 17:20:38
+        /// </summary>
+        /// <returns></returns>
+        public dynamic NotifyTip()
+        {
+            return payProvider.NotifyTip();
+        }
+
+
+        /// <summary>
+        /// 微信回调 闪送模式
+        /// 发单商家加小费 抢单商家加小费
+        /// 胡灵波
+        /// 2015年12月8日 17:20:38
+        /// </summary>
+        /// <returns></returns>
+        public void SSWxNotify()
+        {
+            payProvider.SSWxNotify();
+        }
+        #endregion
     }
 }
