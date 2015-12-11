@@ -264,7 +264,7 @@ namespace SuperManWebApi.Controllers
         /// 胡灵波
         /// 2015年12月8日 11:14:04
         /// </summary>
-        [Token]
+        //[Token]
         public ResultModel<PayResultModel> CreateFlashPay(PayModel model)
         {
             return payProvider.CreateFlashPay(model);

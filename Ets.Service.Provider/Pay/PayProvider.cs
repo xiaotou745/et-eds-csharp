@@ -2436,7 +2436,7 @@ namespace Ets.Service.Provider.Pay
             }
 
             //所属产品_主订单号_子订单号_支付方式
-            string orderNo = string.Concat(model.orderId, "_", model.orderNo, "_", model.childId);
+            string orderNo = string.Concat(model.orderId, "_", model.orderNo, "_", model.childId,"_"+model.payStyle);
             decimal zfAmount = 0;
             if (payStatusModel.PayStatus == PayStatusEnum.HadPay.GetHashCode())//已支付，加小费
             {
@@ -2452,14 +2452,14 @@ namespace Ets.Service.Provider.Pay
             if (model.payType == PayTypeEnum.ZhiFuBao.GetHashCode())
             {
                 LogHelper.LogWriter("=============支付宝支付：");
-                return CreateAliFlashPayOrder(orderNo, zfAmount, model.orderId);
+                return CreateAliFlashPayOrder(orderNo, zfAmount, model.orderId,model.payStyle);
             }
             if (model.payType == PayTypeEnum.WeiXin.GetHashCode())
             {
                 //微信支付
                 LogHelper.LogWriter("=============微信支付：");
 
-                return CreateWxSSPayOrder(orderNo, zfAmount, model.orderId);
+                return CreateWxSSPayOrder(orderNo, zfAmount, model.orderId,model.payStyle);
             }
 
             return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
@@ -2474,7 +2474,7 @@ namespace Ets.Service.Provider.Pay
         /// <param name="payAmount">支付金额</param>
         /// <param name="orderId">订单ID，用于查询商家信息用</param>
         /// <returns></returns>
-        private ResultModel<PayResultModel> CreateAliFlashPayOrder(string orderNo, decimal payAmount, int orderId)
+        private ResultModel<PayResultModel> CreateAliFlashPayOrder(string orderNo, decimal payAmount, int orderId, int payStyle)
         {
             #region 通过订单ID，用于查询商家信息用
             BusinessDM businessModel = new BusinessDao().GetByOrderId(orderId);
@@ -2490,7 +2490,24 @@ namespace Ets.Service.Provider.Pay
             #endregion
 
             PayResultModel resultModel = new PayResultModel();
-            //resultModel.aliQRCode = qrcodeUrl;
+            string qrcodeUrl = string.Empty;
+            if (payStyle == 1)//用户扫二维码
+            {
+                //qrcodeUrl = alipayIntegrate.GetQRCodeUrl(orderNo, payAmount, businessName);
+                AliModel aliModel = new AliModel()
+                {
+                    body = string.Empty,
+                    orderNo = orderNo,
+                    payMoney = payAmount,
+                    productName = businessName
+                };
+                qrcodeUrl = new AliCallBack().GetOrder(aliModel);
+                if (string.IsNullOrEmpty(qrcodeUrl))
+                {
+                    return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
+                }
+            }
+            resultModel.aliQRCode = qrcodeUrl;
             resultModel.orderNo = orderNo;
             resultModel.payAmount = payAmount;
             resultModel.payType = PayTypeEnum.ZhiFuBao.GetHashCode();
@@ -2556,9 +2573,9 @@ namespace Ets.Service.Provider.Pay
                     int orderId = ParseHelper.ToInt(orderNo.Split('_')[0]);//主订单号
                     string currOrderNo = ParseHelper.ToString(orderNo.Split('_')[1]);//主订单号
                     int orderChildId = ParseHelper.ToInt(orderNo.Split('_')[2]);//子订单号
-                    bool isPay = ParseHelper.ToBool(orderNo.Split('_')[3]);//是否已支付
-                    decimal zfAmount = ParseHelper.ToDecimal(orderNo.Split('_')[4]);// 支付金额
-                    decimal tipAmount = ParseHelper.ToDecimal(orderNo.Split('_')[5]);// 小费
+                    bool isPay = ParseHelper.ToBool(orderNo.Split('_')[4]);//是否已支付
+                    decimal zfAmount = ParseHelper.ToDecimal(orderNo.Split('_')[5]);// 支付金额
+                    decimal tipAmount = ParseHelper.ToDecimal(orderNo.Split('_')[6]);// 小费
 
                     if (orderId <= 0 || orderChildId <= 0)
                     {
@@ -2646,14 +2663,25 @@ namespace Ets.Service.Provider.Pay
         /// <param name="orderNo">订单号</param>      
         /// <param name="TotalPrice"></param>
         /// <returns></returns>
-        private ResultModel<PayResultModel> CreateWxSSPayOrder(string orderNo, decimal totalPrice, int orderId)
+        private ResultModel<PayResultModel> CreateWxSSPayOrder(string orderNo, decimal totalPrice, int orderId, int payStyle)
         {
             //支付方式-主订单ID-子订单ID
             PayResultModel resultModel = new PayResultModel();
+
+            string code_url = string.Empty;
+            if (payStyle == 1)//用户扫二维码
+            {
+                ETS.Library.Pay.SSBWxPay.NativePay nativePay = new ETS.Library.Pay.SSBWxPay.NativePay();
+                string prepayId = string.Empty;
+                code_url = nativePay.GetPayUrl(orderNo, totalPrice, "E代送收款", Config.SSWxNotify, out prepayId);
+                resultModel.prepayId = prepayId;
+            }
+
+            resultModel.aliQRCode = code_url;//微信地址
             resultModel.orderNo = orderNo;//订单号
             resultModel.payAmount = totalPrice;//总金额，没乘以100的值
             resultModel.payType = PayTypeEnum.WeiXin.GetHashCode();//微信
-            resultModel.notifyUrl = ETS.Config.SSWxNotify;//回调地址
+            resultModel.notifyUrl = ETS.Config.SSWxNotify;//回调地址            
 
             return ResultModel<PayResultModel>.Conclude(AliPayStatus.success, resultModel);
         }
@@ -2686,10 +2714,10 @@ namespace Ets.Service.Provider.Pay
 
                 int orderId = ParseHelper.ToInt(orderNo.Split('_')[0]);//主订单号
                 string currOrderNo = ParseHelper.ToString(orderNo.Split('_')[1]);//主订单号
-                int orderChildId = ParseHelper.ToInt(orderNo.Split('_')[2]);//子订单号
-                bool isPay = ParseHelper.ToBool(orderNo.Split('_')[3]);//是否已支付
-                decimal zfAmount = ParseHelper.ToDecimal(orderNo.Split('_')[4]);// 支付金额
-                decimal tipAmount = ParseHelper.ToDecimal(orderNo.Split('_')[5]);// 小费
+                int orderChildId = ParseHelper.ToInt(orderNo.Split('_')[2]);//子订单号                
+                bool isPay = ParseHelper.ToBool(orderNo.Split('_')[4]);//是否已支付
+                decimal zfAmount = ParseHelper.ToDecimal(orderNo.Split('_')[5]);// 支付金额
+                decimal tipAmount = ParseHelper.ToDecimal(orderNo.Split('_')[6]);// 小费
 
                 if (orderId <= 0 || orderChildId <= 0)
                 {

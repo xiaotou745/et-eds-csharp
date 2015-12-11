@@ -274,7 +274,7 @@ where   1=1 and o.Id = @OrderId
         /// <returns>不存在返回-1</returns>
         public PayStatusModel GetPayStatus(int orderId, int orderChildId)
         {
-            string sql = "SELECT PayStatus,TotalPrice,WxCodeUrl,TipAmount from dbo.OrderChild oc(nolock) where OrderId = @OrderId and ChildId = @ChildId ";//ThirdPayStatus as 
+            string sql = "SELECT  oc.PayStatus,oc.TotalPrice,oc.WxCodeUrl,o.TipAmount from dbo.OrderChild oc(nolock) left join dbo.[order] o (nolock) on oc.orderid=o.id   where o.id = @OrderId and oc.id = @ChildId ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("OrderId", DbType.Int32, 4).Value = orderId;
             parm.Add("ChildId", DbType.Int32, 4).Value = orderChildId;
