@@ -24,7 +24,7 @@ namespace ETS.Library.Pay.CWxPay
 
         /*APP*/
         //public const string APPID = "wx8164fe553cecbae5";//开放平台
-        //public const string APPSECRET = "c0cb93c7fb3f7322326b0c853f0cba46";//公众平台
+        //public const string APPSECRET = "c0cb93c7fb3f7322326b0c853f0cba46";//开放平台
         //public const string MCHID = "1264065201";//商户
         //public const string KEY = "446FE608F8E5493B89F3FDBC9148BA17";//商户
 
