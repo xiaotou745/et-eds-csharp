@@ -944,7 +944,8 @@ namespace Ets.Service.Provider.Order
                     model.Receive_ProvinceCode = _province.NationalCode.ToString();
                 }
                 string cityName = model.Receive_City;
-                model.Receive_City = string.IsNullOrEmpty(cityName) ? string.Empty : cityName.Trim().Replace("城区", "市").Replace("郊区", "市");
+                //把省里的城区，郊区过滤掉，因为易代送的直辖市都是没有市或城区的
+                model.Receive_City = string.IsNullOrEmpty(cityName) ? string.Empty : cityName.Trim().Replace("城区", "").Replace("郊区", "");
                 //转换市
                 var _city = iAreaProvider.GetNationalAreaInfo(new AreaModelTranslate() { Name = model.Receive_City, JiBie = 3 });
                 if (_city != null)

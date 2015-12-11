@@ -16,15 +16,19 @@ namespace ETS.Library.Pay.CWxPay
         * KEY：商户支付密钥，参考开户邮件设置（必须配置）
         * APPSECRET：公众帐号secert（仅JSAPI支付的时候需要配置）
         */
-        //public const string APPID = "wxb89ebba3cec98a8c";
-        //public const string MCHID = "1243442302";
-        //public const string KEY = "567F0FBC31FC4366AF187E0AF2D0E9B2";
-        //public const string APPSECRET = "1937e6b47786c86fac37303f97d5ed91";
+        /*NATIVE*/
+        public const string APPID = "wxb89ebba3cec98a8c";//公众平台
+        public const string MCHID = "1243442302";//公众平台
+        public const string APPSECRET = "1937e6b47786c86fac37303f97d5ed91";//公众平台
+        public const string KEY = "51c56b886b5be869567dd389b3e5d1d6";//商户
 
-        public const string APPID = "wx8164fe553cecbae5";
-        public const string MCHID = "1264065201";
-        public const string KEY = "446FE608F8E5493B89F3FDBC9148BA17";
-        public const string APPSECRET = "c0cb93c7fb3f7322326b0c853f0cba46";
+        /*APP*/
+        //public const string APPID = "wx8164fe553cecbae5";//开放平台
+        //public const string APPSECRET = "c0cb93c7fb3f7322326b0c853f0cba46";//开放平台
+        //public const string MCHID = "1264065201";//商户
+        //public const string KEY = "446FE608F8E5493B89F3FDBC9148BA17";//商户
+
+
 
         //=======【证书路径设置】===================================== 
         /* 证书路径,注意应该填写绝对路径（仅退款、撤销订单时需要）
