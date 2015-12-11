@@ -574,7 +574,7 @@ select @@IDENTITY ";
                                     ,o.FinishAll
                                     ,ISNULL(oo.IsJoinWithdraw,0) IsJoinWithdraw
                                     ";
-            var sbSqlWhere = new StringBuilder(" 1=1 and o.Platform<=2"); // and o.Platform<=2 老订单列表不显示闪送订单
+            var sbSqlWhere = new StringBuilder(" 1=1 and o.Platform<=3"); // and o.Platform<=2 老订单列表不显示闪送订单
             if (!string.IsNullOrWhiteSpace(criteria.businessName))
             {
                 sbSqlWhere.AppendFormat(" AND b.Name='{0}' ", criteria.businessName);
@@ -828,6 +828,7 @@ where  Id=@Id ";
                                         ,o.[ActualDoneDate]
                                         ,o.[IsPay]
                                         ,o.[Amount]                                        
+                                        ,isnull(o.[Amount],0)+isnull(o.[TipAmount],0) as AmountAndTip     
                                         ,ISNULL(o.OrderCommission,0) OrderCommission
                                         ,ISNULL(o.DistribSubsidy,0) DistribSubsidy
                                         ,ISNULL(o.WebsiteSubsidy,0) WebsiteSubsidy                                   
@@ -879,6 +880,8 @@ where  Id=@Id ";
                                         ,o.BusinessReceivable
                                         ,o.SettleMoney
                                         ,o.FinishAll
+                                        ,o.Platform
+                                        ,o.Payment
                                     FROM [order] o 
                                     JOIN business b   ON b.Id = o.businessId
                                     left JOIN clienter c  ON o.clienterId=c.Id
@@ -3321,7 +3324,22 @@ update  [order]
 set  TipAmount=TipAmount+@TipAmount
 where   Id = @OrderId";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("TipAmount", tipAmount);
+            dbParameters.AddWithValue("TipAmount", tipAmount);            
+            dbParameters.Add("OrderId", DbType.Int32, 4).Value = orderId;
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters) == 1 ? true : false;
+        }
+        /// <summary>
+        /// 付款方式
+        /// </summary>
+        /// <param name="orderId"></param>
+        public bool UpdatePayment(int orderId, int payment)
+        {
+            const string updateSql = @"
+update  [order]
+set  Payment=@Payment
+where   Id = @OrderId";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();            
+            dbParameters.AddWithValue("Payment", payment);
             dbParameters.Add("OrderId", DbType.Int32, 4).Value = orderId;
             return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters) == 1 ? true : false;
         }

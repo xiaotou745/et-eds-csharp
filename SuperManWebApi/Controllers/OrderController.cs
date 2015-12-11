@@ -383,6 +383,13 @@ namespace SuperManWebApi.Controllers
             return receviceAddressProvider.RemoveAddressB(model);
         }
 
+        [HttpPost]
+        public ResultModel<object> SSCancelOrder(SSOrderCancelPM pm)
+        { 
+          return  iOrderProvider.SSCancelOrder(pm);
+        }
+        
+
         #region 用户自定义方法
         /// <summary>
         /// 订单合法性验证

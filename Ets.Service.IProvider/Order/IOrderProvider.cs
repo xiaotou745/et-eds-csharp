@@ -334,6 +334,7 @@ namespace Ets.Service.IProvider.Order
         /// <returns></returns>
         IList<LocalClienterModel> GetLocalClienterList(int orderId);
 
+        ResultModel<object> SSCancelOrder(SSOrderCancelPM pm);
 
     }
 }

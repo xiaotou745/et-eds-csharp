@@ -75,14 +75,14 @@ namespace ETS.Library.Pay.SSBWxPay
         /// <param name="notify_url">回调地址</param>
         /// <param name="total_fee">金额 分</param>
         /// <returns></returns>
-        public string GetPayUrl(string productId, decimal total_fee, string body, string notify_url, out string prepay_id)
+        public string GetPayUrl(string productId, decimal total_fee, string body, string notify_url, out string prepay_id,string orderNo)
         {
             Log.Info(this.GetType().ToString(), "Native pay mode 2 url is producing...");
 
             WxPayData data = new WxPayData();
             data.SetValue("body", body);//商品描述
             data.SetValue("attach", productId);//附加数据
-            data.SetValue("out_trade_no", WxPayApi.GenerateOutTradeNo());//随机字符串
+            data.SetValue("out_trade_no", orderNo);//随机字符串
             string total = (total_fee * 100).ToString();
             total = total.Contains(".") ? total.Split('.')[0] : total;
 
@@ -90,15 +90,38 @@ namespace ETS.Library.Pay.SSBWxPay
             data.SetValue("time_start", DateTime.Now.ToString("yyyyMMddHHmmss"));//交易起始时间
             data.SetValue("time_expire", DateTime.Now.AddMinutes(10).ToString("yyyyMMddHHmmss"));//交易结束时间
             data.SetValue("goods_tag", productId);//商品标记
-            data.SetValue("trade_type", "NATIVE");//交易类型
-            //data.SetValue("trade_type", "APP");//交易类型
+            //data.SetValue("trade_type", "NATIVE");//交易类型
+            data.SetValue("trade_type", "APP");//交易类型
             data.SetValue("product_id", productId);//商品ID
             data.SetValue("notify_url", notify_url);
             WxPayData result = WxPayApi.UnifiedOrder(data);//调用统一下单接口
-            string url = result.GetValue("code_url").ToString();//获得统一下单接口返回的二维码链接
+            //string url = result.GetValue("code_url").ToString();//获得统一下单接口返回的二维码链接
+            string url = "";
             prepay_id = result.GetValue("prepay_id").ToString();
             Log.Info(this.GetType().ToString(), "Get native pay mode 2 url : " + url);
             return url;
+        }
+
+
+        /// <summary>
+        /// 查询订单 闪送模式
+        /// </summary>
+        /// 胡灵波
+        /// 2015年12月11日 16:00:37
+        /// <param name="orderNo"></param>
+        /// <returns></returns>
+        public bool OrderQuery(string orderNo)
+        {
+            WxPayData data = new WxPayData();
+            data.SetValue("out_trade_no", orderNo);//商户订单号      
+            //查询不存在
+            WxPayData queryResult = WxPayApi.OrderQuery(data);
+            if (queryResult.GetValue("return_code").ToString().ToUpper() == "SUCCESS" &&
+                queryResult.GetValue("result_code").ToString().ToUpper() == "FAIL"
+                )
+                return false;
+
+            return true;
         }
         /// <summary>
         /// 取消订单 闪送模式        
@@ -108,9 +131,9 @@ namespace ETS.Library.Pay.SSBWxPay
         /// <param name="orderNo"></param>
         /// <returns></returns>
         public bool CloseOrder(string orderNo)
-        {           
+        {        
             WxPayData data = new WxPayData();
-            data.SetValue("out_trade_no", orderNo);//商户订单号        
+            data.SetValue("out_trade_no", orderNo);//商户订单号     
             WxPayData result = WxPayApi.CloseOrder(data);//调用统一下单接口
             if (result.GetValue("return_code").ToString().ToUpper() == "FAIL")
             {
@@ -139,7 +162,8 @@ namespace ETS.Library.Pay.SSBWxPay
             data.SetValue("total_fee", total_fee);//总金额        
             data.SetValue("refund_fee", refund_fee);//退款金额        
             data.SetValue("out_trade_no", orderNo);//商户订单号        
-            data.SetValue("op_user_id", op_user_id);//商户订单号        
+            data.SetValue("op_user_id", op_user_id);//商户订单号       
+ 
             WxPayData result = WxPayApi.Refund(data);//调用统一下单接口
             if (result.GetValue("return_code").ToString().ToUpper() == "FAIL")
             {
