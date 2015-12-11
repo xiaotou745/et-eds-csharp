@@ -2598,7 +2598,8 @@ order by geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDis
         /// <returns></returns>
         public IList<GetJobCDM> GetLastedJobC(GetJobCPM model)
         {
-            string whereStr = string.Format(" and a.ReceviceCity = '{0}' ", model.City);
+            //string whereStr = string.Format(" and a.ReceviceCity = '{0}' ", model.City);
+            string whereStr = string.Empty;
             string sql = null;
             if (model.ClienterId == 0 || model.IsBind == (int)IsBindBC.No)  // 查询所有 无雇佣骑士的商家发布的订单，以及有雇佣骑士的商家发布的超过了五分钟无人抢单的订单 
             {
