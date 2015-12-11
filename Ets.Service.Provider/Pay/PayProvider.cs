@@ -2436,30 +2436,30 @@ namespace Ets.Service.Provider.Pay
             }
 
             //所属产品_主订单号_子订单号_支付方式
-            string orderNo = string.Concat(model.orderId, "_", model.orderNo, "_", model.childId,"_"+model.payStyle);
+            string orderCombinationNo = string.Concat(model.orderId, "_", model.orderNo, "_", model.childId,"_"+model.payStyle);
             decimal zfAmount = 0;
             if (payStatusModel.PayStatus == PayStatusEnum.HadPay.GetHashCode())//已支付，加小费
             {
                 zfAmount = model.tipAmount;
-                orderNo += "_1" + "_" + zfAmount + "_" + model.tipAmount;
+                orderCombinationNo += "_1" + "_" + zfAmount + "_" + model.tipAmount;
             }
             else//未支付
             {
-                zfAmount = payStatusModel.TotalPrice;
-                orderNo += "_0" + "_" + zfAmount + "_" + payStatusModel.TipAmount;
+                zfAmount = payStatusModel.TotalPrice + payStatusModel.TipAmount;
+                orderCombinationNo += "_0" + "_" + zfAmount + "_" + payStatusModel.TipAmount;
             }
 
             if (model.payType == PayTypeEnum.ZhiFuBao.GetHashCode())
             {
                 LogHelper.LogWriter("=============支付宝支付：");
-                return CreateAliFlashPayOrder(orderNo, zfAmount, model.orderId,model.payStyle);
+                return CreateAliFlashPayOrder(orderCombinationNo, zfAmount, model.orderId, model.payStyle);
             }
             if (model.payType == PayTypeEnum.WeiXin.GetHashCode())
             {
                 //微信支付
                 LogHelper.LogWriter("=============微信支付：");
 
-                return CreateWxSSPayOrder(orderNo, zfAmount, model.orderId,model.payStyle);
+                return CreateWxSSPayOrder(orderCombinationNo, zfAmount, model.orderId, model.payStyle,model.orderNo);
             }
 
             return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
@@ -2512,6 +2512,7 @@ namespace Ets.Service.Provider.Pay
             resultModel.payAmount = payAmount;
             resultModel.payType = PayTypeEnum.ZhiFuBao.GetHashCode();
             resultModel.notifyUrl = ETS.Config.NotifyTipUrl;
+            orderDao.UpdateTipAmount(orderId, 1);
             return ResultModel<PayResultModel>.Conclude(AliPayStatus.success, resultModel);
         }
 
@@ -2608,6 +2609,9 @@ namespace Ets.Service.Provider.Pay
                         otcModel.CreateTime = DateTime.Now;
                         otcModel.PayStates = 1;
                         orderTipCostDao.Insert(otcModel);
+
+                        //更新小费
+                        orderDao.UpdateTipAmount(orderId, tipAmount);
                     }
                     else//未支付
                     {
@@ -2663,7 +2667,7 @@ namespace Ets.Service.Provider.Pay
         /// <param name="orderNo">订单号</param>      
         /// <param name="TotalPrice"></param>
         /// <returns></returns>
-        private ResultModel<PayResultModel> CreateWxSSPayOrder(string orderNo, decimal totalPrice, int orderId, int payStyle)
+        private ResultModel<PayResultModel> CreateWxSSPayOrder(string combinationOrderNo, decimal totalPrice, int orderId, int payStyle,string orderNo )
         {
             //支付方式-主订单ID-子订单ID
             PayResultModel resultModel = new PayResultModel();
@@ -2673,16 +2677,17 @@ namespace Ets.Service.Provider.Pay
             {
                 ETS.Library.Pay.SSBWxPay.NativePay nativePay = new ETS.Library.Pay.SSBWxPay.NativePay();
                 string prepayId = string.Empty;
-                code_url = nativePay.GetPayUrl(orderNo, totalPrice, "E代送收款", Config.SSWxNotify, out prepayId);
+                code_url = nativePay.GetPayUrl(combinationOrderNo, totalPrice, "E代送收款", Config.SSWxNotify, out prepayId, orderNo);
                 resultModel.prepayId = prepayId;
             }
 
             resultModel.aliQRCode = code_url;//微信地址
-            resultModel.orderNo = orderNo;//订单号
+            resultModel.orderNo = combinationOrderNo;//订单号
             resultModel.payAmount = totalPrice;//总金额，没乘以100的值
             resultModel.payType = PayTypeEnum.WeiXin.GetHashCode();//微信
             resultModel.notifyUrl = ETS.Config.SSWxNotify;//回调地址            
 
+            orderDao.UpdateTipAmount(orderId, 2);
             return ResultModel<PayResultModel>.Conclude(AliPayStatus.success, resultModel);
         }
 
@@ -2750,9 +2755,15 @@ namespace Ets.Service.Provider.Pay
                     otcModel.CreateTime = DateTime.Now;
                     otcModel.PayStates = 1;
                     orderTipCostDao.Insert(otcModel);
+
+                    //更新小费
+                    orderDao.UpdateTipAmount(orderId, tipAmount);
                 }
                 else//未支付
                 {
+                    //修改订单支付状态 订单状态
+                    orderDao.UpdateIsPay(orderId);
+
                     //更新商户余额、可提现余额                        
                     iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
                     {
@@ -2764,10 +2775,7 @@ namespace Ets.Service.Provider.Pay
                         WithwardId = orderId,
                         RelationNo = currOrderNo,
                         Remark = "配送费支出金额"
-                    });
-
-                    //修改订单支付状态 订单状态
-                    orderDao.UpdateIsPay(orderId);
+                    });             
 
                     if (tipAmount > 0)
                     {

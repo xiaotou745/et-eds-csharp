@@ -13,6 +13,21 @@ namespace ETS.Library.Pay.SSAliPay
     public class AliPayApi
     {
         /// <summary>
+        /// 统一收单线下交易查询)
+        /// </summary>
+        /// 胡灵波
+        /// 2015年12月11日 13:42:44
+        /// <returns></returns>
+        public AlipayTradeQueryResponse Query()
+        {
+            IAopClient client = new DefaultAopClient("https://openapi.alipay.com/gateway.do", "app_id", "merchant_private_key", "json", "RSA", "alipay_public_key", "GBK");
+            AlipayTradeQueryRequest request = new AlipayTradeQueryRequest();
+            request.BizContent = "your json params";
+            AlipayTradeQueryResponse response = client.Execute(request);
+            return response;
+        }        
+
+        /// <summary>
         /// 统一收单交易退款接口
         /// </summary>
         /// 胡灵波

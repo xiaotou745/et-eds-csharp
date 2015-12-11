@@ -48,6 +48,12 @@ namespace Ets.Model.DataModel.Order
         /// 订单金额
         /// </summary>
         public decimal? Amount { get; set; }
+
+        /// <summary>
+        /// 订单金额
+        /// </summary>
+        public decimal AmountAndTip { get; set; }
+        
         /// <summary>
         /// 订单佣金
         /// </summary>
@@ -414,5 +420,7 @@ namespace Ets.Model.DataModel.Order
         /// 来源（默认1、旧后台，2新后台,3闪送模式）
         /// </summary>
         public int Platform { get; set; }
+
+        public int Payment { get; set; }
     }
 }

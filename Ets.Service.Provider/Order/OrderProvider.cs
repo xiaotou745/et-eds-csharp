@@ -1374,75 +1374,115 @@ namespace Ets.Service.Provider.Order
                 }
                 #endregion
 
-                if (orderDao.CancelOrder(orderModel, orderOptionModel)
-                    && orderOtherDao.UpdateCancelTime(orderModel.Id))
+                if (orderModel.Platform == 3)//闪送模式取消订单
                 {
-                    if (orderModel.Status == 1 && orderTaskPayStatus == 2 &&
-                        orderModel.HadUploadCount == orderModel.NeedUploadCount) //已完成订单
+                    //待支付
+                    if (orderModel.Status == 50)
                     {
-                        //更新骑士余额
-                        iClienterProvider.UpdateCAccountBalance(new ClienterMoneyPM()
-                                                        {
-                                                            ClienterId = orderModel.clienterId,
-                                                            Amount = -orderModel.OrderCommission.Value,
-                                                            Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
-                                                            RecordType = ClienterBalanceRecordRecordType.CancelOrder.GetHashCode(),
-                                                            Operator = orderModel.OptUserName,
-                                                            WithwardId = orderModel.Id,
-                                                            RelationNo = orderModel.OrderNo,
-                                                            Remark = orderModel.Remark
-                                                        });
-
+                        //查询微信
+                        ETS.Library.Pay.SSBWxPay.NativePay nativePay = new ETS.Library.Pay.SSBWxPay.NativePay();
+                        string orderNo = "147670_2206151204152814839_339877_1_0_0.02_0.01";
+                        //string orderNo = "147670";
+                        bool blNativePay = nativePay.CloseOrder(orderNo);
+                        //查询支付宝
+                        ETS.Library.Pay.SSAliPay.AliNativePay aliNativePay = new ETS.Library.Pay.SSAliPay.AliNativePay();
+                        bool blAliNativePay = aliNativePay.CloseOrder(orderModel.OrderNo);
+                        if (blNativePay && blAliNativePay)
+                        { 
+                            //修改订单状态
+                            orderDao.CancelOrder(orderModel, orderOptionModel);
+                            //更新取消时间
+                            orderOtherDao.UpdateCancelTime(orderModel.Id);
+                        }
                     }
+                    else//已支付
+                    { 
+                        //微信 退款
 
-                    if (orderModel.GroupBusinessId > 0)
-                    {
-                        // 更新集团余额
-                        iGroupBusinessProvider.UpdateGBalance(new GroupBusinessPM()
-                        {
-                            BusinessId = orderModel.businessId,//门店Id
-                            GroupId = orderModel.GroupBusinessId,
-                            GroupAmount = orderModel.SettleMoney,
-                            Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
-                            RecordType = BusinessBalanceRecordRecordType.CancelOrder.GetHashCode(),
-                            Operator = orderModel.OptUserName,
-                            WithwardId = orderModel.Id,
-                            RelationNo = orderModel.OrderNo,
-                            Remark = orderModel.Remark
-                        });
-                    }
-                    else
-                    {
-                        // 更新商户余额、可提现余额                        
-                        iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
-                                                                {
-                                                                    BusinessId = orderModel.businessId,
-                                                                    Amount = orderModel.SettleMoney,
-                                                                    Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
-                                                                    RecordType = BusinessBalanceRecordRecordType.CancelOrder.GetHashCode(),
-                                                                    Operator = orderModel.OptUserName,
-                                                                    WithwardId = orderModel.Id,
-                                                                    RelationNo = orderModel.OrderNo,
-                                                                    Remark = orderModel.Remark
-                                                                });
+                        //支付宝 退款
 
-                    }
-
-                    dealResultInfo.DealFlag = true;
-                    dealResultInfo.DealMsg = "订单取消成功！";
-                    tran.Complete();
+                        //退款成功              
+                        //修改订单状态
+                        orderDao.CancelOrder(orderModel, orderOptionModel);
+                        //更新取消时间
+                        orderOtherDao.UpdateCancelTime(orderModel.Id);
+                        //写流水
+                    }            
                 }
                 else
                 {
-                    dealResultInfo.DealMsg = "订单状态更新失败！";
-                }
-                Task.Factory.StartNew(() =>
-                {
-                    if (dealResultInfo.DealFlag)
+                    #region 原后台取消订单
+                    if (orderDao.CancelOrder(orderModel, orderOptionModel)
+                        && orderOtherDao.UpdateCancelTime(orderModel.Id))
                     {
-                        AsyncOrderStatus(orderModel.OrderNo);
+                        if (orderModel.Status == 1 && orderTaskPayStatus == 2 &&
+                            orderModel.HadUploadCount == orderModel.NeedUploadCount) //已完成订单
+                        {
+                            //更新骑士余额
+                            iClienterProvider.UpdateCAccountBalance(new ClienterMoneyPM()
+                                                            {
+                                                                ClienterId = orderModel.clienterId,
+                                                                Amount = -orderModel.OrderCommission.Value,
+                                                                Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
+                                                                RecordType = ClienterBalanceRecordRecordType.CancelOrder.GetHashCode(),
+                                                                Operator = orderModel.OptUserName,
+                                                                WithwardId = orderModel.Id,
+                                                                RelationNo = orderModel.OrderNo,
+                                                                Remark = orderModel.Remark
+                                                            });
+
+                        }
+
+                        if (orderModel.GroupBusinessId > 0)
+                        {
+                            // 更新集团余额
+                            iGroupBusinessProvider.UpdateGBalance(new GroupBusinessPM()
+                            {
+                                BusinessId = orderModel.businessId,//门店Id
+                                GroupId = orderModel.GroupBusinessId,
+                                GroupAmount = orderModel.SettleMoney,
+                                Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
+                                RecordType = BusinessBalanceRecordRecordType.CancelOrder.GetHashCode(),
+                                Operator = orderModel.OptUserName,
+                                WithwardId = orderModel.Id,
+                                RelationNo = orderModel.OrderNo,
+                                Remark = orderModel.Remark
+                            });
+                        }
+                        else
+                        {
+                            // 更新商户余额、可提现余额                        
+                            iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
+                                                                    {
+                                                                        BusinessId = orderModel.businessId,
+                                                                        Amount = orderModel.SettleMoney,
+                                                                        Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
+                                                                        RecordType = BusinessBalanceRecordRecordType.CancelOrder.GetHashCode(),
+                                                                        Operator = orderModel.OptUserName,
+                                                                        WithwardId = orderModel.Id,
+                                                                        RelationNo = orderModel.OrderNo,
+                                                                        Remark = orderModel.Remark
+                                                                    });
+
+                        }
+
+                        dealResultInfo.DealFlag = true;
+                        dealResultInfo.DealMsg = "订单取消成功！";
+                        tran.Complete();
                     }
-                });
+                    else
+                    {
+                        dealResultInfo.DealMsg = "订单状态更新失败！";
+                    }
+                    Task.Factory.StartNew(() =>
+                    {
+                        if (dealResultInfo.DealFlag)
+                        {
+                            AsyncOrderStatus(orderModel.OrderNo);
+                        }
+                    });
+                    #endregion
+                }
                 return dealResultInfo;
             }
         }
@@ -2728,5 +2768,109 @@ namespace Ets.Service.Provider.Order
             return orderDao.GetBusinessUnReceiveOrderQty(orderId, businessId);
         }
 
+        /// <summary>
+        /// 闪送取消订单
+        /// </summary>
+        /// 胡灵波
+        /// 2015年12月11日 15:11:39
+        /// <returns></returns>
+        public ResultModel<object> SSCancelOrder(SSOrderCancelPM pm)
+        {
+            //查询微信
+            ETS.Library.Pay.SSBWxPay.NativePay nativePay = new ETS.Library.Pay.SSBWxPay.NativePay();
+            //string orderNo = "147670_2206151204152814839_339877_1_0_0.02_0.01";
+            
+            var orderModel = orderDao.GetOrderByIdWithNolock(pm.OrderId);
+            OrderOptionModel orderOptionModel = new OrderOptionModel
+            {
+                OptUserId = orderModel.businessId,
+                OptUserName = "闪送取消订单",
+                OrderNo = orderModel.OrderNo,
+                OptLog = "闪送取消订单",
+                OrderId = pm.OrderId,
+                Remark = "闪送取消订单",
+                Platform = SuperPlatform.ThirdParty.GetHashCode()
+            };            
+    
+            orderModel.OptUserName = orderOptionModel.OptUserName;
+            orderModel.Remark = orderOptionModel.OptLog;
+            
+            if (orderModel.Status == 3)//订单已为取消状态
+            {
+                //dealResultInfo.DealMsg = "订单已为取消状态，不能再次取消操作！";
+                //return dealResultInfo;
+            }
+            if (orderModel.IsJoinWithdraw == 1)//订单已分账
+            {
+                //dealResultInfo.DealMsg = "订单已分账，不能取消订单！";
+                //return dealResultInfo;
+            }
+          
+            //支付宝
+            if (orderModel.Payment == PayTypeEnum.ZhiFuBao.GetHashCode() &&
+                orderModel.Status == 50)
+            {
+
+            }
+
+            //微信 未付款
+            if (orderModel.Payment == PayTypeEnum.WeiXin.GetHashCode() &&
+                orderModel.Status == 50)
+            {
+                bool orderIsExist = nativePay.OrderQuery(orderModel.OrderNo);
+                if (orderIsExist)//存在支付订单，且取消成功
+                {
+                    bool blNativePay = nativePay.CloseOrder(orderModel.OrderNo);
+                    if (blNativePay)
+                    {
+                        //修改订单状态
+                        orderDao.CancelOrder(orderModel, orderOptionModel);
+                        //更新取消状态
+                        orderOtherDao.UpdateCancelTime(orderModel.Id);
+                    }
+                }
+                else
+                {
+                    //修改订单状态
+                    orderDao.CancelOrder(orderModel, orderOptionModel);
+                    //更新取消状态
+                    orderOtherDao.UpdateCancelTime(orderModel.Id);
+                }               
+            }
+            //微信 已付款
+            if (orderModel.Payment == PayTypeEnum.WeiXin.GetHashCode() &&
+               orderModel.Status != 50)
+            {
+                bool orderIsExist = nativePay.OrderQuery(orderModel.OrderNo);
+                if (orderIsExist)
+                {
+                    bool blNativePay = nativePay.CloseOrder(orderModel.OrderNo);
+                    if (blNativePay)
+                    {
+                        //修改订单状态
+                        orderDao.CancelOrder(orderModel, orderOptionModel);
+                        //更新取消状态
+                        orderOtherDao.UpdateCancelTime(orderModel.Id);
+
+                        // 更新商户余额、可提现余额                        
+                        iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
+                        {
+                            BusinessId = orderModel.businessId,
+                            Amount = orderModel.AmountAndTip,
+                            Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
+                            RecordType = BusinessBalanceRecordRecordType.CancelOrder.GetHashCode(),
+                            Operator = orderModel.OptUserName,
+                            WithwardId = orderModel.Id,
+                            RelationNo = orderModel.OrderNo,
+                            Remark = orderModel.Remark
+                        });
+                    }
+                }
+            }
+    
+          return  ResultModel<object>.Conclude(OrderApiStatusType.Success);
+        }
+
+     
     }
 }
