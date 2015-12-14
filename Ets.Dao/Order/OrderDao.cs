@@ -2515,7 +2515,7 @@ select top {0}
         a.Id, a.OrderCommission, a.OrderCount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
         ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,
         a.Amount CpAmount,
-        b.Name as BusinessName, b.City as BusinessCity,
+        b.Name as BusinessName, b.City as BusinessCity,b.Id BusinessId,
         b.Address as BusinessAddress, isnull(a.ReceviceCity, '') as UserCity,
         a.Remark,a.OrderNo,
  case  isnull(a.ReceviceAddress,'')  
@@ -2560,7 +2560,7 @@ select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0} a.Id,a.OrderCommission,a.OrderCount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
         (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
         a.Amount CpAmount,
-        b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
+        b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,b.Id BusinessId,
 ISNULL(a.ReceviceCity,'') as UserCity,case  isnull(a.ReceviceAddress,'')  
 		when  '' then '附近3公里左右，由商户指定'
 		else a.ReceviceAddress end as  UserAddress,
@@ -2613,7 +2613,7 @@ select top {0}
         a.Id, a.OrderCommission, a.OrderCount,
         ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
         a.Amount CpAmount,
-        b.Name as BusinessName, b.City as BusinessCity,
+        b.Name as BusinessName, b.City as BusinessCity,b.Id BusinessId,
         isnull(a.ReceviceCity, '') as UserCity,
        a.Remark,a.OrderNo,
  case  isnull(a.ReceviceAddress,'')  
@@ -2647,7 +2647,7 @@ select top {0}
         a.Id, a.OrderCommission, a.OrderCount,
         ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
         a.Amount CpAmount,a.OrderNo,
-        b.Name as BusinessName, b.City as BusinessCity,a.OrderNo,
+        b.Name as BusinessName, b.City as BusinessCity,a.OrderNo,b.Id BusinessId,
          isnull(a.ReceviceCity, '') as UserCity,
         a.Remark,case  isnull(a.ReceviceAddress,'')  
 		when  '' then '附近3公里左右，由商户指定'
@@ -2712,7 +2712,7 @@ order by a.Id desc", model.TopNum, model.ClienterId, model.ExclusiveOrderTime, w
 declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0} a.Id,a.OrderCommission,a.OrderCount,   
-(a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
+(a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,b.Id BusinessId,
 a.Amount CpAmount,
 a.Remark,a.OrderNo,
 b.Name as BusinessName,b.City as BusinessCity,
@@ -2748,7 +2748,7 @@ select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0} a.Id,a.OrderCommission,a.OrderCount,   
 (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
 a.Amount CpAmount,
-a.Remark,a.OrderNo,
+a.Remark,a.OrderNo,b.Id BusinessId,
 b.Name as BusinessName,b.City as BusinessCity,
 ISNULL(a.ReceviceCity,'') as UserCity, case  isnull(a.ReceviceAddress,'')  
 		when  '' then '附近3公里左右，由商户指定'
@@ -2812,7 +2812,7 @@ declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0}  a.BusinessId, a.Id,a.OrderCommission,a.OrderCount,   
 (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
- a.Amount CpAmount,
+ a.Amount CpAmount,b.Id BusinessId,
 a.Remark,a.OrderNo,
 b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
 ISNULL(a.ReceviceCity,'') as UserCity, case  isnull(a.ReceviceAddress,'')  
@@ -2916,6 +2916,7 @@ order by a.id desc
                 temp.TakeType = ParseHelper.ToInt(dataRow["TakeType"]);// 取货状态默认0立即，1预约
                 temp.SongCanDate = ParseHelper.ToDatetime(dataRow["SongCanDate"]);
                 temp.OrderNo = dataRow["OrderNo"].ToString();
+                temp.BusinessId = ParseHelper.ToInt(dataRow["BusinessId"], 0);
                 models.Add(temp);
             }
             return models;

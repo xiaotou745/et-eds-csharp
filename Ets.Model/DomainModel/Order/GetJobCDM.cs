@@ -101,5 +101,6 @@ namespace Ets.Model.DomainModel.Order
         /// </summary>
         public DateTime? SongCanDate { get; set; }
 
+        public int BusinessId { get; set; }
     }
 }
