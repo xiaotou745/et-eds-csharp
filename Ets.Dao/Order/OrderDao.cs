@@ -2517,7 +2517,7 @@ select top {0}
         a.Amount CpAmount,
         b.Name as BusinessName, b.City as BusinessCity,
         b.Address as BusinessAddress, isnull(a.ReceviceCity, '') as UserCity,
-        a.Remark,
+        a.Remark,a.OrderNo,
  case  isnull(a.ReceviceAddress,'')  
 		when  '' then '附近3公里左右，由商户指定'
 		else a.ReceviceAddress end as  UserAddress,ISNULL(b.Longitude,0) as  Longitude,ISNULL(b.Latitude,0) as Latitude,
@@ -2564,7 +2564,7 @@ select top {0} a.Id,a.OrderCommission,a.OrderCount,a.Platform,a.Weight,a.KM,a.Ta
 ISNULL(a.ReceviceCity,'') as UserCity,case  isnull(a.ReceviceAddress,'')  
 		when  '' then '附近3公里左右，由商户指定'
 		else a.ReceviceAddress end as  UserAddress,
-        a.Remark,
+        a.Remark,a.OrderNo,
         ISNULL(b.Longitude,0) as  Longitude,ISNULL(b.Latitude,0) as Latitude,
         case convert(varchar(100), PubDate, 23) 
 	        when convert(varchar(100), getdate(), 23) then '今日 '
@@ -2615,7 +2615,7 @@ select top {0}
         a.Amount CpAmount,
         b.Name as BusinessName, b.City as BusinessCity,
         isnull(a.ReceviceCity, '') as UserCity,
-       a.Remark,
+       a.Remark,a.OrderNo,
  case  isnull(a.ReceviceAddress,'')  
 		when  '' then '附近3公里左右，由商户指定'
 		else a.ReceviceAddress end as  UserAddress,
@@ -2714,7 +2714,7 @@ select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0} a.Id,a.OrderCommission,a.OrderCount,   
 (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
 a.Amount CpAmount,
-a.Remark,
+a.Remark,a.OrderNo,
 b.Name as BusinessName,b.City as BusinessCity,
 ISNULL(a.ReceviceCity,'') as UserCity, case  isnull(a.ReceviceAddress,'')  
 		when  '' then '附近3公里左右，由商户指定'
@@ -2813,7 +2813,7 @@ select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0}  a.BusinessId, a.Id,a.OrderCommission,a.OrderCount,   
 (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
  a.Amount CpAmount,
-a.Remark,
+a.Remark,a.OrderNo,
 b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
 ISNULL(a.ReceviceCity,'') as UserCity, case  isnull(a.ReceviceAddress,'')  
 		when  '' then '附近3公里左右，由商户指定'
