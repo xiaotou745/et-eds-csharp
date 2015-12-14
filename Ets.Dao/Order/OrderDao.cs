@@ -2915,6 +2915,7 @@ order by a.id desc
                 temp.KM = ParseHelper.ToLong(dataRow["KM"]);//送餐距离
                 temp.TakeType = ParseHelper.ToInt(dataRow["TakeType"]);// 取货状态默认0立即，1预约
                 temp.SongCanDate = ParseHelper.ToDatetime(dataRow["SongCanDate"]);
+                temp.OrderNo = dataRow["OrderNo"].ToString();
                 models.Add(temp);
             }
             return models;
