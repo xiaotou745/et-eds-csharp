@@ -2646,8 +2646,8 @@ select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0}
         a.Id, a.OrderCommission, a.OrderCount,
         ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
-        a.Amount CpAmount,
-        b.Name as BusinessName, b.City as BusinessCity,
+        a.Amount CpAmount,a.OrderNo,
+        b.Name as BusinessName, b.City as BusinessCity,a.OrderNo,
          isnull(a.ReceviceCity, '') as UserCity,
         a.Remark,case  isnull(a.ReceviceAddress,'')  
 		when  '' then '附近3公里左右，由商户指定'
@@ -2748,7 +2748,7 @@ select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0} a.Id,a.OrderCommission,a.OrderCount,   
 (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
 a.Amount CpAmount,
-a.Remark,
+a.Remark,a.OrderNo,
 b.Name as BusinessName,b.City as BusinessCity,
 ISNULL(a.ReceviceCity,'') as UserCity, case  isnull(a.ReceviceAddress,'')  
 		when  '' then '附近3公里左右，由商户指定'
