@@ -2370,7 +2370,7 @@ select  o.Id,o.OrderNo,o.PickUpAddress,o.PubDate,o.ReceviceName,o.RecevicePhoneN
     when  ISNULL(b.Latitude,0)=0 or ISNULL(b.Longitude,0)=0 or @clienterLongitude=0 or  @clienterLatitude=0  then -1
     else round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(geography::Point(@clienterLatitude,@clienterLongitude,4326)),0)
     end)
-    as distance,isnull(oo.OneKeyPubOrder,0) as OneKeyPubOrder 
+    as distance,isnull(oo.OneKeyPubOrder,0) as OneKeyPubOrder,oo.ExpectedTakeTime  
 from  dbo.[order] o (nolock)
     join business b (nolock) on b.Id=o.businessId
     left join dbo.OrderOther oo (nolock) on o.Id=oo.orderId
@@ -2641,7 +2641,7 @@ select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0}
         a.Id, a.OrderCommission, a.OrderCount,
         ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
-        a.Amount CpAmount,
+        a.Amount CpAmount,oo.ExpectedTakeTime,
         b.Name as BusinessName, b.City as BusinessCity,b.Id BusinessId,
         isnull(a.ReceviceCity, '') as UserCity,
        a.Remark,a.OrderNo,
@@ -2675,7 +2675,7 @@ select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0}
         a.Id, a.OrderCommission, a.OrderCount,
         ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
-        a.Amount CpAmount,a.OrderNo,
+        a.Amount CpAmount,a.OrderNo,oo.ExpectedTakeTime,
         b.Name as BusinessName, b.City as BusinessCity,a.OrderNo,b.Id BusinessId,
          isnull(a.ReceviceCity, '') as UserCity,
         a.Remark,case  isnull(a.ReceviceAddress,'')  
@@ -2742,7 +2742,7 @@ declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0} a.Id,a.OrderCommission,a.OrderCount,   
 (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,b.Id BusinessId,
-a.Amount CpAmount,
+a.Amount CpAmount,oo.ExpectedTakeTime,
 a.Remark,a.OrderNo,
 b.Name as BusinessName,b.City as BusinessCity,
 ISNULL(a.ReceviceCity,'') as UserCity, case  isnull(a.ReceviceAddress,'')  
@@ -2776,7 +2776,7 @@ declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0} a.Id,a.OrderCommission,a.OrderCount,   
 (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
-a.Amount CpAmount,
+a.Amount CpAmount,oo.ExpectedTakeTime,
 a.Remark,a.OrderNo,b.Id BusinessId,
 b.Name as BusinessName,b.City as BusinessCity,
 ISNULL(a.ReceviceCity,'') as UserCity, case  isnull(a.ReceviceAddress,'')  
@@ -2944,6 +2944,7 @@ order by a.id desc
                 temp.KM = ParseHelper.ToFloat(dataRow["KM"]);//送餐距离
                 temp.TakeType = ParseHelper.ToInt(dataRow["TakeType"]);// 取货状态默认0立即，1预约
                 temp.SongCanDate = ParseHelper.ToDatetime(dataRow["SongCanDate"]);
+                temp.ExpectedTakeTime = ParseHelper.ToDatetime(dataRow["ExpectedTakeTime"]);
                 temp.OrderNo = dataRow["OrderNo"].ToString();
                 temp.BusinessId = ParseHelper.ToInt(dataRow["BusinessId"], 0);
                 models.Add(temp);

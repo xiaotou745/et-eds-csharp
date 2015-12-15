@@ -100,7 +100,7 @@ namespace Ets.Model.DomainModel.Order
         /// 送餐时间,客户要求送餐时间
         /// </summary>
         public DateTime? SongCanDate { get; set; }
-
+        public DateTime? ExpectedTakeTime { get; set; } //商户期望骑士取货时间
         public int BusinessId { get; set; }
     }
 }
