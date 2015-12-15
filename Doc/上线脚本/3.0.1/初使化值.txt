@@ -1,1 +1,2 @@
 insert into GlobalConfig(KeyName,Value,Remark) values('CashAndTime',72,'闪送模式加可提现时间')
+insert into GlobalConfig(KeyName,Value,Remark) values('SSCancelOrder',24,'闪送模式待支付取消订单')

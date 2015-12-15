@@ -620,7 +620,8 @@ namespace ETS.Enums
     /// </summary>
     public enum PayTypeEnum
     {
-
+        [DisplayText("余额")]
+        Balance = 0,
         [DisplayText("支付宝")]
         ZhiFuBao = 1,
         [DisplayText("微信")]

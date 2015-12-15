@@ -2498,6 +2498,35 @@ where   oo.IsJoinWithdraw = 0
             return MapRows<NonJoinWithdrawModel>(dt);
         }
 
+        /// <summary>
+        /// 获取闪送待取消订单 查询超过x小时，未支付的订单
+        /// </summary>
+        /// 胡灵波
+        /// 2015年12月15日 13:37:17
+        /// <param name="hour"></param>
+        /// <returns></returns>
+        public IList<NonJoinWithdrawModel> GetSSCancelOrder(double hour)
+        {
+            string sql = @"
+select 
+o.id,o.OrderNo, o.amount, 
+o.OrderCommission clienterPrice, --给骑士
+o.Amount-o.SettleMoney businessPrice,--给商家
+o.clienterId, o.businessId
+from    dbo.[order] o ( nolock )
+        join dbo.OrderOther oo ( nolock ) on o.Id = oo.OrderId
+where    
+        o.Status = 50        
+        and o.platform=3
+        and datediff(hour, o.ActualDoneDate, getdate()) >= @hour";
+            IDbParameters parm = DbHelper.CreateDbParameters("@hour", DbType.Int64, 4, hour);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            if (!dt.HasData())
+            {
+                return new List<NonJoinWithdrawModel>();
+            }
+            return MapRows<NonJoinWithdrawModel>(dt);
+        }
 
         /// <summary>
         /// 获取物流公司全部任务

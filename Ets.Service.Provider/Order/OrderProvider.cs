@@ -2285,6 +2285,11 @@ namespace Ets.Service.Provider.Order
             return orderDao.OrderReceviceCity();
         }
 
+        public IList<NonJoinWithdrawModel> GetSSCancelOrder(double hour)
+        {
+            return orderDao.GetSSCancelOrder(hour);
+        }
+
         /// <summary>
         /// 根据orderID获取订单地图数据
         /// </summary>
@@ -2774,48 +2779,81 @@ namespace Ets.Service.Provider.Order
         /// 胡灵波
         /// 2015年12月11日 15:11:39
         /// <returns></returns>
-        public ResultModel<object> SSCancelOrder(SSOrderCancelPM pm)
+        public ResultModel<object> SSCancelOrder(SSOrderCancelPM pm, OrderOptionModel orderOptionModel)
         {     
             var orderModel = orderDao.GetOrderByIdWithNolock(pm.OrderId);
-            OrderOptionModel orderOptionModel = new OrderOptionModel
-            {
-                OptUserId = orderModel.businessId,
-                OptUserName = "闪送取消订单",
-                OrderNo = orderModel.OrderNo,
-                OptLog = "闪送取消订单",
-                OrderId = pm.OrderId,
-                Remark = "闪送取消订单",
-                Platform = SuperPlatform.ThirdParty.GetHashCode()
-            };            
-    
             orderModel.OptUserName = orderOptionModel.OptUserName;
             orderModel.Remark = orderOptionModel.OptLog;
+
+            orderOptionModel.OptUserId = orderModel.businessId;
+            orderOptionModel.OrderNo = orderModel.OrderNo;
+        
             
             if (orderModel.Status == 3)//订单已为取消状态
             {
                 //dealResultInfo.DealMsg = "订单已为取消状态，不能再次取消操作！";
                 //return dealResultInfo;                
+
+                return null;
             }
             if (orderModel.IsJoinWithdraw == 1)//订单已分账
             {
                 //dealResultInfo.DealMsg = "订单已分账，不能取消订单！";
                 //return dealResultInfo;
+                return null;
             }
 
-            //支付宝
-            if (orderModel.Payment == PayTypeEnum.ZhiFuBao.GetHashCode()) 
+            if (orderModel.Payment == PayTypeEnum.Balance.GetHashCode())//余额
+            {
+                CancelBalanceOrder(orderModel, orderOptionModel);
+            }            
+            else if (orderModel.Payment == PayTypeEnum.ZhiFuBao.GetHashCode())//支付宝 
             {
                 CancelTaoOrder(orderModel, orderOptionModel);
             }
-            if(orderModel.Payment == PayTypeEnum.WeiXin.GetHashCode())
+            else if(orderModel.Payment == PayTypeEnum.WeiXin.GetHashCode())//微信
             {
                 CancelWxOrder(orderModel, orderOptionModel);
-            }       
+            }
+       
     
           return  ResultModel<object>.Conclude(OrderApiStatusType.Success);
         }
 
-        #region 用户自义方法闪送  支付宝
+        #region 用户自定义方法闪送 余额
+        void CancelBalanceOrder(OrderListModel orderModel, OrderOptionModel orderOptionModel)
+        {
+            if (orderModel.IsPay.HasValue)
+            {
+                //修改订单状态
+                orderDao.CancelOrder(orderModel, orderOptionModel);
+                //更新取消状态
+                orderOtherDao.UpdateCancelTime(orderModel.Id);
+
+                // 更新商户余额、可提现余额                        
+                iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
+                {
+                    BusinessId = orderModel.businessId,
+                    Amount = orderModel.AmountAndTip,
+                    Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
+                    RecordType = BusinessBalanceRecordRecordType.CancelOrder.GetHashCode(),
+                    Operator = orderModel.OptUserName,
+                    WithwardId = orderModel.Id,
+                    RelationNo = orderModel.OrderNo,
+                    Remark = orderModel.Remark
+                });
+            }
+            else
+            {
+                //修改订单状态
+                orderDao.CancelOrder(orderModel, orderOptionModel);
+                //更新取消状态
+                orderOtherDao.UpdateCancelTime(orderModel.Id);
+            }
+        }
+        #endregion
+
+        #region 用户自定义方法闪送  支付宝
         /// <summary>
         /// 支付宝取消订单 闪送模式
         /// </summary>
@@ -2826,6 +2864,7 @@ namespace Ets.Service.Provider.Order
             //ETS.Library.Pay.SSAliPay.AliNativePay  
         }
         #endregion
+
 
         #region 用户自定义方法闪送 微信
         /// <summary>
@@ -2858,17 +2897,17 @@ namespace Ets.Service.Provider.Order
             if (queryResul.GetValue("trade_state") != null && queryResul.GetValue("trade_state").ToString().ToUpper() == "SUCCESS")
             {
                 isPay = true;
-            }
-           
-            //未付款
-            if (!isPay)
-            {
-                CloseOrder(orderModel, orderOptionModel, isExist);
-            }
-            //已付款
-            if (isPay && isExist)
+            }           
+    
+            //已付款 已存在
+            if (isPay)
             {
                 Refund(orderModel, orderOptionModel);
+            }
+            //未付款
+            else if (!isPay)
+            {
+                CloseOrder(orderModel, orderOptionModel, isExist);
             }
         }
 
