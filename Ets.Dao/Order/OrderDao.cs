@@ -2515,9 +2515,9 @@ select top {0}
         a.Id, a.OrderCommission, a.OrderCount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
         ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,
         a.Amount CpAmount,
-        b.Name as BusinessName, b.City as BusinessCity,
+        b.Name as BusinessName, b.City as BusinessCity,b.Id BusinessId,
         b.Address as BusinessAddress, isnull(a.ReceviceCity, '') as UserCity,
-        a.Remark,
+        a.Remark,a.OrderNo,
  case  isnull(a.ReceviceAddress,'')  
 		when  '' then '附近3公里左右，由商户指定'
 		else a.ReceviceAddress end as  UserAddress,ISNULL(b.Longitude,0) as  Longitude,ISNULL(b.Latitude,0) as Latitude,
@@ -2560,11 +2560,11 @@ select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0} a.Id,a.OrderCommission,a.OrderCount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
         (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
         a.Amount CpAmount,
-        b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
+        b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,b.Id BusinessId,
 ISNULL(a.ReceviceCity,'') as UserCity,case  isnull(a.ReceviceAddress,'')  
 		when  '' then '附近3公里左右，由商户指定'
 		else a.ReceviceAddress end as  UserAddress,
-        a.Remark,
+        a.Remark,a.OrderNo,
         ISNULL(b.Longitude,0) as  Longitude,ISNULL(b.Latitude,0) as Latitude,
         case convert(varchar(100), PubDate, 23) 
 	        when convert(varchar(100), getdate(), 23) then '今日 '
@@ -2601,7 +2601,8 @@ order by geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDis
         /// <returns></returns>
         public IList<GetJobCDM> GetLastedJobC(GetJobCPM model)
         {
-            string whereStr = string.Format(" and a.ReceviceCity = '{0}' ", model.City);
+            //string whereStr = string.Format(" and a.ReceviceCity = '{0}' ", model.City);
+            string whereStr = " and 1=1 ";
             string sql = null;
             if (model.ClienterId == 0 || model.IsBind == (int)IsBindBC.No)  // 查询所有 无雇佣骑士的商家发布的订单，以及有雇佣骑士的商家发布的超过了五分钟无人抢单的订单 
             {
@@ -2612,9 +2613,9 @@ select top {0}
         a.Id, a.OrderCommission, a.OrderCount,
         ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
         a.Amount CpAmount,
-        b.Name as BusinessName, b.City as BusinessCity,
+        b.Name as BusinessName, b.City as BusinessCity,b.Id BusinessId,
         isnull(a.ReceviceCity, '') as UserCity,
-       a.Remark,
+       a.Remark,a.OrderNo,
  case  isnull(a.ReceviceAddress,'')  
 		when  '' then '附近3公里左右，由商户指定'
 		else a.ReceviceAddress end as  UserAddress,
@@ -2645,8 +2646,8 @@ select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0}
         a.Id, a.OrderCommission, a.OrderCount,
         ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
-        a.Amount CpAmount,
-        b.Name as BusinessName, b.City as BusinessCity,
+        a.Amount CpAmount,a.OrderNo,
+        b.Name as BusinessName, b.City as BusinessCity,a.OrderNo,b.Id BusinessId,
          isnull(a.ReceviceCity, '') as UserCity,
         a.Remark,case  isnull(a.ReceviceAddress,'')  
 		when  '' then '附近3公里左右，由商户指定'
@@ -2711,9 +2712,9 @@ order by a.Id desc", model.TopNum, model.ClienterId, model.ExclusiveOrderTime, w
 declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0} a.Id,a.OrderCommission,a.OrderCount,   
-(a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
+(a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,b.Id BusinessId,
 a.Amount CpAmount,
-a.Remark,
+a.Remark,a.OrderNo,
 b.Name as BusinessName,b.City as BusinessCity,
 ISNULL(a.ReceviceCity,'') as UserCity, case  isnull(a.ReceviceAddress,'')  
 		when  '' then '附近3公里左右，由商户指定'
@@ -2747,7 +2748,7 @@ select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0} a.Id,a.OrderCommission,a.OrderCount,   
 (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
 a.Amount CpAmount,
-a.Remark,
+a.Remark,a.OrderNo,b.Id BusinessId,
 b.Name as BusinessName,b.City as BusinessCity,
 ISNULL(a.ReceviceCity,'') as UserCity, case  isnull(a.ReceviceAddress,'')  
 		when  '' then '附近3公里左右，由商户指定'
@@ -2811,8 +2812,8 @@ declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0}  a.BusinessId, a.Id,a.OrderCommission,a.OrderCount,   
 (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
- a.Amount CpAmount,
-a.Remark,
+ a.Amount CpAmount,b.Id BusinessId,
+a.Remark,a.OrderNo,
 b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
 ISNULL(a.ReceviceCity,'') as UserCity, case  isnull(a.ReceviceAddress,'')  
 		when  '' then '附近3公里左右，由商户指定'
@@ -2914,6 +2915,8 @@ order by a.id desc
                 temp.KM = ParseHelper.ToLong(dataRow["KM"]);//送餐距离
                 temp.TakeType = ParseHelper.ToInt(dataRow["TakeType"]);// 取货状态默认0立即，1预约
                 temp.SongCanDate = ParseHelper.ToDatetime(dataRow["SongCanDate"]);
+                temp.OrderNo = dataRow["OrderNo"].ToString();
+                temp.BusinessId = ParseHelper.ToInt(dataRow["BusinessId"], 0);
                 models.Add(temp);
             }
             return models;

@@ -31,7 +31,7 @@ namespace Ets.Model.DomainModel.Order
         /// 任务总金额（订单金额总和）  会加上外送费显示
         /// </summary>
         public decimal Amount { get; set; }
-
+        public string OrderNo { get; set; }
         /// <summary>
         /// 菜品金额
         /// </summary>
@@ -101,5 +101,6 @@ namespace Ets.Model.DomainModel.Order
         /// </summary>
         public DateTime? SongCanDate { get; set; }
 
+        public int BusinessId { get; set; }
     }
 }
