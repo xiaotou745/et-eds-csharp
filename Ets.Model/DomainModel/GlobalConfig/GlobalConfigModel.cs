@@ -204,6 +204,11 @@ namespace Ets.Model.DomainModel.GlobalConfig
         /// </summary>
         public string CashAndTime { get; set; }
 
+        /// <summary>
+        /// 闪送模式 n小时后取消订单
+        /// </summary>
+        public string SSCancelOrder { get; set; }
+
         private Dictionary<int, string> _indexedInstanceProperty =
             new Dictionary<int, string>();
          [IndexerNameAttribute("IndexedInstanceProperty")]
