@@ -2794,7 +2794,7 @@ namespace Ets.Service.Provider.Order
             if (orderModel.Status == 3)//订单已为取消状态
             {
                 //dealResultInfo.DealMsg = "订单已为取消状态，不能再次取消操作！";
-                //return dealResultInfo;
+                //return dealResultInfo;                
             }
             if (orderModel.IsJoinWithdraw == 1)//订单已分账
             {
@@ -2815,6 +2815,7 @@ namespace Ets.Service.Provider.Order
           return  ResultModel<object>.Conclude(OrderApiStatusType.Success);
         }
 
+        #region 用户自义方法闪送  支付宝
         /// <summary>
         /// 支付宝取消订单 闪送模式
         /// </summary>
@@ -2824,7 +2825,9 @@ namespace Ets.Service.Provider.Order
         {
             //ETS.Library.Pay.SSAliPay.AliNativePay  
         }
+        #endregion
 
+        #region 用户自定义方法闪送 微信
         /// <summary>
         /// 微信取消订单 闪送模式
         /// </summary>
@@ -2832,9 +2835,10 @@ namespace Ets.Service.Provider.Order
         /// <param name="orderOptionModel"></param>
         void CancelWxOrder(OrderListModel orderModel, OrderOptionModel orderOptionModel)
         {
+            //查询订单
             ETS.Library.Pay.SSBWxPay.NativePay nativePay = new ETS.Library.Pay.SSBWxPay.NativePay();       
             ETS.Library.Pay.SSBWxPay.WxPayData queryResul = nativePay.OrderQuery(orderModel.OrderNo);
-            //关闭
+            
             if (queryResul.GetValue("trade_state") != null && queryResul.GetValue("trade_state").ToString().ToUpper() == "CLOSED")
             {
                 return;
@@ -2856,22 +2860,33 @@ namespace Ets.Service.Provider.Order
                 isPay = true;
             }
            
-            //微信 未付款
+            //未付款
             if (!isPay)
             {
+                CloseOrder(orderModel, orderOptionModel, isExist);
+            }
+            //已付款
+            if (isPay && isExist)
+            {
+                Refund(orderModel, orderOptionModel);
+            }
+        }
 
-                if (isExist)//存在支付订单，且取消成功
-                {
-                    bool blNativePay = nativePay.CloseOrder(orderModel.OrderNo);
-                    if (blNativePay)
-                    {
-                        //修改订单状态
-                        orderDao.CancelOrder(orderModel, orderOptionModel);
-                        //更新取消状态
-                        orderOtherDao.UpdateCancelTime(orderModel.Id);
-                    }
-                }
-                else
+        /// <summary>
+        /// 微信取消订单
+        /// </summary>
+        /// 胡灵波
+        /// 2015年12月15日 11:38:02
+        /// <param name="orderModel"></param>
+        /// <param name="orderOptionModel"></param>
+        /// <param name="isExist"></param>
+        void CloseOrder(OrderListModel orderModel, OrderOptionModel orderOptionModel, bool isExist)
+        {
+            ETS.Library.Pay.SSBWxPay.NativePay nativePay = new ETS.Library.Pay.SSBWxPay.NativePay();       
+            if (isExist)//存在支付订单，且取消成功
+            {
+                bool blNativePay = nativePay.CloseOrder(orderModel.OrderNo);
+                if (blNativePay)
                 {
                     //修改订单状态
                     orderDao.CancelOrder(orderModel, orderOptionModel);
@@ -2879,32 +2894,48 @@ namespace Ets.Service.Provider.Order
                     orderOtherDao.UpdateCancelTime(orderModel.Id);
                 }
             }
-
-            if (isPay && isExist)
-            {            
-                    bool blNativePay = nativePay.Refund(orderModel.OrderNo, "110101000", 2, 2, "1243442302");
-                    if (blNativePay)
-                    {
-                        //修改订单状态
-                        orderDao.CancelOrder(orderModel, orderOptionModel);
-                        //更新取消状态
-                        orderOtherDao.UpdateCancelTime(orderModel.Id);
-
-                        // 更新商户余额、可提现余额                        
-                        iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
-                        {
-                            BusinessId = orderModel.businessId,
-                            Amount = orderModel.AmountAndTip,
-                            Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
-                            RecordType = BusinessBalanceRecordRecordType.CancelOrder.GetHashCode(),
-                            Operator = orderModel.OptUserName,
-                            WithwardId = orderModel.Id,
-                            RelationNo = orderModel.OrderNo,
-                            Remark = orderModel.Remark
-                        });
-                    }            
+            else
+            {
+                //修改订单状态
+                orderDao.CancelOrder(orderModel, orderOptionModel);
+                //更新取消状态
+                orderOtherDao.UpdateCancelTime(orderModel.Id);
             }
         }
-     
+
+        /// <summary>
+        /// 微信退款
+        /// </summary>
+        /// 胡灵波
+        /// 2015年12月15日 11:38:22
+        /// <param name="orderModel"></param>
+        /// <param name="orderOptionModel"></param>
+        void Refund(OrderListModel orderModel, OrderOptionModel orderOptionModel)
+        {
+            ETS.Library.Pay.SSBWxPay.NativePay nativePay = new ETS.Library.Pay.SSBWxPay.NativePay();       
+            bool blNativePay = nativePay.Refund(orderModel.OrderNo, "110101000", 2, 2, "1243442302");
+            if (blNativePay)
+            {
+                //修改订单状态
+                orderDao.CancelOrder(orderModel, orderOptionModel);
+                //更新取消状态
+                orderOtherDao.UpdateCancelTime(orderModel.Id);
+
+                // 更新商户余额、可提现余额                        
+                iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
+                {
+                    BusinessId = orderModel.businessId,
+                    Amount = orderModel.AmountAndTip,
+                    Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
+                    RecordType = BusinessBalanceRecordRecordType.CancelOrder.GetHashCode(),
+                    Operator = orderModel.OptUserName,
+                    WithwardId = orderModel.Id,
+                    RelationNo = orderModel.OrderNo,
+                    Remark = orderModel.Remark
+                });
+            }
+        }
+
+        #endregion
     }
 }
