@@ -334,6 +334,13 @@ namespace Ets.Service.IProvider.Order
         /// <returns></returns>
         IList<LocalClienterModel> GetLocalClienterList(int orderId);
 
+       /// <summary>
+       /// 闪送取消订单
+       /// </summary>
+       /// 胡灵波
+       /// 2015年12月15日 10:57:24
+       /// <param name="pm"></param>
+       /// <returns></returns>
         ResultModel<object> SSCancelOrder(SSOrderCancelPM pm);
 
     }

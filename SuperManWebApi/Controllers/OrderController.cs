@@ -383,6 +383,13 @@ namespace SuperManWebApi.Controllers
             return receviceAddressProvider.RemoveAddressB(model);
         }
 
+        /// <summary>
+        /// 取消订单
+        /// </summary>
+        /// 胡灵波
+        /// 2015年12月15日 10:57:00
+        /// <param name="pm"></param>
+        /// <returns></returns>
         [HttpPost]
         public ResultModel<object> SSCancelOrder(SSOrderCancelPM pm)
         { 

@@ -90,13 +90,12 @@ namespace ETS.Library.Pay.SSBWxPay
             data.SetValue("time_start", DateTime.Now.ToString("yyyyMMddHHmmss"));//交易起始时间
             data.SetValue("time_expire", DateTime.Now.AddMinutes(10).ToString("yyyyMMddHHmmss"));//交易结束时间
             data.SetValue("goods_tag", productId);//商品标记
-            //data.SetValue("trade_type", "NATIVE");//交易类型
-            data.SetValue("trade_type", "APP");//交易类型
+            data.SetValue("trade_type", "NATIVE");//交易类型
+            //data.SetValue("trade_type", "APP");//交易类型
             data.SetValue("product_id", productId);//商品ID
             data.SetValue("notify_url", notify_url);
             WxPayData result = WxPayApi.UnifiedOrder(data);//调用统一下单接口
-            //string url = result.GetValue("code_url").ToString();//获得统一下单接口返回的二维码链接
-            string url = "";
+            string url = result.GetValue("code_url").ToString();//获得统一下单接口返回的二维码链接         
             prepay_id = result.GetValue("prepay_id").ToString();
             Log.Info(this.GetType().ToString(), "Get native pay mode 2 url : " + url);
             return url;
@@ -110,18 +109,26 @@ namespace ETS.Library.Pay.SSBWxPay
         /// 2015年12月11日 16:00:37
         /// <param name="orderNo"></param>
         /// <returns></returns>
-        public bool OrderQuery(string orderNo)
+        //public bool OrderQuery(string orderNo)
+        //{
+        //    WxPayData data = new WxPayData();
+        //    data.SetValue("out_trade_no", orderNo);//商户订单号      
+        //    //查询不存在
+        //    WxPayData queryResult = WxPayApi.OrderQuery(data);
+        //    if (queryResult.GetValue("return_code").ToString().ToUpper() == "SUCCESS" &&
+        //        queryResult.GetValue("result_code").ToString().ToUpper() == "FAIL"
+        //        )
+        //        return false;
+
+        //    return true;
+        //}
+        public WxPayData OrderQuery(string orderNo)
         {
             WxPayData data = new WxPayData();
             data.SetValue("out_trade_no", orderNo);//商户订单号      
             //查询不存在
             WxPayData queryResult = WxPayApi.OrderQuery(data);
-            if (queryResult.GetValue("return_code").ToString().ToUpper() == "SUCCESS" &&
-                queryResult.GetValue("result_code").ToString().ToUpper() == "FAIL"
-                )
-                return false;
-
-            return true;
+            return queryResult;
         }
         /// <summary>
         /// 取消订单 闪送模式        
@@ -160,8 +167,7 @@ namespace ETS.Library.Pay.SSBWxPay
             data.SetValue("out_trade_no", orderNo);//商户订单号        
             data.SetValue("out_refund_no", out_refund_no);//商户退款单号        
             data.SetValue("total_fee", total_fee);//总金额        
-            data.SetValue("refund_fee", refund_fee);//退款金额        
-            data.SetValue("out_trade_no", orderNo);//商户订单号        
+            data.SetValue("refund_fee", refund_fee);//退款金额       
             data.SetValue("op_user_id", op_user_id);//商户订单号       
  
             WxPayData result = WxPayApi.Refund(data);//调用统一下单接口

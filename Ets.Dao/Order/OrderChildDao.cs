@@ -288,6 +288,29 @@ where   1=1 and o.Id = @OrderId
         }
 
         /// <summary>
+        /// 获取订单状态
+        /// 窦海超
+        /// 2015年5月13日 11:04:41
+        /// </summary>
+        /// <param name="orderId">主订单号</param>
+        /// <param name="orderChildId">子订单号</param>
+        /// <returns>不存在返回-1</returns>
+        public PayStatusModel GetPaySSStatus(int orderId, int orderChildId)
+        {
+            string sql = "SELECT  oc.PayStatus,oc.TotalPrice,oc.WxCodeUrl,o.TipAmount from dbo.OrderChild oc(nolock) left join dbo.[order] o (nolock) on oc.orderid=o.id   where o.id = @OrderId and oc.id = @OrderChildId ";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("OrderId", DbType.Int32, 4).Value = orderId;
+            parm.Add("OrderChildId", DbType.Int32, 4).Value = orderChildId;
+            //此表是要同步支付状态，请读写表
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql, parm);
+            if (!dt.HasData())
+            {
+                return null;
+            }
+            return MapRows<PayStatusModel>(dt)[0];
+        }
+
+        /// <summary>
         /// 查询子订单状态，和是否有未完成的订单，APP刷新订单状态用
         /// 窦海超
         /// 2015年5月28日 14:33:12

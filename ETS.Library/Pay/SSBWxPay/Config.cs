@@ -18,33 +18,44 @@ namespace ETS.Library.Pay.SSBWxPay
         * KEY：商户支付密钥，参考开户邮件设置（必须配置）
         * APPSECRET：公众帐号secert（仅JSAPI支付的时候需要配置）
         */
-        //易代送正式
-        //public const string APPID = "wxb89ebba3cec98a8c";
-        //public const string APPSECRET = "1937e6b47786c86fac37303f97d5ed91";
-        //public const string MCHID = "1243442302";
-        //public const string KEY = "51c56b886b5be869567dd389b3e5d1d6";
-        public const string APPID = "wx5505d0e3b58607a6";
-        //public const string APPSECRET = "1937e6b47786c86fac37303f97d5ed91";//公众平台
-        //public const string APPSECRET = "c0cb93c7fb3f7322326b0c853f0cba46";//旧版C端扫码用的KEY，好像是公众平台
-        public const string APPSECRET = "d4624c36b6795d1d99dcf0547af5443d";//开放平台，非扫码，正式使用该KEY
-        public const string MCHID = "1291102901";
-        public const string KEY = "10852AFB8F4044D88F5A24E978BBC053";
-
-        //public const string APPID = "wx8164fe553cecbae5";
-        //public const string MCHID = "1264065201";
+        ////易代送正式
+        ////public const string APPID = "wxb89ebba3cec98a8c";
+        ////public const string APPSECRET = "1937e6b47786c86fac37303f97d5ed91";
+        ////public const string MCHID = "1243442302";
+        ////public const string KEY = "51c56b886b5be869567dd389b3e5d1d6";
+        //public const string APPID = "wx5505d0e3b58607a6";
+        ////public const string APPSECRET = "1937e6b47786c86fac37303f97d5ed91";//公众平台
+        ////public const string APPSECRET = "c0cb93c7fb3f7322326b0c853f0cba46";//旧版C端扫码用的KEY，好像是公众平台
+        //public const string APPSECRET = "d4624c36b6795d1d99dcf0547af5443d";//开放平台，非扫码，正式使用该KEY
+        //public const string MCHID = "1291102901";
         //public const string KEY = "446FE608F8E5493B89F3FDBC9148BA17";
-        //public const string APPSECRET = "c0cb93c7fb3f7322326b0c853f0cba46";
-        
-        
+
+        //public const string APPID = "wxb89ebba3cec98a8c";//公众平台
+        //public const string MCHID = "1243442302";//公众平台
+        //public const string APPSECRET = "1937e6b47786c86fac37303f97d5ed91";//公众平台
+        //public const string KEY = "446FE608F8E5493B89F3FDBC9148BA17";//商户
+
+        public const string APPID = "wxb89ebba3cec98a8c";//公众平台
+        public const string MCHID = "1243442302";//公众平台
+        public const string APPSECRET = "1937e6b47786c86fac37303f97d5ed91";//公众平台
+        public const string KEY = "51c56b886b5be869567dd389b3e5d1d6";//商户
+
+        /*APP
+        public const string APPID = "wx5505d0e3b58607a6";//开放平台
+        public const string APPSECRET = "d4624c36b6795d1d99dcf0547af5443d";//开放平台
+        public const string MCHID = "1291102901";//商户
+        public const string KEY = "51c56b886b5be869567dd389b3e5d1d6";//商户*/
+
+
 
         /*
         //=======【证书路径设置】===================================== 
         /* 证书路径,注意应该填写绝对路径（仅退款、撤销订单时需要）
         */
-        //public const string SSLCERT_PATH = "cert/apiclient_cert.p12";
-        //public const string SSLCERT_PASSWORD = "1233410002";
-        public const string SSLCERT_PATH = "";
-        public const string SSLCERT_PASSWORD = "";
+        public const string SSLCERT_PATH = "cert/apiclient_cert.p12";
+        public const string SSLCERT_PASSWORD = "1291102901";
+        //public const string SSLCERT_PATH = "";
+        //public const string SSLCERT_PASSWORD = "";
 
 
 

@@ -11,7 +11,17 @@ using Aop.Api;
 namespace ETS.Library.Pay.SSAliPay
 {
     public class AliPayApi
-    {
+    {        
+        private static string app_id = "";
+        private static string key = "";
+        private static string input_charset = "";
+        private static string sign_type = "";
+        private static string email = "";
+        private static string account_name = "";
+        static AliPayApi()
+        {
+            app_id = "2088911703660069";
+        }
         /// <summary>
         /// 统一收单线下交易查询)
         /// </summary>

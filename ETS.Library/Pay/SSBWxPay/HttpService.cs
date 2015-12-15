@@ -35,7 +35,7 @@ namespace ETS.Library.Pay.SSBWxPay
             try
             {
                 //设置最大连接数
-                ServicePointManager.DefaultConnectionLimit = 200;
+                ServicePointManager.DefaultConnectionLimit = 200; 
                 //设置https验证方式
                 if (url.StartsWith("https", StringComparison.OrdinalIgnoreCase))
                 {

@@ -2427,7 +2427,7 @@ namespace Ets.Service.Provider.Pay
         public ResultModel<PayResultModel> CreateFlashPay(Model.ParameterModel.AliPay.PayModel model)
         {
             LogHelper.LogWriter("=============支付请求数据：", model);
-            PayStatusModel payStatusModel = orderChildDao.GetPayStatus(model.orderId, model.childId);
+            PayStatusModel payStatusModel = orderChildDao.GetPaySSStatus(model.orderId, model.childId);
             if (payStatusModel == null)
             {
                 string err = string.Concat("订单不存在,主订单号：", model.orderId, ",子订单号:", model.childId);
@@ -2602,18 +2602,20 @@ namespace Ets.Service.Provider.Pay
                         });
 
                         //写订单小费
-                        OrderTipCost otcModel = new OrderTipCost();
-                        otcModel.OrderId = orderId;
-                        otcModel.Amount = tipAmount;
-                        otcModel.CreateName = businessModel.Name;
-                        otcModel.CreateTime = DateTime.Now;
-                        otcModel.PayStates = 1;
-                        orderTipCostDao.Insert(otcModel);
+                        if (tipAmount > 0)
+                        {
+                            OrderTipCost otcModel = new OrderTipCost();
+                            otcModel.OrderId = orderId;
+                            otcModel.Amount = tipAmount;
+                            otcModel.CreateName = businessModel.Name;
+                            otcModel.CreateTime = DateTime.Now;
+                            otcModel.PayStates = 1;
+                            orderTipCostDao.Insert(otcModel);
 
-                        //更新小费
-                        orderDao.UpdateTipAmount(orderId, tipAmount);
+                            orderDao.UpdateTipAmount(orderId, tipAmount);
+                        }               
                     }
-                    else//未支付
+                    else//未支付 发单
                     {
                         //更新商户余额、可提现余额                        
                         iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
@@ -2643,7 +2645,7 @@ namespace Ets.Service.Provider.Pay
                             orderTipCostDao.Insert(otcModel);
 
                             //更新小费
-                            orderDao.UpdateTipAmount(orderId, tipAmount);
+                            //orderDao.UpdateTipAmount(orderId, tipAmount);
                         }
                     }
                 }
@@ -2687,7 +2689,7 @@ namespace Ets.Service.Provider.Pay
             resultModel.payType = PayTypeEnum.WeiXin.GetHashCode();//微信
             resultModel.notifyUrl = ETS.Config.SSWxNotify;//回调地址            
 
-            orderDao.UpdateTipAmount(orderId, 2);
+            orderDao.UpdatePayment(orderId, 2);
             return ResultModel<PayResultModel>.Conclude(AliPayStatus.success, resultModel);
         }
 
@@ -2747,23 +2749,24 @@ namespace Ets.Service.Provider.Pay
                         Remark = "配送费支出金额"
                     });
 
-                    //写订单小费
-                    OrderTipCost otcModel = new OrderTipCost();
-                    otcModel.OrderId = orderId;
-                    otcModel.Amount = tipAmount;
-                    otcModel.CreateName = businessModel.Name;
-                    otcModel.CreateTime = DateTime.Now;
-                    otcModel.PayStates = 1;
-                    orderTipCostDao.Insert(otcModel);
+                    
+                        //写订单小费
+                    if (tipAmount > 0)
+                    {
+                        OrderTipCost otcModel = new OrderTipCost();
+                        otcModel.OrderId = orderId;
+                        otcModel.Amount = tipAmount;
+                        otcModel.CreateName = businessModel.Name;
+                        otcModel.CreateTime = DateTime.Now;
+                        otcModel.PayStates = 1;
+                        orderTipCostDao.Insert(otcModel);
 
-                    //更新小费
-                    orderDao.UpdateTipAmount(orderId, tipAmount);
+                        //更新小费
+                        orderDao.UpdateTipAmount(orderId, tipAmount);
+                    }
                 }
                 else//未支付
-                {
-                    //修改订单支付状态 订单状态
-                    orderDao.UpdateIsPay(orderId);
-
+                {         
                     //更新商户余额、可提现余额                        
                     iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
                     {
@@ -2775,7 +2778,10 @@ namespace Ets.Service.Provider.Pay
                         WithwardId = orderId,
                         RelationNo = currOrderNo,
                         Remark = "配送费支出金额"
-                    });             
+                    });
+
+                    //修改订单支付状态 订单状态
+                    orderDao.UpdateIsPay(orderId);
 
                     if (tipAmount > 0)
                     {
@@ -2789,7 +2795,7 @@ namespace Ets.Service.Provider.Pay
                         orderTipCostDao.Insert(otcModel);
 
                         //更新小费
-                        orderDao.UpdateTipAmount(orderId, tipAmount);
+                        //orderDao.UpdateTipAmount(orderId, tipAmount);
                     }
                 }
 
