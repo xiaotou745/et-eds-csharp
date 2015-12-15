@@ -143,7 +143,7 @@ namespace ETS.Util
         /// <returns></returns>
         public static float ToFloat(object o, float DefaultValue)
         {
-            float result = 0;
+            float result = 0f; 
             if (!float.TryParse(Convert.ToString(o), out result))
                 result = DefaultValue;
             return result;
