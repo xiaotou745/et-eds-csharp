@@ -106,12 +106,7 @@ namespace Ets.Service.Provider.Pay
             if (model.payType == PayTypeEnum.WeiXin.GetHashCode())
             {
                 //微信支付
-                LogHelper.LogWriter("=============微信支付：");
-                //if (model.payStyle == PayStyleEnum.BusinessPay.GetHashCode())//闪送模式
-                //{
-                //    //orderNo += "_" + model.oType;//把订单类型放到最后，回调的时候拆分
-                //    return CreateWxSSPayOrder(orderNo, payStatusModel.TotalPrice, model.orderId);
-                //}
+                LogHelper.LogWriter("=============微信支付：");           
                 return CreateWxPayOrder(orderNo, payStatusModel.TotalPrice, model.orderId, model.payStyle);
             }
             return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
@@ -2443,12 +2438,12 @@ namespace Ets.Service.Provider.Pay
             if (payStatusModel.PayStatus == PayStatusEnum.HadPay.GetHashCode())//已支付，加小费
             {
                 zfAmount = model.tipAmount;
-                orderCombinationNo += "_1" + "_" + zfAmount + "_" + model.tipAmount;
+                //orderCombinationNo += "_1" + "_" + zfAmount + "_" + model.tipAmount;
             }
             else//未支付
             {
                 zfAmount = payStatusModel.TotalPrice + payStatusModel.TipAmount;
-                orderCombinationNo += "_0" + "_" + zfAmount + "_" + payStatusModel.TipAmount;
+                //orderCombinationNo += "_0" + "_" + zfAmount + "_" + payStatusModel.TipAmount;
             }
 
             if (model.payType == PayTypeEnum.ZhiFuBao.GetHashCode())
@@ -2682,15 +2677,15 @@ namespace Ets.Service.Provider.Pay
             PayResultModel resultModel = new PayResultModel();
 
             string code_url = string.Empty;
-            if (payStyle == 1)//用户扫二维码
-            {
+            //if (payStyle == 1)//用户扫二维码
+            //{
                 ETS.Library.Pay.SSBWxPay.NativePay nativePay = new ETS.Library.Pay.SSBWxPay.NativePay();
                 string prepayId = string.Empty;
                 code_url = nativePay.GetPayUrl(combinationOrderNo, totalPrice, "E代送收款", Config.SSWxNotify, out prepayId, orderNo);
                 resultModel.prepayId = prepayId;
-            }
+            //}
 
-            resultModel.aliQRCode = code_url;//微信地址
+            //resultModel.aliQRCode = code_url;//微信地址
             resultModel.orderNo = combinationOrderNo;//订单号
             resultModel.payAmount = totalPrice;//总金额，没乘以100的值
             resultModel.payType = PayTypeEnum.WeiXin.GetHashCode();//微信
@@ -2717,7 +2712,7 @@ namespace Ets.Service.Provider.Pay
             if (notify.return_code == "SUCCESS")
             {
                 string orderNo = notify.order_no;
-                if (string.IsNullOrEmpty(orderNo) || !orderNo.Contains("_"))
+                if (string.IsNullOrEmpty(orderNo))
                 {
                     string fail = string.Concat("错误啦orderNo：", orderNo);
                     LogHelper.LogWriter(fail);
