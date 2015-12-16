@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using ETS.Pay.AliPay;
 using Ets.Service.Provider.Pay;
 using NUnit.Framework;
+using ETS.Library.Pay.SSAliPay;
+using Aop.Api.Response;
 
 namespace Ets.Provider.Tests
 {
@@ -16,6 +18,13 @@ namespace Ets.Provider.Tests
     [TestFixture]
     public class AlipayTest
     {
+        public void Refund()
+        {
+            AliPayApi pay = new AliPayApi();
+            pay.Query();
+            AlipayTradeRefundResponse fund = pay.Refund();
+
+        }
         /// <summary>
         /// 转账
         /// </summary>

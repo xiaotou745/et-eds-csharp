@@ -20,12 +20,14 @@ using System.Net.Http;
 using System.Web.Http;
 using ETS.Util;
 using SuperManWebApi.App_Start.Filters;
+using ETS.Library.Pay.SSAliPay;
 
 namespace SuperManWebApi.Controllers
 {
     public class PayController : ApiController
     {
         readonly IPayProvider payProvider = new PayProvider();
+      
         #region TestMethod
         [HttpGet]
         public ResultModel<PayResultModel> CreatePayTest(int orderId)
