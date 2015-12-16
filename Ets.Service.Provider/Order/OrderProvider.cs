@@ -1959,7 +1959,7 @@ namespace Ets.Service.Provider.Order
             orderDM.Latitude = order.Latitude;
             orderDM.ClienterId = ParseHelper.ToInt(order.clienterId);
             orderDM.OneKeyPubOrder = order.OneKeyPubOrder;
-
+            orderDM.ExpectedTakeTime = order.ExpectedTakeTime;
             #region 是否允许修改小票
             orderDM.IsModifyTicket = true;
             if (order.HadUploadCount >= order.OrderCount && order.Status == OrderStatus.Status1.GetHashCode())

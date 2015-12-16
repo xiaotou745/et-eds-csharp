@@ -286,5 +286,7 @@ namespace Ets.Model.DataModel.Order
         /// 产品名称 
         /// </summary>
         public string ProductName { get; set; }
+
+        public DateTime? ExpectedTakeTime { get; set; }
     }
 }

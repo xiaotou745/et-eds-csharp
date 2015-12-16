@@ -125,6 +125,30 @@ namespace ETS.Util
 
         #endregion
 
+        /// <summary>
+        /// 将参数中的值转换成float类型
+        /// </summary>
+        /// <param name="o">要转换的值</param>
+        /// <returns></returns>
+        public static float ToFloat(object o)
+        {
+            return ToFloat(o, 0);
+        }
+
+        /// <summary>
+        /// 将参数中的值转换成float类型
+        /// </summary>
+        /// <param name="o">要转换的值</param>
+        /// <param name="DefaultValue">转换失败后返回的默认值</param>
+        /// <returns></returns>
+        public static float ToFloat(object o, float DefaultValue)
+        {
+            float result = 0f; 
+            if (!float.TryParse(Convert.ToString(o), out result))
+                result = DefaultValue;
+            return result;
+        }
+
         #region ToBool
 
         /// <summary>

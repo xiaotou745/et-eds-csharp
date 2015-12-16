@@ -238,6 +238,8 @@ namespace Ets.Model.DomainModel.Order
         /// 是否允许现金支付 1允许 0不允许
         /// </summary>
         public int IsAllowCashPay { get; set; }
+        //商户期望骑士取货时间
+        public DateTime? ExpectedTakeTime { get; set; }
     }
 
     public class OrderChildInfo

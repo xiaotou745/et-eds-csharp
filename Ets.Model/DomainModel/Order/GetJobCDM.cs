@@ -96,11 +96,22 @@ namespace Ets.Model.DomainModel.Order
         /// </summary>
         public int TakeType { get; set; }
 
+        private string songCanDate;
         /// <summary>
         /// 送餐时间,客户要求送餐时间
         /// </summary>
-        public DateTime? SongCanDate { get; set; }
+        public string SongCanDate
+        {
+            get { return songCanDate == null ? "" : songCanDate; }
+            set { songCanDate = value; }
+        }
 
+        private string expectedTakeTime;
+        public string ExpectedTakeTime
+        {
+            get { return expectedTakeTime == null ? "" : expectedTakeTime; }
+            set { expectedTakeTime = value; }
+        } //商户期望骑士取货时间
         public int BusinessId { get; set; }
     }
 }

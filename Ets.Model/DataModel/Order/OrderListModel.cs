@@ -422,5 +422,12 @@ namespace Ets.Model.DataModel.Order
         public int Platform { get; set; }
 
         public int Payment { get; set; }
+
+        private string expectedTakeTime;
+        public string ExpectedTakeTime
+        {
+            get { return expectedTakeTime == null ? "" : expectedTakeTime; }
+            set { expectedTakeTime = value; }
+        } //商户期望骑士取货时间
     }
 }
