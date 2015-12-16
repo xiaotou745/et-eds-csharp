@@ -35,12 +35,14 @@ namespace ETS.Library.Pay.SSBWxPay
         //public const string APPSECRET = "1937e6b47786c86fac37303f97d5ed91";//公众平台
         //public const string KEY = "446FE608F8E5493B89F3FDBC9148BA17";//商户
 
-        public const string APPID = "wxb89ebba3cec98a8c";//公众平台
-        public const string MCHID = "1243442302";//公众平台
-        public const string APPSECRET = "1937e6b47786c86fac37303f97d5ed91";//公众平台
-        public const string KEY = "51c56b886b5be869567dd389b3e5d1d6";//商户
 
-        /*APP
+
+        //public const string APPID = "wxb89ebba3cec98a8c";//公众平台
+        //public const string MCHID = "1243442302";//公众平台
+        //public const string APPSECRET = "1937e6b47786c86fac37303f97d5ed91";//公众平台
+        //public const string KEY = "51c56b886b5be869567dd389b3e5d1d6";//商户
+
+        //APP
         public const string APPID = "wx5505d0e3b58607a6";//开放平台
         public const string APPSECRET = "d4624c36b6795d1d99dcf0547af5443d";//开放平台
         public const string MCHID = "1291102901";//商户
