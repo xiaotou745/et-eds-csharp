@@ -22,6 +22,10 @@ namespace Ets.Model.DataModel.Order
         public int OrderId { get; set; }
 
         /// <summary>
+        /// 主订单ID
+        /// </summary>
+        public string OrderNo { get; set; }
+        /// <summary>
         /// 子订单ID
         /// </summary>
         public int ChildId { get; set; }

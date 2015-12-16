@@ -2521,7 +2521,7 @@ from    dbo.[order] o ( nolock )
 where    
         o.Status = 50        
         and o.platform=3
-        and datediff(hour, o.ActualDoneDate, getdate()) >= @hour";
+        and datediff(hour, o.pubDate, getdate()) >= @hour";
             IDbParameters parm = DbHelper.CreateDbParameters("@hour", DbType.Int64, 4, hour);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             if (!dt.HasData())

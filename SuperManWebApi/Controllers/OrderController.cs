@@ -384,7 +384,7 @@ namespace SuperManWebApi.Controllers
         }
 
         /// <summary>
-        /// App取消订单 闪送模式
+        /// App,java管理后台取消订单 闪送模式
         /// </summary>
         /// 胡灵波
         /// 2015年12月15日 10:57:00
