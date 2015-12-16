@@ -11,10 +11,10 @@
   <schedule>
     <!--跨店奖励统计-->
     <job>
-      <name>WithdrawBLL</name>
+      <name>CancelOrderBLL</name>
       <group>DeomJobGroup</group>
       <description>可提现金额变更</description>
-      <job-type>Ets.SSCancelOrder.WithdrawBLL,Ets.SSCancelOrder</job-type>
+      <job-type>Ets.SSCancelOrder.CancelOrderBLL,Ets.SSCancelOrder</job-type>
       <durable>true</durable>
       <recover>false</recover>
     </job>
@@ -22,9 +22,9 @@
     <!--跨店奖励统计 触发器 每天凌晨02:00执行一次跨店奖励统计任务-->
     <trigger>
       <cron>
-        <name>WithdrawBLLTrigger</name>
+        <name>CancelOrderBLLTrigger</name>
         <group>DeomJobTriggerGroup</group>
-        <job-name>WithdrawBLL</job-name>
+        <job-name>CancelOrderBLL</job-name>
         <job-group>DeomJobGroup</job-group>
         <cron-expression>0/30 * * * * ?</cron-expression>
       </cron>

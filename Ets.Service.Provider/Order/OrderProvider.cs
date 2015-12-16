@@ -2823,7 +2823,7 @@ namespace Ets.Service.Provider.Order
         #region 用户自定义方法闪送 余额
         void CancelBalanceOrder(OrderListModel orderModel, OrderOptionModel orderOptionModel)
         {
-            if (orderModel.IsPay.HasValue)
+            if ((bool)orderModel.IsPay)
             {
                 //修改订单状态
                 orderDao.CancelOrder(orderModel, orderOptionModel);
