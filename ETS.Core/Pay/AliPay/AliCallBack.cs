@@ -42,6 +42,8 @@ namespace ETS.Pay.AliPay
             //订单描述
             string body = model.body;
 
+            if (!string.IsNullOrEmpty(model.NotifyUrl))
+                notify_url = model.NotifyUrl;
 
             ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -132,5 +134,9 @@ namespace ETS.Pay.AliPay
         /// </summary>
         public string body { get; set; }
 
+        /// <summary>
+        /// 回调地址
+        /// </summary>
+        public string NotifyUrl { get; set; }
     }
 }

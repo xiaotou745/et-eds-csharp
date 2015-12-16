@@ -57,8 +57,7 @@ namespace Ets.SSCancelOrder
                     using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
                     {
                         try
-                        {
-                            //clienterProvider.UpdateCAllowWithdrawPrice(item);     
+                        {                             
                             OrderOptionModel orderOptionModel = new OrderOptionModel
                             {
                                 OptUserName = "闪送服务取消订单",

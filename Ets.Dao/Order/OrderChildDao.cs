@@ -297,7 +297,7 @@ where   1=1 and o.Id = @OrderId
         /// <returns>不存在返回-1</returns>
         public PayStatusModel GetPaySSStatus(int orderId, int orderChildId)
         {
-            string sql = "SELECT  oc.PayStatus,oc.TotalPrice,oc.WxCodeUrl,o.TipAmount from dbo.OrderChild oc(nolock) left join dbo.[order] o (nolock) on oc.orderid=o.id   where o.id = @OrderId and oc.id = @OrderChildId ";
+            string sql = "SELECT  oc.PayStatus,oc.TotalPrice,oc.WxCodeUrl,o.TipAmount,o.OrderNo from dbo.OrderChild oc(nolock) left join dbo.[order] o (nolock) on oc.orderid=o.id   where o.id = @OrderId and oc.id = @OrderChildId ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("OrderId", DbType.Int32, 4).Value = orderId;
             parm.Add("OrderChildId", DbType.Int32, 4).Value = orderChildId;
@@ -309,6 +309,21 @@ where   1=1 and o.Id = @OrderId
             }
             return MapRows<PayStatusModel>(dt)[0];
         }
+
+        public int GetIdByOrderId(int orderId)
+        {
+            string sql = "SELECT id from dbo.OrderChild oc(nolock)  where oc.OrderId = @OrderId ";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("OrderId", DbType.Int32, 4).Value = orderId;          
+            //此表是要同步支付状态，请读写表
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql, parm);
+            if (!dt.HasData())
+            {
+                return 0;
+            }
+            return Convert.ToInt32(dt.Rows[0]["id"]);
+        }
+
 
         /// <summary>
         /// 查询子订单状态，和是否有未完成的订单，APP刷新订单状态用
