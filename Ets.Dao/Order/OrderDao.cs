@@ -788,6 +788,7 @@ where  Id=@Id ";
                                         ,o.BusinessReceivable
                                         ,o.SettleMoney
                                         ,o.FinishAll
+                                        ,oo.ExpectedTakeTime 
                                     FROM [order] o WITH ( NOLOCK )
                                     JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                     left JOIN clienter c WITH (NOLOCK) ON o.clienterId=c.Id
