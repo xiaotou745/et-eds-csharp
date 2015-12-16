@@ -2354,7 +2354,9 @@ declare @clienterLatitude FLOAT;
 set @clienterLongitude=@Longitude;
 set @clienterLatitude=@Latitude;
 
-select  o.Id,o.OrderNo,o.PickUpAddress,o.PubDate,o.ReceviceName,o.RecevicePhoneNo,o.ReceviceAddress,o.ActualDoneDate,o.IsPay,
+select  o.Id,o.OrderNo,o.PickUpAddress,o.PubDate,o.ReceviceName,o.RecevicePhoneNo,
+case  isnull(o.ReceviceAddress,'')  		when  '' then '附近3公里左右，由商户指定'		else o.ReceviceAddress end as ReceviceAddress,
+o.ActualDoneDate,o.IsPay,
     o.Amount,o.OrderCommission,o.DistribSubsidy,o.WebsiteSubsidy,o.Remark,o.Status,o.clienterId,o.businessId,o.ReceviceCity,o.ReceviceLongitude,
     o.ReceviceLatitude,o.OrderFrom,o.OriginalOrderId,o.OriginalOrderNo,o.Quantity,o.Weight,o.ReceiveProvince,o.ReceiveArea,o.ReceiveProvinceCode,
     o.ReceiveCityCode,o.ReceiveAreaCode,o.OrderType,o.KM,o.GuoJuQty,o.LuJuQty,o.SongCanDate,o.OrderCount,o.CommissionRate,o.Payment,
@@ -2370,7 +2372,7 @@ select  o.Id,o.OrderNo,o.PickUpAddress,o.PubDate,o.ReceviceName,o.RecevicePhoneN
     when  ISNULL(b.Latitude,0)=0 or ISNULL(b.Longitude,0)=0 or @clienterLongitude=0 or  @clienterLatitude=0  then -1
     else round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(geography::Point(@clienterLatitude,@clienterLongitude,4326)),0)
     end)
-    as distance,isnull(oo.OneKeyPubOrder,0) as OneKeyPubOrder,oo.ExpectedTakeTime  
+    as distance,isnull(oo.OneKeyPubOrder,0) as OneKeyPubOrder,oo.ExpectedTakeTime
 from  dbo.[order] o (nolock)
     join business b (nolock) on b.Id=o.businessId
     left join dbo.OrderOther oo (nolock) on o.Id=oo.orderId
@@ -2943,8 +2945,8 @@ order by a.id desc
                 temp.Weight = ParseHelper.ToFloat(dataRow["Weight"]);//订单总重量
                 temp.KM = ParseHelper.ToFloat(dataRow["KM"]);//送餐距离
                 temp.TakeType = ParseHelper.ToInt(dataRow["TakeType"]);// 取货状态默认0立即，1预约
-                temp.SongCanDate = ParseHelper.ToDatetime(dataRow["SongCanDate"]);
-                temp.ExpectedTakeTime = ParseHelper.ToDatetime(dataRow["ExpectedTakeTime"]);
+                temp.SongCanDate = dataRow["SongCanDate"].ToString();
+                temp.ExpectedTakeTime = dataRow["ExpectedTakeTime"].ToString();
                 temp.OrderNo = dataRow["OrderNo"].ToString();
                 temp.BusinessId = ParseHelper.ToInt(dataRow["BusinessId"], 0);
                 models.Add(temp);
