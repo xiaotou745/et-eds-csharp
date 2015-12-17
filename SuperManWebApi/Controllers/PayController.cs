@@ -27,21 +27,40 @@ namespace SuperManWebApi.Controllers
     public class PayController : ApiController
     {
         readonly IPayProvider payProvider = new PayProvider();
-      
+
         #region TestMethod
         [HttpGet]
         public ResultModel<PayResultModel> CreatePayTest(int orderId)
         {
-            PayModel model = new PayModel()
-            {
-                productId = 1,
-                orderId = orderId,
-                childId = 1,
-                payType = 2,
-                version = "1.0",
-                payStyle = 1
-            };
-            return payProvider.CreatePay(model);
+            //PayModel model = new PayModel()
+            //{
+            //    productId = 1,
+            //    orderId = orderId,
+            //    childId = 1,
+            //    payType = 2,
+            //    version = "1.0",
+            //    payStyle = 1
+            //};
+            //return payProvider.CreatePay(model);
+            //微信支付
+            //PayModel model = new PayModel()
+            //{
+            //    payStyle = 0,
+            //    tipAmount = ParseHelper.ToDecimal(0.01),
+            //    payType = 2,
+            //    orderId = orderId
+            //};
+            //return payProvider.CreateFlashPay(model);
+            //微信退款
+            ETS.Library.Pay.SSBWxPay.NativePay nav = new ETS.Library.Pay.SSBWxPay.NativePay();
+            bool s = nav.Refund(
+                "2125151217163453670",//易代送单号
+                "1005451006201512172140602927",//微信单号
+                1,//总金额
+                1,//退款金额
+                "2125151217163453670"//易代送单号
+                );
+            return null;
         }
 
         [HttpGet]
@@ -184,7 +203,7 @@ namespace SuperManWebApi.Controllers
             HttpRequest req = HttpContext.Current.Request;
             #region===回调取参
             StringBuilder sb = new StringBuilder();
-            AlipayBatchCallBackModel model=new AlipayBatchCallBackModel();
+            AlipayBatchCallBackModel model = new AlipayBatchCallBackModel();
             var notify_time = req["notify_time"];//异步通知时间
             sb.Append(notify_time + "\r\n");
             model.NotifyTime = notify_time;

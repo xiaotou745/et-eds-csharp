@@ -2697,8 +2697,9 @@ declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0}
         a.Id, a.OrderCommission, a.OrderCount,a.PubName,
-        ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
-        a.Amount CpAmount,oo.ExpectedTakeTime,
+        ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,
+        convert(varchar(16),a.SongCanDate,120) SongCanDate,
+        a.Amount CpAmount,convert(varchar(16),oo.ExpectedTakeTime,120) ExpectedTakeTime,
         b.Name as BusinessName, b.City as BusinessCity,b.Id BusinessId,
         isnull(a.ReceviceCity, '') as UserCity,
        a.Remark,a.OrderNo,
@@ -2732,8 +2733,10 @@ declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0}
         a.Id, a.OrderCommission, a.OrderCount,a.PubName,
-        ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
-        a.Amount CpAmount,a.OrderNo,oo.ExpectedTakeTime,
+        ( a.Amount + a.OrderCount * a.DistribSubsidy ) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,
+        convert(varchar(16),a.SongCanDate,120) SongCanDate,
+        a.Amount CpAmount,a.OrderNo,
+        convert(varchar(16),oo.ExpectedTakeTime,120) ExpectedTakeTime,
         b.Name as BusinessName, b.City as BusinessCity,a.OrderNo,b.Id BusinessId,
          isnull(a.ReceviceCity, '') as UserCity,
         a.Remark,case  isnull(a.ReceviceAddress,'')  
@@ -2800,8 +2803,8 @@ order by a.Id desc", model.TopNum, model.ClienterId, model.ExclusiveOrderTime, w
 declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0} a.Id,a.OrderCommission,a.OrderCount,a.PubName,   
-(a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,b.Id BusinessId,
-a.Amount CpAmount,oo.ExpectedTakeTime,
+(a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,a.Platform,a.Weight,a.KM,a.TakeType, convert(varchar(16),a.SongCanDate,120) SongCanDate,b.Id BusinessId,
+a.Amount CpAmount,convert(varchar(16),oo.ExpectedTakeTime,120) ExpectedTakeTime,
 a.Remark,a.OrderNo,
 b.Name as BusinessName,b.City as BusinessCity,
 ISNULL(a.ReceviceCity,'') as UserCity, case  isnull(a.ReceviceAddress,'')  
@@ -2835,8 +2838,8 @@ order by geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDis
 declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0} a.Id,a.OrderCommission,a.OrderCount,   
-(a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
-a.Amount CpAmount,oo.ExpectedTakeTime,a.PubName,
+(a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,a.Platform,a.Weight,a.KM,a.TakeType, convert(varchar(16),a.SongCanDate,120) SongCanDate,
+a.Amount CpAmount,convert(varchar(16),oo.ExpectedTakeTime,120) ExpectedTakeTime,a.PubName,
 a.Remark,a.OrderNo,b.Id BusinessId,
 b.Name as BusinessName,b.City as BusinessCity,
 ISNULL(a.ReceviceCity,'') as UserCity, case  isnull(a.ReceviceAddress,'')  
@@ -2901,7 +2904,7 @@ order by geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDis
 declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0}  a.BusinessId, a.Id,a.OrderCommission,a.OrderCount,   
-(a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
+(a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,a.Platform,a.Weight,a.KM,a.TakeType, convert(varchar(16),a.SongCanDate,120) SongCanDate,
  a.Amount CpAmount,b.Id BusinessId,a.PubName,
 a.Remark,a.OrderNo,
 b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
