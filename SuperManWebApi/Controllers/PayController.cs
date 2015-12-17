@@ -42,14 +42,25 @@ namespace SuperManWebApi.Controllers
             //    payStyle = 1
             //};
             //return payProvider.CreatePay(model);
-            PayModel model = new PayModel()
-            {
-                payStyle = 0,
-                tipAmount = ParseHelper.ToDecimal(0.01),
-                payType = 2,
-                orderId = orderId
-            };
-            return payProvider.CreateFlashPay(model);
+            //微信支付
+            //PayModel model = new PayModel()
+            //{
+            //    payStyle = 0,
+            //    tipAmount = ParseHelper.ToDecimal(0.01),
+            //    payType = 2,
+            //    orderId = orderId
+            //};
+            //return payProvider.CreateFlashPay(model);
+            //微信退款
+            ETS.Library.Pay.SSBWxPay.NativePay nav = new ETS.Library.Pay.SSBWxPay.NativePay();
+            bool s = nav.Refund(
+                "2125151217163453670",//易代送单号
+                "1005451006201512172140602927",//微信单号
+                1,//总金额
+                1,//退款金额
+                "2125151217163453670"//易代送单号
+                );
+            return null;
         }
 
         [HttpGet]
