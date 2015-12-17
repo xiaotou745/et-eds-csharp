@@ -25,6 +25,11 @@ namespace Ets.Service.IProvider.Pay
         /// <param name="model"></param>
         ResultModel<PayResultModel> CreatePay(PayModel model);
 
+        /// <summary>
+        /// 生成订单 闪送
+        /// 胡灵波
+        /// 2015年12月8日 11:14:04
+        /// </summary>
         ResultModel<PayResultModel> CreateFlashPay(PayModel model);
 
         dynamic NotifyTip();

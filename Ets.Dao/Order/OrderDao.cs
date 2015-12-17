@@ -1713,6 +1713,8 @@ select top 1
         o.ActualDoneDate,
         oo.GrabTime,
         o.Amount,
+        isnull(o.[TipAmount],0) TipAmount,
+        isnull(o.[Amount],0)+isnull(o.[TipAmount],0) as AmountAndTip,
         o.DeliveryCompanySettleMoney,
         o.DeliveryCompanyID,
         o.MealsSettleMode,
