@@ -35,8 +35,8 @@ namespace Ets.Dao.Order
 		public long Insert(OrderTipCost orderTipCost)
 		{
 			const string insertSql = @"
-insert into OrderTipCost(OrderId,Amount,CreateName,CreateTime,PayStates)
-values(@OrderId,@Amount,@CreateName,@CreateTime,@PayStates);
+insert into OrderTipCost(OrderId,Amount,CreateName,CreateTime,PayStates,OriginalOrderNo,PayType)
+values(@OrderId,@Amount,@CreateName,@CreateTime,@PayStates,@OriginalOrderNo,@PayType);
 select @@IDENTITY
 ";
 
@@ -46,10 +46,28 @@ select @@IDENTITY
 			dbParameters.AddWithValue("CreateName", orderTipCost.CreateName);
 			dbParameters.AddWithValue("CreateTime", orderTipCost.CreateTime);
 			dbParameters.AddWithValue("PayStates", orderTipCost.PayStates);
+            dbParameters.AddWithValue("OriginalOrderNo", orderTipCost.OriginalOrderNo);
+            dbParameters.AddWithValue("PayType", orderTipCost.PayType);
 
     object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters); //提现单号
             return ParseHelper.ToLong(result);
 		}
+
+        /// <summary>
+        /// 判断第三方平台的充值单号存不存在 
+        /// 胡灵波
+        /// 2015年12月17日 19:24:05
+        /// </summary>
+        /// <param name="OriginalOrderNo"></param>
+        /// <returns>true=存在</returns>
+        public bool Check(string OriginalOrderNo)
+        {
+            string sql = @"
+SELECT count(1) FROM dbo.OrderTipCost  where OriginalOrderNo=@OriginalOrderNo";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("OriginalOrderNo", DbType.String, 100).Value = OriginalOrderNo;
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm), 0) > 0 ? true : false;
+        }
 
 		/// <summary>
 		/// 更新一条记录

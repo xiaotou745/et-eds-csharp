@@ -1723,7 +1723,7 @@ select top 1
 		oo.PubLatitude,
 		oo.PubLongitude       
 from    [order] o with ( nolock )
-        join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
+        left join dbo.clienter c with ( nolock ) on o.clienterId = c.Id
         join dbo.business b with ( nolock ) on o.businessId = b.Id
         left join dbo.OrderOther oo with(nolock) on o.Id = oo.OrderId 
 where   1 = 1 and o.Id = @Id
@@ -1743,6 +1743,58 @@ where   1 = 1 and o.Id = @Id
             }
         }
 
+        public OrderListModel GetByOrderIdWrite(int orderId)
+        {
+            string sql = @"
+select top 1
+        o.[Id] ,
+        o.[OrderNo] ,
+        o.[Status] ,
+        c.AccountBalance ,
+        c.AllowWithdrawPrice, 
+        c.Id clienterId ,
+        c.GradeType,
+        o.OrderCommission ,
+        o.businessId ,
+        b.GroupId ,
+        o.PickupCode ,
+        o.OrderCount,
+        c.TrueName ClienterName,
+        ISNULL(oo.HadUploadCount,0) HadUploadCount,
+        o.SettleMoney,
+        o.IsPay,   
+        o.ActualDoneDate,
+        oo.GrabTime,
+        o.Amount,
+        isnull(o.[TipAmount],0) TipAmount,
+        isnull(o.[Amount],0)+isnull(o.[TipAmount],0) as AmountAndTip,
+        o.DeliveryCompanySettleMoney,
+        o.DeliveryCompanyID,
+        o.MealsSettleMode,
+        o.Platform,
+        ISNULL(oo.IsOrderChecked,1) AS IsOrderChecked,
+		oo.PubLatitude,
+		oo.PubLongitude       
+from    [order] o 
+        left join dbo.clienter c on o.clienterId = c.Id
+        join dbo.business b  on o.businessId = b.Id
+        left join dbo.OrderOther oo on o.Id = oo.OrderId 
+where   1 = 1 and o.Id = @Id
+";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("@Id", DbType.Int32, 4).Value = orderId;
+
+            var dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql, parm);
+            var list = ConvertDataTableList<OrderListModel>(dt);
+            if (list != null && list.Count > 0)
+            {
+                return list[0];
+            }
+            else
+            {
+                return null;
+            }
+        }
         /// <summary>
         /// 返回订单信息
         /// 窦海超

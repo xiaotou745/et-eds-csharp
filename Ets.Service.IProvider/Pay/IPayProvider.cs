@@ -23,16 +23,8 @@ namespace Ets.Service.IProvider.Pay
         /// 2015年5月12日 14:35:05
         /// </summary>
         /// <param name="model"></param>
-        ResultModel<PayResultModel> CreatePay(PayModel model);
+        ResultModel<PayResultModel> CreatePay(PayModel model);      
 
-        /// <summary>
-        /// 生成订单 闪送
-        /// 胡灵波
-        /// 2015年12月8日 11:14:04
-        /// </summary>
-        ResultModel<PayResultModel> CreateFlashPay(PayModel model);
-
-        dynamic NotifyTip();
         /// <summary>
         /// 现金支付 wc
         /// </summary>
@@ -83,23 +75,7 @@ namespace Ets.Service.IProvider.Pay
         /// </summary>
         /// <returns></returns>
         dynamic GetOrderPayStatus(OrderPayModel model);
-
-        /// <summary>
-        /// 微信支付回调方法 
-        /// 窦海超
-        /// 2015年5月13日 15:03:45
-        /// </summary>
-        /// <returns></returns>
-        void WxNotify();
-
-
-        /// <summary>
-        /// 闪送模式 微信支付回调方法 
-        /// 窦海超
-        /// 2015年5月13日 15:03:45
-        /// </summary>
-        /// <returns></returns>
-        void SSWxNotify();
+      
 
         /// <summary>
         /// 微信商家充值回调方法 
@@ -182,5 +158,37 @@ namespace Ets.Service.IProvider.Pay
         /// <param name="model"></param>
         /// <returns></returns>
         bool AlipayTransferCallback(AlipayBatchCallBackModel model);
+
+        /// <summary>
+        /// 微信支付回调方法 
+        /// 窦海超
+        /// 2015年5月13日 15:03:45
+        /// </summary>
+        /// <returns></returns>
+        void WxNotify();
+
+        #region 闪送模式
+        /// <summary>
+        /// 生成订单 闪送
+        /// 胡灵波
+        /// 2015年12月8日 11:14:04
+        /// </summary>
+        ResultModel<PayResultModel> CreateFlashPay(PayModel model);
+
+        /// <summary>
+        /// 闪送模式 支付宝回调
+        /// 胡灵波
+        /// 2015年12月8日 11:14:04
+        dynamic NotifyTip();
+
+        /// <summary>
+        /// 闪送模式 微信支付回调方法 
+        /// 窦海超
+        /// 2015年5月13日 15:03:45
+        /// </summary>
+        /// <returns></returns>
+        void SSWxNotify();
+
+        #endregion
     }
 }
