@@ -42,11 +42,11 @@ namespace ETS.Library.Pay.SSBWxPay
         //public const string APPSECRET = "1937e6b47786c86fac37303f97d5ed91";//公众平台
         //public const string KEY = "51c56b886b5be869567dd389b3e5d1d6";//商户
 
-        //APP
+        //APP 接口与APP相同
         public const string APPID = "wx5505d0e3b58607a6";//开放平台
         public const string APPSECRET = "d4624c36b6795d1d99dcf0547af5443d";//开放平台
-        public const string MCHID = "1291102901";//商户
-        public const string KEY = "51c56b886b5be869567dd389b3e5d1d6";//商户*/
+        public const string MCHID = "1291102901";//商户平台
+        public const string KEY = "51c56b886b5be869567dd389b3e5d1d6";//商户平台
 
 
 

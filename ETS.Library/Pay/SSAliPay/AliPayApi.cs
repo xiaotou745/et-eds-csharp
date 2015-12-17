@@ -30,7 +30,7 @@ namespace ETS.Library.Pay.SSAliPay
             //app_id = "2088911703660069";//
             app_id = "2015081900222190";
             //alipay_public_key = @"MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCqlmf4VnMp9F3c32s+JDzr6Xxx6cp3bdUGSRDuomZOn3F5NihvlHbAA5Rk6degOzmTWQDXi17+j+FeQM6T1vsS8l7UguhIkkUOTNJ2cyyGq6L9IPe+ItDzFKSYrORf2RSKQcGnxt7AGHIyTVWkW5VncL80TSH+P0+Vti9/uDZ8GQIDAQAB";
-            //alipay_public_key = @"G:\project\e代送众包版\Eds.SuperMan\lib\rsa_public_key.pem";
+            //alipay_public_key = @"G:\project\e代送众包版\Eds.SuperMan\lib\rsa_public_key.pem";e
             merchant_private_key = @"G:\project\e代送众包版\Eds.SuperMan\lib\rsa_private_key.pem";
         }
         /// <summary>

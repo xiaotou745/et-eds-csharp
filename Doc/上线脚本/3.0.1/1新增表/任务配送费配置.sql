@@ -1,7 +1,7 @@
 USE [superman]
 GO
 
-/****** Object:  Table [dbo].[TaskDistributionConfig]    Script Date: 11/30/2015 10:36:04 ******/
+/****** Object:  Table [dbo].[TaskDistributionConfig]    Script Date: 12/17/2015 10:50:10 ******/
 SET ANSI_NULLS ON
 GO
 

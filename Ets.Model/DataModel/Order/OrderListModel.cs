@@ -50,6 +50,10 @@ namespace Ets.Model.DataModel.Order
         public decimal? Amount { get; set; }
 
         /// <summary>
+        /// 小费金额
+        /// </summary>
+        public decimal TipAmount { get; set; }
+        /// <summary>
         /// 订单金额
         /// </summary>
         public decimal AmountAndTip { get; set; }
