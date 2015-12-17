@@ -106,12 +106,7 @@ namespace Ets.Service.Provider.Pay
             if (model.payType == PayTypeEnum.WeiXin.GetHashCode())
             {
                 //微信支付
-                LogHelper.LogWriter("=============微信支付：");
-                //if (model.payStyle == PayStyleEnum.BusinessPay.GetHashCode())//闪送模式
-                //{
-                //    //orderNo += "_" + model.oType;//把订单类型放到最后，回调的时候拆分
-                //    return CreateWxSSPayOrder(orderNo, payStatusModel.TotalPrice, model.orderId);
-                //}
+                LogHelper.LogWriter("=============微信支付：");           
                 return CreateWxPayOrder(orderNo, payStatusModel.TotalPrice, model.orderId, model.payStyle);
             }
             return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
@@ -2443,12 +2438,12 @@ namespace Ets.Service.Provider.Pay
             if (payStatusModel.PayStatus == PayStatusEnum.HadPay.GetHashCode())//已支付，加小费
             {
                 zfAmount = model.tipAmount;
-                orderCombinationNo += "_1" + "_" + zfAmount + "_" + model.tipAmount;
+                //orderCombinationNo += "_1" + "_" + zfAmount + "_" + model.tipAmount;
             }
             else//未支付
             {
                 zfAmount = payStatusModel.TotalPrice + payStatusModel.TipAmount;
-                orderCombinationNo += "_0" + "_" + zfAmount + "_" + payStatusModel.TipAmount;
+                //orderCombinationNo += "_0" + "_" + zfAmount + "_" + payStatusModel.TipAmount;
             }
 
             if (model.payType == PayTypeEnum.ZhiFuBao.GetHashCode())
@@ -2546,6 +2541,7 @@ namespace Ets.Service.Provider.Pay
                     notify.trade_status = xmlDoc.SelectSingleNode("notify/trade_status").InnerText;
                     notify.out_trade_no = xmlDoc.SelectSingleNode("notify/out_trade_no").InnerText;
                     notify.trade_no = xmlDoc.SelectSingleNode("notify/trade_no").InnerText;
+                    notify.total_fee = ParseHelper.ToDecimal(xmlDoc.SelectSingleNode("notify/total_fee").InnerText);
                 }
                 else
                 {
@@ -2554,6 +2550,7 @@ namespace Ets.Service.Provider.Pay
                     notify.trade_status = request["trade_status"];
                     notify.out_trade_no = request["out_trade_no"];
                     notify.trade_no = request["trade_no"];
+                    notify.total_fee = ParseHelper.ToDecimal(request["total_fee"], 0);
                 }
                 #endregion
                 //如果状态为空或状态不等于同步成功和异步成功就认为是错误
@@ -2574,16 +2571,17 @@ namespace Ets.Service.Provider.Pay
                         return "fail";
                     }
 
-                    int orderId = ParseHelper.ToInt(orderNo.Split('_')[0]);//主订单号          
-                    string currOrderNo="";
-                    OrderListModel olList= orderDao.GetByOrderId(orderId);
-                    if (olList != null)
-                        currOrderNo = olList.OrderNo;
-
+                    int orderId = ParseHelper.ToInt(orderNo.Split('_')[0]);//主订单号      
                     int orderChildId = ParseHelper.ToInt(orderNo.Split('_')[1]);//子订单号
-                    bool isPay = ParseHelper.ToBool(orderNo.Split('_')[2]);//是否已支付
-                    decimal zfAmount = ParseHelper.ToDecimal(orderNo.Split('_')[3]);// 支付金额
-                    decimal tipAmount = ParseHelper.ToDecimal(orderNo.Split('_')[4]);// 小费
+                  
+                    OrderListModel olList= orderDao.GetByOrderId(orderId);
+                    if (olList == null)
+                    {
+                        return "订单不存在";
+                    }
+                    string currOrderNo= olList.OrderNo;
+                    bool isPay = (bool)olList.IsPay;
+                    decimal tipAmount = olList.TipAmount;           
 
                     if (orderId <= 0 || orderChildId <= 0)
                     {
@@ -2599,7 +2597,7 @@ namespace Ets.Service.Provider.Pay
                         iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
                         {
                             BusinessId = businessModel.Id,
-                            Amount = -zfAmount,
+                            Amount = -notify.total_fee,
                             Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
                             RecordType = BusinessBalanceRecordRecordType.PublishOrder.GetHashCode(),
                             Operator = businessModel.Name,
@@ -2607,38 +2605,34 @@ namespace Ets.Service.Provider.Pay
                             RelationNo = currOrderNo,
                             Remark = "配送费支出金额"
                         });
+                     
+                        OrderTipCost otcModel = new OrderTipCost();
+                        otcModel.OrderId = orderId;
+                        otcModel.Amount = notify.total_fee;
+                        otcModel.CreateName = businessModel.Name;
+                        otcModel.CreateTime = DateTime.Now;
+                        otcModel.PayStates = 1;
+                        orderTipCostDao.Insert(otcModel);
 
-                        //写订单小费
-                        if (tipAmount > 0)
-                        {
-                            OrderTipCost otcModel = new OrderTipCost();
-                            otcModel.OrderId = orderId;
-                            otcModel.Amount = tipAmount;
-                            otcModel.CreateName = businessModel.Name;
-                            otcModel.CreateTime = DateTime.Now;
-                            otcModel.PayStates = 1;
-                            orderTipCostDao.Insert(otcModel);
-
-                            orderDao.UpdateTipAmount(orderId, tipAmount);
-                        }               
+                        orderDao.UpdateTipAmount(orderId, notify.total_fee);                              
                     }
                     else//未支付 发单
                     {
+                        //修改订单支付状态 订单状态
+                        orderDao.UpdateIsPay(orderId);
+
                         //更新商户余额、可提现余额                        
                         iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
                         {
                             BusinessId = businessModel.Id,
-                            Amount = -zfAmount,
+                            Amount = -notify.total_fee,
                             Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
                             RecordType = BusinessBalanceRecordRecordType.PublishOrder.GetHashCode(),
                             Operator = businessModel.Name,
                             WithwardId = orderId,
                             RelationNo = currOrderNo,
                             Remark = "配送费支出金额"
-                        });
-
-                        //修改订单支付状态 订单状态
-                        orderDao.UpdateIsPay(orderId);
+                        });                   
 
                         if (tipAmount > 0)
                         {
@@ -2649,10 +2643,7 @@ namespace Ets.Service.Provider.Pay
                             otcModel.CreateName = businessModel.Name;
                             otcModel.CreateTime = DateTime.Now;
                             otcModel.PayStates = 1;
-                            orderTipCostDao.Insert(otcModel);
-
-                            //更新小费
-                            //orderDao.UpdateTipAmount(orderId, tipAmount);
+                            orderTipCostDao.Insert(otcModel);                       
                         }
                     }
                 }
@@ -2682,15 +2673,15 @@ namespace Ets.Service.Provider.Pay
             PayResultModel resultModel = new PayResultModel();
 
             string code_url = string.Empty;
-            if (payStyle == 1)//用户扫二维码
-            {
+            //if (payStyle == 1)//用户扫二维码
+            //{
                 ETS.Library.Pay.SSBWxPay.NativePay nativePay = new ETS.Library.Pay.SSBWxPay.NativePay();
                 string prepayId = string.Empty;
                 code_url = nativePay.GetPayUrl(combinationOrderNo, totalPrice, "E代送收款", Config.SSWxNotify, out prepayId, orderNo);
                 resultModel.prepayId = prepayId;
-            }
+            //}
 
-            resultModel.aliQRCode = code_url;//微信地址
+            //resultModel.aliQRCode = code_url;//微信地址
             resultModel.orderNo = combinationOrderNo;//订单号
             resultModel.payAmount = totalPrice;//总金额，没乘以100的值
             resultModel.payType = PayTypeEnum.WeiXin.GetHashCode();//微信
@@ -2717,7 +2708,7 @@ namespace Ets.Service.Provider.Pay
             if (notify.return_code == "SUCCESS")
             {
                 string orderNo = notify.order_no;
-                if (string.IsNullOrEmpty(orderNo) || !orderNo.Contains("_"))
+                if (string.IsNullOrEmpty(orderNo))
                 {
                     string fail = string.Concat("错误啦orderNo：", orderNo);
                     LogHelper.LogWriter(fail);
@@ -2726,22 +2717,24 @@ namespace Ets.Service.Provider.Pay
                     return;
                 }
 
-                int orderId = ParseHelper.ToInt(orderNo.Split('_')[0]);//主订单号                
-                string currOrderNo = "";
-                OrderListModel olList = orderDao.GetByOrderId(orderId);
-                if (olList != null)
-                    currOrderNo = olList.OrderNo;
+              
+                int orderId = ParseHelper.ToInt(orderNo.Split('_')[0]);//主订单号      
+                int orderChildId = ParseHelper.ToInt(orderNo.Split('_')[1]);//子订单号
 
-                int orderChildId = ParseHelper.ToInt(orderNo.Split('_')[1]);//子订单号                
-                bool isPay = ParseHelper.ToBool(orderNo.Split('_')[2]);//是否已支付
-                decimal zfAmount = ParseHelper.ToDecimal(orderNo.Split('_')[3]);// 支付金额
-                decimal tipAmount = ParseHelper.ToDecimal(orderNo.Split('_')[4]);// 小费
+                OrderListModel olList = orderDao.GetByOrderId(orderId);
+                if (olList == null)
+                {
+                    return ;
+                }
+                string currOrderNo = olList.OrderNo;
+                bool isPay = (bool)olList.IsPay;
+                decimal tipAmount = olList.TipAmount;
 
                 if (orderId <= 0 || orderChildId <= 0)
                 {
                     string fail = string.Concat("错误啦orderId：", orderId, ",orderChildId:", orderChildId);
                     LogHelper.LogWriter(fail);
-                    return;
+                    return ;
                 }
 
                 BusinessDM businessModel = new BusinessDao().GetByOrderId(orderId);
@@ -2751,7 +2744,7 @@ namespace Ets.Service.Provider.Pay
                     iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
                     {
                         BusinessId = businessModel.Id,
-                        Amount = -zfAmount,
+                        Amount = -ParseHelper.ToDecimal(notify.total_fee),
                         Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
                         RecordType = BusinessBalanceRecordRecordType.PublishOrder.GetHashCode(),
                         Operator = businessModel.Name,
@@ -2760,29 +2753,26 @@ namespace Ets.Service.Provider.Pay
                         Remark = "配送费支出金额"
                     });
 
-                    
-                        //写订单小费
-                    if (tipAmount > 0)
-                    {
-                        OrderTipCost otcModel = new OrderTipCost();
-                        otcModel.OrderId = orderId;
-                        otcModel.Amount = tipAmount;
-                        otcModel.CreateName = businessModel.Name;
-                        otcModel.CreateTime = DateTime.Now;
-                        otcModel.PayStates = 1;
-                        orderTipCostDao.Insert(otcModel);
+                    OrderTipCost otcModel = new OrderTipCost();
+                    otcModel.OrderId = orderId;
+                    otcModel.Amount = ParseHelper.ToDecimal(notify.total_fee);
+                    otcModel.CreateName = businessModel.Name;
+                    otcModel.CreateTime = DateTime.Now;
+                    otcModel.PayStates = 1;
+                    orderTipCostDao.Insert(otcModel);
 
-                        //更新小费
-                        orderDao.UpdateTipAmount(orderId, tipAmount);
-                    }
+                    orderDao.UpdateTipAmount(orderId, ParseHelper.ToDecimal(notify.total_fee));
                 }
-                else//未支付
-                {         
+                else//未支付 发单
+                {
+                    //修改订单支付状态 订单状态
+                    orderDao.UpdateIsPay(orderId);
+
                     //更新商户余额、可提现余额                        
                     iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
                     {
                         BusinessId = businessModel.Id,
-                        Amount = -zfAmount,
+                        Amount = -ParseHelper.ToDecimal(notify.total_fee),
                         Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
                         RecordType = BusinessBalanceRecordRecordType.PublishOrder.GetHashCode(),
                         Operator = businessModel.Name,
@@ -2790,9 +2780,6 @@ namespace Ets.Service.Provider.Pay
                         RelationNo = currOrderNo,
                         Remark = "配送费支出金额"
                     });
-
-                    //修改订单支付状态 订单状态
-                    orderDao.UpdateIsPay(orderId);
 
                     if (tipAmount > 0)
                     {
@@ -2804,9 +2791,6 @@ namespace Ets.Service.Provider.Pay
                         otcModel.CreateTime = DateTime.Now;
                         otcModel.PayStates = 1;
                         orderTipCostDao.Insert(otcModel);
-
-                        //更新小费
-                        //orderDao.UpdateTipAmount(orderId, tipAmount);
                     }
                 }
 

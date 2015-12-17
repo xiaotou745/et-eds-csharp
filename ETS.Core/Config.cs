@@ -99,7 +99,7 @@ namespace ETS
         /// <summary>
         /// 闪送模式 微信订单支付回调地址
         /// </summary>
-        public static string SSWxNotify { get { return string.Concat(ConfigKey("SSWxNotifyUrl").TrimEnd('/'), "/Pay/SSWxNotify"); } }
+        public static string SSWxNotify { get { return ConfigKey("SSWxNotifyUrl"); } }
 
 
         /// <summary>
