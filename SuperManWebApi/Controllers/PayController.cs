@@ -27,21 +27,29 @@ namespace SuperManWebApi.Controllers
     public class PayController : ApiController
     {
         readonly IPayProvider payProvider = new PayProvider();
-      
+
         #region TestMethod
         [HttpGet]
         public ResultModel<PayResultModel> CreatePayTest(int orderId)
         {
+            //PayModel model = new PayModel()
+            //{
+            //    productId = 1,
+            //    orderId = orderId,
+            //    childId = 1,
+            //    payType = 2,
+            //    version = "1.0",
+            //    payStyle = 1
+            //};
+            //return payProvider.CreatePay(model);
             PayModel model = new PayModel()
             {
-                productId = 1,
-                orderId = orderId,
-                childId = 1,
+                payStyle = 0,
+                tipAmount = ParseHelper.ToDecimal(0.01),
                 payType = 2,
-                version = "1.0",
-                payStyle = 1
+                orderId = orderId
             };
-            return payProvider.CreatePay(model);
+            return payProvider.CreateFlashPay(model);
         }
 
         [HttpGet]
@@ -115,7 +123,7 @@ namespace SuperManWebApi.Controllers
             HttpRequest req = HttpContext.Current.Request;
             #region===回调取参
             StringBuilder sb = new StringBuilder();
-            AlipayBatchCallBackModel model=new AlipayBatchCallBackModel();
+            AlipayBatchCallBackModel model = new AlipayBatchCallBackModel();
             var notify_time = req["notify_time"];//异步通知时间
             sb.Append(notify_time + "\r\n");
             model.NotifyTime = notify_time;
@@ -157,8 +165,8 @@ namespace SuperManWebApi.Controllers
                 HttpContext.Current.Response.Write("success");
             }
             HttpContext.Current.Response.End();
-            
-         
+
+
         }
 
         /// <summary>
@@ -238,7 +246,7 @@ namespace SuperManWebApi.Controllers
         {
             payProvider.WxNotify();
         }
- 
+
         #endregion
 
 
