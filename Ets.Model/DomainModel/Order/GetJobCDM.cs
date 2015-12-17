@@ -113,5 +113,7 @@ namespace Ets.Model.DomainModel.Order
             set { expectedTakeTime = value; }
         } //商户期望骑士取货时间
         public int BusinessId { get; set; }
+
+        public string PubName { get; set; }
     }
 }
