@@ -1,2 +1,0 @@
-insert into GlobalConfig(KeyName,Value,Remark,GroupId,StrategyId) values('CashAndTime',72,'闪送模式加可提现时间(单位：小时)',0,-1)
-insert into GlobalConfig(KeyName,Value,Remark,GroupId,StrategyId) values('SSCancelOrder',24,'闪送模式待支付取消订单(单位：小时)',0,-1)

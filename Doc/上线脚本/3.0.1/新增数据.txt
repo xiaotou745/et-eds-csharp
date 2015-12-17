@@ -1,9 +1,0 @@
---新增配置基础数据信息
-SET IDENTITY_INSERT [dbo].[TaskDistributionConfig] ON
-INSERT [dbo].[TaskDistributionConfig] ([Id], [KM], [KG], [DistributionPrice], [IsMaster]) VALUES (1, 5, 5, CAST(8.00 AS Numeric(18, 2)), 1)
-INSERT [dbo].[TaskDistributionConfig] ([Id], [KM], [KG], [DistributionPrice], [IsMaster]) VALUES (2, 1, 0, CAST(5.00 AS Numeric(18, 2)), 0)
-INSERT [dbo].[TaskDistributionConfig] ([Id], [KM], [KG], [DistributionPrice], [IsMaster]) VALUES (3, 0, 1, CAST(8.00 AS Numeric(18, 2)), 0)
-SET IDENTITY_INSERT [dbo].[TaskDistributionConfig] OFF
-
-
---
