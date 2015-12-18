@@ -38,6 +38,15 @@ namespace Ets.Model.DataModel.Order
 		/// 支付状态
 		/// </summary>
 		public int PayStates { get; set; }
+        /// <summary>
+        /// 第三方平台单号
+        /// </summary>
+        public string OriginalOrderNo { get; set; }
+
+        /// <summary>
+        /// 支付方式
+        /// </summary>
+        public int PayType { get; set; }
     }   
 
 }

@@ -69,6 +69,7 @@ namespace Ets.Service.Provider.Pay
         private readonly ClienterWithdrawLogDao clienterWithdrawLogDao = new ClienterWithdrawLogDao();
         readonly BusinessBalanceRecordDao businessBalanceRecordDao = new BusinessBalanceRecordDao();
         private IBusinessProvider iBusinessProvider = new BusinessProvider();
+        
         #region 生成支付宝、微信二维码订单
 
         /// <summary>
@@ -2437,13 +2438,11 @@ namespace Ets.Service.Provider.Pay
             decimal zfAmount = 0;
             if (payStatusModel.PayStatus == PayStatusEnum.HadPay.GetHashCode())//已支付，加小费
             {
-                zfAmount = model.tipAmount;
-                //orderCombinationNo += "_1" + "_" + zfAmount + "_" + model.tipAmount;
+                zfAmount = model.tipAmount;             
             }
             else//未支付
             {
-                zfAmount = payStatusModel.TotalPrice + payStatusModel.TipAmount;
-                //orderCombinationNo += "_0" + "_" + zfAmount + "_" + payStatusModel.TipAmount;
+                zfAmount = payStatusModel.TotalPrice + payStatusModel.TipAmount;             
             }
 
             if (model.payType == PayTypeEnum.ZhiFuBao.GetHashCode())
@@ -2509,8 +2508,7 @@ namespace Ets.Service.Provider.Pay
             resultModel.orderNo = orderNo;
             resultModel.payAmount = payAmount;
             resultModel.payType = PayTypeEnum.ZhiFuBao.GetHashCode();
-            resultModel.notifyUrl = ETS.Config.NotifyTipUrl;
-            orderDao.UpdateTipAmount(orderId, 1);
+            resultModel.notifyUrl = ETS.Config.NotifyTipUrl;           
             return ResultModel<PayResultModel>.Conclude(AliPayStatus.success, resultModel);
         }
 
@@ -2563,36 +2561,61 @@ namespace Ets.Service.Provider.Pay
                 #region 回调完成状态
                 if (notify.trade_status == "TRADE_SUCCESS" || notify.trade_status == "TRADE_FINISHED")
                 {
-                    string orderNo = notify.out_trade_no;
-                    if (string.IsNullOrEmpty(orderNo) || !orderNo.Contains("_"))
+                    if (orderTipCostDao.Check(notify.trade_no))
                     {
-                        string fail = string.Concat("错误啦orderNo：", orderNo);
-                        LogHelper.LogWriter(fail);
-                        return "fail";
+                        //如果存在就退出，这里写的很扯，因为支付宝要的是success不带双引号.
+                        //但WEBAPI直接返回时带引号，所以现在要去库里查一次。
+                        //回头找到原因一定要改
+                        return "success";
                     }
+                    
+                    ReturnZhifubo(notify);
 
-                    int orderId = ParseHelper.ToInt(orderNo.Split('_')[0]);//主订单号      
-                    int orderChildId = ParseHelper.ToInt(orderNo.Split('_')[1]);//子订单号
-                  
-                    OrderListModel olList= orderDao.GetByOrderId(orderId);
-                    if (olList == null)
-                    {
-                        return "订单不存在";
-                    }
-                    string currOrderNo= olList.OrderNo;
-                    bool isPay = (bool)olList.IsPay;
-                    decimal tipAmount = olList.TipAmount;           
+               }
+                #endregion
 
-                    if (orderId <= 0 || orderChildId <= 0)
-                    {
-                        string fail = string.Concat("错误啦orderId：", orderId, ",orderChildId:", orderChildId);
-                        LogHelper.LogWriter(fail);
-                        return "fail";
-                    }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(ex, "Alipay自动返回异常");
+                return "fail";
+            }
+            return "fail";
+        }
 
+        bool ReturnZhifubo(AlipayNotifyData notify)
+        {
+            try
+            {
+                string out_trade_no = notify.out_trade_no;                
+                if (string.IsNullOrEmpty(out_trade_no) || !out_trade_no.Contains("_"))
+                {
+                    string fail = string.Concat("错误啦orderNo：", out_trade_no);
+                    LogHelper.LogWriter(fail);
+                    return false;
+                }
+
+                int orderId = ParseHelper.ToInt(out_trade_no.Split('_')[0]);//主订单号      
+                int orderChildId = ParseHelper.ToInt(out_trade_no.Split('_')[1]);//子订单号
+                OrderListModel olList = orderDao.GetByOrderIdWrite(orderId);//写串
+                if (olList == null)
+                {
+                    return false;
+                }                                   
+
+                if (orderId <= 0 || orderChildId <= 0)
+                {
+                    string fail = string.Concat("错误啦orderId：", orderId, ",orderChildId:", orderChildId);
+                    LogHelper.LogWriter(fail);
+                    return false;
+                }
+
+                using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+                {
                     BusinessDM businessModel = new BusinessDao().GetByOrderId(orderId);
-                    if (isPay)//已支付
+                    if ((bool)olList.IsPay)//已支付
                     {
+                        #region 已支付
                         // 更新商户余额、可提现余额                        
                         iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
                         {
@@ -2602,24 +2625,32 @@ namespace Ets.Service.Provider.Pay
                             RecordType = BusinessBalanceRecordRecordType.PublishOrder.GetHashCode(),
                             Operator = businessModel.Name,
                             WithwardId = orderId,
-                            RelationNo = currOrderNo,
+                            RelationNo = olList.OrderNo,
                             Remark = "配送费支出金额"
                         });
-                     
+
+                        //写订单小费
                         OrderTipCost otcModel = new OrderTipCost();
                         otcModel.OrderId = orderId;
-                        otcModel.Amount = notify.total_fee;
+                        otcModel.Amount = olList.TipAmount;
                         otcModel.CreateName = businessModel.Name;
                         otcModel.CreateTime = DateTime.Now;
-                        otcModel.PayStates = 1;
+                        otcModel.PayStates = 1;//已支付
+                        otcModel.OriginalOrderNo = notify.trade_no;
+                        otcModel.PayType = 1;//支付宝
                         orderTipCostDao.Insert(otcModel);
 
-                        orderDao.UpdateTipAmount(orderId, notify.total_fee);                              
+                        //更新总的小费
+                        orderDao.UpdateTipAmount(orderId, notify.total_fee);
+                        #endregion
                     }
                     else//未支付 发单
                     {
+                        #region 未支付
                         //修改订单支付状态 订单状态
                         orderDao.UpdateIsPay(orderId);
+                        //更新子订单状态 支付宝
+                        orderChildDao.UpdateIsPay(orderChildId, 1);                        
 
                         //更新商户余额、可提现余额                        
                         iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
@@ -2630,32 +2661,33 @@ namespace Ets.Service.Provider.Pay
                             RecordType = BusinessBalanceRecordRecordType.PublishOrder.GetHashCode(),
                             Operator = businessModel.Name,
                             WithwardId = orderId,
-                            RelationNo = currOrderNo,
+                            RelationNo = olList.OrderNo,
                             Remark = "配送费支出金额"
-                        });                   
-
-                        if (tipAmount > 0)
-                        {
-                            //写订单小费
-                            OrderTipCost otcModel = new OrderTipCost();
-                            otcModel.OrderId = orderId;
-                            otcModel.Amount = tipAmount;
-                            otcModel.CreateName = businessModel.Name;
-                            otcModel.CreateTime = DateTime.Now;
-                            otcModel.PayStates = 1;
-                            orderTipCostDao.Insert(otcModel);                       
-                        }
+                        });
+                      
+                        //写订单小费
+                        OrderTipCost otcModel = new OrderTipCost();
+                        otcModel.OrderId = orderId;
+                        otcModel.Amount = olList.TipAmount;
+                        otcModel.CreateName = businessModel.Name;
+                        otcModel.CreateTime = DateTime.Now;
+                        otcModel.PayStates = 1;//已支付
+                        otcModel.OriginalOrderNo = notify.trade_no;
+                        otcModel.PayType = 1;//支付宝
+                        orderTipCostDao.Insert(otcModel);
+                      
+                        #endregion
                     }
-                }
-                #endregion
-
+                    tran.Complete();
+                }              
             }
             catch (Exception ex)
             {
-                LogHelper.LogWriter(ex, "Alipay自动返回异常");
-                return "fail";
+                EmailHelper.SendEmailTo("支付宝付款失败" + JsonHelper.JsonConvertToString(notify) + ",异常信息为：" + ex.Message,
+                ConfigSettings.Instance.EmailToAdress);
+                return false;
             }
-            return "fail";
+            return true;
         }
 
 
@@ -2677,6 +2709,7 @@ namespace Ets.Service.Provider.Pay
             //{
                 ETS.Library.Pay.SSBWxPay.NativePay nativePay = new ETS.Library.Pay.SSBWxPay.NativePay();
                 string prepayId = string.Empty;
+                totalPrice =ParseHelper.ToDecimal(0.01);
                 code_url = nativePay.GetPayUrl(combinationOrderNo, totalPrice, "E代送收款", Config.SSWxNotify, out prepayId, orderNo);
                 resultModel.prepayId = prepayId;
             //}
@@ -2707,93 +2740,14 @@ namespace Ets.Service.Provider.Pay
             #region 回调完成状态
             if (notify.return_code == "SUCCESS")
             {
-                string orderNo = notify.order_no;
-                if (string.IsNullOrEmpty(orderNo))
+                if (orderTipCostDao.Check(notify.transaction_id))
                 {
-                    string fail = string.Concat("错误啦orderNo：", orderNo);
-                    LogHelper.LogWriter(fail);
-                    HttpContext.Current.Response.Write(string.Format(errmsg, fail));
-                    HttpContext.Current.Response.End();
+                    //如果存在就退出，这里写的很扯，因为支付宝要的是success不带双引号.
+                    //但WEBAPI直接返回时带引号，所以现在要去库里查一次。
+                    //回头找到原因一定要改
                     return;
                 }
-
-              
-                int orderId = ParseHelper.ToInt(orderNo.Split('_')[0]);//主订单号      
-                int orderChildId = ParseHelper.ToInt(orderNo.Split('_')[1]);//子订单号
-
-                OrderListModel olList = orderDao.GetByOrderId(orderId);
-                if (olList == null)
-                {
-                    return ;
-                }
-                string currOrderNo = olList.OrderNo;
-                bool isPay = (bool)olList.IsPay;
-                decimal tipAmount = olList.TipAmount;
-
-                if (orderId <= 0 || orderChildId <= 0)
-                {
-                    string fail = string.Concat("错误啦orderId：", orderId, ",orderChildId:", orderChildId);
-                    LogHelper.LogWriter(fail);
-                    return ;
-                }
-
-                BusinessDM businessModel = new BusinessDao().GetByOrderId(orderId);
-                if (isPay)//已支付
-                {
-                    // 更新商户余额、可提现余额                        
-                    iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
-                    {
-                        BusinessId = businessModel.Id,
-                        Amount = -ParseHelper.ToDecimal(notify.total_fee),
-                        Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
-                        RecordType = BusinessBalanceRecordRecordType.PublishOrder.GetHashCode(),
-                        Operator = businessModel.Name,
-                        WithwardId = orderId,
-                        RelationNo = currOrderNo,
-                        Remark = "配送费支出金额"
-                    });
-
-                    OrderTipCost otcModel = new OrderTipCost();
-                    otcModel.OrderId = orderId;
-                    otcModel.Amount = ParseHelper.ToDecimal(notify.total_fee);
-                    otcModel.CreateName = businessModel.Name;
-                    otcModel.CreateTime = DateTime.Now;
-                    otcModel.PayStates = 1;
-                    orderTipCostDao.Insert(otcModel);
-
-                    orderDao.UpdateTipAmount(orderId, ParseHelper.ToDecimal(notify.total_fee));
-                }
-                else//未支付 发单
-                {
-                    //修改订单支付状态 订单状态
-                    orderDao.UpdateIsPay(orderId);
-
-                    //更新商户余额、可提现余额                        
-                    iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
-                    {
-                        BusinessId = businessModel.Id,
-                        Amount = -ParseHelper.ToDecimal(notify.total_fee),
-                        Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
-                        RecordType = BusinessBalanceRecordRecordType.PublishOrder.GetHashCode(),
-                        Operator = businessModel.Name,
-                        WithwardId = orderId,
-                        RelationNo = currOrderNo,
-                        Remark = "配送费支出金额"
-                    });
-
-                    if (tipAmount > 0)
-                    {
-                        //写订单小费
-                        OrderTipCost otcModel = new OrderTipCost();
-                        otcModel.OrderId = orderId;
-                        otcModel.Amount = tipAmount;
-                        otcModel.CreateName = businessModel.Name;
-                        otcModel.CreateTime = DateTime.Now;
-                        otcModel.PayStates = 1;
-                        orderTipCostDao.Insert(otcModel);
-                    }
-                }
-
+                ReturnWx(notify);
             }
             #endregion
             LogHelper.LogWriter("支付回调异常", notify);
@@ -2801,6 +2755,118 @@ namespace Ets.Service.Provider.Pay
             HttpContext.Current.Response.End();
             #endregion
         }
+
+
+        bool ReturnWx(ETS.Library.Pay.SSBWxPay.WxNotifyResultModel notify)
+        {
+            try
+            {
+                string orderNo = notify.order_no;
+                if (string.IsNullOrEmpty(orderNo))
+                {
+                    string fail = string.Concat("错误啦orderNo：", orderNo);
+                    LogHelper.LogWriter(fail);                    
+                    HttpContext.Current.Response.End();
+                    return false;
+                }
+
+
+                string attach = notify.attach;
+                int orderId = ParseHelper.ToInt(attach.Split('_')[0]);//主订单号      
+                int orderChildId = ParseHelper.ToInt(attach.Split('_')[1]);//子订单号
+                OrderListModel olList = orderDao.GetByOrderIdWrite(orderId);//写串
+                if (olList == null)
+                {
+                    return false;
+                }               
+
+                if (orderId <= 0 || orderChildId <= 0)
+                {
+                    string fail = string.Concat("错误啦orderId：", orderId, ",orderChildId:", orderChildId);
+                    LogHelper.LogWriter(fail);
+                    return false;
+                }
+
+                using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+                {
+                    BusinessDM businessModel = new BusinessDao().GetByOrderId(orderId);
+                    if ((bool)olList.IsPay)//已支付
+                    {
+                        #region 已支付
+                        // 更新商户余额、可提现余额                        
+                        iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
+                        {
+                            BusinessId = businessModel.Id,
+                            Amount = -ParseHelper.ToDecimal(notify.total_fee),
+                            Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
+                            RecordType = BusinessBalanceRecordRecordType.PublishOrder.GetHashCode(),
+                            Operator = businessModel.Name,
+                            WithwardId = orderId,
+                            RelationNo = olList.OrderNo,
+                            Remark = "配送费支出金额"
+                        });
+
+                        //写订单小费
+                        OrderTipCost otcModel = new OrderTipCost();
+                        otcModel.OrderId = orderId;
+                        otcModel.Amount = olList.TipAmount;
+                        otcModel.CreateName = businessModel.Name;
+                        otcModel.CreateTime = DateTime.Now;
+                        otcModel.PayStates = 1;//已支付
+                        otcModel.OriginalOrderNo = notify.transaction_id;
+                        otcModel.PayType =2;//微信
+                        orderTipCostDao.Insert(otcModel);
+
+                        //更新总的小费
+                        orderDao.UpdateTipAmount(orderId, ParseHelper.ToDecimal(notify.total_fee));
+                        #endregion
+                    }
+                    else//未支付 发单
+                    {
+                        #region 未支付
+                        //修改订单支付状态 订单状态
+                        orderDao.UpdateIsPay(orderId);
+                        //更新子订单状态 微信
+                        orderChildDao.UpdateIsPay(orderChildId, 2);
+
+                        //更新商户余额、可提现余额                        
+                        iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
+                        {
+                            BusinessId = businessModel.Id,
+                            Amount = -ParseHelper.ToDecimal(notify.total_fee),
+                            Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
+                            RecordType = BusinessBalanceRecordRecordType.PublishOrder.GetHashCode(),
+                            Operator = businessModel.Name,
+                            WithwardId = orderId,
+                            RelationNo = olList.OrderNo,
+                            Remark = "配送费支出金额"
+                        });
+
+                        //写订单小费
+                        OrderTipCost otcModel = new OrderTipCost();
+                        otcModel.OrderId = orderId;
+                        otcModel.Amount = olList.TipAmount;
+                        otcModel.CreateName = businessModel.Name;
+                        otcModel.CreateTime = DateTime.Now;
+                        otcModel.PayStates = 1;//已支付
+                        otcModel.OriginalOrderNo = notify.transaction_id;
+                        otcModel.PayType = 2;//微信
+                        orderTipCostDao.Insert(otcModel);
+
+                        #endregion
+                    }
+                    tran.Complete();
+                }
+            }
+            catch (Exception ex)
+            {
+                EmailHelper.SendEmailTo("支付宝付款失败" + JsonHelper.JsonConvertToString(notify) + ",异常信息为：" + ex.Message,
+                ConfigSettings.Instance.EmailToAdress);
+                return false;
+            }
+            return true;
+        }
+
         #endregion
 
         #region 用户自定义方法

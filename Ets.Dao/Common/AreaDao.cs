@@ -65,13 +65,23 @@ namespace Ets.Dao.Common
 //            left join PublicProvinceCity (nolock) as c on t1.code = c.parentid
 //    where   c.IsPublic = 1";
             string sql = @"
+SELECT code into #tmpTwo FROM dbo.PublicProvinceCity ppc(nolock) where parentid=1 
+SELECT code into #tmpThree FROM dbo.PublicProvinceCity ppc(nolock) where parentid in (
+SELECT code FROM #tmpTwo tt
+)
 select  a.Code ,
         a.Name ,
         a.JiBie ,
         a.Parentid
 from    dbo.PublicProvinceCity a ( nolock )
-where   IsPublic = 1
-ORDER BY a.name ASC;
+where   IsPublic = 1 and parentid=1 
+or parentid in (
+select code from #tmpTwo
+)
+or parentid in (
+select code from #tmpThree tt
+)
+ORDER BY jibie desc
 ";
             DataSet ds = DbHelper.ExecuteDataset(SuperMan_Read, sql);
             return MapRows<AreaModel>(DataTableHelper.GetTable(ds));

@@ -2128,13 +2128,14 @@ WHERE b.Id = @BusinessId  ";
         public BusinessDM GetByOrderId(int orderId)
         {
             string sql = @"
-select Name FROM dbo.[order] o(nolock)
+select b.Id, Name FROM dbo.[order] o(nolock)
 join dbo.business b (nolock) on o.businessId = b.Id
  where o.Id = @orderId
             ";
             IDbParameters parm = DbHelper.CreateDbParameters("orderId", DbType.Int32, 4, orderId);
             return DbHelper.QueryForObjectDelegate<BusinessDM>(SuperMan_Read, sql, parm, datarow => new BusinessDM
              {
+                 Id = ParseHelper.ToInt(datarow["Id"].ToString()),
                  Name = datarow["Name"].ToString()
              });
         }
