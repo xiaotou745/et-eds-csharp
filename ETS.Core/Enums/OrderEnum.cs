@@ -20,7 +20,9 @@ namespace ETS.Enums
         [DisplayText("已取货")]
         Status4 = 4,   
         [DisplayText("第三方待接入")]
-        Status30 = 30
+        Status30 = 30,
+        [DisplayText("待支付")]
+        Status50 = 50
     }
     /// <summary>
     /// 订单审核状态
