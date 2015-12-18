@@ -42,7 +42,7 @@ using Ets.Dao.Message;
 using Ets.Model.DataModel.Message;
 using Ets.Service.IProvider.Business;
 using Ets.Service.Provider.Business;
-
+using ETS.NoSql.RedisCache;
 namespace Ets.Service.Provider.Pay
 {
     public class PayProvider : IPayProvider
@@ -93,7 +93,7 @@ namespace Ets.Service.Provider.Pay
                 return ResultModel<PayResultModel>.Conclude(AliPayStatus.success);
             }
             //所属产品_主订单号_子订单号_支付方式
-            string orderNo = string.Concat(model.productId, "_", model.orderId, "_", model.childId, "_", model.payStyle, "_", model.oType);
+            string orderNo = string.Concat(model.productId, "_", model.orderId, "_", model.childId, "_", model.payStyle);
             if (model.payType == PayTypeEnum.ZhiFuBao.GetHashCode())
             {
                 LogHelper.LogWriter("=============支付宝支付：");
@@ -2420,42 +2420,131 @@ namespace Ets.Service.Provider.Pay
         /// 2015年12月8日 11:19:41
         /// </summary>
         /// <param name="model"></param>       
-        public ResultModel<PayResultModel> CreateFlashPay(Model.ParameterModel.AliPay.PayModel model)
+        public ResultModel<PayResultModel> CreateFlashPay(Model.ParameterModel.AliPay.PayModel req)
         {
-            LogHelper.LogWriter("=============支付请求数据：", model);
-            model.childId = orderChildDao.GetIdByOrderId(model.orderId);
-            PayStatusModel payStatusModel = orderChildDao.GetPaySSStatus(model.orderId, model.childId);
-            if (payStatusModel == null)
+            LogHelper.LogWriter("=============支付请求数据：", req);
+            OrderListModel olModel = orderDao.GetByOrderIdWrite(req.orderId);
+            OrderChild orderChildModel = orderChildDao.GetDetailByOrderId(req.orderId);
+            if (olModel == null || orderChildModel==null)
             {
-                string err = string.Concat("订单不存在,主订单号：", model.orderId, ",子订单号:", model.childId);
+                string err = string.Concat("订单不存在");
                 LogHelper.LogWriter(err);
                 return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
-            }
-            model.orderNo = payStatusModel.OrderNo;
+            }    
 
-            //所属产品_主订单号_子订单号_支付方式
-            string orderCombinationNo = string.Concat(model.orderId, "_",  model.childId);
-            decimal zfAmount = 0;
-            if (payStatusModel.PayStatus == PayStatusEnum.HadPay.GetHashCode())//已支付，加小费
-            {
-                zfAmount = model.tipAmount;             
-            }
-            else//未支付
-            {
-                zfAmount = payStatusModel.TotalPrice + payStatusModel.TipAmount;             
-            }
-
-            if (model.payType == PayTypeEnum.ZhiFuBao.GetHashCode())
+            if (req.payType == PayTypeEnum.ZhiFuBao.GetHashCode())
             {
                 LogHelper.LogWriter("=============支付宝支付：");
-                return CreateAliFlashPayOrder(orderCombinationNo, zfAmount, model.orderId, model.payStyle);
+
+                //所属产品_主订单号_子订单号_随机数
+                string orderCombinationNo = string.Concat(req.orderId, "_", orderChildModel.Id, "_" + Helper.GenCode(6));
+                decimal zfAmount = 0;
+                if ((bool)olModel.IsPay)//已支付，加小费
+                {
+                    zfAmount = req.tipAmount;
+                }
+                else//未支付
+                {
+                    zfAmount = orderChildModel.TotalPrice + olModel.TipAmount;
+                }
+         
+                ResultModel<PayResultModel> PayResultModel = CreateAliFlashPayOrder(orderCombinationNo, zfAmount, req.orderId, 0);
+                var redis = new RedisCache();
+                string key = string.Concat(req.orderId, orderChildModel.Id);
+                bool isExist= redis.Get<bool>(key);              
+                if (!isExist)
+                {
+                    if ((bool)olModel.IsPay)
+                    {
+                        //写订单小费
+                        OrderTipCost otcModel = new OrderTipCost();
+                        otcModel.OrderId = req.orderId;
+                        otcModel.Amount = req.tipAmount;
+                        otcModel.TipAmount = req.tipAmount;
+                        otcModel.CreateName = olModel.businessId.ToString();
+                        otcModel.CreateTime = DateTime.Now;
+                        otcModel.PayStates = 0;//未支付
+                        otcModel.OriginalOrderNo = "";
+                        otcModel.PayType = 1;//支付宝
+                        otcModel.OutTradeNo = orderCombinationNo;
+                        orderTipCostDao.Insert(otcModel);
+                    }
+                    else
+                    {
+                        //写订单小费
+                        OrderTipCost otcModel = new OrderTipCost();
+                        otcModel.OrderId = req.orderId;
+                        otcModel.Amount = orderChildModel.TotalPrice + olModel.TipAmount;
+                        otcModel.TipAmount = olModel.TipAmount;
+                        otcModel.CreateName = olModel.businessId.ToString();
+                        otcModel.CreateTime = DateTime.Now;
+                        otcModel.PayStates = 0;//未支付
+                        otcModel.OriginalOrderNo = "";
+                        otcModel.PayType = 1;//支付宝
+                        otcModel.OutTradeNo = orderCombinationNo;
+                        orderTipCostDao.Insert(otcModel);
+                    }
+                    redis.Set(key, true, new TimeSpan(0, 0, 15));
+                }
+
+                return PayResultModel;
             }
-            if (model.payType == PayTypeEnum.WeiXin.GetHashCode())
+            if (req.payType == PayTypeEnum.WeiXin.GetHashCode())
             {
                 //微信支付
                 LogHelper.LogWriter("=============微信支付：");
 
-                return CreateWxSSPayOrder(orderCombinationNo, zfAmount, model.orderId, model.payStyle,model.orderNo);
+                //所属产品_主订单号_子订单号_随机数
+                string orderCombinationNo = string.Concat(req.orderId, "_", orderChildModel.Id, "_" + Helper.GenCode(6));
+                decimal zfAmount = 0;
+                if ((bool)olModel.IsPay)//已支付，加小费
+                {
+                    zfAmount = req.tipAmount;
+                }
+                else//未支付
+                {
+                    zfAmount = orderChildModel.TotalPrice + olModel.TipAmount;
+                }                 
+
+                ResultModel<PayResultModel> payResult = CreateWxSSPayOrder(orderCombinationNo, zfAmount, req.orderId, olModel.OrderNo);
+                var redis = new RedisCache();
+                string key = string.Concat(req.orderId, orderChildModel.Id);
+                bool isExist = redis.Get<bool>(key);
+                if (!isExist)
+                {
+                    if ((bool)olModel.IsPay)
+                    {
+                        //写订单小费
+                        OrderTipCost otcModel = new OrderTipCost();
+                        otcModel.OrderId = req.orderId;
+                        otcModel.Amount = req.tipAmount;
+                        otcModel.TipAmount = req.tipAmount;
+                        otcModel.CreateName = olModel.businessId.ToString();
+                        otcModel.CreateTime = DateTime.Now;
+                        otcModel.PayStates = 0;//未支付
+                        otcModel.OriginalOrderNo = "";
+                        otcModel.PayType = 2;//支付宝
+                        otcModel.OutTradeNo = orderCombinationNo;
+                        orderTipCostDao.Insert(otcModel);
+                    }
+                    else
+                    {
+                        //写订单小费
+                        OrderTipCost otcModel = new OrderTipCost();
+                        otcModel.OrderId = req.orderId;
+                        otcModel.Amount = orderChildModel.TotalPrice + olModel.TipAmount;
+                        otcModel.TipAmount = olModel.TipAmount;
+                        otcModel.CreateName = olModel.businessId.ToString();
+                        otcModel.CreateTime = DateTime.Now;
+                        otcModel.PayStates = 0;//未支付
+                        otcModel.OriginalOrderNo = "";
+                        otcModel.PayType = 2;//支付宝
+                        otcModel.OutTradeNo = orderCombinationNo;
+                        orderTipCostDao.Insert(otcModel);
+                    }
+                    redis.Set(key, true, new TimeSpan(0, 0, 15));
+                }
+                return payResult;
             }
 
             return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
@@ -2631,14 +2720,10 @@ namespace Ets.Service.Provider.Pay
 
                         //写订单小费
                         OrderTipCost otcModel = new OrderTipCost();
-                        otcModel.OrderId = orderId;
-                        otcModel.Amount = olList.TipAmount;
-                        otcModel.CreateName = businessModel.Name;
-                        otcModel.CreateTime = DateTime.Now;
-                        otcModel.PayStates = 1;//已支付
-                        otcModel.OriginalOrderNo = notify.trade_no;
+                        otcModel.UpdateName = businessModel.Name;
                         otcModel.PayType = 1;//支付宝
-                        orderTipCostDao.Insert(otcModel);
+                        otcModel.OutTradeNo = out_trade_no;
+                        orderTipCostDao.UpdateByOutTradeNo(otcModel);
 
                         //更新总的小费
                         orderDao.UpdateTipAmount(orderId, notify.total_fee);
@@ -2666,16 +2751,11 @@ namespace Ets.Service.Provider.Pay
                         });
                       
                         //写订单小费
-                        OrderTipCost otcModel = new OrderTipCost();
-                        otcModel.OrderId = orderId;
-                        otcModel.Amount = olList.TipAmount;
-                        otcModel.CreateName = businessModel.Name;
-                        otcModel.CreateTime = DateTime.Now;
-                        otcModel.PayStates = 1;//已支付
-                        otcModel.OriginalOrderNo = notify.trade_no;
+                        OrderTipCost otcModel = new OrderTipCost();                  
+                        otcModel.UpdateName=businessModel.Name;
                         otcModel.PayType = 1;//支付宝
-                        orderTipCostDao.Insert(otcModel);
-                      
+                        otcModel.OutTradeNo = out_trade_no;
+                        orderTipCostDao.UpdateByOutTradeNo(otcModel);
                         #endregion
                     }
                     tran.Complete();
@@ -2699,7 +2779,7 @@ namespace Ets.Service.Provider.Pay
         /// <param name="orderNo">订单号</param>      
         /// <param name="TotalPrice"></param>
         /// <returns></returns>
-        private ResultModel<PayResultModel> CreateWxSSPayOrder(string combinationOrderNo, decimal totalPrice, int orderId, int payStyle,string orderNo )
+        private ResultModel<PayResultModel> CreateWxSSPayOrder(string combinationOrderNo, decimal totalPrice, int orderId, string orderNo)
         {
             //支付方式-主订单ID-子订单ID
             PayResultModel resultModel = new PayResultModel();
@@ -2805,17 +2885,13 @@ namespace Ets.Service.Provider.Pay
                             RelationNo = olList.OrderNo,
                             Remark = "配送费支出金额"
                         });
-
+                       
                         //写订单小费
                         OrderTipCost otcModel = new OrderTipCost();
-                        otcModel.OrderId = orderId;
-                        otcModel.Amount = olList.TipAmount;
-                        otcModel.CreateName = businessModel.Name;
-                        otcModel.CreateTime = DateTime.Now;
-                        otcModel.PayStates = 1;//已支付
-                        otcModel.OriginalOrderNo = notify.transaction_id;
-                        otcModel.PayType =2;//微信
-                        orderTipCostDao.Insert(otcModel);
+                        otcModel.UpdateName = businessModel.Name;
+                        otcModel.PayType = 2;//支付宝
+                        otcModel.OutTradeNo = attach;
+                        orderTipCostDao.UpdateByOutTradeNo(otcModel);
 
                         //更新总的小费
                         orderDao.UpdateTipAmount(orderId, ParseHelper.ToDecimal(notify.total_fee));
@@ -2833,7 +2909,7 @@ namespace Ets.Service.Provider.Pay
                         iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
                         {
                             BusinessId = businessModel.Id,
-                            Amount = -ParseHelper.ToDecimal(notify.total_fee),
+                            Amount = -ParseHelper.ToDecimal(notify.total_fee),//支付金额
                             Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
                             RecordType = BusinessBalanceRecordRecordType.PublishOrder.GetHashCode(),
                             Operator = businessModel.Name,
@@ -2844,14 +2920,10 @@ namespace Ets.Service.Provider.Pay
 
                         //写订单小费
                         OrderTipCost otcModel = new OrderTipCost();
-                        otcModel.OrderId = orderId;
-                        otcModel.Amount = olList.TipAmount;
-                        otcModel.CreateName = businessModel.Name;
-                        otcModel.CreateTime = DateTime.Now;
-                        otcModel.PayStates = 1;//已支付
-                        otcModel.OriginalOrderNo = notify.transaction_id;
-                        otcModel.PayType = 2;//微信
-                        orderTipCostDao.Insert(otcModel);
+                        otcModel.UpdateName = businessModel.Name;
+                        otcModel.PayType = 2;//支付宝
+                        otcModel.OutTradeNo = attach;
+                        orderTipCostDao.UpdateByOutTradeNo(otcModel);
 
                         #endregion
                     }

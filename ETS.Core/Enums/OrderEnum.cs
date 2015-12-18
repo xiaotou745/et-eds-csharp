@@ -94,6 +94,17 @@ namespace ETS.Enums
         [DisplayText("订单不存在")]
         OrderNotExist = 10004,
         /// <summary>
+        /// 订单已取消
+        /// </summary>
+        [DisplayText("订单已取消")]
+        OrderState3 = 10005,
+        /// <summary>
+        /// 订单已分账
+        /// </summary>
+        [DisplayText("订单已分账")]
+        OrderIsJoinWithdraw = 10006,
+        
+        /// <summary>
         /// 订单已经接入到E代送系统，无法取消订单
         /// </summary>
         [DisplayText("订单已经接入到E代送系统，无法取消订单")]
