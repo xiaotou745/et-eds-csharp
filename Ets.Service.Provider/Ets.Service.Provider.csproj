@@ -30,6 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AopSdk, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\AopSdk.dll</HintPath>
+    </Reference>
     <Reference Include="CalculateCommon">
       <HintPath>..\lib\CalculateCommon.dll</HintPath>
       <HintPath>..\packages\CalculateCommon.dll</HintPath>

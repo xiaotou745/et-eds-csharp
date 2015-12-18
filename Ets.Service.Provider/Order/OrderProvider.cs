@@ -50,6 +50,8 @@ using Ets.Model.ParameterModel.WtihdrawRecords;
 using Ets.Model.DataModel.DeliveryCompany;
 using Ets.Dao.DeliveryCompany;
 using Ets.Service.IProvider.Clienter;
+using ETS.Library.Pay.SSAliPay;
+using Aop.Api.Response;
 #endregion
 namespace Ets.Service.Provider.Order
 {
@@ -74,6 +76,9 @@ namespace Ets.Service.Provider.Order
         ClienterFinanceDao clienterFinanceDao = new ClienterFinanceDao();
         //和区域有关的  wc
         readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
+
+        OrderTipCostDao orderTipCostDao = new OrderTipCostDao();
+        AliPayApi aliPayApi = new AliPayApi();
 
         /// <summary>
         /// 获取订单
@@ -2797,24 +2802,54 @@ namespace Ets.Service.Provider.Order
                 return ResultModel<object>.Conclude(OrderApiStatusType.OrderIsJoinWithdraw);
             }
 
-          
+            IList<OrderTipCost> list= orderTipCostDao.GetListByOrderId(pm.OrderId);
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                OrderTipCost otcModel = new OrderTipCost();
+                otcModel = list[i];
+                if (otcModel.PayStates == 0)//未付款
+                {
+                    if (otcModel.PayType == 0)//现金
+                    {
+
+                    }
+
+                    if (otcModel.PayType == 1)//支付宝
+                    {
+                       AlipayTradeQueryResponse response= aliPayApi.Query(otcModel.OutTradeNo);
+                       string str = response.Body;
+                       //   if (alipayTradeQueryResponse.Code != "10000")
+                    }
+
+                    if (otcModel.PayType == 2)//微信
+                    {
+
+                    }
+
+                }
+                else
+                {
+ 
+                }
+ 
+            }
+
+                //if (orderModel.Payment == PayTypeEnum.Balance.GetHashCode())//余额
+                //{
+                //    CancelBalanceOrder(orderModel, orderOptionModel);
+                //}            
+                //else if (orderModel.Payment == PayTypeEnum.ZhiFuBao.GetHashCode())//支付宝 
+                //{
+                //    CancelTaoOrder(orderModel, orderOptionModel);
+                //}
+                //else if(orderModel.Payment == PayTypeEnum.WeiXin.GetHashCode())//微信
+                //{
+                //    CancelWxOrder(orderModel, orderOptionModel);
+                //}
 
 
-            //if (orderModel.Payment == PayTypeEnum.Balance.GetHashCode())//余额
-            //{
-            //    CancelBalanceOrder(orderModel, orderOptionModel);
-            //}            
-            //else if (orderModel.Payment == PayTypeEnum.ZhiFuBao.GetHashCode())//支付宝 
-            //{
-            //    CancelTaoOrder(orderModel, orderOptionModel);
-            //}
-            //else if(orderModel.Payment == PayTypeEnum.WeiXin.GetHashCode())//微信
-            //{
-            //    CancelWxOrder(orderModel, orderOptionModel);
-            //}
-       
-    
-          return  ResultModel<object>.Conclude(OrderApiStatusType.Success);
+                return ResultModel<object>.Conclude(OrderApiStatusType.Success);
         }
 
         #region 用户自定义方法闪送 余额

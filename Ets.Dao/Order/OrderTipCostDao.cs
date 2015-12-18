@@ -128,7 +128,7 @@ where  PayType=@PayType and OutTradeNo=@OutTradeNo";
 			const string querysql = @"
 select  Id,OrderId,Amount,CreateName,CreateTime,PayStates
 from  OrderTipCost (nolock)
-where  ";		
+where  Id=@Id";		
 
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters("Id", DbType.Int64, 8, id);
@@ -141,7 +141,21 @@ where  ";
             return model;
 		}
 
-	
+
+        public IList<OrderTipCost> GetListByOrderId(int orderId)
+        {
+            IList<OrderTipCost> models = new List<OrderTipCost>();
+            const string querysql = @"
+select Id,OrderId,Amount,CreateName,CreateTime,PayStates,OriginalOrderNo,PayType,OutTradeNo from OrderTipCost where orderId=@orderId ";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("orderId", orderId);
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
+            if (dt == null || dt.Rows.Count <= 0)
+            {
+                return null;
+            }
+            return MapRows<OrderTipCost>(dt);
+        }
 
 		#region  Nested type: OrderTipCostRowMapper
 

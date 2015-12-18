@@ -15,12 +15,7 @@ namespace ETS.Library.Pay.SSAliPay
         /// <param name="orderNo"></param>
         /// <returns></returns>
         public bool CloseOrder(string orderNo)
-        {
-            //查询不存在返回true
-            AlipayTradeQueryResponse alipayTradeQueryResponse = aliPayApi.Query();
-            if (alipayTradeQueryResponse.Code != "10000")
-                return true;
-
+        {       
             AlipayTradeCancelResponse alipayTradeCancelResponse=aliPayApi.Cancel();
             if (alipayTradeCancelResponse.Code != "10000")
                 return false;
@@ -40,12 +35,7 @@ namespace ETS.Library.Pay.SSAliPay
         /// <param name="op_user_id"></param>
         /// <returns></returns>
         public bool Refund()
-        {    
-            //查询不存在返回true
-            AlipayTradeQueryResponse alipayTradeQueryResponse = aliPayApi.Query();
-            if (alipayTradeQueryResponse.Code != "10000")
-                return true;
-
+        {        
             AlipayTradeRefundResponse alipayTradeCancelResponse = aliPayApi.Refund();
             if (alipayTradeCancelResponse.Code != "10000")
                 return false;

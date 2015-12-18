@@ -2504,9 +2504,9 @@ namespace Ets.Service.Provider.Pay
                 else//未支付
                 {
                     zfAmount = orderChildModel.TotalPrice + olModel.TipAmount;
-                }                 
+                }
 
-                ResultModel<PayResultModel> payResult = CreateWxSSPayOrder(orderCombinationNo, zfAmount, req.orderId, olModel.OrderNo);
+                ResultModel<PayResultModel> payResult = CreateWxSSPayOrder(orderCombinationNo, zfAmount, req.orderId, Helper.GenCode(12));
                 var redis = new RedisCache();
                 string key = string.Concat(req.orderId, orderChildModel.Id);
                 bool isExist = redis.Get<bool>(key);
@@ -2789,7 +2789,7 @@ namespace Ets.Service.Provider.Pay
             //{
                 ETS.Library.Pay.SSBWxPay.NativePay nativePay = new ETS.Library.Pay.SSBWxPay.NativePay();
                 string prepayId = string.Empty;
-                totalPrice =ParseHelper.ToDecimal(0.01);
+                totalPrice = totalPrice;
                 code_url = nativePay.GetPayUrl(combinationOrderNo, totalPrice, "E代送收款", Config.SSWxNotify, out prepayId, orderNo);
                 resultModel.prepayId = prepayId;
             //}
@@ -2841,7 +2841,7 @@ namespace Ets.Service.Provider.Pay
         {
             try
             {
-                string orderNo = notify.order_no;
+                string orderNo = notify.order_no;//微信单号
                 if (string.IsNullOrEmpty(orderNo))
                 {
                     string fail = string.Concat("错误啦orderNo：", orderNo);
