@@ -3108,7 +3108,7 @@ SELECT CASE SUM(oc.PayStatus)
         {
             order order = null;     
             string sql = @"select  o.Id ,
-        o.OrderNo ,
+        o.OrderNo ,o.Status,
         o.SettleMoney ,isnull(o.GroupBusinessId,0) as GroupBusinessId 
 from    [order] o ( nolock )
         join dbo.business b ( nolock ) on o.businessId = b.Id
