@@ -938,22 +938,19 @@ namespace Ets.Service.Provider.Order
 
                 #region 转换省市区
                 //转换省
-                string pName = string.IsNullOrEmpty(model.Receive_Province) ? string.Empty : model.Receive_Province.Replace("市", "");
-                var _province = iAreaProvider.GetNationalAreaInfo(new AreaModelTranslate() { Name = pName, JiBie = 2 });
+                var _province = iAreaProvider.GetNationalAreaInfo(new AreaModelTranslate() { Name = model.Receive_Province, JiBie = 2 });
                 if (_province != null)
                 {
                     model.Receive_ProvinceCode = _province.NationalCode.ToString();
                 }
                 string cityName = model.Receive_City;
                 //把省里的城区，郊区过滤掉，因为易代送的直辖市都是没有市或城区的
-                //string selCityName=string.IsNullOrEmpty(cityName) ? string.Empty : cityName.Trim().Replace("城区", "").Replace("郊区", "");
-                string selCityName = string.IsNullOrEmpty(cityName) ? string.Empty : cityName.Trim().Replace("城区", "市").Replace("郊区", "市");
+                model.Receive_City = string.IsNullOrEmpty(cityName) ? string.Empty : cityName.Trim().Replace("城区", "").Replace("郊区", "");
                 //转换市
-                var _city = iAreaProvider.GetNationalAreaInfo(new AreaModelTranslate() { Name = selCityName, JiBie = 3 });
-
+                var _city = iAreaProvider.GetNationalAreaInfo(new AreaModelTranslate() { Name = model.Receive_City, JiBie = 3 });
                 if (_city != null)
                 {
-                    model.Receive_City = selCityName;//selCityName.Contains("市") ? selCityName : string.Concat(selCityName,"市");
+
                     model.Receive_CityCode = _city.NationalCode.ToString();
                 }
                 //转换区
@@ -1258,27 +1255,23 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public TaoBaoCancelOrderReturn TaoBaoCancelOrder(string thirdNo)
         {
-            var r = TaoBaoCancelOrderReturn.Error;
+            var r =TaoBaoCancelOrderReturn.Error;
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-<<<<<<< HEAD
                 var order= orderDao.GetOrderByOrderNoAndOrderFrom(thirdNo, GroupConst.Group8, 0);
                 if (order == null)
                 {
                     return TaoBaoCancelOrderReturn.NoExist;
                 }
-=======
-                var order = orderDao.GetOrderByOrderNoAndOrderFrom(thirdNo, GroupConst.Group8, 0);
->>>>>>> SuperMan3.0
                 OrderOptionModel orderOptionModel = new OrderOptionModel
                 {
-                    OptUserId = 0,
-                    OptUserName = "淘宝回调系统自动",
-                    OrderNo = order.OriginalOrderNo,
+                    OptUserId=0,
+                    OptUserName="淘宝回调系统自动",
+                    OrderNo=order.OriginalOrderNo,
                     OptLog = "淘宝回调取消订单",
-                    OrderId = order.Id,
+                    OrderId=order.Id,
                     Remark = "淘宝回调系统自动取消订单",
-                    Platform = SuperPlatform.ThirdParty.GetHashCode()
+                    Platform= SuperPlatform.ThirdParty.GetHashCode()
                 };
                 var orderModel = orderDao.GetOrderByIdWithNolock(orderOptionModel.OrderId);
                 if (orderModel == null)
@@ -1298,7 +1291,7 @@ namespace Ets.Service.Provider.Order
                 //    dealResultInfo.DealMsg = "订单已分账，不能取消订单！";
                 //    return dealResultInfo;
                 //}
-                #endregion
+                #endregion  
                 #region 淘宝的订单一定都是 线上支付 ，也就是我们的线下支付，不可能出现这种情况
                 //我们的线上支付是指扫码支付  
                 //if (orderModel.MealsSettleMode == 1 && orderTaskPayStatus > 0 && !orderModel.IsPay.Value)//餐费未线上支付模式并且餐费有支付
@@ -1819,12 +1812,12 @@ namespace Ets.Service.Provider.Order
             return ETS.Config.OrderCancelReasons;
         }
 
-        public string CanOrder(string originalOrderNo, int group, string cancelReason = "")
+        public string CanOrder(string originalOrderNo, int group, string cancelReason="")
         {
             var order = orderDao.GetOrderByOrderNoAndOrderFrom(originalOrderNo, group, 0);
             if (order.Status == OrderStatus.Status0.GetHashCode())
             {
-                CancelOrderModel comModel = new CancelOrderModel() { OrderNo = order.OrderNo, OrderStatus = OrderStatus.Status3.GetHashCode(), Remark = "第三方取消订单" + cancelReason, Status = null };
+                CancelOrderModel comModel = new CancelOrderModel() { OrderNo = order.OrderNo, OrderStatus = OrderStatus.Status3.GetHashCode(), Remark = "第三方取消订单"+cancelReason, Status = null };
                 var k = orderDao.CancelOrderStatus(comModel);
                 //var k = orderDao.CancelOrderStatus(order.OrderNo, OrderStatus.Status3.GetHashCode(), "第三方取消订单", null);
                 if (k > 0)
@@ -2204,17 +2197,11 @@ namespace Ets.Service.Provider.Order
             {
                 return CancelOrderStatus.VersionError;
             }
-            order = orderDao.GetOrderById(paramodel.OrderId, paramodel.BusinessId);
-            
+            order = orderDao.GetOrderById(paramodel.OrderId, paramodel.BusinessId, OrderStatus.Status0.GetHashCode());
+
             if (order == null)
             {
                 return CancelOrderStatus.CancelOrderError;
-            }else
-            {
-                if(order.Status  != OrderStatus.Status0.GetHashCode() || order.Status != OrderStatus.Status50.GetHashCode())
-                {
-                    return CancelOrderStatus.FailedCancelOrder;
-                }
             }
             return CancelOrderStatus.Success;
         }
@@ -2501,8 +2488,8 @@ namespace Ets.Service.Provider.Order
                                 }))
                                 {
                                     tran.Complete();
-                                }
-                            }
+                                } 
+                            } 
                         }
                     }
                 }
@@ -2810,13 +2797,7 @@ namespace Ets.Service.Provider.Order
                 return ResultModel<object>.Conclude(OrderApiStatusType.OrderIsJoinWithdraw);
             }
 
-            if ((bool)orderModel.IsPay)
-            {
-            }
-            else//未支付
-            { 
-
-            }
+          
 
 
             //if (orderModel.Payment == PayTypeEnum.Balance.GetHashCode())//余额
