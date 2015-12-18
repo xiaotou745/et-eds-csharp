@@ -2197,11 +2197,17 @@ namespace Ets.Service.Provider.Order
             {
                 return CancelOrderStatus.VersionError;
             }
-            order = orderDao.GetOrderById(paramodel.OrderId, paramodel.BusinessId, OrderStatus.Status0.GetHashCode());
-
+            order = orderDao.GetOrderById(paramodel.OrderId, paramodel.BusinessId);
+            
             if (order == null)
             {
                 return CancelOrderStatus.CancelOrderError;
+            }else
+            {
+                if(order.Status  != OrderStatus.Status0.GetHashCode() || order.Status != OrderStatus.Status50.GetHashCode())
+                {
+                    return CancelOrderStatus.FailedCancelOrder;
+                }
             }
             return CancelOrderStatus.Success;
         }
