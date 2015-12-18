@@ -16,9 +16,5 @@ namespace Ets.Model.ParameterModel.Order
         /// </summary>
         public int OrderId { get; set; }     
 
-        /// <summary>
-        ///骑士ID
-        /// </summary>
-        public int ClienterId { get; set; }
     }
 }

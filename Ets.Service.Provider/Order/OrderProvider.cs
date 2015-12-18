@@ -2782,39 +2782,42 @@ namespace Ets.Service.Provider.Order
         public ResultModel<object> SSCancelOrder(SSOrderCancelPM pm, OrderOptionModel orderOptionModel)
         {     
             var orderModel = orderDao.GetOrderByIdWithNolock(pm.OrderId);
-            orderModel.OptUserName = orderOptionModel.OptUserName;
-            orderModel.Remark = orderOptionModel.OptLog;
-
-            orderOptionModel.OptUserId = orderModel.businessId;
-            orderOptionModel.OrderNo = orderModel.OrderNo;
+            //orderModel.OptUserName = orderOptionModel.OptUserName;
+            //orderModel.Remark = orderOptionModel.OptLog;
+            //orderOptionModel.OptUserId = orderModel.businessId;
+            //orderOptionModel.OrderNo = orderModel.OrderNo;
         
             
             if (orderModel.Status == 3)//订单已为取消状态
-            {
-                //dealResultInfo.DealMsg = "订单已为取消状态，不能再次取消操作！";
-                //return dealResultInfo;                
-
-                return null;
+            {                  
+                return ResultModel<object>.Conclude(OrderApiStatusType.OrderState3);
             }
             if (orderModel.IsJoinWithdraw == 1)//订单已分账
             {
-                //dealResultInfo.DealMsg = "订单已分账，不能取消订单！";
-                //return dealResultInfo;
-                return null;
+                return ResultModel<object>.Conclude(OrderApiStatusType.OrderIsJoinWithdraw);
             }
 
-            if (orderModel.Payment == PayTypeEnum.Balance.GetHashCode())//余额
+            if ((bool)orderModel.IsPay)
             {
-                CancelBalanceOrder(orderModel, orderOptionModel);
-            }            
-            else if (orderModel.Payment == PayTypeEnum.ZhiFuBao.GetHashCode())//支付宝 
-            {
-                CancelTaoOrder(orderModel, orderOptionModel);
             }
-            else if(orderModel.Payment == PayTypeEnum.WeiXin.GetHashCode())//微信
-            {
-                CancelWxOrder(orderModel, orderOptionModel);
+            else//未支付
+            { 
+
             }
+
+
+            //if (orderModel.Payment == PayTypeEnum.Balance.GetHashCode())//余额
+            //{
+            //    CancelBalanceOrder(orderModel, orderOptionModel);
+            //}            
+            //else if (orderModel.Payment == PayTypeEnum.ZhiFuBao.GetHashCode())//支付宝 
+            //{
+            //    CancelTaoOrder(orderModel, orderOptionModel);
+            //}
+            //else if(orderModel.Payment == PayTypeEnum.WeiXin.GetHashCode())//微信
+            //{
+            //    CancelWxOrder(orderModel, orderOptionModel);
+            //}
        
     
           return  ResultModel<object>.Conclude(OrderApiStatusType.Success);
@@ -2862,6 +2865,7 @@ namespace Ets.Service.Provider.Order
         void CancelTaoOrder(OrderListModel orderModel, OrderOptionModel orderOptionModel)
         {
             //ETS.Library.Pay.SSAliPay.AliNativePay  
+            ETS.Library.Pay.SSAliPay.AliPayApi aliPayApi = new ETS.Library.Pay.SSAliPay.AliPayApi();
         }
         #endregion
 

@@ -310,18 +310,19 @@ where   1=1 and o.Id = @OrderId
             return MapRows<PayStatusModel>(dt)[0];
         }
 
-        public int GetIdByOrderId(int orderId)
+        public OrderChild GetDetailByOrderId(int orderId)
         {
-            string sql = "SELECT id from dbo.OrderChild oc(nolock)  where oc.OrderId = @OrderId ";
+            string sql = "SELECT top 1 id,OrderId,ChildId,TotalPrice,GoodPrice,DeliveryPrice,PayStyle,PayType,PayStatus,PayBy,PayTime,PayPrice,HasUploadTicket,TicketUrl,CreateBy,CreateTime,UpdateBy,UpdateTime  from dbo.OrderChild oc  where oc.OrderId = @OrderId ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("OrderId", DbType.Int32, 4).Value = orderId;          
             //此表是要同步支付状态，请读写表
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql, parm);
+         
             if (!dt.HasData())
             {
-                return 0;
+                return null;
             }
-            return Convert.ToInt32(dt.Rows[0]["id"]);
+            return MapRows<OrderChild>(dt)[0];
         }
 
 

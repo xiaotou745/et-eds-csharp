@@ -35,19 +35,21 @@ namespace Ets.Dao.Order
 		public long Insert(OrderTipCost orderTipCost)
 		{
 			const string insertSql = @"
-insert into OrderTipCost(OrderId,Amount,CreateName,CreateTime,PayStates,OriginalOrderNo,PayType)
-values(@OrderId,@Amount,@CreateName,@CreateTime,@PayStates,@OriginalOrderNo,@PayType);
+insert into OrderTipCost(OrderId,Amount,TipAmount,CreateName,CreateTime,PayStates,OriginalOrderNo,PayType,OutTradeNo)
+values(@OrderId,@Amount,@TipAmount,@CreateName,@CreateTime,@PayStates,@OriginalOrderNo,@PayType,@OutTradeNo);
 select @@IDENTITY
 ";
 
 			IDbParameters dbParameters = DbHelper.CreateDbParameters();
 			dbParameters.AddWithValue("OrderId", orderTipCost.OrderId);
 			dbParameters.AddWithValue("Amount", orderTipCost.Amount);
+            dbParameters.AddWithValue("TipAmount", orderTipCost.TipAmount);
 			dbParameters.AddWithValue("CreateName", orderTipCost.CreateName);
 			dbParameters.AddWithValue("CreateTime", orderTipCost.CreateTime);
 			dbParameters.AddWithValue("PayStates", orderTipCost.PayStates);
             dbParameters.AddWithValue("OriginalOrderNo", orderTipCost.OriginalOrderNo);
             dbParameters.AddWithValue("PayType", orderTipCost.PayType);
+            dbParameters.AddWithValue("OutTradeNo", orderTipCost.OutTradeNo);
 
     object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters); //提现单号
             return ParseHelper.ToLong(result);
@@ -66,6 +68,14 @@ select @@IDENTITY
 SELECT count(1) FROM dbo.OrderTipCost  where OriginalOrderNo=@OriginalOrderNo";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("OriginalOrderNo", DbType.String, 100).Value = OriginalOrderNo;
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm), 0) > 0 ? true : false;
+        }
+        public bool CheckOutTradeNo(string OutTradeNo)
+        {
+            string sql = @"
+SELECT count(1) FROM dbo.OrderTipCost (nolock)  where OutTradeNo=@OutTradeNo";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("OutTradeNo", DbType.String, 100).Value = OutTradeNo;
             return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm), 0) > 0 ? true : false;
         }
 
@@ -89,8 +99,24 @@ where  ";
 
 
 			  DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
-		}	
+		}
+        /// <summary>
+        /// 更新一条记录
+        /// </summary>
+        public void UpdateByOutTradeNo(OrderTipCost orderTipCost)
+        {
+            const string updateSql = @"
+update  OrderTipCost
+set   UpdateName=@UpdateName, UpdateTime=getdate(),PayStates=1
+where  PayType=@PayType and OutTradeNo=@OutTradeNo";
 
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("UpdateName", orderTipCost.UpdateName);
+            dbParameters.AddWithValue("PayType", orderTipCost.PayType);
+            dbParameters.AddWithValue("OutTradeNo", orderTipCost.OutTradeNo);
+
+            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+        }	
 		
 		/// <summary>
 		/// 根据ID获取对象

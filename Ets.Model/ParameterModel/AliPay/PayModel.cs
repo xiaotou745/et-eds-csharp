@@ -45,7 +45,7 @@ namespace Ets.Model.ParameterModel.AliPay
         /// <summary>
         /// 订单状态0订单支付，1小费
         /// </summary>
-        public int oType { get; set; }
+        public int States { get; set; }
 
         /// <summary>
         /// 订单编号
@@ -55,6 +55,8 @@ namespace Ets.Model.ParameterModel.AliPay
         /// 小费金额
         /// </summary>
         public decimal tipAmount { get; set; }
+
+
         
     }
 }

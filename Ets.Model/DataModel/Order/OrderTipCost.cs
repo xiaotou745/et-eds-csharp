@@ -26,6 +26,12 @@ namespace Ets.Model.DataModel.Order
 		/// 金额
 		/// </summary>
 		public decimal Amount { get; set; }
+
+        /// <summary>
+        /// 小费金额
+        /// </summary>
+        public decimal TipAmount { get; set; }
+        
 		/// <summary>
 		/// 创建人
 		/// </summary>
@@ -34,6 +40,16 @@ namespace Ets.Model.DataModel.Order
 		/// 创建时间
 		/// </summary>
 		public DateTime CreateTime { get; set; }
+
+        /// <summary>
+		/// 修改人
+		/// </summary>
+        public string UpdateName { get; set; }
+		/// <summary>
+        /// 修改时间
+		/// </summary>
+		public DateTime UpdateTime { get; set; }
+        
 		/// <summary>
 		/// 支付状态
 		/// </summary>
@@ -47,6 +63,8 @@ namespace Ets.Model.DataModel.Order
         /// 支付方式
         /// </summary>
         public int PayType { get; set; }
+
+        public string OutTradeNo { get; set; }
     }   
 
 }
