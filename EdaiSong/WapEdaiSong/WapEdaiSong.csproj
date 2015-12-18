@@ -154,6 +154,9 @@
     <Content Include="Content\img\help\img_06.jpg" />
     <Content Include="Content\img\help\img_07.jpg" />
     <Content Include="1.html" />
+    <Content Include="Content\img\icon-tb.png" />
+    <Content Include="Content\style\list-price.css" />
+    <Content Include="htmls\list-price.html" />
     <Content Include="Images\qqs.png" />
     <Content Include="Images\qqsan.png" />
     <Content Include="Images\renrendituiandroid.jpg" />

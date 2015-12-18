@@ -1,0 +1,51 @@
+﻿@charset "utf-8";
+html,.map_main{
+  height: 100%;
+}
+body{
+  background: #fff;
+  height: 100%;
+}
+.price-lst{
+  border-left:2px #bbc0c7 dotted;
+  margin-left:35px;
+  margin-right:15px;
+  padding-top:15%;
+  height:100%;
+  -moz-box-sizing:border-box;
+  -ms-box-sizing:border-box;
+  box-sizing:border-box;
+}
+.price-lst li{
+  display: -webkit-box;
+  display: -moz-box;
+  display: -o-box;
+  display: box;
+  -moz-box-align:center;
+  -webkit-box-align:center;
+  box-align:center;
+  -moz-box-pack:justify;
+  -webkit-box-pack:justify;
+  box-pack:justify;
+  margin-top:10%;
+}
+.price-lst li p,.price-lst li span{
+  -webkit-box-flex:1;
+  -moz-box-flex:1;
+  -webkit-flex:1;
+  -ms-flex:1;
+  flex:1;
+  font-size:15px;
+}
+.price-lst li span{
+  color:#00bcd5;
+}
+.icon{
+  display:inline-block;
+  width:22px;
+  height:27px;
+  background: url("../img/icon-tb.png") no-repeat;
+  background-size:100%;
+  margin-left:-12px;
+  margin-right:15px;
+}

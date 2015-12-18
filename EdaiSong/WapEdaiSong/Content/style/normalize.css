@@ -372,3 +372,36 @@ input,select{
     -moz-appearance: none;
     -webkit-tap-highlight-color:rgba(0,0,0,0);
 }
+
+
+.cb:after{
+  display:block;
+  content:"";
+  clear:both;
+}
+.cb{
+  zoom:1;
+}
+
+//Çå³ýfocusµÄÐé¿òFirefox
+:focus{outline:none;}
+
+
+input[type="submit"],
+input[type="reset"],
+input[type="button"],
+input,
+textarea,
+select{
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -webkit-tap-highlight-color:rgba(0,0,0,0);
+}
+input:focus ,button:focus ,select:focus ,textarea:focus {
+    -moz-outline:none;
+    outline: none;
+    -webkit-tap-highlight-color:rgba(0,0,0,0);
+}
+input:focus,textarea:focus {
+    -webkit-user-modify:read-write-plaintext-only;
+}
