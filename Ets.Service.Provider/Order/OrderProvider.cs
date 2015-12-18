@@ -2197,7 +2197,7 @@ namespace Ets.Service.Provider.Order
             {
                 return CancelOrderStatus.VersionError;
             }
-            order = orderDao.GetOrderById(paramodel.OrderId, paramodel.BusinessId, OrderStatus.Status0.GetHashCode());
+            order = orderDao.GetOrderById(paramodel.OrderId, paramodel.BusinessId);
 
             if (order == null)
             {
