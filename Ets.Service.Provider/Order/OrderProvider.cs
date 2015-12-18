@@ -1260,16 +1260,12 @@ namespace Ets.Service.Provider.Order
         {
             var r = TaoBaoCancelOrderReturn.Error;
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
-            {
-<<<<<<< HEAD
+            { 
                 var order= orderDao.GetOrderByOrderNoAndOrderFrom(thirdNo, GroupConst.Group8, 0);
                 if (order == null)
                 {
                     return TaoBaoCancelOrderReturn.NoExist;
-                }
-=======
-                var order = orderDao.GetOrderByOrderNoAndOrderFrom(thirdNo, GroupConst.Group8, 0);
->>>>>>> SuperMan3.0
+                } 
                 OrderOptionModel orderOptionModel = new OrderOptionModel
                 {
                     OptUserId = 0,
@@ -2134,7 +2130,7 @@ namespace Ets.Service.Provider.Order
                 {
                     return ResultModel<bool>.Conclude(tempresult, false);
                 }
-                CancelOrderModel comModel = new CancelOrderModel() { OrderNo = paramodel.OrderNo, OrderStatus = OrderStatus.Status3.GetHashCode(), Remark = "商户取消订单", Status = OrderStatus.Status0.GetHashCode(), Price = order.SettleMoney, OrderCancelFrom = SuperPlatform.FromBusiness.GetHashCode(), OrderCancelName = order.BusinessName };
+                CancelOrderModel comModel = new CancelOrderModel() { OrderNo = paramodel.OrderNo, OrderStatus = OrderStatus.Status3.GetHashCode(), Remark = "商户取消订单", Price = order.SettleMoney, OrderCancelFrom = SuperPlatform.FromBusiness.GetHashCode(), OrderCancelName = order.BusinessName };
                 int result = orderDao.CancelOrderStatus(comModel);
                 bool blCancelTime = orderOtherDao.UpdateCancelTime(paramodel.OrderId);
                 //int result = orderDao.CancelOrderStatus(paramodel.OrderNo, OrderStatus.Status3.GetHashCode(), "商家取消订单", OrderStatus.Status0.GetHashCode(), order.SettleMoney);
@@ -2211,12 +2207,16 @@ namespace Ets.Service.Provider.Order
                 return CancelOrderStatus.CancelOrderError;
             }else
             {
-                if(order.Status  != OrderStatus.Status0.GetHashCode() || order.Status != OrderStatus.Status50.GetHashCode())
+                if (order.Status == OrderStatus.Status0.GetHashCode() ||
+                    order.Status == OrderStatus.Status50.GetHashCode())
+                {
+                    return CancelOrderStatus.Success;
+                }
+                else
                 {
                     return CancelOrderStatus.FailedCancelOrder;
                 }
-            }
-            return CancelOrderStatus.Success;
+            } 
         }
         /// <summary>
         /// 查询配送数据列表
