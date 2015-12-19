@@ -1381,38 +1381,38 @@ namespace Ets.Service.Provider.Order
 
                 if (orderModel.Platform == 3)//闪送模式取消订单
                 {
-                    //待支付
-                    if (orderModel.Status == 50)
-                    {
-                        //查询微信
-                        ETS.Library.Pay.SSBWxPay.NativePay nativePay = new ETS.Library.Pay.SSBWxPay.NativePay();
-                        string orderNo = "147670_2206151204152814839_339877_1_0_0.02_0.01";
-                        //string orderNo = "147670";
-                        bool blNativePay = nativePay.CloseOrder(orderNo);
-                        //查询支付宝
-                        ETS.Library.Pay.SSAliPay.AliNativePay aliNativePay = new ETS.Library.Pay.SSAliPay.AliNativePay();
-                        bool blAliNativePay = aliNativePay.CloseOrder(orderModel.OrderNo);
-                        if (blNativePay && blAliNativePay)
-                        { 
-                            //修改订单状态
-                            orderDao.CancelOrder(orderModel, orderOptionModel);
-                            //更新取消时间
-                            orderOtherDao.UpdateCancelTime(orderModel.Id);
-                        }
-                    }
-                    else//已支付
-                    { 
-                        //微信 退款
+                    ////待支付
+                    //if (orderModel.Status == 50)
+                    //{
+                    //    //查询微信
+                    //    ETS.Library.Pay.SSBWxPay.NativePay nativePay = new ETS.Library.Pay.SSBWxPay.NativePay();
+                    //    string orderNo = "147670_2206151204152814839_339877_1_0_0.02_0.01";
+                    //    //string orderNo = "147670";
+                    //    bool blNativePay = nativePay.CloseOrder(orderNo);
+                    //    //查询支付宝
+                    //    ETS.Library.Pay.SSAliPay.AliNativePay aliNativePay = new ETS.Library.Pay.SSAliPay.AliNativePay();
+                    //    bool blAliNativePay = aliNativePay.CloseOrder(orderModel);
+                    //    if (blNativePay && blAliNativePay)
+                    //    { 
+                    //        //修改订单状态
+                    //        orderDao.CancelOrder(orderModel, orderOptionModel);
+                    //        //更新取消时间
+                    //        orderOtherDao.UpdateCancelTime(orderModel.Id);
+                    //    }
+                    //}
+                    //else//已支付
+                    //{ 
+                    //    //微信 退款
 
-                        //支付宝 退款
+                    //    //支付宝 退款
 
-                        //退款成功              
-                        //修改订单状态
-                        orderDao.CancelOrder(orderModel, orderOptionModel);
-                        //更新取消时间
-                        orderOtherDao.UpdateCancelTime(orderModel.Id);
-                        //写流水
-                    }            
+                    //    //退款成功              
+                    //    //修改订单状态
+                    //    orderDao.CancelOrder(orderModel, orderOptionModel);
+                    //    //更新取消时间
+                    //    orderOtherDao.UpdateCancelTime(orderModel.Id);
+                    //    //写流水
+                    //}            
                 }
                 else
                 {
@@ -2786,11 +2786,9 @@ namespace Ets.Service.Provider.Order
         /// <returns></returns>
         public ResultModel<object> SSCancelOrder(SSOrderCancelPM pm, OrderOptionModel orderOptionModel)
         {     
-            var orderModel = orderDao.GetOrderByIdWithNolock(pm.OrderId);
-            //orderModel.OptUserName = orderOptionModel.OptUserName;
-            //orderModel.Remark = orderOptionModel.OptLog;
-            //orderOptionModel.OptUserId = orderModel.businessId;
-            //orderOptionModel.OrderNo = orderModel.OrderNo;
+            var orderModel = orderDao.GetOrderByIdWithNolock(pm.OrderId);        
+            orderOptionModel.OptUserId = orderModel.businessId;
+            orderOptionModel.OrderNo = orderModel.OrderNo;            
         
             
             if (orderModel.Status == 3)//订单已为取消状态
@@ -2802,212 +2800,356 @@ namespace Ets.Service.Provider.Order
                 return ResultModel<object>.Conclude(OrderApiStatusType.OrderIsJoinWithdraw);
             }
 
-            IList<OrderTipCost> list= orderTipCostDao.GetListByOrderId(pm.OrderId);
+            IList<Ets.Model.DataModel.Order.OrderTipCost> list= orderTipCostDao.GetListByOrderId(pm.OrderId);
 
-            for (int i = 0; i < list.Count; i++)
+            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                OrderTipCost otcModel = new OrderTipCost();
-                otcModel = list[i];
-                if (otcModel.PayStates == 0)//未付款
+                for (int i = 0; i < list.Count; i++)
                 {
-                    if (otcModel.PayType == 0)//现金
+                    OrderTipCost otcModel = new OrderTipCost();
+                    otcModel = list[i];
+                    //有一笔退款失败，返回 
+                    ResultModel<object> isCancelSusses = CancelOrder(otcModel, orderModel);
+                    if (isCancelSusses.Status != OrderApiStatusType.CancelSuccess.GetHashCode())
                     {
-
+                        return isCancelSusses;
                     }
-
-                    if (otcModel.PayType == 1)//支付宝
-                    {
-                       AlipayTradeQueryResponse response= aliPayApi.Query(otcModel.OutTradeNo);
-                       string str = response.Body;
-                       //   if (alipayTradeQueryResponse.Code != "10000")
-                    }
-
-                    if (otcModel.PayType == 2)//微信
-                    {
-
-                    }
-
                 }
-                else
-                {
- 
-                }
- 
-            }
-
-                //if (orderModel.Payment == PayTypeEnum.Balance.GetHashCode())//余额
-                //{
-                //    CancelBalanceOrder(orderModel, orderOptionModel);
-                //}            
-                //else if (orderModel.Payment == PayTypeEnum.ZhiFuBao.GetHashCode())//支付宝 
-                //{
-                //    CancelTaoOrder(orderModel, orderOptionModel);
-                //}
-                //else if(orderModel.Payment == PayTypeEnum.WeiXin.GetHashCode())//微信
-                //{
-                //    CancelWxOrder(orderModel, orderOptionModel);
-                //}
-
-
-                return ResultModel<object>.Conclude(OrderApiStatusType.Success);
-        }
-
-        #region 用户自定义方法闪送 余额
-        void CancelBalanceOrder(OrderListModel orderModel, OrderOptionModel orderOptionModel)
-        {
-            if ((bool)orderModel.IsPay)
-            {
                 //修改订单状态
                 orderDao.CancelOrder(orderModel, orderOptionModel);
                 //更新取消状态
                 orderOtherDao.UpdateCancelTime(orderModel.Id);
 
-                // 更新商户余额、可提现余额                        
-                iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
-                {
-                    BusinessId = orderModel.businessId,
-                    Amount = orderModel.AmountAndTip,
-                    Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
-                    RecordType = BusinessBalanceRecordRecordType.CancelOrder.GetHashCode(),
-                    Operator = orderModel.OptUserName,
-                    WithwardId = orderModel.Id,
-                    RelationNo = orderModel.OrderNo,
-                    Remark = orderModel.Remark
-                });
+                tran.Complete();
             }
-            else
+
+
+
+             return ResultModel<object>.Conclude(OrderApiStatusType.Success);
+        }
+
+       ResultModel<object> CancelOrder(OrderTipCost otcModel, OrderListModel orderModel)
+        {
+            try
             {
-                //修改订单状态
-                orderDao.CancelOrder(orderModel, orderOptionModel);
-                //更新取消状态
-                orderOtherDao.UpdateCancelTime(orderModel.Id);
+                switch (otcModel.PayType)
+                {
+                    case 0://现金
+                        {
+                            if (otcModel.PayStates == 0)
+                            {
+                                UpdateOrderTipBalance(otcModel, orderModel, false);
+                            }
+                            else
+                            {
+                                UpdateOrderTipBalance(otcModel, orderModel, true);
+                            }
+                        }
+                        break;
+                    case 1://支付宝
+                        {
+                            AlipayTradeQueryResponse response = aliPayApi.Query(otcModel);
+                            if (otcModel.PayStates == 0)//未支付
+                            {
+                                //string str = response.Body;
+                                //if (alipayTradeQueryResponse.Code != "10000")                                                  
+                                
+                                ////验证
+                                //bool isCancel = false;
+                                //if(isCancel)
+                                //{
+                                //    return  ResultModel<object>.Conclude(OrderApiStatusType.OrderTipCostIsCancel);
+                                //}
+
+                                //bool isExist = false;//查询是否存在                                
+                                //if (isExist)
+                                //{
+                                //    AlipayTradeCancelResponse alipayTradeCancelResponse= aliPayApi.Cancel(otcModel);
+                                //    bool cancelState=false;
+                                //    if (cancelState)//取消成功
+                                //    {
+                                //        UpdateOrderTipBalance(otcModel, orderModel, false);
+                                //    }
+                                //    else
+                                //    {
+                                //        return ResultModel<object>.Conclude(OrderApiStatusType.OrderTipCostCancelErr);
+                                //    }
+                                //}
+                                //else
+                                //{
+                                //    UpdateOrderTipBalance(otcModel, orderModel, false);
+                                //}
+                            }
+
+                            if(otcModel.PayStates == 1)//已付款
+                            {                            
+                            //    //验证 不存在
+                            //    bool isRefund = false;
+                            //    if (isRefund)
+                            //    {
+                            //        return ResultModel<object>.Conclude(OrderApiStatusType.OrderNotExist);
+                            //    }
+                            //    //已关闭
+                            //    //未付款
+
+                             
+                            //    AlipayTradeCancelResponse alipayTradeCancelResponse = aliPayApi.Cancel(otcModel);
+                            //    bool refundState = false;
+                            //    if (refundState)//退款成功
+                            //    {
+                            //        UpdateOrderTipBalance(otcModel, orderModel, true);
+                            //   }
+                            //   else
+                            //   {
+                            //        return ResultModel<object>.Conclude(OrderApiStatusType.OrderTipCostCancelErr);
+                            //   }                            
+                            }
+                        }
+                        break;
+                    case 2://微信
+                         {
+                            ETS.Library.Pay.SSBWxPay.NativePay nativePay = new ETS.Library.Pay.SSBWxPay.NativePay(); 
+                            if (otcModel.PayStates == 0)//未支付
+                            {
+                                //验证 已关闭
+                                ETS.Library.Pay.SSBWxPay.WxPayData wxPayData = nativePay.OrderQuery(otcModel.OutTradeNo);
+                                if (wxPayData.GetValue("trade_state") != null && wxPayData.GetValue("trade_state").ToString().ToUpper() == "CLOSED")
+                                {
+                                    return ResultModel<object>.Conclude(OrderApiStatusType.OrderTipCostPayCLOSED); 
+                                }
+                                //已付款
+                                if (wxPayData.GetValue("trade_state") != null && wxPayData.GetValue("trade_state").ToString().ToUpper() == "SUCCESS")
+                                {
+                                    return ResultModel<object>.Conclude(OrderApiStatusType.OrderTipCostPaySUCCESS);
+                                }
+                                //已退款
+                                if (wxPayData.GetValue("trade_state") != null && wxPayData.GetValue("trade_state").ToString().ToUpper() == "REFUND")
+                                {
+                                    return ResultModel<object>.Conclude(OrderApiStatusType.OrderTipCostPaySREFUND);
+                                }
+
+                                if (wxPayData.GetValue("return_code").ToString().ToUpper() == "SUCCESS" &&
+                                    wxPayData.GetValue("result_code").ToString().ToUpper() == "FAIL"
+                                    )//不存在
+                                {
+                                    UpdateOrderTipBalance(otcModel, orderModel, false);
+                                }
+                                else
+                                {
+                                    bool cancelState = nativePay.CloseOrder(otcModel.OutTradeNo);
+                                    if (cancelState)
+                                    {
+                                        UpdateOrderTipBalance(otcModel, orderModel, false);
+                                    }
+                                    else
+                                    {
+                                        return ResultModel<object>.Conclude(OrderApiStatusType.OrderTipCostPayErr);
+                                    }                       
+                                }                  
+                            }
+
+                            if(otcModel.PayStates == 1)//已付款
+                            {
+                                //验证
+                                ETS.Library.Pay.SSBWxPay.WxPayData wxPayData = nativePay.OrderQuery(otcModel.OutTradeNo);
+                                //不存在
+                                if (wxPayData.GetValue("return_code").ToString().ToUpper() == "SUCCESS" &&
+                                  wxPayData.GetValue("result_code").ToString().ToUpper() == "FAIL"
+                                  )
+                                {
+                                    return ResultModel<object>.Conclude(OrderApiStatusType.OrderNotExist);
+                                }
+                                //已关闭
+                                if (wxPayData.GetValue("trade_state") != null && wxPayData.GetValue("trade_state").ToString().ToUpper() == "CLOSED")
+                                {
+                                    return ResultModel<object>.Conclude(OrderApiStatusType.OrderTipCostPayCLOSED);
+                                }
+                                //未付款
+                                if (wxPayData.GetValue("trade_state") != null && wxPayData.GetValue("trade_state").ToString().ToUpper() == "NOTPAY")
+                                {
+                                    return ResultModel<object>.Conclude(OrderApiStatusType.OrderTipCostPayNOTPAY);
+                                }
+                                //已退款
+                                if (wxPayData.GetValue("trade_state") != null && wxPayData.GetValue("trade_state").ToString().ToUpper() == "REFUND")
+                                {
+                                    return ResultModel<object>.Conclude(OrderApiStatusType.OrderTipCostPaySREFUND);
+                                }                                
+
+                                bool refundState = nativePay.Refund(otcModel.OutTradeNo, otcModel.OriginalOrderNo, Convert.ToInt32(otcModel.Amount * 100), Convert.ToInt32(otcModel.Amount * 100), orderModel.businessId.ToString());
+                                if (refundState)
+                                {
+                                    UpdateOrderTipBalance(otcModel, orderModel,true);
+                                }
+                                else
+                                {
+                                    return ResultModel<object>.Conclude(OrderApiStatusType.OrderTipCostPayErr);
+                                }            
+                            }
+                        }
+                        break;
+                }
             }
+            catch (Exception err)
+            {
+                return ResultModel<object>.Conclude(OrderApiStatusType.Fail);
+            }
+            return ResultModel<object>.Conclude(OrderApiStatusType.CancelSuccess);
         }
-        #endregion
-
-        #region 用户自定义方法闪送  支付宝
-        /// <summary>
-        /// 支付宝取消订单 闪送模式
-        /// </summary>
-        /// <param name="orderModel"></param>
-        /// <param name="orderOptionModel"></param>
-        void CancelTaoOrder(OrderListModel orderModel, OrderOptionModel orderOptionModel)
-        {
-            //ETS.Library.Pay.SSAliPay.AliNativePay  
-            ETS.Library.Pay.SSAliPay.AliPayApi aliPayApi = new ETS.Library.Pay.SSAliPay.AliPayApi();
-        }
-        #endregion
 
 
-        #region 用户自定义方法闪送 微信
-        /// <summary>
-        /// 微信取消订单 闪送模式
-        /// </summary>
-        /// <param name="orderModel"></param>
-        /// <param name="orderOptionModel"></param>
-        void CancelWxOrder(OrderListModel orderModel, OrderOptionModel orderOptionModel)
-        {
-            //查询订单
-            ETS.Library.Pay.SSBWxPay.NativePay nativePay = new ETS.Library.Pay.SSBWxPay.NativePay();       
-            ETS.Library.Pay.SSBWxPay.WxPayData queryResul = nativePay.OrderQuery(orderModel.OrderNo);
+       bool UpdateOrderTipBalance(OrderTipCost otcModel, OrderListModel orderModel, bool isBalance)
+       {
+           //更新小费表状态
+           OrderTipCost upOrderTipCostModel = new OrderTipCost();
+           upOrderTipCostModel.Id = otcModel.Id;
+           upOrderTipCostModel.PayStates = -1;
+           int otcdId = orderTipCostDao.UpdatePayStates(upOrderTipCostModel);
+           if (otcdId <= 0)
+               return false;
+
+           if (isBalance)
+           {
+               // 更新商户余额、可提现余额                        
+               iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
+               {
+                   BusinessId = orderModel.businessId,
+                   Amount = otcModel.Amount,
+                   Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
+                   RecordType = BusinessBalanceRecordRecordType.CancelOrder.GetHashCode(),
+                   Operator = orderModel.BusinessName,
+                   WithwardId = orderModel.Id,
+                   RelationNo = orderModel.OrderNo,
+                   Remark = orderModel.Remark
+               });
+           }
+
+           return true;
+       }
+
+
+        //#region 用户自定义方法闪送  支付宝
+        ///// <summary>
+        ///// 支付宝取消订单 闪送模式
+        ///// </summary>
+        ///// <param name="orderModel"></param>
+        ///// <param name="orderOptionModel"></param>
+        //void CancelTaoOrder(OrderListModel orderModel, OrderOptionModel orderOptionModel)
+        //{
+        //    //ETS.Library.Pay.SSAliPay.AliNativePay  
+        //    ETS.Library.Pay.SSAliPay.AliPayApi aliPayApi = new ETS.Library.Pay.SSAliPay.AliPayApi();
+        //}
+        //#endregion
+
+
+        //#region 用户自定义方法闪送 微信
+        ///// <summary>
+        ///// 微信取消订单 闪送模式
+        ///// </summary>
+        ///// <param name="orderModel"></param>
+        ///// <param name="orderOptionModel"></param>
+        //void CancelWxOrder(OrderListModel orderModel, OrderOptionModel orderOptionModel)
+        //{
+        //    //查询订单
+        //    ETS.Library.Pay.SSBWxPay.NativePay nativePay = new ETS.Library.Pay.SSBWxPay.NativePay();       
+        //    ETS.Library.Pay.SSBWxPay.WxPayData queryResul = nativePay.OrderQuery(orderModel.OrderNo);
             
-            if (queryResul.GetValue("trade_state") != null && queryResul.GetValue("trade_state").ToString().ToUpper() == "CLOSED")
-            {
-                return;
-            }
+        //    if (queryResul.GetValue("trade_state") != null && queryResul.GetValue("trade_state").ToString().ToUpper() == "CLOSED")
+        //    {
+        //        return;
+        //    }
 
-            bool isExist = false, isPay = false;
-            if (queryResul.GetValue("return_code").ToString().ToUpper() == "SUCCESS" &&
-                queryResul.GetValue("result_code").ToString().ToUpper() == "FAIL"
-                )
-            {
-                isExist = false;
-            }
-            else
-            {
-                isExist = true;
-            }
-            if (queryResul.GetValue("trade_state") != null && queryResul.GetValue("trade_state").ToString().ToUpper() == "SUCCESS")
-            {
-                isPay = true;
-            }           
+        //    bool isExist = false, isPay = false;
+        //    if (queryResul.GetValue("return_code").ToString().ToUpper() == "SUCCESS" &&
+        //        queryResul.GetValue("result_code").ToString().ToUpper() == "FAIL"
+        //        )
+        //    {
+        //        isExist = false;
+        //    }
+        //    else
+        //    {
+        //        isExist = true;
+        //    }
+        //    if (queryResul.GetValue("trade_state") != null && queryResul.GetValue("trade_state").ToString().ToUpper() == "SUCCESS")
+        //    {
+        //        isPay = true;
+        //    }           
     
-            //已付款 已存在
-            if (isPay)
-            {
-                Refund(orderModel, orderOptionModel);
-            }
-            //未付款
-            else if (!isPay)
-            {
-                CloseOrder(orderModel, orderOptionModel, isExist);
-            }
-        }
+        //    //已付款 已存在
+        //    if (isPay)
+        //    {
+        //        Refund(orderModel, orderOptionModel);
+        //    }
+        //    //未付款
+        //    else if (!isPay)
+        //    {
+        //        CloseOrder(orderModel, orderOptionModel, isExist);
+        //    }
+        //}
 
-        /// <summary>
-        /// 微信取消订单
-        /// </summary>
-        /// 胡灵波
-        /// 2015年12月15日 11:38:02
-        /// <param name="orderModel"></param>
-        /// <param name="orderOptionModel"></param>
-        /// <param name="isExist"></param>
-        void CloseOrder(OrderListModel orderModel, OrderOptionModel orderOptionModel, bool isExist)
-        {
-            ETS.Library.Pay.SSBWxPay.NativePay nativePay = new ETS.Library.Pay.SSBWxPay.NativePay();       
-            if (isExist)//存在支付订单，且取消成功
-            {
-                bool blNativePay = nativePay.CloseOrder(orderModel.OrderNo);
-                if (blNativePay)
-                {
-                    //修改订单状态
-                    orderDao.CancelOrder(orderModel, orderOptionModel);
-                    //更新取消状态
-                    orderOtherDao.UpdateCancelTime(orderModel.Id);
-                }
-            }
-            else
-            {
-                //修改订单状态
-                orderDao.CancelOrder(orderModel, orderOptionModel);
-                //更新取消状态
-                orderOtherDao.UpdateCancelTime(orderModel.Id);
-            }
-        }
+        ///// <summary>
+        ///// 微信取消订单
+        ///// </summary>
+        ///// 胡灵波
+        ///// 2015年12月15日 11:38:02
+        ///// <param name="orderModel"></param>
+        ///// <param name="orderOptionModel"></param>
+        ///// <param name="isExist"></param>
+        //void CloseOrder(OrderListModel orderModel, OrderOptionModel orderOptionModel, bool isExist)
+        //{
+        //    ETS.Library.Pay.SSBWxPay.NativePay nativePay = new ETS.Library.Pay.SSBWxPay.NativePay();       
+        //    if (isExist)//存在支付订单，且取消成功
+        //    {
+        //        bool blNativePay = nativePay.CloseOrder(orderModel.OrderNo);
+        //        if (blNativePay)
+        //        {
+        //            //修改订单状态
+        //            orderDao.CancelOrder(orderModel, orderOptionModel);
+        //            //更新取消状态
+        //            orderOtherDao.UpdateCancelTime(orderModel.Id);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        //修改订单状态
+        //        orderDao.CancelOrder(orderModel, orderOptionModel);
+        //        //更新取消状态
+        //        orderOtherDao.UpdateCancelTime(orderModel.Id);
+        //    }
+        //}
 
-        /// <summary>
-        /// 微信退款
-        /// </summary>
-        /// 胡灵波
-        /// 2015年12月15日 11:38:22
-        /// <param name="orderModel"></param>
-        /// <param name="orderOptionModel"></param>
-        void Refund(OrderListModel orderModel, OrderOptionModel orderOptionModel)
-        {
-            ETS.Library.Pay.SSBWxPay.NativePay nativePay = new ETS.Library.Pay.SSBWxPay.NativePay();       
-            bool blNativePay = nativePay.Refund(orderModel.OrderNo, "110101000", 2, 2, "1243442302");
-            if (blNativePay)
-            {
-                //修改订单状态
-                orderDao.CancelOrder(orderModel, orderOptionModel);
-                //更新取消状态
-                orderOtherDao.UpdateCancelTime(orderModel.Id);
+        ///// <summary>
+        ///// 微信退款
+        ///// </summary>
+        ///// 胡灵波
+        ///// 2015年12月15日 11:38:22
+        ///// <param name="orderModel"></param>
+        ///// <param name="orderOptionModel"></param>
+        //void Refund(OrderListModel orderModel, OrderOptionModel orderOptionModel)
+        //{
+        //    ETS.Library.Pay.SSBWxPay.NativePay nativePay = new ETS.Library.Pay.SSBWxPay.NativePay();       
+        //    bool blNativePay = nativePay.Refund(orderModel.OrderNo, "110101000", 2, 2, "1243442302");
+        //    if (blNativePay)
+        //    {
+        //        //修改订单状态
+        //        orderDao.CancelOrder(orderModel, orderOptionModel);
+        //        //更新取消状态
+        //        orderOtherDao.UpdateCancelTime(orderModel.Id);
 
-                // 更新商户余额、可提现余额                        
-                iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
-                {
-                    BusinessId = orderModel.businessId,
-                    Amount = orderModel.AmountAndTip,
-                    Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
-                    RecordType = BusinessBalanceRecordRecordType.CancelOrder.GetHashCode(),
-                    Operator = orderModel.OptUserName,
-                    WithwardId = orderModel.Id,
-                    RelationNo = orderModel.OrderNo,
-                    Remark = orderModel.Remark
-                });
-            }
-        }
+        //        // 更新商户余额、可提现余额                        
+        //        iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
+        //        {
+        //            BusinessId = orderModel.businessId,
+        //            Amount = orderModel.AmountAndTip,
+        //            Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
+        //            RecordType = BusinessBalanceRecordRecordType.CancelOrder.GetHashCode(),
+        //            Operator = orderModel.OptUserName,
+        //            WithwardId = orderModel.Id,
+        //            RelationNo = orderModel.OrderNo,
+        //            Remark = orderModel.Remark
+        //        });
+        //    }
+        //}
 
-        #endregion
+        //#endregion
     }
 }

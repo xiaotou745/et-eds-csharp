@@ -2505,8 +2505,8 @@ namespace Ets.Service.Provider.Pay
                 {
                     zfAmount = orderChildModel.TotalPrice + olModel.TipAmount;
                 }
-
-                ResultModel<PayResultModel> payResult = CreateWxSSPayOrder(orderCombinationNo, zfAmount, req.orderId, Helper.GenCode(12));
+                
+                ResultModel<PayResultModel> payResult = CreateWxSSPayOrder(orderCombinationNo, zfAmount, req.orderId, Helper.GenCode(16));
                 var redis = new RedisCache();
                 string key = string.Concat(req.orderId, orderChildModel.Id);
                 bool isExist = redis.Get<bool>(key);
@@ -2523,7 +2523,7 @@ namespace Ets.Service.Provider.Pay
                         otcModel.CreateTime = DateTime.Now;
                         otcModel.PayStates = 0;//未支付
                         otcModel.OriginalOrderNo = "";
-                        otcModel.PayType = 2;//支付宝
+                        otcModel.PayType = 2;//微信
                         otcModel.OutTradeNo = orderCombinationNo;
                         orderTipCostDao.Insert(otcModel);
                     }
@@ -2538,7 +2538,7 @@ namespace Ets.Service.Provider.Pay
                         otcModel.CreateTime = DateTime.Now;
                         otcModel.PayStates = 0;//未支付
                         otcModel.OriginalOrderNo = "";
-                        otcModel.PayType = 2;//支付宝
+                        otcModel.PayType = 2;//微信
                         otcModel.OutTradeNo = orderCombinationNo;
                         orderTipCostDao.Insert(otcModel);
                     }
@@ -2754,7 +2754,7 @@ namespace Ets.Service.Provider.Pay
                         OrderTipCost otcModel = new OrderTipCost();                  
                         otcModel.UpdateName=businessModel.Name;
                         otcModel.PayType = 1;//支付宝
-                        otcModel.OutTradeNo = out_trade_no;
+                        otcModel.OutTradeNo = out_trade_no;                        
                         orderTipCostDao.UpdateByOutTradeNo(otcModel);
                         #endregion
                     }
@@ -2889,10 +2889,10 @@ namespace Ets.Service.Provider.Pay
                         //写订单小费
                         OrderTipCost otcModel = new OrderTipCost();
                         otcModel.UpdateName = businessModel.Name;
-                        otcModel.PayType = 2;//支付宝
+                        otcModel.PayType = 2;//微信
                         otcModel.OutTradeNo = attach;
+                        otcModel.OriginalOrderNo = notify.transaction_id;
                         orderTipCostDao.UpdateByOutTradeNo(otcModel);
-
                         //更新总的小费
                         orderDao.UpdateTipAmount(orderId, ParseHelper.ToDecimal(notify.total_fee));
                         #endregion
@@ -2921,8 +2921,9 @@ namespace Ets.Service.Provider.Pay
                         //写订单小费
                         OrderTipCost otcModel = new OrderTipCost();
                         otcModel.UpdateName = businessModel.Name;
-                        otcModel.PayType = 2;//支付宝
+                        otcModel.PayType = 2;//微信
                         otcModel.OutTradeNo = attach;
+                        otcModel.OriginalOrderNo = notify.transaction_id;
                         orderTipCostDao.UpdateByOutTradeNo(otcModel);
 
                         #endregion

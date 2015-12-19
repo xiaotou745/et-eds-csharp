@@ -101,19 +101,37 @@ where  ";
 			  DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
 		}
         /// <summary>
+        /// 取消订单 更新小费状态
+        /// </summary>
+        /// <param name="orderTipCost"></param>
+        public int UpdatePayStates(OrderTipCost orderTipCost)
+        {
+            const string updateSql = @"
+update  OrderTipCost
+set  PayStates=@PayStates
+where Id=@Id ";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("Id", orderTipCost.Id);   
+            dbParameters.AddWithValue("PayStates", orderTipCost.PayStates);
+
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+        }
+        /// <summary>
         /// 更新一条记录
         /// </summary>
         public void UpdateByOutTradeNo(OrderTipCost orderTipCost)
         {
             const string updateSql = @"
 update  OrderTipCost
-set   UpdateName=@UpdateName, UpdateTime=getdate(),PayStates=1
+set   UpdateName=@UpdateName,OriginalOrderNo=@OriginalOrderNo, UpdateTime=getdate(),PayStates=1
 where  PayType=@PayType and OutTradeNo=@OutTradeNo";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("UpdateName", orderTipCost.UpdateName);
             dbParameters.AddWithValue("PayType", orderTipCost.PayType);
             dbParameters.AddWithValue("OutTradeNo", orderTipCost.OutTradeNo);
+            dbParameters.AddWithValue("OriginalOrderNo", orderTipCost.OriginalOrderNo);
 
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }	
@@ -146,7 +164,7 @@ where  Id=@Id";
         {
             IList<OrderTipCost> models = new List<OrderTipCost>();
             const string querysql = @"
-select Id,OrderId,Amount,CreateName,CreateTime,PayStates,OriginalOrderNo,PayType,OutTradeNo from OrderTipCost where orderId=@orderId ";
+select Id,OrderId,Amount,CreateName,CreateTime,PayStates,OriginalOrderNo,PayType,OutTradeNo from OrderTipCost where orderId=@orderId and PayStates>-1";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("orderId", orderId);
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));

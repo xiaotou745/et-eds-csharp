@@ -22,7 +22,7 @@ namespace Ets.Provider.Tests
         {
             AliPayApi pay = new AliPayApi();
             //pay.Query();
-            AlipayTradeRefundResponse fund = pay.Refund();
+            //AlipayTradeRefundResponse fund = pay.Refund();
 
         }
         /// <summary>

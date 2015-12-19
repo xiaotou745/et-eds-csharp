@@ -82,7 +82,7 @@ namespace ETS.Library.Pay.SSBWxPay
             WxPayData data = new WxPayData();
             data.SetValue("body", body);//商品描述
             data.SetValue("attach", productId);//附加数据
-            data.SetValue("out_trade_no", orderNo);//随机字符串
+            data.SetValue("out_trade_no", productId);//随机字符串
             string total = (total_fee * 100).ToString();
             total = total.Contains(".") ? total.Split('.')[0] : total;
 

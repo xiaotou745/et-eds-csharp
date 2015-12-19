@@ -9,6 +9,7 @@ using Aop.Api.Response;
 using Aop.Api.Util;
 using Aop.Api;
 using Jayrock.Json;
+using Ets.Model.DataModel.Order;
 namespace ETS.Library.Pay.SSAliPay
 {
     //相关资料
@@ -40,14 +41,14 @@ namespace ETS.Library.Pay.SSAliPay
         /// 胡灵波
         /// 2015年12月11日 13:42:44
         /// <returns></returns>
-        public AlipayTradeQueryResponse Query(string out_trade_no)
+        public AlipayTradeQueryResponse Query(OrderTipCost record)
         {
             IAopClient client = new DefaultAopClient("https://openapi.alipay.com/gateway.do", app_id, merchant_private_key, "json", "1.1", "RSA", alipay_public_key, "GBK");
             AlipayTradeQueryRequest request = new AlipayTradeQueryRequest();
             var bizContent = new JsonObject();
             //易代送单号
             //bizContent.Put("out_trade_no", "143594_2008150702170126083_332787_1_0_1.02_1.01");
-            bizContent.Put("out_trade_no", out_trade_no);
+            bizContent.Put("out_trade_no", record.OutTradeNo);
             request.BizContent = bizContent.ToString();
             AlipayTradeQueryResponse response = client.Execute(request);
             return response;
@@ -59,20 +60,37 @@ namespace ETS.Library.Pay.SSAliPay
         /// 胡灵波
         /// 2015年12月10日 10:27:23
         /// <returns></returns>
-        public AlipayTradeRefundResponse Refund()
+        public AlipayTradeRefundResponse Refund(OrderTipCost record)
         {
+            //IAopClient client = new DefaultAopClient("https://openapi.alipay.com/gateway.do", app_id, merchant_private_key, "json", "1.1", "RSA", alipay_public_key, "GBK");
+            //AlipayTradeRefundRequest request = new AlipayTradeRefundRequest();
+            ////request.BizContent = "your json params";
+            //var bizContent = new JsonObject();
+            ////bizContent.Put("out_trade_no", "143594_2008150702170126083_332787_1_0_1.02_1.01");
+            ////支付宝交易号
+            //bizContent.Put("trade_no", "2015121621001004370095287987");
+            ////退款金额
+            //bizContent.Put("refund_amount", "1.02");
+            ////bizContent.Put("refund_amount", refundAmount.ToString("F"));
+            ////退款原因
+            //bizContent.Put("refund_reason", "测试取消订单");
+            //request.BizContent = bizContent.ToString();
+            //AlipayTradeRefundResponse response = client.Execute(request);
+            //return response;
+
+
             IAopClient client = new DefaultAopClient("https://openapi.alipay.com/gateway.do", app_id, merchant_private_key, "json", "1.1", "RSA", alipay_public_key, "GBK");
             AlipayTradeRefundRequest request = new AlipayTradeRefundRequest();
             //request.BizContent = "your json params";
             var bizContent = new JsonObject();
             //bizContent.Put("out_trade_no", "143594_2008150702170126083_332787_1_0_1.02_1.01");
             //支付宝交易号
-            bizContent.Put("trade_no", "2015121621001004370095287987");
+            bizContent.Put("trade_no", record.OriginalOrderNo);
             //退款金额
-            bizContent.Put("refund_amount", "1.02");
+            bizContent.Put("refund_amount", record.Amount);
             //bizContent.Put("refund_amount", refundAmount.ToString("F"));
             //退款原因
-            bizContent.Put("refund_reason", "测试取消订单");
+            bizContent.Put("refund_reason", "取消订单");
             request.BizContent = bizContent.ToString();
             AlipayTradeRefundResponse response = client.Execute(request);
             return response;
@@ -83,7 +101,7 @@ namespace ETS.Library.Pay.SSAliPay
         /// 胡灵波
         /// 2015年12月10日 10:29:40
         /// <returns></returns>
-        public AlipayTradeCancelResponse Cancel()
+        public AlipayTradeCancelResponse Cancel(OrderTipCost record)
         {
             IAopClient client = new DefaultAopClient("https://openapi.alipay.com/gateway.do", "app_id", merchant_private_key, "json", "RSA", alipay_public_key, "GBK");
             AlipayTradeCancelRequest request = new AlipayTradeCancelRequest();
@@ -92,5 +110,5 @@ namespace ETS.Library.Pay.SSAliPay
             return response;
 
         }
-    }
+    }  
 }

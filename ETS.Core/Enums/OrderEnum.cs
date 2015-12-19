@@ -69,6 +69,16 @@ namespace ETS.Enums
         [DisplayText("成功")]
         Success = 0,
         /// <summary>
+        /// 取消成功
+        /// </summary>
+        [DisplayText("取消成功")]
+        CancelSuccess = 200,
+        /// <summary>
+        /// 失败
+        /// </summary>
+        [DisplayText("失败")]
+        Fail= -1,
+        /// <summary>
         /// 签名错误
         /// </summary>
         [DisplayText("签名错误")]
@@ -102,7 +112,52 @@ namespace ETS.Enums
         /// 订单已分账
         /// </summary>
         [DisplayText("订单已分账")]
-        OrderIsJoinWithdraw = 10006,
+        OrderIsJoinWithdraw = 10006,   
+        
+          /// <summary>
+        /// 更新订单小费状态错误
+        /// </summary>
+        [DisplayText("更新订单小费状态错误")]
+        OrderTipCostPayStatesErr = 10007,
+
+        /// <summary>
+        /// 支付成功
+        /// </summary>
+        [DisplayText("支付成功")]
+        OrderTipCostPaySUCCESS = 10008,
+
+
+        /// <summary>
+        /// 转入退款
+        /// </summary>
+        [DisplayText("转入退款")]
+        OrderTipCostPaySREFUND = 10009,
+  
+         /// <summary>
+        /// 未支付
+        /// </summary>
+        [DisplayText("未支付")]
+        OrderTipCostPayNOTPAY = 10010,
+
+        
+         /// <summary>
+        /// 已关闭
+        /// </summary>
+        [DisplayText("已关闭")]
+        OrderTipCostPayCLOSED = 10011,
+
+         /// <summary>
+        /// 支付失败
+        /// </summary>
+        [DisplayText("支付失败")]
+        OrderTipCostPayPAYERROR= 10012,
+
+        /// <summary>
+        /// 支付取消错误
+        /// </summary>
+        [DisplayText("支付取消错误")]
+        OrderTipCostPayErr = 10013,       
+
         
         /// <summary>
         /// 订单已经接入到E代送系统，无法取消订单
