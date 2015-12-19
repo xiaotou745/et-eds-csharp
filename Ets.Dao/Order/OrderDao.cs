@@ -2542,8 +2542,7 @@ o.clienterId, o.businessId
 from    dbo.[order] o ( nolock )
         join dbo.OrderOther oo ( nolock ) on o.Id = oo.OrderId
 where   oo.IsJoinWithdraw = 0    
-        and o.Status = 1 --已完成订单
-        and o.FinishAll=1
+        and o.Status = 1 --已完成订单        
         and o.platform=3
         and datediff(hour, o.ActualDoneDate, getdate()) >= @hour";
             IDbParameters parm = DbHelper.CreateDbParameters("@hour", DbType.Int64, 4, hour);
