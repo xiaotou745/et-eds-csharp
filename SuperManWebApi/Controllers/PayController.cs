@@ -161,13 +161,9 @@ namespace SuperManWebApi.Controllers
         {
             payProvider.BusinessRechargeWxNotify();
         }
-
-        #endregion
-
-        #region 商家冲值 闪送模式
-
+        
         /// <summary>
-        /// 商家充值回调方法回调 支付宝
+        /// 闪送 商家充值回调方法回调 支付宝
         /// 胡灵波
         /// 2015年12月21日 15:47:09
         /// </summary>
@@ -178,7 +174,7 @@ namespace SuperManWebApi.Controllers
         }
 
         /// <summary>
-        /// 商家充值微信回调方法回调
+        /// 闪送商家充值微信回调方法回调
         /// 胡灵波
         /// 2015年12月21日 15:47:19
         /// </summary>
@@ -187,8 +183,8 @@ namespace SuperManWebApi.Controllers
         {
             payProvider.SSBusinessRechargeWxNotify();
         }              
-
         #endregion
+
 
         #region 支付宝
 

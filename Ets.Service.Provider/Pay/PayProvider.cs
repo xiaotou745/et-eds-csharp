@@ -79,7 +79,7 @@ namespace Ets.Service.Provider.Pay
         /// </summary>
         /// <param name="model"></param>       
         public ResultModel<PayResultModel> CreatePay(Model.ParameterModel.AliPay.PayModel model)
-        {
+        {           
             LogHelper.LogWriter("=============支付请求数据：", model);
             PayStatusModel payStatusModel = orderChildDao.GetPayStatus(model.orderId, model.childId);
             if (payStatusModel == null)
@@ -107,7 +107,7 @@ namespace Ets.Service.Provider.Pay
             if (model.payType == PayTypeEnum.WeiXin.GetHashCode())
             {
                 //微信支付
-                LogHelper.LogWriter("=============微信支付：");           
+                LogHelper.LogWriter("=============微信支付：");
                 return CreateWxPayOrder(orderNo, payStatusModel.TotalPrice, model.orderId, model.payStyle);
             }
             return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
@@ -359,8 +359,7 @@ namespace Ets.Service.Provider.Pay
                     int productId = ParseHelper.ToInt(orderNo.Split('_')[0]);//产品编号
                     int orderId = ParseHelper.ToInt(orderNo.Split('_')[1]);//主订单号
                     int orderChildId = ParseHelper.ToInt(orderNo.Split('_')[2]);//子订单号
-                    int payStyle = ParseHelper.ToInt(orderNo.Split('_')[3]);//支付方式(1 用户支付 2 骑士代付 3商户支付)
-                    int oType = ParseHelper.ToInt(orderNo.Split('_')[4]);// 订单状态0订单支付，1小费
+                    int payStyle = ParseHelper.ToInt(orderNo.Split('_')[3]);//支付方式(1 用户支付 2 骑士代付 3商户支付)              
                     if (orderId <= 0 || orderChildId <= 0)
                     {
                         string fail = string.Concat("错误啦orderId：", orderId, ",orderChildId:", orderChildId);
