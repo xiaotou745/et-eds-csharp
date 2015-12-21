@@ -1866,7 +1866,7 @@ SELECT gbr.IsEnable,  isnull(DistribSubsidy,0) as DistribSubsidy,
             CASE WHEN gbr.IsBind=1 THEN gb.Amount
             ELSE 0  END GroupBusinessAmount           
             from Business b (nolock) 
-LEFT JOIN   GroupBusinessRelation gbr (NOLOCK)    ON b.Id=gbr.BusinessId  AND IsEnable=1
+LEFT JOIN   GroupBusinessRelation gbr (NOLOCK)    ON b.Id=gbr.BusinessId  AND gbr.IsEnable=1
 LEFT JOIN GroupBusiness gb (NOLOCK) ON gbr.Groupid=gb.Id 
 where b.Id=@Id";
 
