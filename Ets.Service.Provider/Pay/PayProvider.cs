@@ -424,11 +424,11 @@ namespace Ets.Service.Provider.Pay
             BusinessRechargeResultModel resultModel = new BusinessRechargeResultModel();
             if (model.PayType == PayTypeEnum.WeiXin.GetHashCode())
             {
-                if (model.CType == PayModelEnum.EDS.GetHashCode())//如果是闪送模式
+                if (model.PlatForm == PayModelEnum.EDS.GetHashCode())//如果是闪送模式
                 {
                     #region 闪送模式
                     ETS.Library.Pay.SSBWxPay.NativePay nativePay = new ETS.Library.Pay.SSBWxPay.NativePay();
-                    string prepayId = nativePay.GetPayPrepayId(model.Businessid, orderNo, model.payAmount, "E代送商家充值", Config.WXBusinessRecharge);
+                    string prepayId = nativePay.GetPayPrepayId(model.Businessid, orderNo, model.payAmount, "E代送商家充值", Config.SSBusinessRechargeWxNotify);
                     resultModel.prepayId = prepayId;
                     resultModel.notifyUrl = ETS.Config.SSBusinessRechargeWxNotify;//闪送模式回调地址
                     #endregion
@@ -446,12 +446,19 @@ namespace Ets.Service.Provider.Pay
             }
             else
             {
-                resultModel.notifyUrl = ETS.Config.NotifyUrl.Replace("Notify", "BusinessRechargeNotify");
+                if (model.PlatForm == PayModelEnum.EDS.GetHashCode())//如果是闪送模式
+                {
+                    resultModel.notifyUrl = ETS.Config.NotifyUrl.Replace("Notify", "SSBusinessRechargeNotify");
+                }
+                else
+                {
+                    resultModel.notifyUrl = ETS.Config.NotifyUrl.Replace("Notify", "BusinessRechargeNotify");
+                }
                 //resultModel.orderNo = orderNo;
             }
             resultModel.payAmount = model.payAmount;
             resultModel.orderNo = orderNo;
-            resultModel.PayType = model.PayType;
+            resultModel.payType = model.PayType;
 
             //所属产品_主订单号_子订单号_支付方式
 
@@ -689,6 +696,75 @@ namespace Ets.Service.Provider.Pay
         }
 
 
+        /// <summary>
+        /// 商家充值回调方法 
+        /// 窦海超
+        /// 2015年5月29日 15:17:07
+        /// </summary>
+        /// <returns></returns>
+        public dynamic SSBusinessRechargeNotify()
+        {
+            try
+            {
+                #region 参数绑定
+
+                var request = System.Web.HttpContext.Current.Request;
+                AlipayNotifyData notify = new AlipayNotifyData();
+                notify.buyer_email = request["buyer_email"];
+                notify.trade_status = request["trade_status"];
+                notify.out_trade_no = request["out_trade_no"];
+                notify.trade_no = request["trade_no"];
+                notify.total_fee = ParseHelper.ToDecimal(request["total_fee"], 0);
+                notify.out_biz_no = ParseHelper.ToInt(request["body"], 0);//businessid
+                #endregion
+                //如果状态为空或状态不等于同步成功和异步成功就认为是错误
+                if (string.IsNullOrEmpty(notify.trade_status) || notify.total_fee <= 0)
+                {
+                    string fail = string.Concat("商家充值状态是空或金额<=0");
+                    LogHelper.LogWriter(fail);
+                    return "fail";
+                }
+                #region 回调完成状态
+                if (notify.trade_status == "TRADE_SUCCESS" || notify.trade_status == "TRADE_FINISHED")
+                {
+                    if (new BusinessRechargeDao().Check(notify.trade_no))
+                    {
+                        //如果存在就退出，这里写的很扯，因为支付宝要的是success不带双引号.
+                        //但WEBAPI直接返回时带引号，所以现在要去库里查一次。
+                        //回头找到原因一定要改
+                        return "success";
+                    }
+
+                    string orderNo = notify.out_trade_no;
+                    if (string.IsNullOrEmpty(orderNo) || notify.out_biz_no <= 0)
+                    {
+                        string fail = string.Concat("商家充值错误啦orderNo：", orderNo, "，商家ID为：", notify.out_biz_no);
+                        LogHelper.LogWriter(fail);
+                        return "fail";
+                    }
+
+                    Ets.Model.DataModel.Business.BusinessRechargeModel businessRechargeModel = new Ets.Model.DataModel.Business.BusinessRechargeModel()
+                    {
+                        BusinessId = notify.out_biz_no,
+                        OrderNo = orderNo,
+                        OriginalOrderNo = notify.trade_no,//第三方的订单号
+                        PayAmount = notify.total_fee,
+                        PayBy = notify.buyer_email,
+                        PayStatus = 1,
+                        PayType = 1
+                    };
+                    BusinessRechargeSusess(businessRechargeModel);
+                }
+                #endregion
+
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(ex, "Alipay自动返回异常");
+                return "fail";
+            }
+            return "fail";
+        }
         /// <summary>
         /// 商家充值成功方法
         /// 窦海超 

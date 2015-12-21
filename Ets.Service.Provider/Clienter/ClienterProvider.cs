@@ -1803,7 +1803,7 @@ namespace Ets.Service.Provider.Clienter
             {
                 OrderId = njwModel.id,
                 Price = njwModel.clienterPrice,
-                OptName = njwModel.clienterId.ToString(),
+                OptName = "系统服务",
                 Remark = "闪送模式服务自动审核通过，增加" + njwModel.clienterPrice + "元可提现金额",
                 OptId = njwModel.clienterId,
                 OrderStatus = OrderOperationCommon.AuditStatusOk.GetHashCode(),
