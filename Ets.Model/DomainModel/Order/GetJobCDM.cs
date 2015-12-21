@@ -89,7 +89,7 @@ namespace Ets.Model.DomainModel.Order
         /// <summary>
         /// 送餐距离
         /// </summary>
-        public float KM { get; set; }
+        public string KM { get; set; }
 
         /// <summary>
         /// 取货状态默认0立即，1预约
