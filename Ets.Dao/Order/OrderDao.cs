@@ -3004,7 +3004,7 @@ order by a.id desc
                     : Math.Round(distanceToBusiness * 0.001, 2) + "km";
                 temp.Platform = ParseHelper.ToInt(dataRow["Platform"]);//来源（默认1、旧后台，2新后台）
                 temp.Weight = ParseHelper.ToFloat(dataRow["Weight"]);//订单总重量
-                temp.KM = ParseHelper.ToFloat(dataRow["KM"]);//送餐距离
+                temp.KM = ParseHelper.ToFloat(dataRow["KM"]).ToString("f1");//送餐距离
                 temp.TakeType = ParseHelper.ToInt(dataRow["TakeType"]);// 取货状态默认0立即，1预约
                 temp.SongCanDate = dataRow["SongCanDate"].ToString();
                 temp.ExpectedTakeTime = dataRow["ExpectedTakeTime"].ToString();
