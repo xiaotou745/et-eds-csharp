@@ -8,6 +8,7 @@ using Ets.Service.Provider.Pay;
 using NUnit.Framework;
 using ETS.Library.Pay.SSAliPay;
 using Aop.Api.Response;
+using Ets.Model.DataModel.Order;
 
 namespace Ets.Provider.Tests
 {
@@ -21,7 +22,10 @@ namespace Ets.Provider.Tests
         public void Refund()
         {
             AliPayApi pay = new AliPayApi();
-            //pay.Query();
+            OrderTipCost record = new OrderTipCost() {
+                OutTradeNo = "148358_340607_bb3818"
+            };
+            pay.Query(record);
             //AlipayTradeRefundResponse fund = pay.Refund();
 
         }

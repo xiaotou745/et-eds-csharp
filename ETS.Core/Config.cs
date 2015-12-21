@@ -111,6 +111,7 @@ namespace ETS
         /// </summary>
         public static string WXBusinessRecharge { get { return string.Concat(ConfigKey("YeePayNotifyUrl").TrimEnd('/'), "/Pay/BusinessRechargeWxNotify"); } }
 
+        
         /// <summary>
         /// 支付宝批量付款回调地址
         /// </summary>

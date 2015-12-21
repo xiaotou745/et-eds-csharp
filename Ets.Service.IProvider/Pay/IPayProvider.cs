@@ -67,7 +67,13 @@ namespace Ets.Service.IProvider.Pay
         /// <returns></returns>
         dynamic BusinessRechargeNotify();
 
-
+        /// <summary>
+        /// 商家充值回调方法 
+        /// 胡灵波
+        /// 2015年12月21日 15:42:49
+        /// </summary>
+        /// <returns></returns>
+        dynamic SSBusinessRechargeNotify();
         /// <summary>
         /// 查询支付状态
         /// 窦海超

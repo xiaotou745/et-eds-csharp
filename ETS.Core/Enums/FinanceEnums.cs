@@ -598,9 +598,9 @@ namespace ETS.Enums
     public enum PayModelEnum
     { 
         [DisplayText("易代送商户")]
-        Business=0,
+        Business=1,
         [DisplayText("易代送")]
-        EDS=1
+        EDS=3
     }
 
     /// <summary>
