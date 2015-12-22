@@ -2801,7 +2801,7 @@ namespace Ets.Service.Provider.Order
             }
 
             IList<Ets.Model.DataModel.Order.OrderTipCost> list = orderTipCostDao.GetListByOrderId(pm.OrderId);
-           
+
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 for (int i = 0; i < list.Count; i++)
@@ -2899,7 +2899,7 @@ namespace Ets.Service.Provider.Order
                                 //if (refundState)//退款成功
                                 if (alipayTradeRefundResponse.Msg == "Success")
                                 {
-                                    UpdateOrderTipBalance(otcModel, orderModel, true);
+                                    UpdateOrderTipBalance(otcModel, orderModel, false);//原来这里是true   窦海超
                                 }
                                 else
                                 {
@@ -3011,21 +3011,22 @@ namespace Ets.Service.Provider.Order
             if (otcdId <= 0)
                 return false;
 
-            if (isBalance)
+            //if (isBalance)
+            //{
+            // 更新商户余额、可提现余额                        
+            iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
             {
-                // 更新商户余额、可提现余额                        
-                iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
-                {
-                    BusinessId = orderModel.businessId,
-                    Amount = otcModel.Amount,
-                    Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
-                    RecordType = BusinessBalanceRecordRecordType.CancelOrder.GetHashCode(),
-                    Operator = orderModel.BusinessName,
-                    WithwardId = orderModel.Id,
-                    RelationNo = orderModel.OrderNo,
-                    Remark = orderModel.Remark
-                });
-            }
+                BusinessId = orderModel.businessId,
+                Amount = otcModel.Amount,
+                Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
+                RecordType = BusinessBalanceRecordRecordType.CancelOrder.GetHashCode(),
+                Operator = orderModel.BusinessName,
+                WithwardId = orderModel.Id,
+                RelationNo = orderModel.OrderNo,
+                Remark = orderModel.Remark,
+                IsRetainValue = isBalance == false ? 1 : 0
+            });
+            //}
 
             return true;
         }
