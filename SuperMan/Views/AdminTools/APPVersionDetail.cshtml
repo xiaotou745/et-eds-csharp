@@ -1,4 +1,6 @@
-﻿@model Ets.Model.Common.AppVerionModel
+﻿@using ETS.Enums
+@using ETS.Util
+@model Ets.Model.Common.AppVerionModel
 @{
     Layout = null;
 
@@ -12,7 +14,7 @@
             <div style="width:430px;height:25px;">
                 <div style="float: left">
                     <label>所属平台：</label>
-                    @(Model.AppSource == 0 ? "易代送商户版" : "智能调度平台 ")
+                    @(EnumUtils.GetEnumDescription((AppSource)Model.AppSource)))
                 </div>
             </div>
             <div style="width:430px;height:25px;">
