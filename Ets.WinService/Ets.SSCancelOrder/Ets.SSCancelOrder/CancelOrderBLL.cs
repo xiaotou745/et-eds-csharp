@@ -60,10 +60,10 @@ namespace Ets.SSCancelOrder
                         {                             
                             OrderOptionModel orderOptionModel = new OrderOptionModel
                             {
-                                OptUserName = "闪送服务取消订单",
-                                OptLog = "闪送服务取消订单",
+                                OptUserName = "取消订单返还配送费",
+                                OptLog = "取消订单返还配送费",
                                 OrderId = item.id,
-                                Remark = "闪送服务取消订单",
+                                Remark = "取消订单返还配送费",
                                 Platform = SuperPlatform.ServicePlatform.GetHashCode()
                             };
                             SSOrderCancelPM pm = new SSOrderCancelPM();
