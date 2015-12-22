@@ -91,8 +91,9 @@ INSERT INTO [AppVersion]
            ,[UpdateBy]
            ,[IsTiming]
            ,[PubStatus]
+           ,AppSource
            ,[TimingDate]
-            ,AppSource
+           
             )
      VALUES
            (@Version

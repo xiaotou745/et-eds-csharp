@@ -1,4 +1,5 @@
 ﻿@model ETS.Data.PageData.PageInfo<Ets.Model.Common.AppVerionModel>
+@using ETS.Enums
 @using ETS.Util;
 @using NPOI.SS.Formula.Functions
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tbstyle">
@@ -35,7 +36,7 @@
                         <td title="@item.Message" width="200px">@(item.Message.Length > 15 ? item.Message.Substring(0, 15) +"…": item.Message)</td>
                         <td>@(item.IsTiming == 1 ? "定时发布" : "实时发布")</td>
                         <td>@(item.PubStatus == 0 ? "待发布" : item.PubStatus == 1 ? "已发布" : "取消发布")</td>
-                        <td>@(item.AppSource == 0 ? "易代送商户版" : "智能调度平台")</td>
+                        <td>@(EnumUtils.GetEnumDescription((AppSource)item.AppSource))</td>
                         <td>@item.TimingDate</td>
                         <td>@item.UpdateBy</td>
                         <td>

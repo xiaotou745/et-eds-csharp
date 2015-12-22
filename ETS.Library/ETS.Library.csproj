@@ -30,6 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AopSdk, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\AopSdk.dll</HintPath>
+    </Reference>
     <Reference Include="jpush-api">
       <HintPath>..\packages\JPush.NET.1.2.3.27974\lib\jpush-api.dll</HintPath>
     </Reference>
@@ -154,10 +158,6 @@
     <ProjectReference Include="..\Ets.Model\Ets.Model.csproj">
       <Project>{b9d2361d-7e2c-45ba-89ec-4eca1bf7c456}</Project>
       <Name>Ets.Model</Name>
-    </ProjectReference>
-    <ProjectReference Include="C:\Users\Administrator\Desktop\新建文件夹 %282%29\服务端调用API .Net Demo\服务窗&amp;当面付 .Net Demo\Projects\SDK-ALL\AopSdk.csproj">
-      <Project>{9c11cae5-5188-4e71-825b-68fc3135728a}</Project>
-      <Name>AopSdk</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
