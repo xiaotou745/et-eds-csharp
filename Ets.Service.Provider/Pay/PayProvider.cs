@@ -2780,7 +2780,7 @@ namespace Ets.Service.Provider.Pay
                     if ((bool)olList.IsPay)//已支付
                     {
                         #region 已支付
-                        // 更新商户余额、可提现余额                        
+                        // 更新商户余额、可提现余额
                         iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
                         {
                             BusinessId = businessModel.Id,
