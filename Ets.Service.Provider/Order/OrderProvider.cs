@@ -2791,20 +2791,17 @@ namespace Ets.Service.Provider.Order
             orderOptionModel.OrderNo = orderModel.OrderNo;
 
 
-            //if (orderModel.Status == 3)//订单已为取消状态
-            //{                  
-            //    return ResultModel<object>.Conclude(OrderApiStatusType.OrderState3);
-            //}
-            //if (orderModel.IsJoinWithdraw == 1)//订单已分账
-            //{
-            //    return ResultModel<object>.Conclude(OrderApiStatusType.OrderIsJoinWithdraw);
-            //}
+            if (orderModel.Status == 3)//订单已为取消状态
+            {
+                return ResultModel<object>.Conclude(OrderApiStatusType.OrderState3);
+            }
+            if (orderModel.IsJoinWithdraw == 1)//订单已分账
+            {
+                return ResultModel<object>.Conclude(OrderApiStatusType.OrderIsJoinWithdraw);
+            }
 
             IList<Ets.Model.DataModel.Order.OrderTipCost> list = orderTipCostDao.GetListByOrderId(pm.OrderId);
-            if (list==null)
-            {
-                return ResultModel<object>.Conclude(OrderApiStatusType.CancelSuccess);
-            }
+           
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 for (int i = 0; i < list.Count; i++)
