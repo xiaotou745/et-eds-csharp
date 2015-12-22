@@ -78,6 +78,17 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description',
   @level1name=N'Order', 
   @level2type=N'COLUMN',
   @level2name=N'PickUpLatitude'
+
+UPDATE  [order]
+SET     km = 0
+WHERE   km IS NULL;
+
+ALTER TABLE [order] ADD CONSTRAINT c_order_KM   DEFAULT 0 FOR KM;
+
+ALTER TABLE [order]
+ALTER COLUMN KM  FLOAT NOT NULL 
+
+
  
 ------------------------------------------------订单Other表相关
  alter table [OrderOther] add DeliveryOrderNo bigint not null  default 0;
