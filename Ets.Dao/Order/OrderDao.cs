@@ -1293,6 +1293,8 @@ where   a.OriginalOrderNo = @OriginalOrderNo
         /// wc
         /// 窦海超更改
         /// 2015年7月1日 11:59:28
+        /// 2015年12月22日15:00:24
+        /// 茹化肖修改闪送模式判断
         /// </summary>
         /// <param name="orderStatus">订单状态</param>
         /// <returns></returns>
@@ -1300,22 +1302,24 @@ where   a.OriginalOrderNo = @OriginalOrderNo
         {
             //更新订单状态
             StringBuilder upSql = new StringBuilder();
-
-            upSql.AppendFormat(@"
-UPDATE dbo.[order]
- SET [Status] = @status,ActualDoneDate=getdate()
+            upSql.Append(@"UPDATE dbo.[order]
+                           SET [Status] = @status,");
+            if (myOrderInfo.Platform == 3)//闪送模式直接将FinishAll 更新为1
+            {
+                upSql.Append("FinishAll=1,");
+            }
+            upSql.Append(@"ActualDoneDate=getdate()
 output Inserted.Id,GETDATE(),'{0}','任务已完成',Inserted.clienterId,Inserted.[Status],{1}
 into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform]) 
-WHERE  dbo.[order].Id = @orderId AND clienterId =@clienterId and Status = 4;
-", myOrderInfo.ClienterName, (int)SuperPlatform.FromClienter);
-
+WHERE  dbo.[order].Id = @orderId AND clienterId =@clienterId and Status = 4;");
+           string upsql= string.Format(upSql.ToString(), myOrderInfo.ClienterName, (int)SuperPlatform.FromClienter);
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("orderId", DbType.Int32, 4).Value = myOrderInfo.Id;
             dbParameters.Add("clienterId", DbType.Int32, 4).Value = myOrderInfo.clienterId;
             dbParameters.Add("status", DbType.Int32, 4).Value = OrderStatus.Status1.GetHashCode();
 
             return ParseHelper.ToInt(
-                DbHelper.ExecuteNonQuery(SuperMan_Write, upSql.ToString(), dbParameters),
+                DbHelper.ExecuteNonQuery(SuperMan_Write, upsql, dbParameters),
                 -1
                 );
         }
