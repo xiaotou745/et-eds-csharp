@@ -2978,6 +2978,7 @@ namespace Ets.Service.Provider.Order
                                 }
 
                                 bool refundState = nativePay.Refund(otcModel.OutTradeNo, otcModel.OriginalOrderNo, Convert.ToInt32(otcModel.Amount * 100), Convert.ToInt32(otcModel.Amount * 100), orderModel.businessId.ToString());
+                                //LogHelper.LogWriter("----------------状态:" + refundState.ToString());
                                 if (refundState)
                                 {
                                     UpdateOrderTipBalance(otcModel, orderModel, false);//这里窦海超改成了false，原来是true
@@ -2993,6 +2994,7 @@ namespace Ets.Service.Provider.Order
             }
             catch (Exception err)
             {
+                LogHelper.LogWriter("----------------error:" + err.Message.ToString());
                 return ResultModel<object>.Conclude(OrderApiStatusType.Fail);
             }
             return ResultModel<object>.Conclude(OrderApiStatusType.CancelSuccess);
