@@ -18,22 +18,18 @@ namespace ETS.Library.Pay.SSAliPay
     //http://www.tuicool.com/articles/quUrErZ
     public class AliPayApi
     {
-        private static string app_id = "";
+        private static string app_id = "2015081900222190";
         private static string alipay_public_key = string.Empty;
-        private static string merchant_private_key = string.Empty;
+        private static string merchant_private_key = string.Concat(System.AppDomain.CurrentDomain.BaseDirectory, "\\Content\\pem\\rsa_private_key.pem");
         private static string key = "";
         private static string input_charset = "";
-        private static string sign_type = "";
+        private static string sign_type = "RSA";
         private static string email = "";
         private static string account_name = "";
+        private static string version = "1.0";
+        private static string format = "json";
         static AliPayApi()
         {
-            //app_id = "2088911703660069";//
-            app_id = "2015081900222190";
-            //alipay_public_key = @"MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCqlmf4VnMp9F3c32s+JDzr6Xxx6cp3bdUGSRDuomZOn3F5NihvlHbAA5Rk6degOzmTWQDXi17+j+FeQM6T1vsS8l7UguhIkkUOTNJ2cyyGq6L9IPe+ItDzFKSYrORf2RSKQcGnxt7AGHIyTVWkW5VncL80TSH+P0+Vti9/uDZ8GQIDAQAB";
-            //alipay_public_key = @"D:\project\Eds.SuperMan\lib\rsa_public_key.pem";
-            string str=System.AppDomain.CurrentDomain.BaseDirectory;
-            merchant_private_key = @"G:\project\e代送众包版\Eds.SuperMan\lib\rsa_private_key.pem";            
         }
         /// <summary>
         /// 统一收单线下交易查询)
@@ -45,7 +41,7 @@ namespace ETS.Library.Pay.SSAliPay
         {
             try
             {
-                IAopClient client = new DefaultAopClient("https://openapi.alipay.com/gateway.do", app_id, merchant_private_key, "json", "1.1", "RSA", alipay_public_key, "");
+                IAopClient client = new DefaultAopClient("https://openapi.alipay.com/gateway.do", app_id, merchant_private_key, format, version, sign_type, alipay_public_key, input_charset);
                 AlipayTradeQueryRequest request = new AlipayTradeQueryRequest();
                 var bizContent = new JsonObject();
                 //易代送单号
@@ -70,28 +66,10 @@ namespace ETS.Library.Pay.SSAliPay
         /// <returns></returns>
         public AlipayTradeRefundResponse Refund(OrderTipCost record)
         {
-            //IAopClient client = new DefaultAopClient("https://openapi.alipay.com/gateway.do", app_id, merchant_private_key, "json", "1.1", "RSA", alipay_public_key, "GBK");
-            //AlipayTradeRefundRequest request = new AlipayTradeRefundRequest();
-            ////request.BizContent = "your json params";
-            //var bizContent = new JsonObject();
-            ////bizContent.Put("out_trade_no", "143594_2008150702170126083_332787_1_0_1.02_1.01");
-            ////支付宝交易号
-            //bizContent.Put("trade_no", "2015121621001004370095287987");
-            ////退款金额
-            //bizContent.Put("refund_amount", "1.02");
-            ////bizContent.Put("refund_amount", refundAmount.ToString("F"));
-            ////退款原因
-            //bizContent.Put("refund_reason", "测试取消订单");
-            //request.BizContent = bizContent.ToString();
-            //AlipayTradeRefundResponse response = client.Execute(request);
-            //return response;
-
-
-            IAopClient client = new DefaultAopClient("https://openapi.alipay.com/gateway.do", app_id, merchant_private_key, "json", "1.1", "RSA", alipay_public_key, "GBK");
+            IAopClient client = new DefaultAopClient("https://openapi.alipay.com/gateway.do", app_id, merchant_private_key, format, version, sign_type, alipay_public_key, input_charset);
             AlipayTradeRefundRequest request = new AlipayTradeRefundRequest();
             //request.BizContent = "your json params";
             var bizContent = new JsonObject();
-            //bizContent.Put("out_trade_no", "143594_2008150702170126083_332787_1_0_1.02_1.01");
             //支付宝交易号
             bizContent.Put("trade_no", record.OriginalOrderNo);
             //退款金额
@@ -111,12 +89,12 @@ namespace ETS.Library.Pay.SSAliPay
         /// <returns></returns>
         public AlipayTradeCancelResponse Cancel(OrderTipCost record)
         {
-            IAopClient client = new DefaultAopClient("https://openapi.alipay.com/gateway.do", "app_id", merchant_private_key, "json", "RSA", alipay_public_key, "GBK");
+            IAopClient client = new DefaultAopClient("https://openapi.alipay.com/gateway.do", app_id, merchant_private_key, format, version, sign_type, alipay_public_key, input_charset);
             AlipayTradeCancelRequest request = new AlipayTradeCancelRequest();
             request.BizContent = "your json params";
             AlipayTradeCancelResponse response = client.Execute(request);
             return response;
 
         }
-    }  
+    }
 }
