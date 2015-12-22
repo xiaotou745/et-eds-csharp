@@ -94,6 +94,7 @@
     <Compile Include="Config.cs" />
     <Compile Include="Const\GroupConst.cs" />
     <Compile Include="Const\SystemConst.cs" />
+    <Compile Include="Enums\AppversionEnum.cs" />
     <Compile Include="Enums\BusinessEnum.cs" />
     <Compile Include="Enums\AccountEnum.cs" />
     <Compile Include="Enums\ApiOrderEnum.cs" />
