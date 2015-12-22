@@ -2803,7 +2803,7 @@ namespace Ets.Service.Provider.Order
             IList<Ets.Model.DataModel.Order.OrderTipCost> list = orderTipCostDao.GetListByOrderId(pm.OrderId);
             if (list==null)
             {
-                return;
+                return ResultModel<object>.Conclude(OrderApiStatusType.CancelSuccess);
             }
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
