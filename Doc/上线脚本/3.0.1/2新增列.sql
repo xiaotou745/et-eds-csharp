@@ -58,6 +58,26 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description',
   @level1name=N'Order', 
   @level2type=N'COLUMN',
   @level2name=N'ProductName'
+
+alter table [Order] add [PickUpLongitude] float  not null  default 0 ;
+EXEC sys.sp_addextendedproperty @name=N'MS_Description',
+  @value=N'取货地点经度' ,
+  @level0type=N'SCHEMA',
+  @level0name=N'dbo', 
+  @level1type=N'TABLE',
+  @level1name=N'Order', 
+  @level2type=N'COLUMN',
+  @level2name=N'PickUpLongitude'
+
+alter table [Order] add [PickUpLatitude] float  not null  default 0 ;
+EXEC sys.sp_addextendedproperty @name=N'MS_Description',
+  @value=N'取货地点纬度' ,
+  @level0type=N'SCHEMA',
+  @level0name=N'dbo', 
+  @level1type=N'TABLE',
+  @level1name=N'Order', 
+  @level2type=N'COLUMN',
+  @level2name=N'PickUpLatitude'
  
 ------------------------------------------------订单Other表相关
  alter table [OrderOther] add DeliveryOrderNo bigint not null  default 0;
