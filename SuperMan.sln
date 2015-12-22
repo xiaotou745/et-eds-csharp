@@ -48,8 +48,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ets.Provider.Tests", "Ets.P
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ETS.Library", "ETS.Library\ETS.Library.csproj", "{799CD8B8-A1BD-4FA7-8BEF-8D8BFCF2ABD6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AopSdk", "C:\Users\Administrator\Desktop\新建文件夹 (2)\服务端调用API .Net Demo\服务窗&当面付 .Net Demo\Projects\SDK-ALL\AopSdk.csproj", "{9C11CAE5-5188-4E71-825B-68FC3135728A}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -108,10 +106,6 @@ Global
 		{799CD8B8-A1BD-4FA7-8BEF-8D8BFCF2ABD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{799CD8B8-A1BD-4FA7-8BEF-8D8BFCF2ABD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{799CD8B8-A1BD-4FA7-8BEF-8D8BFCF2ABD6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9C11CAE5-5188-4E71-825B-68FC3135728A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9C11CAE5-5188-4E71-825B-68FC3135728A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9C11CAE5-5188-4E71-825B-68FC3135728A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9C11CAE5-5188-4E71-825B-68FC3135728A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
