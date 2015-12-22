@@ -2602,7 +2602,7 @@ select top {0}
         a.Amount CpAmount,
         b.Name as BusinessName, b.City as BusinessCity,b.Id BusinessId,
         b.Address as BusinessAddress, isnull(a.ReceviceCity, '') as UserCity,
-        a.Remark,a.OrderNo,a.PubName,
+        a.Remark,a.OrderNo,a.PubName,'' ExpectedTakeTime,
  case  isnull(a.ReceviceAddress,'')  
 		when  '' then '附近3公里左右，由商户指定'
 		else a.ReceviceAddress end as  UserAddress,ISNULL(b.Longitude,0) as  Longitude,ISNULL(b.Latitude,0) as Latitude,
@@ -2644,7 +2644,7 @@ declare @cliernterPoint geography ;
 select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0} a.Id,a.OrderCommission,a.OrderCount,a.Platform,a.Weight,a.KM,a.TakeType,a.SongCanDate,
         (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,
-        a.Amount CpAmount,a.PubName,
+        a.Amount CpAmount,a.PubName,'' ExpectedTakeTime,
         b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,b.Id BusinessId,
 ISNULL(a.ReceviceCity,'') as UserCity,case  isnull(a.ReceviceAddress,'')  
 		when  '' then '附近3公里左右，由商户指定'
@@ -2905,7 +2905,7 @@ select @cliernterPoint=geography::Point(@Latitude,@Longitude,4326) ;
 select top {0}  a.BusinessId, a.Id,a.OrderCommission,a.OrderCount,   
 (a.Amount+a.OrderCount*a.DistribSubsidy) as Amount,a.Platform,a.Weight,a.KM,a.TakeType, convert(varchar(16),a.SongCanDate,120) SongCanDate,
  a.Amount CpAmount,b.Id BusinessId,a.PubName,
-a.Remark,a.OrderNo,
+a.Remark,a.OrderNo,'' ExpectedTakeTime,
 b.Name as BusinessName,b.City as BusinessCity,b.Address as BusinessAddress,
 ISNULL(a.ReceviceCity,'') as UserCity, case  isnull(a.ReceviceAddress,'')  
 		when  '' then '附近3公里左右，由商户指定'
@@ -3004,7 +3004,7 @@ order by a.id desc
                     : Math.Round(distanceToBusiness * 0.001, 2) + "km";
                 temp.Platform = ParseHelper.ToInt(dataRow["Platform"]);//来源（默认1、旧后台，2新后台）
                 temp.Weight = ParseHelper.ToFloat(dataRow["Weight"]);//订单总重量
-                temp.KM = ParseHelper.ToFloat(dataRow["KM"]);//送餐距离
+                temp.KM = ParseHelper.ToFloat(dataRow["KM"]).ToString("f1");//送餐距离
                 temp.TakeType = ParseHelper.ToInt(dataRow["TakeType"]);// 取货状态默认0立即，1预约
                 temp.SongCanDate = dataRow["SongCanDate"].ToString();
                 temp.ExpectedTakeTime = dataRow["ExpectedTakeTime"].ToString();

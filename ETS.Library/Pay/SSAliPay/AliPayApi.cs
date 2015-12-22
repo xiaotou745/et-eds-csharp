@@ -31,7 +31,7 @@ namespace ETS.Library.Pay.SSAliPay
             //app_id = "2088911703660069";//
             app_id = "2015081900222190";
             //alipay_public_key = @"MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCqlmf4VnMp9F3c32s+JDzr6Xxx6cp3bdUGSRDuomZOn3F5NihvlHbAA5Rk6degOzmTWQDXi17+j+FeQM6T1vsS8l7UguhIkkUOTNJ2cyyGq6L9IPe+ItDzFKSYrORf2RSKQcGnxt7AGHIyTVWkW5VncL80TSH+P0+Vti9/uDZ8GQIDAQAB";
-            //alipay_public_key = @"G:\project\e代送众包版\Eds.SuperMan\lib\rsa_public_key.pem";e
+            //alipay_public_key = @"D:\project\Eds.SuperMan\lib\rsa_public_key.pem";
             string str=System.AppDomain.CurrentDomain.BaseDirectory;
             merchant_private_key = @"D:\project\Eds.SuperMan\lib\rsa_private_key.pem";            
         }
@@ -43,15 +43,23 @@ namespace ETS.Library.Pay.SSAliPay
         /// <returns></returns>
         public AlipayTradeQueryResponse Query(OrderTipCost record)
         {
-            IAopClient client = new DefaultAopClient("https://openapi.alipay.com/gateway.do", app_id, merchant_private_key, "json", "1.1", "RSA", alipay_public_key, "GBK");
-            AlipayTradeQueryRequest request = new AlipayTradeQueryRequest();
-            var bizContent = new JsonObject();
-            //易代送单号
-            //bizContent.Put("out_trade_no", "143594_2008150702170126083_332787_1_0_1.02_1.01");
-            bizContent.Put("out_trade_no", record.OutTradeNo);
-            request.BizContent = bizContent.ToString();
-            AlipayTradeQueryResponse response = client.Execute(request);
-            return response;
+            try
+            {
+                IAopClient client = new DefaultAopClient("https://openapi.alipay.com/gateway.do", app_id, merchant_private_key, "json", "1.1", "RSA", alipay_public_key, "");
+                AlipayTradeQueryRequest request = new AlipayTradeQueryRequest();
+                var bizContent = new JsonObject();
+                //易代送单号
+                //bizContent.Put("out_trade_no", "143594_2008150702170126083_332787_1_0_1.02_1.01");
+                bizContent.Put("out_trade_no", record.OutTradeNo);
+                request.BizContent = bizContent.ToString();
+                var response = client.Execute(request);
+                return response;
+            }
+            catch (Exception err)
+            {
+                string str = err.Message;
+            }
+            return null;
         }
 
         /// <summary>

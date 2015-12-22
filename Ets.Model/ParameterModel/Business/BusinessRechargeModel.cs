@@ -31,7 +31,7 @@ namespace Ets.Model.ParameterModel.Business
         /// <summary>
         /// 支付类型：0旧版商家，1闪送模式 
         /// </summary>
-        public int CType { get; set; }
+        public int PlatForm { get; set; }
 
     }
 }
