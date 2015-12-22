@@ -2964,7 +2964,8 @@ namespace Ets.Service.Provider.Pay
                             Operator = businessModel.Name,
                             WithwardId = orderId,
                             RelationNo = olList.OrderNo,
-                            Remark = "微信支付配送费"
+                            Remark = "微信支付配送费",
+                            IsRetainValue=1
                         });
 
                         //写订单小费
@@ -2997,7 +2998,8 @@ namespace Ets.Service.Provider.Pay
                             Operator = businessModel.Name,
                             WithwardId = orderId,
                             RelationNo = olList.OrderNo,
-                            Remark = "微信支付配送费"
+                            Remark = "微信支付配送费",
+                            IsRetainValue = 1
                         });
 
                         //写订单小费
