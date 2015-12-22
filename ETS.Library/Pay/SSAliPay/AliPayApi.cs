@@ -91,7 +91,11 @@ namespace ETS.Library.Pay.SSAliPay
         {
             IAopClient client = new DefaultAopClient("https://openapi.alipay.com/gateway.do", app_id, merchant_private_key, format, version, sign_type, alipay_public_key, input_charset);
             AlipayTradeCancelRequest request = new AlipayTradeCancelRequest();
-            request.BizContent = "your json params";
+            var bizContent = new JsonObject();
+            //支付宝交易号
+            bizContent.Put("trade_no", record.OriginalOrderNo);
+           
+            request.BizContent = bizContent.ToString();
             AlipayTradeCancelResponse response = client.Execute(request);
             return response;
 
