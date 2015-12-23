@@ -20,7 +20,7 @@ namespace ETS.Library.Pay.SSAliPay
     {
         private static string app_id = "2015081900222190";
         private static string alipay_public_key = string.Empty;
-        private static string merchant_private_key = string.Concat(System.AppDomain.CurrentDomain.BaseDirectory, "\\Content\\pem\\rsa_private_key.pem");
+        private static string merchant_private_key = string.Concat(System.AppDomain.CurrentDomain.BaseDirectory, "Content\\pem\\rsa_private_key.pem");
         private static string key = "";
         private static string input_charset = "";
         private static string sign_type = "RSA";

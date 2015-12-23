@@ -53,32 +53,26 @@ namespace Ets.SSCancelOrder
 
                 IList<NonJoinWithdrawModel> list = iOrderProvider.GetSSCancelOrder(hour);//获取没给可提现金额加钱的订单
                 foreach (var item in list)
-                {
-                    using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
-                    {
+                {                    
                         try
                         {                             
-                            OrderOptionModel orderOptionModel = new OrderOptionModel
-                            {
-                                OptUserName = "取消订单返还配送费",
-                                OptLog = "取消订单返还配送费",
-                                OrderId = item.id,
-                                Remark = "取消订单返还配送费",
-                                Platform = SuperPlatform.ServicePlatform.GetHashCode()
-                            };
+
                             SSOrderCancelPM pm = new SSOrderCancelPM();
                             pm.OrderId = item.id;
-                            iOrderProvider.SSCancelOrder(pm, orderOptionModel);
+                            pm.OptUserName = "取消订单返还配送费";
+                            pm.OptLog = "取消订单返还配送费";
+                            pm.OrderId = item.id;
+                            pm.Remark = "取消订单返还配送费";
+                            pm.Platform = SuperPlatform.ServicePlatform.GetHashCode();
+                            iOrderProvider.SSCancelOrder(pm);
 
-                            tran.Complete();
+                         
                         }
                         catch (Exception ex)
                         {
                             LogHelper.LogWriter(ex);
-                        }
-                    }
+                        }               
                 }
-
             }
             catch (Exception ex)
             {
