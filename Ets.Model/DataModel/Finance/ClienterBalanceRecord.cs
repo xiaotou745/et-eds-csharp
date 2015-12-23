@@ -57,6 +57,11 @@ namespace Ets.Model.DataModel.Finance
         /// 描述
         /// </summary>
         public string Remark { get; set; }
+        /// <summary>
+        /// 流水订单平台
+        /// 3闪送  -1 非订单
+        /// </summary>
+        public int Platform { get; set; }
 
     }
 }
