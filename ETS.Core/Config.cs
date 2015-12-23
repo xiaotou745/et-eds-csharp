@@ -89,7 +89,10 @@ namespace ETS
         public static string NotifyUrl { get { return ConfigKey("NotifyUrl"); } }
 
 
-        public static string NotifyTipUrl { get { return ConfigKey("NotifyTipUrl"); } }
+        /// <summary>
+        /// 闪送支付宝回调
+        /// </summary>
+        public static string NotifyTipUrl { get { return string.Concat(ConfigKey("YeePayNotifyUrl").TrimEnd('/'), "/pay/NotifyTip"); } }
 
         /// <summary>
         /// 微信订单支付回调地址
@@ -99,7 +102,7 @@ namespace ETS
         /// <summary>
         /// 闪送模式 微信订单支付回调地址
         /// </summary>
-        public static string SSWxNotify { get { return ConfigKey("SSWxNotifyUrl"); } }
+        public static string SSWxNotify { get { return string.Concat(ConfigKey("YeePayNotifyUrl").TrimEnd('/'), "/pay/SSWxNotify"); } }
 
 
         /// <summary>
