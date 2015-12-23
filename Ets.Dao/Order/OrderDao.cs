@@ -2627,6 +2627,7 @@ from    dbo.[order] a ( nolock )
         join dbo.business b ( nolock ) on a.businessId = b.Id
         left join dbo.BusinessExpressRelation ber (nolock) on a.businessId=ber.BusinessId
 where a.status = 0 and a.IsEnable=1 and ber.IsEnable=1 and a.ReceviceCity=@ReceviceCity and ber.ExpressId=@ExpressId
+and a.Platform!=3 
 order by a.Id desc", model.TopNum);
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -2680,6 +2681,7 @@ from dbo.[order] a (nolock)
         left join dbo.BusinessExpressRelation ber (nolock) on a.businessId=ber.BusinessId
 where a.status=0 and a.IsEnable=1 and ber.IsEnable=1 and ber.ExpressId=@ExpressId
 and  geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint)<= @PushRadius
+and a.Platform!=3
 order by geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint) asc
 ", model.TopNum);
 
