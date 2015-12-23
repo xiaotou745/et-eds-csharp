@@ -1381,38 +1381,16 @@ namespace Ets.Service.Provider.Order
 
                 if (orderModel.Platform == 3)//闪送模式取消订单
                 {
-                    ////待支付
-                    //if (orderModel.Status == 50)
-                    //{
-                    //    //查询微信
-                    //    ETS.Library.Pay.SSBWxPay.NativePay nativePay = new ETS.Library.Pay.SSBWxPay.NativePay();
-                    //    string orderNo = "147670_2206151204152814839_339877_1_0_0.02_0.01";
-                    //    //string orderNo = "147670";
-                    //    bool blNativePay = nativePay.CloseOrder(orderNo);
-                    //    //查询支付宝
-                    //    ETS.Library.Pay.SSAliPay.AliNativePay aliNativePay = new ETS.Library.Pay.SSAliPay.AliNativePay();
-                    //    bool blAliNativePay = aliNativePay.CloseOrder(orderModel);
-                    //    if (blNativePay && blAliNativePay)
-                    //    { 
-                    //        //修改订单状态
-                    //        orderDao.CancelOrder(orderModel, orderOptionModel);
-                    //        //更新取消时间
-                    //        orderOtherDao.UpdateCancelTime(orderModel.Id);
-                    //    }
-                    //}
-                    //else//已支付
-                    //{ 
-                    //    //微信 退款
+                    SSOrderCancelPM pm = new SSOrderCancelPM();
+                    pm.OrderId = orderModel.Id;
+                    pm.OptUserName = orderOptionModel.OptUserName;
+                    pm.OptLog = orderOptionModel.OptLog;                
+                    pm.Remark = orderOptionModel.OptLog;
+                    pm.Platform = 0;
 
-                    //    //支付宝 退款
-
-                    //    //退款成功              
-                    //    //修改订单状态
-                    //    orderDao.CancelOrder(orderModel, orderOptionModel);
-                    //    //更新取消时间
-                    //    orderOtherDao.UpdateCancelTime(orderModel.Id);
-                    //    //写流水
-                    //}            
+                    SSCancelOrder(pm);
+                    dealResultInfo.DealFlag = true;
+                    dealResultInfo.DealMsg = "订单取消成功！";
                 }
                 else
                 {

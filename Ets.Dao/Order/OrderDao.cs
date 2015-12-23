@@ -2618,9 +2618,9 @@ select top {0}
         end + '  ' + substring(convert(varchar(100), PubDate, 24), 1, 5) as PubDate,
  case  a.Platform
         when 3 then
-			round(geography::Point(ISNULL(a.Pickuplatitude,0),ISNULL(a.Pickuplongitude,0),4326).STDistance(@cliernterPoint),0)/1000 
+			round(geography::Point(ISNULL(a.Pickuplatitude,0),ISNULL(a.Pickuplongitude,0),4326).STDistance(@cliernterPoint),0) 
 		else  
-		round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) /1000
+		round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) 
        end  DistanceToBusiness
       
 from    dbo.[order] a ( nolock )
@@ -2672,9 +2672,9 @@ ISNULL(a.ReceviceCity,'') as UserCity,case  isnull(a.ReceviceAddress,'')
         as PubDate,
         case  a.Platform
         when 3 then
-			round(geography::Point(ISNULL(a.Pickuplatitude,0),ISNULL(a.Pickuplongitude,0),4326).STDistance(@cliernterPoint),0) /1000
+			round(geography::Point(ISNULL(a.Pickuplatitude,0),ISNULL(a.Pickuplongitude,0),4326).STDistance(@cliernterPoint),0) 
 		else  
-		round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) /1000
+		round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) 
        end  DistanceToBusiness
 from dbo.[order] a (nolock)
         join dbo.business b (nolock) on a.businessId=b.Id
@@ -2732,9 +2732,9 @@ select top {0}
 (case when [Platform]=1 then ISNULL(b.Longitude,0) when [Platform]=2 then oo.PubLongitude else '' end) as  Longitude,--商户发单经度
 (case when [Platform]=1 then ISNULL(b.Latitude,0) when [Platform]=2 then oo.PubLatitude else '' end) as  Latitude,--商户发单纬度
 (case when [Platform]=1 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) when [Platform]=2 then 
-round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0) /1000
+round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0) 
 when [Platform]=3 then round(geography::Point(ISNULL(a.Pickuplatitude,0),ISNULL(a.Pickuplongitude,0),4326).STDistance(@cliernterPoint),0) 
-else '' end)/1000  as DistanceToBusiness,--距离
+else '' end)  as DistanceToBusiness,--距离
 (case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress --发货地址
         
 from    dbo.[order] a ( nolock )
@@ -2769,9 +2769,9 @@ select top {0}
 (case when [Platform]=1 then ISNULL(b.Longitude,0) when [Platform]=2 then oo.PubLongitude else '' end) as  Longitude,--商户发单经度
 (case when [Platform]=1 then ISNULL(b.Latitude,0) when [Platform]=2 then oo.PubLatitude else '' end) as  Latitude,--商户发单纬度
 (case when [Platform]=1 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) when [Platform]=2 then 
-	round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0)/1000
+	round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0)
 when [Platform]=3 then round(geography::Point(ISNULL(a.Pickuplatitude,0),ISNULL(a.Pickuplongitude,0),4326).STDistance(@cliernterPoint),0) 
-else '' end)/1000  as DistanceToBusiness,--距离
+else '' end)  as DistanceToBusiness,--距离
 (case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress --发货地址
 
 from    dbo.[order] a ( nolock )
@@ -2837,9 +2837,9 @@ as PubDate,
 (case when [Platform]=1 then ISNULL(b.Longitude,0) when [Platform]=2 then oo.PubLongitude else '' end) as  Longitude,--商户发单经度
 (case when [Platform]=1 then ISNULL(b.Latitude,0) when [Platform]=2 then oo.PubLatitude else '' end) as  Latitude,--商户发单纬度
 (case when [Platform]=1 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) when [Platform]=2 then 
-		round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0) /1000
+		round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0) 
 when [Platform]=3 then round(geography::Point(ISNULL(a.Pickuplatitude,0),ISNULL(a.Pickuplongitude,0),4326).STDistance(@cliernterPoint),0) 
-	 else '' end)/1000  as DistanceToBusiness,--距离
+	 else '' end)  as DistanceToBusiness,--距离
 (case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress --发货地址
  
 from dbo.[order] a (nolock)
@@ -2873,9 +2873,9 @@ as PubDate,
 (case when [Platform]=1 then ISNULL(b.Longitude,0) when [Platform]=2 then oo.PubLongitude else '' end) as  Longitude,--商户发单经度
 (case when [Platform]=1 then ISNULL(b.Latitude,0) when [Platform]=2 then oo.PubLatitude else '' end) as  Latitude,--商户发单纬度
 (case when [Platform]=1 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) when [Platform]=2 then 
-		round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0)/1000 
+		round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0) 
 when [Platform]=3 then round(geography::Point(ISNULL(a.Pickuplatitude,0),ISNULL(a.Pickuplongitude,0),4326).STDistance(@cliernterPoint),0) 
-	 else '' end)/1000  as DistanceToBusiness,--距离
+	 else '' end)  as DistanceToBusiness,--距离
 (case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress --发货地址
 
 from dbo.[order] a (nolock)
@@ -2938,9 +2938,9 @@ end
 as PubDate,
  case  a.Platform
         when 3 then
-			round(geography::Point(ISNULL(a.Pickuplatitude,0),ISNULL(a.Pickuplongitude,0),4326).STDistance(@cliernterPoint),0) /1000
+			round(geography::Point(ISNULL(a.Pickuplatitude,0),ISNULL(a.Pickuplongitude,0),4326).STDistance(@cliernterPoint),0) 
 		else  
-		round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) /1000
+		round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) 
        end  DistanceToBusiness
 from dbo.[order] a (nolock)
 join dbo.business b (nolock) on a.businessId=b.Id
