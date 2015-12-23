@@ -2928,6 +2928,7 @@ from dbo.[order] a (nolock)
 join dbo.business b (nolock) on a.businessId=b.Id
 join (select  distinct(temp.BusinessId) from BusinessClienterRelation  temp where temp.IsEnable=1 and  temp.IsBind =1 and temp.ClienterId=@ClienterId ) as c on a.BusinessId=c.BusinessId
 where a.status=0 and a.IsEnable=1
+and o.Platform!=3 --店内任务不显示闪送订单
 order by a.id desc 
 ", model.TopNum);
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
