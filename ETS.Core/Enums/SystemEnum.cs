@@ -100,6 +100,8 @@ namespace ETS.Enums
         ManagementBackground = 3,
         [DisplayText("第三方对接平台")]
         ThirdParty = 4,
+        [DisplayText("闪送商家")]
+        shanshongBusiness = 5
     }
 
     /// <summary>
