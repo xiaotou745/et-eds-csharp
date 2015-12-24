@@ -391,11 +391,14 @@ namespace SuperManWebApi.Controllers
         /// <param name="pm"></param>
         /// <returns></returns>
         [HttpPost]
-        public ResultModel<object> SSCancelOrder(SSOrderPM parModel)
+        public ResultModel<object> SSCancelOrder(SSOrderCancelPM parModel)
         {
-            SSOrderCancelPM pm = JsonHelper.JsonConvertToObject<SSOrderCancelPM>(AESApp.AesDecrypt(parModel.data));
+            if (!string.IsNullOrEmpty(parModel.data))
+            {
+                parModel = JsonHelper.JsonConvertToObject<SSOrderCancelPM>(AESApp.AesDecrypt(parModel.data));
+            }
 
-            return iOrderProvider.SSCancelOrder(pm);
+            return iOrderProvider.SSCancelOrder(parModel);
         }
         
 

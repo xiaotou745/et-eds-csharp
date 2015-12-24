@@ -38,6 +38,7 @@ namespace Ets.Service.Provider.OpenApi
         /// <returns></returns>
         public OrderApiStatusType AsyncStatus(ParaModel<AsyncStatusPM_OpenApi> paramodel)
         {
+            LogHelper.LogWriter("淘点点入口参数",paramodel);
             string jsonData, url = null;
             switch (paramodel.fields.status)
             {
@@ -174,7 +175,7 @@ namespace Ets.Service.Provider.OpenApi
             {
                 #region 商户
                 //查询商户是否存在
-                BusinessModel bModel = businessDao.GetBusiness(p.store_id, GroupConst.Group8);
+                BusinessModel bModel = businessDao.GetBusiness(p.store_id, GroupConst.Group100);
                 
                 if (bModel == null)
                 {
@@ -211,7 +212,7 @@ namespace Ets.Service.Provider.OpenApi
                     bModel.Status = 1;//默认审核通过
                     bModel.districtId = "";
                     bModel.CityId = p.city_code;
-                    bModel.GroupId = GroupConst.Group8;
+                    bModel.GroupId = GroupConst.Group100;
                     bModel.OriginalBusiId = 0;
                     bModel.OriginalBusiUnitId = p.store_id;
                     bModel.ProvinceCode = "";
@@ -274,7 +275,7 @@ namespace Ets.Service.Provider.OpenApi
                     oModel.BussGroupAmount = 0;
                     oModel.BussGroupIsAllowOverdraft = 0;
                     oModel.BalancePrice = bModel.BalancePrice;
-                    oModel.OrderFrom = GroupConst.Group8;//订单来源
+                    oModel.OrderFrom = GroupConst.Group100;//订单来源
                     oModel.Remark = p.order_ext_info;//
                     oModel.ReceviceName = p.consignee_name;
                     oModel.RecevicePhoneNo = p.consignee_phone;
@@ -434,6 +435,7 @@ namespace Ets.Service.Provider.OpenApi
             }
             catch (Exception err)
             {
+                LogHelper.LogWriter("错误",err.Message);
                 string str = err.Message;
                 return ETS.Enums.TaoBaoPushOrder.Error;    
             }

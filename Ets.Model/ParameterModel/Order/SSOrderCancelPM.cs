@@ -48,7 +48,7 @@ namespace Ets.Model.ParameterModel.Order
         /// 平台属性：0：商家端;1：配送端;2：服务平台;3：管理后台 4 第三方对接平台
         /// </summary>
         public int Platform { get; set; }
-        
 
+        public string data { get; set; }
     }
 }

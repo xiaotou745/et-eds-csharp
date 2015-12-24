@@ -278,8 +278,9 @@ namespace SuperMan.Controllers
         /// <param name="OrderOptionLog"></param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult CancelOrder(int orderId, string OrderOptionLog)
+        public ActionResult CancelOrder(int orderId, string OrderOptionLog)
         {
+            string callback = string.IsNullOrEmpty(Request["callback"]) ? "" : Request["callback"];
             OrderOptionModel orderOptionModel = new OrderOptionModel()
             {
                 OptUserId = UserContext.Current.Id,
@@ -288,7 +289,13 @@ namespace SuperMan.Controllers
                 OrderId = orderId
             };
             var reg = iOrderProvider.CancelOrderByOrderNo(orderOptionModel);
-            return Json(new ResultModel(reg.DealFlag, reg.DealMsg), JsonRequestBehavior.AllowGet);
+            var res = new ResultModel(reg.DealFlag, reg.DealMsg);
+            if (string.IsNullOrWhiteSpace(callback))//非JSONP
+            {
+                return Json(res, JsonRequestBehavior.AllowGet);
+            }
+            //走JSONP
+            return Content(callback + "("+JsonHelper.JsonConvertToString(res)+")");
         }
         /// <summary>
         /// 查看订单地图
