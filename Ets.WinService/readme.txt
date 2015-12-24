@@ -38,3 +38,5 @@
 	Ets.CrossShopShortMessage
 跨店奖励日志（已废弃）
 	Ets.CrossShopStatisticLog
+闪送模式X时间取消待支付订单
+Ets.SSCancelOrder
