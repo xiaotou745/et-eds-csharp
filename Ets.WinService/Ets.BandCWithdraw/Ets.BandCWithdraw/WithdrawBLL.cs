@@ -45,7 +45,8 @@ namespace Ets.BandCWithdraw
                 if (gcModel != null && gcModel.CashAndTime!=null)
                 {
                     hour=Convert.ToInt32( gcModel.CashAndTime);
-                }               
+                }
+                LogHelper.LogWriter("hour:" + hour);
                 ClienterProvider clienterProvider=new ClienterProvider();
                 OrderDao orderDao = new OrderDao();
                 IList<NonJoinWithdrawModel> list = orderDao.GetNonJoinWithdraw(hour);//获取没给可提现金额加钱的订单
