@@ -14,6 +14,11 @@ namespace Ets.Model.DataModel.Order
         public string PickUpAddress { get; set; }
         public Nullable<System.DateTime> PubDate { get; set; }
         public string ReceviceName { get; set; }
+
+        /// <summary>
+        /// 平台来源
+        /// </summary>
+        public int Platform { get; set; }
         public string RecevicePhoneNo { get; set; }
         public string ReceviceAddress { get; set; }
         public Nullable<System.DateTime> ActualDoneDate { get; set; }

@@ -1904,6 +1904,7 @@ namespace Ets.Service.Provider.Order
             orderDM.OrderNo = order.OrderNo;
             orderDM.OriginalOrderNo = order.OriginalOrderNo;
             orderDM.OrderFrom = order.OrderFrom;
+            orderDM.PlatFormStr = PlatformClass.GetPlatformStr(order.Platform);
             orderDM.OrderCommission = orderCommission;// order.OrderCommission;
             orderDM.PubDate = ParseHelper.ToDatetime(order.PubDate, DateTime.Now).ToString("yyyy-MM-dd HH:mm");
             orderDM.businessName = order.BusinessName;
