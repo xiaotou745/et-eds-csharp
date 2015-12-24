@@ -8,7 +8,7 @@ namespace ETS.Library.Pay.SSBWxPay
     public class Log
     {
         //在网站根目录下创建日志目录
-        public static string path = HttpContext.Current.Request.PhysicalApplicationPath + "logs";
+        public static string path = System.AppDomain.CurrentDomain.SetupInformation.ApplicationBase + "logs";
 
         /**
          * 向日志文件写入调试信息

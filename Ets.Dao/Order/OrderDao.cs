@@ -7,6 +7,7 @@ using Ets.Model.DataModel.DeliveryCompany;
 using Ets.Model.DataModel.Finance;
 using Ets.Model.DataModel.Order;
 using Ets.Model.DataModel.Subsidy;
+using Ets.Model.DomainModel.Clienter;
 using Ets.Model.DomainModel.Order;
 using Ets.Model.DomainModel.Statistics;
 using Ets.Model.DomainModel.Subsidy;
@@ -31,7 +32,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Ets.Model.DomainModel.Clienter;
 
 namespace Ets.Dao.Order
 {
@@ -2746,7 +2746,7 @@ else '' end)  as DistanceToBusiness,--距离
 from    dbo.[order] a ( nolock )
 		join dbo.OrderOther oo(nolock) on a.Id=oo.OrderId
         join dbo.business b ( nolock ) on a.businessId = b.Id
-where   a.status = 0 and a.IsEnable=1  and( (b.IsBind=0 or (b.IsBind=1 and DATEDIFF(minute,a.PubDate,GETDATE())>{1}))  or a.[Platform]=3)
+where   a.status = 0 and a.IsEnable=1  and( b.IsBind=0 or (b.IsBind=1 and DATEDIFF(minute,a.PubDate,GETDATE())>{1}))
         {2}
 order by a.Id desc", model.TopNum, model.ExclusiveOrderTime, whereStr);
             }
@@ -2795,12 +2795,11 @@ join dbo.OrderOther oo(nolock) on a.Id=oo.OrderId
                             and temp.ClienterId = {1}
                   ) as c on a.BusinessId = c.BusinessId        
 where   a.status = 0 and a.IsEnable=1
-        and ( (b.IsBind = 0
+        and ( b.IsBind = 0
               or ( b.IsBind = 1
                    and DATEDIFF(minute, a.PubDate, GETDATE()) > {2}
                  )
-              or c.BusinessId is not null)
-              or a.[Platform]=3               
+              or c.BusinessId is not null
             )
         {3}
 order by a.Id desc", model.TopNum, model.ClienterId, model.ExclusiveOrderTime, whereStr);
@@ -2860,7 +2859,7 @@ when [Platform]=3 then round(geography::Point(ISNULL(a.Pickuplatitude,0),ISNULL(
 from dbo.[order] a (nolock)
 join dbo.OrderOther oo(nolock) on a.Id=oo.OrderId
 join dbo.business b (nolock) on a.businessId=b.Id
-where a.status=0 and a.IsEnable=1 and( (b.IsBind=0 or (b.IsBind=1 and DATEDIFF(minute,a.PubDate,GETDATE())>{1})) or a.[Platform] = 3)
+where a.status=0 and a.IsEnable=1 and( b.IsBind=0 or (b.IsBind=1 and DATEDIFF(minute,a.PubDate,GETDATE())>{1}))
 and  geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint)<= @PushRadius
 order by geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint) asc
 ", model.TopNum, model.ExclusiveOrderTime);
@@ -2908,12 +2907,11 @@ left join ( select  distinct
                             and temp.ClienterId = {1}
                   ) as c on a.BusinessId = c.BusinessId        
 where a.status=0 and a.IsEnable=1
-and ( (b.IsBind = 0
+and ( b.IsBind = 0
               or ( b.IsBind = 1
                    and DATEDIFF(minute, a.PubDate, GETDATE()) > {2}
                  )
-              or c.BusinessId is not null)
-              or a.[Platform] = 3
+              or c.BusinessId is not null
             )
 and  geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint)<= @PushRadius
 order by geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint) asc
@@ -3113,7 +3111,7 @@ end
             dbParameters.AddWithValue("IsTakeTimely", modelPM.IsTimely);
             dbParameters.AddWithValue("clienterId", modelPM.ClienterId);
             dbParameters.AddWithValue("Platform", SuperPlatform.FromClienter.GetHashCode());
-            return  DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+            return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
         /// <summary>
         /// 获取任务支付状态（0：未支付 1：部分支付 2：已支付）
@@ -3619,7 +3617,7 @@ where   Id = @OrderId";
         /// <param name="orderId"></param>
         /// <param name="realOrderCommission"></param>
         /// <returns></returns>
-        public int UpdateOrderRealCommission(OrderOtherPM  orderOtherPM)
+        public int UpdateOrderRealCommission(OrderOtherPM orderOtherPM)
         {
             string sql = @" update [Order] set RealOrderCommission=@realOrderCommission where id=@orderId";
 
@@ -4142,7 +4140,7 @@ WHERE o.[Status]=0 AND o.PubDate>=@LastOrderPushTime;
             {
                 return null;
             }
-            return  ConvertDataTableList<OrderListModel>(dt);
+            return ConvertDataTableList<OrderListModel>(dt);
 
         }
         /// <summary>
@@ -4461,8 +4459,6 @@ select @@identity";
             return ParseHelper.ToInt(result, 0);
         }
 
-
-
         public ClienterOrderModel GetByClienterId(int clienterId, int orderFrom)
         {
             string sql = @"
@@ -4476,7 +4472,7 @@ where   o.OrderFrom = @OrderFrom and c.Id = @ClienterId;
 ";
             var parm = DbHelper.CreateDbParameters();
             parm.Add("@ClienterId", DbType.Int32, 4).Value = clienterId;
-            parm.Add("@OrderFrom", DbType.Int32, 4).Value = orderFrom; 
+            parm.Add("@OrderFrom", DbType.Int32, 4).Value = orderFrom;
             var dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             var list = ConvertDataTableList<ClienterOrderModel>(dt);
             if (list == null || list.Count <= 0)
@@ -4485,5 +4481,6 @@ where   o.OrderFrom = @OrderFrom and c.Id = @ClienterId;
             }
             return list[0];
         }
+
     }
 }

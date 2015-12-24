@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ets.Service.Provider", "..\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ets.SSCancelOrder", "Ets.SSCancelOrder\Ets.SSCancelOrder.csproj", "{7E2BAD23-65BD-4281-9F02-D25FB6DAABA8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ETS.Library", "..\..\ETS.Library\ETS.Library.csproj", "{799CD8B8-A1BD-4FA7-8BEF-8D8BFCF2ABD6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{7E2BAD23-65BD-4281-9F02-D25FB6DAABA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E2BAD23-65BD-4281-9F02-D25FB6DAABA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E2BAD23-65BD-4281-9F02-D25FB6DAABA8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{799CD8B8-A1BD-4FA7-8BEF-8D8BFCF2ABD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{799CD8B8-A1BD-4FA7-8BEF-8D8BFCF2ABD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{799CD8B8-A1BD-4FA7-8BEF-8D8BFCF2ABD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{799CD8B8-A1BD-4FA7-8BEF-8D8BFCF2ABD6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

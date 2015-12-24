@@ -47,11 +47,11 @@ namespace Ets.SSCancelOrder
                 double hour = 24;
                 GlobalConfigModel gcModel= GlobalConfigDao.GlobalConfigGet(0);
                 if (gcModel != null && gcModel.SSCancelOrder != null)
-                {
+                {                    
                     hour = Convert.ToInt32(gcModel.SSCancelOrder);
-                }
-
+                }             
                 IList<NonJoinWithdrawModel> list = iOrderProvider.GetSSCancelOrder(hour);//获取没给可提现金额加钱的订单
+                
                 foreach (var item in list)
                 {                    
                         try
