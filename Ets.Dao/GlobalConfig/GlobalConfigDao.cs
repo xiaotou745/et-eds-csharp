@@ -34,7 +34,7 @@ namespace Ets.Dao.GlobalConfig
                     || propertyName == "GroupName" || propertyName == "OptName")
                     continue;
 
-                string redisKey = "GlobalConfig_" + propertyName + "_" + GroupId.ToString();
+                string redisKey = "GlobalConfig_" + propertyName + "_" + GroupId.ToString();           
                 string redisValue = redis.Get<string>(redisKey);
 
                 if (string.IsNullOrEmpty(redisValue))

@@ -67,7 +67,7 @@ namespace ETS.Enums
         /// 成功
         /// </summary>
         [DisplayText("成功")]
-        Success = 0,
+        Success = 1,
         /// <summary>
         /// 取消成功
         /// </summary>

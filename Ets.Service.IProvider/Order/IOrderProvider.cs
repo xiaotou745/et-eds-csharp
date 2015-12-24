@@ -341,7 +341,7 @@ namespace Ets.Service.IProvider.Order
        /// 2015年12月15日 10:57:24
        /// <param name="pm"></param>
        /// <returns></returns>
-        ResultModel<object> SSCancelOrder(SSOrderCancelPM pm, OrderOptionModel orderOptionModel);
+        ResultModel<object> SSCancelOrder(SSOrderCancelPM pm);
 
         IList<NonJoinWithdrawModel> GetSSCancelOrder(double hour);
 

@@ -21,7 +21,7 @@ using SuperManWebApi.Providers;
 using Ets.Service.IProvider.Business;
 using Ets.Service.Provider.Business;
 using Letao.Util;
-
+using ETS.Security;
 namespace SuperManWebApi.Controllers
 {
     [ExecuteTimeLog]// TODO:每个API的日志、异常之类
@@ -391,18 +391,14 @@ namespace SuperManWebApi.Controllers
         /// <param name="pm"></param>
         /// <returns></returns>
         [HttpPost]
-        public ResultModel<object> SSCancelOrder(SSOrderCancelPM pm)
+        public ResultModel<object> SSCancelOrder(SSOrderCancelPM parModel)
         {
-            OrderOptionModel orderOptionModel = new OrderOptionModel
-            {             
-                OptUserName = "闪送取消订单",               
-                OptLog = "闪送取消订单",
-                OrderId = pm.OrderId,
-                Remark = "闪送取消订单",
-                Platform = SuperPlatform.ServicePlatform.GetHashCode()
-            };
+            if (!string.IsNullOrEmpty(parModel.data))
+            {
+                parModel = JsonHelper.JsonConvertToObject<SSOrderCancelPM>(AESApp.AesDecrypt(parModel.data));
+            }
 
-            return iOrderProvider.SSCancelOrder(pm, orderOptionModel);
+            return iOrderProvider.SSCancelOrder(parModel);
         }
         
 

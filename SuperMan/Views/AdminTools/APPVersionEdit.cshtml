@@ -24,6 +24,7 @@
             <div style="float:left;width:650px">
                 <input name="rAppSource" id="rold" type="radio" value="0" checked="checked" /> 易代送商户版
                 <input name="rAppSource" id="rnew" type="radio" value="1" /> 智能调度版
+                <input name="rAppSource" id="sansong" type="radio" value="2" /> 闪送版
                 @if (dealType == 1)
                 {
                     <input type="hidden" id="hidAppSrouce" name="hidAppSrouce" value="@Model.AppSource" />
@@ -153,8 +154,10 @@
             if (hidAppSrouce == 0) {
                 $("#rold").attr("checked", "checked");
             }
-            else {
+            else if(hidAppSrouce == 1){
                 $("#rnew").attr("checked", "checked");
+            } else {
+                $("#sansong").attr("checked", "checked");
             }
             if (hidPlatForm == 1) {
                 $("#rAndroid").attr("checked", "checked");

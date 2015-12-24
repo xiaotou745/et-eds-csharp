@@ -1042,7 +1042,7 @@ namespace Ets.Service.Provider.Clienter
                             Operator = currOrderListModel.GroupBusiName,
                             WithwardId = currOrderListModel.Id,
                             RelationNo = currOrderListModel.OrderNo,
-                            Remark = "返还配送费支出金额"
+                            Remark = "返还配送费支出金额(店内骑士抢单)"
                         });
                 }
                 else
@@ -1057,13 +1057,14 @@ namespace Ets.Service.Provider.Clienter
                         Operator = currOrderListModel.BusinessName,
                         WithwardId = currOrderListModel.Id,
                         RelationNo = currOrderListModel.OrderNo,
-                        Remark = "返还配送费支出金额"
+                        Remark = "返还配送费支出金额(店内骑士抢单)"
                     });
                 }
-
-                //更新订单状态 FinishAll=1
-                CheckOrderPay(currOrderListModel.Id);
-
+                if (currOrderListModel.Platform != 3)//闪送订单且骑士为店内 
+                {
+                    //更新订单状态 FinishAll=1
+                    CheckOrderPay(currOrderListModel.Id);
+                }
                 //将订单标记为加入已提现
                 orderOtherDao.UpdateJoinWithdraw(currOrderListModel.Id);
                 //更新订单审核通过 

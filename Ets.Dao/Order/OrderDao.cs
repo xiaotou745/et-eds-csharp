@@ -250,7 +250,7 @@ namespace Ets.Dao.Order
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             //基本参数信息
 
-            dbParameters.Add("@OrderNo", SqlDbType.NVarChar,50).Value=paramodel.OrderNo; //订单号
+            dbParameters.Add("@OrderNo", SqlDbType.NVarChar, 50).Value = paramodel.OrderNo; //订单号
             dbParameters.AddWithValue("@OriginalOrderNo", paramodel.order_id);    //其它平台的来源订单号
             dbParameters.AddWithValue("@PubDate", paramodel.create_time);    //订单下单时间
             dbParameters.AddWithValue("@SongCanDate", paramodel.receive_time);  //要求送餐时间
@@ -645,17 +645,17 @@ select @@IDENTITY ";
             {
                 sbSqlWhere.AppendFormat(" and o.FinishAll = 1 and oo.IsJoinWithdraw =0 and o.IsEnable = 1 and o.[Status] <> {0} ", (byte)OrderStatusCommon.Cancel);
             }
-            if (criteria.GroupBusinessId>0)
+            if (criteria.GroupBusinessId > 0)
             {
                 sbSqlWhere.AppendFormat(" and  gbr.GroupId={0}", criteria.GroupBusinessId);
             }
-          
+
             string tableList = @" [order] o WITH ( NOLOCK )
                                 LEFT JOIN clienter c WITH ( NOLOCK ) ON c.Id = o.clienterId
                                 JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                 LEFT JOIN [group] g WITH ( NOLOCK ) ON g.id = o.OrderFrom
                                 JOIN dbo.OrderOther oo (nolock) ON o.Id = oo.OrderId ";
-            if (criteria.GroupBusinessId>0)
+            if (criteria.GroupBusinessId > 0)
             {
                 tableList += " left join GroupBusinessRelation gbr(nolock) on o.BusinessId=b.id";
             }
@@ -663,13 +663,13 @@ select @@IDENTITY ";
             {
                 if (criteria.TagType == TagUserType.Business.GetHashCode())
                 {
-                    tableList = tableList + string.Format("join dbo.TagRelation tagR on b.Id=tagR.UserId and tagR.IsEnable=1 and tagR.UserType=0 and  tagR.TagId={0}",criteria.TagId); 
+                    tableList = tableList + string.Format("join dbo.TagRelation tagR on b.Id=tagR.UserId and tagR.IsEnable=1 and tagR.UserType=0 and  tagR.TagId={0}", criteria.TagId);
                 }
                 else if (criteria.TagType == TagUserType.Clienter.GetHashCode())
                 {
-                    tableList = tableList + string.Format("join dbo.TagRelation tagR on c.Id=tagR.UserId and tagR.IsEnable=1 and tagR.UserType=1  and  tagR.TagId={0}",criteria.TagId); 
+                    tableList = tableList + string.Format("join dbo.TagRelation tagR on c.Id=tagR.UserId and tagR.IsEnable=1 and tagR.UserType=1  and  tagR.TagId={0}", criteria.TagId);
                 }
-             
+
             }
             string orderByColumn = " o.Status ASC,o.Id DESC ";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
@@ -714,7 +714,7 @@ where  Id=@Id ";
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Id", order.Id);
-            dbParameters.AddWithValue("OrderCount", order.OrderCount);             
+            dbParameters.AddWithValue("OrderCount", order.OrderCount);
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
 
@@ -1294,6 +1294,8 @@ where   a.OriginalOrderNo = @OriginalOrderNo
         /// wc
         /// 窦海超更改
         /// 2015年7月1日 11:59:28
+        /// 2015年12月22日15:00:24
+        /// 茹化肖修改闪送模式判断
         /// </summary>
         /// <param name="orderStatus">订单状态</param>
         /// <returns></returns>
@@ -1301,22 +1303,24 @@ where   a.OriginalOrderNo = @OriginalOrderNo
         {
             //更新订单状态
             StringBuilder upSql = new StringBuilder();
-
-            upSql.AppendFormat(@"
-UPDATE dbo.[order]
- SET [Status] = @status,ActualDoneDate=getdate()
+            upSql.Append(@"UPDATE dbo.[order]
+                           SET [Status] = @status,");
+            //if (myOrderInfo.Platform == 3)//闪送模式直接将FinishAll 更新为1
+            //{
+            //    upSql.Append("FinishAll=1,");
+            //}
+            upSql.Append(@"ActualDoneDate=getdate()
 output Inserted.Id,GETDATE(),'{0}','任务已完成',Inserted.clienterId,Inserted.[Status],{1}
 into dbo.OrderSubsidiesLog(OrderId,InsertTime,OptName,Remark,OptId,OrderStatus,[Platform]) 
-WHERE  dbo.[order].Id = @orderId AND clienterId =@clienterId and Status = 4;
-", myOrderInfo.ClienterName, (int)SuperPlatform.FromClienter);
-
+WHERE  dbo.[order].Id = @orderId AND clienterId =@clienterId and Status = 4;");
+            string upsql = string.Format(upSql.ToString(), myOrderInfo.ClienterName, (int)SuperPlatform.FromClienter);
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("orderId", DbType.Int32, 4).Value = myOrderInfo.Id;
             dbParameters.Add("clienterId", DbType.Int32, 4).Value = myOrderInfo.clienterId;
             dbParameters.Add("status", DbType.Int32, 4).Value = OrderStatus.Status1.GetHashCode();
 
             return ParseHelper.ToInt(
-                DbHelper.ExecuteNonQuery(SuperMan_Write, upSql.ToString(), dbParameters),
+                DbHelper.ExecuteNonQuery(SuperMan_Write, upsql, dbParameters),
                 -1
                 );
         }
@@ -1948,9 +1952,10 @@ DateDiff(MINUTE,PubDate, GetDate()) in ({0})", IntervalMinute);
         /// <returns></returns>
         public bool CancelOrder(OrderListModel model, OrderOptionModel orderOptionModel)
         {
-            string remark =orderOptionModel.Remark;
+            string remark = orderOptionModel.Remark;
             string sql = string.Format(@" UPDATE dbo.[order]
-                                             SET    [Status] = @Status
+                                             SET    [Status] = @Status,
+                                                Othercancelreason=@OptLog
                                             OUTPUT
                                               Inserted.Id,
                                               @Price,
@@ -1978,6 +1983,7 @@ DateDiff(MINUTE,PubDate, GetDate()) in ({0})", IntervalMinute);
             parm.AddWithValue("@Status", 3);
             parm.AddWithValue("@OrderNo", model.OrderNo);
             parm.AddWithValue("@Platform", orderOptionModel.Platform);
+            parm.AddWithValue("@OptLog", orderOptionModel.OptLog);
             parm.AddWithValue("@Remark", remark + "，用户操作描述：【" + orderOptionModel.OptLog + "】");
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }
@@ -2428,7 +2434,8 @@ o.ActualDoneDate,o.IsPay,
     when  ISNULL(b.Latitude,0)=0 or ISNULL(b.Longitude,0)=0 or @clienterLongitude=0 or  @clienterLatitude=0  then -1
     else round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(geography::Point(@clienterLatitude,@clienterLongitude,4326)),0)
     end)
-    as distance,isnull(oo.OneKeyPubOrder,0) as OneKeyPubOrder,oo.ExpectedTakeTime
+    as distance,isnull(oo.OneKeyPubOrder,0) as OneKeyPubOrder,oo.ExpectedTakeTime,
+    o.[Platform]
 from  dbo.[order] o (nolock)
     join business b (nolock) on b.Id=o.businessId
     left join dbo.OrderOther oo (nolock) on o.Id=oo.orderId
@@ -2473,7 +2480,7 @@ where  o.Id=@Id ";
         /// <param name="orderId"></param>
         /// <param name="orderStatus"></param>
         /// <returns></returns>
-        public bool CheckOrderIsExist(int orderId,int orderStatus)
+        public bool CheckOrderIsExist(int orderId, int orderStatus)
         {
             var querySql = @" select count(1)  from   dbo.[order] with(nolock) where  Id = @OrderId AND Status=@OrderStatus;";
             var dbParameters = DbHelper.CreateDbParameters();
@@ -2575,7 +2582,7 @@ from    dbo.[order] o ( nolock )
 where    
         o.Status = 50        
         and o.platform=3
-        and datediff(hour, o.pubDate, getdate()) >= @hour";
+        and datediff(hour, o.pubDate, getdate()) >= @hour ";
             IDbParameters parm = DbHelper.CreateDbParameters("@hour", DbType.Int64, 4, hour);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             if (!dt.HasData())
@@ -2611,11 +2618,18 @@ select top {0}
           when convert(varchar(100), getdate(), 23) then '今日 '
           else substring(convert(varchar(100), PubDate, 23), 6, 5)
         end + '  ' + substring(convert(varchar(100), PubDate, 24), 1, 5) as PubDate,
-		round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) as DistanceToBusiness 
+ case  a.Platform
+        when 3 then
+			round(geography::Point(ISNULL(a.Pickuplatitude,0),ISNULL(a.Pickuplongitude,0),4326).STDistance(@cliernterPoint),0) 
+		else  
+		round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) 
+       end  DistanceToBusiness
+      
 from    dbo.[order] a ( nolock )
         join dbo.business b ( nolock ) on a.businessId = b.Id
         left join dbo.BusinessExpressRelation ber (nolock) on a.businessId=ber.BusinessId
 where a.status = 0 and a.IsEnable=1 and ber.IsEnable=1 and a.ReceviceCity=@ReceviceCity and ber.ExpressId=@ExpressId
+and a.Platform!=3 
 order by a.Id desc", model.TopNum);
 
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -2658,12 +2672,18 @@ ISNULL(a.ReceviceCity,'') as UserCity,case  isnull(a.ReceviceAddress,'')
         end
         +'  '+substring(convert(varchar(100),PubDate,24),1,5)
         as PubDate,
-        round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) as DistanceToBusiness 
+        case  a.Platform
+        when 3 then
+			round(geography::Point(ISNULL(a.Pickuplatitude,0),ISNULL(a.Pickuplongitude,0),4326).STDistance(@cliernterPoint),0) 
+		else  
+		round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) 
+       end  DistanceToBusiness
 from dbo.[order] a (nolock)
         join dbo.business b (nolock) on a.businessId=b.Id
         left join dbo.BusinessExpressRelation ber (nolock) on a.businessId=ber.BusinessId
 where a.status=0 and a.IsEnable=1 and ber.IsEnable=1 and ber.ExpressId=@ExpressId
 and  geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint)<= @PushRadius
+and a.Platform!=3
 order by geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint) asc
 ", model.TopNum);
 
@@ -2711,18 +2731,22 @@ select top {0}
           when convert(varchar(100), getdate(), 23) then '今日 '
           else substring(convert(varchar(100), PubDate, 23), 6, 5)
         end + '  ' + substring(convert(varchar(100), PubDate, 24), 1, 5) as PubDate,
-(case when [Platform]=1 then ISNULL(b.Longitude,0) when [Platform]=2 then oo.PubLongitude else '' end) as  Longitude,--商户发单经度
-(case when [Platform]=1 then ISNULL(b.Latitude,0) when [Platform]=2 then oo.PubLatitude else '' end) as  Latitude,--商户发单纬度
-(case when [Platform]=1 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) when [Platform]=2 then 
-round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0) 
-when [Platform]=3 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) 
+(case when [Platform]=1 then ISNULL(b.Longitude,0) 
+when [Platform]=2 then isnull(oo.PubLongitude,0)
+when [Platform]=3 then a.pickUpLongitude  else  '' end) as  Longitude,--商户发单经度
+(case when [Platform]=1 then ISNULL(b.Latitude,0) 
+when [Platform]=2 then isnull(oo.PubLatitude,0) 
+when [Platform]=3 then a.pickUpLatitude else '' end) as  Latitude,--商户发单纬度
+(case when [Platform]=1 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) 
+when [Platform]=2 then round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0) 
+when [Platform]=3 then round(geography::Point(ISNULL(a.Pickuplatitude,0),ISNULL(a.Pickuplongitude,0),4326).STDistance(@cliernterPoint),0) 
 else '' end)  as DistanceToBusiness,--距离
 (case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress --发货地址
         
 from    dbo.[order] a ( nolock )
 		join dbo.OrderOther oo(nolock) on a.Id=oo.OrderId
         join dbo.business b ( nolock ) on a.businessId = b.Id
-where   a.status = 0 and a.IsEnable=1  and( b.IsBind=0 or (b.IsBind=1 and DATEDIFF(minute,a.PubDate,GETDATE())>{1}))
+where   a.status = 0 and a.IsEnable=1  and( (b.IsBind=0 or (b.IsBind=1 and DATEDIFF(minute,a.PubDate,GETDATE())>{1}))  or a.[Platform]=3)
         {2}
 order by a.Id desc", model.TopNum, model.ExclusiveOrderTime, whereStr);
             }
@@ -2748,11 +2772,15 @@ select top {0}
         end + '  ' + substring(convert(varchar(100), PubDate, 24), 1, 5) as PubDate,
         
 [Platform], --来源（默认1、旧后台，2、智能调度，3新后台）
-(case when [Platform]=1 then ISNULL(b.Longitude,0) when [Platform]=2 then oo.PubLongitude else '' end) as  Longitude,--商户发单经度
-(case when [Platform]=1 then ISNULL(b.Latitude,0) when [Platform]=2 then oo.PubLatitude else '' end) as  Latitude,--商户发单纬度
-(case when [Platform]=1 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) when [Platform]=2 then 
-	round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0)
-when [Platform]=3 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) 
+(case when [Platform]=1 then ISNULL(b.Longitude,0) 
+when [Platform]=2 then isnull(oo.PubLongitude,0) 
+when [Platform]=3 then a.pickUpLongitude  else '' end) as  Longitude,--商户发单经度
+(case when [Platform]=1 then ISNULL(b.Latitude,0) 
+when [Platform]=2 then isnull(oo.PubLatitude,0)
+when [Platform]=3 then a.pickUpLatitude else '' end) as  Latitude,--商户发单纬度
+(case when [Platform]=1 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) 
+when [Platform]=2 then round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0)
+when [Platform]=3 then round(geography::Point(ISNULL(a.Pickuplatitude,0),ISNULL(a.Pickuplongitude,0),4326).STDistance(@cliernterPoint),0) 
 else '' end)  as DistanceToBusiness,--距离
 (case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress --发货地址
 
@@ -2767,11 +2795,12 @@ join dbo.OrderOther oo(nolock) on a.Id=oo.OrderId
                             and temp.ClienterId = {1}
                   ) as c on a.BusinessId = c.BusinessId        
 where   a.status = 0 and a.IsEnable=1
-        and ( b.IsBind = 0
+        and ( (b.IsBind = 0
               or ( b.IsBind = 1
                    and DATEDIFF(minute, a.PubDate, GETDATE()) > {2}
                  )
-              or c.BusinessId is not null
+              or c.BusinessId is not null)
+              or a.[Platform]=3               
             )
         {3}
 order by a.Id desc", model.TopNum, model.ClienterId, model.ExclusiveOrderTime, whereStr);
@@ -2816,18 +2845,22 @@ case convert(varchar(100), PubDate, 23)
 end
 +'  '+substring(convert(varchar(100),PubDate,24),1,5)
 as PubDate,
-(case when [Platform]=1 then ISNULL(b.Longitude,0) when [Platform]=2 then oo.PubLongitude else '' end) as  Longitude,--商户发单经度
-(case when [Platform]=1 then ISNULL(b.Latitude,0) when [Platform]=2 then oo.PubLatitude else '' end) as  Latitude,--商户发单纬度
-(case when [Platform]=1 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) when [Platform]=2 then 
-		round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0) 
-when [Platform]=3 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) 
+(case when [Platform]=1 then ISNULL(b.Longitude,0) 
+when [Platform]=2 then isnull(oo.PubLongitude,0) 
+when [Platform]=3 then a.pickUpLongitude else '' end) as  Longitude,--商户发单经度
+(case when [Platform]=1 then ISNULL(b.Latitude,0) 
+when [Platform]=2 then isnull(oo.PubLatitude,0) 
+when [Platform]=3 then a.pickUpLatitude  else '' end) as  Latitude,--商户发单纬度
+(case when [Platform]=1 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) 
+when [Platform]=2 then round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0) 
+when [Platform]=3 then round(geography::Point(ISNULL(a.Pickuplatitude,0),ISNULL(a.Pickuplongitude,0),4326).STDistance(@cliernterPoint),0) 
 	 else '' end)  as DistanceToBusiness,--距离
 (case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress --发货地址
  
 from dbo.[order] a (nolock)
 join dbo.OrderOther oo(nolock) on a.Id=oo.OrderId
 join dbo.business b (nolock) on a.businessId=b.Id
-where a.status=0 and a.IsEnable=1 and( b.IsBind=0 or (b.IsBind=1 and DATEDIFF(minute,a.PubDate,GETDATE())>{1}))
+where a.status=0 and a.IsEnable=1 and( (b.IsBind=0 or (b.IsBind=1 and DATEDIFF(minute,a.PubDate,GETDATE())>{1})) or a.[Platform] = 3)
 and  geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint)<= @PushRadius
 order by geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint) asc
 ", model.TopNum, model.ExclusiveOrderTime);
@@ -2852,11 +2885,15 @@ end
 +'  '+substring(convert(varchar(100),PubDate,24),1,5)
 as PubDate,
 
-(case when [Platform]=1 then ISNULL(b.Longitude,0) when [Platform]=2 then oo.PubLongitude else '' end) as  Longitude,--商户发单经度
-(case when [Platform]=1 then ISNULL(b.Latitude,0) when [Platform]=2 then oo.PubLatitude else '' end) as  Latitude,--商户发单纬度
-(case when [Platform]=1 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) when [Platform]=2 then 
-		round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0) 
-when [Platform]=3 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) 
+(case when [Platform]=1 then ISNULL(b.Longitude,0) 
+when [Platform]=2 then isnull(oo.PubLongitude,0) 
+when [Platform]=3 then a.pickUpLongitude else '' end) as  Longitude,--商户发单经度
+(case when [Platform]=1 then ISNULL(b.Latitude,0) 
+when [Platform]=2 then isnull(oo.PubLatitude,0) 
+when [Platform]=3 then a.pickUpLatitude else '' end) as  Latitude,--商户发单纬度
+(case when [Platform]=1 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) 
+when [Platform]=2 then round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0) 
+when [Platform]=3 then round(geography::Point(ISNULL(a.Pickuplatitude,0),ISNULL(a.Pickuplongitude,0),4326).STDistance(@cliernterPoint),0) 
 	 else '' end)  as DistanceToBusiness,--距离
 (case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress --发货地址
 
@@ -2871,11 +2908,12 @@ left join ( select  distinct
                             and temp.ClienterId = {1}
                   ) as c on a.BusinessId = c.BusinessId        
 where a.status=0 and a.IsEnable=1
-and ( b.IsBind = 0
+and ( (b.IsBind = 0
               or ( b.IsBind = 1
                    and DATEDIFF(minute, a.PubDate, GETDATE()) > {2}
                  )
-              or c.BusinessId is not null
+              or c.BusinessId is not null)
+              or a.[Platform] = 3
             )
 and  geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint)<= @PushRadius
 order by geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint) asc
@@ -2918,11 +2956,17 @@ case convert(varchar(100), PubDate, 23)
 end
 +'  '+substring(convert(varchar(100),PubDate,24),1,5)
 as PubDate,
-round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) as DistanceToBusiness 
+ case  a.Platform
+        when 3 then
+			round(geography::Point(ISNULL(a.Pickuplatitude,0),ISNULL(a.Pickuplongitude,0),4326).STDistance(@cliernterPoint),0) 
+		else  
+		round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) 
+       end  DistanceToBusiness
 from dbo.[order] a (nolock)
 join dbo.business b (nolock) on a.businessId=b.Id
 join (select  distinct(temp.BusinessId) from BusinessClienterRelation  temp where temp.IsEnable=1 and  temp.IsBind =1 and temp.ClienterId=@ClienterId ) as c on a.BusinessId=c.BusinessId
 where a.status=0 and a.IsEnable=1
+and a.Platform!=3 --店内任务不显示闪送订单
 order by a.id desc 
 ", model.TopNum);
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
@@ -3066,7 +3110,7 @@ end
             dbParameters.Add("orderId", DbType.Int32, 4).Value = modelPM.OrderId;
             dbParameters.AddWithValue("TakeLongitude", modelPM.longitude);
             dbParameters.AddWithValue("TakeLatitude", modelPM.latitude);
-            dbParameters.AddWithValue("IsTakeTimely", modelPM.IsTimely);            
+            dbParameters.AddWithValue("IsTakeTimely", modelPM.IsTimely);
             dbParameters.AddWithValue("clienterId", modelPM.ClienterId);
             dbParameters.AddWithValue("Platform", SuperPlatform.FromClienter.GetHashCode());
             return  DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
@@ -3106,7 +3150,7 @@ SELECT CASE SUM(oc.PayStatus)
         /// <returns></returns>
         public order GetOrderById(int orderId, int businessId, int? status = null)
         {
-            order order = null;     
+            order order = null;
             string sql = @"select  o.Id ,
         o.OrderNo ,o.Status,
         o.SettleMoney ,isnull(o.GroupBusinessId,0) as GroupBusinessId 
@@ -3204,7 +3248,7 @@ where b.Id=@BusinessId;");
             parm.AddWithValue("@Remark", model.Remark);
             parm.AddWithValue("@BusinessId", model.businessId);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0;
-        }     
+        }
         /// <summary>
         /// 获得配送数据列表
         /// </summary>
@@ -3407,7 +3451,7 @@ where   Id = @OrderId and FinishAll = 0";
 update  [order]
 set IsPay = 1,Status=0
 where   Id = @OrderId";
-            IDbParameters dbParameters = DbHelper.CreateDbParameters();            
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("OrderId", DbType.Int32, 4).Value = orderId;
             return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters) == 1 ? true : false;
         }
@@ -3422,7 +3466,7 @@ update  [order]
 set  TipAmount=TipAmount+@TipAmount
 where   Id = @OrderId";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
-            dbParameters.AddWithValue("TipAmount", tipAmount);            
+            dbParameters.AddWithValue("TipAmount", tipAmount);
             dbParameters.Add("OrderId", DbType.Int32, 4).Value = orderId;
             return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters) == 1 ? true : false;
         }
@@ -3436,7 +3480,7 @@ where   Id = @OrderId";
 update  [order]
 set  Payment=@Payment
 where   Id = @OrderId";
-            IDbParameters dbParameters = DbHelper.CreateDbParameters();            
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("Payment", payment);
             dbParameters.Add("OrderId", DbType.Int32, 4).Value = orderId;
             return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters) == 1 ? true : false;
@@ -3583,7 +3627,7 @@ where   Id = @OrderId";
             dbParameters.AddWithValue("@realOrderCommission", orderOtherPM.RealOrderCommission);
             dbParameters.AddWithValue("@OrderId", orderOtherPM.OrderId);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters);
-        }      
+        }
 
         /// <summary>
         /// 骑士目前是否有未完成的订单
@@ -3855,7 +3899,7 @@ where   Id = @OrderId";
             parm.AddWithValue("@Id", model.Id);
             parm.AddWithValue("@Status", model.Status);
             parm.AddWithValue("@OldStatus", model.OldStatus);
-            parm.AddWithValue("@Price", model.OrderCommission??0);
+            parm.AddWithValue("@Price", model.OrderCommission ?? 0);
             parm.AddWithValue("@OptId", 0);
             parm.AddWithValue("@OptName", "服务");
             parm.AddWithValue("@Platform", 2);
@@ -3885,7 +3929,7 @@ where orderId=@orderId";
             dbParameters.AddWithValue("@DeductCommissionType", 1);
             dbParameters.AddWithValue("@DeductCommissionReason", "未在规定时间段内完成上传小票");
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, dbParameters) > 0;
-        } 
+        }
         /// <summary>
         /// 订单审核拒绝修改订单
         /// danny-20150813
@@ -4057,14 +4101,14 @@ from dbo.clienter as c where Id=@ClienterId";
         public IList<order> GetFinallErrByClienterId()
         {
             IList<order> list = new List<order>();
-            
+
             string querysql = @"
 select o.Id,o.OrderCount,ISNULL(oo.HadUploadCount, 0) HadUploadCount        
 from    dbo.[order] o ( nolock )
         left join dbo.OrderOther oo ( nolock ) on o.Id = oo.OrderId
 where   o.Status=1 and oo.HadUploadCount>=o.OrderCount
 and FinishAll=0 ";
-      
+
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql));
             if (DataTableHelper.CheckDt(dt))
             {
@@ -4099,7 +4143,7 @@ WHERE o.[Status]=0 AND o.PubDate>=@LastOrderPushTime;
                 return null;
             }
             return  ConvertDataTableList<OrderListModel>(dt);
-            
+
         }
         /// <summary>
         /// 添加订单推送记录
@@ -4125,9 +4169,9 @@ INSERT INTO [OrderPushRecord]
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@OrderId", model.OrderId);
             dbParameters.AddWithValue("@ClienterIdList", model.ClienterIdList);
-            dbParameters.AddWithValue("@TaskType", model.TaskType); 
+            dbParameters.AddWithValue("@TaskType", model.TaskType);
             dbParameters.AddWithValue("@ClienterCount", model.ClienterCount);
-            dbParameters.AddWithValue("@PushCount", model.PushCount); 
+            dbParameters.AddWithValue("@PushCount", model.PushCount);
             return DbHelper.ExecuteNonQuery(SuperMan_Write, insertSql, dbParameters) > 0;
         }
 
@@ -4207,7 +4251,7 @@ MERGE INTO OrderPushRecord opr
             }
             if (!string.IsNullOrWhiteSpace(model.BusName))
             {
-                sbSqlWhere.AppendFormat(" AND b.Name LIKE '%{0}%'",model.BusName);
+                sbSqlWhere.AppendFormat(" AND b.Name LIKE '%{0}%'", model.BusName);
             }
             string tableList = @" dbo.[order] AS o ( NOLOCK )
         JOIN dbo.OrderOther AS oo ( NOLOCK ) ON o.id = oo.OrderId
@@ -4222,7 +4266,7 @@ MERGE INTO OrderPushRecord opr
         /// </summary>
         /// <param name="businessId"></param>
         /// <returns></returns>
-        public OrderListModel GetBusinessUnReceiveOrderQty(int orderId,int businessId)
+        public OrderListModel GetBusinessUnReceiveOrderQty(int orderId, int businessId)
         {
             string sql = @"
 SELECT   b.Name BusinessName
@@ -4245,7 +4289,7 @@ GROUP BY b.Name,b.PhoneNo,b.Latitude,b.Longitude;
                 return null;
             }
             return list[0];
-            
+
         }
         /// <summary>
         /// 根据订单Id获取订单信息
@@ -4412,8 +4456,8 @@ select @@identity";
             dbParameters.AddWithValue("@GroupBusinessId", order.GroupBusinessId);
             dbParameters.AddWithValue("@ProductName", order.ProductName);
             dbParameters.AddWithValue("@OriginalOrderId", order.OriginalOrderId);
-            
-            object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters);      
+
+            object result = DbHelper.ExecuteScalar(SuperMan_Write, insertSql, dbParameters);
             return ParseHelper.ToInt(result, 0);
         }
 

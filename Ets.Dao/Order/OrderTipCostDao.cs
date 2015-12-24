@@ -170,7 +170,7 @@ select Id,OrderId,Amount,CreateName,CreateTime,PayStates,OriginalOrderNo,PayType
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
             if (dt == null || dt.Rows.Count <= 0)
             {
-                return null;
+                return models;
             }
             return MapRows<OrderTipCost>(dt);
         }
