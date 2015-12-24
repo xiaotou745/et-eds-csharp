@@ -51,5 +51,22 @@ namespace Ets.Model.ParameterModel.Business
         /// 描述
         /// </summary>
         public string Remark { get; set; }
+
+        /// <summary>
+        /// 是否保留 原值 ,默认不保留原金额，只有支付宝，微信支付订单时不统 计流水和扣除商家金额
+        /// </summary>
+        private int _isRetanValue = 0;
+
+        public int IsRetainValue
+        {
+            get
+            {
+                return this._isRetanValue;
+            }
+            set
+            {
+                _isRetanValue = value;
+            }
+        }
     }
 }

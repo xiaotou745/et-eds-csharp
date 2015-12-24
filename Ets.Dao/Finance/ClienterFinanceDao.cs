@@ -653,7 +653,9 @@ WHERE ClienterId=@ClienterId ";
                                     ,cbr.[OperateTime]
                                     ,cbr.[WithwardId]
                                     ,cbr.[RelationNo]
-                                    ,cbr.[Remark]";
+                                    ,cbr.[Remark]
+                                    ,CASE WHEN cbr.RecordType=1 THEN ISNULL(o.[Platform],-1)
+                                     ELSE -1 END AS  [Platform]";
             var sbSqlWhere = new StringBuilder(" 1=1 ");
             if (criteria.RecordType != 0)
             {
@@ -673,9 +675,10 @@ WHERE ClienterId=@ClienterId ";
             }
             if (criteria.ClienterId > 0)
             {
-                sbSqlWhere.AppendFormat(" AND ClienterId={0}", criteria.ClienterId);
+                sbSqlWhere.AppendFormat(" AND cbr.ClienterId={0}", criteria.ClienterId);
             }
-            string tableList = @" [ClienterBalanceRecord] cbr WITH(NOLOCK)";
+            string tableList = @" [ClienterBalanceRecord] cbr WITH(NOLOCK)
+                                    LEFT JOIN dbo.[order] AS o(NOLOCK) ON cbr.WithwardId=o.id";
             string orderByColumn = " cbr.Id DESC";
             return new PageHelper().GetPages<T>(SuperMan_Read, criteria.PageIndex, sbSqlWhere.ToString(), orderByColumn, columnList, tableList, criteria.PageSize, true);
         }

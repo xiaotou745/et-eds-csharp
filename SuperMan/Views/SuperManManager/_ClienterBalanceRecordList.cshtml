@@ -35,7 +35,14 @@
                             else if (item.RecordType == 12 || item.RecordType == 13)
                             {
                                 @item.RelationNo
-                            }else
+                            }
+                            else if (item.RecordType == 1 && item.Platform == 3)
+                            {
+                                <a href="@ConfigSettings.Instance.JavaAdminUrl/order/shansongdetail?orderno=@item.RelationNo&orderid=@item.WithwardId">
+                            @item.RelationNo
+                            </a>
+                            }
+                            else
                             {
                                 <a href="/Order/OrderDetail?OrderNo=@item.RelationNo&OrderId=@item.WithwardId ">@item.RelationNo</a>
                             }

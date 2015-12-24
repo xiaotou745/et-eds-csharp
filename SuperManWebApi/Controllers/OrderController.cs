@@ -393,16 +393,8 @@ namespace SuperManWebApi.Controllers
         [HttpPost]
         public ResultModel<object> SSCancelOrder(SSOrderCancelPM pm)
         {
-            OrderOptionModel orderOptionModel = new OrderOptionModel
-            {             
-                OptUserName = "闪送取消订单",               
-                OptLog = "闪送取消订单",
-                OrderId = pm.OrderId,
-                Remark = "闪送取消订单",
-                Platform = SuperPlatform.ServicePlatform.GetHashCode()
-            };
 
-            return iOrderProvider.SSCancelOrder(pm, orderOptionModel);
+            return iOrderProvider.SSCancelOrder(pm);
         }
         
 

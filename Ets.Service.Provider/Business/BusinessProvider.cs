@@ -1554,12 +1554,16 @@ namespace Ets.Service.Provider.Business
         /// <param name="myOrderInfo"></param>
         public void UpdateBBalanceAndWithdraw(BusinessMoneyPM businessMoneyPM)
         {
-            //更新商户余额、可提现
-            businessDao.UpdateForWithdrawC(new UpdateForWithdrawPM()
+            ///这里验证一下，如果不减商户余额时加IsRetainValue该属性就可以了，但是流水会正常记，当然流水会扣除，但账户流水总余额不会变
+            if (businessMoneyPM.IsRetainValue==0)
             {
-                Id = businessMoneyPM.BusinessId,
-                Money = businessMoneyPM.Amount
-            });
+                //更新商户余额、可提现
+                businessDao.UpdateForWithdrawC(new UpdateForWithdrawPM()
+                {
+                    Id = businessMoneyPM.BusinessId,
+                    Money = businessMoneyPM.Amount
+                });
+            }
 
             //更新商户余额流水          
             businessBalanceRecordDao.Insert(new BusinessBalanceRecord()
