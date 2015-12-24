@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace Ets.Model.ParameterModel.Order
 {
+    public class SSOrderPM
+    {
+        public string data { get; set; }
+    }
     /// <summary>
     /// 订单 查询实体类 
     /// </summary>
