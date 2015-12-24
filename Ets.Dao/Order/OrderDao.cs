@@ -2433,7 +2433,8 @@ o.ActualDoneDate,o.IsPay,
     when  ISNULL(b.Latitude,0)=0 or ISNULL(b.Longitude,0)=0 or @clienterLongitude=0 or  @clienterLatitude=0  then -1
     else round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(geography::Point(@clienterLatitude,@clienterLongitude,4326)),0)
     end)
-    as distance,isnull(oo.OneKeyPubOrder,0) as OneKeyPubOrder,oo.ExpectedTakeTime
+    as distance,isnull(oo.OneKeyPubOrder,0) as OneKeyPubOrder,oo.ExpectedTakeTime,
+    o.[Platform]
 from  dbo.[order] o (nolock)
     join business b (nolock) on b.Id=o.businessId
     left join dbo.OrderOther oo (nolock) on o.Id=oo.orderId

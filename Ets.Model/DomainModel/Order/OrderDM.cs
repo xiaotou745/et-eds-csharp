@@ -31,6 +31,11 @@ namespace Ets.Model.DomainModel.Order
         public int OrderFrom { get; set; }
 
         /// <summary>
+        /// 平台来源
+        /// </summary>
+        public string PlatFormStr { get; set; }
+
+        /// <summary>
         /// 收入
         /// </summary>
         public decimal? OrderCommission { get; set; }
