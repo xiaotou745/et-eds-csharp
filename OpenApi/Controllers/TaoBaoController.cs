@@ -53,12 +53,15 @@ namespace OpenApi.Controllers
         [HttpPost]
         public ResultModel<long> OrderDispatch(ParamModel pm)
         {
+            LogHelper.LogWriter("淘宝", pm);
             string json = AESApp.AesDecrypt(pm.data.Replace(' ', '+')/*TODO 暂时用Replace*/);
+            //string json = AESApp.AesDecrypt(pm.data);
             OrderDispatch p = ParseHelper.Deserialize<OrderDispatch>(json);
             p.itemsList = ParseHelper.Deserialize<List<Commodity>>(p.items);
             if (p.store_name.IndexOf("代送") > 0)
             {
-                return ResultModel<long>.Conclude(taoDianDianGroup.TaoBaoPushOrder(p), p.delivery_order_no);
+                var abc=taoDianDianGroup.TaoBaoPushOrder(p); 
+                return ResultModel<long>.Conclude(abc, p.delivery_order_no);
             }
             return ResultModel<long>.Conclude(TaoBaoPushOrder.Error);
 

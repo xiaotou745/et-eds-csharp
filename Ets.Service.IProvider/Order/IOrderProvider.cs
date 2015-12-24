@@ -345,5 +345,6 @@ namespace Ets.Service.IProvider.Order
 
         IList<NonJoinWithdrawModel> GetSSCancelOrder(double hour);
 
+        ClienterOrderModel GetByClienterId(int clienterId, int orderFrom);
     }
 }

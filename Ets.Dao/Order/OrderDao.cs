@@ -31,6 +31,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Ets.Model.DomainModel.Clienter;
 
 namespace Ets.Dao.Order
 {
@@ -2416,9 +2417,7 @@ set @clienterLongitude=@Longitude;
 set @clienterLatitude=@Latitude;
 
 select  o.Id,o.OrderNo,o.PickUpAddress,o.PubDate,o.ReceviceName,o.RecevicePhoneNo,
-case  isnull(o.ReceviceAddress,'')  
-		when  '' then '附近3公里左右，由商户指定'
-		else o.ReceviceAddress end as ReceviceAddress,
+case  isnull(o.ReceviceAddress,'')  		when  '' then '附近3公里左右，由商户指定'		else o.ReceviceAddress end as ReceviceAddress,
 o.ActualDoneDate,o.IsPay,
     o.Amount,o.OrderCommission,o.DistribSubsidy,o.WebsiteSubsidy,o.Remark,o.Status,o.clienterId,o.businessId,o.ReceviceCity,o.ReceviceLongitude,
     o.ReceviceLatitude,o.OrderFrom,o.OriginalOrderId,o.OriginalOrderNo,o.Quantity,o.Weight,o.ReceiveProvince,o.ReceiveArea,o.ReceiveProvinceCode,
@@ -3114,7 +3113,7 @@ end
             dbParameters.AddWithValue("IsTakeTimely", modelPM.IsTimely);
             dbParameters.AddWithValue("clienterId", modelPM.ClienterId);
             dbParameters.AddWithValue("Platform", SuperPlatform.FromClienter.GetHashCode());
-            return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+            return  DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
         }
         /// <summary>
         /// 获取任务支付状态（0：未支付 1：部分支付 2：已支付）
@@ -3620,7 +3619,7 @@ where   Id = @OrderId";
         /// <param name="orderId"></param>
         /// <param name="realOrderCommission"></param>
         /// <returns></returns>
-        public int UpdateOrderRealCommission(OrderOtherPM orderOtherPM)
+        public int UpdateOrderRealCommission(OrderOtherPM  orderOtherPM)
         {
             string sql = @" update [Order] set RealOrderCommission=@realOrderCommission where id=@orderId";
 
@@ -4143,7 +4142,7 @@ WHERE o.[Status]=0 AND o.PubDate>=@LastOrderPushTime;
             {
                 return null;
             }
-            return ConvertDataTableList<OrderListModel>(dt);
+            return  ConvertDataTableList<OrderListModel>(dt);
 
         }
         /// <summary>
@@ -4463,5 +4462,28 @@ select @@identity";
         }
 
 
+
+        public ClienterOrderModel GetByClienterId(int clienterId, int orderFrom)
+        {
+            string sql = @"
+select top 1
+        c.TrueName ,
+        c.PhoneNo ,
+        o.Id
+from    dbo.clienter c ( nolock )
+        left join dbo.[order] o ( nolock ) on c.Id = o.clienterId 
+where   o.OrderFrom = @OrderFrom and c.Id = @ClienterId;
+";
+            var parm = DbHelper.CreateDbParameters();
+            parm.Add("@ClienterId", DbType.Int32, 4).Value = clienterId;
+            parm.Add("@OrderFrom", DbType.Int32, 4).Value = orderFrom; 
+            var dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            var list = ConvertDataTableList<ClienterOrderModel>(dt);
+            if (list == null || list.Count <= 0)
+            {
+                return null;
+            }
+            return list[0];
+        }
     }
 }

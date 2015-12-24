@@ -129,6 +129,7 @@ namespace Ets.Service.Provider.Common
         public GroupApiConfigModel GetGroupApiConfigByAppKey(string appkey, string version)
         {
             var redis = new ETS.NoSql.RedisCache.RedisCache();
+            redis.Delete(appkey + version);
             GroupApiConfigModel model= redis.Get<GroupApiConfigModel>(appkey + version);
             if (model == null)
             {

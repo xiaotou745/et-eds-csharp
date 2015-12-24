@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using Ets.Model.Common;
@@ -19,7 +20,10 @@ using Ets.Service.IProvider.Clienter;
 using ETS.Enums;
 using SuperManWebApi.App_Start.Filters;
 using Ets.Model.ParameterModel.Common;
+using Ets.Service.Provider.Order;
 using ETS.Security;
+using System.Configuration;
+using Ets.Service.IProvider.Order;
 
 namespace SuperManWebApi.Controllers
 {
@@ -32,7 +36,7 @@ namespace SuperManWebApi.Controllers
         readonly IClienterFinanceProvider clienterFinanceProvider = new ClienterFinanceProvider();
         readonly IClienterProvider clienterProvider = new ClienterProvider();
         readonly IClienterLocationProvider clienterLocationProvider = new ClienterLocationProvider();
-
+        readonly IOrderProvider orderProvider = new OrderProvider();
         /// <summary>
         /// 骑士交易流水API caoheyang 20150512
         /// </summary>
@@ -111,6 +115,25 @@ namespace SuperManWebApi.Controllers
         [ApiVersion]
         public ResultModel<object> PushLocaltion(ClienterPushLocaltionPM model)
         {
+            //获取该骑士下有无淘点点订单 
+            Task.Factory.StartNew(() =>
+            {
+                ClienterOrderModel clienterOrderModel = orderProvider.GetByClienterId(model.ClienterId, 100);
+                if (clienterOrderModel != null && clienterOrderModel.OrderId > 0)
+                {
+                    string url = ConfigurationManager.AppSettings["TaoBaoLocationUpdateAsyncStatus"];
+                    var temp = new
+                    {
+                        delivererName = clienterOrderModel.TrueName,
+                        delivererPhone = clienterOrderModel.PhoneNo,
+                        lng = model.Longitude,
+                        lat = model.Latitude
+                    };
+                    new HttpClient().PostAsJsonAsync(url,
+                        new {data = AESApp.AesEncrypt(JsonHelper.JsonConvertToString(temp))});
+                }
+            });
+            //调用淘点点相关java接口 上传坐标
             return clienterLocationProvider.InsertLocaltion(model);
         }       
     }
