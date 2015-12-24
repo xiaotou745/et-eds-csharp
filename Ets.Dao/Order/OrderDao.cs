@@ -2714,12 +2714,13 @@ select top {0}
           when convert(varchar(100), getdate(), 23) then '今日 '
           else substring(convert(varchar(100), PubDate, 23), 6, 5)
         end + '  ' + substring(convert(varchar(100), PubDate, 24), 1, 5) as PubDate,
-(case when [Platform]=1 then ISNULL(b.Longitude,0) when [Platform]=2 then oo.PubLongitude else '' end) as  Longitude,--商户发单经度
-(case when [Platform]=1 then ISNULL(b.Latitude,0) when [Platform]=2 then oo.PubLatitude else '' end) as  Latitude,--商户发单纬度
-(case when [Platform]=1 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) when [Platform]=2 then 
-round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0) 
-when [Platform]=3 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) 
-else '' end)  as DistanceToBusiness,--距离
+(case when [Platform]=1 then ISNULL(b.Longitude,0) 
+else oo.PubLongitude end) as  Longitude,--商户发单经度
+(case when [Platform]=1 then ISNULL(b.Latitude,0) 
+else oo.PubLatitude end) as  Latitude,--商户发单纬度
+(case when [Platform]=1 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) 
+else round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0) 
+ end)  as DistanceToBusiness,--距离
 (case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress --发货地址
         
 from    dbo.[order] a ( nolock )
@@ -2751,12 +2752,10 @@ select top {0}
         end + '  ' + substring(convert(varchar(100), PubDate, 24), 1, 5) as PubDate,
         
 [Platform], --来源（默认1、旧后台，2、智能调度，3新后台）
-(case when [Platform]=1 then ISNULL(b.Longitude,0) when [Platform]=2 then oo.PubLongitude else '' end) as  Longitude,--商户发单经度
-(case when [Platform]=1 then ISNULL(b.Latitude,0) when [Platform]=2 then oo.PubLatitude else '' end) as  Latitude,--商户发单纬度
-(case when [Platform]=1 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) when [Platform]=2 then 
-	round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0)
-when [Platform]=3 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) 
-else '' end)  as DistanceToBusiness,--距离
+(case when [Platform]=1 then ISNULL(b.Longitude,0) else oo.PubLongitude end) as  Longitude,--商户发单经度
+(case when [Platform]=1 then ISNULL(b.Latitude,0) else oo.PubLatitude end) as  Latitude,--商户发单纬度
+(case when [Platform]=1 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) 
+else round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0) end)  as DistanceToBusiness,--距离
 (case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress --发货地址
 
 from    dbo.[order] a ( nolock )
@@ -2819,12 +2818,10 @@ case convert(varchar(100), PubDate, 23)
 end
 +'  '+substring(convert(varchar(100),PubDate,24),1,5)
 as PubDate,
-(case when [Platform]=1 then ISNULL(b.Longitude,0) when [Platform]=2 then oo.PubLongitude else '' end) as  Longitude,--商户发单经度
-(case when [Platform]=1 then ISNULL(b.Latitude,0) when [Platform]=2 then oo.PubLatitude else '' end) as  Latitude,--商户发单纬度
-(case when [Platform]=1 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) when [Platform]=2 then 
-		round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0) 
-when [Platform]=3 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) 
-	 else '' end)  as DistanceToBusiness,--距离
+(case when [Platform]=1 then ISNULL(b.Longitude,0) else oo.PubLongitude  end) as  Longitude,--商户发单经度
+(case when [Platform]=1 then ISNULL(b.Latitude,0) else oo.PubLatitude end) as  Latitude,--商户发单纬度
+(case when [Platform]=1 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) 
+else round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0)  end)  as DistanceToBusiness,--距离
 (case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress --发货地址
  
 from dbo.[order] a (nolock)
@@ -2855,12 +2852,10 @@ end
 +'  '+substring(convert(varchar(100),PubDate,24),1,5)
 as PubDate,
 
-(case when [Platform]=1 then ISNULL(b.Longitude,0) when [Platform]=2 then oo.PubLongitude else '' end) as  Longitude,--商户发单经度
-(case when [Platform]=1 then ISNULL(b.Latitude,0) when [Platform]=2 then oo.PubLatitude else '' end) as  Latitude,--商户发单纬度
-(case when [Platform]=1 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) when [Platform]=2 then 
-		round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0) 
-when [Platform]=3 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) 
-	 else '' end)  as DistanceToBusiness,--距离
+(case when [Platform]=1 then ISNULL(b.Longitude,0) else oo.PubLongitude  end) as  Longitude,--商户发单经度
+(case when [Platform]=1 then ISNULL(b.Latitude,0) else oo.PubLatitude end) as  Latitude,--商户发单纬度
+(case when [Platform]=1 then round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) 
+else round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0)  end)  as DistanceToBusiness,--距离
 (case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress --发货地址
 
 from dbo.[order] a (nolock)
