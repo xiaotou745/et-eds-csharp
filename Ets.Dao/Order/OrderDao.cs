@@ -31,6 +31,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Ets.Model.DomainModel.Clienter;
 
 namespace Ets.Dao.Order
 {
@@ -4417,5 +4418,28 @@ select @@identity";
         }
 
 
+
+        public ClienterOrderModel GetByClienterId(int clienterId, int orderFrom)
+        {
+            string sql = @"
+select top 1
+        c.TrueName ,
+        c.PhoneNo ,
+        o.Id
+from    dbo.clienter c ( nolock )
+        left join dbo.[order] o ( nolock ) on c.Id = o.clienterId 
+where   o.OrderFrom = @OrderFrom and c.Id = @ClienterId;
+";
+            var parm = DbHelper.CreateDbParameters();
+            parm.Add("@ClienterId", DbType.Int32, 4).Value = clienterId;
+            parm.Add("@OrderFrom", DbType.Int32, 4).Value = orderFrom; 
+            var dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            var list = ConvertDataTableList<ClienterOrderModel>(dt);
+            if (list == null || list.Count <= 0)
+            {
+                return null;
+            }
+            return list[0];
+        }
     }
 }

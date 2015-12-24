@@ -35,6 +35,7 @@ namespace Ets.Service.Provider.OpenApi
                 paraModel.app_key = model.AppKey;
                 paraModel.v = model.AppVersion;
                 paraModel.timestamp = TimeHelper.GetTimeStamp();
+                paraModel.group = model.GroupId;
                 paraModel.sign = MD5.Encrypt(model.AppSecret + "app_key" + model.AppKey + "timestamp"
                     + paraModel.timestamp + "v" + model.AppVersion + model.AppSecret);
             }

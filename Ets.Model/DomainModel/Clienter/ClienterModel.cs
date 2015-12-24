@@ -102,4 +102,20 @@ namespace Ets.Model.DomainModel.Clienter
         /// </summary>
         public int WorkStatus { get; set; }
     }
+
+    public class ClienterOrderModel
+    {
+        /// <summary>
+        /// 手机号码
+        /// </summary>
+        public string PhoneNo { get; set; }
+        /// <summary>
+        /// 真实姓名
+        /// </summary>
+        public string TrueName { get; set; }
+        /// <summary>
+        /// 订单Id
+        /// </summary>
+        public int OrderId { get; set; }
+    }
 }

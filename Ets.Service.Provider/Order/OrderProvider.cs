@@ -1263,7 +1263,7 @@ namespace Ets.Service.Provider.Order
             var r =TaoBaoCancelOrderReturn.Error;
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                var order= orderDao.GetOrderByOrderNoAndOrderFrom(thirdNo, GroupConst.Group8, 0);
+                var order= orderDao.GetOrderByOrderNoAndOrderFrom(thirdNo, GroupConst.Group100, 0);
                 if (order == null)
                 {
                     return TaoBaoCancelOrderReturn.NoExist;
@@ -2293,6 +2293,11 @@ namespace Ets.Service.Provider.Order
         public IList<NonJoinWithdrawModel> GetSSCancelOrder(double hour)
         {
             return orderDao.GetSSCancelOrder(hour);
+        }
+
+        public ClienterOrderModel GetByClienterId(int clienterId, int orderFrom)
+        {
+            return orderDao.GetByClienterId(clienterId,orderFrom);
         }
 
         /// <summary>
