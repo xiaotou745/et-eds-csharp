@@ -1953,7 +1953,8 @@ DateDiff(MINUTE,PubDate, GetDate()) in ({0})", IntervalMinute);
         {
             string remark = orderOptionModel.Remark;
             string sql = string.Format(@" UPDATE dbo.[order]
-                                             SET    [Status] = @Status
+                                             SET    [Status] = @Status,
+                                                Othercancelreason=@OptLog
                                             OUTPUT
                                               Inserted.Id,
                                               @Price,
@@ -1981,6 +1982,7 @@ DateDiff(MINUTE,PubDate, GetDate()) in ({0})", IntervalMinute);
             parm.AddWithValue("@Status", 3);
             parm.AddWithValue("@OrderNo", model.OrderNo);
             parm.AddWithValue("@Platform", orderOptionModel.Platform);
+            parm.AddWithValue("@OptLog", orderOptionModel.OptLog);
             parm.AddWithValue("@Remark", remark + "，用户操作描述：【" + orderOptionModel.OptLog + "】");
             return DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm) > 0 ? true : false;
         }

@@ -1042,7 +1042,7 @@ namespace Ets.Service.Provider.Clienter
                             Operator = currOrderListModel.GroupBusiName,
                             WithwardId = currOrderListModel.Id,
                             RelationNo = currOrderListModel.OrderNo,
-                            Remark = "返还配送费支出金额"
+                            Remark = "返还配送费支出金额(店内骑士抢单)"
                         });
                 }
                 else
@@ -1057,7 +1057,7 @@ namespace Ets.Service.Provider.Clienter
                         Operator = currOrderListModel.BusinessName,
                         WithwardId = currOrderListModel.Id,
                         RelationNo = currOrderListModel.OrderNo,
-                        Remark = "返还配送费支出金额"
+                        Remark = "返还配送费支出金额(店内骑士抢单)"
                     });
                 }
                 if (currOrderListModel.Platform != 3)//闪送订单且骑士为店内 
