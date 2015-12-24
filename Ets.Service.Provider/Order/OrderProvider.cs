@@ -1346,54 +1346,55 @@ namespace Ets.Service.Provider.Order
             {
                 DealFlag = false
             };
-            using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
+            orderOptionModel.Remark = orderOptionModel.OptUserName + "通过后台管理系统取消订单";
+            orderOptionModel.Platform = SuperPlatform.ManagementBackground.GetHashCode();
+
+            var orderModel = orderDao.GetOrderByIdWithNolock(orderOptionModel.OrderId);
+            if (orderModel == null)
             {
-                orderOptionModel.Remark = orderOptionModel.OptUserName + "通过后台管理系统取消订单";
-                orderOptionModel.Platform = SuperPlatform.ManagementBackground.GetHashCode();
+                dealResultInfo.DealMsg = "未查询到订单信息！";
+                return dealResultInfo;
+            }
+            orderModel.OptUserName = orderOptionModel.OptUserName;
+            orderModel.Remark = orderOptionModel.OptLog;
+            var orderTaskPayStatus = orderDao.GetOrderTaskPayStatus(orderModel.Id);
+            if (orderModel.Platform == 3)//闪送模式取消订单
+            {
+                SSOrderCancelPM pm = new SSOrderCancelPM();
+                pm.OrderId = orderModel.Id;
+                pm.OptUserName = orderOptionModel.OptUserName;
+                pm.OptLog = orderOptionModel.OptLog;
+                pm.Remark = orderOptionModel.OptLog;
+                pm.Platform = SuperPlatform.ManagementBackground.GetHashCode();
 
-                var orderModel = orderDao.GetOrderByIdWithNolock(orderOptionModel.OrderId);
-                if (orderModel == null)
+                SSCancelOrder(pm);
+                dealResultInfo.DealFlag = true;
+                dealResultInfo.DealMsg = "订单取消成功！";
+            }
+            else
+            {
+                using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
                 {
-                    dealResultInfo.DealMsg = "未查询到订单信息！";
-                    return dealResultInfo;
-                }
-                orderModel.OptUserName = orderOptionModel.OptUserName;
-                orderModel.Remark = orderOptionModel.OptLog;
-                var orderTaskPayStatus = orderDao.GetOrderTaskPayStatus(orderModel.Id);
-                #region 订单不可取消
-                if (orderModel.Status == 3)//订单已为取消状态
-                {
-                    dealResultInfo.DealMsg = "订单已为取消状态，不能再次取消操作！";
-                    return dealResultInfo;
-                }
-                if (orderModel.IsJoinWithdraw == 1)//订单已分账
-                {
-                    dealResultInfo.DealMsg = "订单已分账，不能取消订单！";
-                    return dealResultInfo;
-                }
-                //我们的线上支付是指扫码支付
-                if (orderModel.MealsSettleMode == 1 && orderTaskPayStatus > 0 && !orderModel.IsPay.Value)//餐费未线上支付模式并且餐费有支付
-                {
-                    dealResultInfo.DealMsg = "餐费有支付，不能取消订单！";
-                    return dealResultInfo;
-                }
-                #endregion
 
-                if (orderModel.Platform == 3)//闪送模式取消订单
-                {
-                    SSOrderCancelPM pm = new SSOrderCancelPM();
-                    pm.OrderId = orderModel.Id;
-                    pm.OptUserName = orderOptionModel.OptUserName;
-                    pm.OptLog = orderOptionModel.OptLog;                
-                    pm.Remark = orderOptionModel.OptLog;
-                    pm.Platform = 0;
+                    #region 订单不可取消
+                    if (orderModel.Status == 3)//订单已为取消状态
+                    {
+                        dealResultInfo.DealMsg = "订单已为取消状态，不能再次取消操作！";
+                        return dealResultInfo;
+                    }
+                    if (orderModel.IsJoinWithdraw == 1)//订单已分账
+                    {
+                        dealResultInfo.DealMsg = "订单已分账，不能取消订单！";
+                        return dealResultInfo;
+                    }
+                    //我们的线上支付是指扫码支付
+                    if (orderModel.MealsSettleMode == 1 && orderTaskPayStatus > 0 && !orderModel.IsPay.Value)//餐费未线上支付模式并且餐费有支付
+                    {
+                        dealResultInfo.DealMsg = "餐费有支付，不能取消订单！";
+                        return dealResultInfo;
+                    }
+                    #endregion
 
-                    SSCancelOrder(pm);
-                    dealResultInfo.DealFlag = true;
-                    dealResultInfo.DealMsg = "订单取消成功！";
-                }
-                else
-                {
                     #region 原后台取消订单
                     if (orderDao.CancelOrder(orderModel, orderOptionModel)
                         && orderOtherDao.UpdateCancelTime(orderModel.Id))
@@ -1465,9 +1466,11 @@ namespace Ets.Service.Provider.Order
                         }
                     });
                     #endregion
+
+
                 }
-                return dealResultInfo;
             }
+             return dealResultInfo;
         }
 
         /// <summary>
