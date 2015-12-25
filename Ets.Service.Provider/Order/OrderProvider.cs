@@ -950,12 +950,12 @@ namespace Ets.Service.Provider.Order
                 }
                 string cityName = model.Receive_City;
                 //把省里的城区，郊区过滤掉，因为易代送的直辖市都是没有市或城区的
-                model.Receive_City = string.IsNullOrEmpty(cityName) ? string.Empty : cityName.Trim().Replace("城区", "").Replace("郊区", "");
+                cityName = string.IsNullOrEmpty(cityName) ? string.Empty : cityName.Trim().Replace("城区", "").Replace("郊区", "");
                 //转换市
-                var _city = iAreaProvider.GetNationalAreaInfo(new AreaModelTranslate() { Name = model.Receive_City, JiBie = 3 });
+                var _city = iAreaProvider.GetNationalAreaInfo(new AreaModelTranslate() { Name = cityName, JiBie = 3 });
                 if (_city != null)
                 {
-
+                    model.Receive_City = cityName.Contains("市") ? cityName : string.Concat(cityName, "市");
                     model.Receive_CityCode = _city.NationalCode.ToString();
                 }
                 //转换区

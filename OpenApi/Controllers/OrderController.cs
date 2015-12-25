@@ -65,7 +65,7 @@ namespace OpenApi.Controllers
             new HttpDao().LogThirdPartyInfo(httpModel);
             return status < 0 ?
             ResultModel<object>.Conclude(OrderApiStatusType.ParaError) :    //订单不存在返回参数错误提示
-            ResultModel<object>.Conclude(OrderApiStatusType.Success, new { order_status = status });
+            ResultModel<object>.Conclude(OrderApiStatusType.ThirdSuccess, new { order_status = status });
         }
 
         // POST: Order Create   paramodel 固定 必须是 paramodel  
@@ -144,7 +144,7 @@ namespace OpenApi.Controllers
             //paramodel.group 签名信息中取到  即 那个集团调用的该接口
             IGroupProviderOpenApi groupProvider = OpenApiGroupFactory.Create(paramodel.group);
             if (groupProvider == null)
-                ResultModel<object>.Conclude(OrderApiStatusType.Success);  //无集团信息，不需要同步返回成功，实际应该不会该情况
+                ResultModel<object>.Conclude(OrderApiStatusType.ThirdSuccess);  //无集团信息，不需要同步返回成功，实际应该不会该情况
             OrderApiStatusType statusType = groupProvider.AsyncStatus(paramodel);
             HttpModel httpModel = new HttpModel()
             {
@@ -208,7 +208,7 @@ namespace OpenApi.Controllers
             LogHelper.LogWriter("获取订单信息：", new { paramodel = paramodel });
             List<OrderRecordsLog> orderRecords =  new OrderProvider().GetOrderRecords(paramodel.fields.order_no, paramodel.group).ToList(); 
 
-            var result= ResultModel<object>.Conclude(OrderApiStatusType.Success,orderRecords);
+            var result= ResultModel<object>.Conclude(OrderApiStatusType.ThirdSuccess,orderRecords);
             HttpModel httpModel = new HttpModel()
             {
                 Url = HttpContext.Current.Request.Url.AbsoluteUri,
@@ -252,7 +252,7 @@ namespace OpenApi.Controllers
             new HttpDao().LogThirdPartyInfo(httpModel);
             if (kk == "1")
             {
-                return ResultModel<object>.Conclude(OrderApiStatusType.Success);
+                return ResultModel<object>.Conclude(OrderApiStatusType.ThirdSuccess);
             }
             else
             {
