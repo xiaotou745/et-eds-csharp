@@ -64,6 +64,13 @@ namespace ETS.Enums
     public enum OrderApiStatusType
     {
         /// <summary>
+        /// 第三方平台调用成功，该成功状态专用于第三方使用，
+        /// 因为已经通知过第三方，所有请求成功状态为0，该值不能改，2015年12月25日 13:51:04 窦海超 
+        /// </summary>
+        [DisplayText("成功")]
+        ThirdSuccess=0,
+
+        /// <summary>
         /// 成功
         /// </summary>
         [DisplayText("成功")]

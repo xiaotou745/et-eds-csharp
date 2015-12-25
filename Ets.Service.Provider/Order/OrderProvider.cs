@@ -786,7 +786,7 @@ namespace Ets.Service.Provider.Order
             }
 
             return string.IsNullOrWhiteSpace(orderNo) ? ResultModel<object>.Conclude(OrderApiStatusType.ParaError) :
-             ResultModel<object>.Conclude(OrderApiStatusType.Success, new { order_no = orderNo });
+             ResultModel<object>.Conclude(OrderApiStatusType.ThirdSuccess, new { order_no = orderNo });
         }
 
         /// <summary>
