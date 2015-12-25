@@ -2417,9 +2417,7 @@ set @clienterLongitude=@Longitude;
 set @clienterLatitude=@Latitude;
 
 select  o.Id,o.OrderNo,o.PickUpAddress,o.PubDate,o.ReceviceName,o.RecevicePhoneNo,
-case  isnull(o.ReceviceAddress,'')  
-		when  '' then '附近3公里左右，由商户指定'
-		else o.ReceviceAddress end as ReceviceAddress,
+case  isnull(o.ReceviceAddress,'')  		when  '' then '附近3公里左右，由商户指定'		else o.ReceviceAddress end as ReceviceAddress,
 o.ActualDoneDate,o.IsPay,
     o.Amount,o.OrderCommission,o.DistribSubsidy,o.WebsiteSubsidy,o.Remark,o.Status,o.clienterId,o.businessId,o.ReceviceCity,o.ReceviceLongitude,
     o.ReceviceLatitude,o.OrderFrom,o.OriginalOrderId,o.OriginalOrderNo,o.Quantity,o.Weight,o.ReceiveProvince,o.ReceiveArea,o.ReceiveProvinceCode,
@@ -2583,8 +2581,8 @@ from    dbo.[order] o ( nolock )
         join dbo.OrderOther oo ( nolock ) on o.Id = oo.OrderId
 where    
         o.Status = 50        
-        and o.platform=3  
-      and datediff(hour, o.pubDate, getdate()) >= @hour and o.id>2158000 ";
+        and o.platform=3
+        and datediff(hour, o.pubDate, getdate()) >= @hour and o.id>2158000";
             IDbParameters parm = DbHelper.CreateDbParameters("@hour", DbType.Int64, 4, hour);
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
             if (!dt.HasData())
