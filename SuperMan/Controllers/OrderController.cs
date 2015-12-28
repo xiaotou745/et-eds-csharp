@@ -143,6 +143,10 @@ namespace SuperMan.Controllers
             {
                 criteria.businessCity = "";
             }
+            //accountType为1表示全部城市权限，为2表示不分城市
+            int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;
+            criteria.AuthorityCityNameListStr =
+                iAreaProvider.GetAuthorityCityNameListStr(UserType);
             var pagedList = iOrderProvider.GetOrders(criteria);
             if (pagedList != null && pagedList.Records.Count > 0)
             {
