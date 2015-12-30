@@ -433,5 +433,9 @@ namespace Ets.Model.DataModel.Order
             get { return expectedTakeTime == null ? "" : expectedTakeTime; }
             set { expectedTakeTime = value; }
         } //商户期望骑士取货时间
-    }
+
+       public string Pubphoneno { get; set; }
+        public string Recevicephoneno { get; set; }
+
+        public string Receivecode { get; set; }    }
 }
