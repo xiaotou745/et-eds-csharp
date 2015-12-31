@@ -2421,7 +2421,9 @@ set @clienterLongitude=@Longitude;
 set @clienterLatitude=@Latitude;
 
 select  o.Id,o.OrderNo,o.PickUpAddress,o.PubDate,o.ReceviceName,o.RecevicePhoneNo,
-case  isnull(o.ReceviceAddress,'')  		when  '' then '附近3公里左右，由商户指定'		else o.ReceviceAddress end as ReceviceAddress,
+case  isnull(o.ReceviceAddress,'')  
+		when  '' then '附近3公里左右，由商户指定'
+		else o.ReceviceAddress end as ReceviceAddress,
 o.ActualDoneDate,o.IsPay,
     o.Amount,o.OrderCommission,o.DistribSubsidy,o.WebsiteSubsidy,o.Remark,o.Status,o.clienterId,o.businessId,o.ReceviceCity,o.ReceviceLongitude,
     o.ReceviceLatitude,o.OrderFrom,o.OriginalOrderId,o.OriginalOrderNo,o.Quantity,o.Weight,o.ReceiveProvince,o.ReceiveArea,o.ReceiveProvinceCode,
