@@ -85,6 +85,7 @@
     <Compile Include="Message\BusinessMessageDao.cs" />
     <Compile Include="Message\ClienterMessageDao.cs" />
     <Compile Include="Message\MessageDao.cs" />
+    <Compile Include="Order\ClienterPushLogDao.cs" />
     <Compile Include="Order\OrderTipCostDao.cs" />
     <Compile Include="Order\OrderRegionDao.cs" />
     <Compile Include="Order\OrderSubsidiesLogDao.cs" />
