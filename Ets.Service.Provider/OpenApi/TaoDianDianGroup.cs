@@ -276,7 +276,8 @@ namespace Ets.Service.Provider.OpenApi
                     oModel.BussGroupIsAllowOverdraft = 0;
                     oModel.BalancePrice = bModel.BalancePrice;
                     oModel.OrderFrom = GroupConst.Group100;//订单来源
-                    oModel.Remark = p.order_ext_info;//
+                    //oModel.Remark = p.order_ext_info;//
+                    oModel.Remark ="";
                     oModel.ReceviceName = p.consignee_name;
                     oModel.RecevicePhoneNo = p.consignee_phone;
                     oModel.ReceviceAddress = p.consignee_address;
