@@ -269,6 +269,7 @@
     <Content Include="packages.config" />
     <Content Include="NLog.config" />
     <None Include="Properties\PublishProfiles\pushservicewcf.pubxml" />
+    <Content Include="PushMessage.ashx" />
     <None Include="Scripts\jquery-1.6.4-vsdoc.js" />
     <Content Include="Scripts\jquery-1.6.4.js" />
     <Content Include="Scripts\jquery-1.6.4.min.js" />
@@ -290,6 +291,9 @@
     <Compile Include="LateMsgModel.cs" />
     <Compile Include="MessageQueue.cs" />
     <Compile Include="PushHub.cs" />
+    <Compile Include="PushMessage.ashx.cs">
+      <DependentUpon>PushMessage.ashx</DependentUpon>
+    </Compile>
     <Compile Include="PushSer.svc.cs">
       <DependentUpon>PushSer.svc</DependentUpon>
     </Compile>
