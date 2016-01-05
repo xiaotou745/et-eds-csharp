@@ -2747,10 +2747,7 @@ when [Platform]=3 then a.pickUpLatitude else '' end) as  Latitude,--商户发单
 when [Platform]=2 then round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0) 
 when [Platform]=3 then round(geography::Point(ISNULL(a.Pickuplatitude,0),ISNULL(a.Pickuplongitude,0),4326).STDistance(@cliernterPoint),0) 
 else '' end)  as DistanceToBusiness,--距离
-(case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress, --发货地址
- a.amount+a.tipamount as amountAndTip,a.ReceiveCode,
-case a.Payment when 0 then '余额'  when 1 then '支付宝'  when 2 then '微信' end paymentstr,
-case a.Platform when 1 then 'E代送商户版'  when 2 then 'E代送商户版'  when 3 then 'E代送智能调度' end platformstr
+(case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress --发货地址
         
 from    dbo.[order] a ( nolock )
 		join dbo.OrderOther oo(nolock) on a.Id=oo.OrderId
@@ -2791,10 +2788,8 @@ when [Platform]=3 then a.pickUpLatitude else '' end) as  Latitude,--商户发单
 when [Platform]=2 then round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0)
 when [Platform]=3 then round(geography::Point(ISNULL(a.Pickuplatitude,0),ISNULL(a.Pickuplongitude,0),4326).STDistance(@cliernterPoint),0) 
 else '' end)  as DistanceToBusiness,--距离
-(case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress, --发货地址
- a.amount+a.tipamount as amountAndTip,a.ReceiveCode,
-case a.Payment when 0 then '余额'  when 1 then '支付宝'  when 2 then '微信' end paymentstr,
-case a.Platform when 1 then 'E代送商户版'  when 2 then 'E代送商户版'  when 3 then 'E代送智能调度' end platformstr
+(case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress --发货地址
+
 
 from    dbo.[order] a ( nolock )
 join dbo.OrderOther oo(nolock) on a.Id=oo.OrderId 
@@ -2866,10 +2861,7 @@ when [Platform]=3 then a.pickUpLatitude  else '' end) as  Latitude,--商户发�
 when [Platform]=2 then round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0) 
 when [Platform]=3 then round(geography::Point(ISNULL(a.Pickuplatitude,0),ISNULL(a.Pickuplongitude,0),4326).STDistance(@cliernterPoint),0) 
 	 else '' end)  as DistanceToBusiness,--距离
-(case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress, --发货地址
- a.amount+a.tipamount as amountAndTip,a.ReceiveCode,
-case a.Payment when 0 then '余额'  when 1 then '支付宝'  when 2 then '微信' end paymentstr,
-case a.Platform when 1 then 'E代送商户版'  when 2 then 'E代送商户版'  when 3 then 'E代送智能调度' end platformstr
+(case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress --发货地址
  
 from dbo.[order] a (nolock)
 join dbo.OrderOther oo(nolock) on a.Id=oo.OrderId
@@ -2909,10 +2901,8 @@ when [Platform]=3 then a.pickUpLatitude else '' end) as  Latitude,--商户发单
 when [Platform]=2 then round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0) 
 when [Platform]=3 then round(geography::Point(ISNULL(a.Pickuplatitude,0),ISNULL(a.Pickuplongitude,0),4326).STDistance(@cliernterPoint),0) 
 	 else '' end)  as DistanceToBusiness,--距离
-(case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress, --发货地址
- a.amount+a.tipamount as amountAndTip,a.ReceiveCode,
-case a.Payment when 0 then '余额'  when 1 then '支付宝'  when 2 then '微信' end paymentstr,
-case a.Platform when 1 then 'E代送商户版'  when 2 then 'E代送商户版'  when 3 then 'E代送智能调度' end platformstr
+(case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress --发货地址
+
 
 from dbo.[order] a (nolock)
 join dbo.OrderOther oo(nolock) on a.Id=oo.OrderId
@@ -3461,14 +3451,16 @@ where   Id = @OrderId and FinishAll = 0";
         /// 更新是否已付款
         /// </summary>
         /// <param name="orderId"></param>
-        public bool UpdateIsPay(int orderId)
+        public bool UpdateIsPay(int orderId, int payment)
         {
             const string updateSql = @"
 update  [order]
-set IsPay = 1,Status=0
+set IsPay = 1,Status=0,
+Payment=@Payment
 where   Id = @OrderId";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("OrderId", DbType.Int32, 4).Value = orderId;
+            dbParameters.Add("Payment", DbType.Int32, 4).Value = payment;   
             return DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters) == 1 ? true : false;
         }
         /// <summary>

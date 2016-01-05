@@ -2810,7 +2810,7 @@ namespace Ets.Service.Provider.Pay
                     {
                         #region 未支付
                         //修改订单支付状态 订单状态
-                        orderDao.UpdateIsPay(orderId);
+                        orderDao.UpdateIsPay(orderId,1);
                         //更新子订单状态 支付宝
                         orderChildDao.UpdateIsPay(orderChildId, 1);
 
@@ -2995,7 +2995,7 @@ namespace Ets.Service.Provider.Pay
                     {
                         #region 未支付
                         //修改订单支付状态 订单状态
-                        orderDao.UpdateIsPay(orderId);
+                        orderDao.UpdateIsPay(orderId,2);
                         //更新子订单状态 微信
                         orderChildDao.UpdateIsPay(orderChildId, 2);
 
