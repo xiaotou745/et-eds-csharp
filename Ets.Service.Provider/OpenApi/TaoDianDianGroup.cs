@@ -260,7 +260,7 @@ namespace Ets.Service.Provider.OpenApi
                     oModel.PickUpAddress = bModel.Address;  //取货地址
                     oModel.PubDate = DateTime.Now; //取货时间
                     oModel.ReceviceCity = bModel.City; //城市
-                    oModel.DistribSubsidy = p.delivery_fee/100;//外送费
+                    oModel.DistribSubsidy = p.delivery_fee/100m;//外送费
                     oModel.BusinessCommission = ParseHelper.ToDecimal(bModel.BusinessCommission);//商户结算比例
                     oModel.BusinessName = bModel.Name;
                     oModel.CommissionType = bModel.CommissionType;//结算类型：1：固定比例 2：固定金额
@@ -282,7 +282,7 @@ namespace Ets.Service.Provider.OpenApi
                     oModel.RecevicePhoneNo = p.consignee_phone;
                     oModel.ReceviceAddress = p.consignee_address;
                     oModel.IsPay = true;
-                    oModel.Amount = ParseHelper.ToDecimal(p.actually_paid)/100;
+                    oModel.Amount = ParseHelper.ToDecimal(p.actually_paid)/100m;
                     oModel.OrderCount = p.quantity;  //订单数量
                     //收货 经纬度            
                     oModel.ReceviceLongitude = 0;
@@ -323,7 +323,7 @@ namespace Ets.Service.Provider.OpenApi
                     oModel.CommissionFormulaMode = bModel.StrategyId;
                     oModel.CommissionRate =0; //佣金比例 
                     oModel.BaseCommission =0;//基本佣金
-                    oModel.OrderCommission = p.delivery_fee / 100; //订单佣金
+                    oModel.OrderCommission = p.delivery_fee / 100m; //订单佣金
                     oModel.WebsiteSubsidy = 0;//网站补贴
                     oModel.SettleMoney = 0;      
 
@@ -382,15 +382,15 @@ namespace Ets.Service.Provider.OpenApi
                     OrderChild ocMode = new OrderChild();
                     ocMode.OrderId = oId;
                     ocMode.ChildId = 1;
-                    ocMode.TotalPrice = p.actually_paid;//商品总价格
-                    ocMode.GoodPrice = p.actually_paid;//商品价格
-                    ocMode.DeliveryPrice = p.delivery_fee;//配送费
+                    ocMode.TotalPrice = p.actually_paid/100m;//商品总价格
+                    ocMode.GoodPrice = p.actually_paid/100m;//商品价格
+                    ocMode.DeliveryPrice = p.delivery_fee/100m;//配送费
                     ocMode.PayStyle = 1;//用户支付
                     ocMode.PayType = 0;//支付类型
                     ocMode.PayStatus = 1;//已支付
                     ocMode.PayBy = p.consignee_name;//支付人
                     ocMode.PayTime = DateTime.Now;//支付时间
-                    ocMode.PayPrice = p.actually_paid;//支付金额
+                    ocMode.PayPrice = p.actually_paid/100m;//支付金额
                     ocMode.HasUploadTicket = false;//是否上传小票
                     ocMode.TicketUrl = "";//小票地址
                     ocMode.CreateBy = "淘宝推送订单";//创建人
@@ -406,7 +406,7 @@ namespace Ets.Service.Provider.OpenApi
                         Ets.Model.DataModel.Order.OrderDetail odModel = new Ets.Model.DataModel.Order.OrderDetail();
                         odModel.OrderNo = oModel.OrderNo;
                         odModel.ProductName = p.itemsList[i].itemName;//商品名称
-                        odModel.UnitPrice = p.itemsList[i].unitPrice/100;
+                        odModel.UnitPrice = p.itemsList[i].unitPrice/100m;
                         odModel.Quantity = p.itemsList[i].quantity;
                         odModel.FormDetailID = 0;
                         odModel.GroupID = 0;
@@ -422,7 +422,7 @@ namespace Ets.Service.Provider.OpenApi
                             odModel.TotalWeight = p.itemsList[i].totalWeight;
                         else
                             odModel.TotalWeight = "";
-                        odModel.TotalPrice = p.itemsList[i].totalPrice / 100; 
+                        odModel.TotalPrice = p.itemsList[i].totalPrice / 100m; 
                         long odId = orderDetailDao.Insert(odModel);
                     }
 
