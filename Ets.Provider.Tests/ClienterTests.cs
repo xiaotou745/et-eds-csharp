@@ -23,10 +23,19 @@ namespace Ets.Provider.Tests
     [TestFixture]
     public class ClienterTests
     {
+        [Test]
+        public void Citytest()
+        {
+
+            string key = MD5.Encrypt(string.Format("{0}_{1}_{2}", "北京", "北京市", "朝阳区").Replace(" ", ""));
+        }
+
         //IPayProvider payProvider = new PayProvider();
         [Test]
         public void ClienterTest()
         {
+
+
             //PayProvider p = new PayProvider();
             //var reg = p.QueryBalanceYee(new YeeQueryBalanceParameter() { Ledgerno = "10012628673" });
 
