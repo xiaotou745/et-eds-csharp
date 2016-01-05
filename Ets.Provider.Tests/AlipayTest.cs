@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ETS.Pay.AliPay;
+using Ets.Service.Provider.Order;
 using Ets.Service.Provider.Pay;
 using NUnit.Framework;
 using ETS.Library.Pay.SSAliPay;
@@ -61,6 +62,7 @@ namespace Ets.Provider.Tests
         [Test]
         public void AlipayCreateNo()
         {
+             new OrderProvider().ShanSongPushOrderForJava(121);
             //var no = new PayProvider().CreateAlipayBatchNo();
         }
     }

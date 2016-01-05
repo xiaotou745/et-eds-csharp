@@ -346,5 +346,12 @@ namespace Ets.Service.IProvider.Order
         IList<NonJoinWithdrawModel> GetSSCancelOrder(double hour);
 
         ClienterOrderModel GetByClienterId(int clienterId, int orderFrom);
+
+        /// <summary>
+        /// 调用java接口 里程计算 推单  (处理订单)
+        /// caoheyang 20160105
+        /// </summary>
+        /// <param name="orderid"></param>
+        void ShanSongPushOrderForJava(long orderid);
     }
 }

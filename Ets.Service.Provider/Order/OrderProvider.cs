@@ -16,6 +16,7 @@ using Ets.Model.DomainModel.Order;
 using Ets.Model.ParameterModel.Business;
 using Ets.Model.ParameterModel.Finance;
 using Ets.Model.ParameterModel.Order;
+using ETS.Security;
 using Ets.Service.IProvider.Order;
 using Ets.Service.IProvider.Subsidy;
 using Ets.Service.Provider.MyPush;
@@ -2836,7 +2837,8 @@ namespace Ets.Service.Provider.Order
                 tran.Complete();
             }
 
-
+            //调用java接口 里程计算 推单  (处理订单)  caoheyang 20160105
+            Task.Factory.StartNew(() => ShanSongPushOrderForJava(pm.OrderId));
 
             return ResultModel<object>.Conclude(OrderApiStatusType.Success);
         }
@@ -3183,5 +3185,22 @@ namespace Ets.Service.Provider.Order
         //}
 
         //#endregion
+
+        /// <summary>
+        /// 调用java接口 里程计算 推单  (处理订单)
+        /// caoheyang 20160105
+        /// </summary>
+        /// <param name="orderid"></param>
+        public void ShanSongPushOrderForJava(long orderid)
+        {
+            var temp = new
+            {
+                orderId = orderid,
+            };
+
+            string json = new HttpClient().PostAsJsonAsync(ConfigurationManager.AppSettings["ShanSongPushOrderForJavaURL"],
+                new { data = AESApp.AesEncrypt(JsonHelper.JsonConvertToString(temp)) })
+                .Result.Content.ReadAsStringAsync().Result;
+        }
     }
 }
