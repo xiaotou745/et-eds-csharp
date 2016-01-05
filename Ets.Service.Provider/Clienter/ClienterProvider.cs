@@ -1000,7 +1000,7 @@ namespace Ets.Service.Provider.Clienter
         public ResultModel<RushOrderResultModel> Receive_C(OrderReceiveModel parmodel)
         {
             //int userId, string orderNo, int bussinessId, float grabLongitude, float grabLatitude
-            ///TODO 骑士是否有资格抢单放前面
+            //TODO 骑士是否有资格抢单放前面
             ClienterModel clienterModel = new Ets.Dao.Clienter.ClienterDao().GetUserInfoByUserId(parmodel.ClienterId);
 
             BusinessClienterRelation bcrModel= new Ets.Dao.Business.BusinessClienterRelationDao().GetDetails(new BusinessClienterRelationPM() 
@@ -1023,12 +1023,13 @@ namespace Ets.Service.Provider.Clienter
                 DeliveryCompanyID = parmodel.DeliveryCompanyID//物流公司ID
             };
             bool bResult = orderDao.RushOrder(model);
-            ///TODO 同步第三方状态和jpush 以后放到后台服务或mq进行。            
+            //TODO 同步第三方状态和jpush 以后放到后台服务或mq进行。            
 
+
+            OrderListModel currOrderListModel= orderDao.GetByOrderNo(parmodel.orderNo);
             //不属于物流公司同时属于合作骑士
             if (parmodel.DeliveryCompanyID <= 0 && bcrModel != null && bcrModel.IsCooperation == 1)
             {
-                OrderListModel currOrderListModel= orderDao.GetByOrderNo(parmodel.orderNo);
                 if (currOrderListModel.GroupBusinessId > 0)
                 {
                      //更新集团余额
@@ -1072,8 +1073,6 @@ namespace Ets.Service.Provider.Clienter
              
             }
 
-
-
             if (bResult)
             {
                 //异步回调第三方，推送通知
@@ -1089,6 +1088,10 @@ namespace Ets.Service.Provider.Clienter
                                             });
                     new OrderProvider().AsyncOrderStatus(parmodel.orderNo);//同步第三方订单
                     Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", parmodel.businessId.ToString(), string.Empty);
+                    if (currOrderListModel.Platform == PlatformEnum.FlashToSendModel.GetHashCode())  //里程计算 处理订单
+                    {
+                        new OrderProvider().ShanSongPushOrderForJava(currOrderListModel.Id);
+                    }
                 });
 
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Success);

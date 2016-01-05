@@ -120,5 +120,12 @@ namespace Ets.Model.DomainModel.Order
         public int BusinessId { get; set; }
 
         public string PubName { get; set; }
+
+        public double amountAndTip { get; set; }
+
+        public string receivecode { get; set; }
+        public string paymentstr { get; set; }
+
+        public string platformstr { get; set; }
     }
 }
