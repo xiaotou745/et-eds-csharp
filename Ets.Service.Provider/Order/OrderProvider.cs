@@ -2837,7 +2837,8 @@ namespace Ets.Service.Provider.Order
                 tran.Complete();
             }
 
-
+            //调用java接口 里程计算 推单  (处理订单)  caoheyang 20160105
+            Task.Factory.StartNew(() => ShanSongPushOrderForJava(pm.OrderId));
 
             return ResultModel<object>.Conclude(OrderApiStatusType.Success);
         }
