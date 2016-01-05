@@ -260,7 +260,8 @@ namespace Ets.Service.Provider.OpenApi
                     oModel.PickUpAddress = bModel.Address;  //取货地址
                     oModel.PubDate = DateTime.Now; //取货时间
                     oModel.ReceviceCity = bModel.City; //城市
-                    oModel.DistribSubsidy = p.delivery_fee/100m;//外送费
+                    //oModel.DistribSubsidy = p.delivery_fee/100m;//外送费
+                    oModel.DistribSubsidy = 0;
                     oModel.BusinessCommission = ParseHelper.ToDecimal(bModel.BusinessCommission);//商户结算比例
                     oModel.BusinessName = bModel.Name;
                     oModel.CommissionType = bModel.CommissionType;//结算类型：1：固定比例 2：固定金额
