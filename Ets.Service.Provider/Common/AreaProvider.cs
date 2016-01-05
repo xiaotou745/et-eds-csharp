@@ -50,7 +50,7 @@ namespace Ets.Service.Provider.Common
             if (areaList.AreaModels == null || areaList.AreaModels.Count <= 0)
             {
                 IList<AreaModel> list = dao.GetOpenCitySql();
-             
+
 
                 areaList.AreaModels = list;
                 //areaList.Version = Config.ApiVersion;
@@ -361,10 +361,12 @@ namespace Ets.Service.Provider.Common
                 else if (tempModel.AreaIsOpen == 0 || tempModel.ProvinceIsOpen == 0 || tempModel.CityIsOpen == 0)
                     redis.Set(key, SystemConst.CityOpenInfo, DateTime.Now.AddDays(30));
                 else
-                    redis.Set(key, string.Format("{0}_{1}_{2}", tempModel.ProvinceCode, tempModel.CityCode, tempModel.AreaCode)
-                        , DateTime.Now.AddDays(30));
+                {
+                    cacheValue = string.Format("{0}_{1}_{2}", tempModel.ProvinceCode, tempModel.CityCode, tempModel.AreaCode);
+                    redis.Set(key, cacheValue, DateTime.Now.AddDays(30));
+                }
             }
-            return redis.Get<string>(key);
+            return cacheValue;
         }
         /// <summary>
         /// 获取开通城市列表

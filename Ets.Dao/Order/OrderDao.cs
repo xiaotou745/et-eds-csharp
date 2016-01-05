@@ -2747,7 +2747,10 @@ when [Platform]=3 then a.pickUpLatitude else '' end) as  Latitude,--商户发单
 when [Platform]=2 then round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0) 
 when [Platform]=3 then round(geography::Point(ISNULL(a.Pickuplatitude,0),ISNULL(a.Pickuplongitude,0),4326).STDistance(@cliernterPoint),0) 
 else '' end)  as DistanceToBusiness,--距离
-(case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress --发货地址
+(case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress, --发货地址
+ a.amount+a.tipamount as amountAndTip,a.ReceiveCode,
+case a.Payment when 0 then '余额'  when 1 then '支付宝'  when 2 then '微信' end paymentstr,
+case a.Platform when 1 then 'E代送商户版'  when 2 then 'E代送商户版'  when 3 then 'E代送智能调度' end platformstr
         
 from    dbo.[order] a ( nolock )
 		join dbo.OrderOther oo(nolock) on a.Id=oo.OrderId
@@ -2788,7 +2791,10 @@ when [Platform]=3 then a.pickUpLatitude else '' end) as  Latitude,--商户发单
 when [Platform]=2 then round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0)
 when [Platform]=3 then round(geography::Point(ISNULL(a.Pickuplatitude,0),ISNULL(a.Pickuplongitude,0),4326).STDistance(@cliernterPoint),0) 
 else '' end)  as DistanceToBusiness,--距离
-(case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress --发货地址
+(case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress, --发货地址
+ a.amount+a.tipamount as amountAndTip,a.ReceiveCode,
+case a.Payment when 0 then '余额'  when 1 then '支付宝'  when 2 then '微信' end paymentstr,
+case a.Platform when 1 then 'E代送商户版'  when 2 then 'E代送商户版'  when 3 then 'E代送智能调度' end platformstr
 
 from    dbo.[order] a ( nolock )
 join dbo.OrderOther oo(nolock) on a.Id=oo.OrderId 
@@ -2860,7 +2866,10 @@ when [Platform]=3 then a.pickUpLatitude  else '' end) as  Latitude,--商户发�
 when [Platform]=2 then round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0) 
 when [Platform]=3 then round(geography::Point(ISNULL(a.Pickuplatitude,0),ISNULL(a.Pickuplongitude,0),4326).STDistance(@cliernterPoint),0) 
 	 else '' end)  as DistanceToBusiness,--距离
-(case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress --发货地址
+(case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress, --发货地址
+ a.amount+a.tipamount as amountAndTip,a.ReceiveCode,
+case a.Payment when 0 then '余额'  when 1 then '支付宝'  when 2 then '微信' end paymentstr,
+case a.Platform when 1 then 'E代送商户版'  when 2 then 'E代送商户版'  when 3 then 'E代送智能调度' end platformstr
  
 from dbo.[order] a (nolock)
 join dbo.OrderOther oo(nolock) on a.Id=oo.OrderId
@@ -2900,7 +2909,10 @@ when [Platform]=3 then a.pickUpLatitude else '' end) as  Latitude,--商户发单
 when [Platform]=2 then round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo.PubLongitude,0),4326).STDistance(@cliernterPoint),0) 
 when [Platform]=3 then round(geography::Point(ISNULL(a.Pickuplatitude,0),ISNULL(a.Pickuplongitude,0),4326).STDistance(@cliernterPoint),0) 
 	 else '' end)  as DistanceToBusiness,--距离
-(case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress --发货地址
+(case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress, --发货地址
+ a.amount+a.tipamount as amountAndTip,a.ReceiveCode,
+case a.Payment when 0 then '余额'  when 1 then '支付宝'  when 2 then '微信' end paymentstr,
+case a.Platform when 1 then 'E代送商户版'  when 2 then 'E代送商户版'  when 3 then 'E代送智能调度' end platformstr
 
 from dbo.[order] a (nolock)
 join dbo.OrderOther oo(nolock) on a.Id=oo.OrderId
