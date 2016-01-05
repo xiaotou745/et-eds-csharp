@@ -27,9 +27,14 @@ namespace Ets.Model.DataModel.Order
         /// </summary>
         public string ClienterIds { get; set; }
         /// <summary>
-        /// 推送时间
+        /// 新订单推送时间
         /// </summary>
         public DateTime CreateTime { get; set; }
+        /// <summary>
+        /// 订单处理后（接单取消订单）推送时间
+        /// </summary>
+        public DateTime? ProcessTime { get; set; }
+
 
     }
 
