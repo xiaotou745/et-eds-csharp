@@ -29,12 +29,12 @@ width: 100%;
             <th>实际完成时间</th>
             <th>订单数量</th>
             <th>订单金额</th>
+            <th>商家结算</th>
             <th>订单佣金</th>
             <th>扣除补贴</th>
             <th>外送费</th>
             <th>每单补贴</th>
-            <th>任务补贴</th>
-            <th>商家结算</th>
+            @*<th>任务补贴</th>*@          
             <th>订单来源</th>
             <th>订单状态</th>
             <th>已上传/共需上传</th>
@@ -87,6 +87,29 @@ width: 100%;
                     }
                     var diffMinutes = (DateTime.Now - (item.PubDate != null ? item.PubDate : DateTime.Now)).TotalMinutes;
                     string timeoutStyle = diffMinutes > 5 && item.Status == 0 ? " style=background-color:#FFCCCC" : "";
+                    
+                    decimal waisongfei = item.DistribSubsidy ?? 0.00M;
+                    //第三方订单 不考虑外送费
+                    if (item.OrderFrom > 0)
+                    {
+                        waisongfei = 0;
+                    }
+                    //默认为结算比例
+                    string yingshouID = "yingshou" + item.Id;                 
+                    string yingshou = string.Format("[订单金额*商配比例+(商配定额+代收客配)*订单数量]<br/>[{0}*{1}+({2}+{3})*{4}]", item.Amount, Decimal.Round(item.BusinessCommission * 1.00M / 100, 2), item.CommissionFixValue, waisongfei, item.OrderCount);
+                    string yingshou_tipString = string.Format("  class=true style=color:blue; onmousemove=tip_show('{0}',event,'{1}'); onmouseout=tip_hide();", yingshouID, yingshou);
+
+                    string yingfuID = "yingfu" + item.Id;
+                    string yingfus = string.Format("[订单金额*佣金比例+外送费(或网站补贴)*订单数量]<br/>[{0}*{1}+{2}({3})*{4}]", item.Amount, item.CommissionRate, item.DistribSubsidy, item.WebsiteSubsidy, item.OrderCount);
+                    if (item.CommissionFormulaMode == 3)
+                    {
+                        yingfus = string.Format("[满额补贴+订单金额*佣金比例+外送费(或网站补贴)*订单数量]<br/>[{0}+{1}*{2}+{3}({4})*{5}]", item.Adjustment, item.Amount, item.CommissionRate, item.DistribSubsidy, item.WebsiteSubsidy, item.OrderCount);
+                    }
+                    else if (item.CommissionFormulaMode == 4)
+                    {
+                        yingfus = string.Format("[(基本佣金+网站补贴)*订单数量]<br/>[({0}+{1})*{2}]", item.BaseCommission, item.WebsiteSubsidy, item.OrderCount);
+                    }
+                    string yingfu_tipString = string.Format("  class=true style=color:blue; onmousemove=tip_show('{0}',event,'{1}'); onmouseout=tip_hide();", yingfuID, yingfus);
                     <tr id="@item.Id" @timeoutStyle>
                         <td><a href="/Order/OrderDetail?OrderNo=@item.OrderNo&OrderId=@item.Id ">@item.OrderNo</a></td>
                         <td>@item.OriginalOrderNo</td>
@@ -98,7 +121,13 @@ width: 100%;
                         <td>@item.ActualDoneDate</td>
                         <td>@item.OrderCount</td>
                         <td style="color:red;font-weight:600">@item.Amount</td>
-                        <td>@item.OrderCommission</td>
+                        @*<td>
+                            @{var commission = "[" + item.BusinessCommission + "%+" + item.CommissionFixValue.ToString() + "+" + item.DistribSubsidy + "]";
+                            }
+                            @commission
+                        </td>*@
+                        <td id="@yingshouID" @yingshou_tipString>@item.SettleMoney</td>                  
+                        <td id="@yingfuID" @yingfu_tipString>@item.OrderCommission</td>
                         @{
                                 if (butie > 0)
                                 {
@@ -110,13 +139,9 @@ width: 100%;
                                 }
                             }
                         <td>@item.DistribSubsidy</td>
-                        <td>@item.WebsiteSubsidy</td>
-                        <td>@item.Adjustment</td>
-                        <td>
-                            @{var commission = "["+item.BusinessCommission + "%+" + item.CommissionFixValue.ToString() +"+"+ item.DistribSubsidy+"]";
-                             }
-                            @commission
-                        </td>
+                        <td>@item.WebsiteSubsidy</td>             
+                        @*<td>@item.Adjustment</td>*@
+                      
                         <td>@item.GroupName</td>
                         <td>@ETS.Extension.EnumExtenstion.GetEnumItem(((ETS.Enums.OrderStatusCommon)item.Status).GetType(), (ETS.Enums.OrderStatusCommon)item.Status).Text</td>
                         <td>@item.HadUploadCount.ToString()/@item.OrderCount.ToString()</td>  
@@ -146,6 +171,7 @@ width: 100%;
     </p>
 </div>
 </div>
+<div id="rowTip" style="position: absolute; border: 1px solid #ccc; padding: 0px 3px; display: none;  background: #FFCCCC"></div>
 <script type="text/javascript">
     var adminjs = new adminglass(); //实例化后台类
     $(function () {
@@ -338,5 +364,21 @@ width: 100%;
             var label = new BMap.Label("完成时间-" + jsonstr.ActualDoneDate + (!isCompleteTimely ? ",非实时" : ""), { offset: new BMap.Size(-200, 20) });
             marker3.setLabel(label);
         }
+    }
+    function tip_show(id, e, val1) {
+        var obj = $("#rowTip");
+        obj.hide();
+        obj.html(val1);
+        var targetObj = document.getElementById(id);
+        var left = targetObj.offsetLeft + 250;
+        var top = targetObj.offsetTop + 300;
+        //alert(top+","+left);
+        //var left = e.clientX+10;
+        //var top = e.clientY - 10;
+        obj.css("top", top).css("left", left);
+        obj.show();
+    }
+    function tip_hide() {
+        $("#rowTip").hide();
     }
 </script>
