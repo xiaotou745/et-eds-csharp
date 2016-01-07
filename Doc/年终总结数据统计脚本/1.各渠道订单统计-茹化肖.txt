@@ -1,0 +1,25 @@
+		DECLARE @OrderFrom INT =100--	0 B端商家,1 易淘食(聚网客) ,2 万达,3 全时,4 美团,5 回家吃饭,6 首旅,10 E代送智能调度,11闪送 ,99 商家中心, 100 淘点点 101 全聚德
+        --1.按商家统计任务数量,订单数量,总金额,WHERE STATUS<>3 2016年之前
+        SELECT  o.businessId ,
+                COUNT(o.id) AS TaskCount ,
+                SUM(o.OrderCount) AS OrderCount ,
+                SUM(o.Amount) AS TotalOrderAmount
+        INTO  #T1 FROM    dbo.[order] AS o(NOLOCK)
+        WHERE   o.Status <> 3
+				AND o.PubDate <'2016-01-01'
+				AND o.OrderFrom=@OrderFrom
+				AND o.Platform<>3
+        GROUP BY businessId
+       -- SELECT * FROM #T1 AS t
+        --统计数据
+        SELECT  ISNULL(b.city,'') AS 城市,
+			    COUNT(#T1.businessId ) AS 门店数量,
+                SUM(#T1.TaskCount) AS  完成任务量,
+                SUM(#T1.OrderCount) AS  订单量,
+                SUM(#T1.TotalOrderAmount) AS 订单总额
+                
+                 FROM dbo.business AS b (nolock)
+        JOIN #T1  ON b.id=#T1.businessId
+        WHERE ISNULL(b.InsertTime,'2015-03-01')<'2016-01-01'
+        GROUP BY ISNULL(b.city,'')
+        DROP TABLE #T1

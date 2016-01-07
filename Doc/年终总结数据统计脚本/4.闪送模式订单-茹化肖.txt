@@ -1,0 +1,7 @@
+
+SELECT  COUNT(1) AS 完成订单量 ,
+        CONVERT(CHAR(7), o.PubDate, 120) AS 月份
+FROM    dbo.[order] AS o
+WHERE   o.Platform = 3
+        AND o.Status = 1
+GROUP BY CONVERT(CHAR(7), o.PubDate, 120)
