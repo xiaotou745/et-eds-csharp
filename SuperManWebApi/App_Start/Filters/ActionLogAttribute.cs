@@ -27,6 +27,13 @@ namespace SuperManWebApi.App_Start.Filters
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
     public class ActionLogAttribute : System.Web.Http.Filters.ActionFilterAttribute
     {
+        private static string getClientIp()
+        {
+            if (System.Web.HttpContext.Current.Request.ServerVariables["HTTP_VIA"] != null)
+                return System.Web.HttpContext.Current.Request.ServerVariables["HTTP_X_FORWARDED_FOR"].Split(new char[] { ',' })[0];
+            else
+                return System.Web.HttpContext.Current.Request.ServerVariables["REMOTE_ADDR"];
+        }
         /// <summary>
         ///
         /// </summary>
@@ -46,19 +53,21 @@ namespace SuperManWebApi.App_Start.Filters
             List<string> ips = new List<string>();
             ips.Add(SystemHelper.GetLocalIP());
             ips.Add(SystemHelper.GetGateway());
+            var controllerName = actionContext.RequestContext.RouteData.Values["controller"].ToString();
+            var actionName = actionContext.RequestContext.RouteData.Values["action"].ToString();
             actionContext.Request.Properties["actionlog"] = new ActionLog()
             {
                 userID = -1,
                 userName = "",
                 requestType = 0,
-                clientIp = actionContext.Request.RequestUri.Host,
+                clientIp = getClientIp(),
                 sourceSys = "supermanapi",
                 requestUrl = actionContext.Request.RequestUri.ToString(),
                 param = responseData,
                 decryptMsg = responseData,
                 contentType = actionContext.Request.Content.Headers.ContentType.ToString(),
                 requestMethod = actionContext.Request.Method.ToString(),
-                methodName = actionContext.ActionDescriptor.ActionName,
+                methodName = controllerName + "." + actionName,
                 requestTime =DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"),
                 appServer = JsonHelper.JsonConvertToString(ips),
                 header = JsonHelper.JsonConvertToString(actionContext.Request.Headers)
