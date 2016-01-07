@@ -42,18 +42,3 @@ LEFT JOIN
     LEFT JOIN   dbo.DeliveryCompany d  (NOLOCK) ON o.DeliveryCompanyID=d.Id
 	GROUP BY  d.id
 )  V1 ON t.id=V1.DeliveryCompanyId
-
-
-
-4	如风达	61	96951.00	0.00	        30666.00	    2613	23273	456555.70
-4	如风达	61	76387.50	130521.600000	4.00	2084	18128	373144.70
-
-SELECT  TOP 100
-* FROM  [dbo].[order] o (NOLOCK)
- WHERE DeliveryCompanyId=4
-
-
-
-
-SELECT ClienterFixMoney,* FROM DeliveryCompany WHERE id=4
-case when dc.SettleType=1 then @orderamount*dc.DeliveryCompanyRatio/100 when dc.SettleType=2 then dc.DeliveryCompanySettleMoney*@ordercount
