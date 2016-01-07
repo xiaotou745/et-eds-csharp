@@ -476,6 +476,11 @@ namespace ETS.Enums
         /// </summary>
         [DisplayText("返还配送费")]
         ReturnDeliveryFee = 13,
+        /// <summary>
+        /// 小费
+        /// </summary>
+        [DisplayText("小费")]
+        Tip = 14
     }
 
     /// <summary>

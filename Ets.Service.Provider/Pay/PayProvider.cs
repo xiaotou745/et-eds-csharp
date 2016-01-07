@@ -2787,7 +2787,7 @@ namespace Ets.Service.Provider.Pay
                             Amount = -notify.total_fee,
                             //Amount =0,//这里不能更新余额，如果是支付宝的话流水和金额是不变的
                             Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
-                            RecordType = BusinessBalanceRecordRecordType.PublishOrder.GetHashCode(),
+                            RecordType = BusinessBalanceRecordRecordType.Tip.GetHashCode(),
                             Operator = businessModel.Name,
                             WithwardId = orderId,
                             RelationNo = olList.OrderNo,
@@ -2972,7 +2972,7 @@ namespace Ets.Service.Provider.Pay
                             Amount = -ParseHelper.ToDecimal(notify.total_fee),
                             //Amount = 0,//如果是微信支付则不会减少商家金额
                             Status = BusinessBalanceRecordStatus.Success.GetHashCode(),
-                            RecordType = BusinessBalanceRecordRecordType.PublishOrder.GetHashCode(),
+                            RecordType = BusinessBalanceRecordRecordType.Tip.GetHashCode(),
                             Operator = businessModel.Name,
                             WithwardId = orderId,
                             RelationNo = olList.OrderNo,
