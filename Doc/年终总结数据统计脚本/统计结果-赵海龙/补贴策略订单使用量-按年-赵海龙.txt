@@ -1,0 +1,86 @@
+use superman
+go 
+SELECT    datepart(year,kb.PubDate) AS '年份' ,
+                                            SUM(CASE kb.CommissionFormulaMode
+                                                  WHEN 0 THEN 1
+                                                  ELSE 0
+                                                END) AS '普通补贴任务量' ,
+                                            SUM(CASE kb.CommissionFormulaMode
+                                                  WHEN 1 THEN 1
+                                                  ELSE 0
+                                                END) AS '时间段补贴任务量' ,
+                                            SUM(CASE kb.CommissionFormulaMode
+                                                  WHEN 2 THEN 1
+                                                  ELSE 0
+                                                END) AS '保本补贴任务量' ,
+                                            SUM(CASE kb.CommissionFormulaMode
+                                                  WHEN 3 THEN 1
+                                                  ELSE 0
+                                                END) AS '满金额补贴任务量' ,
+                                            SUM(CASE kb.CommissionFormulaMode
+                                                  WHEN 4 THEN 1
+                                                  ELSE 0
+                                                END) AS '(基本佣金+平台补贴)任务量' ,
+                                            SUM(CASE kb.CommissionFormulaMode
+                                                  WHEN 0 THEN OrderCount
+                                                  ELSE 0
+                                                END) AS '普通补贴单量' ,
+                                            SUM(CASE kb.CommissionFormulaMode
+                                                  WHEN 1 THEN OrderCount
+                                                  ELSE 0
+                                                END) AS '时间段补贴单量' ,
+                                            SUM(CASE kb.CommissionFormulaMode
+                                                  WHEN 2 THEN OrderCount
+                                                  ELSE 0
+                                                END) AS '保本补贴单量' ,
+                                            SUM(CASE kb.CommissionFormulaMode
+                                                  WHEN 3 THEN OrderCount
+                                                  ELSE 0
+                                                END) AS '满金额补贴单量' ,
+                                            SUM(CASE kb.CommissionFormulaMode
+                                                  WHEN 4 THEN OrderCount
+                                                  ELSE 0
+                                                END) AS '(基本佣金+平台补贴)单量' ,
+                                            SUM(CASE kb.CommissionFormulaMode
+                                                  WHEN 0 THEN Amount
+                                                  ELSE 0
+                                                END) AS '普通补贴任务金额' ,
+                                            SUM(CASE kb.CommissionFormulaMode
+                                                  WHEN 1 THEN Amount
+                                                  ELSE 0
+                                                END) AS '时间段补贴任务金额' ,
+                                            SUM(CASE kb.CommissionFormulaMode
+                                                  WHEN 2 THEN Amount
+                                                  ELSE 0
+                                                END) AS '保本补贴任务金额' ,
+                                            SUM(CASE kb.CommissionFormulaMode
+                                                  WHEN 3 THEN Amount
+                                                  ELSE 0
+                                                END) AS '满金额补贴任务金额' ,
+                                            SUM(CASE kb.CommissionFormulaMode
+                                                  WHEN 4 THEN Amount
+                                                  ELSE 0
+                                                END) AS '(基本佣金+平台补贴)任务金额' ,
+                                            SUM(CASE kb.CommissionFormulaMode
+                                                  WHEN 0 THEN Websitesubsidy
+                                                  ELSE 0
+                                                END) AS '普通补贴任务补贴' ,
+                                            SUM(CASE kb.CommissionFormulaMode
+                                                  WHEN 1 THEN Websitesubsidy
+                                                  ELSE 0
+                                                END) AS '时间段补贴任务补贴' ,
+                                            SUM(CASE kb.CommissionFormulaMode
+                                                  WHEN 2 THEN Websitesubsidy
+                                                  ELSE 0
+                                                END) AS '保本补贴任务补贴' ,
+                                            SUM(CASE kb.CommissionFormulaMode
+                                                  WHEN 3 THEN Websitesubsidy
+                                                  ELSE 0
+                                                END) AS '满金额补贴任务补贴' ,
+                                            SUM(CASE kb.CommissionFormulaMode
+                                                  WHEN 4 THEN Websitesubsidy
+                                                  ELSE 0
+                                                END) AS '(基本佣金+平台补贴)任务补贴'
+                                  FROM      dbo.[order] kb WITH ( NOLOCK )
+                                  WHERE     kb.Status <> 3
+                                  GROUP BY  datepart(year,kb.PubDate)
