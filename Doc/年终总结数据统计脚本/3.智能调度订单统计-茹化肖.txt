@@ -1,0 +1,18 @@
+SELECT  o.businessId ,
+        COUNT(o.id) AS TaskCount ,
+        COUNT(o.OrderCount) AS OrderCount ,
+        CONVERT(CHAR(7), o.PubDate, 120) AS PubDate
+INTO    #t1
+FROM    dbo.[order] AS o ( NOLOCK )
+WHERE   o.OrderFrom = 10
+        AND o.Status <> 3
+        AND o.PubDate < '2016-01-01'
+GROUP BY o.businessId ,
+        CONVERT(CHAR(7), o.PubDate, 120)
+SELECT  COUNT(t.businessId) AS 商户数量 ,
+        SUM(t.TaskCount) AS 总任务量 ,
+        SUM(OrderCount) AS 总订单量,
+        t.PubDate AS 月份
+FROM    #t1 AS t
+GROUP BY t.PubDate
+DROP TABLE #t1
