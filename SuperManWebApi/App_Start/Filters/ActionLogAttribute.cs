@@ -40,21 +40,33 @@ namespace SuperManWebApi.App_Start.Filters
         /// <param name="actionContext"></param>
         public async override void OnActionExecuting(HttpActionContext actionContext)
         {
-            //获取入参
-            Stream stream = await actionContext.Request.Content.ReadAsStreamAsync();
-            Encoding encoding = Encoding.UTF8;
-            stream.Position = 0;
+
             string responseData = "";
-            using (StreamReader reader = new StreamReader(stream, encoding))
+            if (actionContext.Request.Method == HttpMethod.Get)
             {
-                responseData = reader.ReadToEnd().ToString();
+                foreach (string key in HttpContext.Current.Request.QueryString.AllKeys)
+                {
+                    responseData = responseData + key + "=" + HttpContext.Current.Request.QueryString[key] + "&";
+                }
             }
+            else if (actionContext.Request.Method == HttpMethod.Post)
+            {
+                //获取入参
+                Stream stream = await actionContext.Request.Content.ReadAsStreamAsync();
+                Encoding encoding = Encoding.UTF8;
+                stream.Position = 0;
+
+                using (StreamReader reader = new StreamReader(stream, encoding))
+                {
+                    responseData = reader.ReadToEnd().ToString();
+                }
+            }
+           
 
             List<string> ips = new List<string>();
             ips.Add(SystemHelper.GetLocalIP());
             ips.Add(SystemHelper.GetGateway());
-            var controllerName = actionContext.RequestContext.RouteData.Values["controller"].ToString();
-            var actionName = actionContext.RequestContext.RouteData.Values["action"].ToString();
+        
             actionContext.Request.Properties["actionlog"] = new ActionLog()
             {
                 userID = -1,
@@ -62,12 +74,16 @@ namespace SuperManWebApi.App_Start.Filters
                 requestType = 0,
                 clientIp = getClientIp(),
                 sourceSys = "supermanapi",
-                requestUrl = actionContext.Request.RequestUri.ToString(),
+                requestUrl = actionContext.Request.RequestUri.ToString().Substring(0, actionContext.Request.RequestUri.ToString().IndexOf("?")),
                 param = responseData,
                 decryptMsg = responseData,
                 contentType = actionContext.Request.Content.Headers.ContentType.ToString(),
                 requestMethod = actionContext.Request.Method.ToString(),
-                methodName = controllerName + "." + actionName,
+                methodName =
+                actionContext.ControllerContext.ControllerDescriptor.ControllerType + "."
+                + actionContext.ControllerContext.ControllerDescriptor.ControllerName + "."+
+                actionContext.ActionDescriptor.ActionName,
+
                 requestTime =DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"),
                 appServer = JsonHelper.JsonConvertToString(ips),
                 header = JsonHelper.JsonConvertToString(actionContext.Request.Headers)
