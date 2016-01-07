@@ -1,0 +1,183 @@
+	   DECLARE  @OrderFrom INT= 100
+	   DECLARE  @GroupID INT =100
+	   --创建日期表
+	    CREATE TABLE #TempMoth( MonthStr NVARCHAR(20))
+	   INSERT INTO #TempMoth (MonthStr) VALUES('2015-03')
+	   INSERT INTO #TempMoth (MonthStr) VALUES('2015-04')
+	   INSERT INTO #TempMoth (MonthStr) VALUES('2015-05')
+	   INSERT INTO #TempMoth (MonthStr) VALUES('2015-06')
+	   INSERT INTO #TempMoth (MonthStr) VALUES('2015-07')
+	   INSERT INTO #TempMoth (MonthStr) VALUES('2015-08')
+	   INSERT INTO #TempMoth (MonthStr) VALUES('2015-09')
+	   INSERT INTO #TempMoth (MonthStr) VALUES('2015-10')
+	   INSERT INTO #TempMoth (MonthStr) VALUES('2015-11')
+	   INSERT INTO #TempMoth (MonthStr) VALUES('2015-12')
+      
+       --查询全年的每个商户每个月的订单统计
+       SELECT   o.businessId ,
+                COUNT(o.id) AS TaskCount ,
+                SUM(o.OrderCount) AS OrderCount ,
+                SUM(o.Amount) AS TotalOrderAmount ,
+                CONVERT(CHAR(7), o.PubDate, 120) AS PubMoth
+       INTO     #ORDER
+       FROM     dbo.[order] AS o ( NOLOCK )
+       WHERE    1 = 1
+                AND o.Status <> 3
+                AND o.Platform <> 3
+                AND o.PubDate < '2016-01-01'
+                AND o.OrderFrom=@OrderFrom
+       GROUP BY o.businessId ,
+                CONVERT(CHAR(7), o.PubDate, 120)
+       ORDER BY o.businessId ASC ,
+                CONVERT(CHAR(7), o.PubDate, 120) ASC
+       SELECT   COUNT(#ORDER.businessId) AS 活跃商户 ,
+                SUM(#ORDER.TaskCount) AS 任务总量 ,
+                SUM(#ORDER.OrderCount) 订单总量 ,
+                SUM(#ORDER.TotalOrderAmount) 订单总金额 ,
+                #ORDER.PubMoth 月份
+       INTO     #ORDER2
+       FROM     #ORDER
+       GROUP BY #ORDER.PubMoth
+       ORDER BY PubMoth ASC 
+           --查询每个月的新增商户数量 
+    	      --查询每月之前的用户
+       SELECT   SUM(CASE WHEN ISNULL(b.InsertTime, '2015-04-10') < '2015-03-01'
+                         THEN 1
+                         ELSE 0
+                    END) AS [2015-03] ,
+                SUM(CASE WHEN ISNULL(b.InsertTime, '2015-04-10') < '2015-04-01'
+                         THEN 1
+                         ELSE 0
+                    END) AS [2015-04] ,
+                SUM(CASE WHEN ISNULL(b.InsertTime, '2015-04-10') < '2015-05-01'
+                         THEN 1
+                         ELSE 0
+                    END) AS [2015-05] ,
+                SUM(CASE WHEN ISNULL(b.InsertTime, '2015-04-10') < '2015-06-01'
+                         THEN 1
+                         ELSE 0
+                    END) AS [2015-06] ,
+                SUM(CASE WHEN ISNULL(b.InsertTime, '2015-04-10') < '2015-07-01'
+                         THEN 1
+                         ELSE 0
+                    END) AS [2015-07] ,
+                SUM(CASE WHEN ISNULL(b.InsertTime, '2015-04-10') < '2015-08-01'
+                         THEN 1
+                         ELSE 0
+                    END) AS [2015-08] ,
+                SUM(CASE WHEN ISNULL(b.InsertTime, '2015-04-10') < '2015-09-01'
+                         THEN 1
+                         ELSE 0
+                    END) AS [2015-09] ,
+                SUM(CASE WHEN ISNULL(b.InsertTime, '2015-04-10') < '2015-10-01'
+                         THEN 1
+                         ELSE 0
+                    END) AS [2015-10] ,
+                SUM(CASE WHEN ISNULL(b.InsertTime, '2015-04-10') < '2015-11-01'
+                         THEN 1
+                         ELSE 0
+                    END) AS [2015-11] ,
+                SUM(CASE WHEN ISNULL(b.InsertTime, '2015-04-10') < '2015-12-01'
+                         THEN 1
+                         ELSE 0
+                    END) AS [2015-12]
+       INTO     #TT
+       FROM     dbo.business AS b ( NOLOCK )
+       WHERE    ISNULL(b.InsertTime, '2015-04-10') < '2016-01-01'
+                AND b.GroupId = @GroupID
+
+      --查询每月
+       SELECT   COUNT(b.id) AS NewBusCount ,
+                CONVERT(CHAR(7), ISNULL(b.InsertTime, '2015-04-10'), 120) AS InsertMoth
+       INTO     #TT3
+       FROM     dbo.business AS b ( NOLOCK ) 
+       WHERE    ISNULL(b.InsertTime, '2015-04-10') < '2016-01-01'
+                AND b.GroupId = @GroupID
+       GROUP BY CONVERT(CHAR(7), ISNULL(b.InsertTime, '2015-04-10'), 120)
+       ORDER BY CONVERT(CHAR(7), ISNULL(b.InsertTime, '2015-04-10'), 120) ASC
+       SELECT   ISNULL(#TT3.NewBusCount,0) AS NewBusCount,#TempMoth.MonthStr AS InsertMoth
+       INTO #TT2 FROM    #TempMoth LEFT JOIN #TT3  ON MonthStr=#TT3.InsertMoth
+       SELECT   #TT2.InsertMoth ,
+                #TT2.NewBusCount ,
+                CASE WHEN #TT2.InsertMoth = '2015-03'
+                     THEN #TT2.NewBusCount + ( SELECT TOP 1
+                                                        [2015-03]
+                                               FROM     #TT
+                                             )
+                     WHEN #TT2.InsertMoth = '2015-04'
+                     THEN #TT2.NewBusCount + ( SELECT TOP 1
+                                                        [2015-04]
+                                               FROM     #TT
+                                             )
+                     WHEN #TT2.InsertMoth = '2015-05'
+                     THEN #TT2.NewBusCount + ( SELECT TOP 1
+                                                        [2015-05]
+                                               FROM     #TT
+                                             )
+                     WHEN #TT2.InsertMoth = '2015-06'
+                     THEN #TT2.NewBusCount + ( SELECT TOP 1
+                                                        [2015-06]
+                                               FROM     #TT
+                                             )
+                     WHEN #TT2.InsertMoth = '2015-07'
+                     THEN #TT2.NewBusCount + ( SELECT TOP 1
+                                                        [2015-07]
+                                               FROM     #TT
+                                             )
+                     WHEN #TT2.InsertMoth = '2015-08'
+                     THEN #TT2.NewBusCount + ( SELECT TOP 1
+                                                        [2015-08]
+                                               FROM     #TT
+                                             )
+                     WHEN #TT2.InsertMoth = '2015-09'
+                     THEN #TT2.NewBusCount + ( SELECT TOP 1
+                                                        [2015-09]
+                                               FROM     #TT
+                                             )
+                     WHEN #TT2.InsertMoth = '2015-10'
+                     THEN #TT2.NewBusCount + ( SELECT TOP 1
+                                                        [2015-10]
+                                               FROM     #TT
+                                             )
+                     WHEN #TT2.InsertMoth = '2015-11'
+                     THEN #TT2.NewBusCount + ( SELECT TOP 1
+                                                        [2015-11]
+                                               FROM     #TT
+                                             )
+                     WHEN #TT2.InsertMoth = '2015-12'
+                     THEN #TT2.NewBusCount + ( SELECT TOP 1
+                                                        [2015-12]
+                                               FROM     #TT
+                                             )
+                     ELSE #TT2.NewBusCount
+                END AS AllBusCount
+       INTO     #BUS
+       FROM     #TT2
+       
+    
+       
+        
+       SELECT   o.月份 ,
+                o.活跃商户 ,
+                ISNULL(b.NewBusCount,0) AS 新增商户数量 ,
+               ISNULL( b.AllBusCount,0) AS 商户总量,
+                o.任务总量 ,
+                o.订单总量 ,
+                o.订单总金额
+       FROM     #ORDER2 AS o
+                LEFT JOIN #BUS AS b ON o.月份 = b.InsertMoth
+       DROP TABLE #ORDER
+       DROP TABLE #BUS
+       DROP TABLE #ORDER2
+       DROP TABLE #TT
+       DROP TABLE #TT2
+       DROP TABLE #TT3
+       DROP TABLE #TempMoth
+       
+       
+       
+
+        
+        
+
+        

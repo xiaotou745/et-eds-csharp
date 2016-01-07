@@ -24,7 +24,7 @@ using Letao.Util;
 using ETS.Security;
 namespace SuperManWebApi.Controllers
 {
-    [ExecuteTimeLog]// TODO:每个API的日志、异常之类
+    //[ExecuteTimeLog]// TODO:每个API的日志、异常之类
     public class OrderController : ApiController
     {
         readonly IOrderProvider iOrderProvider = new OrderProvider();
@@ -190,7 +190,7 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [Token]
         [HttpPost]
-        [ExecuteTimeLog]
+        //[ExecuteTimeLog]
         public ResultModel<RushOrderResultModel> Receive(OrderReceiveModel model)
         {
             #region 验证

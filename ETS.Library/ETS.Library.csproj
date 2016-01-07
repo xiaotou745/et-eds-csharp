@@ -34,6 +34,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\AopSdk.dll</HintPath>
     </Reference>
+    <Reference Include="Apache.NMS">
+      <HintPath>..\lib\mq\Apache.NMS.dll</HintPath>
+    </Reference>
+    <Reference Include="Apache.NMS.ActiveMQ">
+      <HintPath>..\lib\mq\Apache.NMS.ActiveMQ.dll</HintPath>
+    </Reference>
     <Reference Include="jpush-api">
       <HintPath>..\packages\JPush.NET.1.2.3.27974\lib\jpush-api.dll</HintPath>
     </Reference>
@@ -72,6 +78,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActiveMq\ActiveMqHelper.cs" />
     <Compile Include="Pay\SSAliPay\AliNativePay.cs" />
     <Compile Include="Pay\SSAliPay\AliPayApi.cs" />
     <Compile Include="Pay\SSBWxPay\Config.cs" />

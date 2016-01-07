@@ -30,7 +30,7 @@ namespace SuperManWebApi.Controllers
     /// <summary>
     /// 骑士相关接口 add by caoheyang
     /// </summary>
-    [ExecuteTimeLog]
+    //[ExecuteTimeLog]
     public class ClienterController : ApiController
     {
         readonly IClienterFinanceProvider clienterFinanceProvider = new ClienterFinanceProvider();
