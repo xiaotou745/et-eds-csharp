@@ -20,7 +20,7 @@ namespace SuperManWebApi.Controllers
     /// <summary>
     /// 商户相关接口 add by caoheyang
     /// </summary>
-    [ExecuteTimeLog]
+    //[ExecuteTimeLog]
     public class BusinessController : ApiController
     {
         readonly IBusinessBalanceRecordProvider iBusinessBalanceRecordProvider = new BusinessBalanceRecordProvider();

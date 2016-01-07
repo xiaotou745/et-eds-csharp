@@ -186,7 +186,11 @@
     </Compile>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\Filters\ActionLogAttribute.cs" />
+    <Compile Include="App_Start\Filters\ApiHandleErrorAttribute.cs" />
     <Compile Include="App_Start\Filters\ApiVersionAttribute.cs" />
+    <Compile Include="App_Start\Filters\ApiVersionStatisticAttribute.cs" />
+    <Compile Include="App_Start\Filters\ExecuteTimeLogAttribute.cs" />
     <Compile Include="App_Start\Filters\HttpLogAttribute.cs" />
     <Compile Include="App_Start\Filters\TokenAttribute.cs" />
     <Compile Include="App_Start\Filters\ValidateAttribute.cs" />
