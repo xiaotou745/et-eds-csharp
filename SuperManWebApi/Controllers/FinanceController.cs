@@ -23,7 +23,7 @@ namespace SuperManWebApi.Controllers
     /// <summary>
     /// 财务相关功能点   涉及 B、C端
     /// </summary>
-    [ExecuteTimeLog]
+    //[ExecuteTimeLog]
     [Validate]
     [ApiVersion]
     public class FinanceController : ApiController

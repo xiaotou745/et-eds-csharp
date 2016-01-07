@@ -118,7 +118,7 @@ namespace SuperManWebApi.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>        
-        [ExecuteTimeLog]
+        //[ExecuteTimeLog]
         [HttpPost]
         [Token]
         public ResultModel<ClientOrderResultModel[]> GetMyJobList_C(ClientOrderInfoModel model)
@@ -223,7 +223,7 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         [HttpGet]
         [Token]
-        [ExecuteTimeLog]
+        //[ExecuteTimeLog]
         public ResultModel<RushOrderResultModel> RushOrder_C(int userId, string orderNo)
         {
             return new ClienterProvider().RushOrder_C(userId, orderNo);

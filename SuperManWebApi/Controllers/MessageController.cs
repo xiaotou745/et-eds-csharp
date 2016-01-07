@@ -16,7 +16,7 @@ namespace SuperManWebApi.Controllers
     /// <summary>
     /// 消息中心模块接口
     /// </summary>
-    [ExecuteTimeLog]
+    //[ExecuteTimeLog]
     [Token]
     [Validate]
     [ApiVersion]

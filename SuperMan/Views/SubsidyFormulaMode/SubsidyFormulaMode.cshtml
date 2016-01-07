@@ -108,7 +108,7 @@
                     <td>
                         <label style="color: red">普通补贴设置</label>
                         <br /><p>
-                            佣金公式：订单总金额 * @(IsAdd==true?0:ViewBag.GloglConfig.CommonCommissionRatio) (佣金比例可配置) +配送费或(@(IsAdd==true?0:ViewBag.GloglConfig.CommonSiteSubsidies) 网站补贴)*订单数量
+                            佣金公式：订单总金额 * @(IsAdd==true?"0%":ViewBag.GloglConfig.CommonCommissionRatio) (佣金比例可配置) +配送费或(@(IsAdd==true?0:ViewBag.GloglConfig.CommonSiteSubsidies) 网站补贴)*订单数量
                         </p>
                         佣金参数 佣金比例:<input name="txtptCommonCommissionRatio" value="@(IsAdd==true?0:ViewBag.GloglConfig.CommonCommissionRatio)" id="txtptCommonCommissionRatio" type="text">
                         网站补贴:<input name="txttpCommonSiteSubsidies" value="@(IsAdd==true?0:ViewBag.GloglConfig.CommonSiteSubsidies)" id="txttpCommonSiteSubsidies" type="text">

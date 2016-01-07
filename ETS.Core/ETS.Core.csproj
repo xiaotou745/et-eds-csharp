@@ -222,6 +222,7 @@
     <Compile Include="Util\StreamDataSource.cs" />
     <Compile Include="Util\StringHelper.cs" />
     <Compile Include="Util\StringVerify.cs" />
+    <Compile Include="Util\SystemHelper.cs" />
     <Compile Include="Util\TimeHelper.cs" />
     <Compile Include="Util\TranslatorBase.cs" />
     <Compile Include="Util\ValidationHelper.cs" />

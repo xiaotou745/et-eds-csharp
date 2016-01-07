@@ -78,15 +78,15 @@ namespace Ets.Dao.Distribution
             if (!string.IsNullOrEmpty(criteria.businessCity))
             {
                 sbSqlWhere.AppendFormat(" AND C.City='{0}' ", criteria.businessCity.Trim());
-            }
+            }    
             if (!string.IsNullOrWhiteSpace(criteria.deliveryCompany) && criteria.deliveryCompany != "0")
             {
                 sbSqlWhere.AppendFormat(" AND DC.Id={0} ", criteria.deliveryCompany);
             }
-            //if (!string.IsNullOrEmpty(criteria.AuthorityCityNameListStr) && criteria.UserType != 0)
-            //{
-            //    sbSqlWhere.AppendFormat(" AND C.City IN ({0}) ", criteria.AuthorityCityNameListStr.Trim());
-            //}
+            if (!string.IsNullOrEmpty(criteria.AuthorityCityNameListStr) && criteria.UserType != 0)
+            {
+                sbSqlWhere.AppendFormat(" AND C.City IN ({0}) ", criteria.AuthorityCityNameListStr.Trim());
+            }
             if (!string.IsNullOrEmpty(criteria.clienterName))
             {
                 sbSqlWhere.AppendFormat(" AND C.TrueName LIKE '%{0}%' ", criteria.clienterName);
