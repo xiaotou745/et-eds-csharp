@@ -59,8 +59,9 @@ namespace SuperManWebApi.App_Start.Filters
                 contentType = actionContext.Request.Content.Headers.ContentType.ToString(),
                 requestMethod = actionContext.Request.Method.ToString(),
                 methodName = actionContext.ActionDescriptor.ActionName,
-                requestTime = DateTime.Now.ToString(),
-                appServer = JsonHelper.JsonConvertToString(ips)
+                requestTime =DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"),
+                appServer = JsonHelper.JsonConvertToString(ips),
+                header = JsonHelper.JsonConvertToString(actionContext.Request.Headers)
             };
 
             Stopwatch stop = new Stopwatch();
@@ -89,7 +90,7 @@ namespace SuperManWebApi.App_Start.Filters
               
             }
   
-            log.requestEndTime = DateTime.Now.ToString();
+            log.requestEndTime = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
             var stop = actionContext.Request.Properties["actionlogTime"] as Stopwatch;
             stop.Stop();
             log.executeTime = stop.ElapsedMilliseconds;
