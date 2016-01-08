@@ -61,12 +61,12 @@ namespace SuperManWebApi.App_Start.Filters
                     responseData = reader.ReadToEnd().ToString();
                 }
             }
-           
+
 
             List<string> ips = new List<string>();
             ips.Add(SystemHelper.GetLocalIP());
             ips.Add(SystemHelper.GetGateway());
-        
+
             actionContext.Request.Properties["actionlog"] = new ActionLog()
             {
                 userID = -1,
@@ -74,17 +74,19 @@ namespace SuperManWebApi.App_Start.Filters
                 requestType = 0,
                 clientIp = getClientIp(),
                 sourceSys = "supermanapi",
-                requestUrl = actionContext.Request.RequestUri.ToString().Substring(0, actionContext.Request.RequestUri.ToString().IndexOf("?")),
+                requestUrl = actionContext.Request.RequestUri.ToString().IndexOf("?") > 0 ?
+                actionContext.Request.RequestUri.ToString().Substring(0, actionContext.Request.RequestUri.ToString().IndexOf("?")) :
+                             actionContext.Request.RequestUri.ToString(),
                 param = responseData,
                 decryptMsg = responseData,
                 contentType = actionContext.Request.Content.Headers.ContentType.ToString(),
                 requestMethod = actionContext.Request.Method.ToString(),
                 methodName =
                 actionContext.ControllerContext.ControllerDescriptor.ControllerType + "."
-                + actionContext.ControllerContext.ControllerDescriptor.ControllerName + "."+
+                + actionContext.ControllerContext.ControllerDescriptor.ControllerName + "." +
                 actionContext.ActionDescriptor.ActionName,
 
-                requestTime =DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"),
+                requestTime = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"),
                 appServer = JsonHelper.JsonConvertToString(ips),
                 header = JsonHelper.JsonConvertToString(actionContext.Request.Headers)
             };
@@ -114,9 +116,9 @@ namespace SuperManWebApi.App_Start.Filters
             {
                 log.exception = actionContext.Exception.Message;
                 log.stackTrace = actionContext.Exception.StackTrace;
-              
+
             }
-  
+
             log.requestEndTime = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
             var stop = actionContext.Request.Properties["actionlogTime"] as Stopwatch;
             stop.Stop();
