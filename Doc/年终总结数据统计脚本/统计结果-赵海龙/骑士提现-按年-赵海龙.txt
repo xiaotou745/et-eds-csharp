@@ -1,0 +1,43 @@
+use superman
+go
+SELECT  datepart(year,WithdrawTime) AS '年份' ,
+        COUNT(*) AS '提现单总数' ,
+        SUM(Amount) AS '提现单总金额' ,
+        SUM(CASE Status
+              WHEN 3 THEN 1
+              ELSE 0
+            END) AS '已打款次数' ,
+        SUM(CASE Status
+              WHEN 3 THEN Amount
+              ELSE 0
+            END) AS '已打款总金额' ,
+        SUM(CASE Status
+              WHEN 1 THEN 1
+              WHEN 2 THEN 1
+              ELSE 0
+            END) AS '未打款次数' ,
+        SUM(CASE Status
+              WHEN 1 THEN Amount
+              WHEN 2 THEN Amount
+              ELSE 0
+            END) AS '未打款总金额' ,
+        SUM(CASE Status
+              WHEN -2 THEN 1
+              ELSE 0
+            END) AS '打款失败次数' ,
+        SUM(CASE Status
+              WHEN -2 THEN Amount
+              ELSE 0
+            END) AS '打款失败总金额' ,
+        SUM(CASE Status
+              WHEN -1 THEN 1
+              ELSE 0
+            END) AS '审核拒绝次数' ,
+        SUM(CASE Status
+              WHEN -1 THEN Amount
+              ELSE 0
+            END) AS '审核拒绝总金额'
+FROM    dbo.ClienterWithdrawForm WITH ( NOLOCK )
+
+GROUP BY datepart(year,WithdrawTime)
+ORDER BY datepart(year,WithdrawTime)

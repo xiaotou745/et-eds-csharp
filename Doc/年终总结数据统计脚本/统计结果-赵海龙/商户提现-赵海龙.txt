@@ -1,0 +1,51 @@
+use superman
+go
+SELECT  CONVERT(VARCHAR(7), WithdrawTime, 120) AS '月份' ,
+        COUNT(*) AS '提现单总数' ,
+        SUM(Amount) AS '提现单总金额' ,
+        SUM(CASE Status
+              WHEN 3 THEN 1
+              ELSE 0
+            END) AS '已打款次数' ,
+        SUM(CASE Status
+              WHEN 3 THEN Amount
+              ELSE 0
+            END) AS '已打款总金额' ,
+        SUM(CASE Status
+              WHEN 1 THEN 1
+              WHEN 2 THEN 1
+              ELSE 0
+            END) AS '未打款次数' ,
+        SUM(CASE Status
+              WHEN 1 THEN Amount
+              WHEN 2 THEN Amount
+              ELSE 0
+            END) AS '未打款总金额' ,
+        SUM(CASE Status
+              WHEN -2 THEN 1
+              ELSE 0
+            END) AS '打款失败次数' ,
+        SUM(CASE Status
+              WHEN -2 THEN Amount
+              ELSE 0
+            END) AS '打款失败总金额' ,
+        SUM(CASE Status
+              WHEN -1 THEN 1
+              ELSE 0
+            END) AS '审核拒绝次数' ,
+        SUM(CASE Status
+              WHEN -1 THEN Amount
+              ELSE 0
+            END) AS '审核拒绝总金额'
+FROM    dbo.BusinessWithdrawForm WITH ( NOLOCK )
+GROUP BY CONVERT(VARCHAR(7), WithdrawTime, 120) 
+
+
+SELECT  SUM(Balanceprice) AS '商户总账户余额' ,
+        SUM(AllowWithdrawPrice) AS '商户可提现总额' ,
+        SUM(HasWithdrawPrice) AS '商户已提现总额' ,
+        ( SELECT    SUM(amount) AS d
+          FROM      BusinessWithdrawForm WITH ( NOLOCK )
+          WHERE     Status = 3
+        ) AS '商户已打款总额'
+FROM    dbo.business WITH ( NOLOCK )
