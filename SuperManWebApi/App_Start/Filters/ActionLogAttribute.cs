@@ -107,6 +107,8 @@ namespace SuperManWebApi.App_Start.Filters
                     actionContext.Response.Content.ReadAsAsync(
                         actionContext.ActionContext.ActionDescriptor.ReturnType);
                 log.resultJson = JsonHelper.JsonConvertToString(response.Result);
+                log.exception = "";
+                log.stackTrace = "";
             }
             else
             {

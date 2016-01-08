@@ -1,0 +1,61 @@
+use superman
+go
+DECLARE @OverStore INT;
+                DECLARE @StarTime INT;
+                SELECT  @OverStore = SUM(CASE mb.KeyName
+                                           WHEN 'IsStartOverStoreSubsidies'
+                                           THEN 1
+                                           ELSE 0
+                                         END) ,
+                        @StarTime = SUM(CASE mb.KeyName
+                                          WHEN 'IsStarTimeSubsidies' THEN 1
+                                          ELSE 0
+                                        END)
+                FROM    business k WITH ( NOLOCK )
+                        JOIN ( SELECT  DISTINCT
+                                        a.id ,
+                                        b.KeyName
+                               FROM     BusinessGroup a WITH ( NOLOCK )
+                                        JOIN GlobalConfig b WITH ( NOLOCK ) ON a.id = b.GroupId
+                               WHERE    ( b.KeyName = 'IsStartOverStoreSubsidies'
+                                          OR b.KeyName = 'IsStarTimeSubsidies'
+                                        )
+                                        AND b.Value = '1'
+                             ) mb ON k.BusinessGroupId = mb.id
+                WHERE   k.Status = 1
+                             
+                             
+                SELECT  ( SELECT    COUNT(*)
+                          FROM      dbo.business WITH ( NOLOCK )
+                          WHERE     Status = 1
+                        ) AS '商家总数' ,
+                        @OverStore AS '跨店数量' ,
+                        @StarTime AS '按时间补贴数量' ,
+                        SUM(CASE ISNULL(mb.StrategyId, 0)
+                              WHEN 0 THEN 1
+                              ELSE 0
+                            END) AS '普通补贴数量' ,
+                        SUM(CASE ISNULL(mb.StrategyId, 0)
+                              WHEN 1 THEN 1
+                              ELSE 0
+                            END) AS '时间段补贴数量' ,
+                        SUM(CASE ISNULL(mb.StrategyId, 0)
+                              WHEN 2 THEN 1
+                              ELSE 0
+                            END) AS '保本补贴数量' ,
+                        SUM(CASE ISNULL(mb.StrategyId, 0)
+                              WHEN 3 THEN 1
+                              ELSE 0
+                            END) AS '满金额补贴数量' ,
+                        SUM(CASE ISNULL(mb.StrategyId, 0)
+                              WHEN 4 THEN 1
+                              ELSE 0
+                            END) AS '(基本佣金+平台补贴)数量'
+                FROM    business k WITH ( NOLOCK )
+                        LEFT JOIN ( SELECT  DISTINCT
+                                            a.id ,
+                                            a.StrategyId
+                                    FROM    BusinessGroup a WITH ( NOLOCK )
+                                            JOIN GlobalConfig b WITH ( NOLOCK ) ON a.id = b.GroupId
+                                  ) mb ON k.BusinessGroupId = mb.id
+                WHERE   k.Status = 1
