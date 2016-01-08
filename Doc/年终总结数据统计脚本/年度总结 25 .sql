@@ -54,5 +54,30 @@ order by PayType ,
         dbo.business.City
 
 
+-- 33 订单审核统计
+--订单总数  
+select  COUNT(1)
+from    dbo.[order]  (nolock)
+where   PubDate < '2016-01-01 00:00:00'
 
-
+--审核总数
+select  COUNT(1)
+from    OrderOther(nolock)
+        join [order](nolock) on dbo.OrderOther.OrderId = dbo.[order].Id
+where   AuditStatus != 0
+        and AuditOptName is not null
+        and PubDate < '2016-01-01 00:00:00'
+        
+        
+--月订单总数，审核总数
+select  CONVERT(VARCHAR(7), PubDate, 120) 月份 ,
+        COUNT(dbo.[order].Id) as 本月订单总数 ,
+        SUM(CASE when AuditStatus != 0
+                      and AuditOptName is not null then 1
+                 else 0
+            end) 本月人工审核订单数
+from    [order] (nolock)
+        left  join OrderOther(nolock) on dbo.OrderOther.OrderId = dbo.[order].Id
+where   PubDate < '2016-01-01 00:00:00'
+group by CONVERT(VARCHAR(7), PubDate, 120)
+order by CONVERT(VARCHAR(7), PubDate, 120)
