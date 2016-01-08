@@ -537,7 +537,8 @@ where OrderNo=@OrderNo and [Status]=0", SuperPlatform.FromClienter, OrderConst.O
         c.AllowWithdrawPrice as AllowWithdrawPrice ,
         c.IsBind,
         ISNULL(d.Id,0) as DeliveryCompanyId,
-        isnull(d.DeliveryCompanyName,'') DeliveryCompanyName,     
+        isnull(d.DeliveryCompanyName,'') DeliveryCompanyName,  
+c.PushShanSongOrderSet,   
  (case when c.DeliveryCompanyId=0 or 
         (d.SettleType=1 and ClienterSettleRatio>0) or 
         (d.SettleType=2 and d.ClienterFixMoney>0) or
