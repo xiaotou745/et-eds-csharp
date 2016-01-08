@@ -412,7 +412,15 @@ namespace Ets.Service.Provider.Business
         {
             try
             {
-                LoginModel model = JsonHelper.JsonConvertToObject<LoginModel>(AESApp.AesDecrypt(parModel.data));
+                LoginModel model = new LoginModel();
+                if (parModel.data == null)
+                {
+                    model.phoneNo=parModel.phoneNo;
+                    model.Ssid=parModel.Ssid;
+                    model.passWord=parModel.passWord;
+                }
+                else
+                    model = JsonHelper.JsonConvertToObject<LoginModel>(AESApp.AesDecrypt(parModel.data));
                 var redis = new RedisCache();
                 string key = string.Concat(RedissCacheKey.LoginCount_B, model.phoneNo);
                 int excuteCount = redis.Get<int>(key);
