@@ -66,8 +66,7 @@ namespace SuperManWebApi.App_Start.Filters
             List<string> ips = new List<string>();
             ips.Add(SystemHelper.GetLocalIP());
             ips.Add(SystemHelper.GetGateway());
-
-            actionContext.Request.Properties["actionlog"] = new ActionLog()
+            ActionLog log = new ActionLog()
             {
                 userID = -1,
                 userName = "",
@@ -79,7 +78,8 @@ namespace SuperManWebApi.App_Start.Filters
                              actionContext.Request.RequestUri.ToString(),
                 param = responseData,
                 decryptMsg = responseData,
-                contentType = actionContext.Request.Content.Headers.ContentType.ToString(),
+                contentType = actionContext.Request.Content.Headers.ContentType==null?"":
+                actionContext.Request.Content.Headers.ContentType.ToString(),
                 requestMethod = actionContext.Request.Method.ToString(),
                 methodName =
                 actionContext.ControllerContext.ControllerDescriptor.ControllerType + "."
@@ -90,6 +90,8 @@ namespace SuperManWebApi.App_Start.Filters
                 appServer = JsonHelper.JsonConvertToString(ips),
                 header = JsonHelper.JsonConvertToString(actionContext.Request.Headers)
             };
+
+            actionContext.Request.Properties["actionlog"] =log;
 
             Stopwatch stop = new Stopwatch();
             actionContext.Request.Properties["actionlogTime"] = stop;
