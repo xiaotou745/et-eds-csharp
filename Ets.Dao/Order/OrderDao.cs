@@ -2862,7 +2862,7 @@ when [Platform]=2 then round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo
 when [Platform]=3 then round(geography::Point(ISNULL(a.Pickuplatitude,0),ISNULL(a.Pickuplongitude,0),4326).STDistance(@cliernterPoint),0) 
 	 else '' end)  as DistanceToBusiness,--距离
 (case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress --发货地址
- , a.Pickuplatitude,a.PickUpLatitude,a.ReceviceLongitude,a.ReceviceLatitude,a.ReceviceName
+ , a.PickUpLongitude,a.PickUpLatitude,a.ReceviceLongitude,a.ReceviceLatitude,a.ReceviceName
 from dbo.[order] a (nolock)
 join dbo.OrderOther oo(nolock) on a.Id=oo.OrderId
 join dbo.business b (nolock) on a.businessId=b.Id
@@ -2902,7 +2902,7 @@ when [Platform]=2 then round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo
 when [Platform]=3 then round(geography::Point(ISNULL(a.Pickuplatitude,0),ISNULL(a.Pickuplongitude,0),4326).STDistance(@cliernterPoint),0) 
 	 else '' end)  as DistanceToBusiness,--距离
 (case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress --发货地址
-, a.Pickuplatitude,a.PickUpLatitude,a.ReceviceLongitude,a.ReceviceLatitude,a.ReceviceName
+, a.PickUpLongitude,a.PickUpLatitude,a.ReceviceLongitude,a.ReceviceLatitude,a.ReceviceName
 
 from dbo.[order] a (nolock)
 join dbo.OrderOther oo(nolock) on a.Id=oo.OrderId
@@ -2967,7 +2967,7 @@ as PubDate,
 			round(geography::Point(ISNULL(a.Pickuplatitude,0),ISNULL(a.Pickuplongitude,0),4326).STDistance(@cliernterPoint),0) 
 		else  
 		round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) 
-       end  DistanceToBusiness , a.Pickuplatitude,a.PickUpLatitude,a.ReceviceLongitude,a.ReceviceLatitude,a.ReceviceName
+       end  DistanceToBusiness , a.PickUpLongitude,a.PickUpLatitude,a.ReceviceLongitude,a.ReceviceLatitude,a.ReceviceName
 from dbo.[order] a (nolock)
 join dbo.business b (nolock) on a.businessId=b.Id
 join (select  distinct(temp.BusinessId) from BusinessClienterRelation  temp where temp.IsEnable=1 and  temp.IsBind =1 and temp.ClienterId=@ClienterId ) as c on a.BusinessId=c.BusinessId
