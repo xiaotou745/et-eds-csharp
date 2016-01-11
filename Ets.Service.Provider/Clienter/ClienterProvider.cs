@@ -688,6 +688,22 @@ namespace Ets.Service.Provider.Clienter
                 model.FinishOrderStatus = FinishOrderStatus.PickupCodeError;
                 return model;
             }
+            if (myOrderInfo.Platform == PlatformEnum.FlashToSendModel.GetHashCode()) // 闪送模式
+            {
+                //验证取货码
+                if (string.IsNullOrWhiteSpace(myOrderInfo.Receivecode))
+                {
+                    //return ResultModel<string>.Conclude(FinishOrderStatus.ReceiveCodeIsEmpty);
+                    model.FinishOrderStatus = FinishOrderStatus.ReceiveCodeIsEmpty;
+                    return model;
+                }
+                //验证取货码是否正确
+                if (myOrderInfo.Receivecode.Trim() != parModel.ReceiveCode.Trim())
+                {
+                    model.FinishOrderStatus = FinishOrderStatus.ReceiveCodeIsEmpty;
+                    return model;
+                }
+            }
 
             GlobalConfigModel globalSetting = new GlobalConfigProvider().GlobalConfigMethod(0);
             //取到任务的接单时间、从缓存中读取完成任务时间限制，判断要用户点击完成时间>接单时间+限制时间 

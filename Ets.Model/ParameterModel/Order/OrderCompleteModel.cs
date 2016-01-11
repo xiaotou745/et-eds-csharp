@@ -27,5 +27,7 @@ namespace Ets.Model.ParameterModel.Order
         /// </summary>
         public int IsTimely { get; set; }
 
+        public string ReceiveCode { get; set; }        
+
     }
 }
