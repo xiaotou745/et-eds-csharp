@@ -2,6 +2,7 @@
 using SuperMan.App_Start;
 using System.Web;
 using System.Web.Mvc;
+using SuperMan.App_Start.Filters;
 
 namespace SuperMan
 {
@@ -13,7 +14,9 @@ namespace SuperMan
         /// <param name="filters"></param>
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
-            filters.Add(new WebHandleErrorAttribute(), 1);
+            //filters.Add(new WebHandleErrorAttribute(), 1);
+
+            filters.Add(new ActionLogAttribute());
             //filters.Add(new HttpLogAttribute());//注册全局的请求记录 暂时注释掉茹化肖
             //filters.Add(new HandleErrorAttribute(), 2);
         }
