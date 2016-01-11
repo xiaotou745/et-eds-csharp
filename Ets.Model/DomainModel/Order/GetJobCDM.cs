@@ -131,7 +131,7 @@ namespace Ets.Model.DomainModel.Order
         /// <summary>
         /// 发货经度
         /// </summary>
-        public decimal Pickuplatitude { get; set; }
+        public decimal PickUpLongitude { get; set; }
 
          /// <summary>
         /// 发货纬度
