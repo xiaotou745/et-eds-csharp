@@ -1,0 +1,53 @@
+use superman 
+go
+ ---线上的测试门店是否排除
+ SELECT b.Id FROM dbo.business b(nolock) 
+ where  b.Name like '%测试%'      
+ 
+ -- 绑定店内的商户总数
+ SELECT count(1) '绑定店内的商户总数' FROM dbo.BusinessClienterRelation (nolock) where IsCooperation = 1
+ -- 1、门店总数；
+ --2、未审核总数；
+ --3、已审核总数；
+ --4、当月活跃总数；
+ --6、门店余额大于0元总计；
+  select  convert(varchar(7), b.InsertTime, 120) 月份 ,
+                    count(1) 数量 ,
+                    sum(case when b.Status = 1 then 1
+                             else 0
+                        end) '已审核总数' ,
+                    sum(case when b.Status = 2 then 1
+                             else 0
+                        end) '未审核总数' ,
+                    sum(case when b.IsBind = 1 then 1
+                             else 0
+                        end) '绑定商户' ,
+                    sum(case when b.IsBind = 0 then 1
+                             else 0
+                        end) '未绑定商户' ,
+                    sum(b.BalancePrice) '账户余额总计'
+          from      dbo.business b ( nolock )
+          where     b.Status in ( 1, 0 ) and b.BalancePrice>0
+          group by  convert (varchar(7), b.InsertTime, 120) 
+order by convert (varchar(7), b.InsertTime, 120);
+
+-- 当月活跃门店数
+select  convert (varchar(7), o.PubDate, 120) monthInfo ,
+        count(distinct o.businessId) as '活跃门店数量'
+from    dbo.[order] (nolock) as o
+where   o.[Status] <> 3 and o.Id not in (select bu.Id from dbo.business bu (nolock) where bu.Name not like '%测试%')
+group by convert (varchar(7), o.PubDate, 120);
+
+-- 可透支门店总数
+SELECT count(1) '可透支门店总数',isnull(sum(isnull(b.BalancePrice,0)),0) '透支金额' FROM dbo.business b (nolock) where b.IsAllowOverdraft = 1
+
+-- 每月透支金额
+SELECT convert (varchar(7), o.PubDate, 120) 月份,sum(o.OrderCommission) '透支金额' FROM dbo.[order] o(nolock)
+join dbo.business b (nolock) on o.businessId = b.Id
+where b.IsAllowOverdraft = 1
+group by convert (varchar(7), o.PubDate, 120)
+
+--应收门店配送费
+SELECT convert (varchar(7), o.PubDate, 120),sum(isnull(o.DistribSubsidy,0)) '配送费' FROM dbo.[order] o (nolock) 
+where o.Status<> 3 
+group by convert(varchar(7), o.PubDate, 120)
