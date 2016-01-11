@@ -1,0 +1,11 @@
+use superman
+go
+select  convert (varchar(7), cf.ForzenDate, 120) 月份 ,
+        case cf.[Status]
+          when 1 then '冻结中'
+          else '已解冻'
+        end 冻结状态 ,
+        count(1) 单数
+from    dbo.ClienterForzen (nolock) cf
+group by cf.[Status] ,
+        convert (varchar(7), cf.ForzenDate, 120);

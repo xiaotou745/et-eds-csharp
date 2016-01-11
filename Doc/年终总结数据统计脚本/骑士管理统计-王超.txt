@@ -1,0 +1,30 @@
+use superman
+go
+select  a.* ,
+        b.活跃骑士数量
+from    ( select    convert(varchar(7), c.InsertTime, 120) 月份 ,
+                    count(1) 数量 ,
+                    sum(case when c.Status = 1 then 1
+                             else 0
+                        end) '已审核总数' ,
+                    sum(case when c.Status = 2 then 1
+                             else 0
+                        end) '未审核总数' ,
+                    sum(case when c.IsBind = 1 then 1
+                             else 0
+                        end) '绑定商户' ,
+                    sum(case when c.IsBind = 0 then 1
+                             else 0
+                        end) '未绑定商户' ,
+                    sum(c.AccountBalance) '账户余额总计'
+          from      dbo.clienter c ( nolock )
+          where     c.Status in ( 1, 2 )
+          group by  convert (varchar(7), c.InsertTime, 120)
+        ) a
+        left join ( select  convert (varchar(7), o.PubDate, 120) monthInfo ,
+                            count(distinct clienterId) as '活跃骑士数量'
+                    from    dbo.[order] (nolock) as o
+                    where   o.[Status] <> 3
+                    group by convert (varchar(7), o.PubDate, 120)
+                  ) b on a.月份 = b.monthInfo
+order by convert (varchar(7), a.月份, 120);

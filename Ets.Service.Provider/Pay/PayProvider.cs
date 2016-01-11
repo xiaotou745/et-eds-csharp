@@ -2791,7 +2791,7 @@ namespace Ets.Service.Provider.Pay
                             Operator = businessModel.Name,
                             WithwardId = orderId,
                             RelationNo = olList.OrderNo,
-                            Remark = "支付宝支付配送费",
+                            Remark = "小费" + notify.total_fee+"元",
                             IsRetainValue = 1
                         });
 
@@ -2814,6 +2814,16 @@ namespace Ets.Service.Provider.Pay
                         //更新子订单状态 支付宝
                         orderChildDao.UpdateIsPay(orderChildId, 1);
 
+                        decimal amountBSF = notify.total_fee;
+                        //查询小费金额
+                        OrderTipCost selectOtCModel= orderTipCostDao.GetByOutTradeNo(1,out_trade_no);
+                        decimal tipAmount = 0;
+                        if (selectOtCModel != null && selectOtCModel.Amount != null)
+                        {
+                            tipAmount = selectOtCModel.Amount;
+                            amountBSF = amountBSF - tipAmount;
+                        }
+
                         //更新商户余额、可提现余额                        
                         iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
                         {
@@ -2825,7 +2835,7 @@ namespace Ets.Service.Provider.Pay
                             Operator = businessModel.Name,
                             WithwardId = orderId,
                             RelationNo = olList.OrderNo,
-                            Remark = "支付宝支付配送费",
+                            Remark = "配送费支出" + amountBSF.ToString() + "元，小费" + tipAmount.ToString() + "元",
                             IsRetainValue = 1
                         });
 
@@ -2976,7 +2986,7 @@ namespace Ets.Service.Provider.Pay
                             Operator = businessModel.Name,
                             WithwardId = orderId,
                             RelationNo = olList.OrderNo,
-                            Remark = "微信支付配送费",
+                            Remark = "小费"+notify.total_fee+"元",
                             IsRetainValue=1
                         });
 
@@ -2999,6 +3009,15 @@ namespace Ets.Service.Provider.Pay
                         //更新子订单状态 微信
                         orderChildDao.UpdateIsPay(orderChildId, 2);
 
+                        decimal amountBSF = ParseHelper.ToDecimal(notify.total_fee);
+                        //查询小费金额
+                        OrderTipCost selectOtCModel = orderTipCostDao.GetByOutTradeNo(1, attach);
+                        decimal tipAmount = 0;
+                        if (selectOtCModel != null && selectOtCModel.Amount != null)
+                        {
+                            tipAmount = selectOtCModel.Amount;
+                            amountBSF = amountBSF - tipAmount;
+                        }
                         //更新商户余额、可提现余额                        
                         iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
                         {
@@ -3010,7 +3029,7 @@ namespace Ets.Service.Provider.Pay
                             Operator = businessModel.Name,
                             WithwardId = orderId,
                             RelationNo = olList.OrderNo,
-                            Remark = "微信支付配送费",
+                            Remark = "配送费支出" + amountBSF.ToString() + "元，小费" + tipAmount.ToString() + "元",
                             IsRetainValue = 1
                         });
 
