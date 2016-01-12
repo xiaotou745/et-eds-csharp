@@ -1,9 +1,9 @@
 use  superman
 go
 --------------------------------------新增订单表相关列
- alter table dbo.clienter add PushShanSongOrderSet int not null  default 0;
+ alter table dbo.clienter add PushShanSongOrderSet int not null  default 1;
 EXEC sys.sp_addextendedproperty @name=N'MS_Description',
-  @value=N'里程计算骑士端推单设置  0不推单 1推单 默认0' ,
+  @value=N'里程计算骑士端推单设置  0不推单 1推单 默认1' ,
   @level0type=N'SCHEMA',
   @level0name=N'dbo', 
   @level1type=N'TABLE',

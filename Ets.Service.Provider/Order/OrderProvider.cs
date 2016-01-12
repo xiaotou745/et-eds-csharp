@@ -3187,20 +3187,34 @@ namespace Ets.Service.Provider.Order
         //#endregion
 
         /// <summary>
-        /// 调用java接口 里程计算 推单  (处理订单)
-        /// caoheyang 20160105
+        /// 调用java接口 里程计算 推单  (处理订单
+        /// caoheyang  20160112
         /// </summary>
-        /// <param name="orderid"></param>
-        public void ShanSongPushOrderForJava(long orderid)
+        /// <param name="orderid">订单id</param>
+        /// <param name="isNew">是否是新订单推送 默认否</param>
+        public void ShanSongPushOrderForJava(long orderid,bool isNew=false)
         {
             var temp = new
             {
                 orderId = orderid,
             };
 
-            string json = new HttpClient().PostAsJsonAsync(ConfigurationManager.AppSettings["ShanSongPushOrderForJavaURL"],
-                new { data = AESApp.AesEncrypt(JsonHelper.JsonConvertToString(temp)) })
-                .Result.Content.ReadAsStringAsync().Result;
+            string url = isNew
+                ? ConfigurationManager.AppSettings["ShanSongPushNewOrderForJavaURL"]
+                : ConfigurationManager.AppSettings["ShanSongPushOrderForJavaURL"];
+
+            if (ConfigSettings.Instance.InterceptSwith == 0)
+            {
+                string json = new HttpClient().PostAsJsonAsync(url, temp)
+                    .Result.Content.ReadAsStringAsync().Result;
+            }
+            else
+            {
+                string json = new HttpClient().PostAsJsonAsync(url,
+                  new { data = AESApp.AesEncrypt(JsonHelper.JsonConvertToString(temp)) })
+                  .Result.Content.ReadAsStringAsync().Result;
+            }
+
         }
     }
 }
