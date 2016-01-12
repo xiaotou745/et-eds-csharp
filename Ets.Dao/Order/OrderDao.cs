@@ -1634,6 +1634,7 @@ select top 1
         b.GroupId ,
         o.PickupCode ,
         o.OrderCount,
+       o.Receivecode,
         c.TrueName ClienterName,
         ISNULL(oo.HadUploadCount,0) HadUploadCount,
         ISNULL(oo.NeedUploadCount,0) NeedUploadCount,

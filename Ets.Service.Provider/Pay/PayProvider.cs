@@ -2507,6 +2507,12 @@ namespace Ets.Service.Provider.Pay
                 LogHelper.LogWriter(err);
                 return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
             }
+            if (olModel.Status != 50 && olModel.Status != 0)
+            {
+                string err = string.Concat("订单已被抢单");
+                LogHelper.LogWriter(err);
+                return ResultModel<PayResultModel>.Conclude(AliPayStatus.OrderStates);
+            }
 
             if (req.payType == PayTypeEnum.ZhiFuBao.GetHashCode())
             {

@@ -691,7 +691,7 @@ namespace Ets.Service.Provider.Clienter
             if (myOrderInfo.Platform == PlatformEnum.FlashToSendModel.GetHashCode()) // 闪送模式
             {
                 //验证取货码
-                if (string.IsNullOrWhiteSpace(myOrderInfo.Receivecode))
+                if (string.IsNullOrWhiteSpace(parModel.ReceiveCode))
                 {
                     //return ResultModel<string>.Conclude(FinishOrderStatus.ReceiveCodeIsEmpty);
                     model.FinishOrderStatus = FinishOrderStatus.ReceiveCodeIsEmpty;
