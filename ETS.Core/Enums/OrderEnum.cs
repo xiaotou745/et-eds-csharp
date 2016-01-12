@@ -372,7 +372,11 @@ namespace ETS.Enums
         [DisplayText("订单已完成或已取消")]
         OrderHadCancelOrComplete = 111,
         [DisplayText("亲，您完成的太快了！")]
-        TooQuickly = 501
+        TooQuickly = 501,
+        [DisplayText("收货码不能为空")]
+        ReceiveCodeIsEmpty =502,
+        [DisplayText("收货码不正确")]
+        ReceiveCodeError =503
 
     }
     public enum OrderPublicshStatus : int
