@@ -3052,8 +3052,8 @@ order by a.id desc
                 temp.UserAddress = dataRow["UserAddress"] == null ? "" : dataRow["UserAddress"].ToString();
                 int distanceToBusiness = ParseHelper.ToInt(dataRow["DistanceToBusiness"], 0);
                 temp.DistanceToBusiness = distanceToBusiness < 1000
-                    ? distanceToBusiness + "m"
-                    : Math.Round(distanceToBusiness * 0.001, 2) + "km";
+                    ? distanceToBusiness + "米"
+                    : Math.Round(distanceToBusiness * 0.001, 2) + "千米";
                 temp.Platform = ParseHelper.ToInt(dataRow["Platform"]);//来源（默认1、旧后台，2新后台）
                 temp.Weight = ParseHelper.ToFloat(dataRow["Weight"]);//订单总重量
                 temp.KM = ParseHelper.ToFloat(dataRow["KM"]).ToString("f1");//送餐距离
