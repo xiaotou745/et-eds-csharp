@@ -1102,13 +1102,14 @@ namespace Ets.Service.Provider.Clienter
                                                 Latitude = parmodel.Latitude,
                                                 IsTimely = parmodel.IsTimely
                                             });
-                    new OrderProvider().AsyncOrderStatus(parmodel.orderNo);//同步第三方订单
-                    Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", parmodel.businessId.ToString(), string.Empty);
                     //调用java接口 里程计算 推单  (处理订单)  caoheyang 20160105
                     if (currOrderListModel.Platform == PlatformEnum.FlashToSendModel.GetHashCode())
                     {
                         new OrderProvider().ShanSongPushOrderForJava(currOrderListModel.Id);
                     }
+                    new OrderProvider().AsyncOrderStatus(parmodel.orderNo);//同步第三方订单
+                    Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", parmodel.businessId.ToString(), string.Empty);
+                  
                 });
 
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Success);
