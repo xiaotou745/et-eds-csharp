@@ -700,7 +700,7 @@ namespace Ets.Service.Provider.Clienter
                 //验证取货码是否正确
                 if (myOrderInfo.Receivecode.Trim() != parModel.ReceiveCode.Trim())
                 {
-                    model.FinishOrderStatus = FinishOrderStatus.ReceiveCodeIsEmpty;
+                    model.FinishOrderStatus = FinishOrderStatus.ReceiveCodeError;
                     return model;
                 }
             }
