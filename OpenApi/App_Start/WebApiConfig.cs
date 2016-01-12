@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
-using OpenApi.Filters;
+using OpenApi.App_Start.Filters;
 
 namespace OpenApi
 {

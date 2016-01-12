@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
+using ETS.Library.ActiveMq;
 using Ets.Model.Common;
 using ETS.Util;
 

@@ -343,5 +343,15 @@ namespace ETS.Util
         }
 
         #endregion
+
+
+/// <summary>
+/// 
+/// </summary>
+        public int InterceptSwith 
+        {
+            get { return  ParseHelper.ToInt(ConfigurationManager.AppSettings["InterceptSwith"]); }
+        }
+
     }
 }

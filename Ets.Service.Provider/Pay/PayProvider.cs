@@ -19,6 +19,7 @@ using ETS.Enums;
 using Ets.Model.Common;
 using ETS.Expand;
 using Ets.Service.Provider.Finance;
+using Ets.Service.Provider.Order;
 using ETS.Util;
 using ETS.Pay.AliPay;
 using System.Xml;
@@ -2861,6 +2862,10 @@ namespace Ets.Service.Provider.Pay
                     string Content2 = "尊敬的E代送用户您好，您的订单收货码是：#验证码#";
                     Content2 = Content2.Replace("#验证码#", olList.Receivecode);
                     ETS.Sms.SendSmsHelper.SendSmsSaveLogNew(olList.Recevicephoneno, Content2, SystemConst.SMSSOURCE);
+                    if (!(bool) olList.IsPay)
+                    {
+                        new OrderProvider().ShanSongPushOrderForJava(orderId, true);
+                    }
                 });
             }
             catch (Exception ex)
@@ -3056,11 +3061,16 @@ namespace Ets.Service.Provider.Pay
                     string Content2 = "尊敬的E代送用户您好，您的订单收货码是：#验证码#";
                     Content2 = Content2.Replace("#验证码#", olList.Receivecode);
                     ETS.Sms.SendSmsHelper.SendSmsSaveLogNew(olList.Recevicephoneno, Content2, SystemConst.SMSSOURCE);
+
+                    if (!(bool) olList.IsPay)
+                    {
+                        new OrderProvider().ShanSongPushOrderForJava(orderId, true);
+                    }
                 });
             }
             catch (Exception ex)
             {
-                EmailHelper.SendEmailTo("支付宝付款失败" + JsonHelper.JsonConvertToString(notify) + ",异常信息为：" + ex.Message,
+                EmailHelper.SendEmailTo("微信付款失败" + JsonHelper.JsonConvertToString(notify) + ",异常信息为：" + ex.Message,
                 ConfigSettings.Instance.EmailToAdress);
                 return false;
             }

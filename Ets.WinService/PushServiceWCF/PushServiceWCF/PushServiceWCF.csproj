@@ -105,7 +105,6 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="DLL\CYPLog.dll" />
     <Content Include="DLL\Microsoft.AspNet.SignalR.Core.dll" />
     <Content Include="DLL\Microsoft.AspNet.SignalR.Owin.dll" />
     <Content Include="DLL\Microsoft.AspNet.SignalR.SystemWeb.dll" />
