@@ -2902,7 +2902,7 @@ namespace Ets.Service.Provider.Pay
             //{
             ETS.Library.Pay.SSBWxPay.NativePay nativePay = new ETS.Library.Pay.SSBWxPay.NativePay();
             string prepayId = string.Empty;
-            totalPrice = totalPrice;
+            //totalPrice = totalPrice;
             code_url = nativePay.GetPayUrl(combinationOrderNo, totalPrice, "E代送收款", Config.SSWxNotify, out prepayId, orderNo);
             resultModel.prepayId = prepayId;
             //}
