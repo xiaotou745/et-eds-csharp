@@ -2825,9 +2825,9 @@ namespace Ets.Service.Provider.Pay
                         //查询小费金额
                         OrderTipCost selectOtCModel= orderTipCostDao.GetByOutTradeNo(1,out_trade_no);
                         decimal tipAmount = 0;
-                        if (selectOtCModel != null && selectOtCModel.Amount != null)
+                        if (selectOtCModel != null && selectOtCModel.TipAmount != null)
                         {
-                            tipAmount = selectOtCModel.Amount;
+                            tipAmount = selectOtCModel.TipAmount;
                             amountBSF = amountBSF - tipAmount;
                         }
 
@@ -3024,9 +3024,9 @@ namespace Ets.Service.Provider.Pay
                         //查询小费金额
                         OrderTipCost selectOtCModel = orderTipCostDao.GetByOutTradeNo(1, attach);
                         decimal tipAmount = 0;
-                        if (selectOtCModel != null && selectOtCModel.Amount != null)
+                        if (selectOtCModel != null && selectOtCModel.TipAmount != null)
                         {
-                            tipAmount = selectOtCModel.Amount;
+                            tipAmount = selectOtCModel.TipAmount;
                             amountBSF = amountBSF - tipAmount;
                         }
                         //更新商户余额、可提现余额                        

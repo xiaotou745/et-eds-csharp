@@ -141,7 +141,7 @@ where  PayType=@PayType and OutTradeNo=@OutTradeNo";
             OrderTipCost model = new OrderTipCost();
 
             const string querysql = @"
-select  Id,OrderId,Amount,CreateName,CreateTime,PayStates
+select  Id,OrderId,Amount,TipAmount,CreateName,CreateTime,PayStates
 from  OrderTipCost (nolock)
 where  PayType=@PayType and OutTradeNo=@OutTradeNo";
 
