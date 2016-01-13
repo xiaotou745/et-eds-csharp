@@ -27,17 +27,26 @@ namespace ETS.Library.Pay.SSBWxPay
         public WxPayData GetNotifyData()
         {
             //接收从微信后台POST过来的数据
-            System.IO.Stream s =HttpContext.Current.Request.InputStream;
-            int count = 0;
-            byte[] buffer = new byte[1024];
-            StringBuilder builder = new StringBuilder();
-            while ((count = s.Read(buffer, 0, 1024)) > 0)
+
+            string builder = string.Empty;
+            using (System.IO.Stream stream = HttpContext.Current.Request.InputStream)
             {
-                builder.Append(Encoding.UTF8.GetString(buffer, 0, count));
+                Byte[] postBytes = new Byte[stream.Length];
+                stream.Read(postBytes, 0, (Int32)stream.Length);
+                builder = Encoding.UTF8.GetString(postBytes);
             }
-            s.Flush();
-            s.Close();
-            s.Dispose();
+
+            //System.IO.Stream s =HttpContext.Current.Request.InputStream;
+            //int count = 0;
+            //byte[] buffer = new byte[1024];
+            //StringBuilder builder = new StringBuilder();
+            //while ((count = s.Read(buffer, 0, 1024)) > 0)
+            //{
+            //    builder.Append(Encoding.UTF8.GetString(buffer, 0, count));
+            //}
+            //s.Flush();
+            //s.Close();
+            //s.Dispose();
 
             Log.Info(this.GetType().ToString(), "Receive data from WeChat : " + builder.ToString());
 
