@@ -683,7 +683,7 @@ namespace ETS.Enums
         success = 1,
         [DisplayText("失败")]
         fail = 0,
-        [DisplayText("订单状态错误已抢单")]
+        [DisplayText("订单已被抢单")]
         OrderStates = -1
     }
 
