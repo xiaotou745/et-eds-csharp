@@ -342,7 +342,9 @@ namespace ETS.Enums
         [DisplayText("请传递版本号")]
         NoVersion = 107,
         [DisplayText("订单号不能为空")]
-        OrderNoEmpty = 108
+        OrderNoEmpty = 108,
+        [DisplayText("正在审核中暂无法抢单")]
+        Auditing = 109
     }
     public enum FinishOrderStatus
     {
