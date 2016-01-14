@@ -344,7 +344,9 @@ namespace ETS.Enums
         [DisplayText("订单号不能为空")]
         OrderNoEmpty = 108,
         [DisplayText("正在审核中暂无法抢单")]
-        Auditing = 109
+        AuditNoing = 109,
+        [DisplayText("正在审核中暂无法抢单")]
+        Auditing = 110
     }
     public enum FinishOrderStatus
     {
