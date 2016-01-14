@@ -50,12 +50,14 @@ namespace ETS.Library.Pay.SSBWxPay
             catch (WxPayException ex)
             {
                 //若签名错误，则立即返回结果给微信支付后台
-                WxPayData res = new WxPayData();
-                res.SetValue("return_code", "FAIL");
-                res.SetValue("return_msg", ex.Message);
-                Log.Error(this.GetType().ToString(), "Sign check error : " + res.ToXml());
+                //WxPayData res = new WxPayData();
+                //res.SetValue("return_code", "FAIL");
+                //res.SetValue("return_msg", ex.Message);
+                //Log.Error(this.GetType().ToString(), "Sign check error : " + res.ToXml());
                 //page.Response.Write(res.ToXml());
                 //page.Response.End();
+                data.SetValue("return_code", "FAIL");
+                data.SetValue("return_msg", ex.Message);
             }
 
             Log.Info(this.GetType().ToString(), "Check sign success");
