@@ -3472,7 +3472,7 @@ where   Id = @OrderId";
         {
             const string updateSql = @"
 update  [order]
-set  TipAmount=TipAmount+@TipAmount
+set  TipAmount=TipAmount+@TipAmount,Settlemoney=Settlemoney+@TipAmount,OrderCommission=OrderCommission+@TipAmount
 where   Id = @OrderId";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("TipAmount", tipAmount);

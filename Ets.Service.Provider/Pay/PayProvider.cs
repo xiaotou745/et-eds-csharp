@@ -2806,7 +2806,8 @@ namespace Ets.Service.Provider.Pay
                         OrderTipCost otcModel = new OrderTipCost();
                         otcModel.UpdateName = businessModel.Name;
                         otcModel.PayType = 1;//支付宝
-                        otcModel.OutTradeNo = notify.out_trade_no;
+                        otcModel.OutTradeNo = out_trade_no;
+                        otcModel.OriginalOrderNo = notify.trade_no;
                         orderTipCostDao.UpdateByOutTradeNo(otcModel);
 
                         //更新总的小费

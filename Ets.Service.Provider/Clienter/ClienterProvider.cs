@@ -1025,6 +1025,10 @@ namespace Ets.Service.Provider.Clienter
                                     ClienterId = parmodel.ClienterId 
                                 }   
             );
+            if (clienterModel.Status ==0)  //判断 该骑士 是否 有资格 抢单 wc
+            {
+                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Auditing);
+            }
 
             if (clienterModel.Status != 1)  //判断 该骑士 是否 有资格 抢单 wc
             {
