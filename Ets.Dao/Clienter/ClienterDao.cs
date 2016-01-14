@@ -1059,7 +1059,8 @@ case when (c.DeliveryCompanyId>0 and dc.IsShowAccount=1) or
       when(c.DeliveryCompanyId>0 and dc.IsShowAccount=0) then 0
       end IsShowAccount,
 IsReceivePush,c.VehicleName,
-ISNULL(HeadPhoto,'') HeadImgUrl
+ISNULL(HeadPhoto,'') HeadImgUrl,
+c.PushShanSongOrderSet
 from  dbo.clienter c (nolock) 
 left join dbo.DeliveryCompany dc(nolock) on c.DeliveryCompanyId=dc.Id
 where c.Id=@Id";
@@ -1239,6 +1240,11 @@ where  id = @id";
                 if (obj != null && obj != DBNull.Value)
                 {
                     result.VehicleName = dataReader["VehicleName"].ToString();
+                }
+                obj = dataReader["PushShanSongOrderSet"];
+                if (obj != null && obj != DBNull.Value)
+                {
+                    result.PushShanSongOrderSet = ParseHelper.ToInt(dataReader["PushShanSongOrderSet"].ToString());
                 }
                 return result;
             }
