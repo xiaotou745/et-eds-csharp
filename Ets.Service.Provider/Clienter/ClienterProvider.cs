@@ -1027,9 +1027,12 @@ namespace Ets.Service.Provider.Clienter
             );
             if (clienterModel.Status ==0)  //判断 该骑士 是否 有资格 抢单 wc
             {
+                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.AuditNoing);
+            }
+            if (clienterModel.Status == 3)  //判断 该骑士 是否 有资格 抢单 wc
+            {
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Auditing);
             }
-
             if (clienterModel.Status != 1)  //判断 该骑士 是否 有资格 抢单 wc
             {
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.HadCancelQualification);

@@ -43,15 +43,17 @@ namespace SuperMan.App_Start.Filters
             {
                 userID = UserContext.Current.Id,
                 userName = UserContext.Current.Name,
-                requestType = actionContext.HttpContext.Request.IsAjaxRequest()?1:0,
+                requestType = actionContext.HttpContext.Request.IsAjaxRequest() ? 1 : 0,
                 clientIp = getClientIp(),
                 sourceSys = "superman",
-                requestUrl = actionContext.HttpContext.Request.Url.AbsoluteUri,
+                requestUrl = actionContext.HttpContext.Request.Url.AbsoluteUri.IndexOf('?') > 0 ?
+                actionContext.HttpContext.Request.Url.AbsoluteUri.Substring(0, actionContext.HttpContext.Request.Url.AbsoluteUri.IndexOf('?')) :
+                actionContext.HttpContext.Request.Url.AbsoluteUri,
                 param = responseData,
                 decryptMsg = responseData,
                 contentType = actionContext.HttpContext.Request.ContentType ?? "",
                 requestMethod = actionContext.HttpContext.Request.HttpMethod,
-                methodName = actionContext.Controller.ControllerContext.Controller + "."+actionContext.ActionDescriptor.ActionName,
+                methodName = actionContext.Controller.ControllerContext.Controller + "." + actionContext.ActionDescriptor.ActionName,
                 requestTime = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"),
                 appServer = JsonHelper.JsonConvertToString(ips),
                 header = JsonHelper.JsonConvertToString(actionContext.HttpContext.Request.Headers)
