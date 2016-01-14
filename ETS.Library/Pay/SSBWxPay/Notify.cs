@@ -27,26 +27,17 @@ namespace ETS.Library.Pay.SSBWxPay
         public WxPayData GetNotifyData()
         {
             //接收从微信后台POST过来的数据
-
-            string builder = string.Empty;
-            using (System.IO.Stream stream = HttpContext.Current.Request.InputStream)
+            System.IO.Stream s = HttpContext.Current.Request.InputStream;
+            int count = 0;
+            byte[] buffer = new byte[1024];
+            StringBuilder builder = new StringBuilder();
+            while ((count = s.Read(buffer, 0, 1024)) > 0)
             {
-                Byte[] postBytes = new Byte[stream.Length];
-                stream.Read(postBytes, 0, (Int32)stream.Length);
-                builder = Encoding.UTF8.GetString(postBytes);
+                builder.Append(Encoding.UTF8.GetString(buffer, 0, count));
             }
-
-            //System.IO.Stream s =HttpContext.Current.Request.InputStream;
-            //int count = 0;
-            //byte[] buffer = new byte[1024];
-            //StringBuilder builder = new StringBuilder();
-            //while ((count = s.Read(buffer, 0, 1024)) > 0)
-            //{
-            //    builder.Append(Encoding.UTF8.GetString(buffer, 0, count));
-            //}
-            //s.Flush();
-            //s.Close();
-            //s.Dispose();
+            s.Flush();
+            s.Close();
+            s.Dispose();
 
             Log.Info(this.GetType().ToString(), "Receive data from WeChat : " + builder.ToString());
 
@@ -56,7 +47,7 @@ namespace ETS.Library.Pay.SSBWxPay
             {
                 data.FromXml(builder.ToString());
             }
-            catch(WxPayException ex)
+            catch (WxPayException ex)
             {
                 //若签名错误，则立即返回结果给微信支付后台
                 //WxPayData res = new WxPayData();

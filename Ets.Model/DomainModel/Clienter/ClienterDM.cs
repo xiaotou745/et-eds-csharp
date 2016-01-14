@@ -143,5 +143,10 @@ namespace Ets.Model.DomainModel.Clienter
         /// </summary>
         public string VehicleName { get; set; }
         public string VehicleId { get; set; }
+
+        /// <summary>
+        /// 里程计算骑士端推单设置  
+        /// </summary>
+        public int PushShanSongOrderSet { get; set; }
     }
 }
