@@ -51,15 +51,12 @@ namespace SuperManWebApi.App_Start.Filters
             }
             else if (actionContext.Request.Method == HttpMethod.Post)
             {
-                //获取入参
-                Stream stream = await actionContext.Request.Content.ReadAsStreamAsync();
-                Encoding encoding = Encoding.UTF8;
-                stream.Position = 0;
-
-                using (StreamReader reader = new StreamReader(stream, encoding))
-                {
-                    responseData = reader.ReadToEnd().ToString();
-                }
+                var task = actionContext.Request.Content.ReadAsStreamAsync();
+                var content = string.Empty;
+                var sm = task.Result;
+                sm.Seek(0, SeekOrigin.Begin);//设置流的开始位置
+                var bytes = sm.ToByteArray();
+                responseData = bytes.ToStr();
             }
 
 
@@ -140,5 +137,11 @@ namespace SuperManWebApi.App_Start.Filters
 
             });
         }
+
+
+       
     }
+   
+
+
 }
