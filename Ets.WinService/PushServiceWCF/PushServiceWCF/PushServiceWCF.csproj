@@ -287,8 +287,6 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="IPushSer.cs" />
-    <Compile Include="LateMsgModel.cs" />
-    <Compile Include="MessageQueue.cs" />
     <Compile Include="PushHub.cs" />
     <Compile Include="PushMessage.ashx.cs">
       <DependentUpon>PushMessage.ashx</DependentUpon>
