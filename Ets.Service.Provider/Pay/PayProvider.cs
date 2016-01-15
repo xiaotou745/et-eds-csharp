@@ -2914,7 +2914,6 @@ namespace Ets.Service.Provider.Pay
             resultModel.payType = PayTypeEnum.WeiXin.GetHashCode();//微信
             resultModel.notifyUrl = ETS.Config.SSWxNotify;//回调地址            
 
-            orderDao.UpdatePayment(orderId, 2);
             return ResultModel<PayResultModel>.Conclude(AliPayStatus.success, resultModel);
         }
 
