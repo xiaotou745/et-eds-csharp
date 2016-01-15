@@ -19,8 +19,3 @@ insert into OrderTip(Amount) values(5)
 insert into OrderTip(Amount) values(8)
 insert into OrderTip(Amount) values(10)
 go
-
---ÇÐ»»java°æ²Ëµ¥
-
-UPDATE AuthorityMenuClass SET url=NULL WHERE id IN (14,15,16)
-DELETE AuthorityMenuClass  WHERE Id=14
