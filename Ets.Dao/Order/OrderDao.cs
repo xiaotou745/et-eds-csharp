@@ -2876,7 +2876,7 @@ join dbo.business b (nolock) on a.businessId=b.Id
 where (a.Platform!=3 and  a.status=0 and a.IsEnable=1 and( b.IsBind=0 or (b.IsBind=1 and DATEDIFF(minute,a.PubDate,GETDATE())>{1})))
 or (a.Platform=3 and  a.status=0 and a.IsEnable=1 )
 and  geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint)<= @PushRadius
-order by DistanceToBusiness asc
+order by DistanceToBusiness asc,a.PubDate desc
 ", model.TopNum, model.ExclusiveOrderTime);
             }
             else //查询所有 无雇佣骑士的商家发布的订单，以及 非当前骑士的雇主 里 有雇佣骑士的商家 发布的超过了 五分钟 无人抢单的订单 以及当前骑士所属雇主的所有订单
@@ -2934,7 +2934,7 @@ or
 (a.Platform=3 and a.status=0 and a.IsEnable=1 )
 
 and  geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint)<= @PushRadius
-order by DistanceToBusiness asc
+order by DistanceToBusiness asc,a.PubDate desc
 ", model.TopNum, model.ClienterId, model.ExclusiveOrderTime);
             }
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
