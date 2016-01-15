@@ -3,23 +3,17 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Net.NetworkInformation;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
-using System.Web.Http.ModelBinding;
-using ETS.Enums;
 using ETS.Library.ActiveMq;
 using Ets.Model.Common;
-using Ets.Service.Provider.Common;
 using ETS.Util;
 
-namespace SuperManWebApi.App_Start.Filters
+namespace OpenApi.App_Start.Filters
 {
     /// <summary>
     /// 对内接口的参数合法性验证 add by caoheyang 20150512
@@ -69,13 +63,13 @@ namespace SuperManWebApi.App_Start.Filters
                 userName = "",
                 requestType = 0,
                 clientIp = getClientIp(),
-                sourceSys = "supermanapi",
+                sourceSys = "netopenapi",
                 requestUrl = actionContext.Request.RequestUri.ToString().IndexOf("?") > 0 ?
                 actionContext.Request.RequestUri.ToString().Substring(0, actionContext.Request.RequestUri.ToString().IndexOf("?")) :
                              actionContext.Request.RequestUri.ToString(),
                 param = responseData,
                 decryptMsg = responseData,
-                contentType = actionContext.Request.Content.Headers.ContentType==null?"":
+                contentType = actionContext.Request.Content.Headers.ContentType == null ? "" :
                 actionContext.Request.Content.Headers.ContentType.ToString(),
                 requestMethod = actionContext.Request.Method.ToString(),
                 methodName =
@@ -88,7 +82,7 @@ namespace SuperManWebApi.App_Start.Filters
                 header = JsonHelper.JsonConvertToString(actionContext.Request.Headers)
             };
 
-            actionContext.Request.Properties["actionlog"] =log;
+            actionContext.Request.Properties["actionlog"] = log;
 
             Stopwatch stop = new Stopwatch();
             actionContext.Request.Properties["actionlogTime"] = stop;
@@ -137,11 +131,5 @@ namespace SuperManWebApi.App_Start.Filters
 
             });
         }
-
-
-       
     }
-   
-
-
 }

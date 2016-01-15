@@ -220,6 +220,7 @@
     <Compile Include="Util\ServiceResult.cs" />
     <Compile Include="Util\SoaCommon.cs" />
     <Compile Include="Util\StreamDataSource.cs" />
+    <Compile Include="Util\StreamHelper.cs" />
     <Compile Include="Util\StringHelper.cs" />
     <Compile Include="Util\StringVerify.cs" />
     <Compile Include="Util\SystemHelper.cs" />

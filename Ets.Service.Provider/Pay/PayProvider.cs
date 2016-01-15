@@ -19,6 +19,7 @@ using ETS.Enums;
 using Ets.Model.Common;
 using ETS.Expand;
 using Ets.Service.Provider.Finance;
+using Ets.Service.Provider.Order;
 using ETS.Util;
 using ETS.Pay.AliPay;
 using System.Xml;
@@ -2506,6 +2507,12 @@ namespace Ets.Service.Provider.Pay
                 LogHelper.LogWriter(err);
                 return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
             }
+            if (olModel.Status != 50 && olModel.Status != 0)
+            {
+                string err = string.Concat("订单已被抢单");
+                LogHelper.LogWriter(err);
+                return ResultModel<PayResultModel>.Conclude(AliPayStatus.OrderStates);
+            }
 
             if (req.payType == PayTypeEnum.ZhiFuBao.GetHashCode())
             {
@@ -2791,7 +2798,7 @@ namespace Ets.Service.Provider.Pay
                             Operator = businessModel.Name,
                             WithwardId = orderId,
                             RelationNo = olList.OrderNo,
-                            Remark = "支付宝支付配送费",
+                            Remark = "小费" + notify.total_fee+"元",
                             IsRetainValue = 1
                         });
 
@@ -2799,7 +2806,8 @@ namespace Ets.Service.Provider.Pay
                         OrderTipCost otcModel = new OrderTipCost();
                         otcModel.UpdateName = businessModel.Name;
                         otcModel.PayType = 1;//支付宝
-                        otcModel.OutTradeNo = notify.out_trade_no;
+                        otcModel.OutTradeNo = out_trade_no;
+                        otcModel.OriginalOrderNo = notify.trade_no;
                         orderTipCostDao.UpdateByOutTradeNo(otcModel);
 
                         //更新总的小费
@@ -2814,6 +2822,16 @@ namespace Ets.Service.Provider.Pay
                         //更新子订单状态 支付宝
                         orderChildDao.UpdateIsPay(orderChildId, 1);
 
+                        decimal amountBSF = notify.total_fee;
+                        //查询小费金额
+                        OrderTipCost selectOtCModel= orderTipCostDao.GetByOutTradeNo(1,out_trade_no);
+                        decimal tipAmount = 0;
+                        if (selectOtCModel != null && selectOtCModel.TipAmount != null)
+                        {
+                            tipAmount = selectOtCModel.TipAmount;
+                            amountBSF = amountBSF - tipAmount;
+                        }
+
                         //更新商户余额、可提现余额                        
                         iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
                         {
@@ -2825,7 +2843,7 @@ namespace Ets.Service.Provider.Pay
                             Operator = businessModel.Name,
                             WithwardId = orderId,
                             RelationNo = olList.OrderNo,
-                            Remark = "支付宝支付配送费",
+                            Remark = "配送费支出" + amountBSF.ToString() + "元，小费" + tipAmount.ToString() + "元",
                             IsRetainValue = 1
                         });
 
@@ -2846,11 +2864,15 @@ namespace Ets.Service.Provider.Pay
                 {
                     string Content1 = "尊敬的E代送用户您好，您的订单取货码是：#验证码#";
                     Content1 = Content1.Replace("#验证码#", olList.PickupCode);
-                    ETS.Sms.SendSmsHelper.SendSmsSaveLogNew(olList.Pubphoneno, Content1, SystemConst.SMSSOURCE);
+                    ETS.Sms.SendSmsHelper.SendSendSmsSaveLog(olList.Pubphoneno, Content1, SystemConst.SMSSOURCE);
 
                     string Content2 = "尊敬的E代送用户您好，您的订单收货码是：#验证码#";
                     Content2 = Content2.Replace("#验证码#", olList.Receivecode);
-                    ETS.Sms.SendSmsHelper.SendSmsSaveLogNew(olList.Recevicephoneno, Content2, SystemConst.SMSSOURCE);
+                    ETS.Sms.SendSmsHelper.SendSendSmsSaveLog(olList.Recevicephoneno, Content2, SystemConst.SMSSOURCE);
+                    if (!(bool) olList.IsPay)
+                    {
+                        new OrderProvider().ShanSongPushOrderForJava(orderId, true);
+                    }
                 });
             }
             catch (Exception ex)
@@ -2881,7 +2903,7 @@ namespace Ets.Service.Provider.Pay
             //{
             ETS.Library.Pay.SSBWxPay.NativePay nativePay = new ETS.Library.Pay.SSBWxPay.NativePay();
             string prepayId = string.Empty;
-            totalPrice = totalPrice;
+            //totalPrice = totalPrice;
             code_url = nativePay.GetPayUrl(combinationOrderNo, totalPrice, "E代送收款", Config.SSWxNotify, out prepayId, orderNo);
             resultModel.prepayId = prepayId;
             //}
@@ -2976,7 +2998,7 @@ namespace Ets.Service.Provider.Pay
                             Operator = businessModel.Name,
                             WithwardId = orderId,
                             RelationNo = olList.OrderNo,
-                            Remark = "微信支付配送费",
+                            Remark = "小费"+notify.total_fee+"元",
                             IsRetainValue=1
                         });
 
@@ -2999,6 +3021,15 @@ namespace Ets.Service.Provider.Pay
                         //更新子订单状态 微信
                         orderChildDao.UpdateIsPay(orderChildId, 2);
 
+                        decimal amountBSF = ParseHelper.ToDecimal(notify.total_fee);
+                        //查询小费金额
+                        OrderTipCost selectOtCModel = orderTipCostDao.GetByOutTradeNo(1, attach);
+                        decimal tipAmount = 0;
+                        if (selectOtCModel != null && selectOtCModel.TipAmount != null)
+                        {
+                            tipAmount = selectOtCModel.TipAmount;
+                            amountBSF = amountBSF - tipAmount;
+                        }
                         //更新商户余额、可提现余额                        
                         iBusinessProvider.UpdateBBalanceAndWithdraw(new BusinessMoneyPM()
                         {
@@ -3010,7 +3041,7 @@ namespace Ets.Service.Provider.Pay
                             Operator = businessModel.Name,
                             WithwardId = orderId,
                             RelationNo = olList.OrderNo,
-                            Remark = "微信支付配送费",
+                            Remark = "配送费支出" + amountBSF.ToString() + "元，小费" + tipAmount.ToString() + "元",
                             IsRetainValue = 1
                         });
 
@@ -3037,11 +3068,16 @@ namespace Ets.Service.Provider.Pay
                     string Content2 = "尊敬的E代送用户您好，您的订单收货码是：#验证码#";
                     Content2 = Content2.Replace("#验证码#", olList.Receivecode);
                     ETS.Sms.SendSmsHelper.SendSmsSaveLogNew(olList.Recevicephoneno, Content2, SystemConst.SMSSOURCE);
+
+                    if (!(bool) olList.IsPay)
+                    {
+                        new OrderProvider().ShanSongPushOrderForJava(orderId, true);
+                    }
                 });
             }
             catch (Exception ex)
             {
-                EmailHelper.SendEmailTo("支付宝付款失败" + JsonHelper.JsonConvertToString(notify) + ",异常信息为：" + ex.Message,
+                EmailHelper.SendEmailTo("微信付款失败" + JsonHelper.JsonConvertToString(notify) + ",异常信息为：" + ex.Message,
                 ConfigSettings.Instance.EmailToAdress);
                 return false;
             }

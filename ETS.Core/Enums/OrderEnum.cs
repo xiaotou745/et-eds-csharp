@@ -342,7 +342,11 @@ namespace ETS.Enums
         [DisplayText("请传递版本号")]
         NoVersion = 107,
         [DisplayText("订单号不能为空")]
-        OrderNoEmpty = 108
+        OrderNoEmpty = 108,
+        [DisplayText("正在审核中暂无法抢单")]
+        AuditNoing = 109,
+        [DisplayText("正在审核中暂无法抢单")]
+        Auditing = 110
     }
     public enum FinishOrderStatus
     {
@@ -372,7 +376,11 @@ namespace ETS.Enums
         [DisplayText("订单已完成或已取消")]
         OrderHadCancelOrComplete = 111,
         [DisplayText("亲，您完成的太快了！")]
-        TooQuickly = 501
+        TooQuickly = 501,
+        [DisplayText("收货码不能为空")]
+        ReceiveCodeIsEmpty =502,
+        [DisplayText("收货码不正确")]
+        ReceiveCodeError =503
 
     }
     public enum OrderPublicshStatus : int

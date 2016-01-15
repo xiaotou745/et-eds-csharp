@@ -27,7 +27,7 @@ namespace ETS.Library.Pay.SSBWxPay
         public WxPayData GetNotifyData()
         {
             //接收从微信后台POST过来的数据
-            System.IO.Stream s =HttpContext.Current.Request.InputStream;
+            System.IO.Stream s = HttpContext.Current.Request.InputStream;
             int count = 0;
             byte[] buffer = new byte[1024];
             StringBuilder builder = new StringBuilder();
@@ -47,7 +47,7 @@ namespace ETS.Library.Pay.SSBWxPay
             {
                 data.FromXml(builder.ToString());
             }
-            catch(WxPayException ex)
+            catch (WxPayException ex)
             {
                 //若签名错误，则立即返回结果给微信支付后台
                 //WxPayData res = new WxPayData();

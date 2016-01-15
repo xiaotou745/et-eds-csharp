@@ -127,5 +127,31 @@ namespace Ets.Model.DomainModel.Order
         public string paymentstr { get; set; }
 
         public string platformstr { get; set; }
+
+        /// <summary>
+        /// 发货经度
+        /// </summary>
+        public decimal PickUpLongitude { get; set; }
+
+         /// <summary>
+        /// 发货纬度
+        /// </summary>
+        public decimal PickUpLatitude { get; set; }
+
+        
+        /// <summary>
+        /// 收货经度
+        /// </summary>
+        public decimal ReceviceLongitude { get; set; }
+
+         /// <summary>
+        /// 收货纬度
+        /// </summary>
+        public decimal ReceviceLatitude { get; set; }
+
+        /// <summary>
+        /// 收货人姓名
+        /// </summary>
+        public string ReceviceName { get; set; }
     }
 }

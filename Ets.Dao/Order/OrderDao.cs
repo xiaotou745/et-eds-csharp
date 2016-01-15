@@ -1634,6 +1634,7 @@ select top 1
         b.GroupId ,
         o.PickupCode ,
         o.OrderCount,
+       o.Receivecode,
         c.TrueName ClienterName,
         ISNULL(oo.HadUploadCount,0) HadUploadCount,
         ISNULL(oo.NeedUploadCount,0) NeedUploadCount,
@@ -2629,7 +2630,7 @@ select top {0}
 			round(geography::Point(ISNULL(a.Pickuplatitude,0),ISNULL(a.Pickuplongitude,0),4326).STDistance(@cliernterPoint),0) 
 		else  
 		round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) 
-       end  DistanceToBusiness
+       end  DistanceToBusiness, a.PickUpLongitude,a.PickUpLatitude,a.ReceviceLongitude,a.ReceviceLatitude,a.ReceviceName
       
 from    dbo.[order] a ( nolock )
         join dbo.business b ( nolock ) on a.businessId = b.Id
@@ -2683,7 +2684,7 @@ ISNULL(a.ReceviceCity,'') as UserCity,case  isnull(a.ReceviceAddress,'')
 			round(geography::Point(ISNULL(a.Pickuplatitude,0),ISNULL(a.Pickuplongitude,0),4326).STDistance(@cliernterPoint),0) 
 		else  
 		round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) 
-       end  DistanceToBusiness
+       end  DistanceToBusiness, a.PickUpLongitude,a.PickUpLatitude,a.ReceviceLongitude,a.ReceviceLatitude,a.ReceviceName
 from dbo.[order] a (nolock)
         join dbo.business b (nolock) on a.businessId=b.Id
         left join dbo.BusinessExpressRelation ber (nolock) on a.businessId=ber.BusinessId
@@ -2748,11 +2749,12 @@ when [Platform]=2 then round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo
 when [Platform]=3 then round(geography::Point(ISNULL(a.Pickuplatitude,0),ISNULL(a.Pickuplongitude,0),4326).STDistance(@cliernterPoint),0) 
 else '' end)  as DistanceToBusiness,--距离
 (case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress --发货地址
-        
+        , a.PickUpLongitude,a.PickUpLatitude,a.ReceviceLongitude,a.ReceviceLatitude,a.ReceviceName
 from    dbo.[order] a ( nolock )
 		join dbo.OrderOther oo(nolock) on a.Id=oo.OrderId
         join dbo.business b ( nolock ) on a.businessId = b.Id
-where   a.status = 0 and a.IsEnable=1  and( b.IsBind=0 or (b.IsBind=1 and DATEDIFF(minute,a.PubDate,GETDATE())>{1}))
+where  ((a.Platform!=3 and a.status = 0 and a.IsEnable=1  and( b.IsBind=0 or (b.IsBind=1 and DATEDIFF(minute,a.PubDate,GETDATE())>{1})))
+        or (a.Platform=3 and a.status = 0 and a.IsEnable=1))
         {2}
 order by a.Id desc", model.TopNum, model.ExclusiveOrderTime, whereStr);
             }
@@ -2789,7 +2791,7 @@ when [Platform]=2 then round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo
 when [Platform]=3 then round(geography::Point(ISNULL(a.Pickuplatitude,0),ISNULL(a.Pickuplongitude,0),4326).STDistance(@cliernterPoint),0) 
 else '' end)  as DistanceToBusiness,--距离
 (case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress --发货地址
-
+, a.PickUpLongitude,a.PickUpLatitude,a.ReceviceLongitude,a.ReceviceLatitude,a.ReceviceName
 
 from    dbo.[order] a ( nolock )
 join dbo.OrderOther oo(nolock) on a.Id=oo.OrderId 
@@ -2801,13 +2803,18 @@ join dbo.OrderOther oo(nolock) on a.Id=oo.OrderId
                             and temp.IsBind = 1
                             and temp.ClienterId = {1}
                   ) as c on a.BusinessId = c.BusinessId        
-where   a.status = 0 and a.IsEnable=1
+where  ( 
+         (a.Platform!=3  and a.status = 0 and a.IsEnable=1
         and ( b.IsBind = 0
               or ( b.IsBind = 1
                    and DATEDIFF(minute, a.PubDate, GETDATE()) > {2}
                  )
               or c.BusinessId is not null
             )
+          ) 
+        or (a.Platform=3  and a.status = 0 and a.IsEnable=1) 
+      )
+
         {3}
 order by a.Id desc", model.TopNum, model.ClienterId, model.ExclusiveOrderTime, whereStr);
             }
@@ -2862,11 +2869,12 @@ when [Platform]=2 then round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo
 when [Platform]=3 then round(geography::Point(ISNULL(a.Pickuplatitude,0),ISNULL(a.Pickuplongitude,0),4326).STDistance(@cliernterPoint),0) 
 	 else '' end)  as DistanceToBusiness,--距离
 (case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress --发货地址
- 
+ , a.PickUpLongitude,a.PickUpLatitude,a.ReceviceLongitude,a.ReceviceLatitude,a.ReceviceName
 from dbo.[order] a (nolock)
 join dbo.OrderOther oo(nolock) on a.Id=oo.OrderId
 join dbo.business b (nolock) on a.businessId=b.Id
-where a.status=0 and a.IsEnable=1 and( b.IsBind=0 or (b.IsBind=1 and DATEDIFF(minute,a.PubDate,GETDATE())>{1}))
+where (a.Platform!=3 and  a.status=0 and a.IsEnable=1 and( b.IsBind=0 or (b.IsBind=1 and DATEDIFF(minute,a.PubDate,GETDATE())>{1})))
+or (a.Platform=3 and  a.status=0 and a.IsEnable=1 )
 and  geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint)<= @PushRadius
 order by geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint) asc
 ", model.TopNum, model.ExclusiveOrderTime);
@@ -2902,7 +2910,7 @@ when [Platform]=2 then round(geography::Point(ISNULL(oo.PubLatitude,0),ISNULL(oo
 when [Platform]=3 then round(geography::Point(ISNULL(a.Pickuplatitude,0),ISNULL(a.Pickuplongitude,0),4326).STDistance(@cliernterPoint),0) 
 	 else '' end)  as DistanceToBusiness,--距离
 (case when [Platform]=1 then b.Address when [Platform]=3 then a.PickUpAddress else '' end) as BusinessAddress --发货地址
-
+, a.PickUpLongitude,a.PickUpLatitude,a.ReceviceLongitude,a.ReceviceLatitude,a.ReceviceName
 
 from dbo.[order] a (nolock)
 join dbo.OrderOther oo(nolock) on a.Id=oo.OrderId
@@ -2914,13 +2922,17 @@ left join ( select  distinct
                             and temp.IsBind = 1
                             and temp.ClienterId = {1}
                   ) as c on a.BusinessId = c.BusinessId        
-where a.status=0 and a.IsEnable=1
-and ( b.IsBind = 0
-              or ( b.IsBind = 1
-                   and DATEDIFF(minute, a.PubDate, GETDATE()) > {2}
-                 )
-              or c.BusinessId is not null
-            )
+where (a.Platform!=3 and a.status=0 and a.IsEnable=1
+        and ( b.IsBind = 0
+                      or ( b.IsBind = 1
+                           and DATEDIFF(minute, a.PubDate, GETDATE()) > {2}
+                         )
+                      or c.BusinessId is not null
+                    )
+        )
+or 
+(a.Platform=3 and a.status=0 and a.IsEnable=1 )
+
 and  geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint)<= @PushRadius
 order by geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint) asc
 ", model.TopNum, model.ClienterId, model.ExclusiveOrderTime);
@@ -2967,7 +2979,7 @@ as PubDate,
 			round(geography::Point(ISNULL(a.Pickuplatitude,0),ISNULL(a.Pickuplongitude,0),4326).STDistance(@cliernterPoint),0) 
 		else  
 		round(geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint),0) 
-       end  DistanceToBusiness
+       end  DistanceToBusiness , a.PickUpLongitude,a.PickUpLatitude,a.ReceviceLongitude,a.ReceviceLatitude,a.ReceviceName
 from dbo.[order] a (nolock)
 join dbo.business b (nolock) on a.businessId=b.Id
 join (select  distinct(temp.BusinessId) from BusinessClienterRelation  temp where temp.IsEnable=1 and  temp.IsBind =1 and temp.ClienterId=@ClienterId ) as c on a.BusinessId=c.BusinessId
@@ -3051,8 +3063,8 @@ order by a.id desc
                 temp.UserAddress = dataRow["UserAddress"] == null ? "" : dataRow["UserAddress"].ToString();
                 int distanceToBusiness = ParseHelper.ToInt(dataRow["DistanceToBusiness"], 0);
                 temp.DistanceToBusiness = distanceToBusiness < 1000
-                    ? distanceToBusiness + "m"
-                    : Math.Round(distanceToBusiness * 0.001, 2) + "km";
+                    ? distanceToBusiness + "米"
+                    : Math.Round(distanceToBusiness * 0.001, 2) + "千米";
                 temp.Platform = ParseHelper.ToInt(dataRow["Platform"]);//来源（默认1、旧后台，2新后台）
                 temp.Weight = ParseHelper.ToFloat(dataRow["Weight"]);//订单总重量
                 temp.KM = ParseHelper.ToFloat(dataRow["KM"]).ToString("f1");//送餐距离
@@ -3471,7 +3483,7 @@ where   Id = @OrderId";
         {
             const string updateSql = @"
 update  [order]
-set  TipAmount=TipAmount+@TipAmount
+set  TipAmount=TipAmount+@TipAmount,Settlemoney=Settlemoney+@TipAmount,OrderCommission=OrderCommission+@TipAmount
 where   Id = @OrderId";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("TipAmount", tipAmount);

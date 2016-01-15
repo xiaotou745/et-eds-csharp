@@ -236,6 +236,7 @@ namespace SuperManWebApi.Controllers
                 return ResultModel<FinishOrderResultModel>.Conclude(FinishOrderStatus.NoVersion);
             }
 
+
             FinishOrderResultModel finishModel = iClienterProvider.FinishOrder(parModel);
             return ResultModel<FinishOrderResultModel>.Conclude(finishModel.FinishOrderStatus, finishModel);
           

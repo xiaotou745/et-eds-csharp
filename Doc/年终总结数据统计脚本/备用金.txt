@@ -5,7 +5,7 @@ WHERE OptName NOT IN ('wujianbo','武剑波','chenkai') AND OptType=1
 GROUP BY convert(varchar(7),OptTime,120)
 
 --备用金支出
-SELECT convert(varchar(7),OptTime,120) as Date,  COUNT(1) as [充值条数],SUM(Amount) AS 充值金额
+SELECT convert(varchar(7),OptTime,120) as Date,  COUNT(1) as [支出条数],SUM(Amount) AS 支出金额
 FROM   ImprestBalanceRecord (NOLOCK) 
 WHERE OptName NOT IN ('wujianbo','武剑波','chenkai') AND OptType=2
 GROUP BY convert(varchar(7),OptTime,120)

@@ -134,8 +134,29 @@ where  PayType=@PayType and OutTradeNo=@OutTradeNo";
             dbParameters.AddWithValue("OriginalOrderNo", orderTipCost.OriginalOrderNo);
 
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
-        }	
-		
+        }
+
+        public OrderTipCost GetByOutTradeNo(int PayType,string OutTradeNo)
+        {
+            OrderTipCost model = new OrderTipCost();
+
+            const string querysql = @"
+select  Id,OrderId,Amount,TipAmount,CreateName,CreateTime,PayStates
+from  OrderTipCost (nolock)
+where  PayType=@PayType and OutTradeNo=@OutTradeNo";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("PayType", PayType);
+            dbParameters.AddWithValue("OutTradeNo", OutTradeNo);
+
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
+            if (DataTableHelper.CheckDt(dt))
+            {
+                model = DataTableHelper.ConvertDataTableList<OrderTipCost>(dt)[0];
+            }
+            return model;
+        }
+
 		/// <summary>
 		/// 根据ID获取对象
 		/// </summary>

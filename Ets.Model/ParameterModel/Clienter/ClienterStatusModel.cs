@@ -64,8 +64,11 @@ namespace Ets.Model.ParameterModel.Clienter
         /// </summary>
         //public int IsDisplayDeliveryMoney { get; set; }
 
+        /// <summary>
+        /// 里程计算骑士端推单设置  0不推单 1推单 默认0
+        /// </summary>
+        public int PushShanSongOrderSet { get; set; }
 
 
-        
     }
 }

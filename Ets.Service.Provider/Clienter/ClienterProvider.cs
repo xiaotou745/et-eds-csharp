@@ -688,6 +688,22 @@ namespace Ets.Service.Provider.Clienter
                 model.FinishOrderStatus = FinishOrderStatus.PickupCodeError;
                 return model;
             }
+            if (myOrderInfo.Platform == PlatformEnum.FlashToSendModel.GetHashCode()) // 闪送模式
+            {
+                //验证取货码
+                if (string.IsNullOrWhiteSpace(parModel.ReceiveCode))
+                {
+                    //return ResultModel<string>.Conclude(FinishOrderStatus.ReceiveCodeIsEmpty);
+                    model.FinishOrderStatus = FinishOrderStatus.ReceiveCodeIsEmpty;
+                    return model;
+                }
+                //验证取货码是否正确
+                if (myOrderInfo.Receivecode.Trim() != parModel.ReceiveCode.Trim())
+                {
+                    model.FinishOrderStatus = FinishOrderStatus.ReceiveCodeError;
+                    return model;
+                }
+            }
 
             GlobalConfigModel globalSetting = new GlobalConfigProvider().GlobalConfigMethod(0);
             //取到任务的接单时间、从缓存中读取完成任务时间限制，判断要用户点击完成时间>接单时间+限制时间 
@@ -1009,7 +1025,14 @@ namespace Ets.Service.Provider.Clienter
                                     ClienterId = parmodel.ClienterId 
                                 }   
             );
-
+            if (clienterModel.Status ==0)  //判断 该骑士 是否 有资格 抢单 wc
+            {
+                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.AuditNoing);
+            }
+            if (clienterModel.Status == 3)  //判断 该骑士 是否 有资格 抢单 wc
+            {
+                return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Auditing);
+            }
             if (clienterModel.Status != 1)  //判断 该骑士 是否 有资格 抢单 wc
             {
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.HadCancelQualification);
@@ -1086,13 +1109,14 @@ namespace Ets.Service.Provider.Clienter
                                                 Latitude = parmodel.Latitude,
                                                 IsTimely = parmodel.IsTimely
                                             });
-                    new OrderProvider().AsyncOrderStatus(parmodel.orderNo);//同步第三方订单
-                    Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", parmodel.businessId.ToString(), string.Empty);
                     //调用java接口 里程计算 推单  (处理订单)  caoheyang 20160105
                     if (currOrderListModel.Platform == PlatformEnum.FlashToSendModel.GetHashCode())
                     {
                         new OrderProvider().ShanSongPushOrderForJava(currOrderListModel.Id);
                     }
+                    new OrderProvider().AsyncOrderStatus(parmodel.orderNo);//同步第三方订单
+                    Push.PushMessage(1, "订单提醒", "有订单被抢了！", "有超人抢了订单！", parmodel.businessId.ToString(), string.Empty);
+                  
                 });
 
                 return ResultModel<RushOrderResultModel>.Conclude(RushOrderStatus.Success);
