@@ -2753,7 +2753,8 @@ else '' end)  as DistanceToBusiness,--距离
 from    dbo.[order] a ( nolock )
 		join dbo.OrderOther oo(nolock) on a.Id=oo.OrderId
         join dbo.business b ( nolock ) on a.businessId = b.Id
-where   a.status = 0 and a.IsEnable=1  and( b.IsBind=0 or (b.IsBind=1 and DATEDIFF(minute,a.PubDate,GETDATE())>{1}))
+where  ((a.Platform!=3 and a.status = 0 and a.IsEnable=1  and( b.IsBind=0 or (b.IsBind=1 and DATEDIFF(minute,a.PubDate,GETDATE())>{1})))
+        or (a.Platform=3 and a.status = 0 and a.IsEnable=1))
         {2}
 order by a.Id desc", model.TopNum, model.ExclusiveOrderTime, whereStr);
             }
@@ -2802,13 +2803,18 @@ join dbo.OrderOther oo(nolock) on a.Id=oo.OrderId
                             and temp.IsBind = 1
                             and temp.ClienterId = {1}
                   ) as c on a.BusinessId = c.BusinessId        
-where   a.status = 0 and a.IsEnable=1
+where  ( 
+         (a.Platform!=3  and a.status = 0 and a.IsEnable=1
         and ( b.IsBind = 0
               or ( b.IsBind = 1
                    and DATEDIFF(minute, a.PubDate, GETDATE()) > {2}
                  )
               or c.BusinessId is not null
             )
+          ) 
+        or (a.Platform=3  and a.status = 0 and a.IsEnable=1) 
+      )
+
         {3}
 order by a.Id desc", model.TopNum, model.ClienterId, model.ExclusiveOrderTime, whereStr);
             }
@@ -2867,7 +2873,8 @@ when [Platform]=3 then round(geography::Point(ISNULL(a.Pickuplatitude,0),ISNULL(
 from dbo.[order] a (nolock)
 join dbo.OrderOther oo(nolock) on a.Id=oo.OrderId
 join dbo.business b (nolock) on a.businessId=b.Id
-where a.status=0 and a.IsEnable=1 and( b.IsBind=0 or (b.IsBind=1 and DATEDIFF(minute,a.PubDate,GETDATE())>{1}))
+where (a.Platform!=3 and  a.status=0 and a.IsEnable=1 and( b.IsBind=0 or (b.IsBind=1 and DATEDIFF(minute,a.PubDate,GETDATE())>{1})))
+or (a.Platform=3 and  a.status=0 and a.IsEnable=1 )
 and  geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint)<= @PushRadius
 order by geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint) asc
 ", model.TopNum, model.ExclusiveOrderTime);
@@ -2915,13 +2922,17 @@ left join ( select  distinct
                             and temp.IsBind = 1
                             and temp.ClienterId = {1}
                   ) as c on a.BusinessId = c.BusinessId        
-where a.status=0 and a.IsEnable=1
-and ( b.IsBind = 0
-              or ( b.IsBind = 1
-                   and DATEDIFF(minute, a.PubDate, GETDATE()) > {2}
-                 )
-              or c.BusinessId is not null
-            )
+where (a.Platform!=3 and a.status=0 and a.IsEnable=1
+        and ( b.IsBind = 0
+                      or ( b.IsBind = 1
+                           and DATEDIFF(minute, a.PubDate, GETDATE()) > {2}
+                         )
+                      or c.BusinessId is not null
+                    )
+        )
+or 
+(a.Platform=3 and a.status=0 and a.IsEnable=1 )
+
 and  geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint)<= @PushRadius
 order by geography::Point(ISNULL(b.Latitude,0),ISNULL(b.Longitude,0),4326).STDistance(@cliernterPoint) asc
 ", model.TopNum, model.ClienterId, model.ExclusiveOrderTime);
