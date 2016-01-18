@@ -59,14 +59,15 @@
                                 //需要修改密码且当前页不是密码修改页
                                 if ((falgIndex == 1 || falgIndex == '1') && (urlIndex.indexOf("ChangePassword") == -1)) {
                                     alert('您的密码已超过密码策略有效期(30天),将跳转密码修改页面修改密码!');
-                                    window.location.href = "/Account/ChangePassword";
+                                    //window.location.href = "/Account/ChangePassword";
+                                    window.location.href = @javaAdminUrl"/account/changepwd";
                                 }
                             </script>
 
                         </div>
                     </div>
                     <div class="loginInfo" style="width: 460px;">
-                        您好： <strong>@UserContext.Current.Name</strong>，欢迎使用<span class="line">|</span><a href="/Account/LogOff" class="importMsg">退出</a>|<a href="/Account/ChangePassword" class="importMsg">修改密码</a>
+                        您好： <strong>@UserContext.Current.Name</strong>，欢迎使用<span class="line">|</span><a href="/Account/LogOff" class="importMsg">退出</a>|<a href="@javaAdminUrl/account/changepwd" class="importMsg">修改密码</a>
                     </div>
                 </header>
                 <div class="main-container">
