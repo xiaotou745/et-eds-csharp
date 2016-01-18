@@ -681,7 +681,7 @@ namespace Ets.Service.Provider.Order
                 #region 设置门店的省市区编码信息 add by caoheyang 20150407
                 string storecodeInfo = new AreaProvider().GetOpenCode(new Ets.Model.ParameterModel.Area.ParaAreaNameInfo()
                 {
-                    ProvinceName = paramodel.store_info.province,
+                    ProvinceName = paramodel.store_info.province.Replace("市", ""),
                     CityName = paramodel.store_info.city,
                     AreaName = paramodel.store_info.area
                 });
@@ -715,8 +715,10 @@ namespace Ets.Service.Provider.Order
 
             //此处其实应该取数据库，但是由于发布订单时关于店铺的逻辑后期要改，暂时这么处理 
             IGroupProviderOpenApi groupProvider = OpenApiGroupFactory.Create(paramodel.store_info.group);
-            paramodel = groupProvider.SetCommissonInfo(paramodel);
-
+            if (groupProvider != null)
+            {
+                paramodel = groupProvider.SetCommissonInfo(paramodel);
+            }
             #endregion
 
             #region 佣金相关  add by caoheyang 20150416
@@ -1385,9 +1387,16 @@ namespace Ets.Service.Provider.Order
                 pm.Remark = orderOptionModel.OptLog;
                 pm.Platform = SuperPlatform.ManagementBackground.GetHashCode();
 
-                SSCancelOrder(pm);
-                dealResultInfo.DealFlag = true;
-                dealResultInfo.DealMsg = "订单取消成功！";
+                ResultModel<object> result=  SSCancelOrder(pm);
+                if (result.Status == 1)
+                {
+                    dealResultInfo.DealFlag = true;
+                    dealResultInfo.DealMsg = "订单取消成功！";
+                }
+                else
+                {
+                    dealResultInfo.DealMsg = result.Message;
+                }
             }
             else
             {
