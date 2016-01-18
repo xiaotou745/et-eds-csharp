@@ -2812,6 +2812,7 @@ namespace Ets.Service.Provider.Order
             };
             orderOptionModel.OptUserId = orderModel.businessId;
             orderOptionModel.OrderNo = orderModel.OrderNo;
+            orderModel.Remark = pm.Remark;
 
 
             if (orderModel.Status == 3)//订单已为取消状态
