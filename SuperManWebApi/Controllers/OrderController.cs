@@ -396,8 +396,10 @@ namespace SuperManWebApi.Controllers
         {
             if (!string.IsNullOrEmpty(parModel.data))
             {
-                parModel = JsonHelper.JsonConvertToObject<SSOrderCancelPM>(AESApp.AesDecrypt(parModel.data));
+                parModel = JsonHelper.JsonConvertToObject<SSOrderCancelPM>(AESApp.AesDecrypt(parModel.data));             
             }
+            parModel.OptLog = "发货人取消订单";
+            parModel.Remark = "发货人取消订单";
 
             return iOrderProvider.SSCancelOrder(parModel);
         }
