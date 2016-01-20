@@ -104,9 +104,10 @@ select  p.code as ProvinceCode,
 from    PublicProvinceCity (nolock) as p
         left join PublicProvinceCity (nolock) as c on p.code = c.parentid
         left join PublicProvinceCity (nolock) as a on c.code = a.parentid
+        and a.name=@AreaName
 where   p.name =@ProvinceName 
         and c.name =@CityName
-        and a.name=@AreaName";
+        ";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@ProvinceName", SqlDbType.NVarChar);
             parm.SetValue("@ProvinceName", model.ProvinceName);
