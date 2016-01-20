@@ -19,6 +19,19 @@ namespace ETS.Library.Pay.AliPay
     //http://www.tuicool.com/articles/quUrErZ
     public class AliPayApi
     {
+        //private static string app_id = "2015081900222190";
+        //private static string alipay_public_key = string.Empty;
+        //private static string merchant_private_key = string.Concat(System.AppDomain.CurrentDomain.BaseDirectory, "Content\\pem\\rsa_private_key.pem");
+        //private static string key = "c7r4nf8yx9wimj7usojo6v3b57ieaqus";
+        //private static string input_charset = "utf-8";
+        //private static string sign_type = "RSA";
+        //private static string email = "info@edaisong.com";
+        //private static string account_name = "易代送网络科技（北京）有限公司";
+        //private static string version = "1.0";
+        //private static string format = "json";
+
+
+
         private static string app_id = "2015081900222190";
         private static string alipay_public_key = string.Empty;
         private static string merchant_private_key = string.Concat(System.AppDomain.CurrentDomain.BaseDirectory, "Content\\pem\\rsa_private_key.pem");
@@ -43,18 +56,33 @@ namespace ETS.Library.Pay.AliPay
         {
             try
             {
-          
 
-                IAopClient client = new DefaultAopClient("https://openapi.alipay.com/gateway.do", app_id, merchant_private_key, format, version, sign_type, alipay_public_key, input_charset);
+
+                IAopClient client = new DefaultAopClient("https://openapi.alipay.com/gateway.do", app_id, 
+                    merchant_private_key, format, version, sign_type, alipay_public_key, input_charset);
                 AlipayTradePayRequest request = new AlipayTradePayRequest();
                 request.SetNotifyUrl(record.notify_url);
+                
+                //var bizContent = new JsonObject();
+                //bizContent.Put("out_trade_no", record.out_trade_no);
+                //bizContent.Put("total_amount", record.total_amount);                
+                //bizContent.Put("subject", record.subject);                    
+                //request.BizContent = bizContent.ToString();
+                //var response = client.Execute(request);
 
-                var bizContent = new JsonObject();
-                bizContent.Put("out_trade_no", record.out_trade_no);
-                bizContent.Put("total_amount", record.total_amount);                
-                bizContent.Put("subject", record.subject);                    
-                request.BizContent = bizContent.ToString();
-                var response = client.Execute(request);
+                StringBuilder sb = new StringBuilder();
+                sb.Append("{\"out_trade_no\":\"" + record.out_trade_no + "\",");
+                sb.Append("\"total_amount\":\"" + record.total_amount + "\",\"discountable_amount\":\"0.00\",");
+                sb.Append("\"subject\":\"" + record.subject + "\",\"body\":\"test\",");
+                sb.Append("\"goods_detail\":[{\"goods_id\":\"apple-01\",\"goods_name\":\"ipad\",\"goods_category\":\"7788230\",\"price\":\"5.00\",\"quantity\":\"1\"},{\"goods_id\":\"apple-02\",\"goods_name\":\"iphone\",\"goods_category\":\"7788231\",\"price\":\"2.76\",\"quantity\":\"1\"}],");
+                sb.Append("\"operator_id\":\"op001\",\"store_id\":\"pudong001\",\"terminal_id\":\"t_001\",");
+
+                string expire_time = System.DateTime.Now.AddHours(1).ToString("yyyy-MM-dd HH:mm:ss");
+                sb.Append("\"time_expire\":\"" + expire_time + "\"}");
+
+                request.BizContent = sb.ToString();
+                var response = client.Execute(request);	        
+
                 return response;
             }
             catch (Exception err)
