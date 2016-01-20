@@ -106,7 +106,7 @@ from    PublicProvinceCity (nolock) as p
         left join PublicProvinceCity (nolock) as a on c.code = a.parentid
 where   p.name =@ProvinceName 
         and c.name =@CityName
-        --and a.name=@AreaName"; //区域传错了，默认按照第一个区域来
+        and a.name=@AreaName";
             IDbParameters parm = DbHelper.CreateDbParameters();
             parm.Add("@ProvinceName", SqlDbType.NVarChar);
             parm.SetValue("@ProvinceName", model.ProvinceName);
