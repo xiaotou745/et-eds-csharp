@@ -10,3 +10,6 @@ exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'ÊÇ·ñ´ßµ¥Ä¬ÈÏ0Ã
 go
 exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'ÌÔµêµã´ßµ¥Ê±¼ä' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'OrderOther', @level2type=N'COLUMN',@level2name=N'OrderRemindTime'
 go
+update dbo.OrderOther
+set IsOrderRemind=0;
+go
