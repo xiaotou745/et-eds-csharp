@@ -79,6 +79,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActiveMq\ActiveMqHelper.cs" />
+    <Compile Include="Pay\AliPay\AliNativePay.cs" />
+    <Compile Include="Pay\AliPay\AliPayApi.cs" />
     <Compile Include="Pay\SSAliPay\AliNativePay.cs" />
     <Compile Include="Pay\SSAliPay\AliPayApi.cs" />
     <Compile Include="Pay\SSBWxPay\Config.cs" />
@@ -154,7 +156,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Pay\AliPay\" />
     <Folder Include="Util\" />
   </ItemGroup>
   <ItemGroup>
