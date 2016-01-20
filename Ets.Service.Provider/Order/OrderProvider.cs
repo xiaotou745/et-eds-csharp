@@ -2928,45 +2928,49 @@ namespace Ets.Service.Provider.Order
                         }
                         break;
                     case 2://微信
-                        {
+                        {                           
                             if (otcModel.PayStates == 0)//未支付
                             {
-                                ETS.Library.Pay.SSBWxPay.NativePay nativePay = new ETS.Library.Pay.SSBWxPay.NativePay();
-                                //验证 已关闭
-                                ETS.Library.Pay.SSBWxPay.WxPayData wxPayData = nativePay.OrderQuery(otcModel.OutTradeNo);
-                                if (wxPayData.GetValue("trade_state") != null && wxPayData.GetValue("trade_state").ToString().ToUpper() == "CLOSED")
-                                {
-                                    return ResultModel<object>.Conclude(OrderApiStatusType.OrderTipCostPayCLOSED);
-                                }
-                                //已付款
-                                if (wxPayData.GetValue("trade_state") != null && wxPayData.GetValue("trade_state").ToString().ToUpper() == "SUCCESS")
-                                {
-                                    return ResultModel<object>.Conclude(OrderApiStatusType.OrderTipCostPaySUCCESS);
-                                }
-                                //已退款
-                                if (wxPayData.GetValue("trade_state") != null && wxPayData.GetValue("trade_state").ToString().ToUpper() == "REFUND")
-                                {
-                                    return ResultModel<object>.Conclude(OrderApiStatusType.OrderTipCostPaySREFUND);
-                                }
+                                //ETS.Library.Pay.SSBWxPay.NativePay nativePay = new ETS.Library.Pay.SSBWxPay.NativePay();
+                                ////验证 已关闭
+                                //ETS.Library.Pay.SSBWxPay.WxPayData wxPayData = nativePay.OrderQuery(otcModel.OutTradeNo);
+                                //if (wxPayData.GetValue("trade_state") != null && wxPayData.GetValue("trade_state").ToString().ToUpper() == "CLOSED")
+                                //{                              
+                                //    return ResultModel<object>.Conclude(OrderApiStatusType.OrderTipCostPayCLOSED);
+                                //}
+                                ////已付款
+                                //if (wxPayData.GetValue("trade_state") != null && wxPayData.GetValue("trade_state").ToString().ToUpper() == "SUCCESS")
+                                //{
+                                //    return ResultModel<object>.Conclude(OrderApiStatusType.OrderTipCostPaySUCCESS);
+                                //}
+                                ////已退款
+                                //if (wxPayData.GetValue("trade_state") != null && wxPayData.GetValue("trade_state").ToString().ToUpper() == "REFUND")
+                                //{
+                                //    return ResultModel<object>.Conclude(OrderApiStatusType.OrderTipCostPaySREFUND);
+                                //}
+                               
+                                //if (wxPayData.GetValue("return_code").ToString().ToUpper() == "SUCCESS" &&
+                                //    wxPayData.GetValue("result_code").ToString().ToUpper() == "FAIL"
+                                //    )//不存在
+                                //{
+                                //    UpdateOrderTip(otcModel, orderModel);
+                                //}
+                                //else
+                                //{
 
-                                if (wxPayData.GetValue("return_code").ToString().ToUpper() == "SUCCESS" &&
-                                    wxPayData.GetValue("result_code").ToString().ToUpper() == "FAIL"
-                                    )//不存在
-                                {
-                                    UpdateOrderTip(otcModel, orderModel);
-                                }
-                                else
-                                {
-                                    bool cancelState = nativePay.CloseOrder(otcModel.OutTradeNo);
-                                    if (cancelState)
-                                    {
-                                        UpdateOrderTip(otcModel, orderModel);
-                                    }
-                                    else
-                                    {
-                                        return ResultModel<object>.Conclude(OrderApiStatusType.OrderTipCostPayErr);
-                                    }
-                                }
+                                //    bool cancelState = nativePay.CloseOrder(otcModel.OutTradeNo);
+                                //    if (cancelState)
+                                //    {
+                                //        UpdateOrderTip(otcModel, orderModel);
+                                //    }
+                                //    else
+                                //    {
+                                //        return ResultModel<object>.Conclude(OrderApiStatusType.OrderTipCostPayErr);
+                                //    }
+                                //}
+                                ETS.Library.Pay.SSBWxPay.NativePay nativePay = new ETS.Library.Pay.SSBWxPay.NativePay();
+                                nativePay.CloseOrder(otcModel.OutTradeNo);
+                                UpdateOrderTip(otcModel, orderModel);
                             }
 
                             if (otcModel.PayStates == 1)//已付款
@@ -2983,7 +2987,7 @@ namespace Ets.Service.Provider.Order
                                 }
                                 //已关闭
                                 if (wxPayData.GetValue("trade_state") != null && wxPayData.GetValue("trade_state").ToString().ToUpper() == "CLOSED")
-                                {
+                                {                               
                                     return ResultModel<object>.Conclude(OrderApiStatusType.OrderTipCostPayCLOSED);
                                 }
                                 //未付款
@@ -2993,7 +2997,7 @@ namespace Ets.Service.Provider.Order
                                 }
                                 //已退款
                                 if (wxPayData.GetValue("trade_state") != null && wxPayData.GetValue("trade_state").ToString().ToUpper() == "REFUND")
-                                {
+                                {                                
                                     return ResultModel<object>.Conclude(OrderApiStatusType.OrderTipCostPaySREFUND);
                                 }
 
