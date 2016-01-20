@@ -4504,5 +4504,46 @@ where   o.OrderFrom = @OrderFrom and c.Id = @ClienterId;
             return list[0];
         }
 
+        public OrderRemindModel GetByDeliveryOrderNo(long deliveryOrderNo)
+        { 
+            OrderRemindModel orderRemindModel = new OrderRemindModel();
+            const string querysql = @"
+select  oo.Id,
+        oo.OrderId ,
+        oo.DeliveryOrderNo ,
+        oo.IsOrderRemind,
+        o.ReceviceName,
+        o.RecevicePhoneNo
+from    dbo.[OrderOther] oo(nolock)
+join dbo.[order] o (nolock) on oo.OrderId = o.Id
+where   oo.DeliveryOrderNo = @DeliveryOrderNo;";
+            IDbParameters dbSelectParameters = DbHelper.CreateDbParameters();
+            dbSelectParameters.AddWithValue("DeliveryOrderNo", deliveryOrderNo);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, querysql, dbSelectParameters);
+            if (dt.HasData())
+            {
+                orderRemindModel.Id = ParseHelper.ToInt(dt.Rows[0][0]);
+                orderRemindModel.OrderId = ParseHelper.ToInt(dt.Rows[0][1]);
+                orderRemindModel.DeliveryOrderNo = ParseHelper.ToLong(dt.Rows[0][2]);
+                orderRemindModel.IsOrderRemind = ParseHelper.ToInt(dt.Rows[0][3]);
+                orderRemindModel.ReceviceName = dt.Rows[0][4].ToString();
+                orderRemindModel.RecevicePhoneNo = dt.Rows[0][5].ToString();
+            }
+            else
+            {
+                orderRemindModel = null;
+            }
+            return orderRemindModel;
+        }
+
+        public int UpdateByDeliveryOrderNo(int id,DateTime orderRemindTime)
+        {
+            const string querysql = @"update dbo.OrderOther set IsOrderRemind=1,OrderRemindTime=@OrderRemindTime where Id = @Id";
+            IDbParameters dbSelectParameters = DbHelper.CreateDbParameters();
+            dbSelectParameters.AddWithValue("Id", id);
+            dbSelectParameters.Add("OrderRemindTime", DbType.DateTime).Value = orderRemindTime;
+            int k = DbHelper.ExecuteNonQuery(SuperMan_Write, querysql, dbSelectParameters);
+            return k;
+        }
     }
 }

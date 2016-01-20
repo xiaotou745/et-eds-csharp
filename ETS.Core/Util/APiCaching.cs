@@ -82,5 +82,18 @@ namespace ETS.Util
                 return _SmsContentCheckCodeFindPwdVoice;
             }
         }
+
+        private string _SmsContentOrderRemind;
+        public string SmsContentOrderRemind
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_SmsContentOrderRemind))
+                {
+                    _SmsContentOrderRemind = ConfigurationManager.AppSettings["SmsContentOrderRemind"];
+                }
+                return _SmsContentOrderRemind;
+            }
+        }
     }
 }

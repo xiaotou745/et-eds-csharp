@@ -66,19 +66,20 @@ namespace OpenApi.Controllers
             return ResultModel<long>.Conclude(TaoBaoPushOrder.Error);
 
         }
-
-        //[HttpPost]
-        //public ResultModel<object> OrderDispatch(OrderDispatch p)
-        //{
-        //    try
-        //    {
-        //        p.itemsList = ParseHelper.Deserialize<List<Commodity>>(p.items);
-        //    }
-        //    catch (Exception err)
-        //    {
-        //        string str = err.Message;
-        //    }
-        //    return ResultModel<object>.Conclude(taoDianDianGroup.TaoBaoPushOrder(p));
-        //}
+        /// <summary>
+        /// 淘宝催单
+        /// </summary>
+        /// <param name="pm"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ResultModel<long> OrderRemind(ParamModel pm)
+        {
+            LogHelper.LogWriter("淘宝催单", pm);
+            string json = AESApp.AesDecrypt(pm.data.Replace(' ', '+')/*TODO 暂时用Replace*/); 
+            OrderRemind p = ParseHelper.Deserialize<OrderRemind>(json);
+            p.orderRemindInfo = ParseHelper.Deserialize<OrderRemindInfo>(p.info); 
+            var result = taoDianDianGroup.TaoBaoOrderRemind(p);
+            return ResultModel<long>.Conclude(result, p.delivery_order_no); 
+        }
     }
 }
