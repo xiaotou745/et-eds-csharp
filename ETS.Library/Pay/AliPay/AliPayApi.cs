@@ -32,11 +32,11 @@ namespace ETS.Library.Pay.AliPay
 
 
 
-        private static string app_id = "2015081900222190";
+        private static string app_id = "2015081900222190";//2015081900222190
         private static string alipay_public_key = string.Empty;
         private static string merchant_private_key = string.Concat(System.AppDomain.CurrentDomain.BaseDirectory, "Content\\pem\\rsa_private_key.pem");
-        private static string key = "";
-        private static string input_charset = "";
+        private static string key = "c7r4nf8yx9wimj7usojo6v3b57ieaqus";
+        private static string input_charset = "utf-8";
         private static string sign_type = "RSA";
         private static string email = "";
         private static string account_name = "";
@@ -52,17 +52,17 @@ namespace ETS.Library.Pay.AliPay
         /// 胡灵波
         /// 2016年1月20日10:36:57
         /// <returns></returns>
-        public AlipayTradePayResponse Precreate(TradePay record)
+        public AlipayTradePrecreateResponse Precreate(TradePay record)
         {
             try
             {
 
 
-                IAopClient client = new DefaultAopClient("https://openapi.alipay.com/gateway.do", app_id, 
+                IAopClient client = new DefaultAopClient("https://openapi.alipay.com/gateway.do", app_id,
                     merchant_private_key, format, version, sign_type, alipay_public_key, input_charset);
-                AlipayTradePayRequest request = new AlipayTradePayRequest();
+                AlipayTradePrecreateRequest request = new AlipayTradePrecreateRequest();
                 request.SetNotifyUrl(record.notify_url);
-                
+
                 //var bizContent = new JsonObject();
                 //bizContent.Put("out_trade_no", record.out_trade_no);
                 //bizContent.Put("total_amount", record.total_amount);                
@@ -74,14 +74,14 @@ namespace ETS.Library.Pay.AliPay
                 sb.Append("{\"out_trade_no\":\"" + record.out_trade_no + "\",");
                 sb.Append("\"total_amount\":\"" + record.total_amount + "\",\"discountable_amount\":\"0.00\",");
                 sb.Append("\"subject\":\"" + record.subject + "\",\"body\":\"test\",");
-                sb.Append("\"goods_detail\":[{\"goods_id\":\"apple-01\",\"goods_name\":\"ipad\",\"goods_category\":\"7788230\",\"price\":\"5.00\",\"quantity\":\"1\"},{\"goods_id\":\"apple-02\",\"goods_name\":\"iphone\",\"goods_category\":\"7788231\",\"price\":\"2.76\",\"quantity\":\"1\"}],");
-                sb.Append("\"operator_id\":\"op001\",\"store_id\":\"pudong001\",\"terminal_id\":\"t_001\",");
+                //sb.Append("\"goods_detail\":[{\"goods_id\":\"apple-01\",\"goods_name\":\"ipad\",\"goods_category\":\"7788230\",\"price\":\"5.00\",\"quantity\":\"1\"},{\"goods_id\":\"apple-02\",\"goods_name\":\"iphone\",\"goods_category\":\"7788231\",\"price\":\"2.76\",\"quantity\":\"1\"}],");
+                //sb.Append("\"operator_id\":\"op001\",\"store_id\":\"pudong001\",\"terminal_id\":\"t_001\",");
 
                 string expire_time = System.DateTime.Now.AddHours(1).ToString("yyyy-MM-dd HH:mm:ss");
                 sb.Append("\"time_expire\":\"" + expire_time + "\"}");
 
                 request.BizContent = sb.ToString();
-                var response = client.Execute(request);	        
+                AlipayTradePrecreateResponse response = client.Execute(request);
 
                 return response;
             }
@@ -154,7 +154,7 @@ namespace ETS.Library.Pay.AliPay
             var bizContent = new JsonObject();
             //支付宝交易号
             bizContent.Put("trade_no", record.OriginalOrderNo);
-           
+
             request.BizContent = bizContent.ToString();
             AlipayTradeCancelResponse response = client.Execute(request);
             return response;
