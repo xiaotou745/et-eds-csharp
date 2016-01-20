@@ -350,24 +350,58 @@ namespace Ets.Service.Provider.Common
         /// <returns></returns>
         public string GetOpenCode(Ets.Model.ParameterModel.Area.ParaAreaNameInfo model)
         {
-            var redis = new ETS.NoSql.RedisCache.RedisCache();
-            string key = MD5.Encrypt(string.Format("{0}_{1}_{2}", model.ProvinceName, model.CityName, model.AreaName).Replace(" ", ""));
-            string cacheValue = redis.Get<string>(key);
-            if (string.IsNullOrWhiteSpace(cacheValue))
+            try
             {
+                model.ProvinceName = string.IsNullOrEmpty(model.ProvinceName) ? "" : model.ProvinceName.Replace("市", "");
+                model.CityName = string.IsNullOrEmpty(model.CityName) ? "" : model.CityName.Contains("市") ? model.CityName : model.CityName + "市";
+                if (string.IsNullOrEmpty(model.ProvinceName) || string.IsNullOrEmpty(model.CityName))
+                {
+                    return string.Format("{0}_{1}_{2}", 110000, 110100, "");
+                }
                 DMAreaCodeInfo tempModel = new AreaDao().GetOpenCodeSql(model);
-                if (tempModel == null)
+                if (tempModel == null || tempModel.ProvinceCode == 0 || tempModel.CityCode == 0)
+                {
                     return null;
-                else if (tempModel.AreaIsOpen == 0 || tempModel.ProvinceIsOpen == 0 || tempModel.CityIsOpen == 0)
-                    redis.Set(key, SystemConst.CityOpenInfo, DateTime.Now.AddDays(30));
+                }
+                else if (tempModel.AreaIsOpen == 0 || tempModel.ProvinceIsOpen == 0)
+                {
+                    return SystemConst.CityOpenInfo;
+                }
                 else
                 {
-                    cacheValue = string.Format("{0}_{1}_{2}", tempModel.ProvinceCode, tempModel.CityCode, tempModel.AreaCode);
-                    redis.Set(key, cacheValue, DateTime.Now.AddDays(30));
+                    return string.Format("{0}_{1}_{2}", tempModel.ProvinceCode, tempModel.CityCode, tempModel.AreaCode);
                 }
             }
-            return cacheValue;
+            catch (Exception)
+            {
+                LogHelper.LogWriter("第三方调用接口发单时城市匹配异常:", model);
+                   return string.Format("{0}_{1}_{2}", 110000, 110100, "");
+            }
+
+            #region  查询缓存
+            //var redis = new ETS.NoSql.RedisCache.RedisCache();
+            //string key = MD5.Encrypt(string.Format("{0}_{1}_{2}", model.ProvinceName, model.CityName, model.AreaName).Replace(" ", ""));
+            //string cacheValue = redis.Get<string>(key);
+            //if (string.IsNullOrWhiteSpace(cacheValue))
+            //{
+            //DMAreaCodeInfo tempModel = new AreaDao().GetOpenCodeSql(model);
+            //if (tempModel == null)
+            //    return null;
+            //else if (tempModel.AreaIsOpen == 0 || tempModel.ProvinceIsOpen == 0)
+            //{
+            //    return null;
+            //}
+            //else
+            //{
+            //    return string.Format("{0}_{1}_{2}", tempModel.ProvinceCode, tempModel.CityCode, tempModel.AreaCode);
+            //    cacheValue = string.Format("{0}_{1}_{2}", tempModel.ProvinceCode, tempModel.CityCode, tempModel.AreaCode);
+            //    redis.Set(key, cacheValue, DateTime.Now.AddDays(30));
+            //}
+            //}
+            //return cacheValue;
+            #endregion
         }
+
         /// <summary>
         /// 获取开通城市列表
         /// danny-20150410
