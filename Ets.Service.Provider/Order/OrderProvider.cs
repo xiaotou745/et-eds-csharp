@@ -1378,9 +1378,16 @@ namespace Ets.Service.Provider.Order
                 pm.Remark = orderOptionModel.OptLog;
                 pm.Platform = SuperPlatform.ManagementBackground.GetHashCode();
 
-                SSCancelOrder(pm);
-                dealResultInfo.DealFlag = true;
-                dealResultInfo.DealMsg = "订单取消成功！";
+                ResultModel<object> result = SSCancelOrder(pm);
+                if (result.Status == 1)
+                {
+                    dealResultInfo.DealFlag = true;
+                    dealResultInfo.DealMsg = "订单取消成功！";
+                }
+                else
+                {
+                    dealResultInfo.DealMsg = result.Message;
+                }
             }
             else
             {
