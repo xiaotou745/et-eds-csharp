@@ -34,4 +34,18 @@ namespace ETS.Enums
         [DisplayText("订单已存在")]
         OrderId = -2
     }
+    /// <summary>
+    /// 淘宝催单  
+    /// </summary>
+    public enum TaoBaoOrderRemindEnum
+    {
+        [DisplayText("成功")]
+        Success = 1,
+        [DisplayText("系统错误")]
+        Error = -1,
+        [DisplayText("已催过")]
+        HadOrderRemind = -2,
+        [DisplayText("运单不存在")]
+        OrderNotExist=-3
+    }
 }

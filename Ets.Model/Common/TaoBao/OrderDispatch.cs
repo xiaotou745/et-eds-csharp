@@ -155,7 +155,27 @@ namespace Ets.Model.Common.TaoBao
         /// 总价格（分）
         /// </summary>
         public long totalPrice { get; set; }
+    }
 
+    public class OrderRemind
+    {
+        /// <summary>
+        /// 物流单号
+        /// </summary>
+        public long delivery_order_no { get; set; }
+        /// <summary>
+        /// 复杂json对象
+        /// </summary>
+        public string info { get; set; }
 
+        public OrderRemindInfo orderRemindInfo { get; set; }
+    }
+
+    public class OrderRemindInfo
+    {
+        /// <summary>
+        /// 催单时间
+        /// </summary>
+        public long remind_time { get; set; } 
     }
 }

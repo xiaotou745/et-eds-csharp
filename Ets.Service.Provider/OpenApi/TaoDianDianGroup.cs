@@ -15,9 +15,12 @@ using Ets.Dao.Business;
 using Ets.Model.DataModel.Business;
 using System;
 using Ets.Model.DataModel.Order;
+using Ets.Model.DomainModel.Order;
 using Ets.Service.Provider.Order;
+using ETS.Sms;
 using ETS.Transaction.Common;
 using ETS.Transaction;
+using System.Threading.Tasks;
 namespace Ets.Service.Provider.OpenApi
 {
     public class TaoDianDianGroup : IGroupProviderOpenApi
@@ -442,6 +445,42 @@ namespace Ets.Service.Provider.OpenApi
                 return ETS.Enums.TaoBaoPushOrder.Error;    
             }
             return ETS.Enums.TaoBaoPushOrder.Success;
+        }
+        /// <summary>
+        /// 催单更新数据库催单字段，发送催单短信
+        /// wangchao
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        public TaoBaoOrderRemindEnum TaoBaoOrderRemind(OrderRemind p)
+        {
+             OrderRemindModel orderRemindModel = new OrderDao().GetByDeliveryOrderNo(p.delivery_order_no);
+            if (orderRemindModel == null)
+            {
+                return TaoBaoOrderRemindEnum.OrderNotExist;
+            }
+            else
+            {
+                if (orderRemindModel.IsOrderRemind == 1)
+                {
+                    return  TaoBaoOrderRemindEnum.HadOrderRemind;
+                }
+                string msg = string.Format(SupermanApiConfig.Instance.SmsContentOrderRemind, orderRemindModel.ReceviceName.Trim(), orderRemindModel.RecevicePhoneNo.Trim());
+                Task.Factory.StartNew(() =>
+                {
+                    SendSmsHelper.SendSendSmsSaveLog(orderRemindModel.RecevicePhoneNo, msg, SystemConst.SMSSOURCE);
+                });
+                int k = new OrderDao().UpdateByDeliveryOrderNo(orderRemindModel.Id, TimeHelper.TimeStampToCurrDateTime(p.orderRemindInfo.remind_time));
+                if (k > 0)
+                {
+                    return TaoBaoOrderRemindEnum.Success;
+                }
+                else
+                {
+                    return TaoBaoOrderRemindEnum.Error;
+                }
+            }
+            
         }
     }
 }

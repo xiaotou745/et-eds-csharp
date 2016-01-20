@@ -263,7 +263,5 @@ where DeliveryOrderNo=@DeliveryOrderNo";
 
             return isExist;
         }
-
-
     }
 }

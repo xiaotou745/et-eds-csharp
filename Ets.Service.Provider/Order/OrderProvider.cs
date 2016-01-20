@@ -53,6 +53,7 @@ using Ets.Dao.DeliveryCompany;
 using Ets.Service.IProvider.Clienter;
 using ETS.Library.Pay.SSAliPay;
 using Aop.Api.Response;
+using Ets.Model.ParameterModel.Area;
 #endregion
 namespace Ets.Service.Provider.Order
 {
@@ -623,36 +624,27 @@ namespace Ets.Service.Provider.Order
             #endregion
 
             #region 设置用户的省市区编码信息 add by caoheyang 20150407
-            try
+
+            string orderCodeInfo = new AreaProvider().GetOpenCode(new ParaAreaNameInfo()
             {
-                string provinceName = string.IsNullOrEmpty(paramodel.address.province) ? "" : paramodel.address.province.Replace("市", "");
-                string tmpCityName = paramodel.address.city;
-                string cityName = string.IsNullOrEmpty(tmpCityName) ? "" : tmpCityName.Contains("市") ? tmpCityName : tmpCityName + "市";
-                string orderCodeInfo = new AreaProvider().GetOpenCode(new Ets.Model.ParameterModel.Area.ParaAreaNameInfo()
-                {
-                    ProvinceName = provinceName,
-                    CityName = cityName,
-                    AreaName = paramodel.address.area
-                });
-                if (orderCodeInfo == ETS.Const.SystemConst.CityOpenInfo || string.IsNullOrWhiteSpace(orderCodeInfo))
-                    return ResultModel<object>.Conclude(OrderApiStatusType.ParaError, "用户省市区信息错误");
-                else
-                {
-                    string[] storeCodes = orderCodeInfo.Split('_');
-                    paramodel.address.province_code = storeCodes[0];
-                    paramodel.address.city_code = storeCodes[1];
-                    paramodel.address.area_code = storeCodes[2];
-                }
+                ProvinceName = paramodel.address.province,
+                CityName = paramodel.address.city,
+                AreaName = paramodel.address.area
+            });
+            if (orderCodeInfo == null)
+            {
+                return ResultModel<object>.Conclude(OrderApiStatusType.ParaError, "省市区信息有误");
             }
-            catch (Exception ex)
+            else if (orderCodeInfo == SystemConst.CityOpenInfo)
             {
-                //如果传过来的城市不符合要求就放到北京市里，
-                //因为目前对接第三方基本都是北京的商家，
-                //窦海超，2016年1月5日 12:55:59
-                paramodel.address.province_code = "110000";
-                paramodel.address.city_code = "110100";
-                paramodel.address.area_code = "";
-                LogHelper.LogWriter("调用第三方接口发单时城市匹配异常:", paramodel);
+                return ResultModel<object>.Conclude(OrderApiStatusType.ParaError, "省市区尚未开放");
+            }
+            else
+            {
+                string[] storeCodes = orderCodeInfo.Split('_');
+                paramodel.address.province_code = storeCodes[0];
+                paramodel.address.city_code = storeCodes[1];
+                paramodel.address.area_code = storeCodes[2];
             }
 
             #endregion
@@ -670,23 +662,21 @@ namespace Ets.Service.Provider.Order
                     paramodel.store_info.longitude = localtion.Item1;  //精度
                     paramodel.store_info.latitude = localtion.Item2; //纬度
                 }
-                //if (paramodel.address.longitude == 0 || paramodel.address.latitude == 0)  //用户经纬度
-                //{
-                //    Tuple<decimal, decimal> localtion = BaiDuHelper.GeoCoder(paramodel.store_info.province
-                //        + paramodel.address.city + paramodel.address.area + paramodel.address.address);
-                //    paramodel.address.longitude = localtion.Item1;  //精度
-                //    paramodel.address.latitude = localtion.Item2; //纬度
-                //}
-
                 #region 设置门店的省市区编码信息 add by caoheyang 20150407
-                string storecodeInfo = new AreaProvider().GetOpenCode(new Ets.Model.ParameterModel.Area.ParaAreaNameInfo()
+                string storecodeInfo = new AreaProvider().GetOpenCode(new ParaAreaNameInfo()
                 {
                     ProvinceName = paramodel.store_info.province.Replace("市", ""),
                     CityName = paramodel.store_info.city,
                     AreaName = paramodel.store_info.area
                 });
-                if (storecodeInfo == ETS.Const.SystemConst.CityOpenInfo || string.IsNullOrWhiteSpace(storecodeInfo))
-                    return ResultModel<object>.Conclude(OrderApiStatusType.ParaError, "门店省市区信息错误");
+                if (storecodeInfo == null)
+                {
+                    return ResultModel<object>.Conclude(OrderApiStatusType.ParaError, "省市区信息有误");
+                }
+                else if (storecodeInfo == SystemConst.CityOpenInfo)
+                {
+                    return ResultModel<object>.Conclude(OrderApiStatusType.ParaError, "省市区尚未开放");
+                }
                 else
                 {
                     string[] storeCodes = storecodeInfo.Split('_');
@@ -719,6 +709,8 @@ namespace Ets.Service.Provider.Order
             {
                 paramodel = groupProvider.SetCommissonInfo(paramodel);
             }
+
+
             #endregion
 
             #region 佣金相关  add by caoheyang 20150416

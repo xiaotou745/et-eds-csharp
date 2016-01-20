@@ -191,6 +191,7 @@
     <Compile Include="DomainModel\Order\OrderAuditStatisticalModel.cs" />
     <Compile Include="DomainModel\Order\OrderChildForTicket.cs" />
     <Compile Include="DomainModel\Order\OrderExcel.cs" />
+    <Compile Include="DomainModel\Order\OrderRemindModel.cs" />
     <Compile Include="DomainModel\Order\RushOrderModel.cs" />
     <Compile Include="DomainModel\Statistics\ActiveBusinessClienterInfo.cs" />
     <Compile Include="DomainModel\Statistics\ActiveUserInfo.cs" />
