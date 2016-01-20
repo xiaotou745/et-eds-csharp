@@ -10,6 +10,7 @@ using Aop.Api.Util;
 using Aop.Api;
 using Jayrock.Json;
 using Ets.Model.DataModel.Order;
+using Ets.Model.DomainModel;
 namespace ETS.Library.Pay.AliPay
 {
     //相关资料
@@ -38,24 +39,58 @@ namespace ETS.Library.Pay.AliPay
         /// 胡灵波
         /// 2016年1月20日10:36:57
         /// <returns></returns>
-        //public AlipayTradePayResponse Precreate(OrderTipCost record)
-        //{
-        //    try
-        //    {
-        //        IAopClient client = new DefaultAopClient("https://openapi.alipay.com/gateway.do", app_id, merchant_private_key, format, version, sign_type, alipay_public_key, input_charset);
-        //        AlipayTradePayResponse request = new AlipayTradePayResponse();
-        //        var bizContent = new JsonObject();    
-        //        bizContent.Put("out_trade_no", record.OutTradeNo);
-        //        request.BizContent = bizContent.ToString();
-        //        var response = client.Execute(request);
-        //        return response;
-        //    }
-        //    catch (Exception err)
-        //    {
-        //        string str = err.Message;
-        //    }
-        //    return null;
-        //}
+        public AlipayTradePayResponse Precreate(TradePay record)
+        {
+            try
+            {
+                //StringBuilder sb = new StringBuilder();
+                //sb.Append("{\"out_trade_no\":\"" + out_trade_no + "\",");
+                //sb.Append("\"scene\":\"bar_code\",");
+                //sb.Append("\"auth_code\":\"" + auth_code + "\",");
+                //sb.Append("\"total_amount\":\"" + total_amount + "\",\"discountable_amount\":\"0.00\",");
+                //sb.Append("\"subject\":\"凤凰街店-条码支付\",\"body\":\"abc\",");
+                //sb.Append("\"goods_detail\":[{\"goods_id\":\"apple-01\",\"goods_name\":\"ipad\",\"goods_category\":\"7788230\",\"price\":\"88.00\",\"quantity\":\"1\"},{\"goods_id\":\"apple-02\",\"goods_name\":\"iphone\",\"goods_category\":\"7788231\",\"price\":\"88.00\",\"quantity\":\"1\"}],");
+                //sb.Append("\"operator_id\":\"op001\",\"store_id\":\"pudong001\",\"terminal_id\":\"t_001\",");
+                //string expire_time = System.DateTime.Now.AddHours(1).ToString("yyyy-MM-dd HH:mm:ss");
+                //sb.Append("\"time_expire\":\"" + expire_time + "\"}");
+  //              {
+  //  "out_trade_no": "201503022001",
+  //  "total_amount": "88.88",
+  //  "discount_amount":"8.88",
+  //  "unDiscount_amount": "80",
+  //  "subject": "当面付二维码支付",
+  //  "goods_detail": [
+  //    {
+  //      "goods_id": "apple-01",
+  //      "goods_name": "ipad",
+  //      "goods_category": "7788230",
+  //      "price": "88.88",
+  //      "quantity": "1"
+  //    }
+  //  ],
+  //  "operator_id": "op001",
+  //  "store_id": "pudong001",
+  //  "terminal_id": "t_001",
+  //  "timeout_express": "90m"
+  //}"
+          
+                IAopClient client = new DefaultAopClient("https://openapi.alipay.com/gateway.do", app_id, merchant_private_key, format, version, sign_type, alipay_public_key, input_charset);
+                AlipayTradePayRequest request = new AlipayTradePayRequest();
+                var bizContent = new JsonObject();
+                bizContent.Put("out_trade_no", record.out_trade_no);
+                bizContent.Put("total_amount", record.total_amount);
+                bizContent.Put("discountable_amount", record.discountable_amount);                       
+                bizContent.Put("subject", record.subject);                
+                request.BizContent = bizContent.ToString();
+                var response = client.Execute(request);
+                return response;
+            }
+            catch (Exception err)
+            {
+                string str = err.Message;
+            }
+            return null;
+        }
         /// <summary>
         /// 统一收单线下交易查询
         /// </summary>
