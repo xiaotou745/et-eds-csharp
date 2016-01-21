@@ -10,6 +10,7 @@ using Aop.Api.Util;
 using Aop.Api;
 using Jayrock.Json;
 using Ets.Model.DataModel.Order;
+using Ets.Model.DomainModel;
 namespace ETS.Library.Pay.AliPay
 {
     //相关资料
@@ -18,11 +19,23 @@ namespace ETS.Library.Pay.AliPay
     //http://www.tuicool.com/articles/quUrErZ
     public class AliPayApi
     {
-        private static string app_id = "2015081900222190";
+        //private static string app_id = "2015081900222190";
+        //private static string alipay_public_key = string.Empty;
+        //private static string merchant_private_key = string.Concat(System.AppDomain.CurrentDomain.BaseDirectory, "Content\\pem\\rsa_private_key.pem");
+        //private static string key = "c7r4nf8yx9wimj7usojo6v3b57ieaqus";
+        //private static string input_charset = "utf-8";
+        //private static string sign_type = "RSA";
+        //private static string email = "info@edaisong.com";
+        //private static string account_name = "易代送网络科技（北京）有限公司";
+        //private static string version = "1.0";
+        //private static string format = "json";
+
+
+        private static string app_id = "2015081900222190";//2015081900222190
         private static string alipay_public_key = string.Empty;
         private static string merchant_private_key = string.Concat(System.AppDomain.CurrentDomain.BaseDirectory, "Content\\pem\\rsa_private_key.pem");
-        private static string key = "";
-        private static string input_charset = "";
+        private static string key = "c7r4nf8yx9wimj7usojo6v3b57ieaqus";
+        private static string input_charset = "utf-8";
         private static string sign_type = "RSA";
         private static string email = "";
         private static string account_name = "";
@@ -38,24 +51,41 @@ namespace ETS.Library.Pay.AliPay
         /// 胡灵波
         /// 2016年1月20日10:36:57
         /// <returns></returns>
-        //public AlipayTradePayResponse Precreate(OrderTipCost record)
-        //{
-        //    try
-        //    {
-        //        IAopClient client = new DefaultAopClient("https://openapi.alipay.com/gateway.do", app_id, merchant_private_key, format, version, sign_type, alipay_public_key, input_charset);
-        //        AlipayTradePayResponse request = new AlipayTradePayResponse();
-        //        var bizContent = new JsonObject();    
-        //        bizContent.Put("out_trade_no", record.OutTradeNo);
-        //        request.BizContent = bizContent.ToString();
-        //        var response = client.Execute(request);
-        //        return response;
-        //    }
-        //    catch (Exception err)
-        //    {
-        //        string str = err.Message;
-        //    }
-        //    return null;
-        //}
+        public AlipayTradePrecreateResponse Precreate(TradePay record)
+        {
+            try
+            {
+                IAopClient client = new DefaultAopClient("https://openapi.alipay.com/gateway.do", app_id,
+                    merchant_private_key, format, version, sign_type, alipay_public_key, input_charset);
+                AlipayTradePrecreateRequest request = new AlipayTradePrecreateRequest();
+                request.SetNotifyUrl(record.notify_url);
+
+                var bizContent = new JsonObject();
+                bizContent.Put("out_trade_no", record.out_trade_no);
+                bizContent.Put("total_amount", record.total_amount);
+                bizContent.Put("subject", record.subject);
+                string expire_time = System.DateTime.Now.AddHours(1).ToString("yyyy-MM-dd HH:mm:ss");
+                bizContent.Put("time_expire", expire_time);
+                request.BizContent = bizContent.ToString();
+                AlipayTradePrecreateResponse response = client.Execute(request);
+
+                //StringBuilder sb = new StringBuilder();
+                //sb.Append("{\"out_trade_no\":\"" + record.out_trade_no + "\",");
+                //sb.Append("\"total_amount\":\"" + record.total_amount + "\",\"discountable_amount\":\"0.00\",");
+                //sb.Append("\"subject\":\"" + record.subject + "\",\"body\":\"test\",");            
+                //string expire_time = System.DateTime.Now.AddHours(1).ToString("yyyy-MM-dd HH:mm:ss");
+                //sb.Append("\"time_expire\":\"" + expire_time + "\"}");
+                //request.BizContent = sb.ToString();
+                //AlipayTradePrecreateResponse response = client.Execute(request);
+
+                return response;
+            }
+            catch (Exception err)
+            {
+                string str = err.Message;
+            }
+            return null;
+        }
         /// <summary>
         /// 统一收单线下交易查询
         /// </summary>
@@ -119,7 +149,7 @@ namespace ETS.Library.Pay.AliPay
             var bizContent = new JsonObject();
             //支付宝交易号
             bizContent.Put("trade_no", record.OriginalOrderNo);
-           
+
             request.BizContent = bizContent.ToString();
             AlipayTradeCancelResponse response = client.Execute(request);
             return response;

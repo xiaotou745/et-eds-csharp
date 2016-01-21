@@ -1,6 +1,0 @@
-USE  superman
-UPDATE dbo.AuthorityMenuClass SET AuthCode='SuperManManager_SuperManManager_ClienterAudit_Btn' WHERE Id=18--审核
-UPDATE dbo.AuthorityMenuClass SET AuthCode='SuperManManager_SuperManManager_ClienterCancel_Btn' WHERE Id=19--审核
-UPDATE dbo.AuthorityMenuClass SET AuthCode='SuperManManager_SuperManManager_ClienterBlanceChange_Btn' WHERE Id=51--余额调整
-UPDATE dbo.AuthorityMenuClass SET AuthCode='SuperManManager_SuperManManager_ModifyInfo_Btn' WHERE Id=62--修改信息
-UPDATE dbo.AuthorityMenuClass SET Url='' WHERE id=4--切换URL

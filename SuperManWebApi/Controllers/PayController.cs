@@ -63,6 +63,15 @@ namespace SuperManWebApi.Controllers
             return null;
         }
 
+        [HttpPost]
+        public ResultModel<PayResultModel> CreateZFBPayTest (ETS.Library.Pay.AliPay.TradePay model)
+        {
+            ETS.Library.Pay.AliPay.AliPayApi apitest=new ETS.Library.Pay.AliPay.AliPayApi();
+            apitest.Precreate(model); 
+
+            return null;          
+        }
+
         [HttpGet]
         public ResultModel<BusinessRechargeResultModel> CreateRechargeTest()
         {
