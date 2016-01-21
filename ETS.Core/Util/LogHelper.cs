@@ -28,7 +28,7 @@ namespace ETS.Util
                 logstr = logstr + DateTime.Now.ToString() + "\r\n";
                 MethodBase m = new StackTrace().GetFrame(1).GetMethod();
                 ParameterInfo[] pm = m.GetParameters();
-                string classname = m.DeclaringType.ToString();
+                string classname = m.DeclaringType==null?"":m.DeclaringType.ToString();
                 string propertyName = m.Name;
                 logstr = logstr + "备注:" + rmark + "\r\n";
                 //写类名
@@ -37,7 +37,7 @@ namespace ETS.Util
                 logstr = logstr + "函数名称为:" + propertyName + "\r\n";
                 for (int i = 0; i < pm.Length; i++)
                 {
-                    logstr = logstr + "函数的参数有:" + pm[i].Name.ToString() + "\r\n";
+                    logstr = logstr + "函数的参数有:" + (pm[i].Name == null ? "" : pm[i].Name.ToString()) + "\r\n";
                 }
                 JavaScriptSerializer jsonSerializer = new JavaScriptSerializer();
                 logstr = logstr + "函数参数值:" + jsonSerializer.Serialize(dec) + "\r\n";
