@@ -44,6 +44,8 @@ using Ets.Model.DataModel.Message;
 using Ets.Service.IProvider.Business;
 using Ets.Service.Provider.Business;
 using ETS.NoSql.RedisCache;
+using ETS.Library.Pay.AliPay;
+using Aop.Api.Response;
 namespace Ets.Service.Provider.Pay
 {
     public class PayProvider : IPayProvider
@@ -231,19 +233,42 @@ namespace Ets.Service.Provider.Pay
                 businessName = businessModel.Name;
             }
             #endregion
+            //PayResultModel resultModel = new PayResultModel();
+            //string qrcodeUrl = string.Empty;
+            //if (payStyle == 1)//用户扫二维码
+            //{
+            //    //qrcodeUrl = alipayIntegrate.GetQRCodeUrl(orderNo, payAmount, businessName);
+            //    AliModel aliModel = new AliModel()
+            //    {
+            //        body = string.Empty,
+            //        orderNo = orderNo,
+            //        payMoney = payAmount,
+            //        productName = businessName
+            //    };
+            //    qrcodeUrl = new AliCallBack().GetOrder(aliModel);
+            //    if (string.IsNullOrEmpty(qrcodeUrl))
+            //    {
+            //        return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
+            //    }
+            //}
+            //resultModel.aliQRCode = qrcodeUrl;
+            //resultModel.orderNo = orderNo;
+            //resultModel.payAmount = payAmount;
+            //resultModel.payType = PayTypeEnum.ZhiFuBao.GetHashCode();
+            //resultModel.notifyUrl = ETS.Config.NotifyUrl;
+            //return ResultModel<PayResultModel>.Conclude(AliPayStatus.success, resultModel);
             PayResultModel resultModel = new PayResultModel();
             string qrcodeUrl = string.Empty;
             if (payStyle == 1)//用户扫二维码
-            {
-                //qrcodeUrl = alipayIntegrate.GetQRCodeUrl(orderNo, payAmount, businessName);
-                AliModel aliModel = new AliModel()
-                {
-                    body = string.Empty,
-                    orderNo = orderNo,
-                    payMoney = payAmount,
-                    productName = businessName
-                };
-                qrcodeUrl = new AliCallBack().GetOrder(aliModel);
+            {     
+                AlipayTradePrecreateResponse atpPonse=new AliPayApi().Precreate(new TradePay() { 
+                        out_trade_no=orderNo,
+                        total_amount =ParseHelper.ToString(payAmount),
+                        subject = businessName,      
+                        notify_url=ETS.Config.NotifyUrl
+                });
+                qrcodeUrl = atpPonse.QrCode;
+              
                 if (string.IsNullOrEmpty(qrcodeUrl))
                 {
                     return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
@@ -327,6 +352,8 @@ namespace Ets.Service.Provider.Pay
                     XmlDocument xmlDoc = new XmlDocument();
                     xmlDoc.LoadXml(notify_data);
                     notify.buyer_email = xmlDoc.SelectSingleNode("notify/buyer_email").InnerText;
+                    if (notify.buyer_email == null)
+                        notify.buyer_email = "";
                     notify.trade_status = xmlDoc.SelectSingleNode("notify/trade_status").InnerText;
                     notify.out_trade_no = xmlDoc.SelectSingleNode("notify/out_trade_no").InnerText;
                     notify.trade_no = xmlDoc.SelectSingleNode("notify/trade_no").InnerText;
@@ -334,7 +361,10 @@ namespace Ets.Service.Provider.Pay
                 else
                 {
                     //否则是骑士代付
-                    notify.buyer_email = request["buyer_email"];
+                    if (request["buyer_email"] == null)
+                        notify.buyer_email = "";
+                    else
+                        notify.buyer_email = request["buyer_email"];
                     notify.trade_status = request["trade_status"];
                     notify.out_trade_no = request["out_trade_no"];
                     notify.trade_no = request["trade_no"];
@@ -371,7 +401,7 @@ namespace Ets.Service.Provider.Pay
                     OrderChildFinishModel model = new OrderChildFinishModel()
                     {
                         orderChildId = orderChildId,
-                        orderId = orderId,
+                        orderId = orderId,                      
                         payBy = notify.buyer_email,
                         payStyle = payStyle,
                         payType = PayTypeEnum.ZhiFuBao.GetHashCode(),
