@@ -465,12 +465,15 @@ namespace Ets.Service.Provider.OpenApi
                 {
                     return  TaoBaoOrderRemindEnum.HadOrderRemind;
                 }
-                string msg = string.Format(SupermanApiConfig.Instance.SmsContentOrderRemind, orderRemindModel.ReceviceName.Trim(), orderRemindModel.RecevicePhoneNo.Trim());
-                Task.Factory.StartNew(() =>
+                string msg = string.Format(SupermanApiConfig.Instance.SmsContentOrderRemind, orderRemindModel.ReceviceName.Trim(), orderRemindModel.ClienterPhoneNo.Trim());
+                if (!string.IsNullOrWhiteSpace(orderRemindModel.ClienterPhoneNo))
                 {
-                    SendSmsHelper.SendSendSmsSaveLog(orderRemindModel.RecevicePhoneNo, msg, SystemConst.SMSSOURCE);
-                });
-                int k = new OrderDao().UpdateByDeliveryOrderNo(orderRemindModel.Id, TimeHelper.TimeStampToCurrDateTime(p.orderRemindInfo.remind_time));
+                    Task.Factory.StartNew(() =>
+                    {
+                        SendSmsHelper.SendSendSmsSaveLog(orderRemindModel.RecevicePhoneNo, msg, SystemConst.SMSSOURCE);
+                    });
+                }
+                int k = new OrderDao().UpdateByDeliveryOrderNo(orderRemindModel.Id, p.event_time);
                 if (k > 0)
                 {
                     return TaoBaoOrderRemindEnum.Success;

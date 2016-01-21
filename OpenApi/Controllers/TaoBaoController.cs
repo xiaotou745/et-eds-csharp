@@ -76,8 +76,7 @@ namespace OpenApi.Controllers
         {
             LogHelper.LogWriter("淘宝催单", pm);
             string json = AESApp.AesDecrypt(pm.data.Replace(' ', '+')/*TODO 暂时用Replace*/); 
-            OrderRemind p = ParseHelper.Deserialize<OrderRemind>(json);
-            p.orderRemindInfo = ParseHelper.Deserialize<OrderRemindInfo>(p.info); 
+            OrderRemind p = ParseHelper.Deserialize<OrderRemind>(json); 
             var result = taoDianDianGroup.TaoBaoOrderRemind(p);
             return ResultModel<long>.Conclude(result, p.delivery_order_no); 
         }
