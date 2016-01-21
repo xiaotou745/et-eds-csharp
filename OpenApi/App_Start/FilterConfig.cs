@@ -41,6 +41,9 @@ namespace OpenApi
             actionContext.Request.Properties[Key] = stop; 
             stop.Start();
             dynamic paramodel = actionContext.ActionArguments["paramodel"]; //当前请求的参数对象 
+
+            LogHelper.LogWriter("接口参数 " ,paramodel);
+
             lock (paramodel)
             {
                 if (actionContext.ModelState.Count > 0 || paramodel == null) //参数错误，请求中止
