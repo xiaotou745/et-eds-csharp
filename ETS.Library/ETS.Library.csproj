@@ -81,6 +81,7 @@
     <Compile Include="ActiveMq\ActiveMqHelper.cs" />
     <Compile Include="Pay\AliPay\AliNativePay.cs" />
     <Compile Include="Pay\AliPay\AliPayApi.cs" />
+    <Compile Include="Pay\AliPay\TradePay.cs" />
     <Compile Include="Pay\SSAliPay\AliNativePay.cs" />
     <Compile Include="Pay\SSAliPay\AliPayApi.cs" />
     <Compile Include="Pay\SSBWxPay\Config.cs" />
