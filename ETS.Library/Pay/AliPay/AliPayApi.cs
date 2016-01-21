@@ -31,7 +31,6 @@ namespace ETS.Library.Pay.AliPay
         //private static string format = "json";
 
 
-
         private static string app_id = "2015081900222190";//2015081900222190
         private static string alipay_public_key = string.Empty;
         private static string merchant_private_key = string.Concat(System.AppDomain.CurrentDomain.BaseDirectory, "Content\\pem\\rsa_private_key.pem");
@@ -56,32 +55,28 @@ namespace ETS.Library.Pay.AliPay
         {
             try
             {
-
-
                 IAopClient client = new DefaultAopClient("https://openapi.alipay.com/gateway.do", app_id,
                     merchant_private_key, format, version, sign_type, alipay_public_key, input_charset);
                 AlipayTradePrecreateRequest request = new AlipayTradePrecreateRequest();
                 request.SetNotifyUrl(record.notify_url);
 
-                //var bizContent = new JsonObject();
-                //bizContent.Put("out_trade_no", record.out_trade_no);
-                //bizContent.Put("total_amount", record.total_amount);                
-                //bizContent.Put("subject", record.subject);                    
-                //request.BizContent = bizContent.ToString();
-                //var response = client.Execute(request);
-
-                StringBuilder sb = new StringBuilder();
-                sb.Append("{\"out_trade_no\":\"" + record.out_trade_no + "\",");
-                sb.Append("\"total_amount\":\"" + record.total_amount + "\",\"discountable_amount\":\"0.00\",");
-                sb.Append("\"subject\":\"" + record.subject + "\",\"body\":\"test\",");
-                //sb.Append("\"goods_detail\":[{\"goods_id\":\"apple-01\",\"goods_name\":\"ipad\",\"goods_category\":\"7788230\",\"price\":\"5.00\",\"quantity\":\"1\"},{\"goods_id\":\"apple-02\",\"goods_name\":\"iphone\",\"goods_category\":\"7788231\",\"price\":\"2.76\",\"quantity\":\"1\"}],");
-                //sb.Append("\"operator_id\":\"op001\",\"store_id\":\"pudong001\",\"terminal_id\":\"t_001\",");
-
+                var bizContent = new JsonObject();
+                bizContent.Put("out_trade_no", record.out_trade_no);
+                bizContent.Put("total_amount", record.total_amount);
+                bizContent.Put("subject", record.subject);
                 string expire_time = System.DateTime.Now.AddHours(1).ToString("yyyy-MM-dd HH:mm:ss");
-                sb.Append("\"time_expire\":\"" + expire_time + "\"}");
-
-                request.BizContent = sb.ToString();
+                bizContent.Put("time_expire", expire_time);
+                request.BizContent = bizContent.ToString();
                 AlipayTradePrecreateResponse response = client.Execute(request);
+
+                //StringBuilder sb = new StringBuilder();
+                //sb.Append("{\"out_trade_no\":\"" + record.out_trade_no + "\",");
+                //sb.Append("\"total_amount\":\"" + record.total_amount + "\",\"discountable_amount\":\"0.00\",");
+                //sb.Append("\"subject\":\"" + record.subject + "\",\"body\":\"test\",");            
+                //string expire_time = System.DateTime.Now.AddHours(1).ToString("yyyy-MM-dd HH:mm:ss");
+                //sb.Append("\"time_expire\":\"" + expire_time + "\"}");
+                //request.BizContent = sb.ToString();
+                //AlipayTradePrecreateResponse response = client.Execute(request);
 
                 return response;
             }
