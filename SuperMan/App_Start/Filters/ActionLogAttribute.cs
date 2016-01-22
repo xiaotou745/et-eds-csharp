@@ -54,7 +54,7 @@ namespace SuperMan.App_Start.Filters
                 contentType = actionContext.HttpContext.Request.ContentType ?? "",
                 requestMethod = actionContext.HttpContext.Request.HttpMethod,
                 methodName = actionContext.Controller.ControllerContext.Controller + "." + actionContext.ActionDescriptor.ActionName,
-                requestTime = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"),
+                requestTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
                 appServer = JsonHelper.JsonConvertToString(ips),
                 header = JsonHelper.JsonConvertToString(actionContext.HttpContext.Request.Headers)
             };
@@ -84,7 +84,7 @@ namespace SuperMan.App_Start.Filters
                 log.stackTrace = actionContext.Exception.StackTrace;
             }
 
-            log.requestEndTime = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
+            log.requestEndTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             var stop = actionContext.Controller.ViewData["actionlogTime"] as Stopwatch;
             stop.Stop();
             log.executeTime = stop.ElapsedMilliseconds;
