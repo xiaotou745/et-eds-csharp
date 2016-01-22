@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,5 +19,7 @@ namespace Ets.Model.DomainModel.Order
         public string ReceviceName { get; set; }
 
         public string RecevicePhoneNo { get; set; }
+
+        public string ClienterPhoneNo { get; set; }
     }
 }

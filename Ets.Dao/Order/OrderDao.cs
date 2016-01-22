@@ -4519,9 +4519,10 @@ select  oo.Id,
         oo.DeliveryOrderNo ,
         oo.IsOrderRemind,
         o.ReceviceName,
-        o.RecevicePhoneNo
+        o.RecevicePhoneNo,c.PhoneNo ClienterPhoneNo 
 from    dbo.[OrderOther] oo(nolock)
 join dbo.[order] o (nolock) on oo.OrderId = o.Id
+left join dbo.clienter c (nolock) on c.Id = o.clienterId 
 where   oo.DeliveryOrderNo = @DeliveryOrderNo;";
             IDbParameters dbSelectParameters = DbHelper.CreateDbParameters();
             dbSelectParameters.AddWithValue("DeliveryOrderNo", deliveryOrderNo);
@@ -4534,6 +4535,7 @@ where   oo.DeliveryOrderNo = @DeliveryOrderNo;";
                 orderRemindModel.IsOrderRemind = ParseHelper.ToInt(dt.Rows[0][3]);
                 orderRemindModel.ReceviceName = dt.Rows[0][4].ToString();
                 orderRemindModel.RecevicePhoneNo = dt.Rows[0][5].ToString();
+                orderRemindModel.ClienterPhoneNo = dt.Rows[0][6].ToString();
             }
             else
             {
@@ -4542,7 +4544,7 @@ where   oo.DeliveryOrderNo = @DeliveryOrderNo;";
             return orderRemindModel;
         }
 
-        public int UpdateByDeliveryOrderNo(int id,DateTime orderRemindTime)
+        public int UpdateByDeliveryOrderNo(int id,string orderRemindTime)
         {
             const string querysql = @"update dbo.OrderOther set IsOrderRemind=1,OrderRemindTime=@OrderRemindTime where Id = @Id";
             IDbParameters dbSelectParameters = DbHelper.CreateDbParameters();
