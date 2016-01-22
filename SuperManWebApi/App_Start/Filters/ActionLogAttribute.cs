@@ -18,6 +18,10 @@ using ETS.Library.ActiveMq;
 using Ets.Model.Common;
 using Ets.Service.Provider.Common;
 using ETS.Util;
+using System.Web.Mvc;
+using Ets.Model.ParameterModel.Common;
+using ETS.Security;
+using Ets.Model.ParameterModel.Order;
 
 namespace SuperManWebApi.App_Start.Filters
 {
@@ -42,6 +46,7 @@ namespace SuperManWebApi.App_Start.Filters
         {
 
             string responseData = "";
+            string decryptData = "";
             if (actionContext.Request.Method == HttpMethod.Get)
             {
                 foreach (string key in HttpContext.Current.Request.QueryString.AllKeys)
@@ -51,15 +56,33 @@ namespace SuperManWebApi.App_Start.Filters
             }
             else if (actionContext.Request.Method == HttpMethod.Post)
             {
-                var task = actionContext.Request.Content.ReadAsStreamAsync();
-                var content = string.Empty;
-                var sm = task.Result;
-                sm.Seek(0, SeekOrigin.Begin);//设置流的开始位置
-                var bytes = sm.ToByteArray();
-                responseData = bytes.ToStr();
+                var parameterDescriptors = actionContext.ActionDescriptor.GetParameters();
+                if (parameterDescriptors.Count > 0 && (parameterDescriptors[0].ParameterType == typeof(ParamModel) || parameterDescriptors[0].ParameterType == typeof(SSOrderCancelPM)))
+                {
+                   object obj = actionContext.ActionArguments[actionContext.ActionArguments.Keys.ToList()[0]];
+                    if(obj!=null){
+                        if(obj is ParamModel){
+                            responseData = ((ParamModel)obj).data;
+                        }else{
+                            responseData = ((SSOrderCancelPM)obj).data;
+                        }
+                        decryptData = AESApp.AesDecrypt(responseData.Replace(' ', '+')/*TODO 暂时用Replace*/);
+                    }
+                }
+                else {
+                    var task = actionContext.Request.Content.ReadAsStreamAsync();
+                    var content = string.Empty;
+                    var sm = task.Result;
+                    sm.Seek(0, SeekOrigin.Begin);//设置流的开始位置
+                    var bytes = sm.ToByteArray();
+                    responseData = bytes.ToStr();
+                }
             }
 
-
+            if (decryptData=="")
+            {
+                decryptData = responseData;
+            }
             List<string> ips = new List<string>();
             ips.Add(SystemHelper.GetLocalIP());
             ips.Add(SystemHelper.GetGateway());
@@ -74,7 +97,7 @@ namespace SuperManWebApi.App_Start.Filters
                 actionContext.Request.RequestUri.ToString().Substring(0, actionContext.Request.RequestUri.ToString().IndexOf("?")) :
                              actionContext.Request.RequestUri.ToString(),
                 param = responseData,
-                decryptMsg = responseData,
+                decryptMsg = decryptData,
                 contentType = actionContext.Request.Content.Headers.ContentType==null?"":
                 actionContext.Request.Content.Headers.ContentType.ToString(),
                 requestMethod = actionContext.Request.Method.ToString(),
