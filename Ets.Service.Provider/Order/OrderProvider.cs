@@ -613,10 +613,11 @@ namespace Ets.Service.Provider.Order
 
             #region 第三方订单是否重复推送的验证  add by caoheyang 20150417
 
-            string orderExistsNo = redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
-            paramodel.order_id.ToString()));  //查询缓存，看当前订单是否存在,“true”代表存在，key的形式为集团ID_第三方平台订单号
-            if (orderExistsNo != null)
-                return ResultModel<object>.Conclude(OrderApiStatusType.OrderExists, new { order_no = orderExistsNo });
+            //string orderExistsNo = redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
+            //paramodel.order_id.ToString()));  //查询缓存，看当前订单是否存在,“true”代表存在，key的形式为集团ID_第三方平台订单号
+            var orderTemp = orderDao.GetOrderByOrderNoAndOrderFrom(paramodel.order_id, paramodel.store_info.group, 0);
+            if (orderTemp != null)
+                return ResultModel<object>.Conclude(OrderApiStatusType.OrderExists, new { order_no = orderTemp.OrderNo });
             if (paramodel.total_price <= 0)  //金额小于等于0，数据不合法，返回信息 待用数据特性优化
             {
                 return ResultModel<object>.Conclude(OrderApiStatusType.ParaError);
@@ -650,8 +651,10 @@ namespace Ets.Service.Provider.Order
             #endregion
 
             #region  维护店铺相关信息 add by caoheyang 20150416
-            string bussinessIdstr = redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString(),
-              paramodel.store_info.store_id.ToString()));
+            //string bussinessIdstr = redis.Get<string>(string.Format(ETS.Const.RedissCacheKey.OtherBusinessIdInfo, paramodel.store_info.group.ToString(),
+            //  paramodel.store_info.store_id.ToString()));
+            var  bussinesTemp=_businessDao. CheckExistBusiness(paramodel.store_info.store_id,paramodel.store_info.group);
+            string bussinessIdstr = bussinesTemp == null ? null : bussinesTemp.Id.ToString();
             if (bussinessIdstr == null || ParseHelper.ToInt(bussinessIdstr) == 0) //缓存中无店铺id 
             {
                 //当第三方未传递经纬的情况下，根据地址调用百度接口获取经纬度信息  add by caoheyang 20150416
