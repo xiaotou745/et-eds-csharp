@@ -56,7 +56,7 @@ namespace OpenApi.App_Start.Filters
                         if (obj != null)
                         {
                             responseData = ((ParamModel)obj).data;
-                            if (responseData != null)
+                            if (!string.IsNullOrEmpty(responseData))
                             {
                                 decryptData = AESApp.AesDecrypt(responseData.Replace(' ', '+')/*TODO 暂时用Replace*/);
                             }
