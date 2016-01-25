@@ -30,7 +30,7 @@ namespace ETS.Util
         /// <returns></returns>
         public static string ToStr(this byte[] arr)
         {
-            return System.Text.Encoding.Default.GetString(arr);
+            return System.Text.Encoding.UTF8.GetString(arr);
         }
     }
 }
