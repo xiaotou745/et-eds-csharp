@@ -71,7 +71,7 @@ namespace SuperManWebApi.App_Start.Filters
                             {
                                 responseData = ((SSOrderCancelPM)obj).data;
                             }
-                            if (responseData != null)
+                            if (!string.IsNullOrEmpty(responseData))
                             {
                                 decryptData = AESApp.AesDecrypt(responseData.Replace(' ', '+')/*TODO 暂时用Replace*/);
                             }

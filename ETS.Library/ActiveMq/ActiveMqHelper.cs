@@ -51,7 +51,7 @@ namespace ETS.Library.ActiveMq
         }
         public static void AsynSendMessage(string messageStr)
         {
-            ThreadPool.SetMaxThreads(16, 16);
+            ThreadPool.SetMaxThreads(5, 5);
             ThreadPool.QueueUserWorkItem(new WaitCallback(ActiveMqHelper.SendMessage), messageStr);
         }
       
