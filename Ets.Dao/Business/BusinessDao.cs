@@ -444,7 +444,7 @@ and a.PhoneNo=@PhoneNo";
             {
                 tableList = @" business  b WITH (NOLOCK)  
                                 LEFT JOIN dbo.[group] g WITH(NOLOCK) ON g.Id = b.GroupId 
-                                JOIN dbo.[BusinessGroup]  bg WITH ( NOLOCK ) ON  b.BusinessGroupId=bg.Id";
+                                left JOIN dbo.[BusinessGroup]  bg WITH ( NOLOCK ) ON  b.BusinessGroupId=bg.Id";
             }
             else
             {
