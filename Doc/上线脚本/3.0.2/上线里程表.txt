@@ -1,0 +1,196 @@
+use superman
+go
+/****** Object:  Table [dbo].[LineHistory]    Script Date: 01/25/2016 11:45:21 ******/
+set ansi_nulls on
+go
+
+set quoted_identifier on
+go
+
+create table [dbo].[LineHistory](
+	[Id] [int] identity(1,1) not null,
+	[DevPlatform] [nvarchar](100) not null,
+	[OnLineProduct] [nvarchar](200) not null,
+	[DevVersion] [nvarchar](50) not null,
+	[OnLineTime] [datetime] not null,
+	[OnLineContent] [nvarchar](4000) not null,
+	[Remark] [nvarchar](4000) not null,
+	[CreateTime] [datetime] not null,
+	[CreateName] [nvarchar](50) not null,
+	[ModifyTime] [datetime] null,
+	[ModifyName] [nvarchar](50) not null,
+	[IsEnable] [int] not null,
+ constraint [PK_LineHistory] primary key clustered 
+(
+	[Id] asc
+)with (pad_index  = off, statistics_norecompute  = off, ignore_dup_key = off, allow_row_locks  = on, allow_page_locks  = on) on [PRIMARY]
+) on [PRIMARY]
+
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'主键' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineHistory', @level2type=N'COLUMN',@level2name=N'Id'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'所属平台' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineHistory', @level2type=N'COLUMN',@level2name=N'DevPlatform'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'上线产品' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineHistory', @level2type=N'COLUMN',@level2name=N'OnLineProduct'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'版本号' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineHistory', @level2type=N'COLUMN',@level2name=N'DevVersion'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'上线时间' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineHistory', @level2type=N'COLUMN',@level2name=N'OnLineTime'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'上线内容' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineHistory', @level2type=N'COLUMN',@level2name=N'OnLineContent'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'备注' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineHistory', @level2type=N'COLUMN',@level2name=N'Remark'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'创建时间' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineHistory', @level2type=N'COLUMN',@level2name=N'CreateTime'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'创建人' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineHistory', @level2type=N'COLUMN',@level2name=N'CreateName'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'修改时间' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineHistory', @level2type=N'COLUMN',@level2name=N'ModifyTime'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'修改人名称' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineHistory', @level2type=N'COLUMN',@level2name=N'ModifyName'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'是否启用' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineHistory', @level2type=N'COLUMN',@level2name=N'IsEnable'
+GO
+
+ALTER TABLE [dbo].[LineHistory] ADD  CONSTRAINT [DF_LineHistory_DevPlatform]  DEFAULT ('') FOR [DevPlatform]
+GO
+
+ALTER TABLE [dbo].[LineHistory] ADD  CONSTRAINT [DF_LineHistory_LineProduct]  DEFAULT ('') FOR [OnLineProduct]
+GO
+
+ALTER TABLE [dbo].[LineHistory] ADD  CONSTRAINT [DF_LineHistory_DevVersion]  DEFAULT ('') FOR [DevVersion]
+GO
+
+ALTER TABLE [dbo].[LineHistory] ADD  CONSTRAINT [DF_LineHistory_OnLineDate]  DEFAULT ('') FOR [OnLineTime]
+GO
+
+ALTER TABLE [dbo].[LineHistory] ADD  CONSTRAINT [DF_LineHistory_OnLineContent]  DEFAULT ('') FOR [OnLineContent]
+GO
+
+ALTER TABLE [dbo].[LineHistory] ADD  CONSTRAINT [DF_LineHistory_Remark]  DEFAULT ('') FOR [Remark]
+GO
+
+ALTER TABLE [dbo].[LineHistory] ADD  CONSTRAINT [DF_LineHistory_CreateTime]  DEFAULT (getdate()) FOR [CreateTime]
+GO
+
+ALTER TABLE [dbo].[LineHistory] ADD  CONSTRAINT [DF_LineHistory_CreateName]  DEFAULT ('') FOR [CreateName]
+GO
+
+ALTER TABLE [dbo].[LineHistory] ADD  CONSTRAINT [DF_LineHistory_ModifyName]  DEFAULT ('') FOR [ModifyName]
+GO
+
+ALTER TABLE [dbo].[LineHistory] ADD  CONSTRAINT [DF__LineHisto__IsEna__24FD51B3]  DEFAULT ((1)) FOR [IsEnable]
+GO
+
+
+
+
+use renrendb
+go
+/****** Object:  Table [dbo].[LineHistory]    Script Date: 01/25/2016 11:45:21 ******/
+set ansi_nulls on
+go
+
+set quoted_identifier on
+go
+
+create table [dbo].[LineHistory](
+	[Id] [int] identity(1,1) not null,
+	[DevPlatform] [nvarchar](100) not null,
+	[OnLineProduct] [nvarchar](200) not null,
+	[DevVersion] [nvarchar](50) not null,
+	[OnLineTime] [datetime] not null,
+	[OnLineContent] [nvarchar](4000) not null,
+	[Remark] [nvarchar](4000) not null,
+	[CreateTime] [datetime] not null,
+	[CreateName] [nvarchar](50) not null,
+	[ModifyTime] [datetime] null,
+	[ModifyName] [nvarchar](50) not null,
+	[IsEnable] [int] not null,
+ constraint [PK_LineHistory] primary key clustered 
+(
+	[Id] asc
+)with (pad_index  = off, statistics_norecompute  = off, ignore_dup_key = off, allow_row_locks  = on, allow_page_locks  = on) on [PRIMARY]
+) on [PRIMARY]
+
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'主键' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineHistory', @level2type=N'COLUMN',@level2name=N'Id'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'所属平台' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineHistory', @level2type=N'COLUMN',@level2name=N'DevPlatform'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'上线产品' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineHistory', @level2type=N'COLUMN',@level2name=N'OnLineProduct'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'版本号' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineHistory', @level2type=N'COLUMN',@level2name=N'DevVersion'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'上线时间' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineHistory', @level2type=N'COLUMN',@level2name=N'OnLineTime'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'上线内容' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineHistory', @level2type=N'COLUMN',@level2name=N'OnLineContent'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'备注' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineHistory', @level2type=N'COLUMN',@level2name=N'Remark'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'创建时间' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineHistory', @level2type=N'COLUMN',@level2name=N'CreateTime'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'创建人' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineHistory', @level2type=N'COLUMN',@level2name=N'CreateName'
+go
+
+exec sys.sp_addextendedproperty @name=N'MS_Description', @value=N'修改时间' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineHistory', @level2type=N'COLUMN',@level2name=N'ModifyTime'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'修改人名称' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineHistory', @level2type=N'COLUMN',@level2name=N'ModifyName'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'是否启用' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineHistory', @level2type=N'COLUMN',@level2name=N'IsEnable'
+GO
+
+ALTER TABLE [dbo].[LineHistory] ADD  CONSTRAINT [DF_LineHistory_DevPlatform]  DEFAULT ('') FOR [DevPlatform]
+GO
+
+ALTER TABLE [dbo].[LineHistory] ADD  CONSTRAINT [DF_LineHistory_LineProduct]  DEFAULT ('') FOR [OnLineProduct]
+GO
+
+ALTER TABLE [dbo].[LineHistory] ADD  CONSTRAINT [DF_LineHistory_DevVersion]  DEFAULT ('') FOR [DevVersion]
+GO
+
+ALTER TABLE [dbo].[LineHistory] ADD  CONSTRAINT [DF_LineHistory_OnLineDate]  DEFAULT ('') FOR [OnLineTime]
+GO
+
+ALTER TABLE [dbo].[LineHistory] ADD  CONSTRAINT [DF_LineHistory_OnLineContent]  DEFAULT ('') FOR [OnLineContent]
+GO
+
+ALTER TABLE [dbo].[LineHistory] ADD  CONSTRAINT [DF_LineHistory_Remark]  DEFAULT ('') FOR [Remark]
+GO
+
+ALTER TABLE [dbo].[LineHistory] ADD  CONSTRAINT [DF_LineHistory_CreateTime]  DEFAULT (getdate()) FOR [CreateTime]
+GO
+
+ALTER TABLE [dbo].[LineHistory] ADD  CONSTRAINT [DF_LineHistory_CreateName]  DEFAULT ('') FOR [CreateName]
+GO
+
+ALTER TABLE [dbo].[LineHistory] ADD  CONSTRAINT [DF_LineHistory_ModifyName]  DEFAULT ('') FOR [ModifyName]
+GO
+
+ALTER TABLE [dbo].[LineHistory] ADD  CONSTRAINT [DF__LineHisto__IsEna__24FD51B3]  DEFAULT ((1)) FOR [IsEnable]
+GO
+
+
