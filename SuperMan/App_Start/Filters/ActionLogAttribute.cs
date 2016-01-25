@@ -32,38 +32,40 @@ namespace SuperMan.App_Start.Filters
         /// <param name="actionContext"></param>
         public async override void OnActionExecuting(ActionExecutingContext actionContext)
         {
-
-            string responseData = HttpContext.Current.Request.QueryString.AllKeys.Aggregate("", (current, key) => current + key + "=" + HttpContext.Current.Request.QueryString[key] + "&");
-            responseData = HttpContext.Current.Request.Form.AllKeys.Aggregate(responseData, (current, key) => current + key + "=" + HttpContext.Current.Request.Form[key] + "&");
-
-            var ips = new List<string>();
-            ips.Add(SystemHelper.GetLocalIP());
-            ips.Add(SystemHelper.GetGateway());
-            var log = new ActionLog()
+            try
             {
-                userID = UserContext.Current.Id,
-                userName = UserContext.Current.Name,
-                requestType = actionContext.HttpContext.Request.IsAjaxRequest() ? 1 : 0,
-                clientIp = getClientIp(),
-                sourceSys = "superman",
-                requestUrl = actionContext.HttpContext.Request.Url.AbsoluteUri.IndexOf('?') > 0 ?
-                actionContext.HttpContext.Request.Url.AbsoluteUri.Substring(0, actionContext.HttpContext.Request.Url.AbsoluteUri.IndexOf('?')) :
-                actionContext.HttpContext.Request.Url.AbsoluteUri,
-                param = responseData,
-                decryptMsg = responseData,
-                contentType = actionContext.HttpContext.Request.ContentType ?? "",
-                requestMethod = actionContext.HttpContext.Request.HttpMethod,
-                methodName = actionContext.Controller.ControllerContext.Controller + "." + actionContext.ActionDescriptor.ActionName,
-                requestTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-                appServer = JsonHelper.JsonConvertToString(ips),
-                header = JsonHelper.JsonConvertToString(actionContext.HttpContext.Request.Headers)
-            };
+                string responseData = HttpContext.Current.Request.QueryString.AllKeys.Aggregate("", (current, key) => current + key + "=" + HttpContext.Current.Request.QueryString[key] + "&");
+                responseData = HttpContext.Current.Request.Form.AllKeys.Aggregate(responseData, (current, key) => current + key + "=" + HttpContext.Current.Request.Form[key] + "&");
 
-            actionContext.Controller.ViewData["actionlog"] = log;
-            Stopwatch stop = new Stopwatch();
-            actionContext.Controller.ViewData["actionlogTime"] = stop;
-            stop.Start();
+                var ips = new List<string>();
+                ips.Add(SystemHelper.GetLocalIP());
+                ips.Add(SystemHelper.GetGateway());
+                var log = new ActionLog()
+                {
+                    userID = UserContext.Current.Id,
+                    userName = UserContext.Current.Name,
+                    requestType = actionContext.HttpContext.Request.IsAjaxRequest() ? 1 : 0,
+                    clientIp = getClientIp(),
+                    sourceSys = "superman",
+                    requestUrl = actionContext.HttpContext.Request.Url.AbsoluteUri.IndexOf('?') > 0 ?
+                    actionContext.HttpContext.Request.Url.AbsoluteUri.Substring(0, actionContext.HttpContext.Request.Url.AbsoluteUri.IndexOf('?')) :
+                    actionContext.HttpContext.Request.Url.AbsoluteUri,
+                    param = responseData,
+                    decryptMsg = responseData,
+                    contentType = actionContext.HttpContext.Request.ContentType ?? "",
+                    requestMethod = actionContext.HttpContext.Request.HttpMethod,
+                    methodName = actionContext.Controller.ControllerContext.Controller + "." + actionContext.ActionDescriptor.ActionName,
+                    requestTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                    appServer = JsonHelper.JsonConvertToString(ips),
+                    header = JsonHelper.JsonConvertToString(actionContext.HttpContext.Request.Headers)
+                };
 
+                actionContext.Controller.ViewData["actionlog"] = log;
+                Stopwatch stop = new Stopwatch();
+                actionContext.Controller.ViewData["actionlogTime"] = stop;
+                stop.Start();
+            }
+            catch (Exception ex) { }
         }
         /// <summary>
         /// 
@@ -71,37 +73,31 @@ namespace SuperMan.App_Start.Filters
         /// <param name="actionContext"></param>
         public override void OnActionExecuted(ActionExecutedContext actionContext)
         {
-            ActionLog log = actionContext.Controller.ViewData["actionlog"] as ActionLog;
-            if (actionContext.Exception == null)
+            try
             {
-                log.resultJson = "";
-                log.exception = "";
-                log.stackTrace = "";
-            }
-            else
-            {
-                log.exception = actionContext.Exception.Message;
-                log.stackTrace = actionContext.Exception.StackTrace;
-            }
-
-            log.requestEndTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-            var stop = actionContext.Controller.ViewData["actionlogTime"] as Stopwatch;
-            stop.Stop();
-            log.executeTime = stop.ElapsedMilliseconds;
-            stop.Reset();
-
-            Task.Factory.StartNew(() =>
-            {
-                try
+                ActionLog log = actionContext.Controller.ViewData["actionlog"] as ActionLog;
+                if (actionContext.Exception == null)
                 {
-                    ActiveMqHelper.SendMessage(JsonHelper.JsonConvertToString(log));
+                    log.resultJson = "";
+                    log.exception = "";
+                    log.stackTrace = "";
                 }
-                catch (Exception ex)
+                else
                 {
-                    LogHelper.LogWriterFromFilter(actionContext.Exception);//发送错误邮件
+                    log.exception = actionContext.Exception.Message;
+                    log.stackTrace = actionContext.Exception.StackTrace;
                 }
 
-            });
+                log.requestEndTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                var stop = actionContext.Controller.ViewData["actionlogTime"] as Stopwatch;
+                stop.Stop();
+                log.executeTime = stop.ElapsedMilliseconds;
+                stop.Reset();
+
+                //调用线程池，异步发送mq消息
+                ActiveMqHelper.AsynSendMessage(JsonHelper.JsonConvertToString(log));
+            }
+            catch (Exception ex) { }
         }
 
     }
