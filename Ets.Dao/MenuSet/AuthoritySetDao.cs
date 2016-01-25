@@ -332,8 +332,23 @@ VALUES (@ParId,@MenuName,@BeLock,@Url,@IsButton,@JavaUrl);select @@IDENTITY as I
         /// <returns></returns>
         public List<AuthorityMenuModel> GetMenusByAccountId(int accoutId)
         {
-            string sql =
-                " select MenuId,Url,IsButton from AuthorityAccountMenuSet A with(nolock) inner join AuthorityMenuClass M on M.Id=A.MenuId where AccoutId=@AccoutId;";
+            string sql = @"
+DECLARE @roleID INT
+SELECT @roleID=ISNULL(b.Id,0) FROM dbo.account a left JOIN (select * from  AuthorityRole (nolock) where BeLock=0 ) b ON 
+a.RoleId=b.Id WHERE a.id=@AccountId
+
+IF @roleID>0
+  SELECT MenuId,Url,IsButton FROM dbo.AuthorityRoleMentMenuSet  aam (nolock)
+JOIN AuthorityMenuClass amc(nolock) ON aam.MenuId = amc.Id
+WHERE aam.RoleId = @roleID and amc.BeLock = CAST(0 AS BIT)	and amc.parid>0
+
+ELSE
+  SELECT MenuId,Url,IsButton FROM dbo.AuthorityAccountMenuSet  aam (nolock)
+JOIN AuthorityMenuClass amc(nolock) ON aam.MenuId = amc.Id
+WHERE aam.AccoutId=@AccountId and amc.BeLock = CAST(0 AS BIT)	and amc.parid>0";
+
+            //string sql =
+            //    " select MenuId,Url,IsButton from AuthorityAccountMenuSet A with(nolock) inner join AuthorityMenuClass M on M.Id=A.MenuId where AccoutId=@AccoutId;";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("AccoutId", accoutId);
             DataTable dt = DbHelper.ExecuteDataset(SuperMan_Read, sql, dbParameters).Tables[0];
@@ -349,7 +364,16 @@ VALUES (@ParId,@MenuName,@BeLock,@Url,@IsButton,@JavaUrl);select @@IDENTITY as I
         public List<int> GetMenuIdsByAccountId(int accoutId)
         {
             var list = new List<int>();
-            string sql = "select MenuId from AuthorityAccountMenuSet with(nolock) where AccoutId=@AccoutId";
+            string sql = @"
+                    DECLARE @roleID INT
+        SELECT @roleID=ISNULL(b.Id,0) FROM dbo.account a  with(nolock) left JOIN (select * from  AuthorityRole  with(nolock) where BeLock=0 ) b ON 
+        a.RoleId=b.Id WHERE a.id=@AccoutId
+        IF @roleID>0
+        select MenuId from AuthorityRoleMentMenuSet with(nolock) where roleid=@roleID
+        ELSE 
+        select MenuId from AuthorityAccountMenuSet with(nolock) where AccoutId=@AccoutId";
+
+            //string sql = "select MenuId from AuthorityAccountMenuSet with(nolock) where AccoutId=@AccoutId";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.Add("AccoutId", DbType.Int32, 4).Value = accoutId;
             DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, dbParameters);
@@ -405,9 +429,29 @@ VALUES (@ParId,@MenuName,@BeLock,@Url,@IsButton,@JavaUrl);select @@IDENTITY as I
         /// <param name="accoutId">用户ID</param>
         /// <param name="menuId">权限ID</param>
         /// <returns></returns>
+        //public bool CheckPermission(int accoutId, int menuId)
+        //{
+        //    string sql = "select Id from AuthorityAccountMenuSet with(nolock) where AccoutId=@AccoutId and MenuId = @MenuId";
+        //    IDbParameters dbParameters = DbHelper.CreateDbParameters();
+        //    dbParameters.AddWithValue("AccoutId", accoutId);
+        //    dbParameters.AddWithValue("MenuId", menuId);
+        //    object i = DbHelper.ExecuteScalar(SuperMan_Read, sql, dbParameters);
+        //    if (i != null)
+        //    {
+        //        return int.Parse(i.ToString()) > 0;
+        //    }
+        //    return false;
+        //}
         public bool CheckPermission(int accoutId, int menuId)
         {
-            string sql = "select Id from AuthorityAccountMenuSet with(nolock) where AccoutId=@AccoutId and MenuId = @MenuId";
+            string sql = @"
+                    DECLARE @roleID INT
+        SELECT @roleID=ISNULL(b.Id,0) FROM dbo.account a  with(nolock) left JOIN (select * from  AuthorityRole  with(nolock) where BeLock=0 ) b ON 
+        a.RoleId=b.Id WHERE a.id=@AccoutId
+        IF @roleID>0
+        select Id from AuthorityRoleMentMenuSet with(nolock) where roleid=@roleID and MenuId = @MenuId
+        ELSE 
+        select Id from AuthorityAccountMenuSet with(nolock) where AccoutId=@AccoutId and MenuId = @MenuId";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("AccoutId", accoutId);
             dbParameters.AddWithValue("MenuId", menuId);
@@ -418,26 +462,6 @@ VALUES (@ParId,@MenuName,@BeLock,@Url,@IsButton,@JavaUrl);select @@IDENTITY as I
             }
             return false;
         }
-        //        public bool CheckPermission(int accoutId, int menuId)
-        //        {
-        //            string sql = @"
-        //            DECLARE @roleID INT
-        //SELECT @roleID=ISNULL(b.Id,0) FROM dbo.account a left JOIN (select * from  AuthorityRole where BeLock=0 ) b ON 
-        //a.RoleId=b.Id WHERE a.id=@AccoutId
-        //IF @roleID>0
-        //select Id from AuthorityRoleMentMenuSet with(nolock) where roleid=@roleID and MenuId = @MenuId
-        //ELSE 
-        //select Id from AuthorityAccountMenuSet with(nolock) where AccoutId=@AccoutId and MenuId = @MenuId";
-        //            IDbParameters dbParameters = DbHelper.CreateDbParameters();
-        //            dbParameters.AddWithValue("AccoutId", accoutId);
-        //            dbParameters.AddWithValue("MenuId", menuId);
-        //            object i = DbHelper.ExecuteScalar(SuperMan_Read, sql, dbParameters);
-        //            if (i != null)
-        //            {
-        //                return int.Parse(i.ToString()) > 0;
-        //            }
-        //            return false;
-        //        }
         /// <summary>
         /// 加入权限
         /// </summary>
