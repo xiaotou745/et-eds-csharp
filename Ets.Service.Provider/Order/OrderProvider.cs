@@ -2808,6 +2808,7 @@ namespace Ets.Service.Provider.Order
             orderOptionModel.OptUserId = orderModel.businessId;
             orderOptionModel.OrderNo = orderModel.OrderNo;
             orderModel.Remark = pm.Remark;
+            orderModel.OptUserName = pm.OptUserName;
 
 
             if (orderModel.Status == 3)//订单已为取消状态
@@ -3064,6 +3065,21 @@ namespace Ets.Service.Provider.Order
                 IsRetainValue = IsRetainValue == false ? 1 : 0
             });
 
+            if (orderModel.Status == 1)
+            {
+                //更新骑士余额
+                iClienterProvider.UpdateCAccountBalance(new ClienterMoneyPM()
+                {
+                    ClienterId = orderModel.clienterId,
+                    Amount = -otcModel.Amount,
+                    Status = ClienterBalanceRecordStatus.Success.GetHashCode(),
+                    RecordType = ClienterBalanceRecordRecordType.CancelOrder.GetHashCode(),
+                    Operator = orderModel.OptUserName,
+                    WithwardId = orderModel.Id,
+                    RelationNo = orderModel.OrderNo,
+                    Remark = orderModel.Remark
+                });
+            }
             return true;
         }
 
