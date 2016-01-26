@@ -185,7 +185,7 @@ namespace Ets.Service.IProvider.Pay
         /// 闪送模式 支付宝回调
         /// 胡灵波
         /// 2015年12月8日 11:14:04
-        dynamic NotifyTip();
+        string NotifyTip();
 
         /// <summary>
         /// 闪送模式 微信支付回调方法 
@@ -193,7 +193,7 @@ namespace Ets.Service.IProvider.Pay
         /// 2015年5月13日 15:03:45
         /// </summary>
         /// <returns></returns>
-        void SSWxNotify();
+        string SSWxNotify();
 
         #endregion
     }

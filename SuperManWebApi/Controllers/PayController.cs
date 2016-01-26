@@ -64,12 +64,12 @@ namespace SuperManWebApi.Controllers
         }
 
         [HttpPost]
-        public ResultModel<PayResultModel> CreateZFBPayTest (ETS.Library.Pay.AliPay.TradePay model)
+        public ResultModel<PayResultModel> CreateZFBPayTest(ETS.Library.Pay.AliPay.TradePay model)
         {
-            ETS.Library.Pay.AliPay.AliPayApi apitest=new ETS.Library.Pay.AliPay.AliPayApi();
-            apitest.Precreate(model); 
+            ETS.Library.Pay.AliPay.AliPayApi apitest = new ETS.Library.Pay.AliPay.AliPayApi();
+            apitest.Precreate(model);
 
-            return null;          
+            return null;
         }
 
         [HttpGet]
@@ -122,7 +122,7 @@ namespace SuperManWebApi.Controllers
         {
             payProvider.WxNotify();
         }
- 
+
         /// <summary>
         /// 现金支付
         /// wc
@@ -170,7 +170,7 @@ namespace SuperManWebApi.Controllers
         {
             payProvider.BusinessRechargeWxNotify();
         }
-        
+
         /// <summary>
         /// 闪送 商家充值回调方法回调 支付宝
         /// 胡灵波
@@ -191,7 +191,7 @@ namespace SuperManWebApi.Controllers
         public void SSBusinessRechargeWxNotify()
         {
             payProvider.SSBusinessRechargeWxNotify();
-        }              
+        }
         #endregion
 
 
@@ -283,7 +283,7 @@ namespace SuperManWebApi.Controllers
             //};
             return payProvider.GetOrderPayStatus(model);
         }
-       
+
 
         #endregion
 
@@ -326,9 +326,12 @@ namespace SuperManWebApi.Controllers
         /// 2015年12月8日 17:20:38
         /// </summary>
         /// <returns></returns>
-        public dynamic NotifyTip()
+        public void NotifyTip()
         {
-            return payProvider.NotifyTip();
+            string result= payProvider.NotifyTip();
+            HttpContext.Current.Response.Clear();
+            HttpContext.Current.Response.Write(result);
+            HttpContext.Current.Response.End();
         }
 
 
@@ -341,7 +344,10 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         public void SSWxNotify()
         {
-            payProvider.SSWxNotify();
+            string result = payProvider.SSWxNotify();
+            HttpContext.Current.Response.Clear();
+            HttpContext.Current.Response.Write(result);
+            HttpContext.Current.Response.End();
         }
         #endregion
     }

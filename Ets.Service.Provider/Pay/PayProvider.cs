@@ -2563,43 +2563,43 @@ namespace Ets.Service.Provider.Pay
 
                 //ResultModel<PayResultModel> PayResultModel = CreateAliFlashPayOrder(orderCombinationNo, zfAmount, req.orderId, 0);
                 long xfId = 0;
-                var redis = new RedisCache();
-                string key = string.Concat(req.orderId, orderChildModel.Id);
-                bool isExist = redis.Get<bool>(key);
-                if (!isExist)
+                //var redis = new RedisCache();
+                //string key = string.Concat(req.orderId, orderChildModel.Id);
+                //bool isExist = redis.Get<bool>(key);
+                //if (!isExist)
+                //{
+                if ((bool)olModel.IsPay)
                 {
-                    if ((bool)olModel.IsPay)
-                    {
-                        //写订单小费
-                        OrderTipCost otcModel = new OrderTipCost();
-                        otcModel.OrderId = req.orderId;
-                        otcModel.Amount = req.tipAmount;
-                        otcModel.TipAmount = req.tipAmount;
-                        otcModel.CreateName = olModel.BusinessName;
-                        otcModel.CreateTime = DateTime.Now;
-                        otcModel.PayStates = 0;//未支付
-                        otcModel.OriginalOrderNo = "";
-                        otcModel.PayType = 1;//支付宝
-                        otcModel.OutTradeNo = "";
-                        xfId = orderTipCostDao.Insert(otcModel);
-                    }
-                    else
-                    {
-                        //写订单小费
-                        OrderTipCost otcModel = new OrderTipCost();
-                        otcModel.OrderId = req.orderId;
-                        otcModel.Amount = orderChildModel.TotalPrice + olModel.TipAmount;
-                        otcModel.TipAmount = olModel.TipAmount;
-                        otcModel.CreateName = olModel.BusinessName;
-                        otcModel.CreateTime = DateTime.Now;
-                        otcModel.PayStates = 0;//未支付
-                        otcModel.OriginalOrderNo = "";
-                        otcModel.PayType = 1;//支付宝
-                        otcModel.OutTradeNo = "";
-                        xfId = orderTipCostDao.Insert(otcModel);
-                    }
-                    redis.Set(key, true, new TimeSpan(0, 0, 15));
+                    //写订单小费
+                    OrderTipCost otcModel = new OrderTipCost();
+                    otcModel.OrderId = req.orderId;
+                    otcModel.Amount = req.tipAmount;
+                    otcModel.TipAmount = req.tipAmount;
+                    otcModel.CreateName = olModel.BusinessName;
+                    otcModel.CreateTime = DateTime.Now;
+                    otcModel.PayStates = 0;//未支付
+                    otcModel.OriginalOrderNo = "";
+                    otcModel.PayType = 1;//支付宝
+                    otcModel.OutTradeNo = "";
+                    xfId = orderTipCostDao.Insert(otcModel);
                 }
+                else
+                {
+                    //写订单小费
+                    OrderTipCost otcModel = new OrderTipCost();
+                    otcModel.OrderId = req.orderId;
+                    otcModel.Amount = orderChildModel.TotalPrice + olModel.TipAmount;
+                    otcModel.TipAmount = olModel.TipAmount;
+                    otcModel.CreateName = olModel.BusinessName;
+                    otcModel.CreateTime = DateTime.Now;
+                    otcModel.PayStates = 0;//未支付
+                    otcModel.OriginalOrderNo = "";
+                    otcModel.PayType = 1;//支付宝
+                    otcModel.OutTradeNo = "";
+                    xfId = orderTipCostDao.Insert(otcModel);
+                }
+                //    redis.Set(key, true, new TimeSpan(0, 0, 15));
+                //}
                 orderCombinationNo += xfId.ToString();
                 ResultModel<PayResultModel> PayResultModel = CreateAliFlashPayOrder(orderCombinationNo, zfAmount, req.orderId, 0);
                 return PayResultModel;
@@ -2623,43 +2623,43 @@ namespace Ets.Service.Provider.Pay
 
                 //ResultModel<PayResultModel> payResult = CreateWxSSPayOrder(orderCombinationNo, zfAmount, req.orderId, Helper.GenCode(16));
                 long xfId = 0;
-                var redis = new RedisCache();
-                string key = string.Concat(req.orderId, orderChildModel.Id);
-                bool isExist = redis.Get<bool>(key);
-                if (!isExist)
+                //var redis = new RedisCache();
+                //string key = string.Concat(req.orderId, orderChildModel.Id);
+                //bool isExist = redis.Get<bool>(key);
+                //if (!isExist)
+                //{
+                if ((bool)olModel.IsPay)
                 {
-                    if ((bool)olModel.IsPay)
-                    {
-                        //写订单小费
-                        OrderTipCost otcModel = new OrderTipCost();
-                        otcModel.OrderId = req.orderId;
-                        otcModel.Amount = req.tipAmount;
-                        otcModel.TipAmount = req.tipAmount;
-                        otcModel.CreateName = olModel.BusinessName;
-                        otcModel.CreateTime = DateTime.Now;
-                        otcModel.PayStates = 0;//未支付
-                        otcModel.OriginalOrderNo = "";
-                        otcModel.PayType = 2;//微信
-                        otcModel.OutTradeNo = "";
-                        xfId = orderTipCostDao.Insert(otcModel);
-                    }
-                    else
-                    {
-                        //写订单小费
-                        OrderTipCost otcModel = new OrderTipCost();
-                        otcModel.OrderId = req.orderId;
-                        otcModel.Amount = orderChildModel.TotalPrice + olModel.TipAmount;
-                        otcModel.TipAmount = olModel.TipAmount;
-                        otcModel.CreateName = olModel.BusinessName;
-                        otcModel.CreateTime = DateTime.Now;
-                        otcModel.PayStates = 0;//未支付
-                        otcModel.OriginalOrderNo = "";
-                        otcModel.PayType = 2;//微信
-                        otcModel.OutTradeNo = "";
-                        xfId = orderTipCostDao.Insert(otcModel);
-                    }
-                    redis.Set(key, true, new TimeSpan(0, 0, 15));
+                    //写订单小费
+                    OrderTipCost otcModel = new OrderTipCost();
+                    otcModel.OrderId = req.orderId;
+                    otcModel.Amount = req.tipAmount;
+                    otcModel.TipAmount = req.tipAmount;
+                    otcModel.CreateName = olModel.BusinessName;
+                    otcModel.CreateTime = DateTime.Now;
+                    otcModel.PayStates = 0;//未支付
+                    otcModel.OriginalOrderNo = "";
+                    otcModel.PayType = 2;//微信
+                    otcModel.OutTradeNo = "";
+                    xfId = orderTipCostDao.Insert(otcModel);
                 }
+                else
+                {
+                    //写订单小费
+                    OrderTipCost otcModel = new OrderTipCost();
+                    otcModel.OrderId = req.orderId;
+                    otcModel.Amount = orderChildModel.TotalPrice + olModel.TipAmount;
+                    otcModel.TipAmount = olModel.TipAmount;
+                    otcModel.CreateName = olModel.BusinessName;
+                    otcModel.CreateTime = DateTime.Now;
+                    otcModel.PayStates = 0;//未支付
+                    otcModel.OriginalOrderNo = "";
+                    otcModel.PayType = 2;//微信
+                    otcModel.OutTradeNo = "";
+                    xfId = orderTipCostDao.Insert(otcModel);
+                }
+                //    redis.Set(key, true, new TimeSpan(0, 0, 15));
+                //}
 
                 orderCombinationNo += xfId.ToString();
 
@@ -2729,8 +2729,10 @@ namespace Ets.Service.Provider.Pay
         /// 2015年12月8日 17:25:59
         /// </summary>
         /// <returns></returns>
-        public dynamic NotifyTip()
+        public string NotifyTip()
         {
+            string fail = "fail";
+            string success = "success";
             try
             {
                 #region 参数绑定
@@ -2764,9 +2766,8 @@ namespace Ets.Service.Provider.Pay
                 //如果状态为空或状态不等于同步成功和异步成功就认为是错误
                 if (string.IsNullOrEmpty(notify.trade_status))
                 {
-                    string fail = string.Concat("错误啦trade_status：", notify.trade_status, "。sign:", sign, "。notify_data:", notify_data);
-                    LogHelper.LogWriter(fail);
-                    return "fail";
+                    LogHelper.LogWriter(string.Concat("错误啦trade_status：", notify.trade_status, "。sign:", sign, "。notify_data:", notify_data));
+                    return fail;
                 }
                 #region 回调完成状态
                 if (notify.trade_status == "TRADE_SUCCESS" || notify.trade_status == "TRADE_FINISHED")
@@ -2781,27 +2782,24 @@ namespace Ets.Service.Provider.Pay
 
                         if (orderCostId <= 0)
                         {
-                            return "fail";
+                            return fail;
                         }
                         if (orderTipCostDao.CheckId(orderCostId))
                         {
-                            //如果存在就退出，这里写的很扯，因为支付宝要的是success不带双引号.
-                            //但WEBAPI直接返回时带引号，所以现在要去库里查一次。
-                            //回头找到原因一定要改
-                            return "success";
+                            return success;
                         }
                     }
                     else if (tmpLength == 3)
                     {
                         if (orderTipCostDao.Check(notify.trade_no))
                         {
-                            //如果存在就退出，这里写的很扯，因为支付宝要的是success不带双引号.
-                            //但WEBAPI直接返回时带引号，所以现在要去库里查一次。
-                            //回头找到原因一定要改
-                            return "success";
+                            return success;
                         }
                     }
-                    ReturnZhifubo(notify);
+                    if (ReturnZhifubo(notify))
+                    {
+                        return success;
+                    }
 
                 }
                 #endregion
@@ -2810,9 +2808,9 @@ namespace Ets.Service.Provider.Pay
             catch (Exception ex)
             {
                 LogHelper.LogWriter(ex, "Alipay自动返回异常");
-                return "fail";
+                return fail;
             }
-            return "fail";
+            return fail;
         }
 
         bool ReturnZhifubo(AlipayNotifyData notify)
@@ -3012,12 +3010,12 @@ namespace Ets.Service.Provider.Pay
         /// 2015年12月8日 17:27:48
         /// </summary>
         /// <returns></returns>
-        public void SSWxNotify()
+        public string SSWxNotify()
         {
-
+            string fail = "fail";
             #region 参数绑定
             ETS.Library.Pay.SSBWxPay.WxNotifyResultModel notify = new ETS.Library.Pay.SSBWxPay.ResultNotify().ProcessNotify();
-            string errmsg = "<xml><return_code><![CDATA[FAIL]]></return_code><return_msg><![CDATA[{0}]]></return_msg></xml>";
+            //string errmsg = "<xml><return_code><![CDATA[FAIL]]></return_code><return_msg><![CDATA[{0}]]></return_msg></xml>";
             #region 回调完成状态
             if (notify.return_code == "SUCCESS")
             {
@@ -3030,7 +3028,7 @@ namespace Ets.Service.Provider.Pay
                         //如果存在就退出，这里写的很扯，因为支付宝要的是success不带双引号.
                         //但WEBAPI直接返回时带引号，所以现在要去库里查一次。
                         //回头找到原因一定要改
-                        return;
+                        return fail;
                     }
                 }
                 else if (tmpLength == 4)
@@ -3040,16 +3038,18 @@ namespace Ets.Service.Provider.Pay
 
                     if (id <= 0 || orderTipCostDao.CheckId(id))
                     {
-                        return;
+                        return fail;
                     }
                 }
-                ReturnWx(notify);
+                if (ReturnWx(notify))
+                {
+                    return "success";
+                }
             }
             #endregion
             LogHelper.LogWriter("支付回调异常", notify);
-            HttpContext.Current.Response.Write(errmsg);
-            HttpContext.Current.Response.End();
             #endregion
+            return fail;
         }
 
 
