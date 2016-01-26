@@ -2964,7 +2964,7 @@ namespace Ets.Service.Provider.Pay
             #region 回调完成状态
             if (notify.return_code == "SUCCESS")
             {
-                if (orderTipCostDao.Check(notify.transaction_id))
+                if (orderTipCostDao.Check(notify.transaction_id) || orderTipCostDao.CheckOutTradeNo(notify.attach))
                 {
                     //如果存在就退出，这里写的很扯，因为支付宝要的是success不带双引号.
                     //但WEBAPI直接返回时带引号，所以现在要去库里查一次。
