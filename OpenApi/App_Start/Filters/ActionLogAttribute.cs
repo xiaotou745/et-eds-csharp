@@ -34,7 +34,7 @@ namespace OpenApi.App_Start.Filters
         ///
         /// </summary>
         /// <param name="actionContext"></param>
-        public async override void OnActionExecuting(HttpActionContext actionContext)
+        public override void OnActionExecuting(HttpActionContext actionContext)
         {
             //try
             //{
@@ -79,7 +79,7 @@ namespace OpenApi.App_Start.Filters
 
                 List<string> ips = new List<string>();
                 ips.Add(SystemHelper.GetLocalIP());
-                ips.Add(SystemHelper.GetGateway());
+                //ips.Add(SystemHelper.GetGateway());
                 ActionLog log = new ActionLog()
                 {
                     userID = -1,

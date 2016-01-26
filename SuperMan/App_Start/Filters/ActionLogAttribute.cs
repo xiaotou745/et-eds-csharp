@@ -75,8 +75,8 @@ namespace SuperMan.App_Start.Filters
         /// <param name="actionContext"></param>
         public override void OnActionExecuted(ActionExecutedContext actionContext)
         {
-            try
-            {
+            //try
+            //{
                 ActionLog log = actionContext.Controller.ViewData["actionlog"] as ActionLog;
                 if (actionContext.Exception == null)
                 {
@@ -97,11 +97,11 @@ namespace SuperMan.App_Start.Filters
 
                 //调用线程池，异步发送mq消息
                 ActiveMqHelper.AsynSendMessage(JsonHelper.JsonConvertToString(log));
-            }
-            catch (Exception ex)
-            {
-                System.Console.WriteLine(ex.Message);
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    System.Console.WriteLine(ex.Message);
+            //}
         }
 
     }
