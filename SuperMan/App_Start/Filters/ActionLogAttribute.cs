@@ -42,8 +42,8 @@ namespace SuperMan.App_Start.Filters
             //ips.Add(SystemHelper.GetGateway());
             var log = new ActionLog()
             {
-                userID = UserContext.Current.Id,
-                userName = UserContext.Current.Name,
+                userID = UserContext.Current.Id==0?-1:UserContext.Current.Id,
+                userName = UserContext.Current.Name == null ? "" : UserContext.Current.Name,
                 requestType = actionContext.HttpContext.Request.IsAjaxRequest() ? 1 : 0,
                 clientIp = getClientIp(),
                 sourceSys = "superman",
