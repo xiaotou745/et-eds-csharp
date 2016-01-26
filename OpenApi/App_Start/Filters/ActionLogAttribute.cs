@@ -36,8 +36,8 @@ namespace OpenApi.App_Start.Filters
         /// <param name="actionContext"></param>
         public async override void OnActionExecuting(HttpActionContext actionContext)
         {
-            try
-            {
+            //try
+            //{
                 string responseData = "";
                 string decryptData = "";
                 if (actionContext.Request.Method == HttpMethod.Get)
@@ -110,8 +110,8 @@ namespace OpenApi.App_Start.Filters
                 Stopwatch stop = new Stopwatch();
                 actionContext.Request.Properties["actionlogTime"] = stop;
                 stop.Start();
-            }
-            catch (Exception ex) { }
+            //}
+            //catch (Exception ex) { }
         }
         /// <summary>
         /// 
@@ -119,8 +119,8 @@ namespace OpenApi.App_Start.Filters
         /// <param name="actionContext"></param>
         public override void OnActionExecuted(HttpActionExecutedContext actionContext)
         {
-            try
-            {
+            //try
+            //{
                 ActionLog log = actionContext.Request.Properties["actionlog"] as ActionLog;
                 if (actionContext.Exception == null)
                 {
@@ -146,8 +146,8 @@ namespace OpenApi.App_Start.Filters
 
                 //调用线程池，异步发送mq消息
                 ActiveMqHelper.AsynSendMessage(JsonHelper.JsonConvertToString(log));
-            }
-            catch (Exception ex) { }
+            //}
+            //catch (Exception ex) { }
         }
     }
 }

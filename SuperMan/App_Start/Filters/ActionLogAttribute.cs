@@ -32,8 +32,8 @@ namespace SuperMan.App_Start.Filters
         /// <param name="actionContext"></param>
         public async override void OnActionExecuting(ActionExecutingContext actionContext)
         {
-            try
-            {
+            //try
+            //{
                 string responseData = HttpContext.Current.Request.QueryString.AllKeys.Aggregate("", (current, key) => current + key + "=" + HttpContext.Current.Request.QueryString[key] + "&");
                 responseData = HttpContext.Current.Request.Form.AllKeys.Aggregate(responseData, (current, key) => current + key + "=" + HttpContext.Current.Request.Form[key] + "&");
 
@@ -64,8 +64,10 @@ namespace SuperMan.App_Start.Filters
                 Stopwatch stop = new Stopwatch();
                 actionContext.Controller.ViewData["actionlogTime"] = stop;
                 stop.Start();
-            }
-            catch (Exception ex) { }
+            //}
+            //catch (Exception ex) {
+            //    System.Console.WriteLine(ex.Message);
+            //}
         }
         /// <summary>
         /// 
@@ -73,8 +75,8 @@ namespace SuperMan.App_Start.Filters
         /// <param name="actionContext"></param>
         public override void OnActionExecuted(ActionExecutedContext actionContext)
         {
-            try
-            {
+            //try
+            //{
                 ActionLog log = actionContext.Controller.ViewData["actionlog"] as ActionLog;
                 if (actionContext.Exception == null)
                 {
@@ -96,8 +98,10 @@ namespace SuperMan.App_Start.Filters
 
                 //调用线程池，异步发送mq消息
                 ActiveMqHelper.AsynSendMessage(JsonHelper.JsonConvertToString(log));
-            }
-            catch (Exception ex) { }
+            //}
+            //catch (Exception ex) {
+            //    System.Console.WriteLine(ex.Message);
+            //}
         }
 
     }
