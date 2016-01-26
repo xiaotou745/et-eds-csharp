@@ -79,6 +79,15 @@ SELECT count(1) FROM dbo.OrderTipCost (nolock)  where OutTradeNo=@OutTradeNo";
             return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm), 0) > 0 ? true : false;
         }
 
+        public bool CheckId(string id)
+        {
+            string sql = @"
+SELECT count(1) FROM dbo.OrderTipCost (nolock)  where id=@id";
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            parm.Add("id", DbType.String, 100).Value = id;
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm), 0) > 0 ? true : false;
+        }
+
 		/// <summary>
 		/// 更新一条记录
 		/// </summary>
@@ -185,7 +194,7 @@ where  Id=@Id";
         {
             IList<OrderTipCost> models = new List<OrderTipCost>();
             const string querysql = @"
-select Id,OrderId,Amount,CreateName,CreateTime,PayStates,OriginalOrderNo,PayType,OutTradeNo from OrderTipCost where orderId=@orderId and PayStates>-1";
+select Id,OrderId,Amount,CreateName,CreateTime,PayStates,OriginalOrderNo,PayType,OutTradeNo from OrderTipCost where orderId=@orderId --and PayStates>-1";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("orderId", orderId);
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));

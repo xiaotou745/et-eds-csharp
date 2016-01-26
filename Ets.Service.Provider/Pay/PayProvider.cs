@@ -2560,7 +2560,8 @@ namespace Ets.Service.Provider.Pay
                     zfAmount = orderChildModel.TotalPrice + olModel.TipAmount;
                 }
 
-                ResultModel<PayResultModel> PayResultModel = CreateAliFlashPayOrder(orderCombinationNo, zfAmount, req.orderId, 0);
+                //ResultModel<PayResultModel> PayResultModel = CreateAliFlashPayOrder(orderCombinationNo, zfAmount, req.orderId, 0);
+                long xfId = 0;
                 var redis = new RedisCache();
                 string key = string.Concat(req.orderId, orderChildModel.Id);
                 bool isExist = redis.Get<bool>(key);
@@ -2579,7 +2580,7 @@ namespace Ets.Service.Provider.Pay
                         otcModel.OriginalOrderNo = "";
                         otcModel.PayType = 1;//支付宝
                         otcModel.OutTradeNo = orderCombinationNo;
-                        orderTipCostDao.Insert(otcModel);
+                        xfId = orderTipCostDao.Insert(otcModel);
                     }
                     else
                     {
@@ -2594,11 +2595,12 @@ namespace Ets.Service.Provider.Pay
                         otcModel.OriginalOrderNo = "";
                         otcModel.PayType = 1;//支付宝
                         otcModel.OutTradeNo = orderCombinationNo;
-                        orderTipCostDao.Insert(otcModel);
+                        xfId = orderTipCostDao.Insert(otcModel);
                     }
                     redis.Set(key, true, new TimeSpan(0, 0, 15));
                 }
-
+                orderCombinationNo += xfId.ToString();
+                ResultModel<PayResultModel> PayResultModel = CreateAliFlashPayOrder(orderCombinationNo, zfAmount, req.orderId, 0);
                 return PayResultModel;
             }
             if (req.payType == PayTypeEnum.WeiXin.GetHashCode())
@@ -2618,7 +2620,8 @@ namespace Ets.Service.Provider.Pay
                     zfAmount = orderChildModel.TotalPrice + olModel.TipAmount;
                 }
 
-                ResultModel<PayResultModel> payResult = CreateWxSSPayOrder(orderCombinationNo, zfAmount, req.orderId, Helper.GenCode(16));
+                //ResultModel<PayResultModel> payResult = CreateWxSSPayOrder(orderCombinationNo, zfAmount, req.orderId, Helper.GenCode(16));
+                long xfId=0;
                 var redis = new RedisCache();
                 string key = string.Concat(req.orderId, orderChildModel.Id);
                 bool isExist = redis.Get<bool>(key);
@@ -2637,7 +2640,7 @@ namespace Ets.Service.Provider.Pay
                         otcModel.OriginalOrderNo = "";
                         otcModel.PayType = 2;//微信
                         otcModel.OutTradeNo = orderCombinationNo;
-                        orderTipCostDao.Insert(otcModel);
+                        xfId= orderTipCostDao.Insert(otcModel);
                     }
                     else
                     {
@@ -2652,10 +2655,15 @@ namespace Ets.Service.Provider.Pay
                         otcModel.OriginalOrderNo = "";
                         otcModel.PayType = 2;//微信
                         otcModel.OutTradeNo = orderCombinationNo;
-                        orderTipCostDao.Insert(otcModel);
+                        xfId= orderTipCostDao.Insert(otcModel);
                     }
                     redis.Set(key, true, new TimeSpan(0, 0, 15));
                 }
+
+                orderCombinationNo += xfId.ToString();
+
+                LogHelper.LogWriter("=============微信支付orderCombinationNo：" + orderCombinationNo);
+                ResultModel<PayResultModel> payResult = CreateWxSSPayOrder(orderCombinationNo, zfAmount, req.orderId, Helper.GenCode(16));
                 return payResult;
             }
 
@@ -2762,13 +2770,19 @@ namespace Ets.Service.Provider.Pay
                 #region 回调完成状态
                 if (notify.trade_status == "TRADE_SUCCESS" || notify.trade_status == "TRADE_FINISHED")
                 {
-                    if (orderTipCostDao.Check(notify.trade_no))
+                    if (notify.out_trade_no.Split('_').Length == 4)
                     {
-                        //如果存在就退出，这里写的很扯，因为支付宝要的是success不带双引号.
-                        //但WEBAPI直接返回时带引号，所以现在要去库里查一次。
-                        //回头找到原因一定要改
-                        return "success";
+                        string id = notify.out_trade_no.Split('_')[3];
+
+                        if (orderTipCostDao.CheckId(id))
+                        {
+                            //如果存在就退出，这里写的很扯，因为支付宝要的是success不带双引号.
+                            //但WEBAPI直接返回时带引号，所以现在要去库里查一次。
+                            //回头找到原因一定要改
+                            return "success";
+                        }
                     }
+
 
                     ReturnZhifubo(notify);
 
@@ -2797,7 +2811,7 @@ namespace Ets.Service.Provider.Pay
                 }
 
                 int orderId = ParseHelper.ToInt(out_trade_no.Split('_')[0]);//主订单号      
-                int orderChildId = ParseHelper.ToInt(out_trade_no.Split('_')[1]);//子订单号
+                int orderChildId = ParseHelper.ToInt(out_trade_no.Split('_')[1]);//子订单号                
                 OrderListModel olList = orderDao.GetByOrderIdWrite(orderId);//写串
                 if (olList == null)
                 {
@@ -2964,12 +2978,20 @@ namespace Ets.Service.Provider.Pay
             #region 回调完成状态
             if (notify.return_code == "SUCCESS")
             {
-                if (orderTipCostDao.Check(notify.transaction_id) || orderTipCostDao.CheckOutTradeNo(notify.attach))
+                //if (orderTipCostDao.Check(notify.transaction_id) )
+                //{
+                //    //如果存在就退出，这里写的很扯，因为支付宝要的是success不带双引号.
+                //    //但WEBAPI直接返回时带引号，所以现在要去库里查一次。
+                //    //回头找到原因一定要改
+                //    return;
+                //}
+                if (notify.attach.Split('_').Length == 4)
                 {
-                    //如果存在就退出，这里写的很扯，因为支付宝要的是success不带双引号.
-                    //但WEBAPI直接返回时带引号，所以现在要去库里查一次。
-                    //回头找到原因一定要改
-                    return;
+                    string id = notify.attach.Split('_')[3];
+                    if (orderTipCostDao.CheckId(id))
+                    {
+                        return;
+                    }
                 }
                 ReturnWx(notify);
             }
