@@ -3074,7 +3074,8 @@ order by a.id desc
                 temp.OrderNo = dataRow["OrderNo"].ToString();
                 temp.BusinessId = ParseHelper.ToInt(dataRow["BusinessId"], 0);
                 temp.PubName = dataRow["PubName"].ToString();
-
+                temp.PickUpLongitude = ParseHelper.ToDecimal(dataRow["PickUpLongitude"]);
+                temp.PickUpLatitude = ParseHelper.ToDecimal(dataRow["PickUpLatitude"]);
 
                 temp.ReceviceLongitude = ParseHelper.ToDecimal(dataRow["ReceviceLongitude"]);
                 temp.ReceviceLatitude = ParseHelper.ToDecimal(dataRow["ReceviceLatitude"]);

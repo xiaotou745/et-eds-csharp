@@ -35,7 +35,7 @@ namespace SuperManWebApi.Controllers
             //查询数据
             AppVersionProvider appVersionProvider = new AppVersionProvider();
             var result = appVersionProvider.VersionCheck(vcmodel);
-            if (result == null)
+            if (result == null || result.ID<=0)
             {
                 return ResultModel<AppVerionModel>.Conclude(VersionStatus.NoData);
             }

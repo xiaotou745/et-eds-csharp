@@ -68,8 +68,7 @@ select id from dbo.[order] where OrderNo=@OrderNo
 update OrderOther 
 set CompleteLongitude=@CompleteLongitude,CompleteLatitude=@CompleteLatitude,
 IsCompleteTimely=@IsCompleteTimely
-where orderid=@orderId
-)";
+where orderid=@orderId";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@CompleteLongitude", parModel.Longitude);
             dbParameters.AddWithValue("@CompleteLatitude", parModel.Latitude);

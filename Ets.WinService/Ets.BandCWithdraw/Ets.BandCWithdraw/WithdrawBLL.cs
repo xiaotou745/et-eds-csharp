@@ -41,11 +41,12 @@ namespace Ets.BandCWithdraw
             {
                 LogHelper.LogWriter("执行啦:" + DateTime.Now);
                 double hour = 72;
-                GlobalConfigModel gcModel= GlobalConfigDao.GlobalConfigGet(0);
+                GlobalConfigModel gcModel = GlobalConfigDao.GetGlobalConfig(0);
                 if (gcModel != null && gcModel.CashAndTime!=null)
                 {
                     hour=Convert.ToInt32( gcModel.CashAndTime);
                 }
+
                 LogHelper.LogWriter("hour:" + hour);
                 ClienterProvider clienterProvider=new ClienterProvider();
                 OrderDao orderDao = new OrderDao();

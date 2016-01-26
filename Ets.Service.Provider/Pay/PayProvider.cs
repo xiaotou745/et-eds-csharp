@@ -2892,15 +2892,16 @@ namespace Ets.Service.Provider.Pay
                 // 更新短信通道 
                 Task.Factory.StartNew(() =>
                 {
-                    string Content1 = "尊敬的E代送用户您好，您的订单取货码是：#验证码#";
-                    Content1 = Content1.Replace("#验证码#", olList.PickupCode);
-                    ETS.Sms.SendSmsHelper.SendSendSmsSaveLog(olList.Pubphoneno, Content1, SystemConst.SMSSOURCE);
-
-                    string Content2 = "尊敬的E代送用户您好，您的订单收货码是：#验证码#";
-                    Content2 = Content2.Replace("#验证码#", olList.Receivecode);
-                    ETS.Sms.SendSmsHelper.SendSendSmsSaveLog(olList.Recevicephoneno, Content2, SystemConst.SMSSOURCE);
-                    if (!(bool) olList.IsPay)
+                    if (!(bool)olList.IsPay)
                     {
+                        string Content1 = "尊敬的E代送用户您好，您的订单取货码是：#验证码#";
+                        Content1 = Content1.Replace("#验证码#", olList.PickupCode);
+                        ETS.Sms.SendSmsHelper.SendSendSmsSaveLog(olList.Pubphoneno, Content1, SystemConst.SMSSOURCE);
+
+                        string Content2 = "尊敬的E代送用户您好，您的订单收货码是：#验证码#";
+                        Content2 = Content2.Replace("#验证码#", olList.Receivecode);
+                        ETS.Sms.SendSmsHelper.SendSendSmsSaveLog(olList.Recevicephoneno, Content2, SystemConst.SMSSOURCE);
+                 
                         new OrderProvider().ShanSongPushOrderForJava(orderId, true);
                     }
                 });
@@ -3090,16 +3091,17 @@ namespace Ets.Service.Provider.Pay
                 // 更新短信通道 
                 Task.Factory.StartNew(() =>
                 {
-                    string Content1 = "尊敬的E代送用户您好，您的订单取货码是：#验证码#";
-                    Content1 = Content1.Replace("#验证码#", olList.PickupCode);
-                    ETS.Sms.SendSmsHelper.SendSmsSaveLogNew(olList.Pubphoneno, Content1, SystemConst.SMSSOURCE);
-
-                    string Content2 = "尊敬的E代送用户您好，您的订单收货码是：#验证码#";
-                    Content2 = Content2.Replace("#验证码#", olList.Receivecode);
-                    ETS.Sms.SendSmsHelper.SendSmsSaveLogNew(olList.Recevicephoneno, Content2, SystemConst.SMSSOURCE);
-
-                    if (!(bool) olList.IsPay)
+                    if (!(bool)olList.IsPay)
                     {
+                        string Content1 = "尊敬的E代送用户您好，您的订单取货码是：#验证码#";
+                        Content1 = Content1.Replace("#验证码#", olList.PickupCode);
+                        ETS.Sms.SendSmsHelper.SendSmsSaveLogNew(olList.Pubphoneno, Content1, SystemConst.SMSSOURCE);
+
+                        string Content2 = "尊敬的E代送用户您好，您的订单收货码是：#验证码#";
+                        Content2 = Content2.Replace("#验证码#", olList.Receivecode);
+                        ETS.Sms.SendSmsHelper.SendSmsSaveLogNew(olList.Recevicephoneno, Content2, SystemConst.SMSSOURCE);
+
+                   
                         new OrderProvider().ShanSongPushOrderForJava(orderId, true);
                     }
                 });
