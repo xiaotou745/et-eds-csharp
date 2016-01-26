@@ -79,12 +79,17 @@ SELECT count(1) FROM dbo.OrderTipCost (nolock)  where OutTradeNo=@OutTradeNo";
             return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm), 0) > 0 ? true : false;
         }
 
-        public bool CheckId(string id)
+        /// <summary>
+        /// 新模式
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public bool CheckId(int id)
         {
             string sql = @"
-SELECT count(1) FROM dbo.OrderTipCost (nolock)  where id=@id";
+SELECT count(1) FROM dbo.OrderTipCost (nolock)  where id=@id and PayStates=1";
             IDbParameters parm = DbHelper.CreateDbParameters();
-            parm.Add("id", DbType.String, 100).Value = id;
+            parm.Add("id", DbType.Int32, 4).Value = id;
             return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm), 0) > 0 ? true : false;
         }
 
@@ -143,6 +148,51 @@ where  PayType=@PayType and OutTradeNo=@OutTradeNo";
             dbParameters.AddWithValue("OriginalOrderNo", orderTipCost.OriginalOrderNo);
 
             DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+        }
+
+        /// <summary>
+        /// 更新商家小费、订单表
+        /// </summary>
+        public void UpdateByOutTradeNoNew(OrderTipCost orderTipCost)
+        {
+            const string updateSql = @"
+update  OrderTipCost
+set   UpdateName=@UpdateName,OriginalOrderNo=@OriginalOrderNo, UpdateTime=getdate(),PayStates=1,OutTradeNo=@OutTradeNo
+where  PayType=@PayType and Id=@Id ";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("UpdateName", orderTipCost.UpdateName);
+            dbParameters.AddWithValue("PayType", orderTipCost.PayType);
+            dbParameters.AddWithValue("OutTradeNo", orderTipCost.OutTradeNo);
+            dbParameters.AddWithValue("OriginalOrderNo", orderTipCost.OriginalOrderNo);
+            dbParameters.AddWithValue("Id", orderTipCost.Id);
+            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+        }
+        /// <summary>
+        /// 查询商家小费、订单表里的
+        /// </summary>
+        /// <param name="PayType"></param>
+        /// <param name="OutTradeNo"></param>
+        /// <returns></returns>
+        public OrderTipCost GetByOutTradeNo(int PayType, int Id)
+        {
+            OrderTipCost model = new OrderTipCost();
+
+            const string querysql = @"
+select  Id,OrderId,Amount,TipAmount,CreateName,CreateTime,PayStates
+from  OrderTipCost (nolock)
+where  PayType=@PayType and Id=@Id";
+
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("PayType", PayType);
+            dbParameters.AddWithValue("Id", Id);
+
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
+            if (DataTableHelper.CheckDt(dt))
+            {
+                model = DataTableHelper.ConvertDataTableList<OrderTipCost>(dt)[0];
+            }
+            return model;
         }
 
         public OrderTipCost GetByOutTradeNo(int PayType,string OutTradeNo)

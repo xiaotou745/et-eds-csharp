@@ -260,15 +260,16 @@ namespace Ets.Service.Provider.Pay
             PayResultModel resultModel = new PayResultModel();
             string qrcodeUrl = string.Empty;
             if (payStyle == 1)//用户扫二维码
-            {     
-                AlipayTradePrecreateResponse atpPonse=new AliPayApi().Precreate(new TradePay() { 
-                        out_trade_no=orderNo,
-                        total_amount =ParseHelper.ToString(payAmount),
-                        subject = businessName,      
-                        notify_url=ETS.Config.NotifyUrl
+            {
+                AlipayTradePrecreateResponse atpPonse = new AliPayApi().Precreate(new TradePay()
+                {
+                    out_trade_no = orderNo,
+                    total_amount = ParseHelper.ToString(payAmount),
+                    subject = businessName,
+                    notify_url = ETS.Config.NotifyUrl
                 });
                 qrcodeUrl = atpPonse.QrCode;
-              
+
                 if (string.IsNullOrEmpty(qrcodeUrl))
                 {
                     return ResultModel<PayResultModel>.Conclude(AliPayStatus.fail);
@@ -401,7 +402,7 @@ namespace Ets.Service.Provider.Pay
                     OrderChildFinishModel model = new OrderChildFinishModel()
                     {
                         orderChildId = orderChildId,
-                        orderId = orderId,                      
+                        orderId = orderId,
                         payBy = notify.buyer_email,
                         payStyle = payStyle,
                         payType = PayTypeEnum.ZhiFuBao.GetHashCode(),
@@ -2549,7 +2550,7 @@ namespace Ets.Service.Provider.Pay
                 LogHelper.LogWriter("=============支付宝支付：");
 
                 //所属产品_主订单号_子订单号_随机数
-                string orderCombinationNo = string.Concat(req.orderId, "_", orderChildModel.Id, "_" + Helper.GenCode(6));
+                string orderCombinationNo = string.Concat(req.orderId, "_", orderChildModel.Id, "_" + Helper.GenCode(6), "_");
                 decimal zfAmount = 0;
                 if ((bool)olModel.IsPay)//已支付，加小费
                 {
@@ -2609,7 +2610,7 @@ namespace Ets.Service.Provider.Pay
                 LogHelper.LogWriter("=============微信支付：");
 
                 //所属产品_主订单号_子订单号_随机数
-                string orderCombinationNo = string.Concat(req.orderId, "_", orderChildModel.Id, "_" + Helper.GenCode(6));
+                string orderCombinationNo = string.Concat(req.orderId, "_", orderChildModel.Id, "_" + Helper.GenCode(6), "_");
                 decimal zfAmount = 0;
                 if ((bool)olModel.IsPay)//已支付，加小费
                 {
@@ -2621,7 +2622,7 @@ namespace Ets.Service.Provider.Pay
                 }
 
                 //ResultModel<PayResultModel> payResult = CreateWxSSPayOrder(orderCombinationNo, zfAmount, req.orderId, Helper.GenCode(16));
-                long xfId=0;
+                long xfId = 0;
                 var redis = new RedisCache();
                 string key = string.Concat(req.orderId, orderChildModel.Id);
                 bool isExist = redis.Get<bool>(key);
@@ -2640,7 +2641,7 @@ namespace Ets.Service.Provider.Pay
                         otcModel.OriginalOrderNo = "";
                         otcModel.PayType = 2;//微信
                         otcModel.OutTradeNo = orderCombinationNo;
-                        xfId= orderTipCostDao.Insert(otcModel);
+                        xfId = orderTipCostDao.Insert(otcModel);
                     }
                     else
                     {
@@ -2655,7 +2656,7 @@ namespace Ets.Service.Provider.Pay
                         otcModel.OriginalOrderNo = "";
                         otcModel.PayType = 2;//微信
                         otcModel.OutTradeNo = orderCombinationNo;
-                        xfId= orderTipCostDao.Insert(otcModel);
+                        xfId = orderTipCostDao.Insert(otcModel);
                     }
                     redis.Set(key, true, new TimeSpan(0, 0, 15));
                 }
@@ -2770,11 +2771,19 @@ namespace Ets.Service.Provider.Pay
                 #region 回调完成状态
                 if (notify.trade_status == "TRADE_SUCCESS" || notify.trade_status == "TRADE_FINISHED")
                 {
-                    if (notify.out_trade_no.Split('_').Length == 4)
-                    {
-                        string id = notify.out_trade_no.Split('_')[3];
 
-                        if (orderTipCostDao.CheckId(id))
+                    var arrOutTrade = notify.out_trade_no.Split('_');
+                    int tmpLength = arrOutTrade.Length;
+                    int orderCostId = 0;
+                    if (tmpLength == 4)
+                    {
+                        orderCostId = ParseHelper.ToInt(notify.out_trade_no.Split('_')[3]);
+
+                        if (orderCostId <= 0)
+                        {
+                            return "fail";
+                        }
+                        if (orderTipCostDao.CheckId(orderCostId))
                         {
                             //如果存在就退出，这里写的很扯，因为支付宝要的是success不带双引号.
                             //但WEBAPI直接返回时带引号，所以现在要去库里查一次。
@@ -2782,8 +2791,16 @@ namespace Ets.Service.Provider.Pay
                             return "success";
                         }
                     }
-
-
+                    else if (tmpLength == 3)
+                    {
+                        if (orderTipCostDao.CheckOutTradeNo(notify.trade_no))
+                        {
+                            //如果存在就退出，这里写的很扯，因为支付宝要的是success不带双引号.
+                            //但WEBAPI直接返回时带引号，所以现在要去库里查一次。
+                            //回头找到原因一定要改
+                            return "success";
+                        }
+                    }
                     ReturnZhifubo(notify);
 
                 }
@@ -2802,6 +2819,13 @@ namespace Ets.Service.Provider.Pay
         {
             try
             {
+                var arrOutTrade = notify.out_trade_no.Split('_');
+                int tmpLength = arrOutTrade.Length;
+                int orderCostId = 0;
+                if (arrOutTrade.Length == 4)
+                {
+                    orderCostId = ParseHelper.ToInt(arrOutTrade[3]);
+                }
                 string out_trade_no = notify.out_trade_no;
                 if (string.IsNullOrEmpty(out_trade_no) || !out_trade_no.Contains("_"))
                 {
@@ -2812,16 +2836,17 @@ namespace Ets.Service.Provider.Pay
 
                 int orderId = ParseHelper.ToInt(out_trade_no.Split('_')[0]);//主订单号      
                 int orderChildId = ParseHelper.ToInt(out_trade_no.Split('_')[1]);//子订单号                
-                OrderListModel olList = orderDao.GetByOrderIdWrite(orderId);//写串
-                if (olList == null)
-                {
-                    return false;
-                }
 
                 if (orderId <= 0 || orderChildId <= 0)
                 {
                     string fail = string.Concat("错误啦orderId：", orderId, ",orderChildId:", orderChildId);
                     LogHelper.LogWriter(fail);
+                    return false;
+                }
+
+                OrderListModel olList = orderDao.GetByOrderIdWrite(orderId);//写串
+                if (olList == null)
+                {
                     return false;
                 }
 
@@ -2842,7 +2867,7 @@ namespace Ets.Service.Provider.Pay
                             Operator = businessModel.Name,
                             WithwardId = orderId,
                             RelationNo = olList.OrderNo,
-                            Remark = "小费" + notify.total_fee+"元",
+                            Remark = "小费" + notify.total_fee + "元",
                             IsRetainValue = 1
                         });
 
@@ -2852,7 +2877,17 @@ namespace Ets.Service.Provider.Pay
                         otcModel.PayType = 1;//支付宝
                         otcModel.OutTradeNo = out_trade_no;
                         otcModel.OriginalOrderNo = notify.trade_no;
-                        orderTipCostDao.UpdateByOutTradeNo(otcModel);
+                        if (orderCostId > 0)
+                        {
+                            //新模式
+                            otcModel.Id = orderCostId;
+                            orderTipCostDao.UpdateByOutTradeNoNew(otcModel);
+                        }
+                        else
+                        {
+                            orderTipCostDao.UpdateByOutTradeNo(otcModel);
+                        }
+
 
                         //更新总的小费
                         orderDao.UpdateTipAmount(orderId, notify.total_fee);
@@ -2862,13 +2897,13 @@ namespace Ets.Service.Provider.Pay
                     {
                         #region 未支付
                         //修改订单支付状态 订单状态
-                        orderDao.UpdateIsPay(orderId,1);
+                        orderDao.UpdateIsPay(orderId, 1);
                         //更新子订单状态 支付宝
                         orderChildDao.UpdateIsPay(orderChildId, 1);
 
                         decimal amountBSF = notify.total_fee;
                         //查询小费金额
-                        OrderTipCost selectOtCModel= orderTipCostDao.GetByOutTradeNo(1,out_trade_no);
+                        OrderTipCost selectOtCModel = orderTipCostDao.GetByOutTradeNo(1, out_trade_no);
                         decimal tipAmount = 0;
                         if (selectOtCModel != null && selectOtCModel.TipAmount != null)
                         {
@@ -2897,12 +2932,20 @@ namespace Ets.Service.Provider.Pay
                         otcModel.PayType = 1;//支付宝
                         otcModel.OutTradeNo = out_trade_no;
                         otcModel.OriginalOrderNo = notify.trade_no;
-                        orderTipCostDao.UpdateByOutTradeNo(otcModel);
+                        if (orderCostId > 0)
+                        {
+                            otcModel.Id = orderCostId;
+                            orderTipCostDao.UpdateByOutTradeNoNew(otcModel);
+                        }
+                        else
+                        {
+                            orderTipCostDao.UpdateByOutTradeNo(otcModel);
+                        }
                         #endregion
                     }
                     tran.Complete();
                 }
-                
+
                 // 更新短信通道 
                 Task.Factory.StartNew(() =>
                 {
@@ -2915,7 +2958,7 @@ namespace Ets.Service.Provider.Pay
                         string Content2 = "尊敬的E代送用户您好，您的订单收货码是：#验证码#";
                         Content2 = Content2.Replace("#验证码#", olList.Receivecode);
                         ETS.Sms.SendSmsHelper.SendSendSmsSaveLog(olList.Recevicephoneno, Content2, SystemConst.SMSSOURCE);
-                 
+
                         new OrderProvider().ShanSongPushOrderForJava(orderId, true);
                     }
                 });
@@ -2978,17 +3021,24 @@ namespace Ets.Service.Provider.Pay
             #region 回调完成状态
             if (notify.return_code == "SUCCESS")
             {
-                //if (orderTipCostDao.Check(notify.transaction_id) )
-                //{
-                //    //如果存在就退出，这里写的很扯，因为支付宝要的是success不带双引号.
-                //    //但WEBAPI直接返回时带引号，所以现在要去库里查一次。
-                //    //回头找到原因一定要改
-                //    return;
-                //}
-                if (notify.attach.Split('_').Length == 4)
+                int tmpLength = notify.attach.Split('_').Length;
+                if (tmpLength == 3)
                 {
-                    string id = notify.attach.Split('_')[3];
-                    if (orderTipCostDao.CheckId(id))
+                    //回调是旧的
+                    if (orderTipCostDao.Check(notify.transaction_id))
+                    {
+                        //如果存在就退出，这里写的很扯，因为支付宝要的是success不带双引号.
+                        //但WEBAPI直接返回时带引号，所以现在要去库里查一次。
+                        //回头找到原因一定要改
+                        return;
+                    }
+                }
+                else if (tmpLength == 4)
+                {
+                    //这里是新的
+                    int id = ParseHelper.ToInt(notify.attach.Split('_')[3]);
+
+                    if (id <= 0 || orderTipCostDao.CheckId(id))
                     {
                         return;
                     }
@@ -3003,6 +3053,11 @@ namespace Ets.Service.Provider.Pay
         }
 
 
+        /// <summary>
+        /// 闪送专用支付订单
+        /// </summary>
+        /// <param name="notify"></param>
+        /// <returns></returns>
         bool ReturnWx(ETS.Library.Pay.SSBWxPay.WxNotifyResultModel notify)
         {
             try
@@ -3017,19 +3072,29 @@ namespace Ets.Service.Provider.Pay
                 }
 
 
+                #region 由于新老版本共用，现又多了一个长度为四的子订单支付的ID，如果数量是四新模式，数量是三是旧模式
+
                 string attach = notify.attach;
-                int orderId = ParseHelper.ToInt(attach.Split('_')[0]);//主订单号      
-                int orderChildId = ParseHelper.ToInt(attach.Split('_')[1]);//子订单号
-                OrderListModel olList = orderDao.GetByOrderIdWrite(orderId);//写串
-                if (olList == null)
+                var arrAtta = attach.Split('_');
+                int tmpLength = arrAtta.Length;
+                int orderCostId = 0;
+                int orderId = ParseHelper.ToInt(arrAtta[0]);//主订单号      
+                int orderChildId = ParseHelper.ToInt(arrAtta[1]);//子订单号
+                if (tmpLength == 4)
                 {
-                    return false;
+                    orderCostId = ParseHelper.ToInt(arrAtta[3]);
                 }
+                #endregion
 
                 if (orderId <= 0 || orderChildId <= 0)
                 {
                     string fail = string.Concat("错误啦orderId：", orderId, ",orderChildId:", orderChildId);
                     LogHelper.LogWriter(fail);
+                    return false;
+                }
+                OrderListModel olList = orderDao.GetByOrderIdWrite(orderId);//写串
+                if (olList == null)
+                {
                     return false;
                 }
 
@@ -3050,8 +3115,8 @@ namespace Ets.Service.Provider.Pay
                             Operator = businessModel.Name,
                             WithwardId = orderId,
                             RelationNo = olList.OrderNo,
-                            Remark = "小费"+notify.total_fee+"元",
-                            IsRetainValue=1
+                            Remark = "小费" + notify.total_fee + "元",
+                            IsRetainValue = 1
                         });
 
                         //写订单小费
@@ -3060,7 +3125,16 @@ namespace Ets.Service.Provider.Pay
                         otcModel.PayType = 2;//微信
                         otcModel.OutTradeNo = attach;
                         otcModel.OriginalOrderNo = notify.transaction_id;
-                        orderTipCostDao.UpdateByOutTradeNo(otcModel);
+                        if (orderCostId > 0)
+                        {
+                            //新值
+                            otcModel.Id = orderCostId;
+                            orderTipCostDao.UpdateByOutTradeNoNew(otcModel);
+                        }
+                        else
+                        {
+                            orderTipCostDao.UpdateByOutTradeNo(otcModel);
+                        }
                         //更新总的小费
                         orderDao.UpdateTipAmount(orderId, ParseHelper.ToDecimal(notify.total_fee));
                         #endregion
@@ -3069,13 +3143,21 @@ namespace Ets.Service.Provider.Pay
                     {
                         #region 未支付
                         //修改订单支付状态 订单状态
-                        orderDao.UpdateIsPay(orderId,2);
+                        orderDao.UpdateIsPay(orderId, 2);
                         //更新子订单状态 微信
                         orderChildDao.UpdateIsPay(orderChildId, 2);
 
                         decimal amountBSF = ParseHelper.ToDecimal(notify.total_fee);
                         //查询小费金额
-                        OrderTipCost selectOtCModel = orderTipCostDao.GetByOutTradeNo(1, attach);
+                        OrderTipCost selectOtCModel = null;
+                        if (orderCostId > 0)
+                        {
+                            selectOtCModel = orderTipCostDao.GetByOutTradeNo(1, orderCostId);
+                        }
+                        else
+                        {
+                            selectOtCModel = orderTipCostDao.GetByOutTradeNo(1, attach);
+                        }
                         decimal tipAmount = 0;
                         if (selectOtCModel != null && selectOtCModel.TipAmount != null)
                         {
@@ -3103,7 +3185,15 @@ namespace Ets.Service.Provider.Pay
                         otcModel.PayType = 2;//微信
                         otcModel.OutTradeNo = attach;
                         otcModel.OriginalOrderNo = notify.transaction_id;
-                        orderTipCostDao.UpdateByOutTradeNo(otcModel);
+                        if (orderCostId > 0)
+                        {//新模式
+                            otcModel.Id = orderCostId;
+                            orderTipCostDao.UpdateByOutTradeNoNew(otcModel);
+                        }
+                        else
+                        {
+                            orderTipCostDao.UpdateByOutTradeNo(otcModel);
+                        }
 
                         #endregion
                     }
@@ -3123,7 +3213,7 @@ namespace Ets.Service.Provider.Pay
                         Content2 = Content2.Replace("#验证码#", olList.Receivecode);
                         ETS.Sms.SendSmsHelper.SendSmsSaveLogNew(olList.Recevicephoneno, Content2, SystemConst.SMSSOURCE);
 
-                   
+
                         new OrderProvider().ShanSongPushOrderForJava(orderId, true);
                     }
                 });
