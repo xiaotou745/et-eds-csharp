@@ -64,12 +64,26 @@ IsCompleteTimely=@IsCompleteTimely
 where orderid=(
 select id from dbo.[order] where OrderNo=@OrderNo
 )";
+            const string updateSqlById = @"
+update OrderOther 
+set CompleteLongitude=@CompleteLongitude,CompleteLatitude=@CompleteLatitude,
+IsCompleteTimely=@IsCompleteTimely
+where orderid=@orderId
+)";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@CompleteLongitude", parModel.Longitude);
             dbParameters.AddWithValue("@CompleteLatitude", parModel.Latitude);
             dbParameters.AddWithValue("@IsCompleteTimely", parModel.IsTimely);
-            dbParameters.AddWithValue("@orderNo", parModel.orderNo);
-            DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+            if (parModel.orderId > 0)
+            {
+                dbParameters.AddWithValue("@orderId", parModel.orderId);
+                DbHelper.ExecuteNonQuery(SuperMan_Write, updateSqlById, dbParameters);
+            }
+            else {
+                dbParameters.AddWithValue("@orderNo", parModel.orderNo);
+                DbHelper.ExecuteNonQuery(SuperMan_Write, updateSql, dbParameters);
+            }
+
         }
 
         /// <summary>
