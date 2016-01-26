@@ -51,8 +51,13 @@ namespace ETS.Library.ActiveMq
         }
         public static void AsynSendMessage(string messageStr)
         {
-            ThreadPool.SetMaxThreads(5, 5);
-            ThreadPool.QueueUserWorkItem(new WaitCallback(ActiveMqHelper.SendMessage), messageStr);
+             Task.Factory.StartNew(() =>
+                 {
+                     SendMessage(messageStr);
+                     //用线程池的时候，线上会cpu和内存暴涨，原因未知
+                     //ThreadPool.SetMaxThreads(5, 5);
+                     //ThreadPool.QueueUserWorkItem(new WaitCallback(ActiveMqHelper.SendMessage), messageStr);
+                 });
         }
       
     }
