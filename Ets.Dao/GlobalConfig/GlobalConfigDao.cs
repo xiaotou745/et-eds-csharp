@@ -55,6 +55,29 @@ namespace Ets.Dao.GlobalConfig
                 return model;
         }
 
+        public static GlobalConfigModel GetGlobalConfig(int GroupId)
+        {
+            var redis = new ETS.NoSql.RedisCache.RedisCachePublic();
+
+            GlobalConfigModel model = new GlobalConfigModel();
+            PropertyInfo[] pi = model.GetType().GetProperties();
+            for (int i = 0; i < pi.Length; i++)
+            {
+                string propertyName = pi[i].Name;
+                if (propertyName == "Item" ||
+                    propertyName == "StrategyId" || propertyName == "GroupId"
+                    || propertyName == "GroupName" || propertyName == "OptName")
+                    continue;            
+
+                string tableValue = new GlobalConfigDao().GetSubsidies(propertyName, GroupId);
+                if (!string.IsNullOrEmpty(tableValue))
+                {
+                    pi[i].SetValue(model, tableValue, null);                  
+                }
+            }
+
+            return model;
+        }
         /// <summary>
         /// 获取全局变量表数据，此方法需要做优化，由于时间紧做了临时的负值
         /// 窦海超
