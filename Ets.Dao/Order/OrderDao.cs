@@ -1767,6 +1767,7 @@ select top 1
         o.OrderCommission ,
         o.businessId ,
         b.GroupId ,
+        isnull(b.Name,'') as BusinessName,
         o.PickupCode ,
         o.OrderCount,
         c.TrueName ClienterName,

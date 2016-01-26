@@ -2575,12 +2575,12 @@ namespace Ets.Service.Provider.Pay
                         otcModel.OrderId = req.orderId;
                         otcModel.Amount = req.tipAmount;
                         otcModel.TipAmount = req.tipAmount;
-                        otcModel.CreateName = olModel.businessId.ToString();
+                        otcModel.CreateName = olModel.BusinessName;
                         otcModel.CreateTime = DateTime.Now;
                         otcModel.PayStates = 0;//未支付
                         otcModel.OriginalOrderNo = "";
                         otcModel.PayType = 1;//支付宝
-                        otcModel.OutTradeNo = orderCombinationNo;
+                        otcModel.OutTradeNo = "";
                         xfId = orderTipCostDao.Insert(otcModel);
                     }
                     else
@@ -2590,12 +2590,12 @@ namespace Ets.Service.Provider.Pay
                         otcModel.OrderId = req.orderId;
                         otcModel.Amount = orderChildModel.TotalPrice + olModel.TipAmount;
                         otcModel.TipAmount = olModel.TipAmount;
-                        otcModel.CreateName = olModel.businessId.ToString();
+                        otcModel.CreateName = olModel.BusinessName;
                         otcModel.CreateTime = DateTime.Now;
                         otcModel.PayStates = 0;//未支付
                         otcModel.OriginalOrderNo = "";
                         otcModel.PayType = 1;//支付宝
-                        otcModel.OutTradeNo = orderCombinationNo;
+                        otcModel.OutTradeNo = "";
                         xfId = orderTipCostDao.Insert(otcModel);
                     }
                     redis.Set(key, true, new TimeSpan(0, 0, 15));
@@ -2635,12 +2635,12 @@ namespace Ets.Service.Provider.Pay
                         otcModel.OrderId = req.orderId;
                         otcModel.Amount = req.tipAmount;
                         otcModel.TipAmount = req.tipAmount;
-                        otcModel.CreateName = olModel.businessId.ToString();
+                        otcModel.CreateName = olModel.BusinessName;
                         otcModel.CreateTime = DateTime.Now;
                         otcModel.PayStates = 0;//未支付
                         otcModel.OriginalOrderNo = "";
                         otcModel.PayType = 2;//微信
-                        otcModel.OutTradeNo = orderCombinationNo;
+                        otcModel.OutTradeNo = "";
                         xfId = orderTipCostDao.Insert(otcModel);
                     }
                     else
@@ -2650,12 +2650,12 @@ namespace Ets.Service.Provider.Pay
                         otcModel.OrderId = req.orderId;
                         otcModel.Amount = orderChildModel.TotalPrice + olModel.TipAmount;
                         otcModel.TipAmount = olModel.TipAmount;
-                        otcModel.CreateName = olModel.businessId.ToString();
+                        otcModel.CreateName = olModel.BusinessName;
                         otcModel.CreateTime = DateTime.Now;
                         otcModel.PayStates = 0;//未支付
                         otcModel.OriginalOrderNo = "";
                         otcModel.PayType = 2;//微信
-                        otcModel.OutTradeNo = orderCombinationNo;
+                        otcModel.OutTradeNo = "";
                         xfId = orderTipCostDao.Insert(otcModel);
                     }
                     redis.Set(key, true, new TimeSpan(0, 0, 15));
@@ -2793,7 +2793,7 @@ namespace Ets.Service.Provider.Pay
                     }
                     else if (tmpLength == 3)
                     {
-                        if (orderTipCostDao.CheckOutTradeNo(notify.trade_no))
+                        if (orderTipCostDao.Check(notify.trade_no))
                         {
                             //如果存在就退出，这里写的很扯，因为支付宝要的是success不带双引号.
                             //但WEBAPI直接返回时带引号，所以现在要去库里查一次。
