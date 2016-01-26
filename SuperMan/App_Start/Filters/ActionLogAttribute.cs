@@ -30,40 +30,40 @@ namespace SuperMan.App_Start.Filters
         ///
         /// </summary>
         /// <param name="actionContext"></param>
-        public async override void OnActionExecuting(ActionExecutingContext actionContext)
+        public override void OnActionExecuting(ActionExecutingContext actionContext)
         {
             //try
             //{
-                string responseData = HttpContext.Current.Request.QueryString.AllKeys.Aggregate("", (current, key) => current + key + "=" + HttpContext.Current.Request.QueryString[key] + "&");
-                responseData = HttpContext.Current.Request.Form.AllKeys.Aggregate(responseData, (current, key) => current + key + "=" + HttpContext.Current.Request.Form[key] + "&");
+            string responseData = HttpContext.Current.Request.QueryString.AllKeys.Aggregate("", (current, key) => current + key + "=" + HttpContext.Current.Request.QueryString[key] + "&");
+            responseData = HttpContext.Current.Request.Form.AllKeys.Aggregate(responseData, (current, key) => current + key + "=" + HttpContext.Current.Request.Form[key] + "&");
 
-                var ips = new List<string>();
-                ips.Add(SystemHelper.GetLocalIP());
-                ips.Add(SystemHelper.GetGateway());
-                var log = new ActionLog()
-                {
-                    userID = UserContext.Current.Id,
-                    userName = UserContext.Current.Name,
-                    requestType = actionContext.HttpContext.Request.IsAjaxRequest() ? 1 : 0,
-                    clientIp = getClientIp(),
-                    sourceSys = "superman",
-                    requestUrl = actionContext.HttpContext.Request.Url.AbsoluteUri.IndexOf('?') > 0 ?
-                    actionContext.HttpContext.Request.Url.AbsoluteUri.Substring(0, actionContext.HttpContext.Request.Url.AbsoluteUri.IndexOf('?')) :
-                    actionContext.HttpContext.Request.Url.AbsoluteUri,
-                    param = responseData,
-                    decryptMsg = responseData,
-                    contentType = actionContext.HttpContext.Request.ContentType ?? "",
-                    requestMethod = actionContext.HttpContext.Request.HttpMethod,
-                    methodName = actionContext.Controller.ControllerContext.Controller + "." + actionContext.ActionDescriptor.ActionName,
-                    requestTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-                    appServer = JsonHelper.JsonConvertToString(ips),
-                    header = JsonHelper.JsonConvertToString(actionContext.HttpContext.Request.Headers)
-                };
+            var ips = new List<string>();
+            ips.Add(SystemHelper.GetLocalIP());
+            //ips.Add(SystemHelper.GetGateway());
+            var log = new ActionLog()
+            {
+                userID = UserContext.Current.Id==0?-1:UserContext.Current.Id,
+                userName = UserContext.Current.Name == null ? "" : UserContext.Current.Name,
+                requestType = actionContext.HttpContext.Request.IsAjaxRequest() ? 1 : 0,
+                clientIp = getClientIp(),
+                sourceSys = "superman",
+                requestUrl = actionContext.HttpContext.Request.Url.AbsoluteUri.IndexOf('?') > 0 ?
+                actionContext.HttpContext.Request.Url.AbsoluteUri.Substring(0, actionContext.HttpContext.Request.Url.AbsoluteUri.IndexOf('?')) :
+                actionContext.HttpContext.Request.Url.AbsoluteUri,
+                param = responseData,
+                decryptMsg = responseData,
+                contentType = actionContext.HttpContext.Request.ContentType ?? "",
+                requestMethod = actionContext.HttpContext.Request.HttpMethod,
+                methodName = actionContext.Controller.ControllerContext.Controller + "." + actionContext.ActionDescriptor.ActionName,
+                requestTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                appServer = JsonHelper.JsonConvertToString(ips),
+                header = JsonHelper.JsonConvertToString(actionContext.HttpContext.Request.Headers)
+            };
 
-                actionContext.Controller.ViewData["actionlog"] = log;
-                Stopwatch stop = new Stopwatch();
-                actionContext.Controller.ViewData["actionlogTime"] = stop;
-                stop.Start();
+            actionContext.Controller.ViewData["actionlog"] = log;
+            Stopwatch stop = new Stopwatch();
+            actionContext.Controller.ViewData["actionlogTime"] = stop;
+            stop.Start();
             //}
             //catch (Exception ex) {
             //    System.Console.WriteLine(ex.Message);
@@ -89,7 +89,6 @@ namespace SuperMan.App_Start.Filters
                     log.exception = actionContext.Exception.Message;
                     log.stackTrace = actionContext.Exception.StackTrace;
                 }
-
                 log.requestEndTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                 var stop = actionContext.Controller.ViewData["actionlogTime"] as Stopwatch;
                 stop.Stop();
@@ -99,7 +98,8 @@ namespace SuperMan.App_Start.Filters
                 //调用线程池，异步发送mq消息
                 ActiveMqHelper.AsynSendMessage(JsonHelper.JsonConvertToString(log));
             //}
-            //catch (Exception ex) {
+            //catch (Exception ex)
+            //{
             //    System.Console.WriteLine(ex.Message);
             //}
         }
