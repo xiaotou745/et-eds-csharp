@@ -26,7 +26,7 @@ namespace Ets.Dao.Common
         public AppVerionModel VersionCheck(VersionCheckModel vcmodel)
         {
             const string querysql = @"
-SELECT TOP 1 [Version],IsMust,UpdateUrl,[Message] FROM dbo.AppVersion 
+SELECT TOP 1 Id,[Version],IsMust,UpdateUrl,[Message] FROM dbo.AppVersion 
 WHERE  PubStatus<>2 and [PlatForm]=@PlatForm AND UserType=@UserType and TimingDate<getdate() and AppSource=@AppSource
 ORDER BY [Version] DESC";
             IDbParameters parm = DbHelper.CreateDbParameters();
