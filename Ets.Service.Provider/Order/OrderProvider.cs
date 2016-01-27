@@ -82,6 +82,57 @@ namespace Ets.Service.Provider.Order
         OrderTipCostDao orderTipCostDao = new OrderTipCostDao();
         AliPayApi aliPayApi = new AliPayApi();
 
+        #region 单元测试
+        public ResultModel<object> RefundTest(OrderTipCost otcModel)
+        {
+            if (otcModel.PayType == 1)
+            {
+                AlipayTradeQueryResponse response = aliPayApi.Query(otcModel);
+                //验证
+                if (response.Code == "40004")
+                {
+                    return ResultModel<object>.Conclude(OrderApiStatusType.OrderNotExist);
+                }
+
+                AlipayTradeRefundResponse alipayTradeRefundResponse = aliPayApi.Refund(otcModel);
+            }
+            if (otcModel.PayType == 2)
+            {
+                ETS.Library.Pay.SSBWxPay.NativePay nativePay = new ETS.Library.Pay.SSBWxPay.NativePay();
+
+                //验证
+                ETS.Library.Pay.SSBWxPay.WxPayData wxPayData = nativePay.OrderQuery(otcModel.OutTradeNo);
+                //不存在
+                if (wxPayData.GetValue("return_code").ToString().ToUpper() == "SUCCESS" &&
+                  wxPayData.GetValue("result_code").ToString().ToUpper() == "FAIL"
+                  )
+                {
+                    return ResultModel<object>.Conclude(OrderApiStatusType.OrderNotExist);
+                }
+                //已关闭
+                if (wxPayData.GetValue("trade_state") != null && wxPayData.GetValue("trade_state").ToString().ToUpper() == "CLOSED")
+                {
+                    return ResultModel<object>.Conclude(OrderApiStatusType.OrderTipCostPayCLOSED);
+                }
+                //未付款
+                if (wxPayData.GetValue("trade_state") != null && wxPayData.GetValue("trade_state").ToString().ToUpper() == "NOTPAY")
+                {
+                    return ResultModel<object>.Conclude(OrderApiStatusType.OrderTipCostPayNOTPAY);
+                }
+                //已退款
+                if (wxPayData.GetValue("trade_state") != null && wxPayData.GetValue("trade_state").ToString().ToUpper() == "REFUND")
+                {
+                    return ResultModel<object>.Conclude(OrderApiStatusType.OrderTipCostPaySREFUND);
+                }
+
+                bool refundState = nativePay.Refund(otcModel.OutTradeNo, otcModel.OriginalOrderNo, Convert.ToInt32(otcModel.Amount * 100), Convert.ToInt32(otcModel.Amount * 100), otcModel.CreateName);
+            }
+
+            return null;
+        }
+
+        #endregion
+
         /// <summary>
         /// 获取订单
         /// </summary>
@@ -3082,7 +3133,7 @@ namespace Ets.Service.Provider.Order
             }
             return true;
         }
-
+   
 
         //#region 用户自定义方法闪送  支付宝
         ///// <summary>

@@ -343,6 +343,8 @@ namespace Ets.Service.IProvider.Order
        /// <returns></returns>
         ResultModel<object> SSCancelOrder(SSOrderCancelPM pm);
 
+        ResultModel<object> RefundTest(OrderTipCost otcModel);
+
         IList<NonJoinWithdrawModel> GetSSCancelOrder(double hour);
 
         ClienterOrderModel GetByClienterId(int clienterId, int orderFrom);

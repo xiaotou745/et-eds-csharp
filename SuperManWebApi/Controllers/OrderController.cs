@@ -403,8 +403,12 @@ namespace SuperManWebApi.Controllers
 
             return iOrderProvider.SSCancelOrder(parModel);
         }
-        
 
+        [HttpPost]
+        public ResultModel<object> RefundTest(OrderTipCost otcModel)
+        {
+            return iOrderProvider.RefundTest(otcModel);
+        }
         #region 用户自定义方法
         /// <summary>
         /// 订单合法性验证
