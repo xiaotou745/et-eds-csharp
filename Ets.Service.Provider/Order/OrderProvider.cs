@@ -825,7 +825,7 @@ namespace Ets.Service.Provider.Order
                     redis.Set(string.Format(ETS.Const.RedissCacheKey.OtherOrderInfo, paramodel.store_info.group.ToString(),
                         paramodel.order_id.ToString()), orderNo, DateTime.Now.AddDays(30));  //先加入缓存，相当于加锁
                     int orderId = orderDao.CreateToSql(paramodel);  //插入订单返回订单id
-                    orderDao.CreateToSqlAddOrderOther(paramodel.businessId, orderId); //操作插入rderOther表
+                    orderDao.CreateToSqlAddOrderOther(paramodel, orderId); //操作插入rderOther表
                     orderDao.CreateToSqlAddOrderDetail(paramodel, orderNo); //操作插入OrderDetail表
                     orderDao.CreateToSqlAddOrderChild(paramodel, orderId); //插入订单子表
                     InsertOrderOptRecord(new order()
@@ -853,6 +853,41 @@ namespace Ets.Service.Provider.Order
 
             return string.IsNullOrWhiteSpace(orderNo) ? ResultModel<object>.Conclude(OrderApiStatusType.ParaError) :
              ResultModel<object>.Conclude(OrderApiStatusType.ThirdSuccess, new { order_no = orderNo });
+        }
+
+
+        /// <summary>
+        /// 取消订单第三方对接 物流订单接收接口  
+        /// 胡灵波
+        /// 2016年2月3日09:59:47
+        /// </summary>
+        /// <param name="paramodel">参数实体</param>
+        /// <returns>订单号码</returns>
+        public ResultModel<object> Cancel(CancelPM_OpenApi paramodel)
+        {
+            if (string.IsNullOrEmpty(paramodel.order_id))  
+            {
+                return ResultModel<object>.Conclude(OrderApiStatusType.ParaError);
+            }           
+            
+            OrderListModel olModel=  orderDao.GetOrderByOriginalOrderNo(paramodel.order_id);
+            if(olModel==null)
+                return ResultModel<object>.Conclude(OrderApiStatusType.OrderNotExist);
+            if(olModel.Status==1)
+                return ResultModel<object>.Conclude(OrderApiStatusType.OrderState1);
+            if (olModel.Status == 2)
+                return ResultModel<object>.Conclude(OrderApiStatusType.OrderState2);
+            if (olModel.Status == 3)
+                return ResultModel<object>.Conclude(OrderApiStatusType.OrderState3);
+            if (olModel.Status == 4)
+                return ResultModel<object>.Conclude(OrderApiStatusType.OrderState4);
+
+            CancelOrderModel comModel = new CancelOrderModel() { OrderNo = olModel.OrderNo, OrderStatus = OrderStatus.Status3.GetHashCode(), Remark = "第三方商户取消", Status = OrderStatus.Status3.GetHashCode(), OrderCancelFrom = SuperPlatform.ThirdParty.GetHashCode(), OrderCancelName = olModel.BusinessName };            
+            int result = orderDao.CancelOrderStatus(comModel);
+            if(result<=0)
+                return ResultModel<object>.Conclude(OrderApiStatusType.Fail);
+
+            return ResultModel<object>.Conclude(OrderApiStatusType.ThirdSuccess, new { order_no = olModel.OrderNo });
         }
 
         /// <summary>

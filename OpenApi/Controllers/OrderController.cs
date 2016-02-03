@@ -75,6 +75,23 @@ namespace OpenApi.Controllers
             return result;
         }
 
+        // POST: Order Create   paramodel 固定 必须是 paramodel  
+        /// <summary>
+        /// 物流取消订单接口 
+        /// 胡灵波
+        /// 2016年2月3日10:03:12
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [SignOpenApi]
+        [OpenApiActionError]
+        public ResultModel<object> Cancel(ParaModel<CancelPM_OpenApi> paramodel)
+        {     
+            var result = new OrderProvider().Cancel(paramodel.fields);
+
+            return result;
+        }
+
         // POST: Order OrderDetail   paramodel 固定 必须是 paramodel  
         /// <summary>
         /// 查看订单详情接口  add by caoheyang 20150325

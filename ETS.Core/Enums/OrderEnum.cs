@@ -163,7 +163,24 @@ namespace ETS.Enums
         /// 支付取消错误
         /// </summary>
         [DisplayText("支付取消错误")]
-        OrderTipCostPayErr = 10013,       
+        OrderTipCostPayErr = 10013,
+
+
+        /// <summary>
+        /// 订单已完成
+        /// </summary>
+        [DisplayText("订单已完成")]
+        OrderState1 = 10014,
+        /// <summary>
+        /// 订单已接单
+        /// </summary>
+        [DisplayText("订单已接单")]
+        OrderState2 = 10015,
+        /// <summary>
+        /// 订单已取货
+        /// </summary>
+        [DisplayText("订单已取货")]
+        OrderState4 = 10015,
 
         
         /// <summary>

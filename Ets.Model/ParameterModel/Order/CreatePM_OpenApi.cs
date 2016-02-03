@@ -171,6 +171,11 @@ namespace Ets.Model.ParameterModel.Order
         /// 应退商家金额
         /// </summary>
         public decimal BusinessReceivable { get; set; }
+
+        /// <summary>
+        /// 回调Url
+        /// </summary>
+        public string ReturnUrl { get; set; }
         
     }
 

@@ -437,5 +437,13 @@ namespace Ets.Model.DataModel.Order
        public string Pubphoneno { get; set; }
         public string Recevicephoneno { get; set; }
 
-        public string Receivecode { get; set; }    }
+        public string Receivecode { get; set; }
+
+        /// <summary>
+        /// 回调Url
+        /// </summary>
+
+        public string ReturnUrl { get; set; }  
+    
+    }
 }

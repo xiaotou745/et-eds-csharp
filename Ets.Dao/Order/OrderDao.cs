@@ -423,16 +423,17 @@ values( @OrderId,  @ChildId,@TotalPrice,@GoodPrice,@DeliveryPrice,@CreateBy,
         /// <param name="businessId">商家id</param>
         /// <param name="orderId">E代送平台内的订单id</param>
         /// <returns></returns>
-        public int CreateToSqlAddOrderOther(int businessId, int orderId)
+        public int CreateToSqlAddOrderOther(CreatePM_OpenApi paramodel, int orderId)
         {
             const string insertOtherSql = @"
-insert into OrderOther(OrderId,NeedUploadCount,HadUploadCount,PubLongitude,PubLatitude,IsAllowCashPay)
-select @OrderId,1,0,b.Longitude,b.Latitude,b.IsAllowCashPay 
+insert into OrderOther(OrderId,NeedUploadCount,HadUploadCount,PubLongitude,PubLatitude,IsAllowCashPay,ReturnUrl)
+select @OrderId,1,0,b.Longitude,b.Latitude,b.IsAllowCashPay,@ReturnUrl 
 from dbo.business as b where b.Id=@BusinessId
 select @@IDENTITY ";
             IDbParameters dbOtherParameters = DbHelper.CreateDbParameters();
             dbOtherParameters.AddWithValue("@OrderId", orderId); //商户ID
-            dbOtherParameters.AddWithValue("@BusinessId", businessId);
+            dbOtherParameters.AddWithValue("@BusinessId", paramodel.businessId);
+            dbOtherParameters.AddWithValue("@ReturnUrl", paramodel.ReturnUrl);
             return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertOtherSql, dbOtherParameters));
         }
 
@@ -789,7 +790,8 @@ where  Id=@Id ";
                                         ,o.BusinessReceivable
                                         ,o.SettleMoney
                                         ,o.FinishAll
-                                        ,oo.ExpectedTakeTime 
+                                        ,oo.ExpectedTakeTime
+                                        ,oo.ReturnUrl
                                     FROM [order] o WITH ( NOLOCK )
                                     JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
                                     left JOIN clienter c WITH (NOLOCK) ON o.clienterId=c.Id
@@ -817,6 +819,105 @@ where  Id=@Id ";
 
         }
 
+        /// <summary>
+        /// 根据订单号查订单信息
+        /// 胡灵波
+        /// 2016年2月3日16:16:51
+        /// </summary>
+        /// <param name="orderNo"></param>
+        /// <returns></returns>
+        public OrderListModel GetOrderByOriginalOrderNo(string OriginalOrderNo)
+        {
+            #region 查询脚本
+            string sql = @"SELECT top 1 o.[Id]
+                                        ,o.[OrderNo]
+                                        ,o.[PickUpAddress]
+                                        ,o.PubDate
+                                        ,o.[ReceviceName]
+                                        ,o.[RecevicePhoneNo]
+                                        ,o.[ReceviceAddress]
+                                        ,o.[ActualDoneDate]
+                                        ,o.[IsPay]
+                                        ,o.[Amount]
+                                        ,o.[OrderCommission]
+                                        ,o.[DistribSubsidy]
+                                        ,o.[WebsiteSubsidy]
+                                        ,o.[Remark]
+                                        ,o.[Status]
+                                        ,o.[clienterId]
+                                        ,o.[businessId]
+                                        ,o.[ReceviceCity]
+                                        ,o.[ReceviceLongitude]
+                                        ,o.[ReceviceLatitude]
+                                        ,o.[OrderFrom]
+                                        ,o.[OriginalOrderId]
+                                        ,o.[OriginalOrderNo]
+                                        ,o.[Quantity]
+                                        ,o.[Weight]
+                                        ,o.[ReceiveProvince]
+                                        ,o.[ReceiveArea]
+                                        ,o.[ReceiveProvinceCode]
+                                        ,o.[ReceiveCityCode]
+                                        ,o.[ReceiveAreaCode]
+                                        ,o.[OrderType]
+                                        ,o.[KM]
+                                        ,o.[GuoJuQty]
+                                        ,o.[LuJuQty]
+                                        ,o.[SongCanDate]
+                                        ,o.[OrderCount]
+                                        ,o.[CommissionRate] 
+                                        ,o.[RealOrderCommission] 
+                                        ,b.[City] BusinessCity
+                                        ,b.Name BusinessName
+                                        ,b.PhoneNo BusinessPhoneNo
+                                        ,b.PhoneNo2 BusinessPhoneNo2
+                                        ,b.Address BusinessAddress
+                                        ,c.PhoneNo ClienterPhoneNo
+                                        ,c.TrueName ClienterTrueName
+                                        ,c.TrueName ClienterName
+                                        ,c.AccountBalance AccountBalance
+                                        ,b.GroupId
+                                        ,isnull(g.GroupName,'') as  GroupName
+                                        ,isnull(g.GroupName,'') as OrderFromName  
+                                        ,o.OriginalOrderNo
+                                        ,oo.NeedUploadCount
+                                        ,oo.HadUploadCount
+                                        ,oo.ReceiptPic
+                                        ,oo.IsNotRealOrder IsNotRealOrder
+                                        ,o.OtherCancelReason
+                                        ,o.OriginalOrderNo
+                                        ,ISNULL(o.MealsSettleMode,0) MealsSettleMode
+                                        ,ISNULL(oo.IsJoinWithdraw,0) IsJoinWithdraw
+                                        ,o.BusinessReceivable
+                                        ,o.SettleMoney
+                                        ,o.FinishAll
+                                        ,oo.ExpectedTakeTime 
+                                    FROM [order] o WITH ( NOLOCK )
+                                    left JOIN business b WITH ( NOLOCK ) ON b.Id = o.businessId
+                                    left JOIN clienter c WITH (NOLOCK) ON o.clienterId=c.Id
+                                    left JOIN OrderOther oo WITH (NOLOCK) ON oo.OrderId=o.Id
+                                    LEFT JOIN [group] g WITH ( NOLOCK ) ON g.Id = o.orderfrom
+                                    WHERE 1=1 ";
+            #endregion
+            IDbParameters parm = DbHelper.CreateDbParameters();
+            if (!string.IsNullOrWhiteSpace(OriginalOrderNo))
+            {
+                sql += " AND o.OriginalOrderNo=@OriginalOrderNo";
+                parm.Add("@OriginalOrderNo", SqlDbType.NVarChar);
+                parm.SetValue("@OriginalOrderNo", OriginalOrderNo);
+            }
+            var dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, sql, parm));
+            var list = ConvertDataTableList<OrderListModel>(dt);
+            if (list != null && list.Count > 0)
+            {
+                return list[0];
+            }
+            else
+            {
+                return null;
+            }
+
+        }
         public OrderListModel GetOrderByIdWithNolock(int id)
         {
             #region 查询脚本
