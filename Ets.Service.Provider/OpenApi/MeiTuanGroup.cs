@@ -404,7 +404,7 @@ namespace Ets.Service.Provider.OpenApi
                     redis.Set(string.Format(RedissCacheKey.OtherOrderInfo, paramodel.orderfrom.ToString(),
                         paramodel.order_id.ToString()), orderNo, DateTime.Now.AddDays(30));  //先加入缓存，相当于加锁
                     int orderId = orderDao.CreateToSql(paramodel);  //插入订单返回订单id
-                    orderDao.CreateToSqlAddOrderOther(paramodel.businessId, orderId); //操作插入OrderOther表
+                    orderDao.CreateToSqlAddOrderOther(paramodel, orderId); //操作插入OrderOther表
                     orderDao.CreateToSqlAddOrderDetail(paramodel, orderNo); //操作插入OrderDetail表
                     orderDao.CreateToSqlAddOrderChild(paramodel, orderId); //插入订单子表
                     tran.Complete();
