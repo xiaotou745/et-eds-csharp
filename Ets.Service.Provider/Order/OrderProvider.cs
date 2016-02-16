@@ -882,7 +882,7 @@ namespace Ets.Service.Provider.Order
             if (olModel.Status == 4)
                 return ResultModel<object>.Conclude(OrderApiStatusType.OrderState4);
 
-            CancelOrderModel comModel = new CancelOrderModel() { OrderNo = olModel.OrderNo, OrderStatus = OrderStatus.Status3.GetHashCode(), Remark = "第三方商户取消", Status = OrderStatus.Status3.GetHashCode(), OrderCancelFrom = SuperPlatform.ThirdParty.GetHashCode(), OrderCancelName = olModel.BusinessName };            
+            CancelOrderModel comModel = new CancelOrderModel() { OrderNo = olModel.OrderNo, OrderStatus = OrderStatus.Status3.GetHashCode(), Remark = "第三方商户取消", Status = OrderStatus.Status0.GetHashCode(), OrderCancelFrom = SuperPlatform.ThirdParty.GetHashCode(), OrderCancelName = olModel.BusinessName };            
             int result = orderDao.CancelOrderStatus(comModel);
             if(result<=0)
                 return ResultModel<object>.Conclude(OrderApiStatusType.Fail);
@@ -900,7 +900,7 @@ namespace Ets.Service.Provider.Order
             //扣商户金额
             _businessDao.UpdateForWithdrawC(new UpdateForWithdrawPM()
             {
-                Id = Convert.ToInt32(order.businessId),
+                Id = Convert.ToInt32(order.businessId),      
                 Money = -order.SettleMoney
             });
 
