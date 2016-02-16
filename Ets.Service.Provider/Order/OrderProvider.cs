@@ -887,7 +887,7 @@ namespace Ets.Service.Provider.Order
             if(result<=0)
                 return ResultModel<object>.Conclude(OrderApiStatusType.Fail);
 
-            return ResultModel<object>.Conclude(OrderApiStatusType.ThirdSuccess, new { order_no = olModel.OrderNo });
+            return ResultModel<object>.Conclude(OrderApiStatusType.ThirdSuccess);
         }
 
         /// <summary>
