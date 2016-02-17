@@ -24,7 +24,7 @@ namespace Ets.Service.Provider.OpenApi
     /// <summary>
     /// 全时对接回调业务 add by caoheyang 20150326
     /// </summary>
-    public class FulltimeGroup : IGroupProviderOpenApi
+    public class FulltimeGroup : IGroupProviderOpenApi, IGroupSetCommissonOpenApi
     {
         public  string app_key = ConfigSettings.Instance.FulltimeAppkey;
         public const string v = "1.0";

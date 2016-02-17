@@ -758,7 +758,7 @@ namespace Ets.Service.Provider.Order
             #region 根据集团id为店铺设置外送费，结算比例等财务相关信息add by caoheyang 20150417
 
             //此处其实应该取数据库，但是由于发布订单时关于店铺的逻辑后期要改，暂时这么处理 
-            IGroupProviderOpenApi groupProvider = OpenApiGroupFactory.Create(paramodel.store_info.group);
+            IGroupSetCommissonOpenApi groupProvider = OpenApiGroupFactory.CreateSetCommission(paramodel.store_info.group);
             if (groupProvider != null)
             {
                 paramodel = groupProvider.SetCommissonInfo(paramodel);
@@ -990,7 +990,7 @@ namespace Ets.Service.Provider.Order
                 paramodel.fields.order_no = orderlistModel.OrderNo;
                 paramodel.fields.orderfrom = orderlistModel.OrderFrom;
                 paramodel.fields.OtherCancelReason = orderlistModel.OtherCancelReason;
-
+                paramodel.fields.ReturnUrl = orderlistModel.ReturnUrl;
                 string url = ConfigurationManager.AppSettings["AsyncStatus"];
                 string json = new HttpClient().PostAsJsonAsync(url, paramodel).Result.Content.ReadAsStringAsync().Result;
                 LogHelper.LogWriter("调用第三方接口同步状态:", new { url = url, paramodel = paramodel, result = json });

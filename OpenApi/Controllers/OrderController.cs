@@ -122,10 +122,11 @@ namespace OpenApi.Controllers
         [OpenApiActionError]
         public ResultModel<object> AsyncStatus(ParaModel<AsyncStatusPM_OpenApi> paramodel)
         {
-            //paramodel.group 签名信息中取到  即 那个集团调用的该接口
-            IGroupProviderOpenApi groupProvider = OpenApiGroupFactory.Create(paramodel.group);
+            IGroupProviderOpenApi groupProvider = OpenApiGroupFactory.Create(paramodel.group,paramodel.fields.ReturnUrl);
             if (groupProvider == null)
-                ResultModel<object>.Conclude(OrderApiStatusType.ThirdSuccess);  //无集团信息，不需要同步返回成功，实际应该不会该情况
+            {
+                return ResultModel<object>.Conclude(OrderApiStatusType.ThirdSuccess);  
+            }
             OrderApiStatusType statusType = groupProvider.AsyncStatus(paramodel);
             return ResultModel<object>.Conclude(statusType);
         }

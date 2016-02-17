@@ -24,7 +24,7 @@ namespace Ets.Service.Provider.OpenApi
     /// <summary>
     /// 万达集团对接回调业务 add by caoheyang 20150326
     /// </summary>
-    public class WanDaGroup : IGroupProviderOpenApi
+    public class WanDaGroup : IGroupProviderOpenApi, IGroupSetCommissonOpenApi
     {
         public  string app_key = ConfigSettings.Instance.WanDaAppkey;
         public  string app_secret = ConfigSettings.Instance.WanDaAppsecret;
