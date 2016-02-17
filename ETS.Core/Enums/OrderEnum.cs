@@ -180,7 +180,7 @@ namespace ETS.Enums
         /// 订单已取货
         /// </summary>
         [DisplayText("订单已取货")]
-        OrderState4 = 10015,
+        OrderState4 = 10016,
 
         
         /// <summary>

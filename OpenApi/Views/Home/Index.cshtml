@@ -5,6 +5,28 @@
 </div>
 <script src="~/Scripts/jquery-1.10.2.min.js"></script>
 <script>
+    
+
+        $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            url: '/order/Cancel',
+            data: {
+                "app_key": "fulltime",  //  appkey_wandajituan
+                "timestamp": "2015-03-11 20:42:33",
+                "v": "1.0",
+                "sign": "8C59077F13F16FAD71A9E9D053CF215F", //   A36FB267A47A1E412F3CDA7068261D47
+                "fields": {
+                    "order_id": "1040718966"
+                }
+            }
+
+    ,
+            success: function (data) {
+                console.log(data);
+            },
+            error: function () { }
+        });
 
 
 //    $.ajax({
