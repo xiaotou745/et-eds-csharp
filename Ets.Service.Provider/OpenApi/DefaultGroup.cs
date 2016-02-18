@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Formatting;
 using System.Text;
 using System.Threading.Tasks;
 using ETS.Const;
@@ -45,11 +46,12 @@ namespace Ets.Service.Provider.OpenApi
                     cancelreason = paramodel.fields.OtherCancelReason //订单取消原因
                 }
             };
-            string json = new HttpClient().PostAsJsonAsync(paramodel.fields.ReturnUrl, paramodel).Result.Content.ReadAsStringAsync().Result;
+
+            string json = new HttpClient().PostAsJsonAsync(paramodel.fields.ReturnUrl, p).Result.Content.ReadAsStringAsync().Result;
             int r = new OpenCallBackLogDao().Insert(new OpenCallBackLog()
              {
                  Url = paramodel.fields.ReturnUrl,
-                 OrderId = 0,
+                 OrderId = paramodel.fields.order_id,
                  OrderNo = paramodel.fields.order_no,
                  RequestBody = JsonHelper.ToJson(p),
                  ResponseBody = json,

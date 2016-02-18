@@ -196,5 +196,19 @@ namespace OpenApi.Controllers
             }
 
         }
+
+
+        /// <summary>
+        /// 取消订单   王旭丹
+        /// 茹化肖修改
+        /// 2015年8月26日13:12:41
+        /// </summary>
+        /// <param name="paramodel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public void test1(dynamic paramodel)
+        {
+            HttpContext.Current.Response.Write("success");
+        }
     }
 }

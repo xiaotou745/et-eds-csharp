@@ -991,6 +991,7 @@ namespace Ets.Service.Provider.Order
                 paramodel.fields.orderfrom = orderlistModel.OrderFrom;
                 paramodel.fields.OtherCancelReason = orderlistModel.OtherCancelReason;
                 paramodel.fields.ReturnUrl = orderlistModel.ReturnUrl;
+                paramodel.fields.order_id = orderlistModel.Id;
                 string url = ConfigurationManager.AppSettings["AsyncStatus"];
                 string json = new HttpClient().PostAsJsonAsync(url, paramodel).Result.Content.ReadAsStringAsync().Result;
                 LogHelper.LogWriter("调用第三方接口同步状态:", new { url = url, paramodel = paramodel, result = json });

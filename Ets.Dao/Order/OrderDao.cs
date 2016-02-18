@@ -252,7 +252,7 @@ namespace Ets.Dao.Order
 
             dbParameters.Add("@OrderNo", SqlDbType.NVarChar, 50).Value = paramodel.OrderNo; //订单号
             dbParameters.AddWithValue("@OriginalOrderNo", paramodel.order_id);    //其它平台的来源订单号
-            dbParameters.AddWithValue("@PubDate", paramodel.create_time);    //订单下单时间
+            dbParameters.AddWithValue("@PubDate",DateTime.Now/* paramodel.create_time*/);    //订单下单时间
             dbParameters.AddWithValue("@SongCanDate", paramodel.receive_time);  //要求送餐时间
             dbParameters.AddWithValue("@IsPay", paramodel.is_pay);    //是否已付款
             dbParameters.AddWithValue("@Amount", paramodel.total_price);    //订单金额
@@ -433,7 +433,7 @@ select @@IDENTITY ";
             IDbParameters dbOtherParameters = DbHelper.CreateDbParameters();
             dbOtherParameters.AddWithValue("@OrderId", orderId); //商户ID
             dbOtherParameters.AddWithValue("@BusinessId", paramodel.businessId);
-            dbOtherParameters.AddWithValue("@ReturnUrl", paramodel.ReturnUrl);
+            dbOtherParameters.AddWithValue("@ReturnUrl", paramodel.returnurl ?? "");
             return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, insertOtherSql, dbOtherParameters));
         }
 
