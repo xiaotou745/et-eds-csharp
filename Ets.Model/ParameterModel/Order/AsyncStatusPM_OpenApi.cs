@@ -23,6 +23,7 @@ namespace Ets.Model.ParameterModel.Order
         /// </summary>
         [Required]
         public int status { get; set; }
+
         /// <summary>
         /// 超人名称    TODO  后续根据第三方对接集团的增加，可能要扩展成实体对象形式
         /// </summary>
@@ -43,6 +44,7 @@ namespace Ets.Model.ParameterModel.Order
         /// </summary>
         [Required]
         public string OriginalOrderNo { get; set; }
+
         /// <summary>
         ///订单来源   由业务逻辑层所得 add by caoheyang 20150422 
         /// 默认0表示E代送B端订单，1易淘食,2万达，3全时，4美团 
@@ -54,5 +56,10 @@ namespace Ets.Model.ParameterModel.Order
         /// </summary>
         public string OtherCancelReason { get; set; }
 
+
+        /// <summary>
+        /// 回调第三方Url  20160217
+        /// </summary>
+        public string ReturnUrl { get; set; }
     }
 }

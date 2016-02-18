@@ -22,7 +22,7 @@ namespace Ets.Service.Provider.OpenApi
     /// <summary>
     /// 首旅对接回调业务 caoheyang  20150527
     /// </summary>
-    public class TourismGroup : IGroupProviderOpenApi
+    public class TourismGroup : IGroupProviderOpenApi, IGroupSetCommissonOpenApi
     {
         public string app_key = ConfigSettings.Instance.TourismAppkey;
         /// <summary>
