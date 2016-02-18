@@ -208,7 +208,9 @@ namespace OpenApi.Controllers
         [HttpPost]
         public void test1(dynamic paramodel)
         {
+            HttpContext.Current.Response.Clear();
             HttpContext.Current.Response.Write("success");
+            HttpContext.Current.Response.End();   
         }
     }
 }

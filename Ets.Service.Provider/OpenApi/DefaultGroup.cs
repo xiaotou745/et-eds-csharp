@@ -46,7 +46,6 @@ namespace Ets.Service.Provider.OpenApi
                     cancelreason = paramodel.fields.OtherCancelReason //订单取消原因
                 }
             };
-
             string json = new HttpClient().PostAsJsonAsync(paramodel.fields.ReturnUrl, p).Result.Content.ReadAsStringAsync().Result;
             int r = new OpenCallBackLogDao().Insert(new OpenCallBackLog()
              {
