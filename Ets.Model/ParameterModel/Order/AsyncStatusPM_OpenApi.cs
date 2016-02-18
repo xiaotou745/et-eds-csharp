@@ -17,6 +17,11 @@ namespace Ets.Model.ParameterModel.Order
         /// 订单号
         /// </summary>
 
+        public long order_id { get; set; }
+        /// <summary>
+        /// 订单号
+        /// </summary>
+
         public string order_no { get; set; }
         /// <summary>
         /// E代送内部订单状态
@@ -61,5 +66,7 @@ namespace Ets.Model.ParameterModel.Order
         /// 回调第三方Url  20160217
         /// </summary>
         public string ReturnUrl { get; set; }
+
+
     }
 }

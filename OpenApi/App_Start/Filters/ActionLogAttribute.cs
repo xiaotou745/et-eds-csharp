@@ -38,78 +38,78 @@ namespace OpenApi.App_Start.Filters
         {
             //try
             //{
-                string responseData = "";
-                string decryptData = "";
-                if (actionContext.Request.Method == HttpMethod.Get)
+            string responseData = "";
+            string decryptData = "";
+            if (actionContext.Request.Method == HttpMethod.Get)
+            {
+                foreach (string key in HttpContext.Current.Request.QueryString.AllKeys)
                 {
-                    foreach (string key in HttpContext.Current.Request.QueryString.AllKeys)
-                    {
-                        responseData = responseData + key + "=" + HttpContext.Current.Request.QueryString[key] + "&";
-                    }
+                    responseData = responseData + key + "=" + HttpContext.Current.Request.QueryString[key] + "&";
                 }
-                else if (actionContext.Request.Method == HttpMethod.Post)
+            }
+            else if (actionContext.Request.Method == HttpMethod.Post)
+            {
+                var parameterDescriptors = actionContext.ActionDescriptor.GetParameters();
+                if (parameterDescriptors.Count > 0 && (parameterDescriptors[0].ParameterType == typeof(ParamModel)))
                 {
-                    var parameterDescriptors = actionContext.ActionDescriptor.GetParameters();
-                    if (parameterDescriptors.Count > 0 && (parameterDescriptors[0].ParameterType == typeof(ParamModel)))
+                    object obj = actionContext.ActionArguments[actionContext.ActionArguments.Keys.ToList()[0]];
+                    if (obj != null)
                     {
-                        object obj = actionContext.ActionArguments[actionContext.ActionArguments.Keys.ToList()[0]];
-                        if (obj != null)
+                        responseData = ((ParamModel)obj).data;
+                        if (!string.IsNullOrEmpty(responseData))
                         {
-                            responseData = ((ParamModel)obj).data;
-                            if (!string.IsNullOrEmpty(responseData))
-                            {
-                                decryptData = AESApp.AesDecrypt(responseData.Replace(' ', '+')/*TODO 暂时用Replace*/);
-                            }
+                            decryptData = AESApp.AesDecrypt(responseData.Replace(' ', '+')/*TODO 暂时用Replace*/);
                         }
                     }
-                    else
-                    {
-                        var task = actionContext.Request.Content.ReadAsStreamAsync();
-                        var content = string.Empty;
-                        var sm = task.Result;
-                        sm.Seek(0, SeekOrigin.Begin);//设置流的开始位置
-                        var bytes = sm.ToByteArray();
-                        responseData = bytes.ToStr();
-                    }
                 }
-                if (decryptData == "")
+                else
                 {
-                    decryptData = responseData == null ? "" : responseData;
+                    var task = actionContext.Request.Content.ReadAsStreamAsync();
+                    var content = string.Empty;
+                    var sm = task.Result;
+                    sm.Seek(0, SeekOrigin.Begin);//设置流的开始位置
+                    var bytes = sm.ToByteArray();
+                    responseData = bytes.ToStr();
                 }
+            }
+            if (decryptData == "")
+            {
+                decryptData = responseData == null ? "" : responseData;
+            }
 
-                List<string> ips = new List<string>();
-                ips.Add(SystemHelper.GetLocalIP());
-                //ips.Add(SystemHelper.GetGateway());
-                ActionLog log = new ActionLog()
-                {
-                    userID = -1,
-                    userName = "",
-                    requestType = 0,
-                    clientIp = getClientIp(),
-                    sourceSys = "netopenapi",
-                    requestUrl = actionContext.Request.RequestUri.ToString().IndexOf("?") > 0 ?
-                    actionContext.Request.RequestUri.ToString().Substring(0, actionContext.Request.RequestUri.ToString().IndexOf("?")) :
-                                 actionContext.Request.RequestUri.ToString(),
-                    param = responseData,
-                    decryptMsg = decryptData,
-                    contentType = actionContext.Request.Content.Headers.ContentType == null ? "" :
-                    actionContext.Request.Content.Headers.ContentType.ToString(),
-                    requestMethod = actionContext.Request.Method.ToString(),
-                    methodName =
-                    actionContext.ControllerContext.ControllerDescriptor.ControllerType + "."
-                    + actionContext.ControllerContext.ControllerDescriptor.ControllerName + "." +
-                    actionContext.ActionDescriptor.ActionName,
+            List<string> ips = new List<string>();
+            ips.Add(SystemHelper.GetLocalIP());
+            //ips.Add(SystemHelper.GetGateway());
+            ActionLog log = new ActionLog()
+            {
+                userID = -1,
+                userName = "",
+                requestType = 0,
+                clientIp = getClientIp(),
+                sourceSys = "netopenapi",
+                requestUrl = actionContext.Request.RequestUri.ToString().IndexOf("?") > 0 ?
+                actionContext.Request.RequestUri.ToString().Substring(0, actionContext.Request.RequestUri.ToString().IndexOf("?")) :
+                             actionContext.Request.RequestUri.ToString(),
+                param = responseData,
+                decryptMsg = decryptData,
+                contentType = actionContext.Request.Content.Headers.ContentType == null ? "" :
+                actionContext.Request.Content.Headers.ContentType.ToString(),
+                requestMethod = actionContext.Request.Method.ToString(),
+                methodName =
+                actionContext.ControllerContext.ControllerDescriptor.ControllerType + "."
+                + actionContext.ControllerContext.ControllerDescriptor.ControllerName + "." +
+                actionContext.ActionDescriptor.ActionName,
 
-                    requestTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-                    appServer = JsonHelper.JsonConvertToString(ips),
-                    header = JsonHelper.JsonConvertToString(actionContext.Request.Headers)
-                };
+                requestTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                appServer = JsonHelper.JsonConvertToString(ips),
+                header = JsonHelper.JsonConvertToString(actionContext.Request.Headers)
+            };
 
-                actionContext.Request.Properties["actionlog"] = log;
+            actionContext.Request.Properties["actionlog"] = log;
 
-                Stopwatch stop = new Stopwatch();
-                actionContext.Request.Properties["actionlogTime"] = stop;
-                stop.Start();
+            Stopwatch stop = new Stopwatch();
+            actionContext.Request.Properties["actionlogTime"] = stop;
+            stop.Start();
             //}
             //catch (Exception ex) { }
         }
@@ -121,31 +121,33 @@ namespace OpenApi.App_Start.Filters
         {
             //try
             //{
-                ActionLog log = actionContext.Request.Properties["actionlog"] as ActionLog;
-                if (actionContext.Exception == null)
+            ActionLog log = actionContext.Request.Properties["actionlog"] as ActionLog;
+            if (actionContext.Exception == null)
+            {
+                if (actionContext.ActionContext.ActionDescriptor.ReturnType != null)
                 {
-                    var response =
-                        actionContext.Response.Content.ReadAsAsync(
-                            actionContext.ActionContext.ActionDescriptor.ReturnType);
+                    var response =  actionContext.Response.Content.ReadAsAsync(
+                      actionContext.ActionContext.ActionDescriptor.ReturnType);
                     log.resultJson = JsonHelper.JsonConvertToString(response.Result);
-                    log.exception = "";
-                    log.stackTrace = "";
                 }
-                else
-                {
-                    log.exception = actionContext.Exception.Message;
-                    log.stackTrace = actionContext.Exception.StackTrace;
+                log.exception = "";
+                log.stackTrace = "";
+            }
+            else
+            {
+                log.exception = actionContext.Exception.Message;
+                log.stackTrace = actionContext.Exception.StackTrace;
 
-                }
+            }
 
-                log.requestEndTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-                var stop = actionContext.Request.Properties["actionlogTime"] as Stopwatch;
-                stop.Stop();
-                log.executeTime = stop.ElapsedMilliseconds;
-                stop.Reset();
+            log.requestEndTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            var stop = actionContext.Request.Properties["actionlogTime"] as Stopwatch;
+            stop.Stop();
+            log.executeTime = stop.ElapsedMilliseconds;
+            stop.Reset();
 
-                //调用线程池，异步发送mq消息
-                ActiveMqHelper.AsynSendMessage(JsonHelper.JsonConvertToString(log));
+            //调用线程池，异步发送mq消息
+            ActiveMqHelper.AsynSendMessage(JsonHelper.JsonConvertToString(log));
             //}
             //catch (Exception ex) { }
         }

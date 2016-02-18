@@ -60,14 +60,14 @@ namespace ETS.Util
             return retString;
         }
 
-           /// <summary>
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="fromModel">paraModel</param>
         public static T BindeModel<T>(System.Web.HttpRequest httpRequest)
         {
             ////实体类赋值
-            T paramodel =Activator.CreateInstance<T>();
+            T paramodel = Activator.CreateInstance<T>();
             System.Reflection.PropertyInfo[] props = paramodel.GetType().GetProperties();
             for (int i = 0; i < props.Length; i++)
             {
@@ -126,5 +126,36 @@ namespace ETS.Util
 
         //    return retString;
         //}
+
+
+        /// <summary>
+        /// HttpWebRequest 模拟post 
+        /// </summary>
+        /// <param name="jsonData"></param>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        public static string PostJson(string jsonData, string url)
+        {
+            byte[] bytes = Encoding.UTF8.GetBytes(jsonData);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);  
+            request.Method = "POST";  
+            request.ContentLength = bytes.Length;  
+            request.ContentType = "application/json";  
+            Stream reqstream = request.GetRequestStream();  
+            reqstream.Write(bytes, 0, bytes.Length);  
+  
+            //声明一个HttpWebRequest请求  
+            request.Timeout = 90000;  
+            //设置连接超时时间  
+            request.Headers.Set("Pragma", "no-cache");  
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();  
+            Stream streamReceive = response.GetResponseStream();  
+            Encoding encoding = Encoding.UTF8;    
+            StreamReader streamReader = new StreamReader(streamReceive, encoding);  
+            string  strResult = streamReader.ReadToEnd();  
+            streamReceive.Dispose();  
+            streamReader.Dispose();  
+            return strResult;  
+        }
     }
 }
