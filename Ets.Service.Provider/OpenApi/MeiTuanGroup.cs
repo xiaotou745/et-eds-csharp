@@ -34,7 +34,7 @@ namespace Ets.Service.Provider.OpenApi
     /// <summary>
     /// 美团相关业务类 add by caoheyang 20150420
     /// </summary>
-    public class MeiTuanGroup : IGroupProviderOpenApi
+    public class MeiTuanGroup : IGroupProviderOpenApi, IGroupSetCommissonOpenApi
     {
         private string app_id = ConfigSettings.Instance.MeiTuanAppkey;
         private string consumer_secret = ConfigSettings.Instance.MeiTuanAppsecret;

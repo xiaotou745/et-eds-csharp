@@ -117,6 +117,11 @@ namespace Ets.Model.ParameterModel.Order
         public int CommissionFormulaMode { get; set; }
 
         /// <summary>
+        /// 回调Url
+        /// </summary>
+        public string returnurl { get; set; }
+
+        /// <summary>
         /// 订单结算金额 由业务逻辑层计算所得
         /// </summary>
         public decimal settlemoney { get; set; }
@@ -172,10 +177,7 @@ namespace Ets.Model.ParameterModel.Order
         /// </summary>
         public decimal BusinessReceivable { get; set; }
 
-        /// <summary>
-        /// 回调Url
-        /// </summary>
-        public string ReturnUrl { get; set; }
+
         
     }
 

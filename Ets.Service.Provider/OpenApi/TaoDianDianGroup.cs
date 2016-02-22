@@ -23,7 +23,7 @@ using ETS.Transaction;
 using System.Threading.Tasks;
 namespace Ets.Service.Provider.OpenApi
 {
-    public class TaoDianDianGroup : IGroupProviderOpenApi
+    public class TaoDianDianGroup : IGroupProviderOpenApi, IGroupSetCommissonOpenApi
     {
         BusinessDao businessDao=new BusinessDao();
         OrderDao orderDao = new OrderDao();

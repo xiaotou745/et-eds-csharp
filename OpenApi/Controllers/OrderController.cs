@@ -122,10 +122,11 @@ namespace OpenApi.Controllers
         [OpenApiActionError]
         public ResultModel<object> AsyncStatus(ParaModel<AsyncStatusPM_OpenApi> paramodel)
         {
-            //paramodel.group 签名信息中取到  即 那个集团调用的该接口
-            IGroupProviderOpenApi groupProvider = OpenApiGroupFactory.Create(paramodel.group);
+            IGroupProviderOpenApi groupProvider = OpenApiGroupFactory.Create(paramodel.group,paramodel.fields.ReturnUrl);
             if (groupProvider == null)
-                ResultModel<object>.Conclude(OrderApiStatusType.ThirdSuccess);  //无集团信息，不需要同步返回成功，实际应该不会该情况
+            {
+                return ResultModel<object>.Conclude(OrderApiStatusType.ThirdSuccess);  
+            }
             OrderApiStatusType statusType = groupProvider.AsyncStatus(paramodel);
             return ResultModel<object>.Conclude(statusType);
         }
@@ -194,6 +195,22 @@ namespace OpenApi.Controllers
                 return ResultModel<object>.Conclude(OrderApiStatusType.OrderIsJoin, new { Remark = kk });
             }
 
+        }
+
+
+        /// <summary>
+        /// 取消订单   王旭丹
+        /// 茹化肖修改
+        /// 2015年8月26日13:12:41
+        /// </summary>
+        /// <param name="paramodel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public void test1(dynamic paramodel)
+        {
+            HttpContext.Current.Response.Clear();
+            HttpContext.Current.Response.Write("success");
+            HttpContext.Current.Response.End();   
         }
     }
 }

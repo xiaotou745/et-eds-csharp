@@ -106,6 +106,7 @@
     <Compile Include="Finance\ImprestRechargeProvider.cs" />
     <Compile Include="GlobalConfig\GlobalConfigProvider.cs" />
     <Compile Include="Message\MessageProvider.cs" />
+    <Compile Include="OpenApi\DefaultGroup.cs" />
     <Compile Include="OpenApi\JuWangKeGroup.cs" />
     <Compile Include="OpenApi\MeiTuanGroup.cs" />
     <Compile Include="OpenApi\SignProvider.cs" />

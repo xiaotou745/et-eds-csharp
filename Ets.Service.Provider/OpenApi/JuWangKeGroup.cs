@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace Ets.Service.Provider.OpenApi
 {
-    public class JuWangKeGroup : IGroupProviderOpenApi
+    public class JuWangKeGroup : IGroupProviderOpenApi, IGroupSetCommissonOpenApi
     {
         public string app_key = ConfigSettings.Instance.JuWangKeAppkey;
         public const string v = "1.0";

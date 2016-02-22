@@ -105,6 +105,7 @@
     <Compile Include="DataModel\Message\ClienterMessage.cs" />
     <Compile Include="DataModel\Message\MessageModel.cs" />
     <Compile Include="DataModel\Order\ClienterPushLog.cs" />
+    <Compile Include="DataModel\Order\OpenCallBackLog.cs" />
     <Compile Include="DataModel\Order\OrderTipCost.cs" />
     <Compile Include="DataModel\Order\OrderChildFinishModel.cs" />
     <Compile Include="DataModel\Order\OrderChildPayModel.cs" />
