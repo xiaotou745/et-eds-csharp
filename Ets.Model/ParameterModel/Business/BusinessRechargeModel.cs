@@ -29,7 +29,7 @@ namespace Ets.Model.ParameterModel.Business
         public string Version { get; set; }
 
         /// <summary>
-        /// 支付类型：0旧版商家，1闪送模式 
+        /// 支付类型：1易代送商户，3易代送
         /// </summary>
         public int PlatForm { get; set; }
 
