@@ -30,6 +30,17 @@ EXEC sp_addextendedproperty N'MS_Description', N'拒绝原因 审核拒绝时必填有效', '
 GO
 
 --商户表
+  alter table dbo.business add TaskDistributionId int not null  default 0 ;
+EXEC sys.sp_addextendedproperty @name=N'MS_Description',
+  @value=N'配置Id 默认0' ,
+  @level0type=N'SCHEMA',
+  @level0name=N'dbo', 
+  @level1type=N'TABLE',
+  @level1name=N'business', 
+  @level2type=N'COLUMN',
+  @level2name=N'TaskDistributionId'
+go
+
 alter table dbo.business add SetpChargeId int not null  default 0 ;
 EXEC sys.sp_addextendedproperty @name=N'MS_Description',
   @value=N'阶梯收费策略Id 默认0' ,
