@@ -392,6 +392,8 @@
     <Compile Include="ParameterModel\Order\PullOrderInfoPM_OpenApi.cs" />
     <Compile Include="ParameterModel\Order\RemoveAddressBPM.cs" />
     <Compile Include="ParameterModel\Order\UserStatusModel.cs" />
+    <Compile Include="ParameterModel\Pay\WxNotifyParam.cs" />
+    <Compile Include="ParameterModel\Pay\WxPayParam.cs" />
     <Compile Include="ParameterModel\Sms\SmsParaModel.cs" />
     <Compile Include="ParameterModel\Subsidy\CrossShopListModel.cs" />
     <Compile Include="ParameterModel\Subsidy\SubsidyModel.cs" />

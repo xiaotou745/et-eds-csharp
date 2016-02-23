@@ -21,6 +21,7 @@ using System.Web.Http;
 using ETS.Util;
 using SuperManWebApi.App_Start.Filters;
 using ETS.Library.Pay.SSAliPay;
+using ETS.Security;
 
 namespace SuperManWebApi.Controllers
 {
@@ -157,20 +158,12 @@ namespace SuperManWebApi.Controllers
         public void BusinessRechargeNotify()
         {
             payProvider.BusinessRechargeNotify();
+            //string data = HttpContext.Current.Request["data"];
+            //string resultData = payProvider.BusinessRechargeWxNotify(data);
+            //HttpContext.Current.Response.Clear();
+            //HttpContext.Current.Response.Write(resultData);
+            //HttpContext.Current.Response.End();
         }
-
-
-        /// <summary>
-        /// 商家充值微信回调方法回调
-        /// 窦海超
-        /// 2015年5月29日 15:09:29
-        /// </summary>
-        /// <returns></returns>
-        public void BusinessRechargeWxNotify()
-        {
-            payProvider.BusinessRechargeWxNotify();
-        }
-
         /// <summary>
         /// 闪送 商家充值回调方法回调 支付宝
         /// 胡灵波
@@ -183,6 +176,22 @@ namespace SuperManWebApi.Controllers
         }
 
         /// <summary>
+        /// 商家充值微信回调方法回调 微信
+        /// 窦海超
+        /// 2015年5月29日 15:09:29
+        /// </summary>
+        /// <returns></returns>
+        public void BusinessRechargeWxNotify()
+        {
+            //payProvider.BusinessRechargeWxNotify();
+            string data = HttpContext.Current.Request["data"];
+            string resultData = payProvider.BusinessRechargeWxNotify(data);
+            HttpContext.Current.Response.Clear();
+            HttpContext.Current.Response.Write(resultData);
+            HttpContext.Current.Response.End();
+        }
+
+        /// <summary>
         /// 闪送商家充值微信回调方法回调
         /// 胡灵波
         /// 2015年12月21日 15:47:19
@@ -190,7 +199,12 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         public void SSBusinessRechargeWxNotify()
         {
-            payProvider.SSBusinessRechargeWxNotify();
+            //payProvider.SSBusinessRechargeWxNotify();
+            string data = HttpContext.Current.Request["data"];
+            string resultData = payProvider.SSBusinessRechargeWxNotify(data);
+            HttpContext.Current.Response.Clear();
+            HttpContext.Current.Response.Write(resultData);
+            HttpContext.Current.Response.End();
         }
         #endregion
 
@@ -328,7 +342,7 @@ namespace SuperManWebApi.Controllers
         /// <returns></returns>
         public void NotifyTip()
         {
-            string result= payProvider.NotifyTip();
+            string result = payProvider.NotifyTip();
             HttpContext.Current.Response.Clear();
             HttpContext.Current.Response.Write(result);
             HttpContext.Current.Response.End();

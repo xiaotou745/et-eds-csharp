@@ -11,7 +11,7 @@ namespace Ets.Model.DomainModel.Business
         /// <summary>
         /// 支付方式：1：支付宝；2微信
         /// </summary>
-        public int payType { get; set; }
+        public int PayType { get; set; }
 
         /// <summary>
         /// 支付金额，必须大于0.01元

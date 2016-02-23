@@ -108,13 +108,18 @@ namespace ETS
         /// <summary>
         /// 微信商家充值回调地址
         /// </summary>
-        public static string SSBusinessRechargeWxNotify { get { return string.Concat(ConfigKey("YeePayNotifyUrl").TrimEnd('/'), "/Pay/SSBusinessRechargeWxNotify"); } }
+        //public static string SSBusinessRechargeWxNotify { get { return string.Concat(ConfigKey("YeePayNotifyUrl").TrimEnd('/'), "/Pay/SSBusinessRechargeWxNotify"); } }
+        /// <summary>
+        /// 微信商家充值回调地址-全新
+        /// </summary>
+        public static string SSBusinessRechargeWxNotify { get { return string.Concat(ConfigKey("PayNotify").TrimEnd('/'), "/Pay/SSBusinessRechargeWxNotify"); } }
         /// <summary>
         /// 微信商家充值回调地址
         /// </summary>
-        public static string WXBusinessRecharge { get { return string.Concat(ConfigKey("YeePayNotifyUrl").TrimEnd('/'), "/Pay/BusinessRechargeWxNotify"); } }
+        //public static string WXBusinessRecharge { get { return string.Concat(ConfigKey("YeePayNotifyUrl").TrimEnd('/'), "/Pay/BusinessRechargeWxNotify"); } }
+        public static string WXBusinessRecharge { get { return string.Concat(ConfigKey("PayNotify").TrimEnd('/'), "/Pay/BusinessRechargeWxNotify"); } }
 
-        
+
         /// <summary>
         /// 支付宝批量付款回调地址
         /// </summary>
@@ -171,5 +176,15 @@ namespace ETS
         /// 窦海超 
         /// </summary> 
         public static string WithdrawType { get { return ConfigKey("WithdrawType"); } }
+
+        /// <summary>
+        /// 微信扫码支付
+        /// </summary>
+        public static string PayPlatformUrlWxQr { get { return ConfigKey("PayPlatformUrl") + "wxservice/getqrurl"; } }
+
+        /// <summary>
+        /// 微信app支付
+        /// </summary>
+        public static string PayPlatformUrlWxApp { get { return ConfigKey("PayPlatformUrl") + "wxservice/getappurl"; } }
     }
 }

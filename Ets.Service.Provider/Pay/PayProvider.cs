@@ -46,6 +46,7 @@ using Ets.Service.Provider.Business;
 using ETS.NoSql.RedisCache;
 using ETS.Library.Pay.AliPay;
 using Aop.Api.Response;
+using Ets.Model.ParameterModel.Pay;
 namespace Ets.Service.Provider.Pay
 {
     public class PayProvider : IPayProvider
@@ -72,6 +73,8 @@ namespace Ets.Service.Provider.Pay
         private readonly ClienterWithdrawLogDao clienterWithdrawLogDao = new ClienterWithdrawLogDao();
         readonly BusinessBalanceRecordDao businessBalanceRecordDao = new BusinessBalanceRecordDao();
         private IBusinessProvider iBusinessProvider = new BusinessProvider();
+        private IWxPayProvider wxPayProvider = new WxPayProvider();
+
 
         #region 生成支付宝、微信二维码订单
 
@@ -453,27 +456,47 @@ namespace Ets.Service.Provider.Pay
 
             string orderNo = Helper.generateOrderCode(model.Businessid);
             BusinessRechargeResultModel resultModel = new BusinessRechargeResultModel();
+            int platform = 0;
             if (model.PayType == PayTypeEnum.WeiXin.GetHashCode())
             {
+                //ETS.Library.Pay.BWxPay.NativePay nativePay = new ETS.Library.Pay.BWxPay.NativePay();
                 if (model.PlatForm == PayModelEnum.EDS.GetHashCode())//如果是闪送模式
                 {
                     #region 闪送模式
-                    ETS.Library.Pay.SSBWxPay.NativePay nativePay = new ETS.Library.Pay.SSBWxPay.NativePay();
+                    /*
                     string prepayId = nativePay.GetPayPrepayId(model.Businessid, orderNo, model.payAmount, "E代送商家充值", Config.SSBusinessRechargeWxNotify);
+                    
                     resultModel.prepayId = prepayId;
                     resultModel.notifyUrl = ETS.Config.SSBusinessRechargeWxNotify;//闪送模式回调地址
+                   * */
                     #endregion
+                    platform = PayEnum.EDSSSBApp.GetHashCode();
+                    resultModel.notifyUrl = ETS.Config.SSBusinessRechargeWxNotify;//闪送模式回调地址
                 }
                 else
                 {
                     #region 旧版商家充值
-                    ETS.Library.Pay.BWxPay.NativePay nativePay = new ETS.Library.Pay.BWxPay.NativePay();
+                    /**
                     string prepayId = nativePay.GetPayPrepayId(model.Businessid, orderNo, model.payAmount, "E代送商家充值", Config.WXBusinessRecharge);
                     resultModel.prepayId = prepayId;
                     resultModel.notifyUrl = ETS.Config.WXBusinessRecharge;
+                     * */
                     #endregion
-
+                    platform = PayEnum.EDSBApp.GetHashCode();
+                    resultModel.notifyUrl = ETS.Config.WXBusinessRecharge;
                 }
+                WxPayParam wxPayParam = new WxPayParam()
+                {
+                    attach = model.Businessid.ToString(),
+                    body = "E代送商家充值",
+                    notify = resultModel.notifyUrl,// ETS.Config.SSBusinessRechargeWxNotify, //"http://172.18.10.73:7178/pay/BusinessRechargeWxNotify",
+                    order_no = orderNo,
+
+                    total_fee = ParseHelper.ToInt((model.payAmount * 100).ToString().Split('.')[0]).ToString()
+                };
+                wxPayParam.platform = platform;
+                string prepayId = wxPayProvider.CreatePayBusinessRecharge(wxPayParam);
+                resultModel.prepayId = prepayId;
             }
             else
             {
@@ -489,7 +512,7 @@ namespace Ets.Service.Provider.Pay
             }
             resultModel.payAmount = model.payAmount;
             resultModel.orderNo = orderNo;
-            resultModel.payType = model.PayType;
+            resultModel.PayType = model.PayType;
 
             //所属产品_主订单号_子订单号_支付方式
 
@@ -656,6 +679,66 @@ namespace Ets.Service.Provider.Pay
             }
         }
 
+
+
+        /// <summary>
+        /// 微信商家充值回调方法 
+        /// 窦海超
+        /// 2015年8月6日 23:06:02
+        /// </summary>
+        /// <returns></returns>
+        public string SSBusinessRechargeWxNotify(string data)
+        {
+            string resultFail = "fail";
+            try
+            {
+                #region 参数绑定
+                //ETS.Library.Pay.SSBWxPay.WxNotifyResultModel notify = new ETS.Library.Pay.SSBWxPay.ResultNotify().ProcessNotify();
+
+                if (string.IsNullOrEmpty(data))
+                {
+                    return resultFail;
+                }
+                data = data.Replace(" ", "+");
+                data = AESApp.AesDecrypt(data).Replace("[", "").Replace("]", "");
+
+                WxNotifyParam model = JsonHelper.ToObject<WxNotifyParam>(data);
+                #endregion
+                //如果状态为空或状态不等于同步成功和异步成功就认为是错误
+
+                #region 回调完成状态
+                if (model != null && model.result_code.ToString().ToUpper() == "SUCCESS" && ParseHelper.ToInt(model.attach) > 0)
+                {
+                    Ets.Model.DataModel.Business.BusinessRechargeModel businessRechargeModel = new Ets.Model.DataModel.Business.BusinessRechargeModel()
+                    {
+                        BusinessId = ParseHelper.ToInt(model.attach),
+                        OrderNo = model.out_trade_no,
+                        OriginalOrderNo = model.transaction_id,//第三方的订单号
+                        PayAmount = ParseHelper.ToDecimal(model.total_fee) / 100,
+                        PayBy = model.openid,
+                        PayStatus = 1,
+                        PayType = 2
+                    };
+                    //写充值单
+                    string result = BusinessRechargeSusess(businessRechargeModel);
+                    if (result.ToUpper() == "SUCCESS")
+                    {
+
+                        return "SUCCESS";
+                    }
+                }
+                #endregion
+                return resultFail;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogWriter(ex, "微信自动返回异常");
+                HttpContext.Current.Response.Write("<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>");
+                HttpContext.Current.Response.End();
+            }
+            return resultFail;
+        }
+
         /// <summary>
         /// 商家充值回调方法 
         /// 窦海超
@@ -726,6 +809,41 @@ namespace Ets.Service.Provider.Pay
             return "fail";
         }
 
+        /// <summary>
+        /// 微信商家充值
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public string BusinessRechargeWxNotify(string data)
+        {
+            string resultFail = "fail";
+            if (string.IsNullOrEmpty(data))
+            {
+                return resultFail;
+            }
+            data = data.Replace(" ", "+");
+            data = AESApp.AesDecrypt(data).Replace("[", "").Replace("]", "");
+
+            WxNotifyParam model = JsonHelper.ToObject<WxNotifyParam>(data);
+
+            if (model != null && model.result_code.ToString().ToUpper() == "SUCCESS" && ParseHelper.ToInt(model.attach) > 0)
+            {
+                Ets.Model.DataModel.Business.BusinessRechargeModel businessRechargeModel = new Ets.Model.DataModel.Business.BusinessRechargeModel()
+                {
+                    BusinessId = ParseHelper.ToInt(model.attach),
+                    OrderNo = model.out_trade_no,
+                    OriginalOrderNo = model.transaction_id,//第三方的订单号
+                    PayAmount = ParseHelper.ToDecimal(model.total_fee) / 100,
+                    PayBy = model.openid,
+                    PayStatus = 1,
+                    PayType = 2
+                };
+                BusinessRechargeSusess(businessRechargeModel);
+                return "SUCCESS";
+            }
+
+            return resultFail;
+        }
 
         /// <summary>
         /// 商家充值回调方法 
