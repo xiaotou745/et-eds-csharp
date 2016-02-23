@@ -479,6 +479,10 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.CountIsNotEqual);
             }
+            if (business.ReceivableType == 2 && business.SetpChargeId == 0)
+            {
+                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.SetpChargeIdEmpty);
+            }
                 
             order = iOrderProvider.TranslateOrder(model, business);          
             if (order.SettleMoney > business.BalancePrice)

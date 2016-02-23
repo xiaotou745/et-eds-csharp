@@ -80,6 +80,8 @@ namespace Ets.Service.Provider.Order
         readonly Ets.Service.IProvider.Common.IAreaProvider iAreaProvider = new Ets.Service.Provider.Common.AreaProvider();
 
         OrderTipCostDao orderTipCostDao = new OrderTipCostDao();
+
+        BusinessSetpChargeChildDao businessSetpChargeChildDao = new BusinessSetpChargeChildDao();
         AliPayApi aliPayApi = new AliPayApi();
 
         #region 单元测试
@@ -398,9 +400,16 @@ namespace Ets.Service.Provider.Order
             to.OrderCommission = commProvider.GetCurrenOrderCommission(orderComm); //订单佣金
             to.WebsiteSubsidy = commProvider.GetOrderWebSubsidy(orderComm);//网站补贴
 
-            to.SettleMoney = OrderSettleMoneyProvider.GetSettleMoney(orderComm.Amount ?? 0, orderComm.BusinessCommission,
-                orderComm.CommissionFixValue ?? 0, orderComm.OrderCount ?? 0,
-                orderComm.DistribSubsidy ?? 0, 0);//订单结算金额          
+            if (business.ReceivableType == 1)
+            {
+                to.SettleMoney = OrderSettleMoneyProvider.GetSettleMoney(orderComm.Amount ?? 0, orderComm.BusinessCommission,
+                    orderComm.CommissionFixValue ?? 0, orderComm.OrderCount ?? 0,
+                    orderComm.DistribSubsidy ?? 0, 0);//订单结算金额          
+            }
+            else
+            {                
+                to.SettleMoney = businessSetpChargeChildDao.GetChargeValue(business.SetpChargeId, busiOrderInfoModel.Amount);
+            }
 
 
             //to.CommissionFormulaMode = ParseHelper.ToInt(GlobalConfigDao.GlobalConfigGet(business.BusinessGroupId).CommissionFormulaMode);
@@ -418,7 +427,9 @@ namespace Ets.Service.Provider.Order
             if (business.IsBindGroup == 1 && to.SettleMoney > business.BalancePrice)
             {
                 to.GroupBusinessId = business.BussGroupId;
-            }
+            }           
+
+
             return to;
         }
 

@@ -292,7 +292,12 @@ namespace ETS.Enums
         [DisplayText("获取商户信息失败")]
         BusinessEmpty = -11,
         [DisplayText("您的余额不足，请及时充值!")]
-        BusiBalancePriceLack = -12
+        BusiBalancePriceLack = -12,
+       [DisplayText("阶梯收费策略不能为空!")]
+       SetpChargeIdEmpty = -13
+
+
+     
 
     }
 

@@ -641,6 +641,7 @@ b.Longitude ,b.Latitude ,b.[Status] , b.InsertTime ,b.districtId ,b.CityId ,b.Gr
 b.ProvinceCode ,b.CityCode ,b.AreaCode ,b.Province ,b.DistribSubsidy,b.BusinessCommission,
 b.CommissionType,b.CommissionFixValue,b.BusinessGroupId,b.MealsSettleMode,b.OriginalBusiId,
 b.BalancePrice,b.OneKeyPubOrder,b.IsAllowOverdraft,b.IsEmployerTask,b.IsOrderChecked,b.IsAllowCashPay,  
+b.SetpChargeId,b.ReceivableType,  
 bg.StrategyId,
 CASE WHEN gbr.id >0 THEN 1 ELSE 0 END AS IsBindGroup, 
 ISNULL(gb.Id,0) AS BussGroupId,
