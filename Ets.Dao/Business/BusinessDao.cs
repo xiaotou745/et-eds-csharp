@@ -612,8 +612,8 @@ select top 1
         a.Appkey
 from    business (nolock) a
         left join dbo.[group] (nolock) b on a.GroupId = b.Id
-where   PhoneNo = @PhoneNo
-        and Password = @Password
+where   a.PhoneNo = @PhoneNo
+        and a.Password = @Password
         and ISNULL(b.IsModifyBind,1) = 1
 order by a.id desc
 ";
