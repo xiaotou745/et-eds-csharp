@@ -23,7 +23,7 @@ namespace Ets.Service.IProvider.Pay
         /// 2015年5月12日 14:35:05
         /// </summary>
         /// <param name="model"></param>
-        ResultModel<PayResultModel> CreatePay(PayModel model);      
+        ResultModel<PayResultModel> CreatePay(PayModel model);
 
         /// <summary>
         /// 现金支付 wc
@@ -31,7 +31,7 @@ namespace Ets.Service.IProvider.Pay
         /// <param name="model"></param>
         /// <returns></returns>
         ResultModel<PayResultModel> CashPay(PayModel model);
-         
+
         /// <summary>
         /// 确认订单
         /// 窦海超
@@ -69,6 +69,14 @@ namespace Ets.Service.IProvider.Pay
 
         /// <summary>
         /// 商家充值回调方法 
+        /// 窦海超
+        /// 2015年5月29日 15:17:07
+        /// </summary>
+        /// <returns></returns>
+        string BusinessRechargeWxNotify(string data);
+
+        /// <summary>
+        /// 商家充值回调方法 
         /// 胡灵波
         /// 2015年12月21日 15:42:49
         /// </summary>
@@ -81,7 +89,7 @@ namespace Ets.Service.IProvider.Pay
         /// </summary>
         /// <returns></returns>
         dynamic GetOrderPayStatus(OrderPayModel model);
-      
+
 
         /// <summary>
         /// 微信商家充值回调方法 
@@ -90,6 +98,14 @@ namespace Ets.Service.IProvider.Pay
         /// </summary>
         /// <returns></returns>
         void SSBusinessRechargeWxNotify();
+
+        /// <summary>
+        /// 微信商家充值回调方法 
+        /// 窦海超
+        /// 2015年8月6日 23:06:02
+        /// </summary>
+        /// <returns></returns>
+        string SSBusinessRechargeWxNotify(string data);
 
         /// <summary>
         /// 微信商家充值回调方法 

@@ -130,6 +130,16 @@ namespace Ets.Model.DataModel.Business
         /// 是否允许集团透支
         /// </summary>
         public int BussGroupIsAllowOverdraft { get; set; }        
+
+        /// <summary>
+        /// 阶梯收费策略Id 默认0
+        /// </summary>
+        public int SetpChargeId{ get; set; }
+
+        /// <summary>
+        /// 应收类型 1默认标准(a+b+c) 2,阶梯收费 默认1
+        /// </summary>
+        public int ReceivableType { get; set; }
         
     }
 }

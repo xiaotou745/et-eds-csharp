@@ -612,8 +612,8 @@ select top 1
         a.Appkey
 from    business (nolock) a
         left join dbo.[group] (nolock) b on a.GroupId = b.Id
-where   PhoneNo = @PhoneNo
-        and Password = @Password
+where   a.PhoneNo = @PhoneNo
+        and a.Password = @Password
         and ISNULL(b.IsModifyBind,1) = 1
 order by a.id desc
 ";
@@ -625,7 +625,7 @@ order by a.id desc
         }
 
 
-        /// <summary>
+        /// <summary>k
         /// 根据商户id获取商户
         /// </summary>
 
@@ -641,6 +641,7 @@ b.Longitude ,b.Latitude ,b.[Status] , b.InsertTime ,b.districtId ,b.CityId ,b.Gr
 b.ProvinceCode ,b.CityCode ,b.AreaCode ,b.Province ,b.DistribSubsidy,b.BusinessCommission,
 b.CommissionType,b.CommissionFixValue,b.BusinessGroupId,b.MealsSettleMode,b.OriginalBusiId,
 b.BalancePrice,b.OneKeyPubOrder,b.IsAllowOverdraft,b.IsEmployerTask,b.IsOrderChecked,b.IsAllowCashPay,  
+b.SetpChargeId,b.ReceivableType,  
 bg.StrategyId,
 CASE WHEN gbr.id >0 THEN 1 ELSE 0 END AS IsBindGroup, 
 ISNULL(gb.Id,0) AS BussGroupId,
