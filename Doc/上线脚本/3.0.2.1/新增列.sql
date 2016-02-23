@@ -1,6 +1,6 @@
 use superman
 go
---回调列
+--OrderOther 
 alter table dbo.OrderOther add ReturnUrl nvarchar(400) not null  default ('')
 EXEC sp_addextendedproperty N'MS_Description', N'回调地址', 'SCHEMA', N'dbo', 'TABLE', N'OrderOther', 'COLUMN', N'ReturnUrl'
 GO
@@ -29,3 +29,37 @@ GO
 EXEC sp_addextendedproperty N'MS_Description', N'拒绝原因 审核拒绝时必填有效', 'SCHEMA', N'dbo', 'TABLE', N'group', 'COLUMN', N'RefuseReason'
 GO
 
+--商户表
+alter table dbo.business add SetpChargeId int not null  default 0 ;
+EXEC sys.sp_addextendedproperty @name=N'MS_Description',
+  @value=N'阶梯收费策略Id 默认0' ,
+  @level0type=N'SCHEMA',
+  @level0name=N'dbo', 
+  @level1type=N'TABLE',
+  @level1name=N'business', 
+  @level2type=N'COLUMN',
+  @level2name=N'SetpChargeId'
+  go
+  
+alter table dbo.business add ReceivableType int not null  default 1 ;
+EXEC sys.sp_addextendedproperty @name=N'MS_Description',
+  @value=N'应收类型 1默认标准(a+b+c) 2,阶梯收费 默认1' ,
+  @level0type=N'SCHEMA',
+  @level0name=N'dbo', 
+  @level1type=N'TABLE',
+  @level1name=N'business', 
+  @level2type=N'COLUMN',
+  @level2name=N'ReceivableType'
+  go
+  
+--配置表
+alter table dbo.TaskDistributionConfig add TaskDistributionId int not null  default 0 ;
+EXEC sys.sp_addextendedproperty @name=N'MS_Description',
+  @value=N'配置Id 默认0' ,
+  @level0type=N'SCHEMA',
+  @level0name=N'dbo', 
+  @level1type=N'TABLE',
+  @level1name=N'TaskDistributionConfig', 
+  @level2type=N'COLUMN',
+  @level2name=N'TaskDistributionId'
+  go
