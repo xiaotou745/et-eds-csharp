@@ -401,10 +401,22 @@ namespace Ets.Service.Provider.Order
             to.WebsiteSubsidy = commProvider.GetOrderWebSubsidy(orderComm);//网站补贴
 
             if (business.ReceivableType == 1)
-            {
-                to.SettleMoney = OrderSettleMoneyProvider.GetSettleMoney(orderComm.Amount ?? 0, orderComm.BusinessCommission,
+            {             
+                
+                decimal settleMoney = OrderSettleMoneyProvider.GetSettleMoney(orderComm.Amount ?? 0, orderComm.BusinessCommission,
                     orderComm.CommissionFixValue ?? 0, orderComm.OrderCount ?? 0,
                     orderComm.DistribSubsidy ?? 0, 0);//订单结算金额          
+                
+                
+                if (!(bool)to.IsPay && to.MealsSettleMode == MealsSettleMode.LineOn.GetHashCode())//未付款且线上支付
+                {
+                    decimal businessReceivable = Decimal.Round(ParseHelper.ToDecimal(to.Amount) +
+                                   ParseHelper.ToDecimal(to.DistribSubsidy) * ParseHelper.ToInt(to.OrderCount), 2);//第三方如果设置商家外送费会多给第三方商户返回菜品金额+外送费
+                    settleMoney =settleMoney + businessReceivable;
+                }
+                to.SettleMoney = settleMoney;
+
+                to.ReceivableType = 1;
             }
             else
             {
@@ -414,6 +426,7 @@ namespace Ets.Service.Provider.Order
                     to.SettleMoney = bSetpChargeChild.ChargeValue;
                 else
                     to.SettleMoney = businessSetpChargeChildDao.GetChargeValue(business.SetpChargeId, busiOrderInfoModel.Amount);
+                to.ReceivableType = 2;
             }
 
 

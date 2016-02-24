@@ -73,6 +73,7 @@
     <Compile Include="Authority\ClienterLoginLogProvider.cs" />
     <Compile Include="Business\BusinessClienterRelationProvider.cs" />
     <Compile Include="Business\GroupBusinessProvider.cs" />
+    <Compile Include="Business\BusinessSetpChargeChildProvider.cs" />
     <Compile Include="Clienter\ClienterLocationProvider.cs" />
     <Compile Include="Clienter\ClienterProvider.cs" />
     <Compile Include="Clienter\CrossShopStatisticLogProvider.cs" />

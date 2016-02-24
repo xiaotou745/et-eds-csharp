@@ -32,6 +32,7 @@ namespace SuperManWebApi.Controllers
         readonly IClienterProvider iClienterProvider = new ClienterProvider();
         readonly IOrderChildProvider iOrderChildProvider = new OrderChildProvider();
         readonly IReceviceAddressProvider receviceAddressProvider = new ReceviceAddressProvider();
+        readonly IBusinessSetpChargeChildProvider iBusinessSetpChargeChildProvider = new BusinessSetpChargeChildProvider();
         /// <summary>
         /// 商户发布订单   
         /// </summary>
@@ -39,7 +40,7 @@ namespace SuperManWebApi.Controllers
         /// <UpdateTime>20150511</UpdateTime>
         /// <param name="model">订单参数实体</param>
         /// <returns></returns> 
-        //[Token]
+        [Token]
         [HttpPost]
         public ResultModel<BusiOrderResultModel> Push(BussinessOrderInfoPM model)
         {
@@ -479,9 +480,16 @@ namespace SuperManWebApi.Controllers
             {
                 return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.CountIsNotEqual);
             }
-            if (business.ReceivableType == 2 && business.SetpChargeId == 0)
+            if (business.ReceivableType == 2)
             {
-                return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.SetpChargeIdEmpty);
+                if (business.SetpChargeId == 0)
+                    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.SetpChargeIdEmpty);
+             
+                 BusinessSetpChargeChild bSetpChargeChild = iBusinessSetpChargeChildProvider.GetDetails(business.SetpChargeId);
+                 if (bSetpChargeChild == null)
+                 {
+                    return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.SetpChargeIdEmpty);
+                 }             
             }
                 
             order = iOrderProvider.TranslateOrder(model, business);          
@@ -497,6 +505,7 @@ namespace SuperManWebApi.Controllers
                     return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.BusiBalancePriceLack);                
                 }
             }
+       
             return ResultModel<BusiOrderResultModel>.Conclude(PubOrderStatus.VerificationSuccess);
         }
         #endregion

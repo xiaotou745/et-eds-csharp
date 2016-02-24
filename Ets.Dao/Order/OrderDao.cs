@@ -2416,8 +2416,8 @@ select @@identity";
 
             #region 写子OrderOther表
             const string insertOtherSql = @"
-insert into OrderOther(OrderId,NeedUploadCount,HadUploadCount,PubLongitude,PubLatitude,OneKeyPubOrder,IsOrderChecked,IsAllowCashPay,IsPubDateTimely)
-values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude,@OneKeyPubOrder,@IsOrderChecked,@IsAllowCashPay,@IsPubDateTimely)";
+insert into OrderOther(OrderId,NeedUploadCount,HadUploadCount,PubLongitude,PubLatitude,OneKeyPubOrder,IsOrderChecked,IsAllowCashPay,IsPubDateTimely,ReceivableType)
+values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude,@OneKeyPubOrder,@IsOrderChecked,@IsAllowCashPay,@IsPubDateTimely,@ReceivableType)";
             IDbParameters dbOtherParameters = DbHelper.CreateDbParameters();
             dbOtherParameters.AddWithValue("@OrderId", orderId); //商户ID
             dbOtherParameters.AddWithValue("@NeedUploadCount", order.OrderCount); //需上传数量
@@ -2427,7 +2427,7 @@ values(@OrderId,@NeedUploadCount,0,@PubLongitude,@PubLatitude,@OneKeyPubOrder,@I
             dbOtherParameters.Add("@IsOrderChecked", DbType.Int32).Value = order.IsOrderChecked;
             dbOtherParameters.Add("@IsAllowCashPay", DbType.Int32).Value = order.IsAllowCashPay;
             dbOtherParameters.Add("@IsPubDateTimely", DbType.Int32).Value = order.IsPubDateTimely;
-
+            dbOtherParameters.AddWithValue("@ReceivableType", order.ReceivableType);
             DbHelper.ExecuteScalar(SuperMan_Write, insertOtherSql, dbOtherParameters);
             #endregion
 
