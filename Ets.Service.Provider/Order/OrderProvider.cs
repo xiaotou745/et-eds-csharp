@@ -407,8 +407,13 @@ namespace Ets.Service.Provider.Order
                     orderComm.DistribSubsidy ?? 0, 0);//订单结算金额          
             }
             else
-            {                
-                to.SettleMoney = businessSetpChargeChildDao.GetChargeValue(business.SetpChargeId, busiOrderInfoModel.Amount);
+            {
+                BusinessSetpChargeChild bSetpChargeChild = businessSetpChargeChildDao.GetDetails(business.SetpChargeId);
+                
+                if (busiOrderInfoModel.Amount > bSetpChargeChild.MaxValue)
+                    to.SettleMoney = bSetpChargeChild.ChargeValue;
+                else
+                    to.SettleMoney = businessSetpChargeChildDao.GetChargeValue(business.SetpChargeId, busiOrderInfoModel.Amount);
             }
 
 

@@ -93,6 +93,33 @@ where  Id=@Id ";
         }
 
         /// <summary>
+        /// 获取BusinessSetpChargeChild
+        /// </summary>
+        /// <param name="originalOrderNo"></param>
+        /// <param name="orderfrom"></param>
+        /// <returns></returns>
+        public BusinessSetpChargeChild GetDetails(int setpChargeId)
+        {
+            BusinessSetpChargeChild model = null;
+
+            const string querySql = @"SELECT SetpChargeId,MinValue,MaxValue,CreateDate,ChargeValue,Enable FROM [BusinessSetpChargeChild]   WITH ( NOLOCK )  
+            WHERE setpChargeId=3 and Enable=1 AND MaxValue=(             
+            SELECT MAX(MaxValue) FROM [BusinessSetpChargeChild]   WITH ( NOLOCK )  
+            WHERE setpChargeId=3 and Enable=1            )";
+            IDbParameters dbParameters = DbHelper.CreateDbParameters();
+            dbParameters.AddWithValue("@setpChargeId", setpChargeId);           
+     
+
+            DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querySql, dbParameters));
+            if (DataTableHelper.CheckDt(dt) && dt.Rows.Count > 0)
+            {
+                model = MapRows<BusinessSetpChargeChild>(dt)[0];
+            }
+            return model;
+        }
+
+
+        /// <summary>
         /// 获取商户应付金额
         /// </summary>
         /// <param name="originalOrderNo"></param>
@@ -101,7 +128,7 @@ where  Id=@Id ";
         public decimal GetChargeValue(int setpChargeId, decimal money)
         {
             const string querySql = @"SELECT top 1  ChargeValue FROM [BusinessSetpChargeChild]   WITH ( NOLOCK )  
-            WHERE setpChargeId=@setpChargeId AND @money>MinValue and @setpChargeId<=MaxValue and Enable=1";
+            WHERE setpChargeId=@setpChargeId AND @money>MinValue and @money<=MaxValue and Enable=1";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@setpChargeId", setpChargeId);    
             dbParameters.AddWithValue("@money", money);    
