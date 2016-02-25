@@ -670,7 +670,7 @@ namespace Ets.Service.Provider.Clienter
         /// <returns></returns>
         public FinishOrderResultModel FinishOrder(OrderCompleteModel parModel)
         {
-            LogHelper.LogWriter(" UpdateInvalidOrder", new { obj = "时间：" + DateTime.Now.ToString() + "a1111111"});
+            LogHelper.LogWriter(" UpdateInvalidOrder", new { obj = "时间：" + DateTime.Now.ToString() + "1111111"});
             string orderNo = parModel.orderNo;
             string pickupCode = parModel.pickupCode;
             #region 验证
@@ -682,7 +682,6 @@ namespace Ets.Service.Provider.Clienter
                 model.FinishOrderStatus = FinishOrderStatus.DataError;
                 return model;
             }
-            LogHelper.LogWriter(" UpdateInvalidOrder", new { obj = "时间：" + DateTime.Now.ToString() + "a22222222222" });
             //获取该订单信息和该  骑士现在的 收入金额
             if (myOrderInfo.GroupId == GroupConst.Group3 && !string.IsNullOrWhiteSpace(myOrderInfo.PickupCode)
                 && pickupCode != myOrderInfo.PickupCode) //全时订单 判断 取货码是否正确             
@@ -705,7 +704,7 @@ namespace Ets.Service.Provider.Clienter
             //        return model;
             //    }
             //}
-            LogHelper.LogWriter(" UpdateInvalidOrder", new { obj = "时间：" + DateTime.Now.ToString() + "a333333333333" });
+
             GlobalConfigModel globalSetting = new GlobalConfigProvider().GlobalConfigMethod(0);
             //取到任务的接单时间、从缓存中读取完成任务时间限制，判断要用户点击完成时间>接单时间+限制时间 
             int limitFinish = ParseHelper.ToInt(globalSetting.CompleteTimeSet, 0);
@@ -720,14 +719,14 @@ namespace Ets.Service.Provider.Clienter
                     return model;
                 }
             }
-            LogHelper.LogWriter(" UpdateInvalidOrder", new { obj = "时间：" + DateTime.Now.ToString() + "a44444444444" });
+
             if (!new OrderDao().IsOrNotFinish(myOrderInfo.Id))//是否有未完成子订单
             {
                 model.FinishOrderStatus = FinishOrderStatus.ExistNotPayChildOrder;
                 return model;
             }
             #endregion
-            LogHelper.LogWriter(" UpdateInvalidOrder", new { obj = "时间：" + DateTime.Now.ToString() + "a5555555555" });
+
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
                 //更新订单状态                
@@ -737,7 +736,6 @@ namespace Ets.Service.Provider.Clienter
                     model.FinishOrderStatus = FinishOrderStatus.OrderHadCancelOrComplete;
                     return model;
                 }
-                LogHelper.LogWriter(" UpdateInvalidOrder", new { obj = "时间：" + DateTime.Now.ToString() + "a66666666666" });
                 //更新商家金额
                 UpdateBusinessMoney(myOrderInfo);
                 //更新骑士金额
@@ -1486,8 +1484,7 @@ namespace Ets.Service.Provider.Clienter
         /// <returns></returns>
         void UpdateBusinessMoney(OrderListModel myOrderInfo)
         {
-            LogHelper.LogWriter(" UpdateInvalidOrder", new { obj = "时间：" + DateTime.Now.ToString() + "myOrderInfo.IsPay" + myOrderInfo.IsPay.ToString() + " myOrderInfo.MealsSettleMode" + myOrderInfo.MealsSettleMode.GetHashCode().ToString()});
-
+   
             if (!(bool)myOrderInfo.IsPay && myOrderInfo.MealsSettleMode == MealsSettleMode.LineOn.GetHashCode())
             {
                 // 更新商户余额、可提现余额     
@@ -1509,14 +1506,14 @@ namespace Ets.Service.Provider.Clienter
                 List<OrderChildInfo> orderChildInfos = orderChildDao.GetByOrderId(myOrderInfo.Id);
                 List<OrderChildInfo> cashChildInfos =
                     orderChildInfos.Where(t => t.PayType == PayTypeEnum.CashPay.GetHashCode()).ToList();
-                LogHelper.LogWriter(" UpdateInvalidOrder", new { obj = "时间：" + DateTime.Now.ToString() + cashChildInfos.Count.ToString() });
+                
                 if (cashChildInfos.Count > 0)
                 {
                     decimal goodPrice = cashChildInfos.Sum(t => t.GoodPrice);
                     decimal deliveryPrice = cashChildInfos.Sum(t => t.DeliveryPrice);
-                    LogHelper.LogWriter(" UpdateInvalidOrder", new { obj = "时间：" + DateTime.Now.ToString() + businessMoneyPm.Amount.ToString() + " " + goodPrice.ToString()+" "+deliveryPrice.ToString() });
-
-                    businessMoneyPm.Amount = businessMoneyPm.Amount - goodPrice - deliveryPrice;
+                    LogHelper.LogWriter(" UpdateInvalidOrder", new { obj = "时间：" + DateTime.Now.ToString() + myOrderInfo.BusinessReceivable.ToString() + " " + goodPrice.ToString() + " " + deliveryPrice.ToString() });
+                    decimal currAmount = myOrderInfo.BusinessReceivable;
+                    businessMoneyPm.Amount = currAmount - goodPrice - deliveryPrice;
                 }
 
                 #endregion
