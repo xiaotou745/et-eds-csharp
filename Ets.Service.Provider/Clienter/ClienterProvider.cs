@@ -1507,7 +1507,9 @@ namespace Ets.Service.Provider.Clienter
                 if (cashChildInfos.Count > 0)
                 {
                     decimal goodPrice = cashChildInfos.Sum(t => t.GoodPrice);
-                    businessMoneyPm.Amount = businessMoneyPm.Amount - goodPrice;
+                    decimal deliveryPrice = cashChildInfos.Sum(t => t.DeliveryPrice);
+
+                    businessMoneyPm.Amount = businessMoneyPm.Amount - goodPrice - deliveryPrice;
                 }
 
                 #endregion
