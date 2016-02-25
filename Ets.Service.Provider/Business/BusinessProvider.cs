@@ -1197,20 +1197,23 @@ namespace Ets.Service.Provider.Business
             }
             else//
             {
-                LogHelper.LogWriter("ResultModel<BusiOrderResultModel> GetBusinessPushOrderInfo()方法出错", new { obj = "时间：" + DateTime.Now.ToString() + "1111111111" });
+                LogHelper.LogWriter("ResultModel<BusiOrderResultModel> GetBusinessPushOrderInfo()方法出错", new { obj = "时间：" + DateTime.Now.ToString() + "1111111111" + busiInfo.SetpChargeId });
                 decimal settleMoney = 0;
                 BusinessSetpChargeChild bSetpChargeChild = businessSetpChargeChildDao.GetDetails(busiInfo.SetpChargeId);
+                LogHelper.LogWriter("ResultModel<BusiOrderResultModel> GetBusinessPushOrderInfo()方法出错", new { obj = "时间：" + DateTime.Now.ToString() + "2222222222" });
+                LogHelper.LogWriter("ResultModel<BusiOrderResultModel> GetBusinessPushOrderInfo()方法出错", new { obj = "时间：" + DateTime.Now.ToString() + bSetpChargeChild.ToString() });
+                LogHelper.LogWriter("ResultModel<BusiOrderResultModel> GetBusinessPushOrderInfo()方法出错", new { obj = "时间：" + DateTime.Now.ToString() + "3333333333333333333" });
                 if (amount > bSetpChargeChild.MaxValue)
                     settleMoney = bSetpChargeChild.ChargeValue;
                 else
                     settleMoney = businessSetpChargeChildDao.GetChargeValue(busiInfo.SetpChargeId, amount);
-                LogHelper.LogWriter("ResultModel<BusiOrderResultModel> GetBusinessPushOrderInfo()方法出错", new { obj = "时间：" + DateTime.Now.ToString() + "2222222222" });
+                
                 var result = new BusiDistribSubsidyResultModel
                 {
                     DistribSubsidy = 0,
                     GroupBusinessAmount = busiInfo.GroupBusinessAmount
                 };
-                LogHelper.LogWriter("ResultModel<BusiOrderResultModel> GetBusinessPushOrderInfo()方法出错", new { obj = "时间：" + DateTime.Now.ToString() + "3333333333333333333" });
+                
                 result.OrderBalance = settleMoney;
                 //剩余余额(商家余额 –当前任务结算金额)3
                 result.RemainBalance = busiInfo.BalancePrice - result.OrderBalance;

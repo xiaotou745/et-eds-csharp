@@ -105,7 +105,7 @@ where  Id=@Id ";
             const string querySql = @"SELECT SetpChargeId,MinValue,MaxValue,CreateDate,ChargeValue,Enable FROM [BusinessSetpChargeChild]   WITH ( NOLOCK )  
             WHERE setpChargeId=@setpChargeId and Enable=1 AND MaxValue=(             
             SELECT MAX(MaxValue) FROM [BusinessSetpChargeChild]   WITH ( NOLOCK )  
-            WHERE setpChargeId=@setpChargeId and Enable=1            )";
+            WHERE setpChargeId=@setpChargeId and Enable=1  )";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("@setpChargeId", setpChargeId);           
      
