@@ -23,7 +23,9 @@ namespace Ets.Dao.User
         public int Insert(BusinessRechargeModel model)
         {
             string sql = @"
-if(select count(1) FROM dbo.BusinessRecharge br(nolock) where OriginalOrderNo=@OriginalOrderNo<=0)
+declare @businessCount int
+select @businessCount=count(1) FROM dbo.BusinessRecharge br(nolock) where OriginalOrderNo=@OriginalOrderNo
+if(@businessCount<=0)
 begin 
 insert into dbo.BusinessRecharge ( BusinessId , PayType, OrderNo, payAmount, PayStatus,
                                     PayBy, PayTime, OriginalOrderNo )
