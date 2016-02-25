@@ -207,5 +207,9 @@ namespace ETS.Const
         /// </summary>
         public const string Ets_AlipayBatchNo = "Ets_AlipayBatchNo_{0}";
 
+        /// <summary>
+        /// 商家充值锁
+        /// </summary>
+        public const string BusinessRechargeLock = "BusinessRechargeLock_{0}";
     }
 }
