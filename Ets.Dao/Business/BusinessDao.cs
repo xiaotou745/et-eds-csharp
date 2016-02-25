@@ -1885,7 +1885,10 @@ where b.Id=@Id";
                  CommissionFixValue = ParseHelper.ToDecimal(dataRow["CommissionFixValue"], 0),
                  CommissionType = ParseHelper.ToInt(dataRow["CommissionType"], 0),
                  GroupBusinessAmount = ParseHelper.ToDecimal(dataRow["GroupBusinessAmount"], 0),
-                 TaskDistributionId = ParseHelper.ToInt(dataRow["TaskDistributionId"], 0)
+                 ReceivableType = ParseHelper.ToInt(dataRow["ReceivableType"], 0),
+                 SetpChargeId = ParseHelper.ToInt(dataRow["SetpChargeId"], 0),
+                 TaskDistributionId = ParseHelper.ToInt(dataRow["TaskDistributionId"], 0)             
+
              });
         }
 
