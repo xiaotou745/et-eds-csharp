@@ -828,14 +828,6 @@ namespace Ets.Service.Provider.Pay
 
             if (model != null && model.result_code.ToString().ToUpper() == "SUCCESS" && ParseHelper.ToInt(model.attach) > 0)
             {
-                var redis = new ETS.NoSql.RedisCache.RedisCache();
-                string key = string.Format(RedissCacheKey.BusinessRechargeLock, model.transaction_id);
-                int orderLock = ParseHelper.ToInt(redis.Get<int>(key));
-                if (orderLock == 1)
-                {
-                    return resultFail;
-                }
-                redis.Set(key, 1, new TimeSpan(0, 1, 0));
                 Ets.Model.DataModel.Business.BusinessRechargeModel businessRechargeModel = new Ets.Model.DataModel.Business.BusinessRechargeModel()
                 {
                     BusinessId = ParseHelper.ToInt(model.attach),
@@ -952,7 +944,8 @@ namespace Ets.Service.Provider.Pay
 
             using (IUnitOfWork tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                new BusinessRechargeDao().Insert(model);//写入充值 
+                //写入充值 
+                if (new BusinessRechargeDao().Insert(model) <= 0) return "fail";
                 new BusinessDao().UpdateForWithdrawC(forWithdrawPM); //更新商家金额、可提现金额
                 new BusinessBalanceRecordDao().Insert(businessBalanceRecord);//写商家流水
                 tran.Complete();

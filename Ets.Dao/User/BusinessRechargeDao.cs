@@ -20,9 +20,11 @@ namespace Ets.Dao.User
         /// 2015年5月29日 16:08:40
         /// </summary>
         /// <param name="model"></param>
-        public void Insert(BusinessRechargeModel model)
+        public int Insert(BusinessRechargeModel model)
         {
             string sql = @"
+if(select count(1) FROM dbo.BusinessRecharge br(nolock) where OriginalOrderNo=@OriginalOrderNo<=0)
+begin 
 insert into dbo.BusinessRecharge ( BusinessId , PayType, OrderNo, payAmount, PayStatus,
                                     PayBy, PayTime, OriginalOrderNo )
 values  (
@@ -34,7 +36,9 @@ values  (
           @PayBy, -- PayBy - nvarchar(100)
           getdate(), -- PayTime - date
           @OriginalOrderNo  -- OriginalOrderNo - varchar(100)
-          )";
+          ) select @@identity
+end
+";
             IDbParameters parm = DbHelper.CreateDbParameters();
 
             parm.Add("BusinessId", DbType.Int32, 4).Value = model.BusinessId;
@@ -44,7 +48,7 @@ values  (
             parm.Add("PayStatus", DbType.Int32, 4).Value = model.PayStatus;
             parm.Add("PayBy", DbType.String, 200).Value = model.PayBy;
             parm.Add("OriginalOrderNo", DbType.String, 100).Value = model.OriginalOrderNo;
-            DbHelper.ExecuteNonQuery(SuperMan_Write, sql, parm);
+            return ParseHelper.ToInt(DbHelper.ExecuteScalar(SuperMan_Write, sql, parm));
         }
 
         /// <summary>
