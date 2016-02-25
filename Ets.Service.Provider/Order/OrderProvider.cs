@@ -439,6 +439,7 @@ namespace Ets.Service.Provider.Order
 
                 to.SettleMoney = settleMoney;
                 to.ReceivableType = 2;
+                to.DistribSubsidy = 0;
             }
 
 
