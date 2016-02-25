@@ -293,5 +293,11 @@ namespace Ets.Model.DataModel.Order
         public string ProductName { get; set; }
 
         public DateTime? ExpectedTakeTime { get; set; }
+
+         /// <summary>
+        /// 应收类型 1默认标准(a+b+c) 2,阶梯收费 默认1
+        /// </summary>
+        public int ReceivableType { get; set; }
+        
     }
 }
