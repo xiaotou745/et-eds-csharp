@@ -1181,7 +1181,7 @@ namespace Ets.Service.Provider.Business
         {
             var busiInfo = businessDao.GetSettlementRelevantById(id);
 
-            if (busiInfo.TaskDistributionId == 1)
+            if (busiInfo.ReceivableType == 1)
             {
                 var result = new BusiDistribSubsidyResultModel
                 {

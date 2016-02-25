@@ -197,7 +197,9 @@ namespace Ets.Model.DomainModel.Business
         /// 
         /// </summary>
         public int SetpChargeId { get; set; }
-        
+
+        public int ReceivableType { get; set; }
+                
         
         
     }
