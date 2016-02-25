@@ -11,3 +11,9 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description',
 GO
 
 
+	    USE superman
+	    alter table dbo.business drop constraint DF__business__TaskDi__15B0212B
+		--说明：删除表的字段的原有约束
+		alter table dbo.business add constraint DF_BUSINESS_TaskDistributionId DEFAULT 1 for TaskDistributionId
+
+
