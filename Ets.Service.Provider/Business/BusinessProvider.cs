@@ -1188,6 +1188,8 @@ namespace Ets.Service.Provider.Business
                                    busiInfo.DistribSubsidy ?? 0m) * orderChildCount;
             //剩余余额(商家余额 –当前任务结算金额)
             result.RemainBalance = busiInfo.BalancePrice - result.OrderBalance;
+            if (busiInfo.TaskDistributionId == 2)//里程
+                result.DistribSubsidy = 0;
             return result;
         }
         /// <summary>

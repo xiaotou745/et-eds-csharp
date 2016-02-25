@@ -187,6 +187,12 @@ namespace Ets.Model.DomainModel.Business
         /// 当前集团金额
         /// </summary>
         public decimal GroupBusinessAmount { get; set; }
+
+        /// <summary>
+        /// 规则
+        /// </summary>
+        public int TaskDistributionId { get; set; }
+        
         
     }
 }

@@ -415,17 +415,26 @@ namespace Ets.Service.Provider.Order
                     settleMoney =settleMoney + businessReceivable;
                 }
                 to.SettleMoney = settleMoney;
-
                 to.ReceivableType = 1;
             }
             else
             {
-                BusinessSetpChargeChild bSetpChargeChild = businessSetpChargeChildDao.GetDetails(business.SetpChargeId);
-                
+                decimal settleMoney = 0; 
+                BusinessSetpChargeChild bSetpChargeChild = businessSetpChargeChildDao.GetDetails(business.SetpChargeId);                
                 if (busiOrderInfoModel.Amount > bSetpChargeChild.MaxValue)
-                    to.SettleMoney = bSetpChargeChild.ChargeValue;
+                    settleMoney = bSetpChargeChild.ChargeValue;
                 else
-                    to.SettleMoney = businessSetpChargeChildDao.GetChargeValue(business.SetpChargeId, busiOrderInfoModel.Amount);
+                    settleMoney = businessSetpChargeChildDao.GetChargeValue(business.SetpChargeId, busiOrderInfoModel.Amount);
+
+
+                if (!(bool)to.IsPay && to.MealsSettleMode == MealsSettleMode.LineOn.GetHashCode())//未付款且线上支付
+                {
+                    decimal businessReceivable = Decimal.Round(ParseHelper.ToDecimal(to.Amount) +
+                                   ParseHelper.ToDecimal(to.DistribSubsidy) * ParseHelper.ToInt(to.OrderCount), 2);//第三方如果设置商家外送费会多给第三方商户返回菜品金额+外送费
+                    settleMoney = settleMoney + businessReceivable;
+                }
+
+                to.SettleMoney = settleMoney;
                 to.ReceivableType = 2;
             }
 

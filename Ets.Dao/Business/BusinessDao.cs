@@ -1865,6 +1865,7 @@ SELECT gbr.IsEnable,  isnull(DistribSubsidy,0) as DistribSubsidy,
             b.CommissionType, 
             b.CommissionFixValue,
             b.BalancePrice ,
+            b.TaskDistributionId ,
             CASE WHEN gbr.IsBind=1 THEN gb.Amount
             ELSE 0  END GroupBusinessAmount           
             from Business b (nolock) 
@@ -1881,7 +1882,8 @@ where b.Id=@Id";
                  BalancePrice = ParseHelper.ToDecimal(dataRow["BalancePrice"], 0),
                  CommissionFixValue = ParseHelper.ToDecimal(dataRow["CommissionFixValue"], 0),
                  CommissionType = ParseHelper.ToInt(dataRow["CommissionType"], 0),
-                 GroupBusinessAmount = ParseHelper.ToDecimal(dataRow["GroupBusinessAmount"], 0)
+                 GroupBusinessAmount = ParseHelper.ToDecimal(dataRow["GroupBusinessAmount"], 0),
+                 TaskDistributionId = ParseHelper.ToInt(dataRow["TaskDistributionId"], 0)
              });
         }
 
