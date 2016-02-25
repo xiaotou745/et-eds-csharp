@@ -25,7 +25,7 @@ namespace Ets.Service.Provider.Pay
             string payUrl = Config.PayPlatformUrlWxApp;//.PayPlatformUrlWxQr
             string data = JsonHelper.JsonConvertToString(model);
 
-            data = AESApp.AesEncrypt(data);
+            //data = AESApp.AesEncrypt(data);
 
             return HTTPHelper.HttpPostToJava(payUrl, "data=" + data);
         }
