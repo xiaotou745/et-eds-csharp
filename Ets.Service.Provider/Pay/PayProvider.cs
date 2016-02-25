@@ -512,7 +512,7 @@ namespace Ets.Service.Provider.Pay
             }
             resultModel.payAmount = model.payAmount;
             resultModel.orderNo = orderNo;
-            resultModel.payType = model.PayType;
+            resultModel.PayType = model.PayType;
 
             //所属产品_主订单号_子订单号_支付方式
 
