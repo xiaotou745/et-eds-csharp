@@ -1179,18 +1179,36 @@ namespace Ets.Service.Provider.Business
         public BusiDistribSubsidyResultModel GetBusinessPushOrderInfo(int id, int orderChildCount, decimal amount)
         {
             var busiInfo = businessDao.GetSettlementRelevantById(id);
-            var result = new BusiDistribSubsidyResultModel 
-                        { 
-                            DistribSubsidy = busiInfo.DistribSubsidy,
-                            GroupBusinessAmount=busiInfo.GroupBusinessAmount
-                        };
-            result.OrderBalance = amount * busiInfo.BusinessCommission / 100 + (busiInfo.CommissionFixValue +
-                                   busiInfo.DistribSubsidy ?? 0m) * orderChildCount;
-            //剩余余额(商家余额 –当前任务结算金额)
-            result.RemainBalance = busiInfo.BalancePrice - result.OrderBalance;
-            if (busiInfo.TaskDistributionId == 2)//里程
-                result.DistribSubsidy = 0;
-            return result;
+
+            if (busiInfo.TaskDistributionId == 1)
+            {
+                var result = new BusiDistribSubsidyResultModel
+                {
+                    DistribSubsidy = busiInfo.DistribSubsidy,
+                    GroupBusinessAmount = busiInfo.GroupBusinessAmount
+                };
+                result.OrderBalance = amount * busiInfo.BusinessCommission / 100 + (busiInfo.CommissionFixValue +
+                                       busiInfo.DistribSubsidy ?? 0m) * orderChildCount;
+                //剩余余额(商家余额 –当前任务结算金额)
+                result.RemainBalance = busiInfo.BalancePrice - result.OrderBalance;
+
+                return result;
+            }
+            else//
+            {
+                var result = new BusiDistribSubsidyResultModel
+                {
+                    DistribSubsidy = 0,
+                    GroupBusinessAmount = busiInfo.GroupBusinessAmount
+                };
+                result.OrderBalance = amount ;
+                //剩余余额(商家余额 –当前任务结算金额)
+                result.RemainBalance = busiInfo.BalancePrice - result.OrderBalance;
+
+                return result;
+            }
+
+            return null;            
         }
         /// <summary>
         /// 判断商户是否存在
