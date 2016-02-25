@@ -192,6 +192,12 @@ namespace Ets.Model.DomainModel.Business
         /// 规则
         /// </summary>
         public int TaskDistributionId { get; set; }
+
+         /// <summary>
+        /// 
+        /// </summary>
+        public int SetpChargeId { get; set; }
+        
         
         
     }

@@ -1866,6 +1866,7 @@ SELECT gbr.IsEnable,  isnull(DistribSubsidy,0) as DistribSubsidy,
             b.CommissionFixValue,
             b.BalancePrice ,
             b.TaskDistributionId ,
+            b.SetpChargeId,
             CASE WHEN gbr.IsBind=1 THEN gb.Amount
             ELSE 0  END GroupBusinessAmount           
             from Business b (nolock) 

@@ -57,6 +57,7 @@ namespace Ets.Service.Provider.Business
         readonly BusinessLoginLogDao businessLoginLogDao = new BusinessLoginLogDao();
         readonly OrderRegionDao orderRegionDao = new OrderRegionDao();
         readonly BusinessGroupDao businessGroupDao = new BusinessGroupDao();
+        BusinessSetpChargeChildDao businessSetpChargeChildDao = new BusinessSetpChargeChildDao();
         /// <summary>
         /// app端商户获取订单   add by caoheyang 20150311
         /// </summary>
@@ -1196,12 +1197,20 @@ namespace Ets.Service.Provider.Business
             }
             else//
             {
+
+                decimal settleMoney = 0;
+                BusinessSetpChargeChild bSetpChargeChild = businessSetpChargeChildDao.GetDetails(busiInfo.SetpChargeId);
+                if (amount > bSetpChargeChild.MaxValue)
+                    settleMoney = bSetpChargeChild.ChargeValue;
+                else
+                    settleMoney = businessSetpChargeChildDao.GetChargeValue(busiInfo.SetpChargeId, amount);
+
                 var result = new BusiDistribSubsidyResultModel
                 {
                     DistribSubsidy = 0,
                     GroupBusinessAmount = busiInfo.GroupBusinessAmount
                 };
-                result.OrderBalance = amount ;
+                result.OrderBalance = settleMoney;
                 //剩余余额(商家余额 –当前任务结算金额)
                 result.RemainBalance = busiInfo.BalancePrice - result.OrderBalance;
 
