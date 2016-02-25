@@ -410,11 +410,12 @@ namespace Ets.Service.Provider.Order
                 
                 if (!(bool)to.IsPay && to.MealsSettleMode == MealsSettleMode.LineOn.GetHashCode())//未付款且线上支付
                 {
-                    decimal businessReceivable = Decimal.Round(ParseHelper.ToDecimal(to.Amount) +
-                                   ParseHelper.ToDecimal(to.DistribSubsidy) * ParseHelper.ToInt(to.OrderCount), 2);//第三方如果设置商家外送费会多给第三方商户返回菜品金额+外送费
+                    decimal businessReceivable = Decimal.Round(ParseHelper.ToDecimal(to.Amount));//第三方如果设置商家外送费会多给第三方商户返回菜品金额+外送费
+                    settleMoney = settleMoney + businessReceivable;
 
-                    to.BusinessReceivable = businessReceivable;
-                    settleMoney =settleMoney + businessReceivable;
+                    to.BusinessReceivable = Decimal.Round(ParseHelper.ToDecimal(to.Amount) +
+                              ParseHelper.ToDecimal(to.DistribSubsidy) * ParseHelper.ToInt(to.OrderCount), 2);                   
+                  
                 }
                 to.SettleMoney = settleMoney;
                 to.ReceivableType = 1;
@@ -428,12 +429,12 @@ namespace Ets.Service.Provider.Order
                 else
                     settleMoney = businessSetpChargeChildDao.GetChargeValue(business.SetpChargeId, busiOrderInfoModel.Amount);
 
-
                 if (!(bool)to.IsPay && to.MealsSettleMode == MealsSettleMode.LineOn.GetHashCode())//未付款且线上支付
                 {
                     decimal businessReceivable = Decimal.Round(ParseHelper.ToDecimal(to.Amount));//第三方如果设置商家外送费会多给第三方商户返回菜品金额+外送费
-                    to.BusinessReceivable = businessReceivable;
                     settleMoney = settleMoney + businessReceivable;
+
+                    to.BusinessReceivable = Decimal.Round(ParseHelper.ToDecimal(to.Amount)); ;
                 }
 
                 to.SettleMoney = settleMoney;
