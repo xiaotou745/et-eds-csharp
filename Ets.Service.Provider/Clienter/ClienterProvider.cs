@@ -1483,6 +1483,8 @@ namespace Ets.Service.Provider.Clienter
         /// <returns></returns>
         void UpdateBusinessMoney(OrderListModel myOrderInfo)
         {
+            LogHelper.LogWriter(" UpdateInvalidOrder", new { obj = "时间：" + DateTime.Now.ToString() + "myOrderInfo.IsPay" + myOrderInfo.IsPay.ToString() + " myOrderInfo.MealsSettleMode" + myOrderInfo.MealsSettleMode.GetHashCode().ToString()});
+
             if (!(bool)myOrderInfo.IsPay && myOrderInfo.MealsSettleMode == MealsSettleMode.LineOn.GetHashCode())
             {
                 // 更新商户余额、可提现余额     
