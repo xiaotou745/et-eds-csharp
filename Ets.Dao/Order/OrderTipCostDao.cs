@@ -244,7 +244,7 @@ where  Id=@Id";
         {
             IList<OrderTipCost> models = new List<OrderTipCost>();
             const string querysql = @"
-select Id,OrderId,Amount,CreateName,CreateTime,PayStates,OriginalOrderNo,PayType,OutTradeNo from OrderTipCost where orderId=@orderId --and PayStates>-1";
+select Id,OrderId,Amount,CreateName,CreateTime,PayStates,OriginalOrderNo,PayType,OutTradeNo from OrderTipCost where orderId=@orderId and PayStates=1";
             IDbParameters dbParameters = DbHelper.CreateDbParameters();
             dbParameters.AddWithValue("orderId", orderId);
             DataTable dt = DataTableHelper.GetTable(DbHelper.ExecuteDataset(SuperMan_Read, querysql, dbParameters));
