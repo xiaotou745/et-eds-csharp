@@ -1504,10 +1504,12 @@ namespace Ets.Service.Provider.Clienter
                 List<OrderChildInfo> orderChildInfos = orderChildDao.GetByOrderId(myOrderInfo.Id);
                 List<OrderChildInfo> cashChildInfos =
                     orderChildInfos.Where(t => t.PayType == PayTypeEnum.CashPay.GetHashCode()).ToList();
+                LogHelper.LogWriter(" UpdateInvalidOrder", new { obj = "时间：" + DateTime.Now.ToString() + cashChildInfos.Count.ToString() });
                 if (cashChildInfos.Count > 0)
                 {
                     decimal goodPrice = cashChildInfos.Sum(t => t.GoodPrice);
                     decimal deliveryPrice = cashChildInfos.Sum(t => t.DeliveryPrice);
+                    LogHelper.LogWriter(" UpdateInvalidOrder", new { obj = "时间：" + DateTime.Now.ToString() + businessMoneyPm.Amount.ToString() + " " + goodPrice.ToString()+" "+deliveryPrice.ToString() });
 
                     businessMoneyPm.Amount = businessMoneyPm.Amount - goodPrice - deliveryPrice;
                 }
