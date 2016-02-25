@@ -27,7 +27,7 @@ namespace Ets.Service.Provider.Pay
 
             //data = AESApp.AesEncrypt(data);
 
-            return HTTPHelper.HttpPostToJava(payUrl, "data=" + data);
+            return HTTPHelper.HttpPostToJava(payUrl, data);
         }
 
 
