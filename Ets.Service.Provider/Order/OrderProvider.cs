@@ -422,12 +422,32 @@ namespace Ets.Service.Provider.Order
             }
             else
             {
-                decimal settleMoney = 0; 
                 BusinessSetpChargeChild bSetpChargeChild = businessSetpChargeChildDao.GetDetails(business.SetpChargeId);                
-                if (busiOrderInfoModel.Amount > bSetpChargeChild.MaxValue)
-                    settleMoney = bSetpChargeChild.ChargeValue;
-                else
-                    settleMoney = businessSetpChargeChildDao.GetChargeValue(business.SetpChargeId, busiOrderInfoModel.Amount);
+                int orderChileCount = busiOrderInfoModel.listOrderChlid.Count;
+
+                decimal settleMoney = 0; 
+                for (int i = 0; i < orderChileCount; i++)//子订单价格
+                {
+                    decimal amount = 0;
+                    decimal goodPrice  = busiOrderInfoModel.listOrderChlid[i].GoodPrice;
+                    if (goodPrice > bSetpChargeChild.MaxValue)
+                    {
+                        amount = bSetpChargeChild.MaxValue;
+                    }
+                    else
+                    {
+                        amount = businessSetpChargeChildDao.GetChargeValue(business.SetpChargeId, goodPrice);
+                    }
+                    settleMoney = settleMoney + amount;
+                }
+                
+
+                //decimal settleMoney = 0; 
+                //BusinessSetpChargeChild bSetpChargeChild = businessSetpChargeChildDao.GetDetails(business.SetpChargeId);                
+                //if (busiOrderInfoModel.Amount > bSetpChargeChild.MaxValue)
+                //    settleMoney = bSetpChargeChild.ChargeValue;
+                //else
+                //    settleMoney = businessSetpChargeChildDao.GetChargeValue(business.SetpChargeId, busiOrderInfoModel.Amount);
 
                 if (!(bool)to.IsPay && to.MealsSettleMode == MealsSettleMode.LineOn.GetHashCode())//未付款且线上支付
                 {
