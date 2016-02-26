@@ -432,7 +432,7 @@ namespace Ets.Service.Provider.Order
                     decimal goodPrice  = busiOrderInfoModel.listOrderChlid[i].GoodPrice;
                     if (goodPrice > bSetpChargeChild.MaxValue)
                     {
-                        amount = bSetpChargeChild.MaxValue;
+                        amount = bSetpChargeChild.ChargeValue;
                     }
                     else
                     {
