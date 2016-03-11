@@ -133,5 +133,47 @@ namespace SuperMan.Controllers
         {
             return View();
         }
+
+        public ActionResult edsB3()
+        {
+            string userAgent = HttpContext.Request.UserAgent;
+            //微信浏览器
+            if (userAgent.ToLower().Contains("micromessenger"))
+            {
+                ViewBag.IsWeixin = true;
+            }
+            else
+            {
+                ViewBag.IsWeixin = false;
+                //如果是苹果产品
+                if (CheckAgent())
+                {
+                    VersionCheckModel model = new VersionCheckModel()
+                    {
+                        PlatForm = 2,
+                        UserType = 2,
+                        AppSource = 2
+                    };
+                    Download(model);
+                }
+                else
+                {
+                    AppVersionProvider appVersionProvider = new AppVersionProvider();
+                    VersionCheckModel model = new VersionCheckModel()
+                    {
+                        PlatForm = 1,
+                        UserType = 2,
+                        AppSource = 2
+                    };
+                    var result = appVersionProvider.VersionCheck(model);
+                    //Response.Redirect("/Content/app/eds_B.apk?v=" + ETS.Util.TimeHelper.GetTimeStamp());
+                    Response.Redirect(result.UpdateUrl.Trim() + "?v=" + ETS.Util.TimeHelper.GetTimeStamp());
+                }
+                return null;
+            }
+            ViewBag.UserAgent = userAgent;
+
+            return View();
+        }
     }
 }

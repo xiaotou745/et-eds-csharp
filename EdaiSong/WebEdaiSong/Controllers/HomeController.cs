@@ -26,6 +26,16 @@ namespace WebEdaiSong.Controllers
             return View();
         }
 
+        public ActionResult Send()
+        {
+            return View();
+        }
+
+        public ActionResult Delivery()
+        {
+            return View();
+        }
+
         public ActionResult Clienter()
         {
             return View();

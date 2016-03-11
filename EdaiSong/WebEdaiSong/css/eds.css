@@ -1,4 +1,4 @@
-@charset "UTF-8";
+﻿@charset "UTF-8";
 html {
   background:#e8eaf1;
   color:#1c2831;
@@ -140,16 +140,16 @@ body { min-width:1100px; }
   padding-top:45px;
 }
 .slider .s2{
-  background:url(../img/s2-bg.jpg) no-repeat center top;
+  background:url(../img/bg3.jpg) no-repeat center top;
   text-align:center;
   padding-top:45px;
 }
 .slider li .img{
-  width:819px;
-  height:476px;
+  width:828px;
+  height:475px;
   position: relative;
   left:50%;
-  margin-left: -405px;
+  margin-left: -414px;
   *left:0;
   *margin-left:0;
 }
@@ -199,7 +199,18 @@ body { min-width:1100px; }
   position:absolute;
   top:200px;
   left:50%;
-  margin-left:-260px;
+  margin-left:-440px;
+}
+.section3 .code .code-wrap{
+    margin-right: 80px;
+}
+.section3 .code .line{
+    position: absolute;
+    width: 1px;
+    background-color: #284290;
+    top: 5%;
+    height: 90%;
+    right: -60px;
 }
 .section3 .code ul{
   text-align:center;
@@ -209,6 +220,7 @@ body { min-width:1100px; }
 .section3 .code li{
   float: left;
   margin:0 40px;
+  position: relative;
 }
 .section3 .code h5{
   color:#19e2ef;
@@ -298,6 +310,29 @@ body { min-width:1100px; }
 .one_down{
   margin-top:40px;
 }
+.one_cent2{
+    width: 100% !important;
+    background:url(../img/s1-bg.jpg) no-repeat center top;
+}
+.one_cent3{
+    width: 100% !important;
+    background:url(../img/bg3.jpg) no-repeat center top;
+}
+.one_cent .img {
+    width: 828px;
+    height: 475px;
+    position: relative;
+    left: 50%;
+    margin-left: -414px;
+}
+.one_cent .img a {
+    display: block;
+    width: 224px;
+    height: 64px;
+    position: absolute;
+    left: -7px;
+    bottom: 183px;
+}
 .index_two{
   width:100%;
   background:#006699;
@@ -347,7 +382,7 @@ body { min-width:1100px; }
 .index_one{
   width:100%;
   height:570px;
-  background:url(../img/banner_two.jpg) #e8eaf1 center center no-repeat;
+  // background:url(../img/banner_two.jpg) #e8eaf1 center center no-repeat;
 }
 .one_cent{
   width:1066px;
@@ -386,7 +421,7 @@ body { min-width:1100px; }
 }
 .two_right h3{
   font-size:24px;
-  margin-top:35px;
+  margin-top:15px;
 }
 .two_right dl{
   float:left;
@@ -404,10 +439,16 @@ body { min-width:1100px; }
 }
 .two_right dl dd{
   width:540px;
-  margin-top:8px;
   line-height:28px;
 }
 .two_right dl p{
   color:#19e2ef;
   line-height:24px;
+}
+
+.licheng{
+    background-color: #006699;
+}
+.licheng .two_right dl p{
+    color: #fff;
 }

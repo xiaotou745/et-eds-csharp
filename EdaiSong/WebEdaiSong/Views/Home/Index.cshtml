@@ -1,65 +1,87 @@
-﻿<link rel="stylesheet" href="~/css/eds.css" />
-
-		<div id="demo">
-			<!-- 头部模块start -->
-	    	<div id="hd">
-	    		<div class="header">
-                   @Html.ActionLink("logo", "Index", "Home", null, new { @class = "logo" })
-	    			<ul class="nav">	    					
-                        <li>@Html.ActionLink("首页", "Index", "Home")</li>	
-                        <li>@Html.ActionLink("商户版", "Business", "Home")</li>     
-                        <li>@Html.ActionLink("骑士版", "Clienter", "Home")</li>
-                        <li>@Html.ActionLink("关于Ｅ代送", "About", "Home")</li>
-	    			</ul>
-	    		</div>
-	    	</div>
-			<!-- 头部模块end -->
-			<div id="bd">
-				<div id="bd-inner">
-					<div class="section1">
-						<div class="slider swiper-container">
-							<ul class="swiper-wrapper">
-								<li class="s1 swiper-slide">
-									<div class="img"><a href="http://admin.edaisong.com.cn/download/edsb"></a><img src="~/img/s1.png" alt=""></div>
-								</li>
-								<li class="s2 swiper-slide">
-									<div class="img"><a href="http://admin.edaisong.com.cn/download/edsc"></a><img src="~/img/s2.png" alt=""></div>
-								</li>			
-							</ul>
-							<div class="slider-bar"><a href="#" class="on">1</a><a href="#">2</a></div>
-						</div>
-					</div>
-					<div class="section2">
-                        <img src="~/img/s3.jpg" alt="">
-					</div>
-					<div class="section3">
-                        <img src="~/img/s4.jpg" alt="">
-						<div class="code">
-							<ul>
-								<li><h5>骑士端</h5><img src="~/img/code1.jpg" alt=""><p>做飞翔的骑士</p></li>
-								<li><h5>商户端</h5><img src="~/img/code2.jpg" alt=""><p>您身边的翅膀</p></li>
-							</ul>
-							<div class="intro">
-								<p>扫描二维码下载App</p>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<!-- 底部模块start -->
-			<div id="ft">
-				<div class="footer">
-					<div class="phone"><i class="i-phone"></i>客服热线：4006-380-177</div>
-					<div class="copyright"><p>京ICP备15014116号-1 Copyright©2011-2015</p>
-					<p>易代送网络科技（北京）有限公司,All rights reserved.</p></div>
-				</div>
-			</div>
-			<!-- 底部模块end -->
-		</div>
-		<script src="~/js/jquery-1.11.3.min.js"></script>
-		<script src="~/js/slidesjs.min.js"></script>
-		<script type="text/javascript">
-		$(".swiper-wrapper").slidesjs({
-        	height: 570
-	      });    
-		</script>
+﻿
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>E代送 | 专注外卖同城即时配送服务</title>
+    <meta name="description" content="E代送专为外卖订餐平台提供外卖同城即时配送的物流服务；通过下载E代送配送版APP:查看附近外卖订单、抢单、取餐配送，即可完成外卖订餐的配送服务；下载E代送商家版APP,更为商家提供省时省力又放心的专业外卖物流服务！" />
+    <meta name="keywords" content="E代送，E代送APP,E代送抢单，E代送外卖，外卖送餐，外卖网上订餐，外卖同城配送" />
+    <link rel="canonical" href="http://www.edaisong.com/" />
+</head>
+<body>
+    <!--页头html开始-->
+    <link rel="stylesheet" href="~/css/eds.css" />
+    <div id="demo">
+        <!-- 头部模块start -->
+        <div id="hd">
+            <div class="header">
+                @Html.ActionLink("logo", "Index", "Home", null, new { @class = "logo" })
+                <ul class="nav">
+                    <li>@Html.ActionLink("首页", "Index", "Home",new {@class="on"})</li>
+                    <li>@Html.ActionLink("发货版", "Send", "Home")</li>
+                    <li>@Html.ActionLink("配送版", "Delivery", "Home")</li>
+                    <li>@Html.ActionLink("关于Ｅ代送", "About", "Home")</li>
+                </ul>
+            </div>
+        </div>
+        <!-- 头部模块end -->
+        <div id="bd">
+            <div id="bd-inner">
+                <div class="section1">
+                    <div class="slider swiper-container">
+                        <ul class="swiper-wrapper">
+                            <li class="s1 swiper-slide">
+                                <div class="img"><a href="http://admin.edaisong.com.cn/download/edsb3"></a></div>
+                            </li>
+                            <li class="s2 swiper-slide">
+                                <div class="img">
+                                    <a href="http://admin.edaisong.com.cn/download/edsc"></a>
+                                    <!-- <img src="/img/s2.png" alt=""> -->
+                                </div>
+                            </li>
+                        </ul>
+                        <div class="slider-bar"><a href="#" class="on">1</a><a href="#">2</a></div>
+                    </div>
+                </div>
+                <div class="section2">
+                    <img src="~/img/s3.jpg" alt="">
+                </div>
+                <div class="section3">
+                    <img src="~/img/s4.jpg" alt="">
+                    <div class="code">
+                        <ul>
+                            <li class="code-wrap">
+                                <h5>配送版</h5><img src="~/img/code1.jpg" alt=""><p>做飞翔的骑士</p>
+                                <div class="line"></div>
+                            </li>
+                            <li><h5>发货版——里程计费</h5><img src="~/img/code3.jpg" alt=""><p>您身边的翅膀</p></li>
+                            <li><h5>发货版——按单计费</h5><img src="~/img/code2.jpg" alt=""><p>您身边的翅膀</p></li>
+                        </ul>
+                        <div class="intro">
+                            <p>扫描二维码下载App</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 底部模块start -->
+        <div id="ft">
+            <div class="footer">
+                <div class="phone"><i class="i-phone"></i>客服热线：4006-380-177</div>
+                <div class="copyright">
+                    <p>京ICP备15014116号-1 Copyright©2011-2015</p>
+                    <p>易代送网络科技（北京）有限公司,All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+        <!-- 底部模块end -->
+    </div>
+    <script src="~/js/jquery-1.11.3.min.js"></script>
+    <script src="~/js/slidesjs.min.js"></script>
+    <script type="text/javascript">
+        $(".swiper-wrapper").slidesjs({
+            height: 570
+        });
+    </script>
+</body>
+</html>

@@ -133,7 +133,7 @@ h2.t2 img{
   width: 95%;
 }
 h2.t5 img{
-  width: 75%;
+  width: 81.5%;
 }
 p {
   font-size:1.6rem;
@@ -627,4 +627,43 @@ p {
     .img img{
         height: 50%;
     }
+}
+
+
+.icon.down{
+    display: inline-block;
+    margin-left: 1em;
+    background:url(../Images/down.png) 0 0;
+    background-size: 100% 100%;
+    height:20px;
+    width: 25px;
+    vertical-align: middle;
+}
+
+@keyframes img1 {
+    0% {
+        background-position: 0 0;
+    }
+    45% {
+        background-position: 0 0;
+    }
+    50% {
+        background-position: 100% 0;
+    }
+    95%{
+        background-position: 100% 0;
+    }
+    100%{
+        background-position: 0 0;
+    }
+}
+.img_ani1 .img51{
+    background:url(/Images/img53.jpg) no-repeat center 0;
+    background-size: auto 100%;
+        background-position: 100% 0;
+    -webkit-animation:img1 10000ms infinite;
+    -moz-animation:img1 10000ms infinite;
+    -ms-animation:img1 10000ms infinite;
+    -o-animation:img1 10000ms infinite;
+    animation:img1 10000ms infinite;
 }

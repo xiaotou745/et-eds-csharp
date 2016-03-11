@@ -206,9 +206,12 @@
     <Content Include="img\banner_5.png" />
     <Content Include="img\banner_6.png" />
     <Content Include="img\banner_two.jpg" />
+    <Content Include="img\bg3.jpg" />
     <Content Include="img\btn.png" />
     <Content Include="img\code1.jpg" />
     <Content Include="img\code2.jpg" />
+    <Content Include="img\code3.jpg" />
+    <Content Include="img\img5_2.jpg" />
     <Content Include="img\logo.png" />
     <Content Include="img\phone.jpg" />
     <Content Include="img\s1-bg.jpg" />
@@ -221,6 +224,8 @@
     <Content Include="img\two_2.png" />
     <Content Include="img\two_3.png" />
     <Content Include="img\two_4.png" />
+    <Content Include="img\two_5.png" />
+    <Content Include="img\two_6.png" />
     <Content Include="js\jquery-1.11.3.min.js" />
     <Content Include="js\slidesjs.min.js" />
     <Content Include="js\swiper.min.js" />
@@ -239,6 +244,7 @@
     <Content Include="Scripts\knockout-2.2.0.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\_references.js" />
+    <Content Include="Views\Home\Delivery.cshtml" />
     <None Include="Views\Home\index.cshtml" />
     <None Include="Views\Home\About.cshtml" />
     <None Include="Views\Home\Business.cshtml" />
@@ -260,6 +266,7 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Home\IndexTemp.cshtml" />
     <Content Include="Views\Home\PrivacyAgreement.cshtml" />
+    <Content Include="Views\Home\Send.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

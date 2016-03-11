@@ -157,6 +157,10 @@
     <Content Include="Content\img\icon-tb.png" />
     <Content Include="Content\style\list-price.css" />
     <Content Include="htmls\list-price.html" />
+    <Content Include="Images\down.png" />
+    <Content Include="Images\img53.jpg" />
+    <Content Include="Images\img5_0.png" />
+    <Content Include="Images\img5_2.jpg" />
     <Content Include="Images\qqs.png" />
     <Content Include="Images\qqsan.png" />
     <Content Include="Images\renrendituiandroid.jpg" />
