@@ -1,0 +1,160 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>E代送 | 专注外卖同城即时配送服务</title>
+    <meta name="description" content="E代送专为外卖订餐平台提供外卖同城即时配送的物流服务；通过下载E代送配送版APP:查看附近外卖订单、抢单、取餐配送，即可完成外卖订餐的配送服务；下载E代送商家版APP,更为商家提供省时省力又放心的专业外卖物流服务！" />
+    <meta name="keywords" content="E代送，E代送APP,E代送抢单，E代送外卖，外卖送餐，外卖网上订餐，外卖同城配送" />
+    <link rel="canonical" href="http://www.edaisong.com/" />
+</head>
+<body>
+    <!--页头html开始-->
+    <link rel="stylesheet" href="~/css/eds.css" />
+    <div id="eds">
+        <!-- 头部模块start -->
+        <div id="hd">
+            <div class="header">
+               @Html.ActionLink("logo", "Index", "Home", null, new { @class = "logo" }) 
+            <ul class="nav">
+                <li>@Html.ActionLink("首页", "Index", "Home")</li>
+                <li>@Html.ActionLink("发货版", "Send", "Home", new { @class = "on" })</li>
+                <li>@Html.ActionLink("配送版", "Delivery", "Home")</li>
+                <li>@Html.ActionLink("关于Ｅ代送", "About", "Home")</li>
+            </ul>
+            </div>
+        </div>
+        <!-- 头部模块end -->
+        <div id="bd">
+            <div id="bd-inner">
+                <div class="index_one">
+                    <div class="one_cent one_cent2">
+                        <div class="img">
+                            <a href="http://admin.edaisong.com.cn/download/edsb3"></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="index_two licheng">
+                    <div class="two_cent">
+                        <div class="two_left">
+                            <p><img src="/img/two_6.png" /></p>
+                        </div>
+                        <div class="two_right">
+                            <h3>里程计费——Q&A</h3>
+                            <div class="right_one">
+                                <dl>
+                                    <dt>1</dt>
+                                </dl>
+                                <dl>
+                                    <p>E代送3.0是怎么配送的？</p>
+                                    <dd>E代送3.0是发货人发布配送需求，按里程/重量计算配送费用，通过云端</dd>
+                                    <dd>传输快速推送到周边骑士终端，由专人直送快速送达。</dd>
+                                </dl>
+                            </div>
+                            <div class="right_one">
+                                <dl>
+                                    <dt>2</dt>
+                                </dl>
+                                <dl>
+                                    <p>可以配送哪些东西？</p>
+                                    <dd>E代送3.0版支持同城配送，可配送物品：蛋糕，文件，外卖，鲜花等。</dd>
+                                </dl>
+                            </div>
+                            <div class="right_one">
+                                <dl>
+                                    <dt>3</dt>
+                                </dl>
+                                <dl>
+                                    <p>如何获得取货码？</p>
+                                    <dd>发货人订单发布成功后，发货人可在手机App及手机短信同时获得取货码，</dd>
+                                    <dd>骑士上门取货时需向发货人索要取货码，输入取货码后可将货物安全寄出。</dd>
+                                </dl>
+                            </div>
+                            <div class="right_one">
+                                <dl>
+                                    <dt>4</dt>
+                                </dl>
+                                <dl>
+                                    <p>什么是收货码？</p>
+                                    <dd>货物寄出后，收货人会获得收货码的短信提示，同时发货人手机App中</dd>
+                                    <dd>同样会提示收货码，当骑士将货物送达时收货人将收货码告知骑士。</dd>
+                                </dl>
+                            </div>
+                            <div class="right_one">
+                                <dl>
+                                    <dt>5</dt>
+                                </dl>
+                                <dl>
+                                    <p>配送费如何支付？</p>
+                                    <dd>货物寄出后，收货人会获得收货码的短信提示，同时发货人手机App中</dd>
+                                    <dd>同样会提示收货码，当骑士将货物送达时收货人将收货码告知骑士。</dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="index_two">
+                    <div class="two_cent">
+                        <div class="two_left">
+                            <p><img src="~/img/two_5.png" /></p>
+                        </div>
+                        <div class="two_right">
+                            <h3>按单计费——Q&A</h3>
+                            <div class="right_one">
+                                <dl>
+                                    <dt>1</dt>
+                                </dl>
+                                <dl>
+                                    <p>E代送是怎么配送的？</p>
+                                    <dd>E代送骑士会按照商户订单上要求送达时间，到商户地址取货，并迅速送</dd>
+                                    <dd>达至收货人，中途无集散中转环节。</dd>
+                                </dl>
+                            </div>
+                            <div class="right_one">
+                                <dl>
+                                    <dt>2</dt>
+                                </dl>
+                                <dl>
+                                    <p>可以配送哪些东西？</p>
+                                    <dd>餐饮、水果、日用品、文件、礼品、鲜花等均可配送。</dd>
+                                </dl>
+                            </div>
+                            <div class="right_one">
+                                <dl>
+                                    <dt>3</dt>
+                                </dl>
+                                <dl>
+                                    <p>可配送的范围是什么？</p>
+                                    <dd>E代送平台专注于即时短途配送，凡发货地和收货地相距3公里内的均可</dd>
+                                    <dd>配送。</dd>
+                                </dl>
+                            </div>
+                            <div class="right_one">
+                                <dl>
+                                    <dt>4</dt>
+                                </dl>
+                                <dl>
+                                    <p>配送费如何支付？</p>
+                                    <dd>商户需在商家中心提前充值，发单后配送费将自动在余额中扣减。</dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </div>
+        <!-- 底部模块start -->
+        <div id="ft">
+            <div class="footer">
+                <div class="phone"><i class="i-phone"></i>客服热线：4006-380-177</div>
+                <div class="copyright">
+                    <p>京ICP备15014116号-1 Copyright©2011-2015</p>
+                    <p>易代送网络科技（北京）有限公司,All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+        <!-- 底部模块end -->
+    </div>
+</body>
+</html>
