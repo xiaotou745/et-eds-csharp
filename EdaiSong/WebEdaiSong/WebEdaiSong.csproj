@@ -245,7 +245,7 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Views\Home\Delivery.cshtml" />
-    <None Include="Views\Home\index.cshtml" />
+    <None Include="Views\Home\Index.cshtml" />
     <None Include="Views\Home\About.cshtml" />
     <None Include="Views\Home\Business.cshtml" />
     <None Include="Views\Home\Clienter.cshtml" />
