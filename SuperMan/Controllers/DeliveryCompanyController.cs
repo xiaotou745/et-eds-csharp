@@ -7,12 +7,14 @@ using System.Web;
 using System.Web.Helpers;
 using System.Web.Mvc;
 using Ets.Model.Common;
+using Ets.Model.DataModel.Business;
 using Ets.Model.DataModel.DeliveryCompany;
 using Ets.Model.DomainModel.Area;
 using Ets.Model.DomainModel.DeliveryCompany;
 using Ets.Model.ParameterModel.DeliveryCompany;
 using Ets.Service.IProvider.Common;
 using Ets.Service.IProvider.DeliveryCompany;
+using Ets.Service.Provider.Business;
 using Ets.Service.Provider.Common;
 using Ets.Service.Provider.DeliveryCompany;
 using ETS.Util;
@@ -35,14 +37,14 @@ namespace SuperMan.Controllers
         /// </summary>
         /// <returns></returns>
         public ActionResult DeliveryCompany()
-        { 
+        {
             int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
 
             DeliveryCompanyCriteria deliveryCompanyCriteria = new DeliveryCompanyCriteria();
             TryUpdateModel(deliveryCompanyCriteria);
             var dcList = new DeliveryCompanyProvider().Get(deliveryCompanyCriteria);//获取物流公司
 
-            return View(dcList); 
+            return View(dcList);
         }
         /// <summary>
         /// 获取数据 分页
@@ -53,7 +55,7 @@ namespace SuperMan.Controllers
         public ActionResult PostDeliveryCompany(int pageindex = 1)
         {
             DeliveryCompanyCriteria deliveryCompanyCriteria = new DeliveryCompanyCriteria();
-            TryUpdateModel(deliveryCompanyCriteria); 
+            TryUpdateModel(deliveryCompanyCriteria);
             int UserType = UserContext.Current.AccountType == 1 ? 0 : UserContext.Current.Id;//如果管理后台的类型是所有权限就传0，否则传管理后台id
             var dcList = new DeliveryCompanyProvider().Get(deliveryCompanyCriteria);//获取物流公司
             return PartialView("_DeliveryCompanyList", dcList);
@@ -87,7 +89,7 @@ namespace SuperMan.Controllers
         public ActionResult Modify(int Id)
         {
             DeliveryCompanyModel deliveryCompanyModel = deliveryCompanyProvider.GetById(Id);
-            return View("DeliveryCompanyModify",deliveryCompanyModel);
+            return View("DeliveryCompanyModify", deliveryCompanyModel);
         }
 
         /// <summary>
@@ -169,8 +171,6 @@ namespace SuperMan.Controllers
             ViewBag.Message = "请选择文件！";
             return PartialView();
         }
-
-
         /// <summary>
         /// 批量导入骑士验证excel内数据的合法性  add by caoheyang 20150706
         /// </summary>
@@ -258,21 +258,98 @@ namespace SuperMan.Controllers
         public JsonResult DoBatchImportClienter(int companyId)
         {
             string jsondatas = Request.Form["datas"];  //得到页面上可导入的数据
- 
+
             //序列化得到数据
             var models = JsonHelper.JsonConvertToObject<List<BatchImportClienterExcelDM>>(jsondatas);
             ResultModel<string> res = deliveryCompanyProvider.DoBatchImportClienter(new DoBatchImportClienterPM()
             {
-                Datas=models,
-                OptId=UserContext.Current.Id,
-                OptName=UserContext.Current.Name,
-                CompanyId=companyId
+                Datas = models,
+                OptId = UserContext.Current.Id,
+                OptName = UserContext.Current.Name,
+                CompanyId = companyId
             });
             return new JsonResult()
             {
                 Data = res
             };
-        } 
-         
+        }
+
+
+        [HttpGet]
+        public ActionResult ImporBusinss()
+        {
+            return View();
+
+        }
+
+        /// <summary>
+        /// 批量导入骑士  excel  处理  add by caoheyang 20150706
+        /// </summary>
+        /// <param name="companyId">公司id</param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult ImporBusinssExcel()
+        {
+            if (Request.Files["file1"] != null && Request.Files["file1"].FileName != "")
+            {
+                Stream fs = null;
+                IWorkbook wk = null;
+                HttpPostedFileBase file = Request.Files["file1"];
+                fs = file.InputStream;
+                if (Path.GetExtension(Request.Files["file1"].FileName) == ".xls" || Path.GetExtension(Request.Files["file1"].FileName) == ".xlsx")
+                {
+                    wk = new XSSFWorkbook(fs);
+                }
+                else
+                {
+                    ViewBag.Message = "文件格式不正确,支持.xls文件！";
+                    return PartialView();
+                }
+                ISheet st = wk.GetSheetAt(0);
+                List<BusinessModel> list = new List<BusinessModel>();
+                for (int i = 1; i <= st.LastRowNum; i++)
+                {
+                    BusinessModel model = new BusinessModel();
+                    if (st.GetRow(i) != null && st.GetRow(i).GetCell(0) != null) //第三方门店id
+                    {
+                        model.OriginalBusiId = ParseHelper.ToInt(st.GetRow(i).GetCell(0).ToString().Trim());
+                    }
+                    if (st.GetRow(i) != null && st.GetRow(i).GetCell(1) != null) //门店名称
+                    {
+                        model.Name = st.GetRow(i).GetCell(1).ToString().Trim();
+                    }
+                    if (st.GetRow(i) != null && st.GetRow(i).GetCell(2) != null) //门店电话
+                    {
+                        model.PhoneNo = st.GetRow(i).GetCell(2).ToString().Trim();
+                    }
+                    if (st.GetRow(i) != null && st.GetRow(i).GetCell(3) != null) //门店电话2
+                    {
+                        model.PhoneNo2 = st.GetRow(i).GetCell(3).ToString().Trim();
+                    }
+                    if (st.GetRow(i) != null && st.GetRow(i).GetCell(4) != null) //门店地址
+                    {
+                        model.Address = st.GetRow(i).GetCell(4).ToString().Trim();
+                    }
+                    if (st.GetRow(i) != null && st.GetRow(i).GetCell(5) != null) //门店省份
+                    {
+                        model.Province = st.GetRow(i).GetCell(5).ToString().Trim();
+                    }
+                    if (st.GetRow(i) != null && st.GetRow(i).GetCell(6) != null) //城市名称
+                    {
+                        model.City = st.GetRow(i).GetCell(6).ToString().Trim();
+                    }
+                    if (st.GetRow(i) != null && st.GetRow(i).GetCell(7) != null) //区域名称
+                    {
+                        model.district = st.GetRow(i).GetCell(7).ToString().Trim();
+                    }
+                   
+                    list.Add(model);
+                }
+
+              string ids=  new BusinessProvider().ImporBusinssExcel(list, 111);
+            }
+            return PartialView();
+        }
+
     }
 }

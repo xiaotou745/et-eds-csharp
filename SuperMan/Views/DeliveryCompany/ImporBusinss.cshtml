@@ -1,0 +1,29 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ImporBusinss</title>
+</head>
+<body>
+    <div>
+        
+        @using (Html.BeginForm("ImporBusinssExcel", "DeliveryCompany", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <div class="SearchMd">
+                <div style="margin-bottom: 10px;">
+                    <input id="file1" type="file" name="file1">
+                </div>
+                <div>
+                    <button type="submit" class="searchBtn" id="btnImport" />导入
+                </div>
+            </div>
+        }
+    </div>
+</body>
+</html>

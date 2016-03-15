@@ -333,7 +333,7 @@ namespace Ets.Dao.Order
             insertBdbParameters.AddWithValue("@PhoneNo", paramodel.store_info.phone);    //门店联系电话
             insertBdbParameters.AddWithValue("@PhoneNo2", paramodel.store_info.phone2);    //门店第二联系电话
             insertBdbParameters.AddWithValue("@Address", paramodel.store_info.address);    //门店地址
-            insertBdbParameters.AddWithValue("@ProvinceCode", paramodel.store_info.city_code);    //门店所在省份code
+            insertBdbParameters.AddWithValue("@ProvinceCode", paramodel.store_info.province_code);    //门店所在省份code
             insertBdbParameters.AddWithValue("@CityCode", paramodel.store_info.city_code);    //门店所在城市code
             insertBdbParameters.AddWithValue("@AreaCode", paramodel.store_info.area_code);    //门店所在区域code
             insertBdbParameters.AddWithValue("@Longitude", paramodel.store_info.longitude);    //门店所在区域经度

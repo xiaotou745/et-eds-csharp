@@ -11,6 +11,7 @@ using ETS.Data.PageData;
 using System;
 using System.Collections.Generic;
 using CalculateCommon;
+using Ets.Model.ParameterModel.Area;
 using Ets.Model.ParameterModel.Business;
 using System.Linq;
 using ETS.Enums;
@@ -415,9 +416,9 @@ namespace Ets.Service.Provider.Business
                 LoginModel model = new LoginModel();
                 if (parModel.data == null)
                 {
-                    model.phoneNo=parModel.phoneNo;
-                    model.Ssid=parModel.Ssid;
-                    model.passWord=parModel.passWord;
+                    model.phoneNo = parModel.phoneNo;
+                    model.Ssid = parModel.Ssid;
+                    model.passWord = parModel.passWord;
                 }
                 else
                     model = JsonHelper.JsonConvertToObject<LoginModel>(AESApp.AesDecrypt(parModel.data));
@@ -469,8 +470,8 @@ namespace Ets.Service.Provider.Business
                     Appkey = row["Appkey"].ToString()
                 });
                 resultMode.Token = token;
-         
-                    //记录登陆日志
+
+                //记录登陆日志
                 businessLoginLogDao.Insert(new BusinessLoginLogDM
                                 {
                                     BusinessId = ParseHelper.ToInt(row["userId"]),
@@ -483,7 +484,7 @@ namespace Ets.Service.Provider.Business
                                     Description = "登陆成功",
                                     IsSuccess = 1
                                 }
-                        );               
+                        );
 
                 //string resultStr = AESApp.AesDecrypt(JsonHelper.JsonConvertToString(resultMode));
                 return ResultModel<BusiLoginResultModel>.Conclude(LoginModelStatus.Success, resultMode);//BusiLoginResultModel
@@ -1179,10 +1180,10 @@ namespace Ets.Service.Provider.Business
         public BusiDistribSubsidyResultModel GetBusinessPushOrderInfo(int id, int orderChildCount, decimal amount)
         {
             var busiInfo = businessDao.GetSettlementRelevantById(id);
-            var result = new BusiDistribSubsidyResultModel 
-                        { 
+            var result = new BusiDistribSubsidyResultModel
+                        {
                             DistribSubsidy = busiInfo.DistribSubsidy,
-                            GroupBusinessAmount=busiInfo.GroupBusinessAmount
+                            GroupBusinessAmount = busiInfo.GroupBusinessAmount
                         };
             result.OrderBalance = amount * busiInfo.BusinessCommission / 100 + (busiInfo.CommissionFixValue +
                                    busiInfo.DistribSubsidy ?? 0m) * orderChildCount;
@@ -1236,7 +1237,8 @@ namespace Ets.Service.Provider.Business
             };
             using (var tran = EdsUtilOfWorkFactory.GetUnitOfWorkOfEDS())
             {
-                if (model.PushOrderType == 1) {  //快单模式
+                if (model.PushOrderType == 1)
+                {  //快单模式
                     BusinessGroupModel groupModel = businessGroupDao.GetCurrenBusinessGroupByGroupId(model.BusinessGroupId);
                     if (groupModel.StrategyId != 4)//  所选的补贴策略不是基本佣金+网站补贴类型的策略
                     {
@@ -1244,9 +1246,9 @@ namespace Ets.Service.Provider.Business
                         return dealResultInfo;
                     }
                 }
-                BusinessDetailModel old=businessDao.GetBusinessDetailById(model.Id.ToString());
-                if ((old.BusinessCommission != model.BusinessCommission|| old.CommissionFixValue != model.CommissionFixValue||
-                        old.DistribSubsidy != model.DistribSubsidy ||old.BusinessGroupId != model.BusinessGroupId) && orderRegionDao.GetOrderCountInfoByBusinessId(model.Id))
+                BusinessDetailModel old = businessDao.GetBusinessDetailById(model.Id.ToString());
+                if ((old.BusinessCommission != model.BusinessCommission || old.CommissionFixValue != model.CommissionFixValue ||
+                        old.DistribSubsidy != model.DistribSubsidy || old.BusinessGroupId != model.BusinessGroupId) && orderRegionDao.GetOrderCountInfoByBusinessId(model.Id))
                 {
                     dealResultInfo.DealMsg = "当前商家有待接单订单尚未处理，不能修改商户结算（应收）和补贴设置（应付）";
                     return dealResultInfo;
@@ -1563,7 +1565,7 @@ namespace Ets.Service.Provider.Business
         public void UpdateBBalanceAndWithdraw(BusinessMoneyPM businessMoneyPM)
         {
             ///这里验证一下，如果不减商户余额时加IsRetainValue该属性就可以了，但是流水会正常记，当然流水会扣除，但账户流水总余额不会变
-            if (businessMoneyPM.IsRetainValue==0)
+            if (businessMoneyPM.IsRetainValue == 0)
             {
                 //更新商户余额、可提现
                 businessDao.UpdateForWithdrawC(new UpdateForWithdrawPM()
@@ -1590,6 +1592,70 @@ namespace Ets.Service.Provider.Business
         public bool UpdateBusinessIsEnable(BusinessAuditModel bam)
         {
             return businessDao.UpdateBusinessIsEnable(bam);
+        }
+
+        /// <summary>
+        /// 好厨师导入店铺
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        public string ImporBusinssExcel(List<BusinessModel> list, int groupid)
+        {
+            string existid = "";
+            for (int i = 0; i < list.Count; i++)
+            {
+               
+                var bussinesTemp = businessDao.CheckExistBusiness(ParseHelper.ToInt(list[i].OriginalBusiId), groupid);
+                if (bussinesTemp == null)
+                {
+                    string storecodeInfo = new AreaProvider().GetOpenCode(new ParaAreaNameInfo()
+                    {
+                        ProvinceName = list[i].Province.Trim(),
+                        CityName = list[i].City.Trim(),
+                        AreaName = list[i].district.Trim()
+                    });
+                    string[] storeCodes = storecodeInfo.Split('_');
+                    list[i].ProvinceCode = storeCodes[0];
+                    list[i].CityCode = storeCodes[1];
+                    list[i].districtId = storeCodes[2];
+
+                    Tuple<decimal, decimal> la = BaiDuHelper.GeoCoder((list[i].Province ?? "") + (list[i].City ?? "") + (list[i].AreaCode ?? "") +
+                                       (list[i].Address ?? ""));
+
+                    OrderDao o = new OrderDao();
+                    o.CreateToSqlAddBusiness(new CreatePM_OpenApi()
+                    {
+                        store_info = new Store()
+                        {
+                            store_id = ParseHelper.ToInt(list[i].OriginalBusiId),
+                            store_name = list[i].Name,
+                            group = groupid,
+                            id_card = "",
+                            phone = list[i].PhoneNo,
+                            phone2 = list[i].PhoneNo2,
+                            address = list[i].Address,
+                            province_code = list[i].ProvinceCode,
+                            city_code = list[i].CityCode,
+                            area_code = list[i].districtId,
+                            province = list[i].Province,
+                            city = list[i].City,
+                            area = list[i].district,
+                            longitude = la.Item1,
+                            latitude = la.Item2,
+                            businesscommission = 0
+                        },
+                        CommissionType = 2,
+                        CommissionFixValue = 5,
+                        BusinessGroupId = 0
+                    });
+                }
+                else
+                {
+                    existid = existid + list[i].OriginalBusiId;
+                }
+
+            }
+            return existid;
         }
     }
 }
