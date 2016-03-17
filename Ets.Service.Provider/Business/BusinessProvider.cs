@@ -1599,7 +1599,7 @@ namespace Ets.Service.Provider.Business
         /// </summary>
         /// <param name="list"></param>
         /// <returns></returns>
-        public string ImporBusinssExcel(List<BusinessModel> list, int groupid)
+        public string ImporBusinssExcel(List<BusinessModel> list, int groupid,int decid)
         {
             string existid = "";
             for (int i = 0; i < list.Count; i++)
@@ -1623,7 +1623,7 @@ namespace Ets.Service.Provider.Business
                                        (list[i].Address ?? ""));
 
                     OrderDao o = new OrderDao();
-                    o.CreateToSqlAddBusiness(new CreatePM_OpenApi()
+                    int bid= o.CreateToSqlAddBusiness(new CreatePM_OpenApi()
                     {
                         store_info = new Store()
                         {
@@ -1632,7 +1632,7 @@ namespace Ets.Service.Provider.Business
                             group = groupid,
                             id_card = "",
                             phone = list[i].PhoneNo,
-                            phone2 = list[i].PhoneNo2,
+                            phone2 = list[i].PhoneNo,
                             address = list[i].Address,
                             province_code = list[i].ProvinceCode,
                             city_code = list[i].CityCode,
@@ -1648,6 +1648,15 @@ namespace Ets.Service.Provider.Business
                         CommissionFixValue = 5,
                         BusinessGroupId = 0
                     });
+
+                    var berm = new BusinessExpressRelationModel
+                    {
+                        ExpressId = Convert.ToInt32(decid),
+                        IsEnable = Convert.ToInt32(1),
+                        BusinessId = bid,
+                        OptName = "admin"
+                    };
+                    businessDao.EditBusinessExpressRelation(berm);
                 }
                 else
                 {
