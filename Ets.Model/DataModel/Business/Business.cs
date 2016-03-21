@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Ets.Model.DataModel.Business
 {
-    public partial class BusinessModel
+    public  class BusinessModel
     {/// <summary>
         /// 主键Id(自增)
         /// </summary>
