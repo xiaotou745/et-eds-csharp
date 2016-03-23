@@ -1181,9 +1181,11 @@ namespace Ets.Service.Provider.Business
         public BusiDistribSubsidyResultModel GetBusinessPushOrderInfo(int id, int orderChildCount, decimal amount)
         {
             var busiInfo = businessDao.GetSettlementRelevantById(id);
-            var result = new BusiDistribSubsidyResultModel
+            if (busiInfo.ReceivableType == 1)
+            {
+                var result = new BusiDistribSubsidyResultModel
                         {
-                    DistribSubsidy = busiInfo.DistribSubsidy,
+                            DistribSubsidy = busiInfo.DistribSubsidy,
                             GroupBusinessAmount = busiInfo.GroupBusinessAmount
                 };
                 result.OrderBalance = amount * busiInfo.BusinessCommission / 100 + (busiInfo.CommissionFixValue +
