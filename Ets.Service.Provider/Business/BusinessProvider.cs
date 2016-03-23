@@ -1627,7 +1627,7 @@ namespace Ets.Service.Provider.Business
         /// </summary>
         /// <param name="list"></param>
         /// <returns></returns>
-        public string ImporBusinssExcel(List<BusinessModel> list, int groupid,int decid)
+        public string ImporBusinssExcel(List<BusinessModel> list, int groupid, int decid, int businessgroupid)
         {
             string existid = "";
             for (int i = 0; i < list.Count; i++)
@@ -1673,8 +1673,8 @@ namespace Ets.Service.Provider.Business
                             businesscommission = 0
                         },
                         CommissionType = 2,
-                        CommissionFixValue = 5,
-                        BusinessGroupId = 0
+                        CommissionFixValue = 8,
+                        BusinessGroupId = businessgroupid
                     });
 
                     var berm = new BusinessExpressRelationModel

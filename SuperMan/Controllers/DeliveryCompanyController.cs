@@ -347,7 +347,8 @@ namespace SuperMan.Controllers
                 }
                 int groupid = ParseHelper.ToInt(Request.Form["groupid"]);
                 int decid = ParseHelper.ToInt(Request.Form["decid"]);
-                string ids = new BusinessProvider().ImporBusinssExcel(list, groupid, decid);
+                int businessgroupid = ParseHelper.ToInt(Request.Form["businessgroupid"]);
+                string ids = new BusinessProvider().ImporBusinssExcel(list, groupid, decid, businessgroupid);
             }
             return PartialView();
         }

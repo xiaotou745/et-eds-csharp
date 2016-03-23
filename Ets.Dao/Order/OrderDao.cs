@@ -1597,7 +1597,7 @@ where   o.[Status] <> 3
             parm.AddWithValue("@OriginalOrderNo", orderNO);
             parm.AddWithValue("@OrderFrom", orderFrom);
             parm.AddWithValue("@OrderType", orderType);
-            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Read, sql, parm);
+            DataTable dt = DbHelper.ExecuteDataTable(SuperMan_Write, sql, parm);
             if (dt == null || dt.Rows.Count <= 0)
             {
                 return null;
